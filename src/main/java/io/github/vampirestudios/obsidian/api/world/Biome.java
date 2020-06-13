@@ -10,8 +10,8 @@ public class Biome {
     public NetherBiomeNoise biomeNoiseInformation;
     public String parent = "";
     public String dimension;
-//    public String category;
-//    public String precipitation;
+    public String category = "plains";
+    public String precipitation = "none";
     public Identifier surfaceBuilder;
     public Identifier surfaceConfig;
     public float depth;

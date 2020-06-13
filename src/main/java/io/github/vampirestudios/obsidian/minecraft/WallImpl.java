@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
 import io.github.vampirestudios.obsidian.api.block.Block;
-import io.github.vampirestudios.vampirelib.blocks.WallBaseBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.WallBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 
 import static net.minecraft.block.TntBlock.primeTnt;
 
-public class WallImpl extends WallBaseBlock {
+public class WallImpl extends WallBlock {
 
     public Block block;
 

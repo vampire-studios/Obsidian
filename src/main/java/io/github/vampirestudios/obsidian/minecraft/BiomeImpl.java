@@ -24,8 +24,8 @@ public class BiomeImpl extends Biome {
                                         .waterFogColor(biome.waterFogColor)
                                         .build()
                         )
-                        .category(Category.PLAINS)
-                        .precipitation(Precipitation.NONE)
+                        .category(Category.method_28424(biome.category))
+                        .precipitation(Precipitation.method_28431(biome.precipitation))
                         .noises(
                                 ImmutableList.of(
                                         new MixedNoisePoint(

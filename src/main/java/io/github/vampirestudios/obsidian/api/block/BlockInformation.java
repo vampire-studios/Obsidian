@@ -89,34 +89,34 @@ public class BlockInformation {
                 return Material.UNDERWATER_PLANT;
             case "minecraft:replaceable_plant":
                 return Material.REPLACEABLE_PLANT;
-            case "minecraft:sea_grass":
-                return Material.SEAGRASS;
+            case "minecraft:replaceable_underwater_plant":
+                return Material.REPLACEABLE_UNDERWATER_PLANT;
             case "minecraft:water":
                 return Material.WATER;
             case "minecraft:bubble_column":
                 return Material.BUBBLE_COLUMN;
             case "minecraft:lava":
                 return Material.LAVA;
-            case "minecraft:snow":
-                return Material.SNOW;
+            case "minecraft:snow_layer":
+                return Material.SNOW_LAYER;
             case "minecraft:fire":
                 return Material.FIRE;
-            case "minecraft:part":
-                return Material.PART;
+            case "minecraft:supported":
+                return Material.SUPPORTED;
             case "minecraft:cobweb":
                 return Material.COBWEB;
             case "minecraft:redstone_lamp":
                 return Material.REDSTONE_LAMP;
-            case "minecraft:clay":
-                return Material.CLAY;
-            case "minecraft:earth":
-                return Material.EARTH;
-            case "minecraft:organic":
-                return Material.ORGANIC;
-            case "minecraft:packed_ice":
-                return Material.PACKED_ICE;
-            case "minecraft:sand":
-                return Material.SAND;
+            case "minecraft:organic_product":
+                return Material.ORGANIC_PRODUCT;
+            case "minecraft:soil":
+                return Material.SOIL;
+            case "minecraft:solid_organic":
+                return Material.SOLID_ORGANIC;
+            case "minecraft:dense_ice":
+                return Material.DENSE_ICE;
+            case "minecraft:aggregate":
+                return Material.AGGREGATE;
             case "minecraft:sponge":
                 return Material.SPONGE;
             case "minecraft:shulker_box":
@@ -145,16 +145,16 @@ public class BlockInformation {
                 return Material.METAL;
             case "minecraft:snow_block":
                 return Material.SNOW_BLOCK;
-            case "minecraft:anvil":
-                return Material.ANVIL;
+            case "minecraft:repair_station":
+                return Material.REPAIR_STATION;
             case "minecraft:barrier":
                 return Material.BARRIER;
             case "minecraft:piston":
                 return Material.PISTON;
             case "minecraft:unused_plant":
                 return Material.UNUSED_PLANT;
-            case "minecraft:pumpkin":
-                return Material.PUMPKIN;
+            case "minecraft:gourd":
+                return Material.GOURD;
             case "minecraft:egg":
                 return Material.EGG;
             case "minecraft:cake":

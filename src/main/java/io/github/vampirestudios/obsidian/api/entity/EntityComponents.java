@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.entity;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 
 public class EntityComponents {
 
@@ -9,19 +9,19 @@ public class EntityComponents {
     public CollisionBox collision_box;
     public String entity_category;
 
-    public EntityCategory getCategory() {
+    public SpawnGroup getCategory() {
         switch (entity_category) {
             case "monster":
-                return EntityCategory.MONSTER;
+                return SpawnGroup.MONSTER;
             case "creature":
-                return EntityCategory.CREATURE;
+                return SpawnGroup.CREATURE;
             case "ambient":
-                return EntityCategory.AMBIENT;
+                return SpawnGroup.AMBIENT;
             case "water_creature":
-                return EntityCategory.WATER_CREATURE;
+                return SpawnGroup.WATER_CREATURE;
             case "misc":
             default:
-                return EntityCategory.MISC;
+                return SpawnGroup.MISC;
         }
     }
 

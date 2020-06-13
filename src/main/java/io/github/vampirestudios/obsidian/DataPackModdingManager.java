@@ -1,17 +1,17 @@
 package io.github.vampirestudios.obsidian;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
-import io.github.vampirestudios.hidden_gems.HiddenGems;
 import io.github.vampirestudios.obsidian.api.block.Block;
+import io.github.vampirestudios.obsidian.api.command.Command;
 import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.ToolItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.api.world.Biome;
-import io.github.vampirestudios.obsidian.api.world.Dimension;
 import io.github.vampirestudios.obsidian.minecraft.BiomeImpl;
 import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
-import io.github.vampirestudios.vampirelib.utils.registry.RegistryUtils;
+import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.fabricmc.fabric.api.biomes.v1.NetherBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldClimate;
@@ -54,7 +54,7 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
 
     @Override
     public Identifier getFabricId() {
-        return new Identifier(HiddenGems.MOD_ID, "data_pack_modding");
+        return new Identifier(Obsidian.MOD_ID, "data_pack_modding");
     }
 
     public void registerReloadListener() {
@@ -75,8 +75,8 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
         List<Block> blocks = new ArrayList<>();
         List<Entity> entities = new ArrayList<>();
         List<Potion> potions = new ArrayList<>();
-        List<Dimension> dimensions = new ArrayList<>();
         List<Biome> biomes = new ArrayList<>();
+        List<Command> commands = new ArrayList<>();
 
         RawData(ResourceManager manager) {
             for (Identifier id : manager.findResources("config/data_pack_modding", path -> path.endsWith(".json"))) {
@@ -94,15 +94,15 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
                         potions.add(GSON.fromJson(reader, Potion.class));
                     else if (id.getPath().startsWith("config/data_pack_modding/biomes/"))
                         biomes.add(GSON.fromJson(reader, Biome.class));
-                    else if (id.getPath().startsWith("config/data_pack_modding/dimensions/"))
-                        dimensions.add(GSON.fromJson(reader, Dimension.class));
-                    else HiddenGems.LOGGER.warn("[HiddenGems:DataPackModdingManager] Unknown resource '{}'", id);
+                    else if (id.getPath().startsWith("config/data_pack_modding/commands/"))
+                        commands.add(GSON.fromJson(reader, Command.class));
+                    else Obsidian.LOGGER.warn("[Obsidian:DataPackModdingManager] Unknown resource '{}'", id);
                 } catch (JsonIOException | JsonSyntaxException ex) {
-                    HiddenGems.LOGGER.error("[HiddenGems:DataPackModdingManager] Error while parsing resource '{}'", id, ex);
+                    Obsidian.LOGGER.error("[Obsidian:DataPackModdingManager] Error while parsing resource '{}'", id, ex);
                 } catch (IOException ex) {
-                    HiddenGems.LOGGER.error("[HiddenGems:DataPackModdingManager] Error reading resource '{}'", id, ex);
+                    Obsidian.LOGGER.error("[Obsidian:DataPackModdingManager] Error reading resource '{}'", id, ex);
                 } catch (Exception ex) {
-                    HiddenGems.LOGGER.error("[HiddenGems:DataPackModdingManager] Error loading resource '{}'", id, ex);
+                    Obsidian.LOGGER.error("[Obsidian:DataPackModdingManager] Error loading resource '{}'", id, ex);
                 }
             }
         }
@@ -133,9 +133,10 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
                 ArtificeAssetGeneration.blocks.add(block);
             }
             for(Entity entity : this.entities) {
+                net.minecraft.entity.
                 EntityType<EntityImpl> type = new EntityType<>(EntityImpl::new, entity.components.getCategory(),
-                        false, entity.summonable, false, entity.spawnable, 0, 0,
-                        EntityDimensions.fixed(entity.components.collision_box.width, entity.components.collision_box.height));
+                        false, entity.summonable, false, entity.spawnable, ImmutableSet.of(),
+                        EntityDimensions.fixed(entity.components.collision_box.width, entity.components.collision_box.height), 0, 0);
                 Registry.register(Registry.ENTITY_TYPE, entity.identifier, type);
                 if (entity.spawnable) {
                     Registry.register(Registry.ITEM, new Identifier(entity.identifier.getNamespace(), String.format("%s_spawn_egg", entity.identifier.getPath())),

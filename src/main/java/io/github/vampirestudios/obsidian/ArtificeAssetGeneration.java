@@ -6,7 +6,7 @@ import io.github.vampirestudios.obsidian.api.block.Block;
 import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.Item;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
-import io.github.vampirestudios.vampirelib.utils.Utils;
+import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.util.Identifier;
 

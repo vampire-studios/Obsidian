@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
 import io.github.vampirestudios.obsidian.api.block.Block;
-import io.github.vampirestudios.vampirelib.blocks.StairsBaseBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,12 +17,12 @@ import net.minecraft.world.World;
 
 import static net.minecraft.block.TntBlock.primeTnt;
 
-public class StairsImpl extends StairsBaseBlock {
+public class StairsImpl extends StairsBlock {
 
     public Block block;
 
     public StairsImpl(Block block) {
-        super(Registry.BLOCK.get(block.information.name).getDefaultState());
+        super(Registry.BLOCK.get(block.information.name).getDefaultState(), Settings.copy(Registry.BLOCK.get(block.information.name)));
         this.block = block;
     }
 

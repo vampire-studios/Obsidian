@@ -8,7 +8,6 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 
-import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,13 +71,12 @@ public class AddonResourcePack implements ResourcePack {
 		return namespaces;
 	}
 
-	@Nullable
 	@Override
 	public <T> T parseMetadata(ResourceMetadataReader<T> metadataReader) {
 		JsonObject object = new JsonObject();
 		if(metadataReader.getKey().equals("pack")) {
 			object.addProperty("description", "Default pack for config packs.\n" + virtualPacks.length + " packs loaded.");
-			object.addProperty("pack_format", 4);
+			object.addProperty("pack_format", 5);
 		}
 		return metadataReader.fromJson(object);
 	}

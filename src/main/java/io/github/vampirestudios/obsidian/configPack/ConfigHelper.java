@@ -4,41 +4,41 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.swordglowsblue.artifice.api.Artifice;
-import io.github.vampirestudios.hidden_gems.HiddenGems;
-import io.github.vampirestudios.obsidian.PlayerPlacementHandlers;
-import io.github.vampirestudios.obsidian.SimpleStringDeserializer;
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.IAddonPack;
 import io.github.vampirestudios.obsidian.api.block.Block;
+import io.github.vampirestudios.obsidian.api.command.Command;
 import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.api.world.Biome;
-import io.github.vampirestudios.obsidian.api.world.Dimension;
-import io.github.vampirestudios.obsidian.client.resource.AddonResourcePackCreator;
+import io.github.vampirestudios.obsidian.client.resource.AddonResourcePack;
 import io.github.vampirestudios.obsidian.minecraft.*;
-import io.github.vampirestudios.vampirelib.utils.Utils;
-import io.github.vampirestudios.vampirelib.utils.registry.RegistryUtils;
+import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
+import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.biomes.v1.NetherBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldClimate;
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.dimension.v1.FabricDimensionType;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.*;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.source.HorizontalVoronoiBiomeAccessType;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -59,8 +59,8 @@ public class ConfigHelper {
     public static List<Block> blocks = new ArrayList<>();
     public static List<Entity> entities = new ArrayList<>();
     private static List<Potion> potions = new ArrayList<>();
-    private static final List<Dimension> dimensions = new ArrayList<>();
     private static final List<Biome> biomes = new ArrayList<>();
+    private static final List<Command> commands = new ArrayList<>();
 
     public static void loadDefault() {
         if (!MATERIALS_DIRECTORY.exists())
@@ -69,10 +69,10 @@ public class ConfigHelper {
 
     public static void loadConfig() {
         try {
-            FabricLoader.getInstance().getEntrypoints("hidden_gems:addon_packs", IAddonPack.class).forEach(supplier -> {
+            FabricLoader.getInstance().getEntrypoints("obsidian:addon_packs", IAddonPack.class).forEach(supplier -> {
                 try {
                     ADDON_PACKS.add(supplier);
-                    HiddenGems.LOGGER.info(String.format("[Hidden Gems] Registering addon: %s from an entrypoint",
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s from an entrypoint",
                             supplier.getConfigPackInfo().getInformation().getId()));
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
@@ -87,10 +87,10 @@ public class ConfigHelper {
                             ConfigPackInfo packInfo = GSON.fromJson(new FileReader(packInfoFile), ConfigPackInfo.class);
                             ConfigPack configPack = new ConfigPack(packInfo, file);
                             ADDON_PACKS.add(configPack);
-                            HiddenGems.LOGGER.info(String.format("[Hidden Gems] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
+                            Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
                         }
                     } catch (Exception e) {
-                        HiddenGems.LOGGER.error("[Hidden Gems] Failed to load addon pack.", e);
+                        Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
                     }
                 } else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mcpack")) {
                     try (ZipFile zipFile = new ZipFile(file)) {
@@ -99,10 +99,10 @@ public class ConfigHelper {
                             ConfigPackInfo packInfo = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(packInfoEntry)), ConfigPackInfo.class);
                             ConfigPack configPack = new ConfigPack(packInfo);
                             ADDON_PACKS.add(configPack);
-                            HiddenGems.LOGGER.info(String.format("[Hidden Gems] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
+                            Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
                         }
                     } catch (Exception e) {
-                        HiddenGems.LOGGER.error("[Hidden Gems] Failed to load addon pack.", e);
+                        Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
                     }
                 }
             }
@@ -114,10 +114,10 @@ public class ConfigHelper {
                 moduleText = "Loading %d pack:";
             }
 
-            HiddenGems.LOGGER.info(String.format("[Hidden Gems] " + moduleText, ADDON_PACKS.size()));
+            Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, ADDON_PACKS.size()));
 
             for(IAddonPack pack : ADDON_PACKS) {
-                HiddenGems.LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
+                Obsidian.LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
 
                 String modId = pack.getConfigPackInfo().getInformation().namespace;
 
@@ -155,7 +155,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                             })
-                                    )/*.dumpResources(Paths.get("saves", MinecraftClient.getInstance().world.getLevelProperties().getLevelName(), "datapacks", pack.getIdentifier().getPath()).toString())*/;
+                                    );
                                     blocks.add(block);
                                     if (block.additionalInformation != null) {
                                         if (block.additionalInformation.slab) {
@@ -194,7 +194,7 @@ public class ConfigHelper {
                                             });/*.dumpResources(Paths.get("saves", MinecraftClient.getInstance().world.getLevelProperties().getLevelName(), "datapacks", pack.getIdentifier().getPath()).toString());*/
                                         }
                                         if (block.additionalInformation.stairs) {
-                                            RegistryUtils.register(new StairsImpl(block), new Identifier(modId, block.information.name + "_stairs"),
+                                            RegistryUtils.register(new StairsImpl(block), new Identifier(modId, block.information.name.getPath() + "_stairs"),
                                                     ItemGroup.BUILDING_BLOCKS);
                                             Artifice.registerData(String.format("hidden_gems:%s_stairs_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_stairs"), lootTableBuilder -> {
@@ -224,7 +224,7 @@ public class ConfigHelper {
                                         }
                                         if (block.additionalInformation.fence) {
                                             RegistryUtils.register(new FenceImpl(block),
-                                                    new Identifier(modId, block.information.name + "_fence"), ItemGroup.DECORATIONS);
+                                                    new Identifier(modId, block.information.name.getPath() + "_fence"), ItemGroup.DECORATIONS);
                                             Artifice.registerData(String.format("hidden_gems:%s_fence_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_fence"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
@@ -240,7 +240,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                                 serverResourcePackBuilder.addShapedRecipe(Utils.appendToPath(block.information.name, "_fence"), shapedRecipeBuilder -> {
-                                                    shapedRecipeBuilder.group(new Identifier(modId, "'fences"));
+                                                    shapedRecipeBuilder.group(new Identifier(modId, "fences"));
                                                     shapedRecipeBuilder.pattern(
                                                             "W#W",
                                                             "W#W"
@@ -261,7 +261,7 @@ public class ConfigHelper {
                                                         pool.rolls(1);
                                                         pool.entry(entry -> {
                                                             entry.type(new Identifier("item"));
-                                                            entry.name(new Identifier(modId, block.information.name + "_fence_gate"));
+                                                            entry.name(new Identifier(modId, block.information.name.getPath() + "_fence_gate"));
                                                         });
                                                         pool.condition(new Identifier("survives_explosion"), jsonObjectBuilder -> { });
                                                     });
@@ -297,7 +297,7 @@ public class ConfigHelper {
                                         }
                                     }
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register block %s.", block.information.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register block %s.", block.information.name));
                                     e.printStackTrace();
                                 }
                             }
@@ -315,7 +315,7 @@ public class ConfigHelper {
                                     System.out.println(String.format("Registered an item called %s", item.information.name));
                                     items.add(item);
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register item %s.", item.information.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register item %s.", item.information.name));
                                     e.printStackTrace();
                                 }
                             }
@@ -384,7 +384,7 @@ public class ConfigHelper {
                                     System.out.println(String.format("Registered a tool called %s", tool.information.name));
                                     tools.add(tool);
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register tool %s.", tool.information.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register tool %s.", tool.information.name));
                                     e.printStackTrace();
                                 }
                             }
@@ -434,7 +434,7 @@ public class ConfigHelper {
                                     System.out.println(String.format("Registered a weapon called %s", weapon.information.name));
                                     weapons.add(weapon);
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register weapon %s.", weapon.information.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register weapon %s.", weapon.information.name));
                                     e.printStackTrace();
                                 }
                             }
@@ -457,7 +457,7 @@ public class ConfigHelper {
                                     System.out.println(String.format("Registered a food called %s", foodItem.information.name));
                                     items.add(foodItem);
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register food %s.", foodItem.information.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register food %s.", foodItem.information.name));
                                     e.printStackTrace();
                                 }
                             }
@@ -477,7 +477,7 @@ public class ConfigHelper {
 
                                     potions.add(potion);
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register food %s.", potion.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register food %s.", potion.name));
                                     e.printStackTrace();
                                 }
                             }
@@ -502,36 +502,30 @@ public class ConfigHelper {
                                     biomes.add(biome);
                                     System.out.println(String.format("Registered a biome called %s", biome.name));
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register biome %s.", biome.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register biome %s.", biome.name));
                                     e.printStackTrace();
                                 }
                             }
                         }
                     }
                     if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "dimensions").toFile().exists()) {
+                            pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().exists()) {
                         for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "dimensions").toFile().listFiles())) {
+                                pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().listFiles())) {
                             if (file.isFile()) {
-                                Dimension dimension = GSON.fromJson(new FileReader(file), Dimension.class);
+                                Command command = GSON.fromJson(new FileReader(file), Command.class);
                                 try {
-                                    if(dimension == null) continue;
-                                    Set<net.minecraft.world.biome.Biome> biomes = new LinkedHashSet<>();
-                                    for (Identifier name : dimension.biomes) {
-                                        biomes.add(Registry.BIOME.get(name));
-                                    }
+                                    if(command == null) continue;
 
-                                    FabricDimensionType.Builder builder = FabricDimensionType.builder()
-                                            .biomeAccessStrategy(HorizontalVoronoiBiomeAccessType.INSTANCE)
-                                            .skyLight(dimension.hasSkyLight)
-                                            .factory((world, dimensionType) -> new DimensionImpl(dimension, world, dimensionType, biomes))
-                                            .defaultPlacer(PlayerPlacementHandlers.SURFACE_WORLD.getEntityPlacer());
-
-                                    builder.buildAndRegister(dimension.name);
-                                    dimensions.add(dimension);
-                                    System.out.println(String.format("Registered a dimension called %s", dimension.name));
+                                    // Using a lambda
+                                    CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+                                        // This command will be registered regardless of the server being dedicated or integrated
+                                        CommandImpl.register(command, dispatcher);
+                                    });
+                                    commands.add(command);
+                                    System.out.println(String.format("Registered a command called %s", command.name));
                                 } catch (Exception e) {
-                                    HiddenGems.LOGGER.error(String.format("[Hidden Gems] Failed to register dimension %s.", dimension.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register command %s.", command.name));
                                     e.printStackTrace();
                                 }
                             }
@@ -545,8 +539,16 @@ public class ConfigHelper {
             throwable.printStackTrace();
             System.exit(0);
         }
-        if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-            MinecraftClient.getInstance().getResourcePackManager().registerProvider(new AddonResourcePackCreator());
+        if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            AddonResourcePack addonResourcePack = new AddonResourcePack();
+            /*MinecraftClient.getInstance().getResourcePackManager().getEnabledProfiles().add(ResourcePackProfile.of(addonResourcePack.getName(), true, () -> addonResourcePack, new ResourcePackProfile.Factory<ClientResourcePackProfile>() {
+                @Override
+                public ClientResourcePackProfile create(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory, ResourcePack pack, PackResourceMetadata metadata, ResourcePackProfile.InsertionPosition initialPosition, ResourcePackSource source) {
+                    return ResourcePackProfile.of(name, alwaysEnabled, packFactory, this, initialPosition, source);
+                }
+            }, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.method_29486("pack.source.obsidian")));*/
+//            MinecraftClient.getInstance().getResourcePackManager().
+        }
     }
 
     private static void fillDefaultConfigs() {
