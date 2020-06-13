@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.IAddonPack;
+import io.github.vampirestudios.obsidian.api.TextureInformation;
 import io.github.vampirestudios.obsidian.api.block.Block;
 import io.github.vampirestudios.obsidian.api.command.Command;
 import io.github.vampirestudios.obsidian.api.entity.Entity;
@@ -13,7 +14,6 @@ import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.api.world.Biome;
-import io.github.vampirestudios.obsidian.client.resource.AddonResourcePack;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
@@ -312,6 +312,19 @@ public class ConfigHelper {
                                 try {
                                     RegistryUtils.registerItem(new Item(new Item.Settings().group(item.information.getItemGroup()).rarity(item.information.getRarity())
                                             .maxCount(item.information.max_count)), item.information.name);
+                                    Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("item.%s.%s", item.information.name.getNamespace(), item.information.name.getPath()),
+                                                        item.information.displayName));
+                                        if (item.information.texturesAndModels != null) {
+                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(item.information.name, "item/"), modelBuilder -> {
+                                                modelBuilder.parent(item.information.texturesAndModels.modelType);
+                                                for(TextureInformation texture : item.information.texturesAndModels.textures) {
+                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
+                                                }
+                                            });
+                                        }
+                                    });
                                     System.out.println(String.format("Registered an item called %s", item.information.name));
                                     items.add(item);
                                 } catch (Exception e) {
@@ -381,6 +394,19 @@ public class ConfigHelper {
                                                     tool.information.name);
                                             break;
                                     }
+                                    Artifice.registerAssets(String.format("obsidian:%s_tool_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(tool.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("item.%s.%s", tool.information.name.getNamespace(), tool.information.name.getPath()),
+                                                        tool.information.displayName));
+                                        if (tool.information.texturesAndModels != null) {
+                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(tool.information.name, "item/"), modelBuilder -> {
+                                                modelBuilder.parent(tool.information.texturesAndModels.modelType);
+                                                for(TextureInformation texture : tool.information.texturesAndModels.textures) {
+                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
+                                                }
+                                            });
+                                        }
+                                    });
                                     System.out.println(String.format("Registered a tool called %s", tool.information.name));
                                     tools.add(tool);
                                 } catch (Exception e) {
@@ -431,6 +457,19 @@ public class ConfigHelper {
                                     RegistryUtils.registerItem(new SwordItem(material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                                             .group(weapon.information.getItemGroup()).rarity(weapon.information.getRarity())
                                             .maxCount(weapon.information.max_count)), weapon.information.name);
+                                    Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(weapon.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("item.%s.%s", weapon.information.name.getNamespace(), weapon.information.name.getPath()),
+                                                        weapon.information.displayName));
+                                        if (weapon.information.texturesAndModels != null) {
+                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(weapon.information.name, "item/"), modelBuilder -> {
+                                                modelBuilder.parent(weapon.information.texturesAndModels.modelType);
+                                                for(TextureInformation texture : weapon.information.texturesAndModels.textures) {
+                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
+                                                }
+                                            });
+                                        }
+                                    });
                                     System.out.println(String.format("Registered a weapon called %s", weapon.information.name));
                                     weapons.add(weapon);
                                 } catch (Exception e) {
@@ -540,7 +579,7 @@ public class ConfigHelper {
             System.exit(0);
         }
         if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            AddonResourcePack addonResourcePack = new AddonResourcePack();
+//            AddonResourcePack addonResourcePack = new AddonResourcePack();
             /*MinecraftClient.getInstance().getResourcePackManager().getEnabledProfiles().add(ResourcePackProfile.of(addonResourcePack.getName(), true, () -> addonResourcePack, new ResourcePackProfile.Factory<ClientResourcePackProfile>() {
                 @Override
                 public ClientResourcePackProfile create(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory, ResourcePack pack, PackResourceMetadata metadata, ResourcePackProfile.InsertionPosition initialPosition, ResourcePackSource source) {

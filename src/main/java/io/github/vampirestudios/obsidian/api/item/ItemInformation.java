@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.item;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.api.TextureAndModelInformation;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -8,6 +9,7 @@ import net.minecraft.util.Rarity;
 public class ItemInformation {
 
     public String rarity = "common";
+    @SerializedName("item_group")
     public String itemGroup = "";
     public Integer max_count;
     public Identifier name;

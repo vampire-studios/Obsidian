@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import com.google.common.collect.ImmutableSet;
@@ -24,4 +25,4 @@ public class MixinResourcePackManager {
             return ImmutableSet.of(elements);
         }
     }
-}
+}*/
