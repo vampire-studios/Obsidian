@@ -1,0 +1,26 @@
+{
+    "information": {
+        "name": "tutorial:poisoned_apple_pie",
+        "displayName": "Poisoned Apple Pie",
+        "item_group": "minecraft:food",
+        "rarity": "common",
+        "max_count": 16
+    },
+    "components": {
+        "use_duration": 32,
+        "food": {
+            "nutrition": 3,
+            "saturation_modifier": "good",
+            "effects": [
+                {
+                    "name": "minecraft:poison",
+                    "chance": 1.0,
+                    "duration": 10,
+                    "amplifier": 1,
+                    "effect_type": "harmful",
+                    "color": 2039587
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "name": "tutorial:floof_dimension",
+    "canSleep": false,
+    "netherLike": true,
+    "waterVaporizes": false,
+    "renderFog": true,
+    "hasSkyLight": true,
+    "hasSky": true,
+    "colors": {
+        "fogColor": -16540410
+    },
+    "dimensionType": "nether",
+    "stoneBlock": "minecraft:obsidian",
+    "fluid": "minecraft:magma_block",
+    "biomes": [
+        "minecraft:plains",
+        "minecraft:forest",
+        "minecraft:basalt_deltas",
+        "minecraft:soul_sand_valley",
+        "minecraft:nether_wastes"
+    ]
+}

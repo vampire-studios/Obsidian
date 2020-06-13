@@ -1,0 +1,20 @@
+{
+    "information": {
+        "name": "tutorial:potato_pickaxe",
+        "displayName": "Potato Pickaxe",
+        "item_group": "minecraft:tools",
+        "rarity": "common",
+        "max_count": 1
+    },
+    "attackDamage": 1,
+    "attackSpeed": -2.8,
+    "toolType": "pickaxe",
+    "material": {
+        "durability": 2031,
+        "miningSpeedMultiplier": 9.0,
+        "attackDamage": 4.0,
+        "miningLevel": 4,
+        "enchantability": 15,
+        "repairItem": "minecraft:potato"
+    }
+}

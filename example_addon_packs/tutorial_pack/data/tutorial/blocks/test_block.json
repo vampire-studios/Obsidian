@@ -1,0 +1,12 @@
+{
+    "information": {
+        "name": "tutorial:test_block",
+        "displayName": "Test Block",
+        "material": "minecraft:stone",
+        "itemGroup": "minecraft:building_blocks",
+        "soundGroup": "minecraft:stone",
+        "boundingBoxes": [
+            0, 0, 0, 16, 16, 16
+        ]
+    }
+}

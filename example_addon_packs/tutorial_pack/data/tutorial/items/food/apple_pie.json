@@ -1,0 +1,16 @@
+{
+  "information": {
+    "name": "tutorial:apple_pie",
+    "displayName": "Apple Pie",
+    "item_group": "minecraft:food",
+    "rarity": "common",
+    "max_count": 16
+  },
+  "components": {
+    "use_duration": 32,
+    "food": {
+      "nutrition": 16,
+      "saturation_modifier": "good"
+    }
+  }
+}
