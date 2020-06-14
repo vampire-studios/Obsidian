@@ -7,6 +7,7 @@ import net.minecraft.world.gen.surfacebuilder.TernarySurfaceConfig;
 public class Biome {
 
     public Identifier name;
+    public String displayName;
     public NetherBiomeNoise biomeNoiseInformation;
     public String parent = "";
     public String dimension;

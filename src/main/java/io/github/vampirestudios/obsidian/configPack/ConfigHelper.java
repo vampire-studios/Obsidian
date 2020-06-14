@@ -140,6 +140,11 @@ public class ConfigHelper {
                                     }
                                     RegistryUtils.register(new BlockImpl(block, blockSettings.build()), block.information.name,
                                             block.information.getItemGroup());
+                                    Artifice.registerAssets(String.format("obsidian:%s_block_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath()),
+                                                        block.information.displayName));
+                                    });
                                     System.out.println(String.format("Registered a block called %s", block.information.name));
                                     Artifice.registerData(String.format("hidden_gems:%s_block_data", pack.getIdentifier().getPath()), serverResourcePackBuilder ->
                                             serverResourcePackBuilder.addLootTable(block.information.name, lootTableBuilder -> {
@@ -161,6 +166,11 @@ public class ConfigHelper {
                                         if (block.additionalInformation.slab) {
                                             RegistryUtils.register(new SlabImpl(block),
                                                     Utils.appendToPath(block.information.name, "_slab"), ItemGroup.BUILDING_BLOCKS);
+                                            Artifice.registerAssets(String.format("obsidian:%s_slab_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                        translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_slab"),
+                                                                block.information.displayName + " Slab"));
+                                            });
                                             Artifice.registerData(String.format("hidden_gems:%s_slab_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_slab"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
@@ -191,11 +201,16 @@ public class ConfigHelper {
                                                     shapedRecipeBuilder.ingredientItem('#', block.information.name);
                                                     shapedRecipeBuilder.result(Utils.appendToPath(block.information.name, "_slab"), 6);
                                                 });
-                                            });/*.dumpResources(Paths.get("saves", MinecraftClient.getInstance().world.getLevelProperties().getLevelName(), "datapacks", pack.getIdentifier().getPath()).toString());*/
+                                            });
                                         }
                                         if (block.additionalInformation.stairs) {
                                             RegistryUtils.register(new StairsImpl(block), new Identifier(modId, block.information.name.getPath() + "_stairs"),
                                                     ItemGroup.BUILDING_BLOCKS);
+                                            Artifice.registerAssets(String.format("obsidian:%s_stairs_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                        translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_stairs"),
+                                                                block.information.displayName + " Stairs"));
+                                            });
                                             Artifice.registerData(String.format("hidden_gems:%s_stairs_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_stairs"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
@@ -220,11 +235,16 @@ public class ConfigHelper {
                                                     shapedRecipeBuilder.ingredientItem('#', block.information.name);
                                                     shapedRecipeBuilder.result(Utils.appendToPath(block.information.name, "_stairs"), 4);
                                                 });
-                                            });/*.dumpResources(Paths.get("saves", MinecraftClient.getInstance().world.getLevelProperties().getLevelName(), "datapacks", pack.getIdentifier().getPath()).toString());*/
+                                            });
                                         }
                                         if (block.additionalInformation.fence) {
                                             RegistryUtils.register(new FenceImpl(block),
                                                     new Identifier(modId, block.information.name.getPath() + "_fence"), ItemGroup.DECORATIONS);
+                                            Artifice.registerAssets(String.format("obsidian:%s_fence_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                        translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_fence"),
+                                                                block.information.displayName + " Fence"));
+                                            });
                                             Artifice.registerData(String.format("hidden_gems:%s_fence_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_fence"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
@@ -249,11 +269,16 @@ public class ConfigHelper {
                                                     shapedRecipeBuilder.ingredientItem('#', new Identifier("stick"));
                                                     shapedRecipeBuilder.result(Utils.appendToPath(block.information.name, "_fence"), 3);
                                                 });
-                                            });/*.dumpResources(Paths.get("saves", MinecraftClient.getInstance().world.getLevelProperties().getLevelName(), "datapacks", pack.getIdentifier().getPath()).toString());*/
+                                            });
                                         }
                                         if (block.additionalInformation.fenceGate) {
                                             RegistryUtils.register(new FenceGateImpl(block),
                                                     Utils.appendToPath(block.information.name, "_fence_gate"), ItemGroup.REDSTONE);
+                                            Artifice.registerAssets(String.format("obsidian:%s_fence_gate_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                        translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_fence_gate"),
+                                                                block.information.displayName + " Fence Gate"));
+                                            });
                                             Artifice.registerData(String.format("hidden_gems:%s_fence_gate_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_fence_gate"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
@@ -276,11 +301,16 @@ public class ConfigHelper {
                                                     shapedRecipeBuilder.ingredientItem('#', new Identifier("stick"));
                                                     shapedRecipeBuilder.result(Utils.appendToPath(block.information.name, "_fence_gate"), 3);
                                                 });
-                                            });/*.dumpResources(Paths.get("saves", MinecraftClient.getInstance().world.getLevelProperties().getLevelName(), "datapacks", pack.getIdentifier().getPath()).toString());*/
+                                            });
                                         }
                                         if (block.additionalInformation.walls) {
                                             RegistryUtils.register(new WallImpl(block),
                                                     Utils.appendToPath(block.information.name, "_wall"), ItemGroup.DECORATIONS);
+                                            Artifice.registerAssets(String.format("obsidian:%s_wall_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                        translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_wall"),
+                                                                block.information.displayName + " Wall"));
+                                            });
                                             Artifice.registerData(String.format("hidden_gems:%s_wall_data", pack.getIdentifier().getPath()), serverResourcePackBuilder ->
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_wall"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
@@ -293,7 +323,7 @@ public class ConfigHelper {
                                                         pool.condition(new Identifier("survives_explosion"), jsonObjectBuilder -> { });
                                                     });
                                                 })
-                                            );/*.dumpResources(Paths.get("saves", MinecraftClient.getInstance().world.getLevelProperties().getLevelName(), "datapacks", pack.getIdentifier().getPath()).toString());*/
+                                            );
                                         }
                                     }
                                 } catch (Exception e) {
@@ -493,6 +523,11 @@ public class ConfigHelper {
                                             .maxDamage(foodItem.components.use_duration)
                                             .rarity(foodItem.information.getRarity())
                                             .food(foodComponent)));
+                                    Artifice.registerAssets(String.format("obsidian:%s_food_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("item.%s.%s", foodItem.information.name.getNamespace(), foodItem.information.name.getPath()),
+                                                        foodItem.information.displayName));
+                                    });
                                     System.out.println(String.format("Registered a food called %s", foodItem.information.name));
                                     items.add(foodItem);
                                 } catch (Exception e) {
@@ -532,6 +567,11 @@ public class ConfigHelper {
                                     if(biome == null) continue;
                                     BiomeImpl biome1 = new BiomeImpl(biome);
                                     Registry.register(Registry.BIOME, biome.name, biome1);
+                                    Artifice.registerAssets(String.format("obsidian:%s_biome_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(biome.name.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("biome.%s.%s", biome.name.getNamespace(), biome.name.getPath()),
+                                                        biome.displayName));
+                                    });
                                     if(biome.dimension.equals("overworld")) {
                                         OverworldBiomes.addContinentalBiome(biome1, OverworldClimate.TEMPERATE, 1.0);
                                     }
