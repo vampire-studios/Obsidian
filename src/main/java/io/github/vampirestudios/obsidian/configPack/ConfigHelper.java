@@ -146,15 +146,15 @@ public class ConfigHelper {
                                                         block.information.displayName));
                                         if (block.information.texturesAndModels != null) {
                                             clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder ->
-                                                    blockStateBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "models/block/"))));
-                                            clientResourcePackBuilder.addBlockModel(Utils.prependToPath(block.information.name, "models/block/"), modelBuilder -> {
+                                                    blockStateBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "block/"))));
+                                            clientResourcePackBuilder.addBlockModel(Utils.prependToPath(block.information.name, "block/"), modelBuilder -> {
                                                 modelBuilder.parent(block.information.texturesAndModels.modelType);
                                                 for(TextureInformation texture : block.information.texturesAndModels.textures) {
                                                     modelBuilder.texture(texture.textureName, texture.texturePath);
                                                 }
                                             });
-                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(block.information.name, "models/item/"), modelBuilder -> {
-                                                modelBuilder.parent(Utils.prependToPath(block.information.name, "models/block/"));
+                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(block.information.name, "item/"), modelBuilder -> {
+                                                modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
                                             });
                                         }
                                     }).dumpResources("test");
