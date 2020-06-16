@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.block;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.api.TextureAndModelInformation;
 import net.minecraft.block.Material;
 import net.minecraft.item.ItemGroup;
@@ -14,16 +15,21 @@ public class BlockInformation {
     public String itemGroup;
     public boolean collidable = true;
     public String soundGroup = "";
+    @SerializedName("minecraft:block_light_emission")
     public int luminance = 0;
-    public float resistance = 1.0F;
-    public float hardness = 1.0F;
+    @SerializedName("minecraft:explosion_resistance")
+    public float resistance = 0.0F;
+    @SerializedName("minecraft:destroy_time")
+    public float hardness = 0.0F;
     public boolean randomTicks = false;
+    @SerializedName("minecraft:friction")
     public float slipperiness = 0.0F;
     public Identifier drop = new Identifier("minecraft:stone");
     public boolean dynamicBounds = false;
     public TextureAndModelInformation texturesAndModels;
     public Integer[] boundingBoxes;
     public String action = "";
+    public float jumpVelocityMultiplier;
 
     public BlockSoundGroup getBlockSoundGroup() {
         switch (soundGroup) {

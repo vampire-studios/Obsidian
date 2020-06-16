@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.item;
 
 import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.api.TextureAndModelInformation;
+import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -11,10 +12,14 @@ public class ItemInformation {
     public String rarity = "common";
     @SerializedName("item_group")
     public String itemGroup = "";
-    public Integer max_count;
+    @SerializedName("minecraft:max_stack_size")
+    public Integer maxStackSize = 64;
     public Identifier name;
     public String displayName;
     public TextureAndModelInformation texturesAndModels;
+    @SerializedName("minecraft:foil")
+    public boolean enchanted = false;
+    public TooltipInformation[] tooltip = new TooltipInformation[0];
 
     public Rarity getRarity() {
         switch (rarity) {
@@ -28,10 +33,6 @@ public class ItemInformation {
             default:
                 return Rarity.COMMON;
         }
-    }
-
-    public int getMaxCount() {
-        return max_count == null ? 64 : max_count;
     }
 
     public ItemGroup getItemGroup() {

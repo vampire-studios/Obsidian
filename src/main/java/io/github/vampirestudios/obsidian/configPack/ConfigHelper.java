@@ -144,7 +144,20 @@ public class ConfigHelper {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath()),
                                                         block.information.displayName));
-                                    });
+                                        if (block.information.texturesAndModels != null) {
+                                            clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder ->
+                                                    blockStateBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "models/block/"))));
+                                            clientResourcePackBuilder.addBlockModel(Utils.prependToPath(block.information.name, "models/block/"), modelBuilder -> {
+                                                modelBuilder.parent(block.information.texturesAndModels.modelType);
+                                                for(TextureInformation texture : block.information.texturesAndModels.textures) {
+                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
+                                                }
+                                            });
+                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(block.information.name, "models/item/"), modelBuilder -> {
+                                                modelBuilder.parent(Utils.prependToPath(block.information.name, "models/block/"));
+                                            });
+                                        }
+                                    }).dumpResources("test");
                                     System.out.println(String.format("Registered a block called %s", block.information.name));
                                     Artifice.registerData(String.format("hidden_gems:%s_block_data", pack.getIdentifier().getPath()), serverResourcePackBuilder ->
                                             serverResourcePackBuilder.addLootTable(block.information.name, lootTableBuilder -> {
@@ -160,7 +173,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                             })
-                                    );
+                                    ).dumpResources("test");
                                     blocks.add(block);
                                     if (block.additionalInformation != null) {
                                         if (block.additionalInformation.slab) {
@@ -340,9 +353,9 @@ public class ConfigHelper {
                             if (file.isFile()) {
                                 io.github.vampirestudios.obsidian.api.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.Item.class);
                                 try {
-                                    RegistryUtils.registerItem(new Item(new Item.Settings().group(item.information.getItemGroup()).rarity(item.information.getRarity())
-                                            .maxCount(item.information.max_count)), item.information.name);
-                                    Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                    RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup()).rarity(item.information.getRarity())
+                                            .maxCount(item.information.maxStackSize)), item.information.name);
+                                    Artifice.registerAssets(String.format("obsidian:%s_item_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", item.information.name.getNamespace(), item.information.name.getPath()),
                                                         item.information.displayName));
@@ -354,7 +367,7 @@ public class ConfigHelper {
                                                 }
                                             });
                                         }
-                                    });
+                                    }).dumpResources("test");
                                     System.out.println(String.format("Registered an item called %s", item.information.name));
                                     items.add(item);
                                 } catch (Exception e) {
@@ -405,26 +418,26 @@ public class ConfigHelper {
                                     switch (tool.toolType) {
                                         case "pickaxe":
                                             RegistryUtils.registerItem(new PickaxeItemImpl(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_count)),
+                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
                                         case "shovel":
                                             RegistryUtils.registerItem(new ShovelItem(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_count)),
+                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
                                         case "hoe":
                                             RegistryUtils.registerItem(new HoeItemImpl(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                            .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_count)),
+                                                            .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
                                         case "axe":
                                             RegistryUtils.registerItem(new AxeItemImpl(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_count)),
+                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
                                     }
-                                    Artifice.registerAssets(String.format("obsidian:%s_tool_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                    Artifice.registerAssets(String.format("obsidian:%s_tool_assets", tool.information.name.getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(tool.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", tool.information.name.getNamespace(), tool.information.name.getPath()),
                                                         tool.information.displayName));
@@ -436,7 +449,7 @@ public class ConfigHelper {
                                                 }
                                             });
                                         }
-                                    });
+                                    }).dumpResources("test");
                                     System.out.println(String.format("Registered a tool called %s", tool.information.name));
                                     tools.add(tool);
                                 } catch (Exception e) {
@@ -486,8 +499,8 @@ public class ConfigHelper {
                                     };
                                     RegistryUtils.registerItem(new SwordItem(material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                                             .group(weapon.information.getItemGroup()).rarity(weapon.information.getRarity())
-                                            .maxCount(weapon.information.max_count)), weapon.information.name);
-                                    Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                            .maxCount(weapon.information.maxStackSize)), weapon.information.name);
+                                    Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", weapon.information.name.getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(weapon.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", weapon.information.name.getNamespace(), weapon.information.name.getPath()),
                                                         weapon.information.displayName));
@@ -499,7 +512,7 @@ public class ConfigHelper {
                                                 }
                                             });
                                         }
-                                    });
+                                    }).dumpResources("test");
                                     System.out.println(String.format("Registered a weapon called %s", weapon.information.name));
                                     weapons.add(weapon);
                                 } catch (Exception e) {
@@ -517,17 +530,17 @@ public class ConfigHelper {
                                 FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
                                 try {
                                     FoodComponent foodComponent = foodItem.components.food.getBuilder().build();
-                                    Registry.register(Registry.ITEM, foodItem.information.name, new Item(new Item.Settings()
+                                    Registry.register(Registry.ITEM, foodItem.information.name, new ItemImpl(foodItem, new Item.Settings()
                                             .group(foodItem.information.getItemGroup())
-                                            .maxCount(foodItem.information.getMaxCount())
+                                            .maxCount(foodItem.information.maxStackSize)
                                             .maxDamage(foodItem.components.use_duration)
                                             .rarity(foodItem.information.getRarity())
                                             .food(foodComponent)));
-                                    Artifice.registerAssets(String.format("obsidian:%s_food_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                    Artifice.registerAssets(String.format("obsidian:%s_food_assets", foodItem.information.name.getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", foodItem.information.name.getNamespace(), foodItem.information.name.getPath()),
                                                         foodItem.information.displayName));
-                                    });
+                                    }).dumpResources("test");
                                     System.out.println(String.format("Registered a food called %s", foodItem.information.name));
                                     items.add(foodItem);
                                 } catch (Exception e) {

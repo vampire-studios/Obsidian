@@ -112,7 +112,7 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
                 FoodComponent foodComponent = foodItem.components.food.getBuilder().build();
                 Registry.register(Registry.ITEM, foodItem.information.name, new Item(new Item.Settings()
                         .group(foodItem.information.getItemGroup())
-                        .maxCount(foodItem.information.getMaxCount())
+                        .maxCount(foodItem.information.maxStackSize)
                         .maxDamage(foodItem.components.use_duration)
                         .rarity(foodItem.information.getRarity())
                         .food(foodComponent)));
@@ -120,7 +120,7 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
                 ArtificeAssetGeneration.items.add(foodItem);
             }
             for(ToolItem toolItem : this.toolItems) {
-                RegistryUtils.registerItem(new Item(new Item.Settings().group(toolItem.information.getItemGroup()).maxCount(toolItem.information.getMaxCount())
+                RegistryUtils.registerItem(new Item(new Item.Settings().group(toolItem.information.getItemGroup()).maxCount(toolItem.information.maxStackSize)
                         .rarity(toolItem.information.getRarity())), toolItem.information.name);
                 System.out.println(String.format("Registered a tool called %s", toolItem.information.name));
                 ArtificeAssetGeneration.items.add(toolItem);
