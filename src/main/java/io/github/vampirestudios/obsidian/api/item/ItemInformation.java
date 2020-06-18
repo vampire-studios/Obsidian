@@ -17,7 +17,6 @@ public class ItemInformation {
     public Identifier name;
     public String displayName;
     public TextureAndModelInformation texturesAndModels;
-    @SerializedName("minecraft:foil")
     public boolean enchanted = false;
     public TooltipInformation[] tooltip = new TooltipInformation[0];
 

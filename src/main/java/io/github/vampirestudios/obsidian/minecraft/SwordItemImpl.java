@@ -4,18 +4,19 @@ import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.item.Item;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.ShovelItem;
+import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 import java.util.List;
 
-public class PickaxeItemImpl extends PickaxeItem {
+public class SwordItemImpl extends SwordItem {
 
     public Item item;
 
-    public PickaxeItemImpl(Item item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
+    public SwordItemImpl(Item item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
         super(material, attackDamage, attackSpeed, settings);
         this.item = item;
     }

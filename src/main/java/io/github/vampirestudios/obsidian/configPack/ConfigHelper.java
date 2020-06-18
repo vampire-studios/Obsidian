@@ -417,22 +417,22 @@ public class ConfigHelper {
                                     };
                                     switch (tool.toolType) {
                                         case "pickaxe":
-                                            RegistryUtils.registerItem(new PickaxeItemImpl(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
+                                            RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
                                                     .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
                                         case "shovel":
-                                            RegistryUtils.registerItem(new ShovelItem(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
+                                            RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
                                                     .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
                                         case "hoe":
-                                            RegistryUtils.registerItem(new HoeItemImpl(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
+                                            RegistryUtils.registerItem(new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
                                                             .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
                                         case "axe":
-                                            RegistryUtils.registerItem(new AxeItemImpl(material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
+                                            RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
                                                     .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
                                                     tool.information.name);
                                             break;
@@ -497,7 +497,7 @@ public class ConfigHelper {
                                             return Ingredient.ofItems(Registry.ITEM.get(weapon.material.repairItem));
                                         }
                                     };
-                                    RegistryUtils.registerItem(new SwordItem(material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
+                                    RegistryUtils.registerItem(new SwordItemImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                                             .group(weapon.information.getItemGroup()).rarity(weapon.information.getRarity())
                                             .maxCount(weapon.information.maxStackSize)), weapon.information.name);
                                     Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", weapon.information.name.getPath()), clientResourcePackBuilder -> {
