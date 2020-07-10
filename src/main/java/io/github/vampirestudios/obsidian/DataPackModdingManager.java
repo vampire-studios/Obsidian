@@ -9,12 +9,8 @@ import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.ToolItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.api.world.Biome;
-import io.github.vampirestudios.obsidian.minecraft.BiomeImpl;
 import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
-import net.fabricmc.fabric.api.biomes.v1.NetherBiomes;
-import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
-import net.fabricmc.fabric.api.biomes.v1.OverworldClimate;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.entity.EntityDimensions;
@@ -151,18 +147,6 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
                             new net.minecraft.potion.Potion(new StatusEffectInstance(potion.getEffectType(), potion.getEffects().duration * 20, potion.getEffects().amplifier)));
                     System.out.println(String.format("Registered a potion effect called %s", potion.name));
                 ArtificeAssetGeneration.potions.add(potion);
-            }
-            for (Biome biome : this.biomes) {
-                if(biome == null) continue;
-                BiomeImpl biome1 = new BiomeImpl(biome);
-                Registry.register(Registry.BIOME, biome.name, biome1);
-                if(biome.dimension.equals("overworld")) {
-                    OverworldBiomes.addContinentalBiome(biome1, OverworldClimate.TEMPERATE, 1.0);
-                }
-                if(biome.dimension.equals("nether")) {
-                    NetherBiomes.addNetherBiome(biome1);
-                }
-                System.out.println(String.format("Registered a biome called %s", biome.name));
             }
         }
 

@@ -9,24 +9,21 @@ import io.github.vampirestudios.obsidian.api.IAddonPack;
 import io.github.vampirestudios.obsidian.api.TextureInformation;
 import io.github.vampirestudios.obsidian.api.block.Block;
 import io.github.vampirestudios.obsidian.api.command.Command;
-import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
-import io.github.vampirestudios.obsidian.api.world.Biome;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.biomes.v1.NetherBiomes;
-import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
-import net.fabricmc.fabric.api.biomes.v1.OverworldClimate;
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.*;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -57,9 +54,7 @@ public class ConfigHelper {
     public static List<WeaponItem> weapons = new ArrayList<>();
     public static List<io.github.vampirestudios.obsidian.api.item.ToolItem> tools = new ArrayList<>();
     public static List<Block> blocks = new ArrayList<>();
-    public static List<Entity> entities = new ArrayList<>();
     private static List<Potion> potions = new ArrayList<>();
-    private static final List<Biome> biomes = new ArrayList<>();
     private static final List<Command> commands = new ArrayList<>();
 
     public static void loadDefault() {
@@ -571,36 +566,6 @@ public class ConfigHelper {
                         }
                     }
                     if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "biomes").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "biomes").toFile().listFiles())) {
-                            if (file.isFile()) {
-                                Biome biome = GSON.fromJson(new FileReader(file), Biome.class);
-                                try {
-                                    if(biome == null) continue;
-                                    BiomeImpl biome1 = new BiomeImpl(biome);
-                                    Registry.register(Registry.BIOME, biome.name, biome1);
-                                    Artifice.registerAssets(String.format("obsidian:%s_biome_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
-                                        clientResourcePackBuilder.addTranslations(new Identifier(biome.name.getNamespace(), "en_us"), translationBuilder ->
-                                                translationBuilder.entry(String.format("biome.%s.%s", biome.name.getNamespace(), biome.name.getPath()),
-                                                        biome.displayName));
-                                    });
-                                    if(biome.dimension.equals("overworld")) {
-                                        OverworldBiomes.addContinentalBiome(biome1, OverworldClimate.TEMPERATE, 1.0);
-                                    }
-                                    if(biome.dimension.equals("nether")) {
-                                        NetherBiomes.addNetherBiome(biome1);
-                                    }
-                                    biomes.add(biome);
-                                    System.out.println(String.format("Registered a biome called %s", biome.name));
-                                } catch (Exception e) {
-                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register biome %s.", biome.name));
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
                             pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().exists()) {
                         for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
                                 pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().listFiles())) {
@@ -630,16 +595,6 @@ public class ConfigHelper {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             System.exit(0);
-        }
-        if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-//            AddonResourcePack addonResourcePack = new AddonResourcePack();
-            /*MinecraftClient.getInstance().getResourcePackManager().getEnabledProfiles().add(ResourcePackProfile.of(addonResourcePack.getName(), true, () -> addonResourcePack, new ResourcePackProfile.Factory<ClientResourcePackProfile>() {
-                @Override
-                public ClientResourcePackProfile create(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory, ResourcePack pack, PackResourceMetadata metadata, ResourcePackProfile.InsertionPosition initialPosition, ResourcePackSource source) {
-                    return ResourcePackProfile.of(name, alwaysEnabled, packFactory, this, initialPosition, source);
-                }
-            }, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.method_29486("pack.source.obsidian")));*/
-//            MinecraftClient.getInstance().getResourcePackManager().
         }
     }
 

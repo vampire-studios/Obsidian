@@ -4,7 +4,6 @@ import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.item.Item;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShovelItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.text.Text;
@@ -22,7 +21,7 @@ public class SwordItemImpl extends SwordItem {
     }
 
     @Override
-    public boolean hasEnchantmentGlint(ItemStack stack) {
+    public boolean hasGlint(ItemStack stack) {
         return item.information.enchanted;
     }
 

@@ -3,7 +3,6 @@ package io.github.vampirestudios.obsidian.minecraft;
 import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.item.Item;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.item.ToolMaterial;
@@ -22,7 +21,7 @@ public class ShovelItemImpl extends ShovelItem {
     }
 
     @Override
-    public boolean hasEnchantmentGlint(ItemStack stack) {
+    public boolean hasGlint(ItemStack stack) {
         return item.information.enchanted;
     }
 

@@ -28,7 +28,7 @@ public class Biome {
     public TernarySurfaceConfig getSurfaceConfig() {
         if (surfaceConfig.equals(new Identifier("gravel_config"))) return SurfaceBuilder.GRAVEL_CONFIG;
         if (surfaceConfig.equals(new Identifier("grass_config"))) return SurfaceBuilder.GRASS_CONFIG;
-        if (surfaceConfig.equals(new Identifier("dirt_config"))) return SurfaceBuilder.DIRT_CONFIG;
+        if (surfaceConfig.equals(new Identifier("podzol_config"))) return SurfaceBuilder.PODZOL_CONFIG;
         if (surfaceConfig.equals(new Identifier("stone_config"))) return SurfaceBuilder.STONE_CONFIG;
         if (surfaceConfig.equals(new Identifier("coarse_dirt_config"))) return SurfaceBuilder.COARSE_DIRT_CONFIG;
         if (surfaceConfig.equals(new Identifier("sand_config"))) return SurfaceBuilder.SAND_CONFIG;

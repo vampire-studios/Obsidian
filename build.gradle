@@ -12,6 +12,7 @@ group = project.maven_group
 
 repositories {
 	jcenter()
+	maven{ url="https://jitpack.io" }
 }
 
 dependencies {
@@ -20,8 +21,10 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation "com.lettuce.fudge:artifice:${project.artifice_version}"
-	include "com.lettuce.fudge:artifice:${project.artifice_version}"
+//	modImplementation "com.lettuce.fudge:artifice:${project.artifice_version}"
+	modImplementation 'com.github.oliviathevampire:artifice:0aece06502'
+//	include "com.lettuce.fudge:artifice:${project.artifice_version}"
+	include 'com.github.oliviathevampire:artifice:0aece06502'
 }
 
 processResources {
