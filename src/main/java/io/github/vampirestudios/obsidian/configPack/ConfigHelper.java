@@ -133,24 +133,67 @@ public class ConfigHelper {
                                     if (block.information.randomTicks) {
                                         blockSettings.ticksRandomly();
                                     }
-                                    RegistryUtils.register(new BlockImpl(block, blockSettings.build()), block.information.name,
-                                            block.information.getItemGroup());
+                                    if(block.additionalInformation.rotatable) {
+                                        RegistryUtils.register(new HorizontalFacingBlockImpl(block, blockSettings.build()), block.information.name,
+                                                block.information.getItemGroup());
+                                    } else if(block.additionalInformation.pillar) {
+                                        RegistryUtils.register(new PillarBlockImpl(block, blockSettings.build()), block.information.name,
+                                                block.information.getItemGroup());
+                                    } else {
+                                        RegistryUtils.register(new BlockImpl(block, blockSettings.build()), block.information.name,
+                                                block.information.getItemGroup());
+                                    }
                                     Artifice.registerAssets(String.format("obsidian:%s_block_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath()),
                                                         block.information.displayName));
                                         if (block.information.texturesAndModels != null) {
-                                            clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder ->
-                                                    blockStateBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "block/"))));
-                                            clientResourcePackBuilder.addBlockModel(Utils.prependToPath(block.information.name, "block/"), modelBuilder -> {
-                                                modelBuilder.parent(block.information.texturesAndModels.modelType);
-                                                for(TextureInformation texture : block.information.texturesAndModels.textures) {
-                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
-                                                }
-                                            });
-                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(block.information.name, "item/"), modelBuilder -> {
-                                                modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
-                                            });
+                                            if(block.additionalInformation.rotatable) {
+                                                clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder -> {
+                                                    blockStateBuilder.variant("facing=north", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")));
+                                                    blockStateBuilder.variant("facing=south", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")).rotationY(180));
+                                                    blockStateBuilder.variant("facing=east", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")).rotationY(90));
+                                                    blockStateBuilder.variant("facing=west", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")).rotationY(270));
+                                                });
+                                                clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
+                                                    modelBuilder.parent(block.information.texturesAndModels.modelType);
+                                                    for(TextureInformation texture : block.information.texturesAndModels.textures) {
+                                                        modelBuilder.texture(texture.textureName, texture.texturePath);
+                                                    }
+                                                });
+                                                clientResourcePackBuilder.addItemModel(block.information.name, modelBuilder -> {
+                                                    modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
+                                                });
+                                            } else if(block.additionalInformation.pillar) {
+                                                clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder -> {
+                                                    blockStateBuilder.variant("axis=x", variant -> variant.model(Utils.prependToPath(block.information.name, "block/"))
+                                                            .rotationX(90).rotationY(90));
+                                                    blockStateBuilder.variant("axis=y", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")));
+                                                    blockStateBuilder.variant("axis=z", variant -> variant.model(Utils.prependToPath(block.information.name, "block/"))
+                                                            .rotationX(90));
+                                                });
+                                                clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
+                                                    modelBuilder.parent(block.information.texturesAndModels.modelType);
+                                                    for(TextureInformation texture : block.information.texturesAndModels.textures) {
+                                                        modelBuilder.texture(texture.textureName, texture.texturePath);
+                                                    }
+                                                });
+                                                clientResourcePackBuilder.addItemModel(block.information.name, modelBuilder -> {
+                                                    modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
+                                                });
+                                            } else {
+                                                clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder ->
+                                                        blockStateBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "block/"))));
+                                                clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
+                                                    modelBuilder.parent(block.information.texturesAndModels.modelType);
+                                                    for(String texture : ) {
+                                                        modelBuilder.texture(block.information.texturesAndModels.textures., texture.texturePath);
+                                                    }
+                                                });
+                                                clientResourcePackBuilder.addItemModel(block.information.name, modelBuilder -> {
+                                                    modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
+                                                });
+                                            }
                                         }
                                     }).dumpResources("test");
                                     System.out.println(String.format("Registered a block called %s", block.information.name));
@@ -355,7 +398,7 @@ public class ConfigHelper {
                                                 translationBuilder.entry(String.format("item.%s.%s", item.information.name.getNamespace(), item.information.name.getPath()),
                                                         item.information.displayName));
                                         if (item.information.texturesAndModels != null) {
-                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(item.information.name, "item/"), modelBuilder -> {
+                                            clientResourcePackBuilder.addItemModel(item.information.name, modelBuilder -> {
                                                 modelBuilder.parent(item.information.texturesAndModels.modelType);
                                                 for(TextureInformation texture : item.information.texturesAndModels.textures) {
                                                     modelBuilder.texture(texture.textureName, texture.texturePath);
@@ -437,7 +480,7 @@ public class ConfigHelper {
                                                 translationBuilder.entry(String.format("item.%s.%s", tool.information.name.getNamespace(), tool.information.name.getPath()),
                                                         tool.information.displayName));
                                         if (tool.information.texturesAndModels != null) {
-                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(tool.information.name, "item/"), modelBuilder -> {
+                                            clientResourcePackBuilder.addItemModel(tool.information.name, modelBuilder -> {
                                                 modelBuilder.parent(tool.information.texturesAndModels.modelType);
                                                 for(TextureInformation texture : tool.information.texturesAndModels.textures) {
                                                     modelBuilder.texture(texture.textureName, texture.texturePath);
@@ -500,7 +543,7 @@ public class ConfigHelper {
                                                 translationBuilder.entry(String.format("item.%s.%s", weapon.information.name.getNamespace(), weapon.information.name.getPath()),
                                                         weapon.information.displayName));
                                         if (weapon.information.texturesAndModels != null) {
-                                            clientResourcePackBuilder.addItemModel(Utils.prependToPath(weapon.information.name, "item/"), modelBuilder -> {
+                                            clientResourcePackBuilder.addItemModel(weapon.information.name, modelBuilder -> {
                                                 modelBuilder.parent(weapon.information.texturesAndModels.modelType);
                                                 for(TextureInformation texture : weapon.information.texturesAndModels.textures) {
                                                     modelBuilder.texture(texture.textureName, texture.texturePath);
@@ -535,6 +578,14 @@ public class ConfigHelper {
                                         clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", foodItem.information.name.getNamespace(), foodItem.information.name.getPath()),
                                                         foodItem.information.displayName));
+                                        if (foodItem.information.texturesAndModels != null) {
+                                            clientResourcePackBuilder.addItemModel(foodItem.information.name, modelBuilder -> {
+                                                modelBuilder.parent(foodItem.information.texturesAndModels.modelType);
+                                                for(TextureInformation texture : foodItem.information.texturesAndModels.textures) {
+                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
+                                                }
+                                            });
+                                        }
                                     }).dumpResources("test");
                                     System.out.println(String.format("Registered a food called %s", foodItem.information.name));
                                     items.add(foodItem);

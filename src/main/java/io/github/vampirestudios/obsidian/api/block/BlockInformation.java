@@ -27,7 +27,9 @@ public class BlockInformation {
     public Identifier drop = new Identifier("minecraft:stone");
     public boolean dynamicBounds = false;
     public TextureAndModelInformation texturesAndModels;
-    public Integer[] boundingBoxes;
+    public Integer[] boundingBoxes = new Integer[] {
+            0, 0, 0, 16, 16, 16
+    };
     public String action = "";
     public float jumpVelocityMultiplier;
 

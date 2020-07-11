@@ -2,11 +2,11 @@ package io.github.vampirestudios.obsidian.api;
 
 import net.minecraft.util.Identifier;
 
-import java.util.List;
+import java.util.Map;
 
 public class TextureAndModelInformation {
 
-    public List<TextureInformation> textures;
+    public Map<String, Identifier> textures;
     public Identifier modelType;
 
 }

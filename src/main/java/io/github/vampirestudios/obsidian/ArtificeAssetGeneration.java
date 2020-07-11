@@ -28,7 +28,7 @@ public class ArtificeAssetGeneration implements ClientModInitializer {
                         translationBuilder.entry(String.format("item.%s.%s", item.information.name.getNamespace(), item.information.name.getPath()),
                                 item.information.displayName));
                 if (item.information.texturesAndModels.textures != null) {
-                    clientResourcePackBuilder.addItemModel(Utils.prependToPath(item.information.name, "item/"), modelBuilder -> {
+                    clientResourcePackBuilder.addItemModel(item.information.name, modelBuilder -> {
                         modelBuilder.parent(item.information.texturesAndModels.modelType);
                         for(TextureInformation texture : item.information.texturesAndModels.textures) {
                             modelBuilder.texture(texture.textureName, texture.texturePath);
@@ -42,16 +42,16 @@ public class ArtificeAssetGeneration implements ClientModInitializer {
                                 block.information.displayName));
                 if (block.information.texturesAndModels.textures != null) {
                     clientResourcePackBuilder.addBlockState(Utils.prependToPath(block.information.name, "blockstates/"), modelBuilder -> {
-                        modelBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")));
+                        modelBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "block/block/")));
                     });
-                    clientResourcePackBuilder.addBlockModel(Utils.prependToPath(block.information.name, "block/"), modelBuilder -> {
+                    clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
                         modelBuilder.parent(block.information.texturesAndModels.modelType);
                         for(TextureInformation texture : block.information.texturesAndModels.textures) {
                             modelBuilder.texture(texture.textureName, texture.texturePath);
                         }
                     });
-                    clientResourcePackBuilder.addItemModel(Utils.prependToPath(block.information.name, "item/"), modelBuilder -> {
-                        modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
+                    clientResourcePackBuilder.addItemModel(block.information.name, modelBuilder -> {
+                        modelBuilder.parent(Utils.prependToPath(block.information.name, "block/block/"));
                     });
                 }
             }
