@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.IAddonPack;
-import io.github.vampirestudios.obsidian.api.TextureInformation;
 import io.github.vampirestudios.obsidian.api.block.Block;
 import io.github.vampirestudios.obsidian.api.command.Command;
+import io.github.vampirestudios.obsidian.api.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
@@ -56,6 +56,7 @@ public class ConfigHelper {
     public static List<Block> blocks = new ArrayList<>();
     private static List<Potion> potions = new ArrayList<>();
     private static final List<Command> commands = new ArrayList<>();
+    private static final List<Enchantment> enchantments = new ArrayList<>();
 
     public static void loadDefault() {
         if (!MATERIALS_DIRECTORY.exists())
@@ -87,7 +88,7 @@ public class ConfigHelper {
                     } catch (Exception e) {
                         Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
                     }
-                } else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mcpack")) {
+                } else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".zip")) {
                     try (ZipFile zipFile = new ZipFile(file)) {
                         ZipEntry packInfoEntry = zipFile.getEntry("addon.info.pack");
                         if (packInfoEntry != null) {
@@ -125,7 +126,7 @@ public class ConfigHelper {
                                 Block block = GSON.fromJson(new FileReader(file), Block.class);
                                 try {
                                     FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-                                            .strength(block.information.hardness, block.information.resistance).lightLevel(block.information.luminance)
+                                            .strength(block.information.destroy_time, block.information.explosion_resistance).lightLevel(block.information.luminance)
                                             .drops(block.information.drop).collidable(block.information.collidable).slipperiness(block.information.slipperiness);
                                     if (block.information.dynamicBounds) {
                                         blockSettings.dynamicBounds();
@@ -133,22 +134,29 @@ public class ConfigHelper {
                                     if (block.information.randomTicks) {
                                         blockSettings.ticksRandomly();
                                     }
-                                    if(block.additionalInformation.rotatable) {
-                                        RegistryUtils.register(new HorizontalFacingBlockImpl(block, blockSettings.build()), block.information.name,
-                                                block.information.getItemGroup());
-                                    } else if(block.additionalInformation.pillar) {
-                                        RegistryUtils.register(new PillarBlockImpl(block, blockSettings.build()), block.information.name,
-                                                block.information.getItemGroup());
+                                    if(block.additional_information != null) {
+                                        if(block.additional_information.rotatable) {
+                                            RegistryUtils.register(new HorizontalFacingBlockImpl(block, blockSettings.build()), block.information.name,
+                                                    block.information.getItem_group());
+                                        }
+                                        if(block.additional_information.pillar) {
+                                            RegistryUtils.register(new PillarBlockImpl(block, blockSettings.build()), block.information.name,
+                                                    block.information.getItem_group());
+                                        }
+                                        if(!block.additional_information.pillar && !block.additional_information.rotatable) {
+                                            RegistryUtils.register(new BlockImpl(block, blockSettings.build()), block.information.name,
+                                                    block.information.getItem_group());
+                                        }
                                     } else {
                                         RegistryUtils.register(new BlockImpl(block, blockSettings.build()), block.information.name,
-                                                block.information.getItemGroup());
+                                                block.information.getItem_group());
                                     }
                                     Artifice.registerAssets(String.format("obsidian:%s_block_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath()),
-                                                        block.information.displayName));
-                                        if (block.information.texturesAndModels != null) {
-                                            if(block.additionalInformation.rotatable) {
+                                                        block.information.display_name));
+                                        if (block.display != null && block.display.model != null) {
+                                            if(block.additional_information.rotatable) {
                                                 clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder -> {
                                                     blockStateBuilder.variant("facing=north", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")));
                                                     blockStateBuilder.variant("facing=south", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")).rotationY(180));
@@ -156,15 +164,13 @@ public class ConfigHelper {
                                                     blockStateBuilder.variant("facing=west", variant -> variant.model(Utils.prependToPath(block.information.name, "block/")).rotationY(270));
                                                 });
                                                 clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
-                                                    modelBuilder.parent(block.information.texturesAndModels.modelType);
-                                                    for(TextureInformation texture : block.information.texturesAndModels.textures) {
-                                                        modelBuilder.texture(texture.textureName, texture.texturePath);
-                                                    }
+                                                    modelBuilder.parent(block.display.model.parent);
+                                                    block.display.model.textures.forEach(modelBuilder::texture);
                                                 });
                                                 clientResourcePackBuilder.addItemModel(block.information.name, modelBuilder -> {
                                                     modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
                                                 });
-                                            } else if(block.additionalInformation.pillar) {
+                                            } else if(block.additional_information.pillar) {
                                                 clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder -> {
                                                     blockStateBuilder.variant("axis=x", variant -> variant.model(Utils.prependToPath(block.information.name, "block/"))
                                                             .rotationX(90).rotationY(90));
@@ -173,10 +179,8 @@ public class ConfigHelper {
                                                             .rotationX(90));
                                                 });
                                                 clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
-                                                    modelBuilder.parent(block.information.texturesAndModels.modelType);
-                                                    for(TextureInformation texture : block.information.texturesAndModels.textures) {
-                                                        modelBuilder.texture(texture.textureName, texture.texturePath);
-                                                    }
+                                                    modelBuilder.parent(block.display.model.parent);
+                                                    block.display.model.textures.forEach(modelBuilder::texture);
                                                 });
                                                 clientResourcePackBuilder.addItemModel(block.information.name, modelBuilder -> {
                                                     modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
@@ -185,10 +189,8 @@ public class ConfigHelper {
                                                 clientResourcePackBuilder.addBlockState(block.information.name, blockStateBuilder ->
                                                         blockStateBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "block/"))));
                                                 clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
-                                                    modelBuilder.parent(block.information.texturesAndModels.modelType);
-                                                    for(String texture : ) {
-                                                        modelBuilder.texture(block.information.texturesAndModels.textures., texture.texturePath);
-                                                    }
+                                                    modelBuilder.parent(block.display.model.parent);
+                                                    block.display.model.textures.forEach(modelBuilder::texture);
                                                 });
                                                 clientResourcePackBuilder.addItemModel(block.information.name, modelBuilder -> {
                                                     modelBuilder.parent(Utils.prependToPath(block.information.name, "block/"));
@@ -213,14 +215,14 @@ public class ConfigHelper {
                                             })
                                     ).dumpResources("test");
                                     blocks.add(block);
-                                    if (block.additionalInformation != null) {
-                                        if (block.additionalInformation.slab) {
+                                    if (block.additional_information != null) {
+                                        if (block.additional_information.slab) {
                                             RegistryUtils.register(new SlabImpl(block),
                                                     Utils.appendToPath(block.information.name, "_slab"), ItemGroup.BUILDING_BLOCKS);
                                             Artifice.registerAssets(String.format("obsidian:%s_slab_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                                 clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_slab"),
-                                                                block.information.displayName + " Slab"));
+                                                                block.information.display_name + " Slab"));
                                             });
                                             Artifice.registerData(String.format("hidden_gems:%s_slab_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_slab"), lootTableBuilder -> {
@@ -254,13 +256,13 @@ public class ConfigHelper {
                                                 });
                                             });
                                         }
-                                        if (block.additionalInformation.stairs) {
+                                        if (block.additional_information.stairs) {
                                             RegistryUtils.register(new StairsImpl(block), new Identifier(modId, block.information.name.getPath() + "_stairs"),
                                                     ItemGroup.BUILDING_BLOCKS);
                                             Artifice.registerAssets(String.format("obsidian:%s_stairs_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                                 clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_stairs"),
-                                                                block.information.displayName + " Stairs"));
+                                                                block.information.display_name + " Stairs"));
                                             });
                                             Artifice.registerData(String.format("hidden_gems:%s_stairs_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_stairs"), lootTableBuilder -> {
@@ -288,13 +290,13 @@ public class ConfigHelper {
                                                 });
                                             });
                                         }
-                                        if (block.additionalInformation.fence) {
+                                        if (block.additional_information.fence) {
                                             RegistryUtils.register(new FenceImpl(block),
                                                     new Identifier(modId, block.information.name.getPath() + "_fence"), ItemGroup.DECORATIONS);
                                             Artifice.registerAssets(String.format("obsidian:%s_fence_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                                 clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_fence"),
-                                                                block.information.displayName + " Fence"));
+                                                                block.information.display_name + " Fence"));
                                             });
                                             Artifice.registerData(String.format("hidden_gems:%s_fence_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_fence"), lootTableBuilder -> {
@@ -322,13 +324,13 @@ public class ConfigHelper {
                                                 });
                                             });
                                         }
-                                        if (block.additionalInformation.fenceGate) {
+                                        if (block.additional_information.fenceGate) {
                                             RegistryUtils.register(new FenceGateImpl(block),
                                                     Utils.appendToPath(block.information.name, "_fence_gate"), ItemGroup.REDSTONE);
                                             Artifice.registerAssets(String.format("obsidian:%s_fence_gate_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                                 clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_fence_gate"),
-                                                                block.information.displayName + " Fence Gate"));
+                                                                block.information.display_name + " Fence Gate"));
                                             });
                                             Artifice.registerData(String.format("hidden_gems:%s_fence_gate_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_fence_gate"), lootTableBuilder -> {
@@ -354,13 +356,13 @@ public class ConfigHelper {
                                                 });
                                             });
                                         }
-                                        if (block.additionalInformation.walls) {
+                                        if (block.additional_information.walls) {
                                             RegistryUtils.register(new WallImpl(block),
                                                     Utils.appendToPath(block.information.name, "_wall"), ItemGroup.DECORATIONS);
                                             Artifice.registerAssets(String.format("obsidian:%s_wall_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                                 clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.getNamespace(), block.information.name.getPath() + "_wall"),
-                                                                block.information.displayName + " Wall"));
+                                                                block.information.display_name + " Wall"));
                                             });
                                             Artifice.registerData(String.format("hidden_gems:%s_wall_data", pack.getIdentifier().getPath()), serverResourcePackBuilder ->
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name, "_wall"), lootTableBuilder -> {
@@ -392,17 +394,15 @@ public class ConfigHelper {
                                 io.github.vampirestudios.obsidian.api.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.Item.class);
                                 try {
                                     RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup()).rarity(item.information.getRarity())
-                                            .maxCount(item.information.maxStackSize)), item.information.name);
+                                            .maxCount(item.information.max_stack_size)), item.information.name);
                                     Artifice.registerAssets(String.format("obsidian:%s_item_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", item.information.name.getNamespace(), item.information.name.getPath()),
-                                                        item.information.displayName));
-                                        if (item.information.texturesAndModels != null) {
+                                                        item.information.display_name));
+                                        if (item.display != null && item.display.model != null) {
                                             clientResourcePackBuilder.addItemModel(item.information.name, modelBuilder -> {
-                                                modelBuilder.parent(item.information.texturesAndModels.modelType);
-                                                for(TextureInformation texture : item.information.texturesAndModels.textures) {
-                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
-                                                }
+                                                modelBuilder.parent(item.display.model.parent);
+                                                item.display.model.textures.forEach(modelBuilder::texture);
                                             });
                                         }
                                     }).dumpResources("test");
@@ -456,35 +456,33 @@ public class ConfigHelper {
                                     switch (tool.toolType) {
                                         case "pickaxe":
                                             RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
+                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_stack_size)),
                                                     tool.information.name);
                                             break;
                                         case "shovel":
                                             RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
+                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_stack_size)),
                                                     tool.information.name);
                                             break;
                                         case "hoe":
                                             RegistryUtils.registerItem(new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                            .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
+                                                            .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_stack_size)),
                                                     tool.information.name);
                                             break;
                                         case "axe":
                                             RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.maxStackSize)),
+                                                    .group(tool.information.getItemGroup()).rarity(tool.information.getRarity()).maxCount(tool.information.max_stack_size)),
                                                     tool.information.name);
                                             break;
                                     }
                                     Artifice.registerAssets(String.format("obsidian:%s_tool_assets", tool.information.name.getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(tool.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", tool.information.name.getNamespace(), tool.information.name.getPath()),
-                                                        tool.information.displayName));
-                                        if (tool.information.texturesAndModels != null) {
+                                                        tool.information.display_name));
+                                        if (tool.display != null && tool.display.model != null) {
                                             clientResourcePackBuilder.addItemModel(tool.information.name, modelBuilder -> {
-                                                modelBuilder.parent(tool.information.texturesAndModels.modelType);
-                                                for(TextureInformation texture : tool.information.texturesAndModels.textures) {
-                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
-                                                }
+                                                modelBuilder.parent(tool.display.model.parent);
+                                                tool.display.model.textures.forEach(modelBuilder::texture);
                                             });
                                         }
                                     }).dumpResources("test");
@@ -535,19 +533,17 @@ public class ConfigHelper {
                                             return Ingredient.ofItems(Registry.ITEM.get(weapon.material.repairItem));
                                         }
                                     };
-                                    RegistryUtils.registerItem(new SwordItemImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
+                                    RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                                             .group(weapon.information.getItemGroup()).rarity(weapon.information.getRarity())
-                                            .maxCount(weapon.information.maxStackSize)), weapon.information.name);
+                                            .maxCount(weapon.information.max_stack_size)), weapon.information.name);
                                     Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", weapon.information.name.getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(weapon.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", weapon.information.name.getNamespace(), weapon.information.name.getPath()),
-                                                        weapon.information.displayName));
-                                        if (weapon.information.texturesAndModels != null) {
+                                                        weapon.information.display_name));
+                                        if (weapon.display != null && weapon.display.model != null) {
                                             clientResourcePackBuilder.addItemModel(weapon.information.name, modelBuilder -> {
-                                                modelBuilder.parent(weapon.information.texturesAndModels.modelType);
-                                                for(TextureInformation texture : weapon.information.texturesAndModels.textures) {
-                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
-                                                }
+                                                modelBuilder.parent(weapon.display.model.parent);
+                                                weapon.display.model.textures.forEach(modelBuilder::texture);
                                             });
                                         }
                                     }).dumpResources("test");
@@ -567,23 +563,21 @@ public class ConfigHelper {
                             if (file.isFile()) {
                                 FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
                                 try {
-                                    FoodComponent foodComponent = foodItem.components.food.getBuilder().build();
+                                    FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
                                     Registry.register(Registry.ITEM, foodItem.information.name, new ItemImpl(foodItem, new Item.Settings()
                                             .group(foodItem.information.getItemGroup())
-                                            .maxCount(foodItem.information.maxStackSize)
-                                            .maxDamage(foodItem.components.use_duration)
+                                            .maxCount(foodItem.information.max_stack_size)
+                                            .maxDamage(foodItem.information.duration)
                                             .rarity(foodItem.information.getRarity())
                                             .food(foodComponent)));
                                     Artifice.registerAssets(String.format("obsidian:%s_food_assets", foodItem.information.name.getPath()), clientResourcePackBuilder -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.getNamespace(), "en_us"), translationBuilder ->
                                                 translationBuilder.entry(String.format("item.%s.%s", foodItem.information.name.getNamespace(), foodItem.information.name.getPath()),
-                                                        foodItem.information.displayName));
-                                        if (foodItem.information.texturesAndModels != null) {
+                                                        foodItem.information.display_name));
+                                        if (foodItem.display != null && foodItem.display.model != null) {
                                             clientResourcePackBuilder.addItemModel(foodItem.information.name, modelBuilder -> {
-                                                modelBuilder.parent(foodItem.information.texturesAndModels.modelType);
-                                                for(TextureInformation texture : foodItem.information.texturesAndModels.textures) {
-                                                    modelBuilder.texture(texture.textureName, texture.texturePath);
-                                                }
+                                                modelBuilder.parent(foodItem.display.model.parent);
+                                                foodItem.display.model.textures.forEach(modelBuilder::texture);
                                             });
                                         }
                                     }).dumpResources("test");
@@ -618,6 +612,54 @@ public class ConfigHelper {
                     }
                     if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
                             pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                                pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().listFiles())) {
+                            if (file.isFile()) {
+                                Command command = GSON.fromJson(new FileReader(file), Command.class);
+                                try {
+                                    if(command == null) continue;
+
+                                    // Using a lambda
+                                    CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+                                        // This command will be registered regardless of the server being dedicated or integrated
+                                        CommandImpl.register(command, dispatcher);
+                                    });
+                                    commands.add(command);
+                                    System.out.println(String.format("Registered a command called %s", command.name));
+                                } catch (Exception e) {
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register command %s.", command.name));
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                            pack.getConfigPackInfo().getInformation().namespace, "enchantments").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                                pack.getConfigPackInfo().getInformation().namespace, "enchantments").toFile().listFiles())) {
+                            if (file.isFile()) {
+                                Enchantment enchantment = GSON.fromJson(new FileReader(file), Enchantment.class);
+                                try {
+                                    if(enchantment == null) continue;
+                                    Registry.register(Registry.ENCHANTMENT, enchantment.id, new net.minecraft.enchantment.Enchantment(enchantment.getRarity(),
+                                            enchantment.getEnchantmentTarget(), enchantment.getEquipmentSlots()){});
+                                    Artifice.registerAssets(Utils.appendToPath(enchantment.id, "_lang_assets"), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(enchantment.id.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("enchantment.%s.%s", enchantment.id.getNamespace(), enchantment.id.getPath()),
+                                                        enchantment.name));
+                                    });
+
+                                    enchantments.add(enchantment);
+                                    System.out.println(String.format("Registered an enchantment called %s", enchantment.name));
+                                } catch (Exception e) {
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register enchantment %s.", enchantment.name));
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                            pack.getConfigPackInfo().getInformation().namespace, "status_effects").toFile().exists()) {
                         for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
                                 pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().listFiles())) {
                             if (file.isFile()) {

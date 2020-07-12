@@ -1,8 +1,5 @@
 package io.github.vampirestudios.obsidian.api.item;
 
-import com.google.gson.annotations.SerializedName;
-import io.github.vampirestudios.obsidian.api.TextureAndModelInformation;
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -10,15 +7,13 @@ import net.minecraft.util.Rarity;
 public class ItemInformation {
 
     public String rarity = "common";
-    @SerializedName("item_group")
-    public String itemGroup = "";
-    @SerializedName("minecraft:max_stack_size")
-    public Integer maxStackSize = 64;
+    public String item_group = "";
+    public Integer max_stack_size = 64;
     public Identifier name;
-    public String displayName;
-    public TextureAndModelInformation texturesAndModels;
+    public String name_color = "";
+    public String display_name;
     public boolean enchanted = false;
-    public TooltipInformation[] tooltip = new TooltipInformation[0];
+    public int duration = 5;
 
     public Rarity getRarity() {
         switch (rarity) {
@@ -35,7 +30,7 @@ public class ItemInformation {
     }
 
     public ItemGroup getItemGroup() {
-        switch (itemGroup) {
+        switch (item_group) {
             case "minecraft:building_blocks":
                 return ItemGroup.BUILDING_BLOCKS;
             case "minecraft:decorations":

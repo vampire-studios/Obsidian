@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian;
 
 import com.swordglowsblue.artifice.api.Artifice;
@@ -27,7 +28,7 @@ public class ArtificeAssetGeneration implements ClientModInitializer {
                 clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.getNamespace(), "en_us"), translationBuilder ->
                         translationBuilder.entry(String.format("item.%s.%s", item.information.name.getNamespace(), item.information.name.getPath()),
                                 item.information.displayName));
-                if (item.information.texturesAndModels.textures != null) {
+                if (item.display.model.textures != null) {
                     clientResourcePackBuilder.addItemModel(item.information.name, modelBuilder -> {
                         modelBuilder.parent(item.information.texturesAndModels.modelType);
                         for(TextureInformation texture : item.information.texturesAndModels.textures) {
@@ -45,7 +46,7 @@ public class ArtificeAssetGeneration implements ClientModInitializer {
                         modelBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name, "block/block/")));
                     });
                     clientResourcePackBuilder.addBlockModel(block.information.name, modelBuilder -> {
-                        modelBuilder.parent(block.information.texturesAndModels.modelType);
+                        modelBuilder.parent(block.information.texturesAndModels.parent);
                         for(TextureInformation texture : block.information.texturesAndModels.textures) {
                             modelBuilder.texture(texture.textureName, texture.texturePath);
                         }
@@ -58,4 +59,4 @@ public class ArtificeAssetGeneration implements ClientModInitializer {
         });
     }
 
-}
+}*/

@@ -1,7 +1,5 @@
 package io.github.vampirestudios.obsidian.api.block;
 
-import com.google.gson.annotations.SerializedName;
-import io.github.vampirestudios.obsidian.api.TextureAndModelInformation;
 import net.minecraft.block.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.sound.BlockSoundGroup;
@@ -11,22 +9,17 @@ public class BlockInformation {
 
     public String material;
     public Identifier name;
-    public String displayName;
-    public String itemGroup;
+    public String display_name;
+    public String item_group;
     public boolean collidable = true;
-    public String soundGroup = "";
-    @SerializedName("minecraft:block_light_emission")
+    public String sound_group = "";
     public int luminance = 0;
-    @SerializedName("minecraft:explosion_resistance")
-    public float resistance = 0.0F;
-    @SerializedName("minecraft:destroy_time")
-    public float hardness = 0.0F;
+    public float explosion_resistance = 0.0F;
+    public float destroy_time = 0.0F;
     public boolean randomTicks = false;
-    @SerializedName("minecraft:friction")
     public float slipperiness = 0.0F;
     public Identifier drop = new Identifier("minecraft:stone");
     public boolean dynamicBounds = false;
-    public TextureAndModelInformation texturesAndModels;
     public Integer[] boundingBoxes = new Integer[] {
             0, 0, 0, 16, 16, 16
     };
@@ -34,7 +27,7 @@ public class BlockInformation {
     public float jumpVelocityMultiplier;
 
     public BlockSoundGroup getBlockSoundGroup() {
-        switch (soundGroup) {
+        switch (sound_group) {
             case "minecraft:wood":
                 return BlockSoundGroup.WOOD;
             case "minecraft:gravel":
@@ -173,8 +166,8 @@ public class BlockInformation {
         }
     }
 
-    public ItemGroup getItemGroup() {
-        switch (itemGroup) {
+    public ItemGroup getItem_group() {
+        switch (item_group) {
             case "minecraft:building_blocks":
                 return ItemGroup.BUILDING_BLOCKS;
             case "minecraft:decorations":

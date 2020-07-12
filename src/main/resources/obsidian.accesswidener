@@ -1,0 +1,3 @@
+accessWidener v1 named
+accessible method net/minecraft/text/TextColor <init> (I)V
+accessible method net/minecraft/enchantment/Enchantment <init> (Lnet/minecraft/enchantment/Enchantment$Rarity;Lnet/minecraft/enchantment/EnchantmentTarget;[Lnet/minecraft/entity/EquipmentSlot;)V

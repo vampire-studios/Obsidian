@@ -2,9 +2,10 @@ package io.github.vampirestudios.obsidian.api;
 
 import net.minecraft.util.Identifier;
 
+import java.util.Map;
+
 public class TextureInformation {
 
-    public String textureName;
-    public Identifier texturePath;
+    public Map<String, Identifier> textures;
 
 }

@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.api.item;
 
-import com.google.gson.annotations.SerializedName;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.FoodComponent;
@@ -8,14 +7,11 @@ import net.minecraft.util.registry.Registry;
 
 public class ItemFood {
 
-    @SerializedName("Nutrition")
     public Integer nutrition = 4;
     public String saturation_modifier = "";
-    @SerializedName("can_always_eat")
-    public boolean alwaysEdible = false;
+    public boolean can_always_eat = false;
     public boolean snack = false;
-    @SerializedName("is_meat")
-    public boolean meat = false;
+    public boolean is_meat = false;
     public FoodPotionEffect[] effects;
 
     public float getSaturationModifier() {
@@ -40,8 +36,8 @@ public class ItemFood {
         FoodComponent.Builder builder = new FoodComponent.Builder()
                 .hunger(nutrition)
                 .saturationModifier(getSaturationModifier());
-        if (meat) builder.meat();
-        if (alwaysEdible) builder.alwaysEdible();
+        if (is_meat) builder.meat();
+        if (can_always_eat) builder.alwaysEdible();
         if (snack) builder.snack();
         if (effects != null) {
             for(FoodPotionEffect potionEffect : effects) {

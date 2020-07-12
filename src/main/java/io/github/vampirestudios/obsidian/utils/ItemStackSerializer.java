@@ -19,9 +19,7 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
 
 	@Override
 	public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
 		if (json.isJsonObject()) {
-
 			JsonObject jsonObject = json.getAsJsonObject();
 
 			String name = null;

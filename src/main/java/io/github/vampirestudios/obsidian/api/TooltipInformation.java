@@ -1,30 +1,32 @@
 package io.github.vampirestudios.obsidian.api;
 
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
 public class TooltipInformation {
 
-    public String textType;
+    public String type;
     public String text;
+    public String color = "0xFFFFFF";
     public String[] formatting;
 
     public Text getTextType(String text) {
-        switch (textType) {
+        String color1 = color.replace("#", "").replace("0x", "");
+        switch (type) {
             case "literal":
             default:
                 LiteralText literalText = new LiteralText(text);
                 for(String formatting1 : formatting) {
                     literalText.formatted(Formatting.byName(formatting1));
                 }
+                literalText.setStyle(literalText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
                 return literalText;
             case "translable":
                 TranslatableText translatableText = new TranslatableText(text);
                 for(String formatting1 : formatting) {
                     translatableText.formatted(Formatting.byName(formatting1));
                 }
+                translatableText.setStyle(translatableText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
                 return translatableText;
         }
     }

@@ -7,6 +7,6 @@ import java.util.Map;
 public class TextureAndModelInformation {
 
     public Map<String, Identifier> textures;
-    public Identifier modelType;
+    public Identifier parent;
 
 }

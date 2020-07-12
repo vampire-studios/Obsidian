@@ -21,14 +21,12 @@
   "entrypoints": {
     "main": [
       "io.github.vampirestudios.obsidian.Obsidian"
-    ],
-    "client": [
-      "io.github.vampirestudios.obsidian.ArtificeAssetGeneration"
     ]
   },
   "mixins": [
     "obsidian.mixins.json"
   ],
+  "accessWidener": "obsidian.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.7.4",

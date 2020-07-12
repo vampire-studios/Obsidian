@@ -12,13 +12,13 @@ public class Obsidian implements ModInitializer {
     public static String MOD_ID = "obsidian";
     public static String NAME = "Obsidian";
     public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
-    public static String VERSION = "0.1.0";
+    public static String VERSION = "0.2.0";
 
 //    public static final DataPackModdingManager MODDING_MANAGER = new DataPackModdingManager();
 
     @Override
     public void onInitialize() {
-        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "1.16-pre5"));
+        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "20w28a"));
 
 //        MODDING_MANAGER.registerReloadListener();
         ConfigHelper.loadDefault();

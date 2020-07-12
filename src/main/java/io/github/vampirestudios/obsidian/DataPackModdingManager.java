@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian;
 
 import com.google.common.collect.ImmutableSet;
@@ -159,4 +160,4 @@ public class DataPackModdingManager implements SimpleResourceReloadListener<Data
         }
     }
 
-}
+}*/
