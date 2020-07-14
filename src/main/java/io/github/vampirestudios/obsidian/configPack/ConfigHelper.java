@@ -9,16 +9,19 @@ import io.github.vampirestudios.obsidian.api.IAddonPack;
 import io.github.vampirestudios.obsidian.api.block.Block;
 import io.github.vampirestudios.obsidian.api.command.Command;
 import io.github.vampirestudios.obsidian.api.enchantments.Enchantment;
+import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.minecraft.*;
-import io.github.vampirestudios.obsidian.utils.RegistryUtils;
-import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
-import io.github.vampirestudios.obsidian.utils.Utils;
+import io.github.vampirestudios.obsidian.utils.*;
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
@@ -27,6 +30,7 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -661,7 +665,7 @@ public class ConfigHelper {
                     if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
                             pack.getConfigPackInfo().getInformation().namespace, "status_effects").toFile().exists()) {
                         for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().listFiles())) {
+                                pack.getConfigPackInfo().getInformation().namespace, "status_effects").toFile().listFiles())) {
                             if (file.isFile()) {
                                 Command command = GSON.fromJson(new FileReader(file), Command.class);
                                 try {
@@ -676,6 +680,42 @@ public class ConfigHelper {
                                     System.out.println(String.format("Registered a command called %s", command.name));
                                 } catch (Exception e) {
                                     Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register command %s.", command.name));
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                            pack.getConfigPackInfo().getInformation().namespace, "entities").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                                pack.getConfigPackInfo().getInformation().namespace, "entities").toFile().listFiles())) {
+                            if (file.isFile()) {
+                                Entity entity = GSON.fromJson(new FileReader(file), Entity.class);
+                                try {
+                                    if(entity == null) continue;
+                                    String baseColor = entity.spawn_egg.base_color.replace("#", "").replace("0x", "");
+                                    String overlayColor = entity.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
+
+                                    EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.identifier)
+                                            .entity((type, world) -> new EntityImpl(type, world, entity))
+                                            .category(entity.components.getCategory())
+                                            .dimensions(EntityDimensions.fixed(entity.components.collision_box.width, entity.components.collision_box.height))
+                                            .hasEgg(entity.spawnable)
+                                            .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
+                                            .build();
+                                    FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.components.health.max));
+                                    Artifice.registerAssets(Utils.appendToPath(entity.identifier, "_assets"), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addTranslations(new Identifier(entity.identifier.getNamespace(), "en_us"), translationBuilder ->
+                                                translationBuilder.entry(String.format("item.%s.%s", entity.identifier.getNamespace(), entity.identifier.getPath() + "_spawn_egg"),
+                                                        WordUtils.capitalizeFully(entity.identifier.getPath().replace("_", " ") + " Spawn Egg")));
+                                        clientResourcePackBuilder.addItemModel(new Identifier(entity.identifier.getNamespace(), entity.identifier.getPath() + "_spawn_egg"), modelBuilder -> {
+                                            modelBuilder.parent(new Identifier("item/template_spawn_egg"));
+                                        });
+                                    });
+                                    EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher));
+                                    System.out.println(String.format("Registered an entity called %s", entity.identifier.toString()));
+                                } catch (Exception e) {
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register entity %s.", entity.identifier.toString()));
                                     e.printStackTrace();
                                 }
                             }

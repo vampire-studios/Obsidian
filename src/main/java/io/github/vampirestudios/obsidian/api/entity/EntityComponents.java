@@ -1,12 +1,11 @@
 package io.github.vampirestudios.obsidian.api.entity;
 
-import com.google.gson.annotations.SerializedName;
 import net.minecraft.entity.SpawnGroup;
 
 public class EntityComponents {
 
-    @SerializedName("minecraft:collision_box")
     public CollisionBox collision_box;
+    public Health health;
     public String entity_category;
 
     public SpawnGroup getCategory() {

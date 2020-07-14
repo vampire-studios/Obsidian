@@ -1,35 +1,22 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import net.minecraft.entity.Entity;
+import io.github.vampirestudios.obsidian.api.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Packet;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.world.World;
 
-public class EntityImpl extends Entity {
+public class EntityImpl extends PathAwareEntity {
 
-    public EntityImpl(EntityType<?> entityType_1, World world_1) {
+    private Entity entity;
+
+    public EntityImpl(EntityType<EntityImpl> entityType_1, World world_1, Entity entity) {
         super(entityType_1, world_1);
+        this.entity = entity;
     }
 
     @Override
-    protected void initDataTracker() {
-
-    }
-
-    @Override
-    protected void readCustomDataFromTag(CompoundTag var1) {
-
-    }
-
-    @Override
-    protected void writeCustomDataToTag(CompoundTag var1) {
-
-    }
-
-    @Override
-    public Packet<?> createSpawnPacket() {
-        return null;
+    public float getHealth() {
+        return entity.components.health.value;
     }
 
 }
