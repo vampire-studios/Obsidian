@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.block;
 
+import io.github.vampirestudios.obsidian.api.NameInformation;
 import net.minecraft.block.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.sound.BlockSoundGroup;
@@ -8,8 +9,7 @@ import net.minecraft.util.Identifier;
 public class BlockInformation {
 
     public String material;
-    public Identifier name;
-    public String display_name;
+    public NameInformation name;
     public String item_group;
     public boolean collidable = true;
     public String sound_group = "";

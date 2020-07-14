@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -28,7 +29,7 @@ public class StairsImpl extends StairsBlock {
     public Block block;
 
     public StairsImpl(Block block) {
-        super(Registry.BLOCK.get(block.information.name).getDefaultState(), Settings.copy(Registry.BLOCK.get(block.information.name)));
+        super(Registry.BLOCK.get(block.information.name.id).getDefaultState(), Settings.copy(Registry.BLOCK.get(block.information.name.id)));
         this.block = block;
     }
 
@@ -52,6 +53,11 @@ public class StairsImpl extends StairsBlock {
             }
         }
         return ActionResult.FAIL;
+    }
+
+    @Override
+    public MutableText getName() {
+        return (MutableText) block.information.name.getName(true);
     }
 
     @Override

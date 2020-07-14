@@ -9,6 +9,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.state.StateManager;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -53,6 +54,11 @@ public class HorizontalFacingBlockImpl extends HorizontalFacingBlock {
             }
         }
         return ActionResult.FAIL;
+    }
+
+    @Override
+    public MutableText getName() {
+        return (MutableText) block.information.name.getName(true);
     }
 
     @Override

@@ -28,6 +28,7 @@ public class EntityRegistryBuilder<E extends Entity> {
     private int secondaryColor;
     private boolean hasEgg;
     private boolean fireImmune;
+    private boolean summonable;
     private EntityDimensions dimensions;
 
     public EntityRegistryBuilder() {
@@ -71,6 +72,11 @@ public class EntityRegistryBuilder<E extends Entity> {
         return this;
     }
 
+    public EntityRegistryBuilder<E> summonable(boolean summonable) {
+        this.summonable = summonable;
+        return this;
+    }
+
     public EntityRegistryBuilder<E> dimensions(EntityDimensions size) {
         this.dimensions = size;
         return this;
@@ -80,6 +86,9 @@ public class EntityRegistryBuilder<E extends Entity> {
         FabricEntityTypeBuilder<E> entityBuilder = FabricEntityTypeBuilder.create(this.category, this.entityFactory).dimensions(this.dimensions);
         if (fireImmune) {
             entityBuilder.fireImmune();
+        }
+        if(summonable) {
+            entityBuilder.disableSummon();
         }
         if (this.alwaysUpdateVelocity && this.updateIntervalTicks != 0 & this.trackingDistance != 0) {
             entityBuilder = FabricEntityTypeBuilder.create(this.category, this.entityFactory).dimensions(this.dimensions)

@@ -7,8 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -28,13 +26,8 @@ public class ShovelItemImpl extends ShovelItem {
     }
 
     @Override
-    public String getTranslationKey() {
-        TranslatableText name = new TranslatableText(String.format("item.%s.%s", item.information.name.getNamespace(), item.information.name.getPath()));
-        if (!item.information.name_color.isEmpty()) {
-            String color = item.information.name_color.replace("#", "").replace("0x", "");
-            name.setStyle(name.getStyle().withColor(new TextColor(Integer.parseInt(color, 16))));
-        }
-        return name.getString();
+    public Text getName() {
+        return item.information.name.getName(false);
     }
 
     @Override

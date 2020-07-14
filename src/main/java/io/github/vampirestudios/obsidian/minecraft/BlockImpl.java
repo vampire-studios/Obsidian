@@ -4,22 +4,24 @@ import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 import static net.minecraft.block.TntBlock.primeTnt;
 
@@ -51,7 +53,43 @@ public class BlockImpl extends Block {
                 return ActionResult.SUCCESS;
             }
         }
+        if (!world_1.isClient) {
+            if (Objects.requireNonNull(world_1.getServer()).getCommandFunctionManager().getFunction(block.functions.on_use).isPresent()) {
+                Objects.requireNonNull(world_1.getServer()).getCommandFunctionManager().execute(world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).get(), world_1.getServer().getCommandSource());
+            }
+        }
         return ActionResult.FAIL;
+    }
+
+    @Override
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        if (world.getServer().getCommandFunctionManager().getFunction(block.functions.scheduled_tick).isPresent()) {
+            world.getServer().getCommandFunctionManager().execute(world.getServer().getCommandFunctionManager().getFunction(block.functions.scheduled_tick).get(), world.getServer().getCommandSource());
+        }
+    }
+
+    @Override
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        if (world.getServer().getCommandFunctionManager().getFunction(block.functions.random_tick).isPresent()) {
+            world.getServer().getCommandFunctionManager().execute(world.getServer().getCommandFunctionManager().getFunction(block.functions.random_tick).get(), world.getServer().getCommandSource());
+        }
+    }
+
+    @Override
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        /*if (Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.random_display_tick).isPresent()) {
+            Objects.requireNonNull(world.getServer()).getCommandFunctionManager().execute(world.getServer().getCommandFunctionManager().getFunction(block.functions.random_display_tick).get(), world.getServer().getCommandSource());
+        }*/
+        if (!world.isClient) {
+            if (Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.random_display_tick).isPresent()) {
+                Objects.requireNonNull(world.getServer()).getCommandFunctionManager().execute(world.getServer().getCommandFunctionManager().getFunction(block.functions.random_display_tick).get(), world.getServer().getCommandSource());
+            }
+        }
+    }
+
+    @Override
+    public MutableText getName() {
+        return (MutableText) block.information.name.getName(true);
     }
 
     @Override
@@ -63,27 +101,4 @@ public class BlockImpl extends Block {
         }
     }
 
-    @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView view, BlockPos pos, ShapeContext entityContext_1) {
-        return Block.createCuboidShape(
-                block.information.boundingBoxes[0],
-                block.information.boundingBoxes[1],
-                block.information.boundingBoxes[2],
-                block.information.boundingBoxes[3],
-                block.information.boundingBoxes[4],
-                block.information.boundingBoxes[5]
-        );
-    }
-
-    @Override
-    public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos) {
-        return Block.createCuboidShape(
-                block.information.boundingBoxes[0],
-                block.information.boundingBoxes[1],
-                block.information.boundingBoxes[2],
-                block.information.boundingBoxes[3],
-                block.information.boundingBoxes[4],
-                block.information.boundingBoxes[5]
-        );
-    }
 }

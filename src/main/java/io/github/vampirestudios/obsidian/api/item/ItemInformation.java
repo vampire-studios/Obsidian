@@ -1,19 +1,17 @@
 package io.github.vampirestudios.obsidian.api.item;
 
+import io.github.vampirestudios.obsidian.api.NameInformation;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ItemInformation {
 
     public String rarity = "common";
     public String item_group = "";
-    public Integer max_stack_size = 64;
-    public Identifier name;
-    public String name_color = "";
-    public String display_name;
+    public Integer max_count = 64;
+    public NameInformation name;
     public boolean enchanted = false;
-    public int duration = 5;
+    public int use_duration = 5;
 
     public Rarity getRarity() {
         switch (rarity) {
