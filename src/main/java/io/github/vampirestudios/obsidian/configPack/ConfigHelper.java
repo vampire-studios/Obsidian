@@ -20,7 +20,6 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -473,6 +472,16 @@ public class ConfigHelper {
                                 try {
                                     RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup())/*.rarity(item.information.getRarity())*/
                                             .maxCount(item.information.max_count)), item.information.name.id);
+                                    /*ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, list) -> {
+                                        list.clear();
+                                        list.add(item.information.name.getName(false));
+
+                                        if (item.display != null && item.display.lore.length != 0) {
+                                            for (TooltipInformation tooltipInformation : item.display.lore) {
+                                                list.add(tooltipInformation.getTextType(tooltipInformation.text));
+                                            }
+                                        }
+                                    });*/
                                     Artifice.registerAssets(String.format("obsidian:%s_item_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
                                         item.information.name.translated.forEach((languageId, name) -> {
                                             clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.id.getNamespace(), languageId), translationBuilder -> {
@@ -555,6 +564,16 @@ public class ConfigHelper {
                                                     tool.information.name.id);
                                             break;
                                     }
+                                    /*ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, list) -> {
+                                        list.clear();
+                                        list.add(tool.information.name.getName(false));
+
+                                        if (tool.display != null && tool.display.lore.length != 0) {
+                                            for (TooltipInformation tooltipInformation : tool.display.lore) {
+                                                list.add(tooltipInformation.getTextType(tooltipInformation.text));
+                                            }
+                                        }
+                                    });*/
                                     Artifice.registerAssets(String.format("obsidian:%s_tool_assets", tool.information.name.id.getPath()), clientResourcePackBuilder -> {
                                         tool.information.name.translated.forEach((languageId, name) -> {
                                             clientResourcePackBuilder.addTranslations(new Identifier(tool.information.name.id.getNamespace(), languageId), translationBuilder -> {
@@ -619,6 +638,16 @@ public class ConfigHelper {
                                             .group(weapon.information.getItemGroup())
 //                                            .rarity(weapon.information.getRarity())
                                             .maxCount(weapon.information.max_count)), weapon.information.name.id);
+                                    /*ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, list) -> {
+                                        list.clear();
+                                        list.add(weapon.information.name.getName(false));
+
+                                        if (weapon.display != null && weapon.display.lore.length != 0) {
+                                            for (TooltipInformation tooltipInformation : weapon.display.lore) {
+                                                list.add(tooltipInformation.getTextType(tooltipInformation.text));
+                                            }
+                                        }
+                                    });*/
                                     Artifice.registerAssets(String.format("obsidian:%s_weapon_assets", weapon.information.name.id.getPath()), clientResourcePackBuilder -> {
                                         weapon.information.name.translated.forEach((languageId, name) -> {
                                             clientResourcePackBuilder.addTranslations(new Identifier(weapon.information.name.id.getNamespace(), languageId), translationBuilder -> {
@@ -655,6 +684,16 @@ public class ConfigHelper {
                                             .maxDamage(foodItem.information.use_duration)
 //                                            .rarity(foodItem.information.getRarity())
                                             .food(foodComponent)));
+                                    /*ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, list) -> {
+                                        list.clear();
+                                        list.add(foodItem.information.name.getName(false));
+
+                                        if (foodItem.display != null && foodItem.display.lore.length != 0) {
+                                            for (TooltipInformation tooltipInformation : foodItem.display.lore) {
+                                                list.add(tooltipInformation.getTextType(tooltipInformation.text));
+                                            }
+                                        }
+                                    });*/
                                     Artifice.registerAssets(String.format("obsidian:%s_food_assets", foodItem.information.name.id.getPath()), clientResourcePackBuilder -> {
                                         foodItem.information.name.translated.forEach((languageId, name) -> {
                                             clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.id.getNamespace(), languageId), translationBuilder -> {

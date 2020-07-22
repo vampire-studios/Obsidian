@@ -26,11 +26,6 @@ public class AxeItemImpl extends AxeItem {
     }
 
     @Override
-    public Text getName() {
-        return item.information.name.getName(false);
-    }
-
-    @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : item.display.lore) {
