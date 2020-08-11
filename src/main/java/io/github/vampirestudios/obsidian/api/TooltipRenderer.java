@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api;
 
 import net.minecraft.client.font.TextRenderer;
@@ -26,51 +27,65 @@ public class TooltipRenderer {
         this.fr = fr;
     }
 
-    /**
+    */
+/**
      * @return The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this stack may be empty.
-     */
+     *//*
+
     public ItemStack getStack() {
         return stack;
     }
 
-    /**
+    */
+/**
      * The lines to be drawn. May change between {@link TooltipRenderer.Pre} and {@link TooltipRenderer.Post}.
-     */
+     *//*
+
     public List<? extends StringRenderable> getLines() {
         return lines;
     }
 
-    /**
+    */
+/**
      * @return The MatrixStack of the current rendering context
-     */
+     *//*
+
     public MatrixStack getMatrixStack() {
         return matrixStack;
     }
 
-    /**
+    */
+/**
      * @return The X position of the tooltip box. By default, the mouse X position.
-     */
+     *//*
+
     public int getX() {
         return x;
     }
 
-    /**
+    */
+/**
      * @return The Y position of the tooltip box. By default, the mouse Y position.
-     */
+     *//*
+
     public int getY() {
         return y;
     }
 
-    /**
+    */
+/**
      * @return The {@link TextRenderer} instance the current render is using.
-     */
+     *//*
+
     public TextRenderer getFontRenderer() {
         return fr;
     }
 
-    /**
+    */
+/**
      * This event is fired before any tooltip calculations are done. It provides setters for all aspects of the tooltip, so the final render can be modified.
-     */
+     *//*
+
     public static class Pre extends TooltipRenderer {
         private int screenWidth;
         private int screenHeight;
@@ -99,43 +114,54 @@ public class TooltipRenderer {
             this.screenHeight = screenHeight;
         }
 
-        /**
+        */
+/**
          * @return The max width the tooltip can be. Defaults to -1 (unlimited).
-         */
+         *//*
+
         public int getMaxWidth() {
             return maxWidth;
         }
 
-        /**
+        */
+/**
          * Sets the max width of the tooltip. Use -1 for unlimited.
-         */
+         *//*
+
         public void setMaxWidth(int maxWidth) {
             this.maxWidth = maxWidth;
         }
 
-        /**
+        */
+/**
          * Sets the {@link TextRenderer} to be used to render text.
-         */
+         *//*
+
         public void setFontRenderer(TextRenderer fr) {
             this.fr = fr;
         }
 
-        /**
+        */
+/**
          * Set the X origin of the tooltip.
-         */
+         *//*
+
         public void setX(int x) {
             this.x = x;
         }
 
-        /**
+        */
+/**
          * Set the Y origin of the tooltip.
-         */
+         *//*
+
         public void setY(int y) {
             this.y = y;
         }
     }
 
-    /**
+    */
+/**
      * Events inheriting from this class are fired at different stages during the tooltip rendering.
      * <p>
      * Do not use this event directly, use one of its subclasses:
@@ -143,7 +169,8 @@ public class TooltipRenderer {
      * <li>{@link TooltipRenderer.PostBackground}</li>
      * <li>{@link TooltipRenderer.PostText}</li>
      * </ul>
-     */
+     *//*
+
     protected static abstract class Post extends TooltipRenderer {
         private final int width;
         private final int height;
@@ -154,42 +181,52 @@ public class TooltipRenderer {
             this.height = height;
         }
 
-        /**
+        */
+/**
          * @return The width of the tooltip box. This is the width of the <i>inner</i> box, not including the border.
-         */
+         *//*
+
         public int getWidth() {
             return width;
         }
 
-        /**
+        */
+/**
          * @return The height of the tooltip box. This is the height of the <i>inner</i> box, not including the border.
-         */
+         *//*
+
         public int getHeight() {
             return height;
         }
     }
 
-    /**
+    */
+/**
      * This event is fired directly after the tooltip background is drawn, but before any text is drawn.
-     */
+     *//*
+
     public static class PostBackground extends Post {
         public PostBackground(ItemStack stack, List<? extends StringRenderable> textLines, MatrixStack matrixStack, int x, int y, TextRenderer fr, int width, int height) {
             super(stack, textLines, matrixStack, x, y, fr, width, height);
         }
     }
 
-    /**
+    */
+/**
      * This event is fired directly after the tooltip text is drawn, but before the GL state is reset.
-     */
+     *//*
+
     public static class PostText extends Post {
         public PostText(ItemStack stack, List<? extends StringRenderable> textLines, MatrixStack matrixStack, int x, int y, TextRenderer fr, int width, int height) {
             super(stack, textLines, matrixStack, x, y, fr, width, height);
         }
     }
 
-    /**
+    */
+/**
      * This event is fired when the colours for the tooltip background are determined.
-     */
+     *//*
+
     public static class Color extends TooltipRenderer {
         private final int originalBackground;
         private final int originalBorderStart;
@@ -246,3 +283,4 @@ public class TooltipRenderer {
     }
 
 }
+*/

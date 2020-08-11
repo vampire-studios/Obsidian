@@ -4,10 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.swordglowsblue.artifice.api.Artifice;
+import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.PlayerJoinCallback;
 import io.github.vampirestudios.obsidian.api.IAddonPack;
 import io.github.vampirestudios.obsidian.api.block.Block;
 import io.github.vampirestudios.obsidian.api.command.Command;
+import io.github.vampirestudios.obsidian.api.currency.Currency;
 import io.github.vampirestudios.obsidian.api.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
@@ -28,8 +31,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.structure.rule.TagMatchRuleTest;
 import net.minecraft.tag.BlockTags;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -172,8 +178,7 @@ public class ConfigHelper {
                                         if (block.ore_information.biomes != null) {
                                             for (String biome2 : block.ore_information.biomes) {
                                                 if (BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2)) {
-                                                    biome.addFeature(
-                                                            GenerationStep.Feature.UNDERGROUND_ORES,
+                                                    BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES,
                                                             Feature.ORE.configure(
                                                                     new OreFeatureConfig(
                                                                             new TagMatchRuleTest(
@@ -182,7 +187,7 @@ public class ConfigHelper {
                                                                             finalBlockImpl.getDefaultState(),
                                                                             block.ore_information.size
                                                                     )
-                                                            ).method_30374(
+                                                            ).decorate(
                                                                     Decorator.RANGE.configure(
                                                                             new RangeDecoratorConfig(
                                                                                     block.ore_information.config.bottom_offset,
@@ -190,13 +195,11 @@ public class ConfigHelper {
                                                                                     block.ore_information.config.maximum
                                                                             )
                                                                     )
-                                                            ).method_30377(block.ore_information.config.maximum).method_30371().method_30375(20)
-                                                    );
+                                                            ).method_30377(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
                                                 }
                                             }
                                         } else {
-                                            biome.addFeature(
-                                                    GenerationStep.Feature.UNDERGROUND_ORES,
+                                            BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES,
                                                     Feature.ORE.configure(
                                                             new OreFeatureConfig(
                                                                     new TagMatchRuleTest(
@@ -205,7 +208,7 @@ public class ConfigHelper {
                                                                     finalBlockImpl.getDefaultState(),
                                                                     block.ore_information.size
                                                             )
-                                                    ).method_30377(block.ore_information.config.maximum).method_30371().method_30375(20)
+                                                    ).method_30377(block.ore_information.config.maximum).spreadHorizontally().repeat(20)
                                             );
                                         }
                                     });
@@ -482,11 +485,12 @@ public class ConfigHelper {
                                             }
                                         }
                                     });*/
-                                    Artifice.registerAssets(String.format("obsidian:%s_item_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                    Artifice.registerAssets(String.format("obsidian:%s_item_assets", item.information.name.id.getPath()), clientResourcePackBuilder -> {
                                         item.information.name.translated.forEach((languageId, name) -> {
                                             clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                                 translationBuilder.entry(String.format("item.%s.%s", item.information.name.id.getNamespace(), item.information.name.id.getPath()), name);
                                             });
+                                            System.out.println(String.format("Language ID: %s Name: %s", languageId, name));
                                         });
                                         if (item.display != null && item.display.model != null) {
                                             clientResourcePackBuilder.addItemModel(item.information.name.id, modelBuilder -> {
@@ -837,6 +841,28 @@ public class ConfigHelper {
                                     System.out.println(String.format("Registered an entity called %s", entity.identifier.toString()));
                                 } catch (Exception e) {
                                     Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register entity %s.", entity.identifier.toString()));
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                            pack.getConfigPackInfo().getInformation().namespace, "currency").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
+                                pack.getConfigPackInfo().getInformation().namespace, "currency").toFile().listFiles())) {
+                            if (file.isFile()) {
+                                Currency currency = GSON.fromJson(new FileReader(file), Currency.class);
+                                try {
+                                    if(currency == null) continue;
+                                    PlayerJoinCallback.EVENT.register(player -> {
+                                        Scoreboard scoreboard = player.getScoreboard();
+                                        if (!scoreboard.containsObjective(currency.name.toLowerCase())) {
+                                            scoreboard.addObjective(currency.name.toLowerCase(), ScoreboardCriterion.DUMMY, new LiteralText(currency.name), ScoreboardCriterion.RenderType.INTEGER);
+                                        }
+                                    });
+                                    Obsidian.LOGGER.info(String.format("Registered a currency called %s", currency.name));
+                                } catch (Exception e) {
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register currency %s.", currency.name));
                                     e.printStackTrace();
                                 }
                             }

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.api.GuiUtils;
@@ -27,9 +28,11 @@ public abstract class ScreenMixin {
 
     @Shadow public abstract List<Text> getTooltipFromItem(ItemStack stack);
 
-    /**
+    */
+/**
      * @author Olivia
-     */
+     *//*
+
     @Overwrite
     public void renderTooltip(MatrixStack matrices, ItemStack stack, int x, int y) {
         GuiUtils.preItemToolTip(stack);
@@ -43,3 +46,4 @@ public abstract class ScreenMixin {
     }
 
 }
+*/

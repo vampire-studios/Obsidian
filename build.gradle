@@ -25,10 +25,8 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-//	modImplementation "com.lettuce.fudge:artifice:${project.artifice_version}"
-	modImplementation 'com.github.oliviathevampire:artifice:0aece06502'
-//	include "com.lettuce.fudge:artifice:${project.artifice_version}"
-	include 'com.github.oliviathevampire:artifice:0aece06502'
+	modImplementation ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
+	include ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
 }
 
 processResources {

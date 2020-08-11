@@ -4,10 +4,12 @@
   "package": "io.github.vampirestudios.obsidian.mixins",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "ReloadableResourceManagerImplMixin",
-    "ScreenMixin"
+    "ReloadableResourceManagerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "MixinPlayerManager"
+  ]
 }

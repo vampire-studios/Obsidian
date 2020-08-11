@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,11 +19,13 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * This class provides several methods and constants used by the Config GUI classes.
  *
  * @author bspkrs
- */
+ *//*
+
 public class GuiUtils
 {
     public static final int DEFAULT_BACKGROUND_COLOR = 0xF0100010;
@@ -40,7 +43,8 @@ public class GuiUtils
     {
         return colorCodes[isLighter ? "0123456789abcdef".indexOf(c) : "0123456789abcdef".indexOf(c) + 16];
     }
-    /**
+    */
+/**
      * Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
      * and filler. It is assumed that the desired texture ResourceLocation object has been bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
@@ -55,14 +59,16 @@ public class GuiUtils
      * @param textureHeight the height of the box texture in the resource location image
      * @param borderSize the size of the box's borders
      * @param zLevel the zLevel to draw at
-     */
+     *//*
+
     public static void drawContinuousTexturedBox(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
             int borderSize, float zLevel)
     {
         drawContinuousTexturedBox(x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
     }
 
-    /**
+    */
+/**
      * Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
      * and filler. The provided ResourceLocation object will be bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
@@ -78,14 +84,16 @@ public class GuiUtils
      * @param textureHeight the height of the box texture in the resource location image
      * @param borderSize the size of the box's borders
      * @param zLevel the zLevel to draw at
-     */
+     *//*
+
     public static void drawContinuousTexturedBox(Identifier res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
                                                  int borderSize, float zLevel)
     {
         drawContinuousTexturedBox(res, x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
     }
 
-    /**
+    */
+/**
      * Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
      * and filler. The provided ResourceLocation object will be bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
@@ -104,7 +112,8 @@ public class GuiUtils
      * @param leftBorder the size of the box's left border
      * @param rightBorder the size of the box's right border
      * @param zLevel the zLevel to draw at
-     */
+     *//*
+
     public static void drawContinuousTexturedBox(Identifier res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
             int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
@@ -112,7 +121,8 @@ public class GuiUtils
         drawContinuousTexturedBox(x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
     }
 
-    /**
+    */
+/**
      * Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
      * and filler. It is assumed that the desired texture ResourceLocation object has been bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
@@ -130,7 +140,8 @@ public class GuiUtils
      * @param leftBorder the size of the box's left border
      * @param rightBorder the size of the box's right border
      * @param zLevel the zLevel to draw at
-     */
+     *//*
+
     public static void drawContinuousTexturedBox(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
             int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
@@ -196,18 +207,22 @@ public class GuiUtils
 
     private static ItemStack cachedTooltipStack = ItemStack.EMPTY;
 
-    /**
+    */
+/**
      * Must be called from {@code GuiScreen.renderToolTip} before {@code GuiScreen.drawHoveringText} is called.
      *
      * @param stack The stack for which a tooltip is about to be drawn.
-     */
+     *//*
+
     public static void preItemToolTip(ItemStack stack) {
         cachedTooltipStack = stack;
     }
 
-    /**
+    */
+/**
      * Must be called from {@code GuiScreen.renderToolTip} after {@code GuiScreen.drawHoveringText} is called.
-     */
+     *//*
+
     public static void postItemToolTip()
     {
         cachedTooltipStack = ItemStack.EMPTY;
@@ -217,7 +232,8 @@ public class GuiUtils
         drawHoveringText(mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
     }
 
-    /**
+    */
+/**
      *  Draws a tooltip box on the screen with text in it.
      *  Automatically positions the box relative to the mouse to match Mojang's implementation.
      *  Automatically wraps text when there is not enough space on the screen to display the text without wrapping.
@@ -235,7 +251,8 @@ public class GuiUtils
      * @param borderColorEnd The ending color of the box border. The border color will be smoothly interpolated
      *                       between the start and end values.
      * @param font the font for drawing the text in the tooltip box
-     */
+     *//*
+
     public static void drawHoveringText(MatrixStack mStack, List<? extends StringRenderable> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
                                         int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, TextRenderer font)
     {
@@ -247,11 +264,13 @@ public class GuiUtils
         drawHoveringText(stack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
     }
 
-    /**
+    */
+/**
      * Use this version if calling from somewhere where ItemStack context is available.
      *
      * @see #drawHoveringText(MatrixStack, List, int, int, int, int, int, int, int, int, TextRenderer)
-     */
+     *//*
+
     //TODO, Validate rendering is the same as the original
     public static void drawHoveringText(final ItemStack stack, MatrixStack mStack, List<? extends StringRenderable> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
                                         int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, TextRenderer font) {
@@ -442,4 +461,4 @@ public class GuiUtils
 
         DrawableHelper.drawTexture(mStack, x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
     }
-}
+}*/

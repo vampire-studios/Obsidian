@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api;
 
 import net.fabricmc.fabric.api.event.Event;
@@ -63,7 +64,8 @@ public interface RenderTooltipCallback {
         }
 
 
-        /*interface PostText {
+        */
+/*interface PostText {
             Event<RenderTooltipCallback.Post.PostText> EVENT = EventFactory.createArrayBacked(RenderTooltipCallback.Post.PostText.class, (callbacks) -> {
                 return (stack, lines, matrixStack, x, y, textRenderer, width, height) -> {
                     for(RenderTooltipCallback.Post.PostText callback : callbacks) {
@@ -74,7 +76,8 @@ public interface RenderTooltipCallback {
             });
 
             TooltipRenderer.Post.PostText postText(ItemStack stack, List<? extends StringRenderable> textLines, MatrixStack matrixStack, int x, int y, TextRenderer fr, int width, int height);
-        }*/
+        }*//*
+
     }
 
     interface PostText {
@@ -115,3 +118,4 @@ public interface RenderTooltipCallback {
     }
 
 }
+*/

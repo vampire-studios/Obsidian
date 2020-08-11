@@ -13,7 +13,7 @@ public class NameInformation {
     public Identifier id;
     public Map<String, String> translated;
     public String color;
-    public String[] formatting;
+    public String[] formatting = new String[]{};
 
     public Text getName(boolean block) {
         String color1 = color.replace("#", "").replace("0x", "");
