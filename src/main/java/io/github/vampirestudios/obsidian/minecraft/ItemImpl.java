@@ -20,7 +20,7 @@ public class ItemImpl extends Item {
 
     @Override
     public boolean hasGlint(ItemStack stack) {
-        return item.information.enchanted;
+        return item.information.has_glint;
     }
 
     @Override

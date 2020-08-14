@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.configPack;
 
+import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -16,13 +17,15 @@ import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
+import io.github.vampirestudios.obsidian.api.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -33,8 +36,13 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardCriterion;
+import net.minecraft.state.property.Property;
+import net.minecraft.structure.rule.BlockMatchRuleTest;
+import net.minecraft.structure.rule.BlockStateMatchRuleTest;
+import net.minecraft.structure.rule.RuleTest;
 import net.minecraft.structure.rule.TagMatchRuleTest;
 import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
@@ -42,6 +50,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.decorator.Decorator;
 import net.minecraft.world.gen.decorator.RangeDecoratorConfig;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import org.apache.commons.lang3.text.WordUtils;
@@ -50,10 +59,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -74,6 +80,7 @@ public class ConfigHelper {
     public static List<Block> blocks = new ArrayList<>();
     private static List<Potion> potions = new ArrayList<>();
     private static final List<Command> commands = new ArrayList<>();
+    private static final List<StatusEffect> statusEffects = new ArrayList<>();
     private static final List<Enchantment> enchantments = new ArrayList<>();
 
     public static void loadDefault() {
@@ -144,75 +151,85 @@ public class ConfigHelper {
                                 Block block = GSON.fromJson(new FileReader(file), Block.class);
                                 try {
                                     FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-                                            .strength(block.information.destroy_time, block.information.explosion_resistance).lightLevel(block.information.luminance)
-                                            .drops(block.information.drop).collidable(block.information.collidable).slipperiness(block.information.slipperiness);
+                                            .strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
+                                            .collidable(block.information.collidable).slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) ->
+                                                    block.information.is_emissive).nonOpaque();
                                     if (block.information.dynamicBounds) {
                                         blockSettings.dynamicBounds();
                                     }
                                     if (block.information.randomTicks) {
                                         blockSettings.ticksRandomly();
                                     }
+                                    if (block.information.is_bouncy) {
+                                        blockSettings.jumpVelocityMultiplier(block.information.jump_velocity_modifier);
+                                    }
+                                    if (block.information.is_light_block) {
+                                        blockSettings.lightLevel(value -> block.information.luminance);
+                                    }
                                     net.minecraft.block.Block blockImpl = null;
                                     if(block.additional_information != null) {
                                         if(block.additional_information.rotatable) {
-                                            blockImpl = RegistryUtils.register(new HorizontalFacingBlockImpl(block, blockSettings.build()), block.information.name.id,
-                                                    block.information.getItem_group());
+                                            blockImpl = RegistryUtils.registerBlockWithoutItem(new HorizontalFacingBlockImpl(block, blockSettings), block.information.name.id);
                                         }
                                         if(block.additional_information.pillar) {
-                                            blockImpl = RegistryUtils.register(new PillarBlockImpl(block, blockSettings.build()), block.information.name.id,
-                                                    block.information.getItem_group());
+                                            blockImpl = RegistryUtils.registerBlockWithoutItem(new PillarBlockImpl(block, blockSettings), block.information.name.id);
                                         }
                                         if(!block.additional_information.pillar && !block.additional_information.rotatable) {
-                                            blockImpl = RegistryUtils.register(new BlockImpl(block, blockSettings.build()), block.information.name.id,
-                                                    block.information.getItem_group());
+                                            blockImpl = RegistryUtils.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id);
                                         }
                                     } else {
-                                        blockImpl = RegistryUtils.register(new BlockImpl(block, blockSettings.build()), block.information.name.id,
-                                                block.information.getItem_group());
+                                        blockImpl = RegistryUtils.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id);
                                     }
+                                    Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
+                                    if (block.food_information != null) {
+                                        FoodComponent foodComponent = block.food_information.getBuilder().build();
+                                        settings.food(foodComponent);
+                                    }
+                                    if (block.information.fireproof) {
+                                        settings.fireproof();
+                                    }
+                                    RegistryUtils.registerItem(new CustomBlockItem(block, blockImpl, settings), block.information.name.id);
                                     net.minecraft.block.Block finalBlockImpl = blockImpl;
-                                    for(net.minecraft.block.Block block1 : BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target).values()) {
-                                        System.out.println(Registry.BLOCK.getId(block1).toString());
-                                    }
-                                    BuiltinRegistries.BIOME.forEach(biome -> {
-                                        if (block.ore_information.biomes != null) {
-                                            for (String biome2 : block.ore_information.biomes) {
-                                                if (BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2)) {
-                                                    BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES,
-                                                            Feature.ORE.configure(
-                                                                    new OreFeatureConfig(
-                                                                            new TagMatchRuleTest(
-                                                                                    BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target)
-                                                                            ),
-                                                                            finalBlockImpl.getDefaultState(),
-                                                                            block.ore_information.size
-                                                                    )
-                                                            ).decorate(
-                                                                    Decorator.RANGE.configure(
-                                                                            new RangeDecoratorConfig(
-                                                                                    block.ore_information.config.bottom_offset,
-                                                                                    block.ore_information.config.top_offset,
-                                                                                    block.ore_information.config.maximum
-                                                                            )
-                                                                    )
-                                                            ).method_30377(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
-                                                }
-                                            }
+
+                                    if (block.ore_information != null) {
+                                        RuleTest test;
+                                        if (block.ore_information.test_type.equals("tag")) {
+                                            Tag<net.minecraft.block.Block> tag = BlockTags.getTagGroup().getTag(block.ore_information.target_state.block);
+                                            test = new TagMatchRuleTest(tag == null ? BlockTags.BASE_STONE_OVERWORLD : tag);
+                                        } else if (block.ore_information.test_type.equals("blockstate")) {
+                                            test = new BlockStateMatchRuleTest(getState(Registry.BLOCK.get(block.ore_information.target_state.block), block.ore_information.target_state.properties));
                                         } else {
-                                            BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES,
-                                                    Feature.ORE.configure(
-                                                            new OreFeatureConfig(
-                                                                    new TagMatchRuleTest(
-                                                                            BlockTags.BASE_STONE_OVERWORLD
-                                                                    ),
-                                                                    finalBlockImpl.getDefaultState(),
-                                                                    block.ore_information.size
-                                                            )
-                                                    ).method_30377(block.ore_information.config.maximum).spreadHorizontally().repeat(20)
-                                            );
+                                            test = new BlockMatchRuleTest(Registry.BLOCK.get(block.ore_information.target_state.block));
                                         }
-                                    });
-                                    Artifice.registerAssets(String.format("obsidian:%s_block_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                        ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
+                                                Feature.ORE.configure(
+                                                        new OreFeatureConfig(
+                                                                test,
+                                                                finalBlockImpl.getDefaultState(),
+                                                                block.ore_information.size
+                                                        )
+                                                ).decorate(
+                                                        Decorator.RANGE.configure(
+                                                                new RangeDecoratorConfig(
+                                                                        block.ore_information.config.bottom_offset,
+                                                                        block.ore_information.config.top_offset,
+                                                                        block.ore_information.config.maximum
+                                                                )
+                                                        )
+                                                ).method_30377(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
+                                        BuiltinRegistries.BIOME.forEach(biome -> {
+                                            if (block.ore_information.biomes != null) {
+                                                for (String biome2 : block.ore_information.biomes) {
+                                                    if (BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2)) {
+                                                        BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
+                                                    }
+                                                }
+                                            } else {
+                                                BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
+                                            }
+                                        });
+                                    }
+                                    Artifice.registerAssets(String.format("obsidian:%s_%s_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                         block.information.name.translated.forEach((languageId, name) -> {
                                             System.out.println(languageId);
                                             clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
@@ -263,7 +280,7 @@ public class ConfigHelper {
                                         }
                                     }).dumpResources("test");
                                     System.out.println(String.format("Registered a block called %s", block.information.name.id));
-                                    Artifice.registerData(String.format("hidden_gems:%s_block_data", pack.getIdentifier().getPath()), serverResourcePackBuilder ->
+                                    Artifice.registerData(String.format("obsidian:%s_%s_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                             serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
                                                 lootTableBuilder.type(new Identifier("block"));
                                                 lootTableBuilder.pool(pool -> {
@@ -284,7 +301,7 @@ public class ConfigHelper {
                                         if (block.additional_information.slab) {
                                             RegistryUtils.register(new SlabImpl(block),
                                                     Utils.appendToPath(block.information.name.id, "_slab"), ItemGroup.BUILDING_BLOCKS);
-                                            Artifice.registerAssets(String.format("obsidian:%s_slab_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                            Artifice.registerAssets(String.format("obsidian:%s_%s_slab_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                                 block.information.name.translated.forEach((languageId, name) -> {
                                                     clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_slab"),
@@ -292,7 +309,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                             });
-                                            Artifice.registerData(String.format("hidden_gems:%s_slab_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
+                                            Artifice.registerData(String.format("obsidian:%s_%s_slab_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_slab"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
                                                     lootTableBuilder.pool(pool -> {
@@ -327,7 +344,7 @@ public class ConfigHelper {
                                         if (block.additional_information.stairs) {
                                             RegistryUtils.register(new StairsImpl(block), new Identifier(modId, block.information.name.id.getPath() + "_stairs"),
                                                     ItemGroup.BUILDING_BLOCKS);
-                                            Artifice.registerAssets(String.format("obsidian:%s_stairs_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                            Artifice.registerAssets(String.format("obsidian:%s_%s_stairs_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                                 block.information.name.translated.forEach((languageId, name) -> {
                                                     clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_stairs"),
@@ -335,7 +352,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                             });
-                                            Artifice.registerData(String.format("hidden_gems:%s_stairs_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
+                                            Artifice.registerData(String.format("obsidian:%s_%s_stairs_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_stairs"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
                                                     lootTableBuilder.pool(pool -> {
@@ -364,7 +381,7 @@ public class ConfigHelper {
                                         if (block.additional_information.fence) {
                                             RegistryUtils.register(new FenceImpl(block),
                                                     new Identifier(modId, block.information.name.id.getPath() + "_fence"), ItemGroup.DECORATIONS);
-                                            Artifice.registerAssets(String.format("obsidian:%s_fence_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                            Artifice.registerAssets(String.format("obsidian:%s_%s_fence_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                                 block.information.name.translated.forEach((languageId, name) -> {
                                                     clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence"),
@@ -372,7 +389,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                             });
-                                            Artifice.registerData(String.format("hidden_gems:%s_fence_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
+                                            Artifice.registerData(String.format("obsidian:%s_%s_fence_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
                                                     lootTableBuilder.pool(pool -> {
@@ -401,7 +418,7 @@ public class ConfigHelper {
                                         if (block.additional_information.fenceGate) {
                                             RegistryUtils.register(new FenceGateImpl(block),
                                                     Utils.appendToPath(block.information.name.id, "_fence_gate"), ItemGroup.REDSTONE);
-                                            Artifice.registerAssets(String.format("obsidian:%s_fence_gate_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                            Artifice.registerAssets(String.format("obsidian:%s_%s_fence_gate_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                                 block.information.name.translated.forEach((languageId, name) -> {
                                                     clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence_gate"),
@@ -409,7 +426,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                             });
-                                            Artifice.registerData(String.format("hidden_gems:%s_fence_gate_data", pack.getIdentifier().getPath()), serverResourcePackBuilder -> {
+                                            Artifice.registerData(String.format("obsidian:%s_%s_fence_gate_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence_gate"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
                                                     lootTableBuilder.pool(pool -> {
@@ -436,7 +453,7 @@ public class ConfigHelper {
                                         if (block.additional_information.walls) {
                                             RegistryUtils.register(new WallImpl(block),
                                                     Utils.appendToPath(block.information.name.id, "_wall"), ItemGroup.DECORATIONS);
-                                            Artifice.registerAssets(String.format("obsidian:%s_wall_assets", pack.getIdentifier().getPath()), clientResourcePackBuilder -> {
+                                            Artifice.registerAssets(String.format("obsidian:%s_%s_wall_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                                 block.information.name.translated.forEach((languageId, name) -> {
                                                     clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_wall"),
@@ -444,7 +461,7 @@ public class ConfigHelper {
                                                     });
                                                 });
                                             });
-                                            Artifice.registerData(String.format("hidden_gems:%s_wall_data", pack.getIdentifier().getPath()), serverResourcePackBuilder ->
+                                            Artifice.registerData(String.format("obsidian:%s_%s_wall_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                                 serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_wall"), lootTableBuilder -> {
                                                     lootTableBuilder.type(new Identifier("block"));
                                                     lootTableBuilder.pool(pool -> {
@@ -686,18 +703,7 @@ public class ConfigHelper {
                                             .group(foodItem.information.getItemGroup())
                                             .maxCount(foodItem.information.max_count)
                                             .maxDamage(foodItem.information.use_duration)
-//                                            .rarity(foodItem.information.getRarity())
                                             .food(foodComponent)));
-                                    /*ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, list) -> {
-                                        list.clear();
-                                        list.add(foodItem.information.name.getName(false));
-
-                                        if (foodItem.display != null && foodItem.display.lore.length != 0) {
-                                            for (TooltipInformation tooltipInformation : foodItem.display.lore) {
-                                                list.add(tooltipInformation.getTextType(tooltipInformation.text));
-                                            }
-                                        }
-                                    });*/
                                     Artifice.registerAssets(String.format("obsidian:%s_food_assets", foodItem.information.name.id.getPath()), clientResourcePackBuilder -> {
                                         foodItem.information.name.translated.forEach((languageId, name) -> {
                                             clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.id.getNamespace(), languageId), translationBuilder -> {
@@ -791,19 +797,15 @@ public class ConfigHelper {
                         for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
                                 pack.getConfigPackInfo().getInformation().namespace, "status_effects").toFile().listFiles())) {
                             if (file.isFile()) {
-                                Command command = GSON.fromJson(new FileReader(file), Command.class);
+                                StatusEffect statusEffect = GSON.fromJson(new FileReader(file), StatusEffect.class);
                                 try {
-                                    if(command == null) continue;
-
-                                    // Using a lambda
-                                    CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-                                        // This command will be registered regardless of the server being dedicated or integrated
-                                        CommandImpl.register(command, dispatcher);
-                                    });
-                                    commands.add(command);
-                                    System.out.println(String.format("Registered a command called %s", command.name));
+                                    if(statusEffect == null) continue;
+                                    String color1 = statusEffect.color.replace("#", "").replace("0x", "");
+                                    Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect.getStatusEffectType(), Integer.parseInt(color1, 16)));
+                                    statusEffects.add(statusEffect);
+                                    System.out.println(String.format("Registered a status effect called %s", statusEffect.name.translated.get("en_us")));
                                 } catch (Exception e) {
-                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register command %s.", command.name));
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register status effect %s.", statusEffect.name.translated.get("en_us")));
                                     e.printStackTrace();
                                 }
                             }
@@ -880,6 +882,30 @@ public class ConfigHelper {
 
     private static void fillDefaultConfigs() {
         MATERIALS_DIRECTORY.mkdirs();
+    }
+
+    public static BlockState getState(net.minecraft.block.Block block, Map<String, String> jsonProperties) {
+        BlockState blockstate = block.getDefaultState();
+        Collection<Property<?>> properties = blockstate.getProperties();
+        for(Property property : properties) {
+            String propertyName = property.getName();
+            if(jsonProperties.containsKey(propertyName)) {
+                String valueName = jsonProperties.get(propertyName);
+                Optional valueOpt = property.parse(valueName);
+                if(valueOpt.isPresent()) {
+                    Comparable value = (Comparable) valueOpt.get();
+                    blockstate = blockstate.with(property, value);
+                } else {
+                    System.err.println(String.format("Property[%s=%s] doesn't exist for %s", propertyName, valueName, block.toString()));
+                }
+                jsonProperties.remove(propertyName);
+            }
+        }
+        if(!jsonProperties.isEmpty()) {
+            Joiner joiner = Joiner.on(", ");
+            System.err.println(String.format("The following properties do not exist in %s: %s", block.toString(), joiner.join(jsonProperties.keySet())));
+        }
+        return blockstate;
     }
 
 }

@@ -13,7 +13,6 @@ public class BlockInformation {
     public String item_group;
     public boolean collidable = true;
     public String sound_group = "";
-    public int luminance = 0;
     public float explosion_resistance = 0.0F;
     public float destroy_time = 0.0F;
     public boolean randomTicks = false;
@@ -24,7 +23,15 @@ public class BlockInformation {
             0, 0, 0, 16, 16, 16
     };
     public String action = "";
-    public float jumpVelocityMultiplier;
+    public boolean is_bouncy = false;
+    public float jump_velocity_modifier;
+    public boolean has_glint = false;
+    public boolean is_enchantable = false;
+    public int enchantability = 5;
+    public boolean is_light_block = false;
+    public int luminance = 1;
+    public boolean is_emissive = false;
+    public boolean fireproof = false;
 
     public BlockSoundGroup getBlockSoundGroup() {
         switch (sound_group) {
@@ -166,7 +173,7 @@ public class BlockInformation {
         }
     }
 
-    public ItemGroup getItem_group() {
+    public ItemGroup getItemGroup() {
         switch (item_group) {
             case "minecraft:building_blocks":
                 return ItemGroup.BUILDING_BLOCKS;

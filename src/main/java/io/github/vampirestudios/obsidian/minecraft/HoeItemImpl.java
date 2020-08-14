@@ -22,7 +22,17 @@ public class HoeItemImpl extends HoeItem {
 
     @Override
     public boolean hasGlint(ItemStack stack) {
-        return item.information.enchanted;
+        return item.information.has_glint;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return item.information.is_enchantable;
+    }
+
+    @Override
+    public int getEnchantability() {
+        return item.information.enchantability;
     }
 
     @Override

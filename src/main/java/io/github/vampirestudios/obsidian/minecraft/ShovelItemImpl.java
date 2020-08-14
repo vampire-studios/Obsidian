@@ -22,7 +22,7 @@ public class ShovelItemImpl extends ShovelItem {
 
     @Override
     public boolean hasGlint(ItemStack stack) {
-        return item.information.enchanted;
+        return item.information.has_glint;
     }
 
     @Override

@@ -1,7 +1,9 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
 import io.github.vampirestudios.obsidian.api.TooltipInformation;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.PillarBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -13,7 +15,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
@@ -64,29 +65,5 @@ public class PillarBlockImpl extends PillarBlock {
                 tooltip.add(tooltipInformation.getTextType(tooltipInformation.text));
             }
         }
-    }
-
-    @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView view, BlockPos pos, ShapeContext entityContext_1) {
-        return Block.createCuboidShape(
-                block.information.boundingBoxes[0],
-                block.information.boundingBoxes[1],
-                block.information.boundingBoxes[2],
-                block.information.boundingBoxes[3],
-                block.information.boundingBoxes[4],
-                block.information.boundingBoxes[5]
-        );
-    }
-
-    @Override
-    public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos) {
-        return Block.createCuboidShape(
-                block.information.boundingBoxes[0],
-                block.information.boundingBoxes[1],
-                block.information.boundingBoxes[2],
-                block.information.boundingBoxes[3],
-                block.information.boundingBoxes[4],
-                block.information.boundingBoxes[5]
-        );
     }
 }

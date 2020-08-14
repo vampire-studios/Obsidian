@@ -10,7 +10,10 @@ public class ItemInformation {
     public String item_group = "";
     public Integer max_count = 64;
     public NameInformation name;
-    public boolean enchanted = false;
+    public boolean has_glint = false;
+    public boolean is_enchantable = false;
+    public int enchantability = 5;
+    public boolean hand_equipped = false;
     public int use_duration = 5;
 
     public Rarity getRarity() {

@@ -5,7 +5,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.util.registry.Registry;
 
-public class ItemFood {
+public class FoodInformation {
 
     public Integer nutrition = 4;
     public String saturation_modifier = "";

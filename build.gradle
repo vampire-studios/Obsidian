@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.4-SNAPSHOT'
+	id 'fabric-loom' version '0.5-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -11,8 +11,11 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+	mavenCentral()
+	mavenLocal()
 	jcenter()
 	maven{ url="https://jitpack.io" }
+	maven{ url="http://server.bbkr.space:8081/artifactory/libs-release/" }
 }
 
 minecraft {
@@ -27,6 +30,9 @@ dependencies {
 
 	modImplementation ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
 	include ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
+
+	modImplementation "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"
+	include "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"
 }
 
 processResources {
