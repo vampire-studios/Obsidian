@@ -1,16 +1,21 @@
 {
   "information": {
-    "name": "tutorial:apple_pie",
-    "displayName": "Apple Pie",
+    "name": {
+      "id": "tutorial:apple_pie",
+      "translated": {
+        "en_us": "Apple Pie",
+        "nb_no": "Eplepai"
+      },
+      "color": "#ca165f",
+      "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
+    },
     "item_group": "minecraft:food",
     "rarity": "common",
-    "max_count": 16
+    "max_count": 16,
+    "use_duration": 32
   },
-  "components": {
-    "use_duration": 32,
-    "food": {
-      "nutrition": 16,
-      "saturation_modifier": "good"
-    }
+  "food_information": {
+    "nutrition": 16,
+    "saturation_modifier": "good"
   }
 }

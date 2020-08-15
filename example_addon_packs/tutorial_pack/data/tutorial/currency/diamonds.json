@@ -1,0 +1,10 @@
+{
+  "name": "Diamonds",
+  "suffix": "Diamonds",
+  "currencyItems": [
+    {
+      "item": "minecraft:diamond",
+      "worth": 1
+    }
+  ]
+}

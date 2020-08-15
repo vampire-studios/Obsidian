@@ -1,9 +1,15 @@
 {
     "information": {
-        "name": "tutorial:potato_pickaxe",
-        "displayName": "Potato Pickaxe",
+        "name": {
+            "id": "tutorial:potato_pickaxe",
+            "translated": {
+                "en_us": "Potato Pickaxe",
+                "nb_no": "Potethakke"
+            },
+            "color": "#d9aa51"
+        },
         "item_group": "minecraft:tools",
-        "rarity": "common",
+        "rarity": "rare",
         "max_count": 1
     },
     "attackDamage": 1,

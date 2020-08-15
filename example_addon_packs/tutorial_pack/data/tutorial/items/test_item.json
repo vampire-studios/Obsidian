@@ -1,0 +1,27 @@
+{
+  "information": {
+    "name": {
+      "id": "tutorial:test_item",
+      "translated": {
+        "en_us": "Test Item"
+      }
+    },
+    "item_group": "minecraft:misc"
+  },
+  "display": {
+    "model": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "block/stone"
+      }
+    },
+    "lore": [
+      {
+        "type": "literal",
+        "text": "Testing",
+        "color": "#ffffff",
+        "formatting": []
+      }
+    ]
+  }
+}

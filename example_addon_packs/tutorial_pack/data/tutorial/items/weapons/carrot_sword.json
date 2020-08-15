@@ -1,7 +1,13 @@
 {
     "information": {
-        "name": "tutorial:carrot_sword",
-        "displayName": "Carrot Sword",
+        "name": {
+            "id": "tutorial:carrot_sword",
+            "translated": {
+                "en_us": "Carrot Sword",
+                "nb_no": "Gullerotsverd"
+            },
+            "color": "#ffa73f"
+        },
         "item_group": "minecraft:combat",
         "rarity": "common",
         "max_count": 1

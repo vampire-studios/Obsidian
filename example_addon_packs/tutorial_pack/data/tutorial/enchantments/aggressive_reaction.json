@@ -1,0 +1,10 @@
+{
+  "id": "tutorial:aggressive_reaction",
+  "name": "Aggressive Reaction",
+  "slots": [
+    "mainhand",
+    "offhand"
+  ],
+  "target": "WEAPON",
+  "rarity": "VERY_RARE"
+}

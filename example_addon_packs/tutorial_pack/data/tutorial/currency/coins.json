@@ -1,0 +1,22 @@
+{
+  "name": "Coins",
+  "suffix": "Coins",
+  "currencyItems": [
+    {
+      "item": "tutorial:silver_coin",
+      "worth": 1
+    },
+    {
+      "item": "tutorial:gold_coin",
+      "worth": 5
+    },
+    {
+      "item": "tutorial:diamond_coin",
+      "worth": 10
+    },
+    {
+      "item": "tutorial:netherite_coin",
+      "worth": 20
+    }
+  ]
+}

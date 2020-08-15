@@ -1,0 +1,10 @@
+{
+  "name": "Emeralds",
+  "suffix": "Emeralds",
+  "currencyItems": [
+    {
+      "item": "minecraft:emerald",
+      "worth": 1
+    }
+  ]
+}
