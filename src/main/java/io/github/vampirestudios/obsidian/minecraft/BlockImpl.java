@@ -34,6 +34,11 @@ public class BlockImpl extends Block {
     }
 
     @Override
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+        return block.information.light_absorption_value;
+    }
+
+    @Override
     public ActionResult onUse(BlockState blockState_1, World world_1, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
         if(block.information.action.equals("explode")) {
             ItemStack itemStack_1 = playerEntity_1.getStackInHand(hand_1);

@@ -32,6 +32,7 @@ public class BlockInformation {
     public int luminance = 1;
     public boolean is_emissive = false;
     public boolean fireproof = false;
+    public float light_absorption_value = 1.0F;
 
     public BlockSoundGroup getBlockSoundGroup() {
         switch (sound_group) {

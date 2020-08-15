@@ -1,0 +1,10 @@
+{
+  "id": "tutorial:sand_particle",
+  "sheet_type": "PARTICLE_SHEET_OPAQUE",
+  "always_spawn": false,
+  "collides_with_world": false,
+  "red_color": 0.9,
+  "green_color": 0.8,
+  "blue_color": 0.6,
+  "max_age": 80
+}

@@ -16,23 +16,25 @@ import io.github.vampirestudios.obsidian.api.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.entity.Entity;
 import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
+import io.github.vampirestudios.obsidian.api.particle.Particle;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.api.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ToolMaterial;
+import net.minecraft.item.*;
+import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardCriterion;
@@ -82,6 +84,7 @@ public class ConfigHelper {
     private static final List<Command> commands = new ArrayList<>();
     private static final List<StatusEffect> statusEffects = new ArrayList<>();
     private static final List<Enchantment> enchantments = new ArrayList<>();
+    private static final List<io.github.vampirestudios.obsidian.api.ItemGroup> itemGroups = new ArrayList<>();
 
     public static void loadDefault() {
         if (!MATERIALS_DIRECTORY.exists())
@@ -141,12 +144,60 @@ public class ConfigHelper {
                 Obsidian.LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
 
                 String modId = pack.getConfigPackInfo().getInformation().namespace;
+                String path = MATERIALS_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().getInformation().namespace;
 
                 try {
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "blocks").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "blocks").toFile().listFiles())) {
+                    if (Paths.get(path, "item_groups").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "item_groups").toFile().listFiles())) {
+                            if (file.isFile()) {
+                                io.github.vampirestudios.obsidian.api.ItemGroup itemGroup = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.ItemGroup.class);
+                                try {
+                                    if(itemGroup == null) continue;
+                                    FabricItemGroupBuilder.create(itemGroup.name.id)
+                                            .icon(() -> new ItemStack(Registry.ITEM.get(itemGroup.icon)))
+                                            .build();
+                                    Artifice.registerAssets(String.format("obsidian:%s_item_assets", itemGroup.name.id.getPath()), clientResourcePackBuilder -> {
+                                        itemGroup.name.translated.forEach((languageId, name) -> {
+                                            clientResourcePackBuilder.addTranslations(new Identifier(itemGroup.name.id.getNamespace(), languageId), translationBuilder -> {
+                                                translationBuilder.entry(String.format("itemGroup.%s.%s", itemGroup.name.id.getNamespace(), itemGroup.name.id.getPath()), name);
+                                            });
+                                            System.out.println(String.format("Language ID: %s Name: %s", languageId, name));
+                                        });
+                                    }).dumpResources("test");
+                                    itemGroups.add(itemGroup);
+                                    System.out.println(String.format("Registered an item group called %s", itemGroup.name.translated.get("en_us")));
+                                } catch (Exception e) {
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register item group %s.", itemGroup.name.translated.get("en_us")));
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (Paths.get(path, "particles").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "particles").toFile().listFiles())) {
+                            if (file.isFile()) {
+                                Particle particle = GSON.fromJson(new FileReader(file), Particle.class);
+                                try {
+                                    if(particle == null) continue;
+                                    DefaultParticleType particleType = FabricParticleTypes.simple(particle.always_spawn);
+                                    Registry.register(Registry.PARTICLE_TYPE, particle.id, particleType);
+                                    ParticleFactoryRegistry.getInstance().register(particleType, fabricSpriteProvider ->
+                                            new ParticleImpl.Factory(particle, fabricSpriteProvider));
+                                    Artifice.registerAssets(Utils.appendToPath(particle.id, "_assets"), clientResourcePackBuilder -> {
+                                        clientResourcePackBuilder.addParticle(particle.id, particleBuilder -> {
+                                            particleBuilder.texture(particle.texture);
+                                        });
+                                    });
+                                    System.out.println("Registered a particle called " + particle.id.toString());
+                                } catch (Exception e) {
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register particle %s.", particle.id.toString()));
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (Paths.get(path, "blocks").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "blocks").toFile().listFiles())) {
                             if (file.isFile()) {
                                 Block block = GSON.fromJson(new FileReader(file), Block.class);
                                 try {
@@ -483,25 +534,13 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "items").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "items").toFile().listFiles())) {
+                    if (Paths.get(path, "items").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "items").toFile().listFiles())) {
                             if (file.isFile()) {
                                 io.github.vampirestudios.obsidian.api.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.Item.class);
                                 try {
                                     RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup())/*.rarity(item.information.getRarity())*/
                                             .maxCount(item.information.max_count)), item.information.name.id);
-                                    /*ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, list) -> {
-                                        list.clear();
-                                        list.add(item.information.name.getName(false));
-
-                                        if (item.display != null && item.display.lore.length != 0) {
-                                            for (TooltipInformation tooltipInformation : item.display.lore) {
-                                                list.add(tooltipInformation.getTextType(tooltipInformation.text));
-                                            }
-                                        }
-                                    });*/
                                     Artifice.registerAssets(String.format("obsidian:%s_item_assets", item.information.name.id.getPath()), clientResourcePackBuilder -> {
                                         item.information.name.translated.forEach((languageId, name) -> {
                                             clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.id.getNamespace(), languageId), translationBuilder -> {
@@ -525,10 +564,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "items", "tools").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "items", "tools").toFile().listFiles())) {
+                    if (Paths.get(path, "items", "tools").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "items", "tools").toFile().listFiles())) {
                             if (file.isFile()) {
                                 io.github.vampirestudios.obsidian.api.item.ToolItem tool = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.ToolItem.class);
                                 try {
@@ -617,10 +654,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "items", "weapons").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "items", "weapons").toFile().listFiles())) {
+                    if (Paths.get(path, "items", "weapons").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "items", "weapons").toFile().listFiles())) {
                             if (file.isFile()) {
                                 WeaponItem weapon = GSON.fromJson(new FileReader(file), WeaponItem.class);
                                 try {
@@ -691,10 +726,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "items", "food").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "items", "food").toFile().listFiles())) {
+                    if (Paths.get(path, "items", "food").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "items", "food").toFile().listFiles())) {
                             if (file.isFile()) {
                                 FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
                                 try {
@@ -726,10 +759,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "potions").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "potions").toFile().listFiles())) {
+                    if (Paths.get(path, "potions").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "potions").toFile().listFiles())) {
                             if (file.isFile()) {
                                 Potion potion = GSON.fromJson(new FileReader(file), Potion.class);
                                 try {
@@ -746,10 +777,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "commands").toFile().listFiles())) {
+                    if (Paths.get(path, "commands").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "commands").toFile().listFiles())) {
                             if (file.isFile()) {
                                 Command command = GSON.fromJson(new FileReader(file), Command.class);
                                 try {
@@ -769,10 +798,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "enchantments").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "enchantments").toFile().listFiles())) {
+                    if (Paths.get(path, "enchantments").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "enchantments").toFile().listFiles())) {
                             if (file.isFile()) {
                                 Enchantment enchantment = GSON.fromJson(new FileReader(file), Enchantment.class);
                                 try {
@@ -792,10 +819,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "status_effects").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "status_effects").toFile().listFiles())) {
+                    if (Paths.get(path, "status_effects").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "status_effects").toFile().listFiles())) {
                             if (file.isFile()) {
                                 StatusEffect statusEffect = GSON.fromJson(new FileReader(file), StatusEffect.class);
                                 try {
@@ -811,10 +836,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "entities").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "entities").toFile().listFiles())) {
+                    if (Paths.get(path, "entities").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "entities").toFile().listFiles())) {
                             if (file.isFile()) {
                                 Entity entity = GSON.fromJson(new FileReader(file), Entity.class);
                                 try {
@@ -848,10 +871,8 @@ public class ConfigHelper {
                             }
                         }
                     }
-                    if (Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                            pack.getConfigPackInfo().getInformation().namespace, "currency").toFile().exists()) {
-                        for (File file : Objects.requireNonNull(Paths.get(MATERIALS_DIRECTORY.getPath(), pack.getIdentifier().getPath(), "data",
-                                pack.getConfigPackInfo().getInformation().namespace, "currency").toFile().listFiles())) {
+                    if (Paths.get(path, "currency").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "currency").toFile().listFiles())) {
                             if (file.isFile()) {
                                 Currency currency = GSON.fromJson(new FileReader(file), Currency.class);
                                 try {
