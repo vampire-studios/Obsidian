@@ -1,42 +1,90 @@
 {
-    "information": {
-        "name": {
-            "id": "tutorial:test_block",
-            "translated": {
-                "en_us": "Test Block"
-            },
-            "color": "#ca165f"
-        },
-        "material": "minecraft:stone",
-        "item_group": "minecraft:building_blocks",
-        "sound_group": "minecraft:stone",
-        "fireproof": true,
-        "is_light_block": true,
-        "luminance": 20,
-        "has_glint": true
+  "information": {
+    "name": {
+      "id": "tutorial:test_block",
+      "translated": {
+        "en_us": "Test Block"
+      },
+      "color": "#ca165f"
     },
-    "ore_information": {
-        "test_type": "block",
-        "target_state": {
-            "block": "minecraft:stone"
-        },
-        "size": 9,
-        "config": {
-            "bottom_offset": 0,
-            "top_offset": 0,
-            "maximum": 60
+    "material": "minecraft:stone",
+    "item_group": "minecraft:building_blocks",
+    "sound_group": "minecraft:stone",
+    "fireproof": true,
+    "is_light_block": true,
+    "luminance": 20,
+    "has_glint": true
+  },
+  "display": {
+    "model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "item/potato"
+      }
+    },
+    "lore": [
+      {
+        "text": {
+          "type": "literal",
+          "text": "Worth: 10 Coins",
+          "color": "#ffffff",
+          "formatting": []
         }
+      },
+      {
+        "text": {
+          "type": "literal",
+          "text": "Worth: 10 Coins",
+          "color": "#ffffff",
+          "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
+        }
+      },
+      {
+        "text": {
+          "type": "translatable",
+          "text": "block.tutorial.test_block.desc",
+          "translated": {
+            "en_us": "This is a test"
+          },
+          "color": "#ffffff",
+          "formatting": []
+        }
+      },
+      {
+        "text": {
+          "type": "translatable",
+          "text": "block.tutorial.test_block.desc",
+          "translated": {
+            "en_us": "This is a test"
+          },
+          "color": "#ffffff",
+          "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
+        }
+      }
+    ]
+  },
+  "ore_information": {
+    "test_type": "block",
+    "target_state": {
+      "block": "minecraft:stone"
     },
-    "food_information": {
-        "nutrition": 69,
-        "saturation_modifier": "supernatural",
-        "effects": [
-            {
-                "name": "minecraft:slowness",
-                "chance": 1,
-                "duration": 99999,
-                "amplifier": 3
-            }
-        ]
+    "size": 9,
+    "config": {
+      "bottom_offset": 0,
+      "top_offset": 0,
+      "maximum": 60
     }
+  },
+  "food_information": {
+    "nutrition": 69,
+    "saturation_modifier": "supernatural",
+    "effects": [
+      {
+        "name": "minecraft:slowness",
+        "chance": 1,
+        "duration": 99999,
+        "amplifier": 3
+      }
+    ]
+  }
 }

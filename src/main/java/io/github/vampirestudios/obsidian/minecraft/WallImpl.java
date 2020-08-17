@@ -10,7 +10,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -55,15 +54,10 @@ public class WallImpl extends WallBlock {
     }
 
     @Override
-    public MutableText getName() {
-        return (MutableText) block.information.name.getName(true);
-    }
-
-    @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
         if (block.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.display.lore) {
-                tooltip.add(tooltipInformation.getTextType(tooltipInformation.text));
+                tooltip.add(tooltipInformation.getTextType());
             }
         }
     }

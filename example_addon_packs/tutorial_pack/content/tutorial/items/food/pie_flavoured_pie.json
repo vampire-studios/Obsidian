@@ -26,9 +26,12 @@
     },
     "lore": [
       {
-        "type": "literal",
-        "text": "This is a pie with a pie popping up",
-        "color": "#ffffff"
+        "text": {
+          "type": "literal",
+          "text": "This is a pie with a pie popping up",
+          "color": "#ffffff",
+          "formatting": []
+        }
       }
     ]
   }
