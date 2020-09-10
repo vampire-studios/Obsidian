@@ -1,15 +1,27 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "io.github.vampirestudios.obsidian.mixins",
-  "compatibilityLevel": "JAVA_8",
-  "client": [
-    "ReloadableResourceManagerImplMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "mixins": [
-    "MixinPlayerManager"
-  ]
+    "required": true,
+    "minVersion": "0.8",
+    "package": "io.github.vampirestudios.obsidian.mixins",
+    "compatibilityLevel": "JAVA_8",
+    "client": [
+        "ReloadableResourceManagerImplMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "mixins": [
+        "ArmorFeatureRendererMixin",
+        "BowItemMixin",
+        "CrossbowItemMixin",
+        "DynamicRegistryManagerMixin",
+        "EntityBowUseMixin",
+        "EntityCrossbowUseMixin",
+        "HeldItemRendererMixin",
+        "ItemMixin",
+        "MixinPlayerManager",
+        "PlayerEntityRendererMixin",
+        "ProjectileUtilMixin",
+        "SkeletonEntityModelMixin",
+        "AbstractSkeletonEntityMixin"
+    ]
 }

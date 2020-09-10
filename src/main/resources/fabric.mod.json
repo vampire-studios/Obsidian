@@ -6,7 +6,7 @@
   "name": "Obsidian",
   "description": "Library for a bedrock-like addon system",
   "authors": [
-    "Me!"
+    "Vampire Studios"
   ],
   "contact": {
     "homepage": "https://github.com/vampire-studios/Obsidian",
@@ -21,7 +21,10 @@
   "entrypoints": {
     "main": [
       "io.github.vampirestudios.obsidian.Obsidian"
-    ]
+    ]/*,
+    "dynamic-registry-provider": [
+      "io.github.vampirestudios.obsidian.TestDynamicRegistryProvider"
+    ]*/
   },
   "mixins": [
     "obsidian.mixins.json"

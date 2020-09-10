@@ -8,6 +8,7 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.PlayerJoinCallback;
+import io.github.vampirestudios.obsidian.api.ArmorTextureRegistry;
 import io.github.vampirestudios.obsidian.api.IAddonPack;
 import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.block.Block;
@@ -33,12 +34,14 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.*;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardCriterion;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.state.property.Property;
 import net.minecraft.structure.rule.BlockMatchRuleTest;
 import net.minecraft.structure.rule.BlockStateMatchRuleTest;
@@ -86,6 +89,7 @@ public class ConfigHelper {
     private static final List<StatusEffect> statusEffects = new ArrayList<>();
     private static final List<Enchantment> enchantments = new ArrayList<>();
     private static final List<io.github.vampirestudios.obsidian.api.ItemGroup> itemGroups = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.item.ArmorItem> armors = new ArrayList<>();
 
     public static void loadDefault() {
         if (!MATERIALS_DIRECTORY.exists())
@@ -582,6 +586,79 @@ public class ConfigHelper {
                                     items.add(item);
                                 } catch (Exception e) {
                                     Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register item %s.", item.information.name.id));
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (Paths.get(path, "items", "armor").toFile().exists()) {
+                        for (File file : Objects.requireNonNull(Paths.get(path, "items", "armor").toFile().listFiles())) {
+                            if (file.isFile()) {
+                                io.github.vampirestudios.obsidian.api.item.ArmorItem armor = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.ArmorItem.class);
+                                try {
+                                    ArmorMaterial material = new ArmorMaterial() {
+                                        @Override
+                                        public int getDurability(EquipmentSlot slot) {
+                                            return armor.material.durability;
+                                        }
+
+                                        @Override
+                                        public int getProtectionAmount(EquipmentSlot slot) {
+                                            return armor.material.protection_amount;
+                                        }
+
+                                        @Override
+                                        public int getEnchantability() {
+                                            return armor.material.enchantability;
+                                        }
+
+                                        @Override
+                                        public SoundEvent getEquipSound() {
+                                            return Registry.SOUND_EVENT.get(armor.material.sound_event);
+                                        }
+
+                                        @Override
+                                        public Ingredient getRepairIngredient() {
+                                            return Ingredient.ofItems(Registry.ITEM.get(armor.material.repair_item));
+                                        }
+
+                                        @Override
+                                        public String getName() {
+                                            return armor.material.name;
+                                        }
+
+                                        @Override
+                                        public float getToughness() {
+                                            return armor.material.toughness;
+                                        }
+
+                                        @Override
+                                        public float getKnockbackResistance() {
+                                            return armor.material.knockback_resistance;
+                                        }
+                                    };
+                                    Item item = RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
+                                                    .group(armor.information.getItemGroup()).maxCount(armor.information.max_count)),
+                                            armor.information.name.id);
+                                    ArmorTextureRegistry.register((entity, stack, slot, secondLayer, suffix) ->
+                                            armor.material.texture, item);
+                                    Artifice.registerAssets(String.format("obsidian:%s_tool_assets", armor.information.name.id.getPath()), clientResourcePackBuilder -> {
+                                        armor.information.name.translated.forEach((languageId, name) -> {
+                                            clientResourcePackBuilder.addTranslations(new Identifier(armor.information.name.id.getNamespace(), languageId), translationBuilder -> {
+                                                translationBuilder.entry(String.format("item.%s.%s", armor.information.name.id.getNamespace(), armor.information.name.id.getPath()), name);
+                                            });
+                                        });
+                                        if (armor.display != null && armor.display.model != null) {
+                                            clientResourcePackBuilder.addItemModel(armor.information.name.id, modelBuilder -> {
+                                                modelBuilder.parent(armor.display.model.parent);
+                                                armor.display.model.textures.forEach(modelBuilder::texture);
+                                            });
+                                        }
+                                    }).dumpResources("test");
+                                    System.out.println(String.format("Registered an armor item called %s", armor.information.name));
+                                    armors.add(armor);
+                                } catch (Exception e) {
+                                    Obsidian.LOGGER.error(String.format("[Obsidian] Failed to register armor item %s.", armor.information.name));
                                     e.printStackTrace();
                                 }
                             }

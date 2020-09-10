@@ -1,0 +1,33 @@
+{
+    "information": {
+        "name": {
+            "id": "tutorial:bucket_helmet",
+            "translated": {
+                "en_us": "Bucket Helmet",
+                "nb_no": "Bøttehjelm"
+            },
+            "color": "#d9aa51"
+        },
+        "item_group": "minecraft:combat",
+        "max_count": 1
+    },
+    "armor_slot": "head",
+    "material": {
+        "name": "tutorial:bucket",
+        "durability": 3000,
+        "protection_amount": 20,
+        "enchantability": 10,
+        "sound_event": "minecraft:item.armor.equip_diamond",
+        "toughness": 10.0,
+        "knockback_resistance": 30.0,
+        "repair_material": "minecraft:bucket"
+    },
+    "display": {
+        "model": {
+            "parent": "item/generated",
+            "textures": {
+                "layer0": "tutorial:item/bucket_helmet"
+            }
+        }
+    }
+}

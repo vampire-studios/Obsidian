@@ -20,3 +20,6 @@ mutable field net/minecraft/world/biome/GenerationSettings flowerFeatures Ljava/
 accessible field net/minecraft/world/biome/GenerationSettings flowerFeatures Ljava/util/List;
 mutable field net/minecraft/world/biome/Biome generationSettings Lnet/minecraft/world/biome/GenerationSettings;
 accessible field net/minecraft/world/biome/Biome generationSettings Lnet/minecraft/world/biome/GenerationSettings;
+
+accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
+accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;

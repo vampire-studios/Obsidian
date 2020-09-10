@@ -1,5 +1,7 @@
 package io.github.vampirestudios.obsidian.api.block;
 
+import net.minecraft.client.render.model.ModelLoader;
+
 public class AdditionalBlockInformation {
 
     public boolean slab = false;
@@ -13,5 +15,6 @@ public class AdditionalBlockInformation {
     public boolean trapdoor = false;
     public boolean rotatable = false;
     public boolean pillar = false;
+    ModelLoader
 
 }
