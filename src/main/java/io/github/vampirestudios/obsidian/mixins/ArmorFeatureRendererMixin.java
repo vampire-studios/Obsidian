@@ -83,4 +83,5 @@ public abstract class ArmorFeatureRendererMixin extends FeatureRenderer {
 			cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(model, Identifier::new));
 		}
 	}
+
 }

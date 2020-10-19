@@ -27,7 +27,7 @@ public class WallImpl extends WallBlock {
     public Block block;
 
     public WallImpl(Block block) {
-        super(net.minecraft.block.Block.Settings.of(block.information.getMaterial()));
+        super(Settings.of(block.information.getMaterial()));
         this.block = block;
     }
 

@@ -49,7 +49,7 @@ public class CustomDynamicRegistry<T> {
 	}
 
 	public Lifecycle getLifecycle() {
-		return this.registry.method_31138();
+		return this.registry.getLifecycle();
 	}
 
 	public Supplier<T> getDefaultValueSupplier() {

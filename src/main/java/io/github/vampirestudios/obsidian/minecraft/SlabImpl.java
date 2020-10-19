@@ -27,7 +27,7 @@ public class SlabImpl extends SlabBlock {
     public Block block;
 
     public SlabImpl(Block block) {
-        super(net.minecraft.block.Block.Settings.of(block.information.getMaterial()));
+        super(Settings.of(block.information.getMaterial()));
         this.block = block;
     }
 

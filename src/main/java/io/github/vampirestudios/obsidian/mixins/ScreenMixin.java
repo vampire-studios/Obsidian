@@ -1,4 +1,4 @@
-/*
+package io.github.vampirestudios.obsidian.mixins;/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.api.GuiUtils;

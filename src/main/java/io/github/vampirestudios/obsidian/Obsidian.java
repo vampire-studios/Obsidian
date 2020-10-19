@@ -34,7 +34,7 @@ public class Obsidian implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "20w28a"));
+        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "1.16.3"));
 
         /*Registry.register(TATER_REGISTRY, DEFAULT_TATER_ID, DEFAULT_TATER);
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) ->

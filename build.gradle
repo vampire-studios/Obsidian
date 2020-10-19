@@ -16,6 +16,16 @@ repositories {
 	jcenter()
 	maven{ url="https://jitpack.io" }
 	maven{ url="http://server.bbkr.space:8081/artifactory/libs-release/" }
+	maven { url "https://dl.bintray.com/shedaniel/autoconfig1u/" }
+	maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+	maven {
+		url = "https://maven.theillusivec4.top"
+	}
+	maven {
+		name = "AdrianTodt's Maven"
+		url = "https://dl.bintray.com/adriantodt/maven"
+	}
+	maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
 }
 
 minecraft {
@@ -33,6 +43,21 @@ dependencies {
 
 	modImplementation "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"
 	include "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"
+
+	modCompileOnly ("me.shedaniel:RoughlyEnoughItems-api:${project.rei_version}") {
+		exclude group: "net.fabricmc.fabric-api"
+	}
+	modRuntime ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
+		exclude group: "net.fabricmc.fabric-api"
+	}
+
+	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc.fabric-api" }
+
+	modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:${project.fabric_shield_lib_version}"
+	modImplementation "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
+	include "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
+
+	modImplementation "software.bernie.geckolib:fabric-1.16.3-geckolib:3.0.0-alpha.3"
 }
 
 processResources {
