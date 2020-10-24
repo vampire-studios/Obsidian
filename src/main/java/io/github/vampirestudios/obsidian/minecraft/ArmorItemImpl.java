@@ -1,8 +1,11 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
+import io.github.vampirestudios.obsidian.api.ArmorProvider;
 import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
@@ -11,7 +14,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ArmorItemImpl extends ArmorItem {
+public class ArmorItemImpl extends ArmorItem implements ArmorProvider {
 
     public io.github.vampirestudios.obsidian.api.item.ArmorItem item;
 
@@ -32,6 +35,16 @@ public class ArmorItemImpl extends ArmorItem {
                 tooltip.add(tooltipInformation.getTextType());
             }
         }
+    }
+
+    @Override
+    public BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel) {
+        return defaultModel;
+    }
+
+    @Override
+    public String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
+        return item.material.texture;
     }
 
 }

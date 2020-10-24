@@ -1,6 +1,8 @@
 package io.github.vampirestudios.obsidian.api.entity;
 
 import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.model.*;
 import net.minecraft.util.Identifier;
 
@@ -17,6 +19,7 @@ public class Entity {
 
     public EntityComponents components;
 
+    @Environment(EnvType.CLIENT)
     public EntityModel<EntityImpl> getEntityModel() {
         switch (vanilla_entity_type.toString()) {
             case "minecraft:pig":

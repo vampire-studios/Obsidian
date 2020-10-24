@@ -21,10 +21,10 @@
   "entrypoints": {
     "main": [
       "io.github.vampirestudios.obsidian.Obsidian"
-    ]/*,
-    "dynamic-registry-provider": [
-      "io.github.vampirestudios.obsidian.TestDynamicRegistryProvider"
-    ]*/
+    ],
+    "client": [
+      "io.github.vampirestudios.obsidian.client.ClientInit"
+    ]
   },
   "mixins": [
     "obsidian.mixins.json"

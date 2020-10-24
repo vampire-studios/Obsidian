@@ -16,32 +16,16 @@
 
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.ArmorProviderExtensions;
-import io.github.vampirestudios.obsidian.api.ArmorTextureRegistry;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Item.class)
-public class ItemMixin implements ArmorProviderExtensions {
-	@Unique
-	private ArmorTextureRegistry.Provider armorTextureProvider;
-
-	@Override
-	public ArmorTextureRegistry.Provider fabric_getArmorTextureProvider() {
-		return armorTextureProvider;
-	}
-
-	@Override
-	public void fabric_setArmorTextureProvider(ArmorTextureRegistry.Provider provider) {
-		armorTextureProvider = provider;
-	}
-
+public class ItemMixin {
 	@Inject(method = "isUsedOnRelease", at = @At("HEAD"), cancellable = true)
 	public void isUsedOnRelease(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
 		if (itemStack.getItem() instanceof CrossbowItem) {

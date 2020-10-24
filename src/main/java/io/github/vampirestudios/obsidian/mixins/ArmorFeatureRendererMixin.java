@@ -16,6 +16,7 @@
 
 package io.github.vampirestudios.obsidian.mixins;
 
+import io.github.vampirestudios.obsidian.api.ArmorProvider;
 import io.github.vampirestudios.obsidian.api.ArmorTextureRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Map;
 
@@ -75,9 +77,14 @@ public abstract class ArmorFeatureRendererMixin extends FeatureRenderer {
 		this.storedSlot = null;
 	}
 
-	@Inject(method = "getArmorTexture", at = @At("HEAD"), cancellable = true)
-	private void getArmorTexture(ArmorItem armorItem, boolean secondLayer, /* @Nullable */ String suffix, CallbackInfoReturnable<Identifier> cir) {
-		String model = ArmorTextureRegistry.getArmorTexture(storedEntity, storedEntity.getEquippedStack(storedSlot), storedSlot, secondLayer, suffix);
+	@Inject(method = "getArmorTexture", at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+	private void getArmorTexture(ArmorItem armorItem, boolean secondLayer, String suffix, CallbackInfoReturnable<Identifier> cir, String vanillaIdentifier) {
+		String model;
+		if (armorItem instanceof ArmorProvider) {
+			model = ((ArmorProvider)armorItem).getArmorTexture(storedEntity, storedEntity.getEquippedStack(storedSlot), storedSlot, vanillaIdentifier);
+		} else {
+			model = ArmorTextureRegistry.getArmorTexture(storedEntity, storedEntity.getEquippedStack(storedSlot), storedSlot, secondLayer, suffix);
+		}
 
 		if (model != null) {
 			cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(model, Identifier::new));

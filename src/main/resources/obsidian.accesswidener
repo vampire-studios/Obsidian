@@ -23,5 +23,8 @@ accessible field net/minecraft/world/biome/Biome generationSettings Lnet/minecra
 accessible method net/minecraft/util/WorldSavePath <init> (Ljava/lang/String;)V
 extendable method net/minecraft/util/WorldSavePath <init> (Ljava/lang/String;)V
 
+accessible method net/minecraft/resource/ResourceType <init> (Ljava/lang/String;)V
+extendable method net/minecraft/resource/ResourceType <init> (Ljava/lang/String;)V
+
 accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
 accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;

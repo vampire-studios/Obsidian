@@ -76,7 +76,7 @@ public class AddonResourcePack implements ResourcePack {
 		JsonObject object = new JsonObject();
 		if(metadataReader.getKey().equals("pack")) {
 			object.addProperty("description", "Default pack for config packs.\n" + virtualPacks.length + " packs loaded.");
-			object.addProperty("pack_format", 5);
+			object.addProperty("pack_format", 6);
 		}
 		return metadataReader.fromJson(object);
 	}
