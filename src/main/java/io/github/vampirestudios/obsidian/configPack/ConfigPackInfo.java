@@ -1,13 +1,17 @@
 package io.github.vampirestudios.obsidian.configPack;
 
-import io.github.vampirestudios.obsidian.config.AddonInformation;
+import net.minecraft.util.Identifier;
+
+import java.util.List;
 
 public class ConfigPackInfo {
 
-    public AddonInformation information;
-
-    public AddonInformation getInformation() {
-        return information;
-    }
+    public String displayName;
+    public String version;
+    public String description;
+    public Identifier id;
+    public String namespace;
+    public List<String> authors;
+    public int addonVersion;
 
 }

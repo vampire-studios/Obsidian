@@ -12,7 +12,7 @@
     "model": {
       "parent": "item/generated",
       "textures": {
-        "layer0": "block/stone"
+        "layer0": "block/diamond_block"
       }
     },
     "lore": [
@@ -31,8 +31,10 @@
           "translated": {
             "en_us": "This is a translated line"
           },
-          "color": "#ffffff",
-          "formatting": []
+          "color": "#000000",
+          "formatting": [
+            "BOLD"
+          ]
         }
       }
     ]

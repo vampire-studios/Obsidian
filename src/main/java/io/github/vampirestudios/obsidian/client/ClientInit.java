@@ -19,7 +19,7 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ConfigHelper.entities.forEach(entity -> {
+        ConfigHelper.ENTITIES.forEach(entity -> {
             EntityType<?> entityType = Registry.ENTITY_TYPE.get(entity.identifier);
             EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
         });
@@ -27,12 +27,12 @@ public class ClientInit implements ClientModInitializer {
         Artifice.registerAssetsNew(new Identifier(Obsidian.MOD_ID, "idk"), new Processor<ArtificeResourcePack.ClientResourcePackBuilder>() {
             @Override
             public void accept(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder) {
-                ConfigHelper.enchantments.forEach(enchantment -> {
+                ConfigHelper.ENCHANTMENTS.forEach(enchantment -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(enchantment.id.getNamespace(), "en_us"), translationBuilder ->
                                 translationBuilder.entry(String.format("enchantment.%s.%s", enchantment.id.getNamespace(), enchantment.id.getPath()),
                                         enchantment.name));
                 });
-                ConfigHelper.entities.forEach(entity -> {
+                ConfigHelper.ENTITIES.forEach(entity -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(entity.identifier.getNamespace(), "en_us"), translationBuilder ->
                             translationBuilder.entry(String.format("item.%s.%s", entity.identifier.getNamespace(), entity.identifier.getPath() + "_spawn_egg"),
                                     WordUtils.capitalizeFully(entity.identifier.getPath().replace("_", " ") + " Spawn Egg")));
@@ -40,7 +40,7 @@ public class ClientInit implements ClientModInitializer {
                         modelBuilder.parent(new Identifier("item/template_spawn_egg"));
                     });
                 });
-                ConfigHelper.foodItems.forEach(food -> {
+                ConfigHelper.FOODS.forEach(food -> {
                     food.information.name.translated.forEach((languageId, name) -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(food.information.name.id.getNamespace(), languageId), translationBuilder -> {
                             translationBuilder.entry(String.format("item.%s.%s", food.information.name.id.getNamespace(), food.information.name.id.getPath()), name);
@@ -53,7 +53,7 @@ public class ClientInit implements ClientModInitializer {
                         });
                     }
                 });
-                ConfigHelper.weapons.forEach(weapon -> {
+                ConfigHelper.WEAPONS.forEach(weapon -> {
                     weapon.information.name.translated.forEach((languageId, name) -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(weapon.information.name.id.getNamespace(), languageId), translationBuilder -> {
                             translationBuilder.entry(String.format("item.%s.%s", weapon.information.name.id.getNamespace(), weapon.information.name.id.getPath()), name);
@@ -66,7 +66,7 @@ public class ClientInit implements ClientModInitializer {
                         });
                     }
                 });
-                ConfigHelper.tools.forEach(tool -> {
+                ConfigHelper.TOOLS.forEach(tool -> {
                     tool.information.name.translated.forEach((languageId, name) -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(tool.information.name.id.getNamespace(), languageId), translationBuilder -> {
                             translationBuilder.entry(String.format("item.%s.%s", tool.information.name.id.getNamespace(), tool.information.name.id.getPath()), name);
@@ -79,7 +79,7 @@ public class ClientInit implements ClientModInitializer {
                         });
                     }
                 });
-                ConfigHelper.armors.forEach(armor -> {
+                ConfigHelper.ARMORS.forEach(armor -> {
                     armor.information.name.translated.forEach((languageId, name) -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(armor.information.name.id.getNamespace(), languageId), translationBuilder -> {
                             translationBuilder.entry(String.format("item.%s.%s", armor.information.name.id.getNamespace(), armor.information.name.id.getPath()), name);
@@ -92,9 +92,12 @@ public class ClientInit implements ClientModInitializer {
                         });
                     }
                 });
-                ConfigHelper.items.forEach(item -> {
+                ConfigHelper.ITEMS.forEach(item -> {
+                    System.out.println(item.information.name.id);
                     item.information.name.translated.forEach((languageId, name) -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.id.getNamespace(), languageId), translationBuilder -> {
+                            System.out.println(String.format("item.%s.%s", item.information.name.id.getNamespace(), item.information.name.id.getPath()));
+                            System.out.println(name);
                             translationBuilder.entry(String.format("item.%s.%s", item.information.name.id.getNamespace(), item.information.name.id.getPath()), name);
                         });
                     });
@@ -105,9 +108,12 @@ public class ClientInit implements ClientModInitializer {
                         });
                     }
                 });
-                ConfigHelper.blocks.forEach(block -> {
+                ConfigHelper.BLOCKS.forEach(block -> {
+                    System.out.println(block.information.name.id);
                     block.information.name.translated.forEach((languageId, name) -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
+                            System.out.println(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()));
+                            System.out.println(name);
                             translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), name);
                         });
                     });
@@ -220,9 +226,11 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 });
-                ConfigHelper.itemGroups.forEach(itemGroup -> {
+                ConfigHelper.ITEM_GROUPS.forEach(itemGroup -> {
                     itemGroup.name.translated.forEach((languageId, name) -> {
                         clientResourcePackBuilder.addTranslations(new Identifier(itemGroup.name.id.getNamespace(), languageId), translationBuilder -> {
+                            System.out.println(String.format("itemGroup.%s.%s", itemGroup.name.id.getNamespace(), itemGroup.name.id.getPath()));
+                            System.out.println(name);
                             translationBuilder.entry(String.format("itemGroup.%s.%s", itemGroup.name.id.getNamespace(), itemGroup.name.id.getPath()), name);
                         });
                     });

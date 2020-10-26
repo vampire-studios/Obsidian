@@ -1,0 +1,9 @@
+{
+    "displayName": "Tutorial Addon",
+    "version": "0.1.0",
+    "description": "This is a tutorial",
+    "id": "vampire_studios:tutorial_pack",
+    "namespace": "tutorial",
+    "authors": ["Vampire Studios"],
+    "addonVersion": 1
+}

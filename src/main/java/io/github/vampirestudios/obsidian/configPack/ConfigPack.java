@@ -29,12 +29,12 @@ public class ConfigPack implements IAddonPack {
 
     @Override
     public Identifier getIdentifier() {
-        return configPackInfo.information.getId();
+        return configPackInfo.id;
     }
 
     @Override
     public String getDisplayName() {
-        return configPackInfo.information.getDisplayName();
+        return configPackInfo.displayName;
     }
 
     @Override

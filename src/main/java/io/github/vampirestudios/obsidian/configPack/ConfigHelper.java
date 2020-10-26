@@ -18,7 +18,6 @@ import io.github.vampirestudios.obsidian.api.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.api.statusEffects.StatusEffect;
-import io.github.vampirestudios.obsidian.api.template.BlockTemplate;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
 import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
@@ -72,25 +71,23 @@ public class ConfigHelper {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
             .setPrettyPrinting().create();
-    public static final File MATERIALS_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "addon_packs");
+    public static final File MATERIALS_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "obsidian_packs");
     public static final List<IAddonPack> ADDON_PACKS = new ArrayList<>();
-    public static final List<IAddonPack> ENABLED_ADDON_PACKS = new ArrayList<>();
     public static RegistryHelper REGISTRY_HELPER;
+    public static final int PACK_VERSION = 1;
 
-    public static List<io.github.vampirestudios.obsidian.api.item.Item> items = new ArrayList<>();
-    public static List<FoodItem> foodItems = new ArrayList<>();
-    public static List<WeaponItem> weapons = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.item.ToolItem> tools = new ArrayList<>();
-    public static List<Block> blocks = new ArrayList<>();
-    public static final List<Potion> potions = new ArrayList<>();
-    public static final List<Command> commands = new ArrayList<>();
-    public static final List<StatusEffect> statusEffects = new ArrayList<>();
-    public static final List<Enchantment> enchantments = new ArrayList<>();
-    public static final List<io.github.vampirestudios.obsidian.api.ItemGroup> itemGroups = new ArrayList<>();
-    public static final List<Entity> entities = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.item.ArmorItem> armors = new ArrayList<>();
-    public static Map<String, BlockTemplate> BLOCK_TEMPLATES = new HashMap<>();
-    public static Map<String, io.github.vampirestudios.obsidian.api.item.Item> ITEM_TEMPLATES = new HashMap<>();
+    public static List<io.github.vampirestudios.obsidian.api.item.Item> ITEMS = new ArrayList<>();
+    public static List<FoodItem> FOODS = new ArrayList<>();
+    public static List<WeaponItem> WEAPONS = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.item.ToolItem> TOOLS = new ArrayList<>();
+    public static List<Block> BLOCKS = new ArrayList<>();
+    public static final List<Potion> POTIONS = new ArrayList<>();
+    public static final List<Command> COMMANDS = new ArrayList<>();
+    public static final List<StatusEffect> STATUS_EFFECTS = new ArrayList<>();
+    public static final List<Enchantment> ENCHANTMENTS = new ArrayList<>();
+    public static final List<io.github.vampirestudios.obsidian.api.ItemGroup> ITEM_GROUPS = new ArrayList<>();
+    public static final List<Entity> ENTITIES = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.item.ArmorItem> ARMORS = new ArrayList<>();
 
     public static void loadDefault() {
         if (!MATERIALS_DIRECTORY.exists())
@@ -104,10 +101,10 @@ public class ConfigHelper {
                 if (packInfoFile.exists()) {
                     ConfigPackInfo packInfo = GSON.fromJson(new FileReader(packInfoFile), ConfigPackInfo.class);
                     ConfigPack configPack = new ConfigPack(packInfo, file);
-                    if (!ADDON_PACKS.contains(configPack)) {
+                    if (!ADDON_PACKS.contains(configPack) && configPack.getConfigPackInfo().addonVersion == PACK_VERSION) {
                         ADDON_PACKS.add(configPack);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
@@ -121,7 +118,7 @@ public class ConfigHelper {
                     if (!ADDON_PACKS.contains(configPack)) {
                         ADDON_PACKS.add(configPack);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
@@ -131,11 +128,11 @@ public class ConfigHelper {
 
     public static void loadConfig() {
         try {
-            FabricLoader.getInstance().getEntrypoints("obsidian:addon_packs", IAddonPack.class).forEach(supplier -> {
+            FabricLoader.getInstance().getEntrypoints("obsidian:obsidian_packs", IAddonPack.class).forEach(supplier -> {
                 try {
                     ADDON_PACKS.add(supplier);
                     Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s from an entrypoint",
-                            supplier.getConfigPackInfo().getInformation().getId()));
+                            supplier.getConfigPackInfo().id));
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
@@ -156,8 +153,8 @@ public class ConfigHelper {
             for(IAddonPack pack : ADDON_PACKS) {
                 Obsidian.LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
 
-                String modId = pack.getConfigPackInfo().getInformation().namespace;
-                String path = MATERIALS_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().getInformation().namespace;
+                String modId = pack.getConfigPackInfo().namespace;
+                String path = MATERIALS_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().namespace;
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
@@ -222,7 +219,7 @@ public class ConfigHelper {
                         FabricItemGroupBuilder.create(itemGroup.name.id)
                                 .icon(() -> new ItemStack(Registry.ITEM.get(itemGroup.icon)))
                                 .build();
-                        register(itemGroups, "block", itemGroup.name.id.toString(), itemGroup);
+                        register(ITEM_GROUPS, "block", itemGroup.name.id.toString(), itemGroup);
                     } catch (Exception e) {
                         failedRegistering("item group", itemGroup.name.id.toString(), e);
                     }
@@ -246,6 +243,9 @@ public class ConfigHelper {
                         }
                         if (block.information.randomTicks) {
                             blockSettings.ticksRandomly();
+                        }
+                        if (block.information.is_bouncy) {
+                            blockSettings.jumpVelocityMultiplier(block.information.jump_velocity_modifier);
                         }
                         if (block.information.is_bouncy) {
                             blockSettings.jumpVelocityMultiplier(block.information.jump_velocity_modifier);
@@ -331,7 +331,7 @@ public class ConfigHelper {
                                     });
                                 })
                         );
-                        register(blocks, "block", block.information.name.id.toString(), block);
+                        register(BLOCKS, "block", block.information.name.id.toString(), block);
                         if (block.additional_information != null) {
                             if (block.additional_information.slab) {
                                 REGISTRY_HELPER.registerBlock(new SlabImpl(block),
@@ -487,7 +487,7 @@ public class ConfigHelper {
                     try {
                         RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
                                 .maxCount(item.information.max_count)), item.information.name.id);
-                        register(items, "item", item.information.name.id.toString(), item);
+                        register(ITEMS, "item", item.information.name.id.toString(), item);
                     } catch (Exception e) {
                         failedRegistering("item", item.information.name.id.toString(), e);
                     }
@@ -546,7 +546,7 @@ public class ConfigHelper {
                         RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
                                         .group(armor.information.getItemGroup()).maxCount(armor.information.max_count)),
                                 armor.information.name.id);
-                        register(armors, "armor", armor.information.name.id.toString(), armor);
+                        register(ARMORS, "armor", armor.information.name.id.toString(), armor);
                     } catch (Exception e) {
                         failedRegistering("armor", armor.information.name.id.toString(), e);
                     }
@@ -614,7 +614,7 @@ public class ConfigHelper {
                                         tool.information.name.id);
                                 break;
                         }
-                        register(tools, "tool", tool.information.name.id.toString(), tool);
+                        register(TOOLS, "tool", tool.information.name.id.toString(), tool);
                     } catch (Exception e) {
                         failedRegistering("tool", tool.information.name.id.toString(), e);
                     }
@@ -663,7 +663,7 @@ public class ConfigHelper {
                         RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                                 .group(weapon.information.getItemGroup())
                                 .maxCount(weapon.information.max_count)), weapon.information.name.id);
-                        register(weapons, "weapon", weapon.information.name.id.toString(), weapon);
+                        register(WEAPONS, "weapon", weapon.information.name.id.toString(), weapon);
                     } catch (Exception e) {
                         failedRegistering("weapon", weapon.information.name.id.toString(), e);
                     }
@@ -684,7 +684,7 @@ public class ConfigHelper {
                                 .maxCount(foodItem.information.max_count)
                                 .maxDamage(foodItem.information.use_duration)
                                 .food(foodComponent)));
-                        register(foodItems, "food item", foodItem.information.name.id.toString(), foodItem);
+                        register(FOODS, "food item", foodItem.information.name.id.toString(), foodItem);
                     } catch (Exception e) {
                         failedRegistering("food", foodItem.information.name.id.toString(), e);
                     }
@@ -702,7 +702,7 @@ public class ConfigHelper {
                         if (potion == null) continue;
                         Registry.register(Registry.POTION, potion.name,
                                 new net.minecraft.potion.Potion(new StatusEffectInstance(potion.getEffectType(), potion.getEffects().duration * 20, potion.getEffects().amplifier)));
-                        register(potions, "potion", potion.name.toString(), potion);
+                        register(POTIONS, "potion", potion.name.toString(), potion);
                     } catch (Exception e) {
                         failedRegistering("potion", potion.name.toString(), e);
                     }
@@ -723,7 +723,7 @@ public class ConfigHelper {
                             // This command will be registered regardless of the server being dedicated or integrated
                             CommandImpl.register(command, dispatcher);
                         });
-                        register(commands, "command", command.name, command);
+                        register(COMMANDS, "command", command.name, command);
                     } catch (Exception e) {
                         failedRegistering("command", command.name, e);
                     }
@@ -740,7 +740,7 @@ public class ConfigHelper {
                     try {
                         if(enchantment == null) continue;
                         Registry.register(Registry.ENCHANTMENT, enchantment.id, new EnchantmentImpl(enchantment));
-                        register(enchantments, "enchantment", enchantment.name, enchantment);
+                        register(ENCHANTMENTS, "enchantment", enchantment.name, enchantment);
                     } catch (Exception e) {
                         failedRegistering("enchantment", enchantment.name, e);
                     }
@@ -758,7 +758,7 @@ public class ConfigHelper {
                         if(statusEffect == null) continue;
                         String color1 = statusEffect.color.replace("#", "").replace("0x", "");
                         Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect.getStatusEffectType(), Integer.parseInt(color1, 16)));
-                        register(statusEffects, "status effect", statusEffect.name.translated.get("en_us"), statusEffect);
+                        register(STATUS_EFFECTS, "status effect", statusEffect.name.translated.get("en_us"), statusEffect);
                     } catch (Exception e) {
                         failedRegistering("status effect", statusEffect.name.translated.get("en_us"), e);
                     }
@@ -786,7 +786,7 @@ public class ConfigHelper {
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
                         FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.components.health.max));
-                        register(entities, "entity", entity.identifier.toString(), entity);
+                        register(ENTITIES, "entity", entity.identifier.toString(), entity);
                     } catch (Exception e) {
                         failedRegistering("entity", entity.identifier.toString(), e);
                     }
@@ -819,10 +819,6 @@ public class ConfigHelper {
 
     private static <T> void register(List<T> list, String type, String name, T idk) {
         list.add(idk);
-        Obsidian.LOGGER.info("[Obsidian] Registered a {} {}.", type, name);
-    }
-
-    private static void register(String type, String name) {
         Obsidian.LOGGER.info("[Obsidian] Registered a {} {}.", type, name);
     }
 

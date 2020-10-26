@@ -11,7 +11,7 @@
         "item_group": "minecraft:combat",
         "max_count": 1
     },
-    "armor_slot": "head",
+    "armorSlot": "head",
     "material": {
         "name": "tutorial:bucket",
         "durability": 3000,
@@ -20,7 +20,8 @@
         "sound_event": "minecraft:item.armor.equip_diamond",
         "toughness": 10.0,
         "knockback_resistance": 30.0,
-        "repair_material": "minecraft:bucket"
+        "repair_material": "minecraft:bucket",
+        "texture": "tutorial:textures/models/armor/bucket.png"
     },
     "display": {
         "model": {

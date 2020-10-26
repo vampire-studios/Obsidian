@@ -113,7 +113,7 @@ public class ConfigHelperClient {
                     if (!ADDON_PACKS.contains(configPack)) {
                         ADDON_PACKS.add(configPack);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
@@ -127,7 +127,7 @@ public class ConfigHelperClient {
                     if (!ADDON_PACKS.contains(configPack)) {
                         ADDON_PACKS.add(configPack);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().getInformation().getId()));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
@@ -141,7 +141,7 @@ public class ConfigHelperClient {
                 try {
                     ADDON_PACKS.add(supplier);
                     Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s from an entrypoint",
-                            supplier.getConfigPackInfo().getInformation().getId()));
+                            supplier.getConfigPackInfo().id));
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
@@ -162,8 +162,8 @@ public class ConfigHelperClient {
             for(IAddonPack pack : ADDON_PACKS) {
                 Obsidian.LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
 
-                String modId = pack.getConfigPackInfo().getInformation().namespace;
-                String path = MATERIALS_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().getInformation().namespace;
+                String modId = pack.getConfigPackInfo().namespace;
+                String path = MATERIALS_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().namespace;
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
