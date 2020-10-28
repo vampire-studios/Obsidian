@@ -23,8 +23,6 @@ public class Obsidian implements ModInitializer {
 
     public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "item_groups")), Lifecycle.stable());
 
-//    public static final DataPackModdingManager MODDING_MANAGER = new DataPackModdingManager();
-
     @Override
     public void onInitialize() {
         LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "1.16.3"));
