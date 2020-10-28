@@ -20,13 +20,17 @@ import io.github.vampirestudios.obsidian.api.potion.Potion;
 import io.github.vampirestudios.obsidian.api.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
+import io.github.vampirestudios.vampirelib.blocks.LeavesBaseBlock;
 import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ChainBlock;
+import net.minecraft.block.LanternBlock;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -67,7 +71,7 @@ import java.util.zip.ZipFile;
 
 public class ConfigHelper {
 
-    public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Hidden_Gems"));
+    public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
             .setPrettyPrinting().create();
@@ -107,7 +111,7 @@ public class ConfigHelper {
                     Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
                 }
             } catch (Exception e) {
-                Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
+                Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack!", e);
             }
         } else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".zip")) {
             try (ZipFile zipFile = new ZipFile(file)) {
@@ -216,9 +220,10 @@ public class ConfigHelper {
                     io.github.vampirestudios.obsidian.api.ItemGroup itemGroup = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.ItemGroup.class);
                     try {
                         if(itemGroup == null) continue;
-                        FabricItemGroupBuilder.create(itemGroup.name.id)
+                        ItemGroup itemGroup1 = FabricItemGroupBuilder.create(itemGroup.name.id)
                                 .icon(() -> new ItemStack(Registry.ITEM.get(itemGroup.icon)))
                                 .build();
+                        Registry.register(Obsidian.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup1);
                         register(ITEM_GROUPS, "block", itemGroup.name.id.toString(), itemGroup);
                     } catch (Exception e) {
                         failedRegistering("item group", itemGroup.name.id.toString(), e);
@@ -244,8 +249,8 @@ public class ConfigHelper {
                         if (block.information.randomTicks) {
                             blockSettings.ticksRandomly();
                         }
-                        if (block.information.is_bouncy) {
-                            blockSettings.jumpVelocityMultiplier(block.information.jump_velocity_modifier);
+                        if (block.information.translucent) {
+                            blockSettings.nonOpaque();
                         }
                         if (block.information.is_bouncy) {
                             blockSettings.jumpVelocityMultiplier(block.information.jump_velocity_modifier);
@@ -253,15 +258,23 @@ public class ConfigHelper {
                         if (block.information.is_light_block) {
                             blockSettings.lightLevel(value -> block.information.luminance);
                         }
-                        net.minecraft.block.Block blockImpl = null;
+                        net.minecraft.block.Block blockImpl;
                         if(block.additional_information != null) {
                             if(block.additional_information.rotatable) {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingBlockImpl(block, blockSettings), block.information.name.id.getPath());
-                            }
-                            if(block.additional_information.pillar) {
+                            } else if(block.additional_information.pillar) {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new PillarBlockImpl(block, blockSettings), block.information.name.id.getPath());
-                            }
-                            if(!block.additional_information.pillar && !block.additional_information.rotatable) {
+                            } else if(block.additional_information.path) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new PathBlockImpl(blockSettings, block), block.information.name.id.getPath());
+                            } else if(block.additional_information.lantern) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new LanternBlock(blockSettings), block.information.name.id.getPath());
+                            } else if(block.additional_information.barrel) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BarrelBlock(blockSettings), block.information.name.id.getPath());
+                            } else if(block.additional_information.leaves) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new LeavesBaseBlock(), block.information.name.id.getPath());
+                            } else if(block.additional_information.chains) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new ChainBlock(blockSettings), block.information.name.id.getPath());
+                            } else {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
                             }
                         } else {

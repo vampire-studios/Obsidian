@@ -15,11 +15,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class FileResourcePackProvider implements ResourcePackProvider {
-    private static final FileFilter POSSIBLE_PACK = (file) -> {
-        boolean bl = file.isFile() && file.getName().endsWith(".zip");
-        boolean bl2 = file.isDirectory() && (new File(file, "addon.info.pack")).isFile();
-        return bl || bl2;
-    };
+    private static final FileFilter POSSIBLE_PACK = (file) -> file.isDirectory() && (new File(file, "addon.info.pack")).isFile();
     private final File packsFolder;
     private final ResourcePackSource field_25345;
 

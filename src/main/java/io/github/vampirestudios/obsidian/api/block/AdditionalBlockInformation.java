@@ -11,7 +11,14 @@ public class AdditionalBlockInformation {
     public boolean pressurePlate = false;
     public boolean door = false;
     public boolean trapdoor = false;
+
     public boolean rotatable = false;
     public boolean pillar = false;
+    public boolean path = false;
+    public boolean lantern = false;
+    public boolean barrel = false;
+    public boolean leaves = false;
+    public boolean plant = false;
+    public boolean chains = false;
 
 }

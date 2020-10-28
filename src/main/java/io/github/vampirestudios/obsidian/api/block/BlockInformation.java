@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.block;
 
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.NameInformation;
 import net.minecraft.block.Material;
 import net.minecraft.item.ItemGroup;
@@ -19,9 +20,6 @@ public class BlockInformation {
     public float slipperiness = 0.0F;
     public Identifier drop = new Identifier("minecraft:stone");
     public boolean dynamicBounds = false;
-    public Integer[] boundingBoxes = new Integer[] {
-            0, 0, 0, 16, 16, 16
-    };
     public String action = "";
     public boolean is_bouncy = false;
     public float jump_velocity_modifier;
@@ -32,7 +30,8 @@ public class BlockInformation {
     public int luminance = 1;
     public boolean is_emissive = false;
     public boolean fireproof = false;
-    public float light_absorption_value = 1.0F;
+    public float light_absorption_value = 0.0F;
+    public boolean translucent = false;
 
     public BlockSoundGroup getBlockSoundGroup() {
         switch (sound_group) {
@@ -175,29 +174,7 @@ public class BlockInformation {
     }
 
     public ItemGroup getItemGroup() {
-        switch (item_group) {
-            case "minecraft:building_blocks":
-                return ItemGroup.BUILDING_BLOCKS;
-            case "minecraft:decorations":
-                return ItemGroup.DECORATIONS;
-            case "minecraft:redstone":
-                return ItemGroup.REDSTONE;
-            case "minecraft:transportation":
-                return ItemGroup.TRANSPORTATION;
-            case "minecraft:misc":
-                return ItemGroup.MISC;
-            case "minecraft:food":
-                return ItemGroup.FOOD;
-            case "minecraft:tools":
-                return ItemGroup.TOOLS;
-            case "minecraft:combat":
-                return ItemGroup.COMBAT;
-            case "minecraft:brewing":
-                return ItemGroup.BREWING;
-            case "minecraft:search":
-            default:
-                return ItemGroup.SEARCH;
-        }
+        return Obsidian.ITEM_GROUP_REGISTRY.get(new Identifier(item_group));
     }
 
 }

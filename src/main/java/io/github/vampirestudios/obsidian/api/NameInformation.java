@@ -23,13 +23,13 @@ public class NameInformation {
         if (!text.isEmpty()) {
             switch (type) {
                 case "literal":
-                default:
                     LiteralText literalText = new LiteralText(text);
                     for(String formatting1 : formatting) {
                         literalText = (LiteralText) literalText.formatted(Formatting.byName(formatting1));
                     }
                     literalText = (LiteralText) literalText.setStyle(literalText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
                     return literalText;
+                default:
                 case "translable":
                     TranslatableText translatableText = new TranslatableText(text);
                     for(String formatting1 : formatting) {
@@ -41,9 +41,9 @@ public class NameInformation {
         } else {
             TranslatableText translatableText = new TranslatableText(String.format(block ? "block.%s.%s" : "item.%s.%s", id.getNamespace(), id.getPath()));
             for(String formatting1 : formatting) {
-                translatableText.formatted(Formatting.byName(formatting1));
+                translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
             }
-            translatableText.setStyle(translatableText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
+            translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
             return translatableText;
         }
     }
