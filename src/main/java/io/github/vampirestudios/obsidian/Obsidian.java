@@ -10,6 +10,7 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import software.bernie.geckolib.GeckoLib;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -27,6 +28,7 @@ public class Obsidian implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "1.16.3"));
+        GeckoLib.initialize();
         Registry.register(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
         Registry.register(ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
         Registry.register(ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);

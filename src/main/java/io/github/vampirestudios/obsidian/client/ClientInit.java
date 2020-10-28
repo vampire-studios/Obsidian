@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.client;
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.api.TooltipInformation;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.minecraft.BedrockEntityImplRenderer;
 import io.github.vampirestudios.obsidian.minecraft.EntityImplRenderer;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
@@ -23,7 +24,11 @@ public class ClientInit implements ClientModInitializer {
     public void onInitializeClient() {
         ConfigHelper.ENTITIES.forEach(entity -> {
             EntityType<?> entityType = Registry.ENTITY_TYPE.get(entity.identifier);
-            EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
+            if (entity.custom_model) {
+                EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new BedrockEntityImplRenderer(entityRenderDispatcher, entity));
+            } else {
+                EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
+            }
         });
         ConfigHelper.BLOCKS.forEach(block -> {
             if (block.information.translucent) {
