@@ -20,5 +20,6 @@ public class AdditionalBlockInformation {
     public boolean leaves = false;
     public boolean plant = false;
     public boolean chains = false;
+    public boolean cake_like = false;
 
 }

@@ -274,6 +274,8 @@ public class ConfigHelper {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new LeavesBaseBlock(), block.information.name.id.getPath());
                             } else if(block.additional_information.chains) {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new ChainBlock(blockSettings), block.information.name.id.getPath());
+                            } else if(block.additional_information.cake_like) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new CakeBlockImpl(block), block.information.name.id.getPath());
                             } else {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
                             }
