@@ -8,4 +8,6 @@ public class CustomEntityModel {
     public Identifier modelLocation;
     public Identifier textureLocation;
 
+    public String[] animationNames;
+
 }
