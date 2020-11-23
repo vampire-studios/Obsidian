@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
-import io.github.vampirestudios.obsidian.api.item.Item;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;

@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
-import io.github.vampirestudios.obsidian.api.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FenceGateBlock;

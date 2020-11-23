@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.FabricCrossbowHooks;
+import io.github.vampirestudios.obsidian.api.obsidian.FabricCrossbowHooks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ArrowItem;

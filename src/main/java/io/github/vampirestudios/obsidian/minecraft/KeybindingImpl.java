@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.Keybinding;
+import io.github.vampirestudios.obsidian.api.obsidian.Keybinding;
 import net.minecraft.client.options.KeyBinding;
 
 public class KeybindingImpl extends KeyBinding {

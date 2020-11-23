@@ -1,6 +1,7 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.model.AnimatedGeoModel;
@@ -28,3 +29,4 @@ public class GeckoEntityModel<T extends IAnimatable> extends AnimatedGeoModel<T>
         return entity.entity_model.textureLocation;
     }
 }
+*/

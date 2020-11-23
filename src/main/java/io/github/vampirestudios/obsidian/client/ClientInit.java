@@ -1,17 +1,13 @@
 package io.github.vampirestudios.obsidian.client;
 
 import com.swordglowsblue.artifice.api.Artifice;
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
-import io.github.vampirestudios.obsidian.minecraft.BedrockEntityImplRenderer;
-import io.github.vampirestudios.obsidian.minecraft.EntityImplRenderer;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.entity.EntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.text.WordUtils;
@@ -22,14 +18,14 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ConfigHelper.ENTITIES.forEach(entity -> {
+        /*ConfigHelper.ENTITIES.forEach(entity -> {
             EntityType<?> entityType = Registry.ENTITY_TYPE.get(entity.identifier);
             if (entity.custom_model) {
                 EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new BedrockEntityImplRenderer(entityRenderDispatcher, entity));
             } else {
                 EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
             }
-        });
+        });*/
         ConfigHelper.BLOCKS.forEach(block -> {
             if (block.information.translucent) {
                 Block block1 = Registry.BLOCK.get(block.information.name.id);
@@ -38,7 +34,7 @@ public class ClientInit implements ClientModInitializer {
         });
 
         ConfigHelper.ITEM_GROUPS.forEach(itemGroup -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_item_assets", itemGroup.name.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_item_assets", itemGroup.name.id.getPath()), clientResourcePackBuilder -> {
                 itemGroup.name.translated.forEach((languageId, name) -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(itemGroup.name.id.getNamespace(), languageId), translationBuilder -> {
                         translationBuilder.entry(String.format("itemGroup.%s.%s", itemGroup.name.id.getNamespace(), itemGroup.name.id.getPath()), name);
@@ -52,7 +48,7 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.BLOCKS.forEach(block -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_%s_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_%s_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                 block.information.name.translated.forEach((languageId, name) -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), name);
@@ -131,7 +127,7 @@ public class ClientInit implements ClientModInitializer {
             });
             if (block.additional_information != null) {
                 if (block.additional_information.stairs) {
-                    Artifice.registerAssetsNew(String.format("obsidian:%s_%s_stairs_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                    Artifice.registerAssetPack(String.format("obsidian:%s_%s_stairs_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                         block.information.name.translated.forEach((languageId, name) -> {
                             clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                 translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_stairs"),
@@ -146,7 +142,7 @@ public class ClientInit implements ClientModInitializer {
                     });
                 }
                 if (block.additional_information.fence) {
-                    Artifice.registerAssetsNew(String.format("obsidian:%s_%s_fence_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                    Artifice.registerAssetPack(String.format("obsidian:%s_%s_fence_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                         block.information.name.translated.forEach((languageId, name) -> {
                             clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                 translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence"),
@@ -161,7 +157,7 @@ public class ClientInit implements ClientModInitializer {
                     });
                 }
                 if (block.additional_information.fenceGate) {
-                    Artifice.registerAssetsNew(String.format("obsidian:%s_%s_fence_gate_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                    Artifice.registerAssetPack(String.format("obsidian:%s_%s_fence_gate_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                         block.information.name.translated.forEach((languageId, name) -> {
                             clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                 translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence_gate"),
@@ -176,7 +172,7 @@ public class ClientInit implements ClientModInitializer {
                     });
                 }
                 if (block.additional_information.walls) {
-                    Artifice.registerAssetsNew(String.format("obsidian:%s_%s_wall_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                    Artifice.registerAssetPack(String.format("obsidian:%s_%s_wall_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                         block.information.name.translated.forEach((languageId, name) -> {
                             clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                 translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_wall"),
@@ -193,7 +189,7 @@ public class ClientInit implements ClientModInitializer {
             }
         });
         ConfigHelper.ITEMS.forEach(item -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_item_assets", item.information.name.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_item_assets", item.information.name.id.getPath()), clientResourcePackBuilder -> {
                 item.information.name.translated.forEach((languageId, name) -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.id.getNamespace(), languageId), translationBuilder -> {
                         translationBuilder.entry(String.format("item.%s.%s", item.information.name.id.getNamespace(), item.information.name.id.getPath()), name);
@@ -213,7 +209,7 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.ARMORS.forEach(armor -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_armor_assets", armor.information.name.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_armor_assets", armor.information.name.id.getPath()), clientResourcePackBuilder -> {
                 armor.information.name.translated.forEach((languageId, name) -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(armor.information.name.id.getNamespace(), languageId), translationBuilder -> {
                         translationBuilder.entry(String.format("item.%s.%s", armor.information.name.id.getNamespace(), armor.information.name.id.getPath()), name);
@@ -233,7 +229,7 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.WEAPONS.forEach(weapon -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_weapon_assets", weapon.information.name.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_weapon_assets", weapon.information.name.id.getPath()), clientResourcePackBuilder -> {
                 weapon.information.name.translated.forEach((languageId, name) -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(weapon.information.name.id.getNamespace(), languageId), translationBuilder -> {
                         translationBuilder.entry(String.format("item.%s.%s", weapon.information.name.id.getNamespace(), weapon.information.name.id.getPath()), name);
@@ -253,7 +249,7 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.TOOLS.forEach(tool -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_tool_assets", tool.information.name.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_tool_assets", tool.information.name.id.getPath()), clientResourcePackBuilder -> {
                 tool.information.name.translated.forEach((languageId, name) -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(tool.information.name.id.getNamespace(), languageId), translationBuilder -> {
                         translationBuilder.entry(String.format("item.%s.%s", tool.information.name.id.getNamespace(), tool.information.name.id.getPath()), name);
@@ -273,7 +269,7 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.FOODS.forEach(foodItem -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_food_assets", foodItem.information.name.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_food_assets", foodItem.information.name.id.getPath()), clientResourcePackBuilder -> {
                 foodItem.information.name.translated.forEach((languageId, name) -> {
                     clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.id.getNamespace(), languageId), translationBuilder -> {
                         translationBuilder.entry(String.format("item.%s.%s", foodItem.information.name.id.getNamespace(), foodItem.information.name.id.getPath()), name);
@@ -293,7 +289,7 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.ENCHANTMENTS.forEach(enchantment -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_enchantment_assets", enchantment.id.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_enchantment_assets", enchantment.id.getPath()), clientResourcePackBuilder -> {
                 clientResourcePackBuilder.addTranslations(new Identifier(enchantment.id.getNamespace(), "en_us"), translationBuilder ->
                         translationBuilder.entry(String.format("enchantment.%s.%s", enchantment.id.getNamespace(), enchantment.id.getPath()),
                                 enchantment.name));
@@ -305,7 +301,7 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.ENTITIES.forEach(entity -> {
-            Artifice.registerAssetsNew(String.format("obsidian:%s_entity_assets", entity.identifier.getPath()), clientResourcePackBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_entity_assets", entity.identifier.getPath()), clientResourcePackBuilder -> {
                 clientResourcePackBuilder.addTranslations(new Identifier(entity.identifier.getNamespace(), "en_us"), translationBuilder ->
                         translationBuilder.entry(String.format("item.%s.%s", entity.identifier.getNamespace(), entity.identifier.getPath() + "_spawn_egg"),
                                 WordUtils.capitalizeFully(entity.identifier.getPath().replace("_", " ") + " Spawn Egg")));

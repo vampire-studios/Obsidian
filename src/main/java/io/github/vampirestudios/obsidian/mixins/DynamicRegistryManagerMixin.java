@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.mixins;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.vampirestudios.obsidian.api.CustomDynamicRegistry;
-import io.github.vampirestudios.obsidian.api.DynamicRegistryProvider;
+import io.github.vampirestudios.obsidian.api.obsidian.CustomDynamicRegistry;
+import io.github.vampirestudios.obsidian.api.obsidian.DynamicRegistryProvider;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.DynamicRegistryManager;

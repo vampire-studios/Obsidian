@@ -10,8 +10,8 @@ public class AddonResourcePackCreator implements ResourcePackProvider {
 
    @Override
    public void register(Consumer<ResourcePackProfile> consumer, ResourcePackProfile.Factory factory) {
-      AddonResourcePack addonResourcePack = new AddonResourcePack();
-      consumer.accept(ResourcePackProfile.of(addonResourcePack.getName(), true, () -> addonResourcePack, factory, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.method_29486("pack.source.obsidian")));
+      ObsidianAddonResourcePack obsidianAddonResourcePack = new ObsidianAddonResourcePack();
+      consumer.accept(ResourcePackProfile.of(obsidianAddonResourcePack.getName(), true, () -> obsidianAddonResourcePack, factory, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.nameAndSource("pack.source.obsidian")));
    }
 
 }

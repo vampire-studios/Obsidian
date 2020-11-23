@@ -1,15 +1,15 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.enchantments.AttackDamage;
-import io.github.vampirestudios.obsidian.api.enchantments.ProtectionAmount;
+import io.github.vampirestudios.obsidian.api.obsidian.enchantments.AttackDamage;
+import io.github.vampirestudios.obsidian.api.obsidian.enchantments.ProtectionAmount;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.damage.DamageSource;
 
 public class EnchantmentImpl extends Enchantment {
-    private io.github.vampirestudios.obsidian.api.enchantments.Enchantment enchantment;
+    private io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment enchantment;
 
-    public EnchantmentImpl(io.github.vampirestudios.obsidian.api.enchantments.Enchantment enchantment) {
+    public EnchantmentImpl(io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment enchantment) {
         super(enchantment.getRarity(), enchantment.getEnchantmentTarget(), enchantment.getEquipmentSlots());
         this.enchantment = enchantment;
     }

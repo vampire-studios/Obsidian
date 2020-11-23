@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.vampirelib.blocks.CakeBaseBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -26,9 +26,9 @@ import static net.minecraft.block.TntBlock.primeTnt;
 
 public class CakeBlockImpl extends CakeBaseBlock {
 
-    public io.github.vampirestudios.obsidian.api.block.Block block;
+    public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-    public CakeBlockImpl(io.github.vampirestudios.obsidian.api.block.Block block) {
+    public CakeBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
         super(block.information.cake_slices);
         this.block = block;
     }

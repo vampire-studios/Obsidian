@@ -2,8 +2,8 @@ package io.github.vampirestudios.obsidian.minecraft;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import io.github.vampirestudios.obsidian.api.command.Argument;
-import io.github.vampirestudios.obsidian.api.command.Command;
+import io.github.vampirestudios.obsidian.api.obsidian.command.Argument;
+import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;

@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.FabricBowHooks;
+import io.github.vampirestudios.obsidian.api.obsidian.FabricBowHooks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;

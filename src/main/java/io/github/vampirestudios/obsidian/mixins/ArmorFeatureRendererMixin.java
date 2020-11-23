@@ -16,8 +16,8 @@
 
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.ArmorProvider;
-import io.github.vampirestudios.obsidian.api.ArmorTextureRegistry;
+import io.github.vampirestudios.obsidian.api.obsidian.ArmorProvider;
+import io.github.vampirestudios.obsidian.api.obsidian.ArmorTextureRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;

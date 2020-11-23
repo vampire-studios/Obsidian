@@ -41,23 +41,27 @@ dependencies {
     modImplementation ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
     include ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
 
-    modImplementation "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"
-    include "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"
+    /*modImplementation "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"
+    include "com.github.vampire-studios:VampireLib-Fabric:${project.vampirelib_version}"*/
+    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:2.2.0+build.3-20w46a") {
+        exclude group: "net.fabricmc.fabric-api"
+        exclude group: "io.github.cottonmc"
+    }
 
-    modCompileOnly ("me.shedaniel:RoughlyEnoughItems-api:${project.rei_version}") {
+    /*modCompileOnly ("me.shedaniel:RoughlyEnoughItems-api:${project.rei_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
     modRuntime ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
         exclude group: "net.fabricmc.fabric-api"
-    }
+    }*/
 
-    modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc.fabric-api" }
+//    modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc.fabric-api" }
 
-    modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:${project.fabric_shield_lib_version}"
-    modImplementation "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
-    include "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
+//    modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:${project.fabric_shield_lib_version}"
+//    modImplementation "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
+//    include "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
 
-    modCompile "software.bernie.geckolib:fabric-1.16.3-geckolib:3.0.0-beta.2:dev"
+//    modCompile "software.bernie.geckolib:fabric-1.16.3-geckolib:3.0.0-beta.2:dev"
 }
 
 processResources {

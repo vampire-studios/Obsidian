@@ -6,9 +6,9 @@ import net.minecraft.particle.DefaultParticleType;
 
 public class ParticleImpl extends SpriteBillboardParticle {
 
-    private io.github.vampirestudios.obsidian.api.particle.Particle particle;
+    private io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle;
 
-    public ParticleImpl(io.github.vampirestudios.obsidian.api.particle.Particle particle, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+    public ParticleImpl(io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         super(world, x, y - 0.125D, z, velocityX, velocityY, velocityZ);
         this.particle = particle;
         this.collidesWithWorld = particle.collides_with_world;
@@ -27,9 +27,9 @@ public class ParticleImpl extends SpriteBillboardParticle {
 
     public static class Factory implements ParticleFactory<DefaultParticleType> {
         private final SpriteProvider spriteProvider;
-        private final io.github.vampirestudios.obsidian.api.particle.Particle particle;
+        private final io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle;
 
-        public Factory(io.github.vampirestudios.obsidian.api.particle.Particle particle, SpriteProvider spriteProvider) {
+        public Factory(io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle, SpriteProvider spriteProvider) {
             this.particle = particle;
             this.spriteProvider = spriteProvider;
         }

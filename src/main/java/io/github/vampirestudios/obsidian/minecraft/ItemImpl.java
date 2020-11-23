@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,9 +11,9 @@ import java.util.List;
 
 public class ItemImpl extends Item {
 
-    public io.github.vampirestudios.obsidian.api.item.Item item;
+    public io.github.vampirestudios.obsidian.api.obsidian.item.Item item;
 
-    public ItemImpl(io.github.vampirestudios.obsidian.api.item.Item item, Settings settings) {
+    public ItemImpl(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Settings settings) {
         super(settings);
         this.item = item;
     }

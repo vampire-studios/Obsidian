@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.ArmorProvider;
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.ArmorProvider;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
@@ -16,9 +16,9 @@ import java.util.List;
 
 public class ArmorItemImpl extends ArmorItem implements ArmorProvider {
 
-    public io.github.vampirestudios.obsidian.api.item.ArmorItem item;
+    public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
 
-    public ArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.item.ArmorItem item, Settings settings) {
+    public ArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Settings settings) {
         super(material, EquipmentSlot.byName(item.armorSlot), settings);
         this.item = item;
     }

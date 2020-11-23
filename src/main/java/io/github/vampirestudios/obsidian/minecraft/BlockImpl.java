@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -26,17 +26,17 @@ import static net.minecraft.block.TntBlock.primeTnt;
 
 public class BlockImpl extends Block {
 
-    public io.github.vampirestudios.obsidian.api.block.Block block;
+    public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-    public BlockImpl(io.github.vampirestudios.obsidian.api.block.Block block, Settings settings) {
+    public BlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Settings settings) {
         super(settings);
         this.block = block;
     }
 
-    @Override
+    /*@Override
     public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
         return block.information.light_absorption_value;
-    }
+    }*/
 
     @Override
     public ActionResult onUse(BlockState blockState_1, World world_1, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
@@ -58,8 +58,9 @@ public class BlockImpl extends Block {
             }
         }
         if (!world_1.isClient) {
-            if (Objects.requireNonNull(world_1.getServer()).getCommandFunctionManager().getFunction(block.functions.on_use).isPresent()) {
-                Objects.requireNonNull(world_1.getServer()).getCommandFunctionManager().execute(world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).get(), world_1.getServer().getCommandSource());
+            if (world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).isPresent()) {
+                world_1.getServer().getCommandFunctionManager().execute(world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).get(), world_1.getServer().getCommandSource());
+                return ActionResult.SUCCESS;
             }
         }
         return ActionResult.FAIL;
@@ -81,9 +82,6 @@ public class BlockImpl extends Block {
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        /*if (Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.random_display_tick).isPresent()) {
-            Objects.requireNonNull(world.getServer()).getCommandFunctionManager().execute(world.getServer().getCommandFunctionManager().getFunction(block.functions.random_display_tick).get(), world.getServer().getCommandSource());
-        }*/
         if (!world.isClient) {
             if (Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.random_display_tick).isPresent()) {
                 Objects.requireNonNull(world.getServer()).getCommandFunctionManager().execute(world.getServer().getCommandFunctionManager().getFunction(block.functions.random_display_tick).get(), world.getServer().getCommandSource());

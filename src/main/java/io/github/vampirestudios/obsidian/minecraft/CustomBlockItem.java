@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;

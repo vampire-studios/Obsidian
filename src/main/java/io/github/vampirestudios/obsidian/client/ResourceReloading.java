@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.block.Block;
-import io.github.vampirestudios.obsidian.api.item.Item;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloadListener;

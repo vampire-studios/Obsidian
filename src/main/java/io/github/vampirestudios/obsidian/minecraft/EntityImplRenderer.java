@@ -1,6 +1,7 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
@@ -18,3 +19,4 @@ public class EntityImplRenderer extends MobEntityRenderer<EntityImpl, EntityMode
         return this.entity.getEntityTexture();
     }
 }
+*/

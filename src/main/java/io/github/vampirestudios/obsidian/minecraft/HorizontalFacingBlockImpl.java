@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -27,9 +27,9 @@ import static net.minecraft.block.TntBlock.primeTnt;
 
 public class HorizontalFacingBlockImpl extends HorizontalFacingBlock {
 
-    public io.github.vampirestudios.obsidian.api.block.Block block;
+    public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-    public HorizontalFacingBlockImpl(io.github.vampirestudios.obsidian.api.block.Block block, Settings settings) {
+    public HorizontalFacingBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Settings settings) {
         super(settings);
         this.block = block;
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));

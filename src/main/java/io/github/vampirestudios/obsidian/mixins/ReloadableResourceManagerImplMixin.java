@@ -1,7 +1,8 @@
 package io.github.vampirestudios.obsidian.mixins;
 
 import com.mojang.datafixers.util.Unit;
-import io.github.vampirestudios.obsidian.client.resource.AddonResourcePack;
+import io.github.vampirestudios.obsidian.client.resource.BedrockAddonResourcePack;
+import io.github.vampirestudios.obsidian.client.resource.ObsidianAddonResourcePack;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceReloadMonitor;
@@ -19,8 +20,9 @@ import java.util.concurrent.Executor;
 public abstract class ReloadableResourceManagerImplMixin {
 
     @Inject (method = "beginMonitoredReload", at = @At (value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    private void registerARRPs(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReloadMonitor> cir) {
-        this.addPack(new AddonResourcePack());
+    private void registerAdditionalPacks(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReloadMonitor> cir) {
+        this.addPack(new ObsidianAddonResourcePack());
+        this.addPack(new BedrockAddonResourcePack());
     }
 
     @Shadow

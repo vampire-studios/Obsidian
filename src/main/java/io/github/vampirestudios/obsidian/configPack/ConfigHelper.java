@@ -7,17 +7,16 @@ import com.google.gson.JsonObject;
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.PlayerJoinCallback;
-import io.github.vampirestudios.obsidian.api.IAddonPack;
-import io.github.vampirestudios.obsidian.api.block.Block;
-import io.github.vampirestudios.obsidian.api.command.Command;
-import io.github.vampirestudios.obsidian.api.currency.Currency;
-import io.github.vampirestudios.obsidian.api.enchantments.Enchantment;
-import io.github.vampirestudios.obsidian.api.entity.Entity;
-import io.github.vampirestudios.obsidian.api.item.FoodItem;
-import io.github.vampirestudios.obsidian.api.item.WeaponItem;
-import io.github.vampirestudios.obsidian.api.potion.Potion;
-import io.github.vampirestudios.obsidian.api.statusEffects.StatusEffect;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
+import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
+import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
+import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
+import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
+import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
 import io.github.vampirestudios.vampirelib.blocks.LeavesBaseBlock;
@@ -37,8 +36,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.*;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.state.property.Property;
 import net.minecraft.structure.rule.BlockMatchRuleTest;
@@ -47,7 +44,6 @@ import net.minecraft.structure.rule.RuleTest;
 import net.minecraft.structure.rule.TagMatchRuleTest;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.Tag;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -75,27 +71,27 @@ public class ConfigHelper {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
             .setPrettyPrinting().create();
-    public static final File MATERIALS_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "obsidian_packs");
-    public static final List<IAddonPack> ADDON_PACKS = new ArrayList<>();
+    public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "obsidian_addons");
+    public static final List<IAddonPack> OBSIDIAN_ADDONS = new ArrayList<>();
     public static RegistryHelper REGISTRY_HELPER;
     public static final int PACK_VERSION = 1;
 
-    public static List<io.github.vampirestudios.obsidian.api.item.Item> ITEMS = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.Item> ITEMS = new ArrayList<>();
     public static List<FoodItem> FOODS = new ArrayList<>();
     public static List<WeaponItem> WEAPONS = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.item.ToolItem> TOOLS = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new ArrayList<>();
     public static List<Block> BLOCKS = new ArrayList<>();
     public static final List<Potion> POTIONS = new ArrayList<>();
     public static final List<Command> COMMANDS = new ArrayList<>();
     public static final List<StatusEffect> STATUS_EFFECTS = new ArrayList<>();
     public static final List<Enchantment> ENCHANTMENTS = new ArrayList<>();
-    public static final List<io.github.vampirestudios.obsidian.api.ItemGroup> ITEM_GROUPS = new ArrayList<>();
+    public static final List<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new ArrayList<>();
     public static final List<Entity> ENTITIES = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.item.ArmorItem> ARMORS = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> ARMORS = new ArrayList<>();
 
-    public static void loadDefault() {
-        if (!MATERIALS_DIRECTORY.exists())
-            fillDefaultConfigs();
+    public static void loadDefaultObsidianAddons() {
+        if (!OBSIDIAN_ADDON_DIRECTORY.exists())
+            createObsidianAddonsFolder();
     }
 
     public static void register(File file) {
@@ -103,62 +99,62 @@ public class ConfigHelper {
             try {
                 File packInfoFile = new File(file, "addon.info.pack");
                 if (packInfoFile.exists()) {
-                    ConfigPackInfo packInfo = GSON.fromJson(new FileReader(packInfoFile), ConfigPackInfo.class);
-                    ConfigPack configPack = new ConfigPack(packInfo, file);
-                    if (!ADDON_PACKS.contains(configPack) && configPack.getConfigPackInfo().addonVersion == PACK_VERSION) {
-                        ADDON_PACKS.add(configPack);
+                    ObsidianAddonInfo obsidianAddonInfo = GSON.fromJson(new FileReader(packInfoFile), ObsidianAddonInfo.class);
+                    ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, file);
+                    if (!OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == PACK_VERSION) {
+                        OBSIDIAN_ADDONS.add(obsidianAddon);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
                 }
             } catch (Exception e) {
-                Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack!", e);
+                Obsidian.LOGGER.error("[Obsidian] Failed to load obsidian addon!", e);
             }
         } else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".zip")) {
             try (ZipFile zipFile = new ZipFile(file)) {
                 ZipEntry packInfoEntry = zipFile.getEntry("addon.info.pack");
                 if (packInfoEntry != null) {
-                    ConfigPackInfo packInfo = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(packInfoEntry)), ConfigPackInfo.class);
-                    ConfigPack configPack = new ConfigPack(packInfo);
-                    if (!ADDON_PACKS.contains(configPack)) {
-                        ADDON_PACKS.add(configPack);
+                    ObsidianAddonInfo obsidianAddonInfo = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(packInfoEntry)), ObsidianAddonInfo.class);
+                    ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo);
+                    if (!OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == PACK_VERSION) {
+                        OBSIDIAN_ADDONS.add(obsidianAddon);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
                 }
             } catch (Exception e) {
-                Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
+                Obsidian.LOGGER.error("[Obsidian] Failed to load obsidian addon!", e);
             }
         }
     }
 
-    public static void loadConfig() {
+    public static void loadObsidianAddons() {
         try {
             FabricLoader.getInstance().getEntrypoints("obsidian:obsidian_packs", IAddonPack.class).forEach(supplier -> {
                 try {
-                    ADDON_PACKS.add(supplier);
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s from an entrypoint",
+                    OBSIDIAN_ADDONS.add(supplier);
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering an obsidian addon: %s from an entrypoint",
                             supplier.getConfigPackInfo().id));
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
             });
-            for (File file : Objects.requireNonNull(MATERIALS_DIRECTORY.listFiles())) {
+            for (File file : Objects.requireNonNull(OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
                 // Load Packs
                 register(file);
             }
             String moduleText;
-            if (ADDON_PACKS.size() > 1) {
-                moduleText = "Loading %d packs:";
+            if (OBSIDIAN_ADDONS.size() > 1) {
+                moduleText = "Loading %d obsidian addons:";
             } else {
-                moduleText = "Loading %d pack:";
+                moduleText = "Loading %d obsidian addon:";
             }
 
-            Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, ADDON_PACKS.size()));
+            Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.size()));
 
-            for(IAddonPack pack : ADDON_PACKS) {
+            for(IAddonPack pack : OBSIDIAN_ADDONS) {
                 Obsidian.LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
 
                 String modId = pack.getConfigPackInfo().namespace;
-                String path = MATERIALS_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().namespace;
+                String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().namespace;
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
@@ -173,7 +169,7 @@ public class ConfigHelper {
                     parseCommands(path);
                     parseEnchantments(path);
                     parseStatusEffects(path);
-                    parseEntities(path);
+//                    parseEntities(path);
                     parseCurrencies(path);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
@@ -185,8 +181,8 @@ public class ConfigHelper {
         }
     }
 
-    private static void fillDefaultConfigs() {
-        MATERIALS_DIRECTORY.mkdirs();
+    private static void createObsidianAddonsFolder() {
+        OBSIDIAN_ADDON_DIRECTORY.mkdirs();
     }
 
     public static BlockState getState(net.minecraft.block.Block block, Map<String, String> jsonProperties) {
@@ -217,7 +213,7 @@ public class ConfigHelper {
         if (Paths.get(path, "item_groups").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "item_groups").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.ItemGroup itemGroup = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.ItemGroup.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
                     try {
                         if(itemGroup == null) continue;
                         ItemGroup itemGroup1 = FabricItemGroupBuilder.create(itemGroup.name.id)
@@ -318,7 +314,7 @@ public class ConfigHelper {
                                                             block.ore_information.config.maximum
                                                     )
                                             )
-                                    ).method_30377(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
+                                    ).rangeOf(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
                             BuiltinRegistries.BIOME.forEach(biome -> {
                                 if (block.ore_information.biomes != null) {
                                     for (String biome2 : block.ore_information.biomes) {
@@ -331,7 +327,7 @@ public class ConfigHelper {
                                 }
                             });
                         }
-                        Artifice.registerDataNew(String.format("obsidian:%s_%s_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                        Artifice.registerDataPack(String.format("obsidian:%s_%s_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                 serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
                                     lootTableBuilder.type(new Identifier("block"));
                                     lootTableBuilder.pool(pool -> {
@@ -351,7 +347,7 @@ public class ConfigHelper {
                             if (block.additional_information.slab) {
                                 REGISTRY_HELPER.registerBlock(new SlabImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_slab_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_slab_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_slab"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -386,7 +382,7 @@ public class ConfigHelper {
                             if (block.additional_information.stairs) {
                                 REGISTRY_HELPER.registerBlock(new StairsImpl(block), new Identifier(modId, block.information.name.id.getPath() + "_stairs").getPath(),
                                         ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_stairs_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_stairs_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_stairs"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -415,7 +411,7 @@ public class ConfigHelper {
                             if (block.additional_information.fence) {
                                 REGISTRY_HELPER.registerBlock(new FenceImpl(block),
                                         new Identifier(modId, block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_fence_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -444,7 +440,7 @@ public class ConfigHelper {
                             if (block.additional_information.fenceGate) {
                                 REGISTRY_HELPER.registerBlock(new FenceGateImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE);
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_fence_gate_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_gate_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence_gate"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -471,7 +467,7 @@ public class ConfigHelper {
                             if (block.additional_information.walls) {
                                 REGISTRY_HELPER.registerBlock(new WallImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_wall_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_wall_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                         serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_wall"), lootTableBuilder -> {
                                             lootTableBuilder.type(new Identifier("block"));
                                             lootTableBuilder.pool(pool -> {
@@ -498,7 +494,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.Item.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
                     try {
                         RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
                                 .maxCount(item.information.max_count)), item.information.name.id);
@@ -515,7 +511,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "armor").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "armor").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.item.ArmorItem armor = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.ArmorItem.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
                     try {
                         ArmorMaterial material = new ArmorMaterial() {
                             @Override
@@ -574,7 +570,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "tools").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "tools").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.item.ToolItem tool = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.ToolItem.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
                     try {
                         ToolMaterial material = new ToolMaterial() {
                             @Override
@@ -691,7 +687,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "food").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "food").toFile().listFiles())) {
                 if (file.isFile()) {
-                    FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
+                    /*FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
                     try {
                         FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
                         Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, new Item.Settings()
@@ -702,7 +698,7 @@ public class ConfigHelper {
                         register(FOODS, "food item", foodItem.information.name.id.toString(), foodItem);
                     } catch (Exception e) {
                         failedRegistering("food", foodItem.information.name.id.toString(), e);
-                    }
+                    }*/
                 }
             }
         }
@@ -817,12 +813,12 @@ public class ConfigHelper {
                     Currency currency = GSON.fromJson(new FileReader(file), Currency.class);
                     try {
                         if(currency == null) continue;
-                        PlayerJoinCallback.EVENT.register(player -> {
+                        /*PlayerJoinCallback.EVENT.register(player -> {
                             Scoreboard scoreboard = player.getScoreboard();
                             if (!scoreboard.containsObjective(currency.name.toLowerCase())) {
                                 scoreboard.addObjective(currency.name.toLowerCase(), ScoreboardCriterion.DUMMY, new LiteralText(currency.name), ScoreboardCriterion.RenderType.INTEGER);
                             }
-                        });
+                        });*/
                         Obsidian.LOGGER.info(String.format("Registered a currency called %s", currency.name));
                     } catch (Exception e) {
                         failedRegistering("currency", currency.name, e);

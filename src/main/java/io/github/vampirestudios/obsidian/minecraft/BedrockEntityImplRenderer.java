@@ -1,6 +1,7 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft;
 
-import io.github.vampirestudios.obsidian.api.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -20,4 +21,4 @@ public class BedrockEntityImplRenderer extends GeoEntityRenderer<EntityImpl> {
         return RenderLayer.getEntityTranslucent(getTextureLocation(animatable));
     }
 
-}
+}*/

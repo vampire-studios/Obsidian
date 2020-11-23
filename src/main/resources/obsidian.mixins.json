@@ -20,9 +20,7 @@
   "client": [
     "ArmorFeatureRendererMixin",
     "ReloadableResourceManagerImplMixin",
-    "HeldItemRendererMixin",
     "OptionsScreenMixin",
-    "SkeletonEntityModelMixin",
     "PlayerEntityRendererMixin"
   ]
 }

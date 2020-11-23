@@ -8,20 +8,20 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.PlayerJoinCallback;
-import io.github.vampirestudios.obsidian.api.IAddonPack;
-import io.github.vampirestudios.obsidian.api.Keybinding;
-import io.github.vampirestudios.obsidian.api.TooltipInformation;
-import io.github.vampirestudios.obsidian.api.block.Block;
-import io.github.vampirestudios.obsidian.api.command.Command;
-import io.github.vampirestudios.obsidian.api.currency.Currency;
-import io.github.vampirestudios.obsidian.api.enchantments.Enchantment;
-import io.github.vampirestudios.obsidian.api.entity.Entity;
-import io.github.vampirestudios.obsidian.api.item.FoodItem;
-import io.github.vampirestudios.obsidian.api.item.WeaponItem;
-import io.github.vampirestudios.obsidian.api.particle.Particle;
-import io.github.vampirestudios.obsidian.api.potion.Potion;
-import io.github.vampirestudios.obsidian.api.statusEffects.StatusEffect;
-import io.github.vampirestudios.obsidian.api.template.BlockTemplate;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.api.obsidian.Keybinding;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
+import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
+import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
+import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
+import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
+import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
+import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
+import io.github.vampirestudios.obsidian.api.obsidian.template.BlockTemplate;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
 import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
@@ -85,18 +85,18 @@ public class ConfigHelperClient {
     public static final List<IAddonPack> ENABLED_ADDON_PACKS = new ArrayList<>();
     public static RegistryHelper REGISTRY_HELPER;
 
-    public static List<io.github.vampirestudios.obsidian.api.item.Item> items = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.Item> items = new ArrayList<>();
     public static List<WeaponItem> weapons = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.item.ToolItem> tools = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> tools = new ArrayList<>();
     public static List<Block> blocks = new ArrayList<>();
     private static final List<Potion> potions = new ArrayList<>();
     private static final List<Command> commands = new ArrayList<>();
     private static final List<StatusEffect> statusEffects = new ArrayList<>();
     private static final List<Enchantment> enchantments = new ArrayList<>();
-    private static final List<io.github.vampirestudios.obsidian.api.ItemGroup> itemGroups = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.item.ArmorItem> armors = new ArrayList<>();
+    private static final List<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> itemGroups = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> armors = new ArrayList<>();
     public static Map<String, BlockTemplate> BLOCK_TEMPLATES = new HashMap<>();
-    public static Map<String, io.github.vampirestudios.obsidian.api.item.Item> ITEM_TEMPLATES = new HashMap<>();
+    public static Map<String, io.github.vampirestudios.obsidian.api.obsidian.item.Item> ITEM_TEMPLATES = new HashMap<>();
 
     public static void loadDefault() {
         if (!MATERIALS_DIRECTORY.exists())
@@ -108,12 +108,12 @@ public class ConfigHelperClient {
             try {
                 File packInfoFile = new File(file, "addon.info.pack");
                 if (packInfoFile.exists()) {
-                    ConfigPackInfo packInfo = GSON.fromJson(new FileReader(packInfoFile), ConfigPackInfo.class);
-                    ConfigPack configPack = new ConfigPack(packInfo, file);
-                    if (!ADDON_PACKS.contains(configPack)) {
-                        ADDON_PACKS.add(configPack);
+                    ObsidianAddonInfo packInfo = GSON.fromJson(new FileReader(packInfoFile), ObsidianAddonInfo.class);
+                    ObsidianAddon obsidianAddon = new ObsidianAddon(packInfo, file);
+                    if (!ADDON_PACKS.contains(obsidianAddon)) {
+                        ADDON_PACKS.add(obsidianAddon);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", obsidianAddon.getConfigPackInfo().id));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
@@ -122,12 +122,12 @@ public class ConfigHelperClient {
             try (ZipFile zipFile = new ZipFile(file)) {
                 ZipEntry packInfoEntry = zipFile.getEntry("addon.info.pack");
                 if (packInfoEntry != null) {
-                    ConfigPackInfo packInfo = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(packInfoEntry)), ConfigPackInfo.class);
-                    ConfigPack configPack = new ConfigPack(packInfo);
-                    if (!ADDON_PACKS.contains(configPack)) {
-                        ADDON_PACKS.add(configPack);
+                    ObsidianAddonInfo packInfo = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(packInfoEntry)), ObsidianAddonInfo.class);
+                    ObsidianAddon obsidianAddon = new ObsidianAddon(packInfo);
+                    if (!ADDON_PACKS.contains(obsidianAddon)) {
+                        ADDON_PACKS.add(obsidianAddon);
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", configPack.getConfigPackInfo().id));
+                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering addon: %s", obsidianAddon.getConfigPackInfo().id));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load addon pack.", e);
@@ -224,13 +224,13 @@ public class ConfigHelperClient {
         if (Paths.get(path, "item_groups").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "item_groups").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.ItemGroup itemGroup = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.ItemGroup.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
                     try {
                         if(itemGroup == null) continue;
                         FabricItemGroupBuilder.create(itemGroup.name.id)
                                 .icon(() -> new ItemStack(Registry.ITEM.get(itemGroup.icon)))
                                 .build();
-                        Artifice.registerAssetsNew(String.format("obsidian:%s_item_assets", itemGroup.name.id.getPath()), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(String.format("obsidian:%s_item_assets", itemGroup.name.id.getPath()), clientResourcePackBuilder -> {
                             itemGroup.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(itemGroup.name.id.getNamespace(), languageId), translationBuilder -> {
                                     translationBuilder.entry(String.format("itemGroup.%s.%s", itemGroup.name.id.getNamespace(), itemGroup.name.id.getPath()), name);
@@ -257,7 +257,7 @@ public class ConfigHelperClient {
                         Registry.register(Registry.PARTICLE_TYPE, particle.id, particleType);
                         ParticleFactoryRegistry.getInstance().register(particleType, fabricSpriteProvider ->
                                 new ParticleImpl.Factory(particle, fabricSpriteProvider));
-                        Artifice.registerAssetsNew(Utils.appendToPath(particle.id, "_assets"), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(Utils.appendToPath(particle.id, "_assets"), clientResourcePackBuilder -> {
                             clientResourcePackBuilder.addParticle(particle.id, particleBuilder -> particleBuilder.texture(particle.texture));
                         });
                         System.out.println("Registered a particle called " + particle.id.toString());
@@ -341,7 +341,7 @@ public class ConfigHelperClient {
                                                             block.ore_information.config.maximum
                                                     )
                                             )
-                                    ).method_30377(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
+                                    ).rangeOf(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
                             BuiltinRegistries.BIOME.forEach(biome -> {
                                 if (block.ore_information.biomes != null) {
                                     for (String biome2 : block.ore_information.biomes) {
@@ -354,7 +354,7 @@ public class ConfigHelperClient {
                                 }
                             });
                         }
-                        Artifice.registerAssetsNew(String.format("obsidian:%s_%s_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(String.format("obsidian:%s_%s_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                             block.information.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                     translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), name);
@@ -426,7 +426,7 @@ public class ConfigHelperClient {
                                 }
                             }
                         });
-                        Artifice.registerDataNew(String.format("obsidian:%s_%s_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                        Artifice.registerDataPack(String.format("obsidian:%s_%s_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                 serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
                                     lootTableBuilder.type(new Identifier("block"));
                                     lootTableBuilder.pool(pool -> {
@@ -446,7 +446,7 @@ public class ConfigHelperClient {
                             if (block.additional_information.slab) {
                                 REGISTRY_HELPER.registerBlock(new SlabImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerAssetsNew(String.format("obsidian:%s_%s_slab_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                                Artifice.registerAssetPack(String.format("obsidian:%s_%s_slab_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                     block.information.name.translated.forEach((languageId, name) -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                             translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_slab"),
@@ -454,7 +454,7 @@ public class ConfigHelperClient {
                                         });
                                     });
                                 });
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_slab_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_slab_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_slab"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -489,7 +489,7 @@ public class ConfigHelperClient {
                             if (block.additional_information.stairs) {
                                 REGISTRY_HELPER.registerBlock(new StairsImpl(block), new Identifier(modId, block.information.name.id.getPath() + "_stairs").getPath(),
                                         ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerAssetsNew(String.format("obsidian:%s_%s_stairs_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                                Artifice.registerAssetPack(String.format("obsidian:%s_%s_stairs_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                     block.information.name.translated.forEach((languageId, name) -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                             translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_stairs"),
@@ -497,7 +497,7 @@ public class ConfigHelperClient {
                                         });
                                     });
                                 });
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_stairs_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_stairs_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_stairs"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -526,7 +526,7 @@ public class ConfigHelperClient {
                             if (block.additional_information.fence) {
                                 REGISTRY_HELPER.registerBlock(new FenceImpl(block),
                                         new Identifier(modId, block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerAssetsNew(String.format("obsidian:%s_%s_fence_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                                Artifice.registerAssetPack(String.format("obsidian:%s_%s_fence_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                     block.information.name.translated.forEach((languageId, name) -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                             translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence"),
@@ -534,7 +534,7 @@ public class ConfigHelperClient {
                                         });
                                     });
                                 });
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_fence_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -563,7 +563,7 @@ public class ConfigHelperClient {
                             if (block.additional_information.fenceGate) {
                                 REGISTRY_HELPER.registerBlock(new FenceGateImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE);
-                                Artifice.registerAssetsNew(String.format("obsidian:%s_%s_fence_gate_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                                Artifice.registerAssetPack(String.format("obsidian:%s_%s_fence_gate_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                     block.information.name.translated.forEach((languageId, name) -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                             translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence_gate"),
@@ -571,7 +571,7 @@ public class ConfigHelperClient {
                                         });
                                     });
                                 });
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_fence_gate_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_gate_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence_gate"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -598,7 +598,7 @@ public class ConfigHelperClient {
                             if (block.additional_information.walls) {
                                 REGISTRY_HELPER.registerBlock(new WallImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerAssetsNew(String.format("obsidian:%s_%s_wall_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                                Artifice.registerAssetPack(String.format("obsidian:%s_%s_wall_assets", pack.getIdentifier().getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                                     block.information.name.translated.forEach((languageId, name) -> {
                                         clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                             translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_wall"),
@@ -606,7 +606,7 @@ public class ConfigHelperClient {
                                         });
                                     });
                                 });
-                                Artifice.registerDataNew(String.format("obsidian:%s_%s_wall_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                                Artifice.registerDataPack(String.format("obsidian:%s_%s_wall_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                         serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_wall"), lootTableBuilder -> {
                                             lootTableBuilder.type(new Identifier("block"));
                                             lootTableBuilder.pool(pool -> {
@@ -633,11 +633,11 @@ public class ConfigHelperClient {
         if (Paths.get(path, "items").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.Item.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
                     try {
                         RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
                                 .maxCount(item.information.max_count)), item.information.name.id);
-                        Artifice.registerAssetsNew(String.format("obsidian:%s_item_assets", item.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(String.format("obsidian:%s_item_assets", item.information.name.id.getPath()), clientResourcePackBuilder -> {
                             item.information.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(item.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                     translationBuilder.entry(String.format("item.%s.%s", item.information.name.id.getNamespace(), item.information.name.id.getPath()), name);
@@ -663,7 +663,7 @@ public class ConfigHelperClient {
         if (Paths.get(path, "items", "armor").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "armor").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.item.ArmorItem armor = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.ArmorItem.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
                     try {
                         ArmorMaterial material = new ArmorMaterial() {
                             @Override
@@ -711,7 +711,7 @@ public class ConfigHelperClient {
                                 armor.information.name.id);
 //                        ArmorTextureRegistry.register((entity, stack, slot, secondLayer, suffix) ->
 //                                armor.material.texture, item);
-                        Artifice.registerAssetsNew(String.format("obsidian:%s_armor_assets", armor.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(String.format("obsidian:%s_armor_assets", armor.information.name.id.getPath()), clientResourcePackBuilder -> {
                             armor.information.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(armor.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                     translationBuilder.entry(String.format("item.%s.%s", armor.information.name.id.getNamespace(), armor.information.name.id.getPath()), name);
@@ -737,7 +737,7 @@ public class ConfigHelperClient {
         if (Paths.get(path, "items", "tools").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "tools").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.item.ToolItem tool = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.item.ToolItem.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
                     try {
                         ToolMaterial material = new ToolMaterial() {
                             @Override
@@ -792,7 +792,7 @@ public class ConfigHelperClient {
                                         tool.information.name.id);
                                 break;
                         }
-                        Artifice.registerAssetsNew(String.format("obsidian:%s_tool_assets", tool.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(String.format("obsidian:%s_tool_assets", tool.information.name.id.getPath()), clientResourcePackBuilder -> {
                             tool.information.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(tool.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                     translationBuilder.entry(String.format("item.%s.%s", tool.information.name.id.getNamespace(), tool.information.name.id.getPath()), name);
@@ -854,7 +854,7 @@ public class ConfigHelperClient {
                         RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                                 .group(weapon.information.getItemGroup())
                                 .maxCount(weapon.information.max_count)), weapon.information.name.id);
-                        Artifice.registerAssetsNew(String.format("obsidian:%s_weapon_assets", weapon.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(String.format("obsidian:%s_weapon_assets", weapon.information.name.id.getPath()), clientResourcePackBuilder -> {
                             weapon.information.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(weapon.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                     translationBuilder.entry(String.format("item.%s.%s", weapon.information.name.id.getNamespace(), weapon.information.name.id.getPath()), name);
@@ -888,7 +888,7 @@ public class ConfigHelperClient {
                                 .maxCount(foodItem.information.max_count)
                                 .maxDamage(foodItem.information.use_duration)
                                 .food(foodComponent)));
-                        Artifice.registerAssetsNew(String.format("obsidian:%s_food_assets", foodItem.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(String.format("obsidian:%s_food_assets", foodItem.information.name.id.getPath()), clientResourcePackBuilder -> {
                             foodItem.information.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(foodItem.information.name.id.getNamespace(), languageId), translationBuilder -> {
                                     translationBuilder.entry(String.format("item.%s.%s", foodItem.information.name.id.getNamespace(), foodItem.information.name.id.getPath()), name);
@@ -974,7 +974,7 @@ public class ConfigHelperClient {
                     try {
                         if(enchantment == null) continue;
                         Registry.register(Registry.ENCHANTMENT, enchantment.id, new EnchantmentImpl(enchantment));
-                        Artifice.registerAssetsNew(Utils.appendToPath(enchantment.id, "_lang_assets"), clientResourcePackBuilder -> {
+                        Artifice.registerAssetPack(Utils.appendToPath(enchantment.id, "_lang_assets"), clientResourcePackBuilder -> {
                             clientResourcePackBuilder.addTranslations(new Identifier(enchantment.id.getNamespace(), "en_us"), translationBuilder ->
                                     translationBuilder.entry(String.format("enchantment.%s.%s", enchantment.id.getNamespace(), enchantment.id.getPath()),
                                             enchantment.name));
@@ -1025,7 +1025,7 @@ public class ConfigHelperClient {
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
                         FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.components.health.max));
-                        EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
+//                        EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
                         System.out.println(String.format("Registered an entity called %s", entity.identifier.toString()));
                     } catch (Exception e) {
                         failedRegistering("entity", entity.identifier.toString(), e);
