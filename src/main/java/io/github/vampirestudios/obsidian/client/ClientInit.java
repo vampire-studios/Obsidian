@@ -1,13 +1,22 @@
 package io.github.vampirestudios.obsidian.client;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.swordglowsblue.artifice.api.Artifice;
+import io.github.vampirestudios.obsidian.*;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.EntityType;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.text.WordUtils;
@@ -16,16 +25,31 @@ import java.io.IOException;
 
 public class ClientInit implements ClientModInitializer {
 
+    public static ClientInit INSTANCE;
+
+    public GeometryManager geometryManager;
+
+    public static Gson GSON_CLIENT = new GsonBuilder()
+            .registerTypeAdapter(GeometryData.class, new GeometryData.Deserializer())
+            .registerTypeAdapter(GeometryBone.class, new GeometryBone.Deserializer())
+            .registerTypeAdapter(GeometryCuboid.class, new GeometryCuboid.Deserializer())
+            .create();
+
     @Override
     public void onInitializeClient() {
-        /*ConfigHelper.ENTITIES.forEach(entity -> {
-            EntityType<?> entityType = Registry.ENTITY_TYPE.get(entity.identifier);
+        INSTANCE = this;
+
+        geometryManager = new GeometryManager(MinecraftClient.getInstance().getResourceManager());
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(geometryManager);
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AnimationRegistry.INSTANCE);
+        ConfigHelper.ENTITIES.forEach(entity -> {
+            EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.identifier);
             if (entity.custom_model) {
-                EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new BedrockEntityImplRenderer(entityRenderDispatcher, entity));
+                EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new JsonEntityRenderer(ctx, entity));
             } else {
-                EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
+                EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
             }
-        });*/
+        });
         ConfigHelper.BLOCKS.forEach(block -> {
             if (block.information.translucent) {
                 Block block1 = Registry.BLOCK.get(block.information.name.id);
