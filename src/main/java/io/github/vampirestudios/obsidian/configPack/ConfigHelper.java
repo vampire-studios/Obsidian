@@ -169,7 +169,7 @@ public class ConfigHelper {
                     parseCommands(path);
                     parseEnchantments(path);
                     parseStatusEffects(path);
-//                    parseEntities(path);
+                    parseEntities(path);
                     parseCurrencies(path);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();

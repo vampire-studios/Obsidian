@@ -1,5 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.entity;
 
+import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.model.*;
 import net.minecraft.util.Identifier;
 
 public class Entity {
@@ -15,56 +20,61 @@ public class Entity {
 
     public EntityComponents components;
 
-    /*@Environment(EnvType.CLIENT)
-    public EntityModel<EntityImpl> getEntityModel() {
+    @Environment(EnvType.CLIENT)
+    public EntityModel<EntityImpl> getEntityModel(EntityRendererFactory.Context context) {
         switch (vanilla_entity_type.toString()) {
             case "minecraft:pig":
-                return new PigEntityModel<>();
+                return new PigEntityModel<>(context.getPart(EntityModelLayers.PIG));
             case "minecraft:villager":
-                return new VillagerResemblingModel<>(1.0F);
+                return new VillagerResemblingModel<>(context.getPart(EntityModelLayers.VILLAGER));
             case "minecraft:chicken":
-                return new ChickenEntityModel<>();
+                return new ChickenEntityModel<>(context.getPart(EntityModelLayers.CHICKEN));
             case "minecraft:bear":
-                return new PolarBearEntityModel();
+                return new PolarBearEntityModel(context.getPart(EntityModelLayers.POLAR_BEAR));
             case "minecraft:squid":
-                return new SquidEntityModel<>();
+                return new SquidEntityModel<>(context.getPart(EntityModelLayers.SQUID));
             case "minecraft:zombie":
-                return new ZombieEntityModel(1.0F, false);
+                return new ZombieEntityModel(context.getPart(EntityModelLayers.ZOMBIE));
             case "minecraft:skeleton":
-                return new SkeletonEntityModel();
+                return new SkeletonEntityModel(context.getPart(EntityModelLayers.SKELETON));
             case "minecraft:fox":
-                return new FoxEntityModel();
+                return new FoxEntityModel(context.getPart(EntityModelLayers.FOX));
             case "minecraft:horse":
-                return new HorseEntityModel(1.0F);
+                return new HorseEntityModel(context.getPart(EntityModelLayers.HORSE));
             case "minecraft:cow":
             default:
-                return new CowEntityModel<>();
+                return new CowEntityModel<>(context.getPart(EntityModelLayers.COW));
+
         }
-    }*/
+    }
 
     public Identifier getEntityTexture() {
-        switch (vanilla_entity_type.toString()) {
-            case "minecraft:pig":
-                return new Identifier("textures/entity/pig/pig.png");
-            case "minecraft:villager":
-                return new Identifier("textures/entity/villager/villager.png");
-            case "minecraft:chicken":
-                return new Identifier("textures/entity/chicken.png");
-            case "minecraft:bear":
-                return new Identifier("textures/entity/bear/polarbear.png");
-            case "minecraft:squid":
-                return new Identifier("textures/entity/squid.png");
-            case "minecraft:zombie":
-                return new Identifier("textures/entity/zombie/zombie.png");
-            case "minecraft:skeleton":
-                return new Identifier("textures/entity/skeleton/skeleton.png");
-            case "minecraft:fox":
-                return new Identifier("textures/entity/fox/fox.png");
-            case "minecraft:horse":
-                return new Identifier("textures/entity/horse/horse_black.png");
-            case "minecraft:cow":
-            default:
-                return new Identifier("textures/entity/cow/cow.png");
+        if (custom_model) {
+            return entity_model.textureLocation;
+        } else {
+            switch (vanilla_entity_type.toString()) {
+                case "minecraft:pig":
+                    return new Identifier("textures/entity/pig/pig.png");
+                case "minecraft:villager":
+                    return new Identifier("textures/entity/villager/villager.png");
+                case "minecraft:chicken":
+                    return new Identifier("textures/entity/chicken.png");
+                case "minecraft:bear":
+                    return new Identifier("textures/entity/bear/polarbear.png");
+                case "minecraft:squid":
+                    return new Identifier("textures/entity/squid.png");
+                case "minecraft:zombie":
+                    return new Identifier("textures/entity/zombie/zombie.png");
+                case "minecraft:skeleton":
+                    return new Identifier("textures/entity/skeleton/skeleton.png");
+                case "minecraft:fox":
+                    return new Identifier("textures/entity/fox/fox.png");
+                case "minecraft:horse":
+                    return new Identifier("textures/entity/horse/horse_black.png");
+                case "minecraft:cow":
+                default:
+                    return new Identifier("textures/entity/cow/cow.png");
+            }
         }
     }
 

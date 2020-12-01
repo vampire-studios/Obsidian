@@ -15,12 +15,13 @@
     "EntityCrossbowUseMixin",
     "ItemMixin",
     "MixinPlayerManager",
+    "ModelPartMixin",
     "ProjectileUtilMixin"
   ],
   "client": [
     "ArmorFeatureRendererMixin",
-    "ReloadableResourceManagerImplMixin",
     "OptionsScreenMixin",
-    "PlayerEntityRendererMixin"
+    "PlayerEntityRendererMixin",
+    "ReloadableResourceManagerImplMixin"
   ]
 }

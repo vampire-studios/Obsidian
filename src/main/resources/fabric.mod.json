@@ -19,6 +19,9 @@
 
   "environment": "*",
   "entrypoints": {
+    "cardinal-components-entity": [
+      "io.github.vampirestudios.obsidian.Obsidian"
+    ],
     "main": [
       "io.github.vampirestudios.obsidian.Obsidian"
     ],
@@ -30,6 +33,11 @@
     "obsidian.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
+  "custom": {
+    "cardinal-components": [
+      "obsidian:tesseract_animation"
+    ]
+  },
 
   "depends": {
     "fabricloader": ">=0.7.4",

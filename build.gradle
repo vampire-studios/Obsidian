@@ -14,6 +14,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     jcenter()
+    maven { url = "https://dl.bintray.com/ladysnake/libs/" }
     maven{ url="https://jitpack.io" }
     maven{ url="http://server.bbkr.space:8081/artifactory/libs-release/" }
     maven { url "https://dl.bintray.com/shedaniel/autoconfig1u/" }
@@ -48,6 +49,9 @@ dependencies {
         exclude group: "io.github.cottonmc"
     }
 
+    include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:3.0.0-nightly.20w48a")
+    include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:3.0.0-nightly.20w48a")
+
     /*modCompileOnly ("me.shedaniel:RoughlyEnoughItems-api:${project.rei_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
@@ -60,7 +64,6 @@ dependencies {
 //    modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:${project.fabric_shield_lib_version}"
 //    modImplementation "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
 //    include "net.adriantodt.fabricmc:fallflyinglib:${project.ffl_version}"
-
 //    modCompile "software.bernie.geckolib:fabric-1.16.3-geckolib:3.0.0-beta.2:dev"
 }
 
