@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian;
 
 import io.github.boogiemonster1o1.opencodecs.builder.FoodComponentBuilder;
@@ -101,4 +102,4 @@ public interface CursedItemCodecs {
             return Objects.requireNonNull(Registry.SOUND_EVENT.getId(item.getEatSound())).toString();
         })).apply(instance, ItemBuilder::createV0);
     });
-}
+}*/

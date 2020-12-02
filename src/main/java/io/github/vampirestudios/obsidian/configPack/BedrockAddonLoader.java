@@ -166,7 +166,7 @@ public class BedrockAddonLoader {
             Obsidian.BEDROCK_LOGGER.info(String.format(moduleText, BEDROCK_ADDONS.size()));
 
             for(IBedrockAddon pack : BEDROCK_ADDONS) {
-                Obsidian.BEDROCK_LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
+                Obsidian.BEDROCK_LOGGER.info(String.format(" - %s", pack.getManifestFile().header.name));
 
                 String modId = pack.getManifestFile().header.identifier.getNamespace();
                 String path = BEDROCK_ADDON_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath();
