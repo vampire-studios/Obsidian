@@ -86,7 +86,15 @@ public final class GeometryCuboid {
         Stream.of(faces).forEach(f -> {
             Vec3f normal = f.normal.copy();
             normal.transform(normalMatrix);
-
+            if (normal.getX() < 0) {
+                normal.multiplyComponentwise(-1, 1, 1);
+            }
+            if (normal.getY() < 0) {
+                normal.multiplyComponentwise(1, -1, 1);
+            }
+            if (normal.getZ() < 0) {
+                normal.multiplyComponentwise(1, 1, -1);
+            }
             Stream.of(f.vertices).forEach(v -> {
                 float x = (float)v.pos.getX() / 16.0F;
                 float y = (float)v.pos.getY() / 16.0F;
@@ -94,7 +102,7 @@ public final class GeometryCuboid {
                 Vector4f pos = new Vector4f(x, y, z, 1.0F);
                 pos.transform(modelMatrix);
                 consumer.vertex(
-                        pos.getX(), pos.getY(), pos.getZ(),
+                        pos.getX(), pos.getY(),   pos.getZ(),
                         red, green, blue, alpha,
                         (float)v.u, (float)v.v, overlay, light,
                         normal.getX(), normal.getY(), normal.getZ());
