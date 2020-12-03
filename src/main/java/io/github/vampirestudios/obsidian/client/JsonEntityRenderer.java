@@ -12,13 +12,13 @@ public class JsonEntityRenderer extends GeometryLivingEntityRenderer<EntityImpl,
     private final Entity entity;
 
     protected JsonEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
-        super(context, new EntityJsonModel(entity.entity_model.modelLocation), 1.0F);
+        super(context, new EntityJsonModel(entity.information.entity_model.modelLocation), 1.0F);
         this.entity = entity;
     }
 
     @Override
     public Identifier getTexture(EntityImpl entityImpl) {
-        return entity.getEntityTexture();
+        return entity.information.getEntityTexture();
     }
 
     @Override

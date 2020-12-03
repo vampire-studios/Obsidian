@@ -16,6 +16,8 @@ public class Information {
     public boolean custom_model;
     public CustomEntityModel entity_model;
 
+    public SpawnEgg spawn_egg;
+
 
     @Environment(EnvType.CLIENT)
     public EntityModel<EntityImpl> getEntityModel(EntityRendererFactory.Context context) {

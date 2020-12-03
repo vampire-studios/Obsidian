@@ -13,13 +13,13 @@ public class CustomEntityRenderer extends MobEntityRenderer<EntityImpl, EntityMo
     private final Entity entity;
 
     protected CustomEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
-        super(context, entity.getEntityModel(context), 1.0F);
+        super(context, entity.information.getEntityModel(context), 1.0F);
         this.entity = entity;
     }
 
     @Override
     public Identifier getTexture(EntityImpl entityImpl) {
-        return entity.getEntityTexture();
+        return entity.information.getEntityTexture();
     }
 
     @Override

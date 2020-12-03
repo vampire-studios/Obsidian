@@ -12,6 +12,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
@@ -559,21 +561,23 @@ public class BedrockAddonLoader {
                     Entity entity = GSON.fromJson(new FileReader(file), Entity.class);
                     try {
                         if(entity == null) continue;
-                        String baseColor = entity.spawn_egg.base_color.replace("#", "").replace("0x", "");
-                        String overlayColor = entity.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
+                        String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
+                        String overlayColor = entity.information.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
+                        CollisionBoxComponent collisionBoxComponent = (CollisionBoxComponent) entity.components.get(new Identifier("collision_box"));
+                        HealthComponent healthComponent = (HealthComponent) entity.components.get(new Identifier("collision_box"));
 
-                        EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.identifier)
-                                .entity((type, world) -> new EntityImpl(type, world, entity))
+                        EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)
+                                .entity((type, world) -> new EntityImpl(type, world, entity, healthComponent.value))
                                 .category(entity.entity_components.getCategory())
-                                .dimensions(EntityDimensions.fixed(entity.entity_components.collision_box.width, entity.entity_components.collision_box.height))
-                                .summonable(entity.summonable)
-                                .hasEgg(entity.spawnable)
+                                .dimensions(EntityDimensions.fixed(collisionBoxComponent.width, collisionBoxComponent.height))
+                                .summonable(entity.information.summonable)
+                                .hasEgg(entity.information.spawnable)
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.entity_components.health.max));
-                        register(ENTITIES, "entity", entity.identifier.toString(), entity);
+                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(healthComponent.max));
+                        register(ENTITIES, "entity", entity.information.identifier.toString(), entity);
                     } catch (Exception e) {
-                        failedRegistering("entity", entity.identifier.toString(), e);
+                        failedRegistering("entity", entity.information.identifier.toString(), e);
                     }
                 }
             }

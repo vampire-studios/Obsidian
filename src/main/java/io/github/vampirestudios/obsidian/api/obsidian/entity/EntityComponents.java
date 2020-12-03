@@ -4,8 +4,6 @@ import net.minecraft.entity.SpawnGroup;
 
 public class EntityComponents {
 
-    public CollisionBox collision_box;
-    public Health health;
     public String entity_category;
 
     public SpawnGroup getCategory() {

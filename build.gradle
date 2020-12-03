@@ -14,19 +14,8 @@ repositories {
     mavenCentral()
     mavenLocal()
     jcenter()
-    maven { url = "https://dl.bintray.com/ladysnake/libs/" }
     maven{ url="https://jitpack.io" }
-    maven{ url="http://server.bbkr.space:8081/artifactory/libs-release/" }
-    maven { url "https://dl.bintray.com/shedaniel/autoconfig1u/" }
-    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
-    maven {
-        url = "https://maven.theillusivec4.top"
-    }
-    maven {
-        name = "AdrianTodt's Maven"
-        url = "https://dl.bintray.com/adriantodt/maven"
-    }
-    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+    maven{ url="http://server.bbkr.space/artifactory/libs-release/" }
 }
 
 minecraft {

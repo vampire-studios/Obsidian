@@ -43,8 +43,8 @@ public class ClientInit implements ClientModInitializer {
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(geometryManager);
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AnimationRegistry.INSTANCE);
         ConfigHelper.ENTITIES.forEach(entity -> {
-            EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.identifier);
-            if (entity.custom_model) {
+            EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.information.identifier);
+            if (entity.information.custom_model) {
                 EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new JsonEntityRenderer(ctx, entity));
             } else {
                 EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
@@ -325,11 +325,11 @@ public class ClientInit implements ClientModInitializer {
             });
         });
         ConfigHelper.ENTITIES.forEach(entity -> {
-            Artifice.registerAssetPack(String.format("obsidian:%s_entity_assets", entity.identifier.getPath()), clientResourcePackBuilder -> {
-                clientResourcePackBuilder.addTranslations(new Identifier(entity.identifier.getNamespace(), "en_us"), translationBuilder ->
-                        translationBuilder.entry(String.format("item.%s.%s", entity.identifier.getNamespace(), entity.identifier.getPath() + "_spawn_egg"),
-                                WordUtils.capitalizeFully(entity.identifier.getPath().replace("_", " ") + " Spawn Egg")));
-                clientResourcePackBuilder.addItemModel(new Identifier(entity.identifier.getNamespace(), entity.identifier.getPath() + "_spawn_egg"), modelBuilder -> {
+            Artifice.registerAssetPack(String.format("obsidian:%s_entity_assets", entity.information.identifier.getPath()), clientResourcePackBuilder -> {
+                clientResourcePackBuilder.addTranslations(new Identifier(entity.information.identifier.getNamespace(), "en_us"), translationBuilder ->
+                        translationBuilder.entry(String.format("item.%s.%s", entity.information.identifier.getNamespace(), entity.information.identifier.getPath() + "_spawn_egg"),
+                                WordUtils.capitalizeFully(entity.information.identifier.getPath().replace("_", " ") + " Spawn Egg")));
+                clientResourcePackBuilder.addItemModel(new Identifier(entity.information.identifier.getNamespace(), entity.information.identifier.getPath() + "_spawn_egg"), modelBuilder -> {
                     modelBuilder.parent(new Identifier("item/template_spawn_egg"));
                 });
                 try {
