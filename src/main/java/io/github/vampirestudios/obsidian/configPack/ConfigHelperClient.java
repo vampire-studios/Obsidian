@@ -28,7 +28,6 @@ import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -1018,13 +1017,13 @@ public class ConfigHelperClient {
 
                         EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.identifier)
                                 .entity((type, world) -> new EntityImpl(type, world, entity))
-                                .category(entity.components.getCategory())
-                                .dimensions(EntityDimensions.fixed(entity.components.collision_box.width, entity.components.collision_box.height))
+                                .category(entity.entity_components.getCategory())
+                                .dimensions(EntityDimensions.fixed(entity.entity_components.collision_box.width, entity.entity_components.collision_box.height))
                                 .summonable(entity.summonable)
                                 .hasEgg(entity.spawnable)
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.components.health.max));
+                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.entity_components.health.max));
 //                        EntityRendererRegistry.INSTANCE.register(entityType, (entityRenderDispatcher, context) -> new EntityImplRenderer(entityRenderDispatcher, entity));
                         System.out.println(String.format("Registered an entity called %s", entity.identifier.toString()));
                     } catch (Exception e) {

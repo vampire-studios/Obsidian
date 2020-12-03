@@ -564,13 +564,13 @@ public class BedrockAddonLoader {
 
                         EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.identifier)
                                 .entity((type, world) -> new EntityImpl(type, world, entity))
-                                .category(entity.components.getCategory())
-                                .dimensions(EntityDimensions.fixed(entity.components.collision_box.width, entity.components.collision_box.height))
+                                .category(entity.entity_components.getCategory())
+                                .dimensions(EntityDimensions.fixed(entity.entity_components.collision_box.width, entity.entity_components.collision_box.height))
                                 .summonable(entity.summonable)
                                 .hasEgg(entity.spawnable)
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.components.health.max));
+                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.entity_components.health.max));
                         register(ENTITIES, "entity", entity.identifier.toString(), entity);
                     } catch (Exception e) {
                         failedRegistering("entity", entity.identifier.toString(), e);

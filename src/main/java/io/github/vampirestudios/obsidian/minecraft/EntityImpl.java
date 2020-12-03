@@ -13,4 +13,8 @@ public class EntityImpl extends PathAwareEntity {
         this.entity = entity;
     }
 
+    @Override
+    public boolean hasCustomName() {
+        return super.hasCustomName();
+    }
 }
