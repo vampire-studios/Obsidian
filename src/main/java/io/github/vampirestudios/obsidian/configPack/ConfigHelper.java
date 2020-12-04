@@ -12,6 +12,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
@@ -689,7 +690,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "food").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "food").toFile().listFiles())) {
                 if (file.isFile()) {
-                    /*FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
+                    FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
                     try {
                         FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
                         Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, new Item.Settings()
@@ -697,10 +698,10 @@ public class ConfigHelper {
                                 .maxCount(foodItem.information.max_count)
                                 .maxDamage(foodItem.information.use_duration)
                                 .food(foodComponent)));
-                        register(FOODS, "food item", foodItem.information.name.id.toString(), foodItem);
+                        register(FOODS, "food", foodItem.information.name.id.toString(), foodItem);
                     } catch (Exception e) {
                         failedRegistering("food", foodItem.information.name.id.toString(), e);
-                    }*/
+                    }
                 }
             }
         }
@@ -789,28 +790,30 @@ public class ConfigHelper {
                         if(entity == null) continue;
                         String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
                         String overlayColor = entity.information.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
-                        entity.components.forEach((s, component) -> {
-                            System.out.println(s);
-                        });
                         CollisionBoxComponent collisionBoxComponent = null;
-                        if(entity.components.get("minecraft:collision_box") instanceof CollisionBoxComponent) {
-                            collisionBoxComponent = (CollisionBoxComponent) entity.components.get("minecraft:collision_box");
+                        Component component = entity.components.get("minecraft:collision_box");
+                        if (component instanceof CollisionBoxComponent) {
+                            collisionBoxComponent = (CollisionBoxComponent) component;
                         }
                         HealthComponent healthComponent = null;
-                        if(entity.components.get("minecraft:health") instanceof HealthComponent) {
-                            healthComponent = (HealthComponent) entity.components.get("minecraft:health");
+                        Component c = entity.components.get("minecraft:health");
+                        if (c instanceof HealthComponent) {
+                            healthComponent = (HealthComponent) c;
                         }
+
+                        String entityJson = GSON.toJson(entity);
+                        System.out.println(entityJson);
 
                         HealthComponent finalHealthComponent = healthComponent;
                         EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)
-                                .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value))
+                                .entity((type, world) -> new EntityImpl(type, world, entity, entity.entity_components.health.value))
                                 .category(entity.entity_components.getCategory())
-                                .dimensions(EntityDimensions.fixed(collisionBoxComponent.width, collisionBoxComponent.height))
+                                .dimensions(EntityDimensions.fixed(entity.entity_components.collision_box.width, entity.entity_components.collision_box.height))
                                 .summonable(entity.information.summonable)
                                 .hasEgg(entity.information.spawnable)
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(healthComponent.max));
+                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.entity_components.health.max));
                         register(ENTITIES, "entity", entity.information.identifier.toString(), entity);
                     } catch (Exception e) {
                         failedRegistering("entity", entity.information.identifier.toString(), e);

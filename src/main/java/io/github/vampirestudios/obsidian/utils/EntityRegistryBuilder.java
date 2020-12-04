@@ -21,7 +21,7 @@ import net.minecraft.util.registry.Registry;
 public class EntityRegistryBuilder<E extends Entity> {
     private static Identifier name;
     private EntityFactory<E> entityFactory;
-    private SpawnGroup category;
+    private SpawnGroup  category;
     private int trackingDistance;
     private int updateIntervalTicks;
     private boolean alwaysUpdateVelocity;
