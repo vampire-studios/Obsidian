@@ -8,7 +8,9 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.minecraft.LeavesBaseBlock;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -22,8 +24,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
-import io.github.vampirestudios.vampirelib.blocks.LeavesBaseBlock;
-import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -806,14 +806,14 @@ public class ConfigHelper {
 
                         HealthComponent finalHealthComponent = healthComponent;
                         EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)
-                                .entity((type, world) -> new EntityImpl(type, world, entity, entity.entity_components.health.value))
+                                .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value))
                                 .category(entity.entity_components.getCategory())
-                                .dimensions(EntityDimensions.fixed(entity.entity_components.collision_box.width, entity.entity_components.collision_box.height))
+                                .dimensions(EntityDimensions.fixed(collisionBoxComponent.width, collisionBoxComponent.height))
                                 .summonable(entity.information.summonable)
                                 .hasEgg(entity.information.spawnable)
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(entity.entity_components.health.max));
+                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(finalHealthComponent.max));
                         register(ENTITIES, "entity", entity.information.identifier.toString(), entity);
                     } catch (Exception e) {
                         failedRegistering("entity", entity.information.identifier.toString(), e);

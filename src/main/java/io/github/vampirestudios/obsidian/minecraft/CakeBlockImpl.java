@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import io.github.vampirestudios.vampirelib.blocks.CakeBaseBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.item.TooltipContext;

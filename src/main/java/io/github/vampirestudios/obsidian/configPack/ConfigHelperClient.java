@@ -10,6 +10,7 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.PlayerJoinCallback;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.Keybinding;
+import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
@@ -26,7 +27,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect
 import io.github.vampirestudios.obsidian.api.obsidian.template.BlockTemplate;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.utils.*;
-import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
