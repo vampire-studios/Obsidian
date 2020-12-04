@@ -1,9 +1,7 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import com.google.common.base.Joiner;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
@@ -48,6 +46,7 @@ import net.minecraft.structure.rule.TagMatchRuleTest;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.GenerationStep;
@@ -785,11 +784,21 @@ public class ConfigHelper {
         if (Paths.get(path, "entities").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "entities").toFile().listFiles())) {
                 if (file.isFile()) {
-                    Entity entity = GSON.fromJson(new FileReader(file), Entity.class);
+                    JsonObject entityJson = GSON.fromJson(new FileReader(file), JsonObject.class);
+                    Entity entity = GSON.fromJson(entityJson, Entity.class);
                     try {
-                        if(entity == null) continue;
+                        if(entity == null) continue; // TODO: add error log here
                         String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
                         String overlayColor = entity.information.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
+                        entity.components = new HashMap<>();
+                        JsonObject components = JsonHelper.getObject(entityJson, "components");
+                        for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
+                            Identifier identifier = new Identifier(entry.getKey());
+                            Class<? extends Component> componentClass = Obsidian.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() -> new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
+
+                            entity.components.put(identifier.toString(), GSON.fromJson(entry.getValue(), componentClass));
+                        }
+
                         CollisionBoxComponent collisionBoxComponent = null;
                         Component component = entity.components.get("minecraft:collision_box");
                         if (component instanceof CollisionBoxComponent) {
@@ -800,9 +809,6 @@ public class ConfigHelper {
                         if (c instanceof HealthComponent) {
                             healthComponent = (HealthComponent) c;
                         }
-
-                        String entityJson = GSON.toJson(entity);
-                        System.out.println(entityJson);
 
                         HealthComponent finalHealthComponent = healthComponent;
                         EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)

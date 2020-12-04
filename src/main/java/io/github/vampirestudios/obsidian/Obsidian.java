@@ -8,6 +8,10 @@ import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.MovementComponent;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import net.fabricmc.api.ModInitializer;
@@ -36,6 +40,7 @@ public class Obsidian implements ModInitializer, EntityComponentInitializer {
     public static ComponentKey<TesseractComponent> COMPONENT_ANIMATION = ComponentRegistry.getOrCreate(id("tesseract_animation"), TesseractComponent.class);
 
     public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "item_groups")), Lifecycle.stable());
+    public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
@@ -55,6 +60,10 @@ public class Obsidian implements ModInitializer, EntityComponentInitializer {
         Registry.register(ITEM_GROUP_REGISTRY, "combat", ItemGroup.COMBAT);
         Registry.register(ITEM_GROUP_REGISTRY, "brewing", ItemGroup.BREWING);
         Registry.register(ITEM_GROUP_REGISTRY, "search", ItemGroup.SEARCH);
+
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
 
         ConfigHelper.loadDefaultObsidianAddons();
         BedrockAddonLoader.loadDefaultBedrockAddons();
