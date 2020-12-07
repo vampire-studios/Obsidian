@@ -1,14 +1,15 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import com.google.common.base.Joiner;
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.minecraft.LeavesBaseBlock;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -21,7 +22,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.minecraft.*;
-import io.github.vampirestudios.obsidian.utils.*;
+import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
+import io.github.vampirestudios.obsidian.utils.EntityUtils;
+import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -70,9 +74,6 @@ import java.util.zip.ZipFile;
 public class ConfigHelper {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
-    public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
-            .setPrettyPrinting().create();
     public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "obsidian_addons");
     public static final List<IAddonPack> OBSIDIAN_ADDONS = new ArrayList<>();
     public static RegistryHelper REGISTRY_HELPER;
@@ -101,7 +102,7 @@ public class ConfigHelper {
             try {
                 File packInfoFile = new File(file, "addon.info.pack");
                 if (packInfoFile.exists()) {
-                    ObsidianAddonInfo obsidianAddonInfo = GSON.fromJson(new FileReader(packInfoFile), ObsidianAddonInfo.class);
+                    ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(new FileReader(packInfoFile), ObsidianAddonInfo.class);
                     ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, file);
                     if (!OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == PACK_VERSION) {
                         OBSIDIAN_ADDONS.add(obsidianAddon);
@@ -115,7 +116,7 @@ public class ConfigHelper {
             try (ZipFile zipFile = new ZipFile(file)) {
                 ZipEntry packInfoEntry = zipFile.getEntry("addon.info.pack");
                 if (packInfoEntry != null) {
-                    ObsidianAddonInfo obsidianAddonInfo = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(packInfoEntry)), ObsidianAddonInfo.class);
+                    ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(new InputStreamReader(zipFile.getInputStream(packInfoEntry)), ObsidianAddonInfo.class);
                     ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo);
                     if (!OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == PACK_VERSION) {
                         OBSIDIAN_ADDONS.add(obsidianAddon);
@@ -215,7 +216,7 @@ public class ConfigHelper {
         if (Paths.get(path, "item_groups").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "item_groups").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
                     try {
                         if(itemGroup == null) continue;
                         ItemGroup itemGroup1 = FabricItemGroupBuilder.create(itemGroup.name.id)
@@ -235,7 +236,7 @@ public class ConfigHelper {
         if (Paths.get(path, "blocks").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "blocks").toFile().listFiles())) {
                 if (file.isFile()) {
-                    Block block = GSON.fromJson(new FileReader(file), Block.class);
+                    Block block = Obsidian.GSON.fromJson(new FileReader(file), Block.class);
                     try {
                         FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
                                 .strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
@@ -496,7 +497,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.obsidian.item.Item item = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.Item item = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
                     try {
                         RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
                                 .maxCount(item.information.max_count)), item.information.name.id);
@@ -513,7 +514,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "armor").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "armor").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
                     try {
                         ArmorMaterial material = new ArmorMaterial() {
                             @Override
@@ -572,7 +573,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "tools").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "tools").toFile().listFiles())) {
                 if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
+                    io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
                     try {
                         ToolMaterial material = new ToolMaterial() {
                             @Override
@@ -640,7 +641,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "weapons").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "weapons").toFile().listFiles())) {
                 if (file.isFile()) {
-                    WeaponItem weapon = GSON.fromJson(new FileReader(file), WeaponItem.class);
+                    WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
                     try {
                         ToolMaterial material = new ToolMaterial() {
                             @Override
@@ -689,7 +690,7 @@ public class ConfigHelper {
         if (Paths.get(path, "items", "food").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "items", "food").toFile().listFiles())) {
                 if (file.isFile()) {
-                    FoodItem foodItem = GSON.fromJson(new FileReader(file), FoodItem.class);
+                    FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
                     try {
                         FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
                         Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, new Item.Settings()
@@ -710,7 +711,7 @@ public class ConfigHelper {
         if (Paths.get(path, "potions").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "potions").toFile().listFiles())) {
                 if (file.isFile()) {
-                    Potion potion = GSON.fromJson(new FileReader(file), Potion.class);
+                    Potion potion = Obsidian.GSON.fromJson(new FileReader(file), Potion.class);
                     try {
                         if (potion == null) continue;
                         Registry.register(Registry.POTION, potion.name,
@@ -728,7 +729,7 @@ public class ConfigHelper {
         if (Paths.get(path, "commands").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "commands").toFile().listFiles())) {
                 if (file.isFile()) {
-                    Command command = GSON.fromJson(new FileReader(file), Command.class);
+                    Command command = Obsidian.GSON.fromJson(new FileReader(file), Command.class);
                     try {
                         if(command == null) continue;
                         // Using a lambda
@@ -749,7 +750,7 @@ public class ConfigHelper {
         if (Paths.get(path, "enchantments").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "enchantments").toFile().listFiles())) {
                 if (file.isFile()) {
-                    Enchantment enchantment = GSON.fromJson(new FileReader(file), Enchantment.class);
+                    Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
                     try {
                         if(enchantment == null) continue;
                         Registry.register(Registry.ENCHANTMENT, enchantment.id, new EnchantmentImpl(enchantment));
@@ -766,7 +767,7 @@ public class ConfigHelper {
         if (Paths.get(path, "status_effects").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "status_effects").toFile().listFiles())) {
                 if (file.isFile()) {
-                    StatusEffect statusEffect = GSON.fromJson(new FileReader(file), StatusEffect.class);
+                    StatusEffect statusEffect = Obsidian.GSON.fromJson(new FileReader(file), StatusEffect.class);
                     try {
                         if(statusEffect == null) continue;
                         String color1 = statusEffect.color.replace("#", "").replace("0x", "");
@@ -784,8 +785,8 @@ public class ConfigHelper {
         if (Paths.get(path, "entities").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "entities").toFile().listFiles())) {
                 if (file.isFile()) {
-                    JsonObject entityJson = GSON.fromJson(new FileReader(file), JsonObject.class);
-                    Entity entity = GSON.fromJson(entityJson, Entity.class);
+                    JsonObject entityJson = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
+                    Entity entity = Obsidian.GSON.fromJson(entityJson, Entity.class);
                     try {
                         if(entity == null) continue; // TODO: add error log here
                         String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
@@ -796,16 +797,17 @@ public class ConfigHelper {
                             Identifier identifier = new Identifier(entry.getKey());
                             Class<? extends Component> componentClass = Obsidian.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() -> new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
 
-                            entity.components.put(identifier.toString(), GSON.fromJson(entry.getValue(), componentClass));
+                            entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));
                         }
+                        entity.components.forEach((s, component) -> System.out.println(s));
 
                         CollisionBoxComponent collisionBoxComponent = null;
-                        Component component = entity.components.get("minecraft:collision_box");
-                        if (component instanceof CollisionBoxComponent) {
-                            collisionBoxComponent = (CollisionBoxComponent) component;
+                        Component c = entity.components.get("minecraft:collision_box");
+                        if (c instanceof CollisionBoxComponent) {
+                            collisionBoxComponent = (CollisionBoxComponent) c;
                         }
                         HealthComponent healthComponent = null;
-                        Component c = entity.components.get("minecraft:health");
+                        c = entity.components.get("minecraft:health");
                         if (c instanceof HealthComponent) {
                             healthComponent = (HealthComponent) c;
                         }
@@ -833,7 +835,7 @@ public class ConfigHelper {
         if (Paths.get(path, "currency").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "currency").toFile().listFiles())) {
                 if (file.isFile()) {
-                    Currency currency = GSON.fromJson(new FileReader(file), Currency.class);
+                    Currency currency = Obsidian.GSON.fromJson(new FileReader(file), Currency.class);
                     try {
                         if(currency == null) continue;
                         /*PlayerJoinCallback.EVENT.register(player -> {

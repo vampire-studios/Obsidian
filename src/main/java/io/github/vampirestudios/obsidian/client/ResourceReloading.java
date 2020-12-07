@@ -3,7 +3,6 @@ package io.github.vampirestudios.obsidian.client;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
-import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloadListener;
 import net.minecraft.util.Identifier;
@@ -51,7 +50,7 @@ public class ResourceReloading {
     }
     public static Block loadBlock(Identifier location, ResourceManager resourceManager) {
         try {
-            return ConfigHelper.GSON.fromJson(getModelAsString(resourceManager, location), Block.class);
+            return Obsidian.GSON.fromJson(getModelAsString(resourceManager, location), Block.class);
         } catch (Exception e) {
             Obsidian.LOGGER.error(String.format("Error parsing %S", location), e);
             throw (new RuntimeException(e));
@@ -59,7 +58,7 @@ public class ResourceReloading {
     }
     public static Item loadItem(Identifier location, ResourceManager resourceManager) {
         try {
-            return ConfigHelper.GSON.fromJson(getModelAsString(resourceManager, location), Item.class);
+            return Obsidian.GSON.fromJson(getModelAsString(resourceManager, location), Item.class);
         } catch (Exception e) {
             Obsidian.LOGGER.error(String.format("Error parsing %S", location), e);
             throw (new RuntimeException(e));

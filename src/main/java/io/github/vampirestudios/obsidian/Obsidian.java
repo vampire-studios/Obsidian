@@ -9,11 +9,10 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.components.MovementComponent;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -35,6 +34,8 @@ public class Obsidian implements ModInitializer, EntityComponentInitializer {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(BoneFrameData.class, new BoneFrameData.Deserializer())
             .registerTypeAdapter(Keyframe.class, new Keyframe.Deserializer())
+            .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
+            .setPrettyPrinting()
             .create();
 
     public static ComponentKey<TesseractComponent> COMPONENT_ANIMATION = ComponentRegistry.getOrCreate(id("tesseract_animation"), TesseractComponent.class);
@@ -64,6 +65,13 @@ public class Obsidian implements ModInitializer, EntityComponentInitializer {
         Registry.register(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
         Registry.register(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
         Registry.register(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "namable", NamableComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
+        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
 
         ConfigHelper.loadDefaultObsidianAddons();
         BedrockAddonLoader.loadDefaultBedrockAddons();
