@@ -6,16 +6,13 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.*;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
-import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.entity.EntityType;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -42,14 +39,14 @@ public class ClientInit implements ClientModInitializer {
         geometryManager = new GeometryManager(MinecraftClient.getInstance().getResourceManager());
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(geometryManager);
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(AnimationRegistry.INSTANCE);
-        ConfigHelper.ENTITIES.forEach(entity -> {
+        /*ConfigHelper.ENTITIES.forEach(entity -> {
             EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.information.identifier);
             if (entity.information.custom_model) {
                 EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new JsonEntityRenderer(ctx, entity));
             } else {
                 EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
             }
-        });
+        });*/
         ConfigHelper.BLOCKS.forEach(block -> {
             if (block.information.translucent) {
                 Block block1 = Registry.BLOCK.get(block.information.name.id);
@@ -74,8 +71,14 @@ public class ClientInit implements ClientModInitializer {
         ConfigHelper.BLOCKS.forEach(block -> {
             Artifice.registerAssetPack(String.format("obsidian:%s_%s_assets", block.information.name.id.getPath(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
                 block.information.name.translated.forEach((languageId, name) -> {
+                    String blockName;
+                    if (name.contains("_")) {
+                        blockName = WordUtils.capitalizeFully(name.replace("_", " "));
+                    } else {
+                        blockName = name;
+                    }
                     clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder -> {
-                        translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), name);
+                        translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), blockName);
                     });
                 });
                 if (block.display != null && block.display.lore.length != 0) {
