@@ -8,10 +8,7 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.PlayerJoinCallback;
-import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.api.obsidian.Keybinding;
-import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.*;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
@@ -40,6 +37,7 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.*;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.recipe.Ingredient;
@@ -710,8 +708,7 @@ public class ConfigHelperClient {
                         Item item = RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
                                         .group(armor.information.getItemGroup()).maxCount(armor.information.max_count)),
                                 armor.information.name.id);
-//                        ArmorTextureRegistry.register((entity, stack, slot, secondLayer, suffix) ->
-//                                armor.material.texture, item);
+                        ArmorTextureRegistry.register((entity, stack, slot, secondLayer, suffix) -> armor.material.texture, item);
                         Artifice.registerAssetPack(String.format("obsidian:%s_armor_assets", armor.information.name.id.getPath()), clientResourcePackBuilder -> {
                             armor.information.name.translated.forEach((languageId, name) -> {
                                 clientResourcePackBuilder.addTranslations(new Identifier(armor.information.name.id.getNamespace(), languageId), translationBuilder -> {
