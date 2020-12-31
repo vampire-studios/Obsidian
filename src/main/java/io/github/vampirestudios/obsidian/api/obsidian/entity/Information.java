@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.entity;
 
-import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRendererFactory;

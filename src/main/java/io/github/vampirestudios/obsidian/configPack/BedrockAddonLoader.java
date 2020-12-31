@@ -7,8 +7,8 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.bedrock.BedrockAddon;
 import io.github.vampirestudios.obsidian.api.bedrock.IBedrockAddon;
 import io.github.vampirestudios.obsidian.api.bedrock.ManifestFile;
+import io.github.vampirestudios.obsidian.api.bedrock.block.BaseBlock;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
-import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -19,16 +19,19 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
-import io.github.vampirestudios.obsidian.minecraft.*;
+import io.github.vampirestudios.obsidian.minecraft.bedrock.BlockImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
 import io.github.vampirestudios.obsidian.utils.EntityUtils;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Material;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -65,7 +68,7 @@ public class BedrockAddonLoader {
     public static List<FoodItem> FOODS = new ArrayList<>();
     public static List<WeaponItem> WEAPONS = new ArrayList<>();
     public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new ArrayList<>();
-    public static List<Block> BLOCKS = new ArrayList<>();
+    public static List<BaseBlock> BLOCKS = new ArrayList<>();
     public static final List<Potion> POTIONS = new ArrayList<>();
     public static final List<Command> COMMANDS = new ArrayList<>();
     public static final List<StatusEffect> STATUS_EFFECTS = new ArrayList<>();
@@ -175,19 +178,19 @@ public class BedrockAddonLoader {
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
-                    parseItemGroup(path);
-                    parseBlock(pack, modId, path);
-                    parseBasicItems(path);
-                    parseArmor(path);
-                    parseTools(path);
-                    parseWeapons(path);
-                    parseFood(path);
-                    parsePotions(path);
-                    parseCommands(path);
-                    parseEnchantments(path);
-                    parseStatusEffects(path);
+//                    parseItemGroup(path);
+                    parseBlock(path);
+//                    parseBasicItems(path);
+//                    parseArmor(path);
+//                    parseTools(path);
+//                    parseWeapons(path);
+//                    parseFood(path);
+//                    parsePotions(path);
+//                    parseCommands(path);
+//                    parseEnchantments(path);
+//                    parseStatusEffects(path);
 //                    parseEntities(path);
-                    parseCurrencies(path);
+//                    parseCurrencies(path);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
@@ -246,24 +249,22 @@ public class BedrockAddonLoader {
         }
     }
 
-    private static void parseBlock(IBedrockAddon pack, String modId, String path) throws FileNotFoundException {
-        /*if (Paths.get(path, "blocks").toFile().exists()) {
+    private static void parseBlock(String path) throws FileNotFoundException {
+        if (Paths.get(path, "blocks").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "blocks").toFile().listFiles())) {
                 if (file.isFile()) {
                     BaseBlock block = GSON.fromJson(new FileReader(file), BaseBlock.class);
                     try {
-                        FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-                                .strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
-                                .collidable(block.information.collidable).slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) ->
-                                        block.information.is_emissive).nonOpaque();
-                        net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
-                        register(BLOCKS, "block", block.information.name.id.toString(), block);
+                        FabricBlockSettings blockSettings = FabricBlockSettings.of(Material.STONE)/*.sounds(block.information.getBlockSoundGroup())*/
+                                .strength(block.block.components.destroy_time, block.block.components.explosion_resistance).nonOpaque();
+                        REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block.block.description.identifier.getPath());
+                        register(BLOCKS, "block", block.block.description.identifier.toString(), block);
                     } catch (Exception e) {
-                        failedRegistering("block", block.information.name.id.toString(), e);
+                        failedRegistering("block", block.block.description.identifier.toString(), e);
                     }
                 }
             }
-        }*/
+        }
     }
 
     private static void parseBasicItems(String path) throws FileNotFoundException {

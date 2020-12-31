@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.mixins;
 import io.github.vampirestudios.obsidian.FileResourcePackProvider;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.options.OptionsScreen;
+import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.resource.ResourcePackManager;

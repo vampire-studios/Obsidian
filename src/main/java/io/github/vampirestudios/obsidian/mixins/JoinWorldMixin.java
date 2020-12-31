@@ -6,7 +6,6 @@ import net.minecraft.item.Item;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,14 +20,14 @@ public class JoinWorldMixin {
 	
 	@Inject(at = @At("TAIL"),method = "read(Lnet/minecraft/network/PacketByteBuf;)V")
 	public void doRegistries(PacketByteBuf buf, CallbackInfo ci) {
-		MutableRegistry<Item> items = registryManager.get(Registry.ITEM.getKey());
+		Registry<Item> items = registryManager.get(Registry.ITEM.getKey());
 		items.forEach((item) -> {
 			if (!Registry.ITEM.containsId(items.getId(item))) {
 				Obsidian.LOGGER.info("Registering an item called {}", items.getId(item));
 				Registry.register(Registry.ITEM, items.getId(item), item);
 			}
 		});
-		MutableRegistry<Block> blocks = registryManager.get(Registry.BLOCK.getKey());
+		Registry<Block> blocks = registryManager.get(Registry.BLOCK.getKey());
 		blocks.forEach((block) -> {
 			if (!Registry.BLOCK.containsId(blocks.getId(block))) {
 				Obsidian.LOGGER.info("Registering a block called {}", blocks.getId(block));

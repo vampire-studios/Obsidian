@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.EntityGeometryModel;
-import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 

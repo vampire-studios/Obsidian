@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.GeometryLivingEntityRenderer;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
-import io.github.vampirestudios.obsidian.minecraft.EntityImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;

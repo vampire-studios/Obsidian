@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.potion;
 
-import io.github.vampirestudios.obsidian.minecraft.StatusEffectImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.StatusEffectImpl;
 import net.minecraft.util.Identifier;
 
 public class Potion {

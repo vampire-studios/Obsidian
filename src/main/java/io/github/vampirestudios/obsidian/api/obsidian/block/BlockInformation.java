@@ -110,8 +110,8 @@ public class BlockInformation {
                 return Material.SNOW_LAYER;
             case "minecraft:fire":
                 return Material.FIRE;
-            case "minecraft:supported":
-                return Material.SUPPORTED;
+            case "minecraft:decoration":
+                return Material.DECORATION;
             case "minecraft:cobweb":
                 return Material.COBWEB;
             case "minecraft:redstone_lamp":

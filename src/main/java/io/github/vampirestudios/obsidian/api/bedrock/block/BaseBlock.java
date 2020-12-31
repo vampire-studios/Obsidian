@@ -11,7 +11,7 @@ public class BaseBlock extends BaseInformation {
     public static class Block {
 
         public Description description;
-        public Component component;
+        public Component components;
 
     }
 
