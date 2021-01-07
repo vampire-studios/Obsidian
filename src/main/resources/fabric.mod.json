@@ -9,7 +9,7 @@
     "Vampire Studios"
   ],
   "contact": {
-    "homepage": "https://github.com/vampire-studios/Obsidian",
+    "homepage": "https://vampirestudios.netlify.app/pages/obsidian.html",
     "sources": "https://github.com/vampire-studios/Obsidian",
     "issues": "https://github.com/vampire-studios/Obsidian/issues"
   },
@@ -19,25 +19,20 @@
 
   "environment": "*",
   "entrypoints": {
-    "cardinal-components-entity": [
-      "io.github.vampirestudios.obsidian.Obsidian"
-    ],
     "main": [
       "io.github.vampirestudios.obsidian.Obsidian"
     ],
     "client": [
       "io.github.vampirestudios.obsidian.client.ClientInit"
+    ],
+    "modmenu": [
+      "io.github.vampirestudios.obsidian.configPack.REIModMenuEntryPoint"
     ]
   },
   "mixins": [
     "obsidian.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
-  "custom": {
-    "cardinal-components": [
-      "obsidian:tesseract_animation"
-    ]
-  },
 
   "depends": {
     "fabricloader": ">=0.7.4",

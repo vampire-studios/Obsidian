@@ -28,3 +28,7 @@ extendable method net/minecraft/resource/ResourceType <init> (Ljava/lang/String;
 
 accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
 accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;
+
+accessible class net/minecraft/entity/mob/DrownedEntity$TridentAttackGoal
+
+accessible method net/fabricmc/loader/FabricLoader addMod (Lnet/fabricmc/loader/discovery/ModCandidate;)V

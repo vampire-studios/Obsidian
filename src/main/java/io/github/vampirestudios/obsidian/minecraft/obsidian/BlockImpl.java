@@ -57,12 +57,12 @@ public class BlockImpl extends Block {
                 return ActionResult.SUCCESS;
             }
         }
-        if (!world_1.isClient && block.functions.on_use != null) {
+        /*if (!world_1.isClient && !block.functions.on_use.toString().isEmpty()) {
             if (world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).isPresent()) {
                 world_1.getServer().getCommandFunctionManager().execute(world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).get(), world_1.getServer().getCommandSource());
                 return ActionResult.SUCCESS;
             }
-        }
+        }*/
         return ActionResult.FAIL;
     }
 

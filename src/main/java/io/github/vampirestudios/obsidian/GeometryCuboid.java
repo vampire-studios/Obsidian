@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian;
 import com.google.gson.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.math.*;
 
@@ -13,7 +14,7 @@ public final class GeometryCuboid {
 
     private Face[] faces;
 
-    private Vec3f rotation, pivot;
+    private Vector3f rotation, pivot;
 
     private final Vec3d size, origin;
     private final float inflate, u, v;
@@ -67,8 +68,8 @@ public final class GeometryCuboid {
     }
 
     public void setCuboidRotation(float x, float y, float z, float pitch, float yaw, float roll) {
-        this.pivot = new Vec3f(x, y, z);
-        this.rotation = new Vec3f(pitch, yaw, roll);
+        this.pivot = new Vector3f(x, y, z);
+        this.rotation = new Vector3f(pitch, yaw, roll);
     }
 
     public void renderCuboid(MatrixStack stack, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha) {
@@ -84,7 +85,7 @@ public final class GeometryCuboid {
         Matrix3f normalMatrix = stack.peek().getNormal();
 
         Stream.of(faces).forEach(f -> {
-            Vec3f normal = f.normal.copy();
+            Vector3f normal = f.normal.copy();
             normal.transform(normalMatrix);
             if (normal.getX() < 0) {
                 normal.multiplyComponentwise(-1, 1, 1);
@@ -114,7 +115,7 @@ public final class GeometryCuboid {
 
     private static final class Face {
         private final TexturedVertex[] vertices;
-        private final Vec3f normal;
+        private final Vector3f normal;
 
         public Face(TexturedVertex[] vertices, double u1, double v1, double u2, double v2, float squishU, float squishV, boolean mirror, Direction d) {
             this.vertices = vertices;

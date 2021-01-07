@@ -10,7 +10,7 @@ public interface IAddonPack {
 
     Identifier getIdentifier();
 
-    String getDisplayName();
+    String getDisplayNameObsidian();
 
     ResourcePack getVirtualResourcePack();
 

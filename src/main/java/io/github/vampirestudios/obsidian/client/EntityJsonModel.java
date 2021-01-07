@@ -15,4 +15,5 @@ public class EntityJsonModel extends EntityGeometryModel<EntityImpl> {
     public void setAngles(EntityImpl entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 
     }
+
 }

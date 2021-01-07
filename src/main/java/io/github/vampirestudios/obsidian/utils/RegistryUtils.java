@@ -65,23 +65,23 @@ public class RegistryUtils {
         return blockEntityType;
     }
 
-    public static Block registerNetherStem(Identifier name, MapColor MapColor) {
+    public static Block registerNetherStem(Identifier name, MaterialColor MapColor) {
         return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> MapColor)
                 .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), name);
     }
 
-    public static Block registerLog(Identifier name, MapColor MapColor, MapColor MapColor2) {
+    public static Block registerLog(Identifier name, MaterialColor MapColor, MaterialColor MapColor2) {
         return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
                 blockState.get(PillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
                 .strength(2.0F).sounds(BlockSoundGroup.WOOD)), name);
     }
 
-    public static Block registerNetherStem(String name, MapColor MapColor) {
+    public static Block registerNetherStem(String name, MaterialColor MapColor) {
         return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> MapColor)
                 .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), new Identifier(Obsidian.MOD_ID, name));
     }
 
-    public static Block registerLog(String name, MapColor MapColor, MapColor MapColor2) {
+    public static Block registerLog(String name, MaterialColor MapColor, MaterialColor MapColor2) {
         return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
                 blockState.get(PillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
                 .strength(2.0F).sounds(BlockSoundGroup.WOOD)), new Identifier(Obsidian.MOD_ID, name));

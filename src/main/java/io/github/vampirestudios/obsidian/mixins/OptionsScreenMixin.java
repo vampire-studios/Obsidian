@@ -3,11 +3,10 @@ package io.github.vampirestudios.obsidian.mixins;
 import io.github.vampirestudios.obsidian.FileResourcePackProvider;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.OptionsScreen;
+import net.minecraft.client.gui.screen.options.OptionsScreen;
 import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -28,7 +27,7 @@ public class OptionsScreenMixin extends Screen {
     @Inject(method = "init", at=@At("RETURN"))
     protected void init(CallbackInfo ci) {
         this.addButton(new ButtonWidget(this.width / 2 - 100, this.height / 6 + 140, 200, 20, new LiteralText("Obsidian Packs"), (buttonWidget) -> {
-            this.client.openScreen(new PackScreen(this, new ResourcePackManager(ResourceType.CLIENT_RESOURCES, new FileResourcePackProvider(ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, text -> new LiteralText("Addon made by Obsidian"))), this::idk, ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, new TranslatableText("addonPacks.title")));
+            this.client.openScreen(new PackScreen(this, new ResourcePackManager(new FileResourcePackProvider(ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, text -> new LiteralText("Addon made by Obsidian"))), this::idk, ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, new TranslatableText("addonPacks.title")));
         }));
     }
 

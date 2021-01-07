@@ -30,7 +30,12 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.discovery.ModCandidate;
+import net.fabricmc.loader.util.UrlUtil;
 import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChainBlock;
@@ -64,6 +69,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -172,11 +178,30 @@ public class ConfigHelper {
                     parseCommands(path);
                     parseEnchantments(path);
                     parseStatusEffects(path);
-                    parseEntities(path);
+//                    parseEntities(path);
                     parseCurrencies(path);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
+
+                ObsidianAddon addon = (ObsidianAddon) pack;
+                try {
+                    FabricLoader loader = FabricLoader.getInstance();
+                    Method addMod = net.fabricmc.loader.FabricLoader.class.getDeclaredMethod("addMod", ModCandidate.class);
+                    addMod.setAccessible(true);
+                    ModCandidate candidate = new ModCandidate(new ObsidianAddonModMetadata(addon), UrlUtil.asUrl(addon.getFile()), 0, false);
+                    addMod.invoke(loader, candidate);
+                    Optional<ModContainer> optional = loader.getModContainer(addon.getConfigPackInfo().namespace);
+                    if(optional.isPresent()) {
+                        Method setupRootPath = net.fabricmc.loader.ModContainer.class.getDeclaredMethod("setupRootPath");
+                        setupRootPath.setAccessible(true);
+                        setupRootPath.invoke(optional.get());
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                
+                ResourceManagerHelperImpl.registerBuiltinResourcePack(pack.getIdentifier(), pack.getConfigPackInfo().namespace, FabricLoader.getInstance().getModContainer(addon.getConfigPackInfo().namespace).get(), ResourcePackActivationType.ALWAYS_ENABLED);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -260,6 +285,8 @@ public class ConfigHelper {
                         net.minecraft.block.Block blockImpl;
                         if(block.additional_information != null) {
                             if(block.additional_information.rotatable) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new FacingBlockImpl(block, blockSettings), block.information.name.id.getPath());
+                            } else if(block.additional_information.horizontal_rotatable) {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingBlockImpl(block, blockSettings), block.information.name.id.getPath());
                             } else if(block.additional_information.pillar) {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new PillarBlockImpl(block, blockSettings), block.information.name.id.getPath());
@@ -330,7 +357,7 @@ public class ConfigHelper {
                                 }
                             });
                         }
-                        Artifice.registerDataPack(String.format("obsidian:%s_%s_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                        Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                 serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
                                     lootTableBuilder.type(new Identifier("block"));
                                     lootTableBuilder.pool(pool -> {
@@ -350,7 +377,7 @@ public class ConfigHelper {
                             if (block.additional_information.slab) {
                                 REGISTRY_HELPER.registerBlock(new SlabImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_slab_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_slab_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_slab"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -385,7 +412,7 @@ public class ConfigHelper {
                             if (block.additional_information.stairs) {
                                 REGISTRY_HELPER.registerBlock(new StairsImpl(block), new Identifier(modId, block.information.name.id.getPath() + "_stairs").getPath(),
                                         ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_stairs_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_stairs_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_stairs"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -414,7 +441,7 @@ public class ConfigHelper {
                             if (block.additional_information.fence) {
                                 REGISTRY_HELPER.registerBlock(new FenceImpl(block),
                                         new Identifier(modId, block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_fence_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -443,7 +470,7 @@ public class ConfigHelper {
                             if (block.additional_information.fenceGate) {
                                 REGISTRY_HELPER.registerBlock(new FenceGateImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_gate_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_fence_gate_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence_gate"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -470,7 +497,7 @@ public class ConfigHelper {
                             if (block.additional_information.walls) {
                                 REGISTRY_HELPER.registerBlock(new WallImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_wall_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                                Artifice.registerDataPack(String.format("%s:%s_wall_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                         serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_wall"), lootTableBuilder -> {
                                             lootTableBuilder.type(new Identifier("block"));
                                             lootTableBuilder.pool(pool -> {
@@ -860,6 +887,7 @@ public class ConfigHelper {
 
     private static void failedRegistering(String type, String name, Exception e) {
         e.printStackTrace();
+        e.getCause().printStackTrace();;
         Obsidian.LOGGER.error("[Obsidian] Failed to register {} {}.", type, name);
     }
 

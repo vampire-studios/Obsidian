@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
-import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -12,7 +12,7 @@ public class CustomEntityRenderer extends MobEntityRenderer<EntityImpl, EntityMo
 
     private final Entity entity;
 
-    protected CustomEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
+    protected CustomEntityRenderer(EntityRenderDispatcher context, Entity entity) {
         super(context, entity.information.getEntityModel(context), 1.0F);
         this.entity = entity;
     }

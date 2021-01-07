@@ -53,7 +53,7 @@ public class GeometryManager implements SimpleSynchronousResourceReloadListener,
     @Override
     public void apply(ResourceManager manager) {
 
-        Lists.newArrayList(this.modelData.keySet()).forEach(k -> modelData.replace(k, loadGeometryData(k)));
+        Lists.newArrayList(this.modelData.keySet()).stream().filter(i -> !i.equals(MISSING_IDENTIFIER)).forEach(k -> modelData.replace(k, loadGeometryData(k)));
         modelData.put(MISSING_IDENTIFIER, ClientInit.GSON_CLIENT.fromJson(MISSING_MODEL_DATA, GeometryData.class));
     }
 
@@ -62,12 +62,13 @@ public class GeometryManager implements SimpleSynchronousResourceReloadListener,
         this.modelData.clear();
     }
 
-    private static final String MISSING_MODEL_DATA = "{\n" +
+    private static final String MISSING_MODEL_DATA =
+            "{\n" +
             "\t\"format_version\": \"1.12.0\",\n" +
             "\t\"minecraft:geometry\": [\n" +
             "\t\t{\n" +
             "\t\t\t\"description\": {\n" +
-            "\t\t\t\t\"identifier\": \"geometry.obsidian.entities.fuckup\",\n" +
+            "\t\t\t\t\"identifier\": \"geometry.archiesarmy.fuckup\",\n" +
             "\t\t\t\t\"texture_width\": 16,\n" +
             "\t\t\t\t\"texture_height\": 16,\n" +
             "\t\t\t\t\"visible_bounds_width\": 2,\n" +

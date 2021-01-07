@@ -8,8 +8,8 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 import com.mojang.datafixers.types.Type;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
+import net.minecraft.block.MaterialColor;
 import net.minecraft.block.PillarBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -56,13 +56,13 @@ public class RegistryHelper {
         return block;
     }
 
-    public Block registerNetherStem(String name, MapColor materialColor) {
+    public Block registerNetherStem(String name, MaterialColor materialColor) {
         return this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) -> {
             return materialColor;
         }).strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), name, ItemGroup.BUILDING_BLOCKS);
     }
 
-    public Block registerLog(String name, MapColor materialColor, MapColor materialColor2) {
+    public Block registerLog(String name, MaterialColor materialColor, MaterialColor materialColor2) {
         return this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) -> {
             return blockState.get(PillarBlock.AXIS) == Axis.Y ? materialColor : materialColor2;
         }).strength(2.0F).sounds(BlockSoundGroup.WOOD)), name);

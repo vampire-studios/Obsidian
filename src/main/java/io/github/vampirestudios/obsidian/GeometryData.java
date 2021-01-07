@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian;
 
+import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import io.github.vampirestudios.obsidian.client.ClientInit;
@@ -42,6 +43,8 @@ public class GeometryData {
     public GeometryBone getBone(String part) {
         return bones.get(part);
     }
+
+    public List<GeometryBone> getAllBones() { return Lists.newArrayList(bones.values()); }
 
     //TODO use internal Resource Manager
 

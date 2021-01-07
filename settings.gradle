@@ -8,6 +8,17 @@ pluginManagement {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        maven {
+            name = 'Jitpack'
+            url = 'https://jitpack.io'
+        }
         gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "io.github.vampirestudios.modrinthmaven" && requested.version?.endsWith("-SNAPSHOT") != true) {
+                useModule("com.github.vampire-studios.ModrinthMaven:ModrinthMaven:${requested.version}")
+            }
+        }
     }
 }

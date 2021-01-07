@@ -22,6 +22,10 @@ public class ObsidianAddon implements IAddonPack {
         this.file = file;
     }
 
+    public File getFile() {
+        return file;
+    }
+
     @Override
     public ObsidianAddonInfo getConfigPackInfo() {
         return obsidianAddonInfo;
@@ -33,7 +37,7 @@ public class ObsidianAddon implements IAddonPack {
     }
 
     @Override
-    public String getDisplayName() {
+    public String getDisplayNameObsidian() {
         return obsidianAddonInfo.displayName;
     }
 

@@ -3,17 +3,13 @@ package io.github.vampirestudios.obsidian;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.serialization.Lifecycle;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
-import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import io.github.vampirestudios.obsidian.api.bedrock.block.Event;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.network.NetworkHandler;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.ItemGroup;
@@ -26,21 +22,20 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
-public class Obsidian implements ModInitializer, EntityComponentInitializer {
+public class Obsidian implements ModInitializer {
 
     public static String MOD_ID = "obsidian";
     public static String NAME = "Obsidian";
+    public static Obsidian INSTANCE;
     public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
     public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
     public static String VERSION = "0.2.0";
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(BoneFrameData.class, new BoneFrameData.Deserializer())
-            .registerTypeAdapter(Keyframe.class, new Keyframe.Deserializer())
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
             .setPrettyPrinting()
             .create();
 
-    public static ComponentKey<TesseractComponent> COMPONENT_ANIMATION = ComponentRegistry.getOrCreate(id("tesseract_animation"), TesseractComponent.class);
+    public NetworkHandler networkHandler;
 
     public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "item_groups")), Lifecycle.stable());
     public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
@@ -53,8 +48,9 @@ public class Obsidian implements ModInitializer, EntityComponentInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "20w46a"));
-//        GeckoLib.initialize();
+        INSTANCE = this;
+        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "1.16.4"));
+
         Registry.register(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
         Registry.register(ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
         Registry.register(ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);
@@ -97,11 +93,7 @@ public class Obsidian implements ModInitializer, EntityComponentInitializer {
         BedrockAddonLoader.loadDefaultBedrockAddons();
         CompletableFuture.runAsync(ConfigHelper::loadObsidianAddons, ConfigHelper.EXECUTOR_SERVICE);
         CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
-    }
-
-    @Override
-    public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        registry.registerForPlayers (COMPONENT_ANIMATION, TesseractComponent::new, RespawnCopyStrategy.NEVER_COPY);
+        networkHandler = new NetworkHandler();
     }
 
 }

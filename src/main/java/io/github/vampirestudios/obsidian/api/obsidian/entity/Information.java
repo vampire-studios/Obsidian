@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.entity;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.model.*;
 import net.minecraft.util.Identifier;
 
@@ -20,29 +20,29 @@ public class Information {
 
 
     @Environment(EnvType.CLIENT)
-    public EntityModel<EntityImpl> getEntityModel(EntityRendererFactory.Context context) {
+    public EntityModel<EntityImpl> getEntityModel(EntityRenderDispatcher context) {
         switch (vanilla_entity_type.toString()) {
             case "minecraft:pig":
-                return new PigEntityModel<>(context.getPart(EntityModelLayers.PIG));
+                return new PigEntityModel<>();
             case "minecraft:villager":
-                return new VillagerResemblingModel<>(context.getPart(EntityModelLayers.VILLAGER));
+                return new VillagerResemblingModel<>(1.0F);
             case "minecraft:chicken":
-                return new ChickenEntityModel<>(context.getPart(EntityModelLayers.CHICKEN));
+                return new ChickenEntityModel<>();
             case "minecraft:bear":
-                return new PolarBearEntityModel(context.getPart(EntityModelLayers.POLAR_BEAR));
+                return new PolarBearEntityModel();
             case "minecraft:squid":
-                return new SquidEntityModel<>(context.getPart(EntityModelLayers.SQUID));
+                return new SquidEntityModel<>();
             case "minecraft:zombie":
-                return new ZombieEntityModel(context.getPart(EntityModelLayers.ZOMBIE));
+                return new ZombieEntityModel(1.0F, false);
             case "minecraft:skeleton":
-                return new SkeletonEntityModel(context.getPart(EntityModelLayers.SKELETON));
+                return new SkeletonEntityModel();
             case "minecraft:fox":
-                return new FoxEntityModel(context.getPart(EntityModelLayers.FOX));
+                return new FoxEntityModel();
             case "minecraft:horse":
-                return new HorseEntityModel(context.getPart(EntityModelLayers.HORSE));
+                return new HorseEntityModel(1.0F);
             case "minecraft:cow":
             default:
-                return new CowEntityModel<>(context.getPart(EntityModelLayers.COW));
+                return new CowEntityModel<>();
 
         }
     }
