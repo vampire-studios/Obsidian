@@ -7,6 +7,9 @@ import com.google.gson.JsonParseException;
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.SimpleBowItem;
+import io.github.vampirestudios.obsidian.api.SimpleCrossbowItem;
+import io.github.vampirestudios.obsidian.api.SimpleTridentItem;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
@@ -18,6 +21,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
+import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
@@ -37,11 +41,11 @@ import net.minecraft.block.ChainBlock;
 import net.minecraft.block.LanternBlock;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.*;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.property.Property;
 import net.minecraft.structure.rule.BlockMatchRuleTest;
 import net.minecraft.structure.rule.BlockStateMatchRuleTest;
@@ -82,6 +86,7 @@ public class ConfigHelper {
     public static List<io.github.vampirestudios.obsidian.api.obsidian.item.Item> ITEMS = new ArrayList<>();
     public static List<FoodItem> FOODS = new ArrayList<>();
     public static List<WeaponItem> WEAPONS = new ArrayList<>();
+    public static List<RangedWeaponItem> RANGED_WEAPONS = new ArrayList<>();
     public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new ArrayList<>();
     public static List<Block> BLOCKS = new ArrayList<>();
     public static final List<Potion> POTIONS = new ArrayList<>();
@@ -162,10 +167,11 @@ public class ConfigHelper {
 
                 try {
                     parseItemGroup(path);
-                    parseBlock(pack, modId, path);
+                    parseBlock(modId, path);
                     parseBasicItems(path);
                     parseArmor(path);
                     parseTools(path);
+                    parseRangedWeapons(path);
                     parseWeapons(path);
                     parseFood(path);
                     parsePotions(path);
@@ -200,14 +206,14 @@ public class ConfigHelper {
                     Comparable value = (Comparable) valueOpt.get();
                     blockstate = blockstate.with(property, value);
                 } else {
-                    System.err.println(String.format("Property[%s=%s] doesn't exist for %s", propertyName, valueName, block.toString()));
+                    System.err.printf("Property[%s=%s] doesn't exist for %s%n", propertyName, valueName, block.toString());
                 }
                 jsonProperties.remove(propertyName);
             }
         }
         if(!jsonProperties.isEmpty()) {
             Joiner joiner = Joiner.on(", ");
-            System.err.println(String.format("The following properties do not exist in %s: %s", block.toString(), joiner.join(jsonProperties.keySet())));
+            System.err.printf("The following properties do not exist in %s: %s%n", block.toString(), joiner.join(jsonProperties.keySet()));
         }
         return blockstate;
     }
@@ -232,7 +238,7 @@ public class ConfigHelper {
         }
     }
 
-    private static void parseBlock(IAddonPack pack, String modId, String path) throws FileNotFoundException {
+    private static void parseBlock(String modId, String path) throws FileNotFoundException {
         if (Paths.get(path, "blocks").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "blocks").toFile().listFiles())) {
                 if (file.isFile()) {
@@ -516,47 +522,7 @@ public class ConfigHelper {
                 if (file.isFile()) {
                     io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
                     try {
-                        ArmorMaterial material = new ArmorMaterial() {
-                            @Override
-                            public int getDurability(EquipmentSlot slot) {
-                                return armor.material.durability;
-                            }
-
-                            @Override
-                            public int getProtectionAmount(EquipmentSlot slot) {
-                                return armor.material.protection_amount;
-                            }
-
-                            @Override
-                            public int getEnchantability() {
-                                return armor.material.enchantability;
-                            }
-
-                            @Override
-                            public SoundEvent getEquipSound() {
-                                return Registry.SOUND_EVENT.get(armor.material.sound_event);
-                            }
-
-                            @Override
-                            public Ingredient getRepairIngredient() {
-                                return Ingredient.ofItems(Registry.ITEM.get(armor.material.repair_item));
-                            }
-
-                            @Override
-                            public String getName() {
-                                return armor.material.name;
-                            }
-
-                            @Override
-                            public float getToughness() {
-                                return armor.material.toughness;
-                            }
-
-                            @Override
-                            public float getKnockbackResistance() {
-                                return armor.material.knockback_resistance;
-                            }
-                        };
+                        CustomArmorMaterial material = new CustomArmorMaterial(armor.material);
                         RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
                                         .group(armor.information.getItemGroup()).maxCount(armor.information.max_count)),
                                 armor.information.name.id);
@@ -575,37 +541,7 @@ public class ConfigHelper {
                 if (file.isFile()) {
                     io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
                     try {
-                        ToolMaterial material = new ToolMaterial() {
-                            @Override
-                            public int getDurability() {
-                                return tool.material.durability;
-                            }
-
-                            @Override
-                            public float getMiningSpeedMultiplier() {
-                                return tool.material.miningSpeed;
-                            }
-
-                            @Override
-                            public float getAttackDamage() {
-                                return tool.material.attackDamage;
-                            }
-
-                            @Override
-                            public int getMiningLevel() {
-                                return tool.material.miningLevel;
-                            }
-
-                            @Override
-                            public int getEnchantability() {
-                                return tool.material.enchantability;
-                            }
-
-                            @Override
-                            public Ingredient getRepairIngredient() {
-                                return Ingredient.ofItems(Registry.ITEM.get(tool.material.repairItem));
-                            }
-                        };
+                        CustomToolMaterial material = new CustomToolMaterial(tool.material);
                         switch (tool.toolType) {
                             case "pickaxe":
                                 RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
@@ -627,10 +563,51 @@ public class ConfigHelper {
                                                 .group(tool.information.getItemGroup()).maxCount(tool.information.max_count)),
                                         tool.information.name.id);
                                 break;
+                            case "bow":
+                                RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(tool.information.getItemGroup())
+                                        .maxCount(tool.information.max_count)), tool.information.name.id);
+                                break;
+                            case "crossbow":
+                                RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(tool.information.getItemGroup())
+                                        .maxCount(tool.information.max_count)), tool.information.name.id);
+                                break;
+                            case "trident":
+                                RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(tool.information.getItemGroup())
+                                        .maxCount(tool.information.max_count)), tool.information.name.id);
+                                break;
                         }
                         register(TOOLS, "tool", tool.information.name.id.toString(), tool);
                     } catch (Exception e) {
                         failedRegistering("tool", tool.information.name.id.toString(), e);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void parseRangedWeapons(String path) throws FileNotFoundException {
+        if (Paths.get(path, "items", "weapons", "ranged").toFile().exists()) {
+            for (File file : Objects.requireNonNull(Paths.get(path, "items", "weapons", "ranged").toFile().listFiles())) {
+                if (file.isFile()) {
+                    RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
+                    try {
+                        switch (rangedWeapon.weapon_type) {
+                            case "bow":
+                                RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
+                                        .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
+                                break;
+                            case "crossbow":
+                                RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
+                                        .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
+                                break;
+                            case "trident":
+                                RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
+                                        .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
+                                break;
+                        }
+                        register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id.toString(), rangedWeapon);
+                    } catch (Exception e) {
+                        failedRegistering("ranged_weapon", rangedWeapon.information.name.id.toString(), e);
                     }
                 }
             }
@@ -643,37 +620,7 @@ public class ConfigHelper {
                 if (file.isFile()) {
                     WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
                     try {
-                        ToolMaterial material = new ToolMaterial() {
-                            @Override
-                            public int getDurability() {
-                                return weapon.material.durability;
-                            }
-
-                            @Override
-                            public float getMiningSpeedMultiplier() {
-                                return weapon.material.miningSpeed;
-                            }
-
-                            @Override
-                            public float getAttackDamage() {
-                                return weapon.material.attackDamage;
-                            }
-
-                            @Override
-                            public int getMiningLevel() {
-                                return weapon.material.miningLevel;
-                            }
-
-                            @Override
-                            public int getEnchantability() {
-                                return weapon.material.enchantability;
-                            }
-
-                            @Override
-                            public Ingredient getRepairIngredient() {
-                                return Ingredient.ofItems(Registry.ITEM.get(weapon.material.repairItem));
-                            }
-                        };
+                        CustomToolMaterial material = new CustomToolMaterial(weapon.material);
                         RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                                 .group(weapon.information.getItemGroup())
                                 .maxCount(weapon.information.max_count)), weapon.information.name.id);
