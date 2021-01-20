@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian;
 
+import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -43,11 +43,13 @@ public class GeometryData {
         return bones.get(part);
     }
 
+    public List<GeometryBone> getAllBones() { return Lists.newArrayList(bones.values()); }
+
     //TODO use internal Resource Manager
 
     public static GeometryData load(ResourceManager resourceManager, Identifier identifier) {
         try {
-            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            Resource resource = resourceManager.getResource(identifier);
 
             GeometryData data;
             try(JsonReader reader = ClientInit.GSON_CLIENT.newJsonReader(new InputStreamReader(resource.getInputStream()))) {

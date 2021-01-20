@@ -5,7 +5,6 @@
 
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import com.mojang.datafixers.types.Type;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
@@ -74,12 +73,12 @@ public class RegistryHelper {
     }
 
     public Item registerItem(Item item, String name) {
-        return (Item)Registry.register(Registry.ITEM, new Identifier(this.modId, name), item);
+        return Registry.register(Registry.ITEM, new Identifier(this.modId, name), item);
     }
 
     public <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(Builder<T> builder, String name) {
-        BlockEntityType<T> blockEntityType = builder.build((Type)null);
-        return (BlockEntityType)Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(this.modId, name), blockEntityType);
+        BlockEntityType<T> blockEntityType = builder.build(null);
+        return Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(this.modId, name), blockEntityType);
     }
 
     public Block registerCompatBlock(String modName, String blockName, Block block, ItemGroup itemGroup) {
@@ -91,11 +90,11 @@ public class RegistryHelper {
     }
 
     public SoundEvent createSoundEvent(String name) {
-        return (SoundEvent)Registry.register(Registry.SOUND_EVENT, name, new SoundEvent(new Identifier(this.modId, name)));
+        return Registry.register(Registry.SOUND_EVENT, name, new SoundEvent(new Identifier(this.modId, name)));
     }
 
     public SoundEvent registerSoundEvent(SoundEvent soundEvent, String name) {
-        return (SoundEvent)Registry.register(Registry.SOUND_EVENT, new Identifier(this.modId, name), soundEvent);
+        return Registry.register(Registry.SOUND_EVENT, new Identifier(this.modId, name), soundEvent);
     }
 
     public Item registerSpawnEgg(String name, EntityType<? extends MobEntity> entity, int primaryColor, int secondaryColor) {
@@ -103,6 +102,6 @@ public class RegistryHelper {
     }
 
     public Potion registerPotion(String name, Potion potion) {
-        return (Potion)Registry.register(Registry.POTION, new Identifier(this.modId, name), potion);
+        return Registry.register(Registry.POTION, new Identifier(this.modId, name), potion);
     }
 }

@@ -1,13 +1,15 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ItemInformation {
 
     public String rarity = "common";
-    public String item_group = "";
+    public Identifier item_group;
     public Integer max_count = 64;
     public NameInformation name;
     public boolean has_glint = false;
@@ -31,29 +33,7 @@ public class ItemInformation {
     }
 
     public ItemGroup getItemGroup() {
-        switch (item_group) {
-            case "minecraft:building_blocks":
-                return ItemGroup.BUILDING_BLOCKS;
-            case "minecraft:decorations":
-                return ItemGroup.DECORATIONS;
-            case "minecraft:redstone":
-                return ItemGroup.REDSTONE;
-            case "minecraft:transportation":
-                return ItemGroup.TRANSPORTATION;
-            case "minecraft:misc":
-                return ItemGroup.MISC;
-            case "minecraft:food":
-                return ItemGroup.FOOD;
-            case "minecraft:tools":
-                return ItemGroup.TOOLS;
-            case "minecraft:combat":
-                return ItemGroup.COMBAT;
-            case "minecraft:brewing":
-                return ItemGroup.BREWING;
-            case "minecraft:search":
-            default:
-                return ItemGroup.SEARCH;
-        }
+        return Obsidian.ITEM_GROUP_REGISTRY.get(item_group);
     }
 
 }

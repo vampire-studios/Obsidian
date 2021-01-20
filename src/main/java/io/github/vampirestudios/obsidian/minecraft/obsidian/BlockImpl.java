@@ -57,12 +57,12 @@ public class BlockImpl extends Block {
                 return ActionResult.SUCCESS;
             }
         }
-        if (!world_1.isClient && block.functions.on_use != null) {
+        /*if (!world_1.isClient && block.functions.on_use != null) {
             if (world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).isPresent()) {
                 world_1.getServer().getCommandFunctionManager().execute(world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).get(), world_1.getServer().getCommandSource());
                 return ActionResult.SUCCESS;
             }
-        }
+        }*/
         return ActionResult.FAIL;
     }
 
@@ -93,7 +93,7 @@ public class BlockImpl extends Block {
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
         if (block.display != null && block.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.display.lore) {
-                tooltip.add(tooltipInformation.getTextType());
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }
     }

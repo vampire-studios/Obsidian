@@ -1,13 +1,12 @@
 package io.github.vampirestudios.obsidian.client;
 
-import io.github.vampirestudios.obsidian.GeometryLivingEntityRenderer;
+import io.github.vampirestudios.obsidian.AnimatableEntityRenderer;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class JsonEntityRenderer extends GeometryLivingEntityRenderer<EntityImpl, EntityJsonModel> {
+public class JsonEntityRenderer extends AnimatableEntityRenderer<EntityImpl, EntityJsonModel> {
 
     private final Entity entity;
 
@@ -26,8 +25,4 @@ public class JsonEntityRenderer extends GeometryLivingEntityRenderer<EntityImpl,
         return false;
     }
 
-    protected void scale(EntityImpl entity, MatrixStack matrixStack, float f) {
-        float g = 0.9375F;
-        matrixStack.scale(g, g, g);
-    }
 }

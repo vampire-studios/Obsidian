@@ -31,7 +31,7 @@ public class CustomBlockItem extends BlockItem {
 
     @Override
     public Text getName() {
-        return block.information.name.getName(true);
+        return block.information.name.getName("block");
     }
 
 }

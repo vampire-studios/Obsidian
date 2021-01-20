@@ -78,6 +78,30 @@ public class BlockInformation {
                 return BlockSoundGroup.NETHER_WART;
             case "minecraft:lantern":
                 return BlockSoundGroup.LANTERN;
+            case "minecraft:sculk_sensor":
+                return BlockSoundGroup.SCULK_SENSOR;
+            case "minecraft:copper":
+                return BlockSoundGroup.COPPER;
+            case "minecraft:calcite":
+                return BlockSoundGroup.CALCITE;
+            case "minecraft:pointed_dripstone":
+                return BlockSoundGroup.POINTED_DRIPSTONE;
+            case "minecraft:dripstone_block":
+                return BlockSoundGroup.DRIPSTONE_BLOCK;
+            case "minecraft:tuff":
+                return BlockSoundGroup.TUFF;
+            case "minecraft:small_amethyst_bud":
+                return BlockSoundGroup.SMALL_AMETHYST_BUD;
+            case "minecraft:medium_amethyst_bud":
+                return BlockSoundGroup.MEDIUM_AMETHYST_BUD;
+            case "minecraft:large_amethyst_bud":
+                return BlockSoundGroup.LARGE_AMETHYST_BUD;
+            case "minecraft:amethyst_cluster":
+                return BlockSoundGroup.AMETHYST_CLUSTER;
+            case "minecraft:amethyst_block":
+                return BlockSoundGroup.AMETHYST_BLOCK;
+            case "minecraft:candle":
+                return BlockSoundGroup.CANDLE;
             case "minecraft:stone":
             default:
                 return BlockSoundGroup.STONE;

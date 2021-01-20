@@ -1,13 +1,12 @@
 package io.github.vampirestudios.obsidian.api.obsidian.enchantments;
 
+import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.util.Identifier;
 
 public class Enchantment {
 
-    public String name;
-    public Identifier id;
+    public NameInformation name;
     public String[] slots;
     public String target;
     public String rarity;

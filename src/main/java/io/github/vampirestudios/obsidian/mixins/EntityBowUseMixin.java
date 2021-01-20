@@ -11,8 +11,9 @@ import net.minecraft.item.RangedWeaponItem;
 
 @Mixin({ AbstractSkeletonEntity.class })
 public class EntityBowUseMixin {
-	@Inject(method = "canUseRangedWeapon", at = @At("HEAD"))
-	public void canUseRangedWeapon(RangedWeaponItem weapon, CallbackInfoReturnable<Boolean> cir) {
+	// Allows Entities that use bows to shoot custom bows.
+	@Inject(method = "canUseRangedWeapon", at = @At("HEAD"), cancellable = true)
+	public void ob_canUseRangedWeapon(RangedWeaponItem weapon, CallbackInfoReturnable<Boolean> cir) {
 		if (weapon instanceof BowItem) {
 			cir.setReturnValue(true);
 		}

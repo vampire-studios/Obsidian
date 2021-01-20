@@ -4,7 +4,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import net.minecraft.resource.DirectoryResourcePack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ZipResourcePack;
-import net.minecraft.util.Identifier;
 
 import java.io.File;
 
@@ -22,18 +21,17 @@ public class ObsidianAddon implements IAddonPack {
         this.file = file;
     }
 
+    public File getFile() {
+        return file;
+    }
+
     @Override
     public ObsidianAddonInfo getConfigPackInfo() {
         return obsidianAddonInfo;
     }
 
     @Override
-    public Identifier getIdentifier() {
-        return obsidianAddonInfo.id;
-    }
-
-    @Override
-    public String getDisplayName() {
+    public String getDisplayNameObsidian() {
         return obsidianAddonInfo.displayName;
     }
 

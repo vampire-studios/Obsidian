@@ -13,6 +13,7 @@ public class AdditionalBlockInformation {
     public boolean trapdoor = false;
 
     public boolean rotatable = false;
+    public boolean horizontal_rotatable = false;
     public boolean pillar = false;
     public boolean path = false;
     public boolean lantern = false;

@@ -13,12 +13,12 @@ import net.minecraft.item.Items;
 @Mixin(SkeletonEntityModel.class)
 public class SkeletonEntityModelMixin {
 	@Redirect(method = "animateModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
-	private Item animateModel(ItemStack itemStack) {
-		return itemStack.getItem() instanceof BowItem ? Items.BOW : itemStack.getItem();
+	public Item ob_animateModel(ItemStack stack) {
+		return stack.getItem() instanceof BowItem ? Items.BOW : stack.getItem();
 	}
 
 	@Redirect(method = "setAngles", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
-	private Item setAngles(ItemStack itemStack) {
-		return itemStack.getItem() instanceof BowItem ? Items.BOW : itemStack.getItem();
+	private Item ob_setAngles(ItemStack heldItemStack) {
+		return heldItemStack.getItem() instanceof BowItem ? Items.BOW : heldItemStack.getItem();
 	}
 }

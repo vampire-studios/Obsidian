@@ -4,7 +4,6 @@ import com.google.gson.*;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
 import java.lang.reflect.Type;
@@ -24,6 +23,10 @@ public class GeometryBone {
     private final Vec3f pivot;
     private Vec3f rotation = new Vec3f(0, 0, 0);
 
+    private final Vec3f additiveRotation = new Vec3f(0 , 0 , 0);
+    private final Vec3f additiveTranslation = new Vec3f(0,  0, 0 );
+    private final Vec3f additiveScaling = new Vec3f(1,  1,  1);
+
     public boolean visible = true;
 
     public GeometryBone(String id, Vec3f pivot) {
@@ -41,6 +44,21 @@ public class GeometryBone {
             this.rotation = new Vec3f((float)Math.toRadians(pitch), (float)Math.toRadians(yaw), (float)Math.toRadians(roll));
         else
             this.rotation = new Vec3f(pitch, yaw, roll);
+    }
+
+    public void addRotation(float pitch, float yaw, float roll, boolean degrees) {
+        if(degrees)
+            this.additiveRotation.add(new Vec3f((float)Math.toRadians(pitch), (float)Math.toRadians(yaw), (float)Math.toRadians(roll)));
+        else
+            this.additiveRotation.add(new Vec3f(pitch, yaw, roll));
+    }
+
+    public void addTranslation(float x, float y, float z) {
+        this.additiveTranslation.add(new Vec3f(x, y, z));
+    }
+
+    public void addScaling(float x, float y, float z) {
+        this.additiveScaling.add(new Vec3f(x, y, z));
     }
 
     public void setTextureSize(int width, int height) {
@@ -64,12 +82,18 @@ public class GeometryBone {
 
             stack.push();
             if (!this.elements.isEmpty() || !this.children.isEmpty()) {
+                stack.translate(pivot.getX() / 16D, pivot.getY() / 16D, pivot.getZ() / 16D);
+                stack.multiply(Vec3f.NEGATIVE_Z.getRadialQuaternion(rotation.getZ() + additiveRotation.getZ()));
+                stack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(rotation.getY() + additiveRotation.getY()));
+                stack.multiply(Vec3f.NEGATIVE_X.getRadialQuaternion(rotation.getX() + additiveRotation.getX()));
+                stack.translate(-(pivot.getX()) / 16D, -(pivot.getY() / 16D), -(pivot.getZ() / 16D));
 
-                if (!rotation.equals(new Vec3f(0.0F, 0.0F, 0.0F))) {
-                    stack.translate(pivot.getX() / 16D, pivot.getY() / 16D, pivot.getZ() / 16D);
-                    stack.multiply(new Quaternion(-rotation.getX(), rotation.getY(), -rotation.getZ(), false));
-                    stack.translate(-(pivot.getX()) / 16D, -(pivot.getY() / 16D), -(pivot.getZ() / 16D));
-                }
+                stack.translate(additiveTranslation.getX(), additiveTranslation.getY(), additiveTranslation.getZ());
+                stack.scale(additiveScaling.getX(), additiveScaling.getY(), additiveScaling.getZ());
+
+                additiveRotation.set(0, 0, 0);
+                additiveTranslation.set(0, 0, 0);
+                additiveScaling.set(1, 1, 1);
 
                 elements.forEach(c -> c.renderCuboid(stack, consumer, light, overlay, red, green, blue, alpha));
             }

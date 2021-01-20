@@ -179,7 +179,7 @@ public class BedrockAddonLoader {
 
                 try {
 //                    parseItemGroup(path);
-                    parseBlock(path);
+//                    parseBlock(path);
 //                    parseBasicItems(path);
 //                    parseArmor(path);
 //                    parseTools(path);
@@ -217,14 +217,14 @@ public class BedrockAddonLoader {
                     Comparable value = (Comparable) valueOpt.get();
                     blockstate = blockstate.with(property, value);
                 } else {
-                    System.err.println(String.format("Property[%s=%s] doesn't exist for %s", propertyName, valueName, block.toString()));
+                    System.err.printf("Property[%s=%s] doesn't exist for %s%n", propertyName, valueName, block.toString());
                 }
                 jsonProperties.remove(propertyName);
             }
         }
         if(!jsonProperties.isEmpty()) {
             Joiner joiner = Joiner.on(", ");
-            System.err.println(String.format("The following properties do not exist in %s: %s", block.toString(), joiner.join(jsonProperties.keySet())));
+            System.err.printf("The following properties do not exist in %s: %s%n", block.toString(), joiner.join(jsonProperties.keySet()));
         }
         return blockstate;
     }
@@ -520,23 +520,6 @@ public class BedrockAddonLoader {
         }
     }
 
-    private static void parseEnchantments(String path) throws FileNotFoundException {
-        if (Paths.get(path, "enchantments").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "enchantments").toFile().listFiles())) {
-                if (file.isFile()) {
-                    Enchantment enchantment = GSON.fromJson(new FileReader(file), Enchantment.class);
-                    try {
-                        if(enchantment == null) continue;
-                        Registry.register(Registry.ENCHANTMENT, enchantment.id, new EnchantmentImpl(enchantment));
-                        register(ENCHANTMENTS, "enchantment", enchantment.name, enchantment);
-                    } catch (Exception e) {
-                        failedRegistering("enchantment", enchantment.name, e);
-                    }
-                }
-            }
-        }
-    }
-
     private static void parseStatusEffects(String path) throws FileNotFoundException {
         if (Paths.get(path, "status_effects").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "status_effects").toFile().listFiles())) {
@@ -568,14 +551,14 @@ public class BedrockAddonLoader {
                         HealthComponent healthComponent = (HealthComponent) entity.components.get(new Identifier("collision_box"));
 
                         EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)
-                                .entity((type, world) -> new EntityImpl(type, world, entity, healthComponent.value))
+                                .entity((type, world) -> new EntityImpl(type, world, entity, healthComponent.value, null))
                                 .category(entity.entity_components.getCategory())
                                 .dimensions(EntityDimensions.fixed(collisionBoxComponent.width, collisionBoxComponent.height))
                                 .summonable(entity.information.summonable)
                                 .hasEgg(entity.information.spawnable)
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(healthComponent.max));
+                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(healthComponent.max, 0.4D));
                         register(ENTITIES, "entity", entity.information.identifier.toString(), entity);
                     } catch (Exception e) {
                         failedRegistering("entity", entity.information.identifier.toString(), e);

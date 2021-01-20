@@ -32,7 +32,7 @@ public class ArmorItemImpl extends ArmorItem implements ArmorProvider {
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : item.display.lore) {
-                tooltip.add(tooltipInformation.getTextType());
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }
     }

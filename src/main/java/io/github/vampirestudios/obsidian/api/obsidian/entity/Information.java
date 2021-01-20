@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 public class Information {
 
     public Identifier identifier;
+    public String name;
     public boolean spawnable;
     public boolean summonable;
     public Identifier vanilla_entity_type;

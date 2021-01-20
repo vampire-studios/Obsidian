@@ -96,7 +96,12 @@ public class EntityRegistryBuilder<E extends Entity> {
                     .trackable(this.trackingDistance, this.updateIntervalTicks, this.alwaysUpdateVelocity);
         }
 
-        EntityType<E> entityType = Registry.register(Registry.ENTITY_TYPE, name, entityBuilder.build());
+        EntityType<E> entityType;
+        if(Registry.ENTITY_TYPE.containsId(name)) {
+            entityType = (EntityType<E>) Registry.ENTITY_TYPE.get(name);
+        } else {
+            entityType = Registry.register(Registry.ENTITY_TYPE, name, entityBuilder.build());
+        }
 
         if (this.hasEgg) {
             RegistryUtils.registerItem(new SpawnEggItem((EntityType<? extends MobEntity>) entityType, this.primaryColor, this.secondaryColor, (new Settings()).group(ItemGroup.MISC)), new Identifier(name.getNamespace(), String.format("%s_spawn_egg", name.getPath())));

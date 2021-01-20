@@ -9,14 +9,18 @@
   "mixins": [
     "AbstractSkeletonEntityMixin",
     "BowItemMixin",
+    "BuiltinModelItemRendererMixin",
     "CrossbowItemMixin",
     "DynamicRegistryManagerMixin",
     "EntityBowUseMixin",
     "EntityCrossbowUseMixin",
+    "EntityMixin",
     "ItemMixin",
+    "ItemRendererMixin",
+    "JoinWorldMixin",
     "MixinPlayerManager",
-    "ModelPartMixin",
-    "ProjectileUtilMixin"
+    "ProjectileUtilMixin",
+    "TridentAttackGoalMixin"
   ],
   "client": [
     "ArmorFeatureRendererMixin",

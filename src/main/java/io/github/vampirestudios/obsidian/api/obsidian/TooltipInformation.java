@@ -6,8 +6,8 @@ public class TooltipInformation {
 
     public NameInformation text;
 
-    public Text getTextType() {
-        return text.getName(false);
+    public Text getTextType(String type) {
+        return text.getName(type);
     }
 
 }

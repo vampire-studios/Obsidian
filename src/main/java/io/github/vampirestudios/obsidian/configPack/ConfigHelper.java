@@ -13,15 +13,19 @@ import io.github.vampirestudios.obsidian.api.SimpleTridentItem;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.BreathableComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.components.MovementComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
+import io.github.vampirestudios.obsidian.api.obsidian.item.ShieldItem;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
@@ -30,15 +34,22 @@ import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
 import io.github.vampirestudios.obsidian.utils.EntityUtils;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import io.github.vampirestudios.vampirelib.api.ShieldRegistry;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.discovery.ModCandidate;
+import net.fabricmc.loader.util.UrlUtil;
 import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChainBlock;
 import net.minecraft.block.LanternBlock;
+import net.minecraft.block.cauldron.CauldronBehavior;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -68,6 +79,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -89,13 +101,15 @@ public class ConfigHelper {
     public static List<RangedWeaponItem> RANGED_WEAPONS = new ArrayList<>();
     public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new ArrayList<>();
     public static List<Block> BLOCKS = new ArrayList<>();
-    public static final List<Potion> POTIONS = new ArrayList<>();
-    public static final List<Command> COMMANDS = new ArrayList<>();
-    public static final List<StatusEffect> STATUS_EFFECTS = new ArrayList<>();
-    public static final List<Enchantment> ENCHANTMENTS = new ArrayList<>();
-    public static final List<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new ArrayList<>();
-    public static final List<Entity> ENTITIES = new ArrayList<>();
+    public static List<Potion> POTIONS = new ArrayList<>();
+    public static List<Command> COMMANDS = new ArrayList<>();
+    public static List<StatusEffect> STATUS_EFFECTS = new ArrayList<>();
+    public static List<Enchantment> ENCHANTMENTS = new ArrayList<>();
+    public static List<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new ArrayList<>();
+    public static List<Entity> ENTITIES = new ArrayList<>();
     public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> ARMORS = new ArrayList<>();
+    public static List<CauldronType> CAULDRON_TYPES = new ArrayList<>();
+    public static List<ShieldItem> SHIELDS = new ArrayList<>();
 
     public static void loadDefaultObsidianAddons() {
         if (!OBSIDIAN_ADDON_DIRECTORY.exists())
@@ -140,7 +154,7 @@ public class ConfigHelper {
                 try {
                     OBSIDIAN_ADDONS.add(supplier);
                     Obsidian.LOGGER.info(String.format("[Obsidian] Registering an obsidian addon: %s from an entrypoint",
-                            supplier.getConfigPackInfo().id));
+                            supplier.getConfigPackInfo().displayName));
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
@@ -159,10 +173,10 @@ public class ConfigHelper {
             Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.size()));
 
             for(IAddonPack pack : OBSIDIAN_ADDONS) {
-                Obsidian.LOGGER.info(String.format(" - %s", pack.getIdentifier().toString()));
+                Obsidian.LOGGER.info(String.format(" - %s", pack.getConfigPackInfo().displayName));
 
                 String modId = pack.getConfigPackInfo().namespace;
-                String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + pack.getIdentifier().getPath() + "/content/" + pack.getConfigPackInfo().namespace;
+                String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + pack.getConfigPackInfo().folderName + "/content/" + pack.getConfigPackInfo().namespace;
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
@@ -180,9 +194,35 @@ public class ConfigHelper {
                     parseStatusEffects(path);
                     parseEntities(path);
                     parseCurrencies(path);
+                    parseCauldronTypes(path);
+                    parseShields(path);
+//                    parseElytras(path);
+//                    parseVillagerProfessions(path);
+//                    parseVillagerBiomeType(path);
+//                    parseVillagerTrades(path);
+//                    parseFluids(path);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
+
+                ObsidianAddon addon = (ObsidianAddon) pack;
+                try {
+                    FabricLoader loader = FabricLoader.getInstance();
+                    Method addMod = net.fabricmc.loader.FabricLoader.class.getDeclaredMethod("addMod", ModCandidate.class);
+                    addMod.setAccessible(true);
+                    ModCandidate candidate = new ModCandidate(new ObsidianAddonModMetadata(addon), UrlUtil.asUrl(addon.getFile()), 0, false);
+                    addMod.invoke(loader, candidate);
+                    Optional<ModContainer> optional = loader.getModContainer(addon.getConfigPackInfo().namespace);
+                    if(optional.isPresent()) {
+                        Method setupRootPath = net.fabricmc.loader.ModContainer.class.getDeclaredMethod("setupRootPath");
+                        setupRootPath.setAccessible(true);
+                        setupRootPath.invoke(optional.get());
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                ResourceManagerHelperImpl.registerBuiltinResourcePack(new Identifier("obsidian", pack.getConfigPackInfo().namespace), pack.getConfigPackInfo().namespace, FabricLoader.getInstance().getModContainer(addon.getConfigPackInfo().namespace).get(), ResourcePackActivationType.ALWAYS_ENABLED);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -238,6 +278,49 @@ public class ConfigHelper {
         }
     }
 
+    private static void parseCauldronTypes(String path) throws FileNotFoundException {
+        if (Paths.get(path, "cauldron_types").toFile().exists()) {
+            for (File file : Objects.requireNonNull(Paths.get(path, "cauldron_types").toFile().listFiles())) {
+                if (file.isFile()) {
+                    CauldronType cauldronType = Obsidian.GSON.fromJson(new FileReader(file), CauldronType.class);
+                    try {
+                        if(cauldronType == null) continue;
+                        CauldronBehavior cauldronBehavior = (state, world, pos, player, hand, stack) -> {
+                            BlockState blockState = getState(Registry.BLOCK.get(cauldronType.blockstate.block), cauldronType.blockstate.properties);
+                            return CauldronBehavior.fillCauldron(world, pos, player, hand, stack, blockState, Registry.SOUND_EVENT.get(cauldronType.sound_event));
+                        };
+                        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+                        CauldronBehavior.WATER_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+                        CauldronBehavior.LAVA_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+                        CauldronBehavior.POWDER_SNOW_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+                        register(CAULDRON_TYPES, "cauldron_type", cauldronType.name, cauldronType);
+                    } catch (Exception e) {
+                        failedRegistering("cauldron_types", cauldronType.name, e);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void parseShields(String path) throws FileNotFoundException {
+        if (Paths.get(path, "shields").toFile().exists()) {
+            for (File file : Objects.requireNonNull(Paths.get(path, "shields").toFile().listFiles())) {
+                if (file.isFile()) {
+                    ShieldItem shieldItem = Obsidian.GSON.fromJson(new FileReader(file), ShieldItem.class);
+                    try {
+                        if(shieldItem == null) continue;
+                        ShieldItemImpl shieldItemImpl = new ShieldItemImpl(shieldItem, new Item.Settings().group(shieldItem.information.getItemGroup()));
+                        REGISTRY_HELPER.registerItem(shieldItemImpl, shieldItem.information.name.id.getPath());
+                        ShieldRegistry.INSTANCE.add(shieldItemImpl);
+                        register(SHIELDS, "shield", shieldItem.information.name.id.toString(), shieldItem);
+                    } catch (Exception e) {
+                        failedRegistering("shield", shieldItem.information.name.id.toString(), e);
+                    }
+                }
+            }
+        }
+    }
+
     private static void parseBlock(String modId, String path) throws FileNotFoundException {
         if (Paths.get(path, "blocks").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "blocks").toFile().listFiles())) {
@@ -266,6 +349,8 @@ public class ConfigHelper {
                         net.minecraft.block.Block blockImpl;
                         if(block.additional_information != null) {
                             if(block.additional_information.rotatable) {
+                                blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new FacingBlockImpl(block, blockSettings), block.information.name.id.getPath());
+                            } else if(block.additional_information.horizontal_rotatable) {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingBlockImpl(block, blockSettings), block.information.name.id.getPath());
                             } else if(block.additional_information.pillar) {
                                 blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new PillarBlockImpl(block, blockSettings), block.information.name.id.getPath());
@@ -336,7 +421,7 @@ public class ConfigHelper {
                                 }
                             });
                         }
-                        Artifice.registerDataPack(String.format("obsidian:%s_%s_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                        Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                 serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
                                     lootTableBuilder.type(new Identifier("block"));
                                     lootTableBuilder.pool(pool -> {
@@ -351,12 +436,11 @@ public class ConfigHelper {
                                     });
                                 })
                         );
-                        register(BLOCKS, "block", block.information.name.id.toString(), block);
                         if (block.additional_information != null) {
                             if (block.additional_information.slab) {
                                 REGISTRY_HELPER.registerBlock(new SlabImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_slab_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_slab_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_slab"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -391,7 +475,7 @@ public class ConfigHelper {
                             if (block.additional_information.stairs) {
                                 REGISTRY_HELPER.registerBlock(new StairsImpl(block), new Identifier(modId, block.information.name.id.getPath() + "_stairs").getPath(),
                                         ItemGroup.BUILDING_BLOCKS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_stairs_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_stairs_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_stairs"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -420,7 +504,7 @@ public class ConfigHelper {
                             if (block.additional_information.fence) {
                                 REGISTRY_HELPER.registerBlock(new FenceImpl(block),
                                         new Identifier(modId, block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_fence_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -449,7 +533,7 @@ public class ConfigHelper {
                             if (block.additional_information.fenceGate) {
                                 REGISTRY_HELPER.registerBlock(new FenceGateImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_fence_gate_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                                Artifice.registerDataPack(String.format("%s:%s_fence_gate_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
                                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence_gate"), lootTableBuilder -> {
                                         lootTableBuilder.type(new Identifier("block"));
                                         lootTableBuilder.pool(pool -> {
@@ -476,7 +560,7 @@ public class ConfigHelper {
                             if (block.additional_information.walls) {
                                 REGISTRY_HELPER.registerBlock(new WallImpl(block),
                                         Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS);
-                                Artifice.registerDataPack(String.format("obsidian:%s_%s_wall_data", pack.getIdentifier().getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                                Artifice.registerDataPack(String.format("%s:%s_wall_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
                                         serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_wall"), lootTableBuilder -> {
                                             lootTableBuilder.type(new Identifier("block"));
                                             lootTableBuilder.pool(pool -> {
@@ -491,6 +575,7 @@ public class ConfigHelper {
                                 );
                             }
                         }
+                        register(BLOCKS, "block", block.information.name.id.toString(), block);
                     } catch (Exception e) {
                         failedRegistering("block", block.information.name.id.toString(), e);
                     }
@@ -700,10 +785,10 @@ public class ConfigHelper {
                     Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
                     try {
                         if(enchantment == null) continue;
-                        Registry.register(Registry.ENCHANTMENT, enchantment.id, new EnchantmentImpl(enchantment));
-                        register(ENCHANTMENTS, "enchantment", enchantment.name, enchantment);
+                        Registry.register(Registry.ENCHANTMENT, enchantment.name.id, new EnchantmentImpl(enchantment));
+                        register(ENCHANTMENTS, "enchantment", enchantment.name.id.getPath(), enchantment);
                     } catch (Exception e) {
-                        failedRegistering("enchantment", enchantment.name, e);
+                        failedRegistering("enchantment", enchantment.name.id.getPath(), e);
                     }
                 }
             }
@@ -746,7 +831,6 @@ public class ConfigHelper {
 
                             entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));
                         }
-                        entity.components.forEach((s, component) -> System.out.println(s));
 
                         CollisionBoxComponent collisionBoxComponent = null;
                         Component c = entity.components.get("minecraft:collision_box");
@@ -759,16 +843,31 @@ public class ConfigHelper {
                             healthComponent = (HealthComponent) c;
                         }
 
+                        MovementComponent movementComponent = null;
+                        c = entity.components.get("minecraft:movement");
+                        if (c instanceof MovementComponent) {
+                            movementComponent = (MovementComponent) c;
+                        }
+
+                        BreathableComponent breathableComponent = null;
+                        c = entity.components.get("minecraft:breathable");
+                        if (c instanceof BreathableComponent) {
+                            breathableComponent = (BreathableComponent) c;
+                        }
+
+                        assert collisionBoxComponent != null;
+                        assert movementComponent != null;
                         HealthComponent finalHealthComponent = healthComponent;
+                        BreathableComponent finalBreathableComponent = breathableComponent;
                         EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)
-                                .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value))
+                                .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value, finalBreathableComponent))
                                 .category(entity.entity_components.getCategory())
                                 .dimensions(EntityDimensions.fixed(collisionBoxComponent.width, collisionBoxComponent.height))
                                 .summonable(entity.information.summonable)
                                 .hasEgg(entity.information.spawnable)
                                 .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                                 .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(finalHealthComponent.max));
+                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(finalHealthComponent.max, movementComponent.value));
                         register(ENTITIES, "entity", entity.information.identifier.toString(), entity);
                     } catch (Exception e) {
                         failedRegistering("entity", entity.information.identifier.toString(), e);

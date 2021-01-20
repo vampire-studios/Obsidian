@@ -35,9 +35,6 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
-
-    include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:3.0.0-nightly.20w48a")
-    include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:3.0.0-nightly.20w48a")
 }
 
 processResources {

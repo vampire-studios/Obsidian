@@ -1,60 +1,73 @@
 package io.github.vampirestudios.obsidian;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import io.github.vampirestudios.obsidian.client.ClientInit;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
 
-@Environment(EnvType.CLIENT)
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+
 public class AnimationData {
 
-    private final Animation animation;
+    public static final String FORMAT_VERSION = "1.8.0";
+    public boolean shouldReset, loop = false;
+    private final Map<String, AnimationBone> data;
+    public final double length;
 
-    private Keyframe lastKeyframe;
-    private Keyframe nextKeyframe;
-
-    private int tickCounter;
-
-    private final boolean shouldLoop, freeze;
-
-    public AnimationData(Animation a, int ticks, boolean shouldLoop, boolean freeze) {
-        this.animation = a;
-        this.tickCounter = ticks;
-        this.shouldLoop = shouldLoop;
-        this.freeze = freeze;
-
-        reset();
+    public AnimationData(Map<String, AnimationBone> data, double length) {
+        this.data = data;
+        this.length = length;
     }
 
-    public void processAnimation(float delta) {
-        while (tickCounter >= nextKeyframe.getTimeStamp() && nextKeyframe != animation.getKeyframes().get(0)) {
-            lastKeyframe = nextKeyframe;
-            nextKeyframe = getNextKeyframe();
-        }
-        animation.applyFrameData(lastKeyframe, tickCounter, delta);
+    public Map<String, AnimationBone> getData() {
+        return data;
     }
 
-    public Keyframe getNextKeyframe() {
-        int indexNext = animation.getKeyframes().indexOf(lastKeyframe) + 1;
-        return animation.getKeyframes().get(indexNext == animation.getKeyframeCount() ? 0 : indexNext);
-    }
+    //TODO USE INTERNAL RESOURCE MANAGER
+    public static AnimationData load(ResourceManager resourceManager, Identifier identifier) {
+        try {
+            Resource resource = resourceManager.getResource(identifier);
 
-    public void reset() {
-        this.lastKeyframe = animation.getKeyframes().get(0);
-
-        for(Keyframe f : animation.getKeyframes())
-            if(f.getTimeStamp() <= tickCounter)
-                this.lastKeyframe = f;
-
-        this.nextKeyframe = getNextKeyframe();
-    }
-
-    public boolean tick() {
-        if(!freeze) {
-            if(tickCounter++ >= animation.getLength()) {
-                if(!shouldLoop)
-                    return false;
-                tickCounter = 0;
+            AnimationData data;
+            try(JsonReader reader = ClientInit.GSON_CLIENT.newJsonReader(new InputStreamReader(resource.getInputStream()))) {
+                data = ClientInit.GSON_CLIENT.fromJson(reader, AnimationData.class);
+            } catch(JsonParseException e) {
+                System.out.println("Failed to parse model json!");
+                e.printStackTrace();
+                return ClientInit.INSTANCE.animationManager.getAnimationData(AnimationManager.MISSING_IDENTIFIER);
             }
+
+            return data;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return ClientInit.INSTANCE.animationManager.getAnimationData(AnimationManager.MISSING_IDENTIFIER);
         }
-        return true;
     }
+
+    public static class Deserializer implements JsonDeserializer<AnimationData> {
+
+        @Override
+        public AnimationData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = ((Map.Entry<String, JsonElement>) json.getAsJsonObject().get("animations").getAsJsonObject().entrySet().toArray()[0]).getValue().getAsJsonObject();
+            double length = obj.get("animation_length").getAsDouble();
+            Map<String, AnimationBone> data = new HashMap<>();
+            obj.get("bones").getAsJsonObject().entrySet().forEach(e -> {
+                AnimationBone bone = ClientInit.GSON_CLIENT.fromJson(e.getValue(), AnimationBone.class);
+                data.put(e.getKey(), bone);
+            });
+            AnimationData value = new AnimationData(data, length);
+            value.loop = obj.has("loop") && obj.get("loop").getAsBoolean();
+            value.shouldReset = obj.has("override_previous_animation") && obj.get("override_previous_animation").getAsBoolean();
+
+            return value;
+        }
+
+    }
+
 }

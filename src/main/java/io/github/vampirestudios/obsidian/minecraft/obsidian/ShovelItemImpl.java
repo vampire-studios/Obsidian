@@ -27,14 +27,14 @@ public class ShovelItemImpl extends ShovelItem {
 
     @Override
     public Text getName() {
-        return item.information.name.getName(false);
+        return item.information.name.getName("item");
     }
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : item.display.lore) {
-                tooltip.add(tooltipInformation.getTextType());
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }
     }

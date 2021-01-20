@@ -93,7 +93,7 @@ public class PathBlockImpl extends GrassPathBlock {
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
         if (block.display != null && block.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.display.lore) {
-                tooltip.add(tooltipInformation.getTextType());
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }
     }
