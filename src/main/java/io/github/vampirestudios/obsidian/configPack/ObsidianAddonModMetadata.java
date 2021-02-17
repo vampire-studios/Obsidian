@@ -81,6 +81,11 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
     }
 
     @Override
+    public Collection<String> getProvides() {
+        return null;
+    }
+
+    @Override
     public Version getVersion() {
         return new StringVersion(addon.getConfigPackInfo().version);
     }

@@ -9,5 +9,6 @@ public class ShieldItem extends Item {
 	public Identifier shieldBase;
 	@SerializedName("shield_base_no_pattern")
 	public Identifier shieldBaseNoPattern;
+	public boolean can_have_banner = true;
 
 }

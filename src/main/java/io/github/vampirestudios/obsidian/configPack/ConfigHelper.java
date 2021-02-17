@@ -38,13 +38,9 @@ import io.github.vampirestudios.vampirelib.api.ShieldRegistry;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
-import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.discovery.ModCandidate;
-import net.fabricmc.loader.util.UrlUtil;
 import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChainBlock;
@@ -79,7 +75,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -93,7 +88,7 @@ public class ConfigHelper {
     public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "obsidian_addons");
     public static final List<IAddonPack> OBSIDIAN_ADDONS = new ArrayList<>();
     public static RegistryHelper REGISTRY_HELPER;
-    public static final int PACK_VERSION = 1;
+    public static final int PACK_VERSION = 2;
 
     public static List<io.github.vampirestudios.obsidian.api.obsidian.item.Item> ITEMS = new ArrayList<>();
     public static List<FoodItem> FOODS = new ArrayList<>();
@@ -125,8 +120,10 @@ public class ConfigHelper {
                     ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, file);
                     if (!OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == PACK_VERSION) {
                         OBSIDIAN_ADDONS.add(obsidianAddon);
+                        Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
+                    } else {
+                        Obsidian.LOGGER.info(String.format("[Obsidian] Found incompatible obsidian addon: %s with a version of %d", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion));
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load obsidian addon!", e);
@@ -139,8 +136,10 @@ public class ConfigHelper {
                     ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo);
                     if (!OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == PACK_VERSION) {
                         OBSIDIAN_ADDONS.add(obsidianAddon);
+                        Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
+                    } else {
+                        Obsidian.LOGGER.info(String.format("[Obsidian] Found incompatible obsidian addon: %s with a version of %d", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion));
                     }
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
                 }
             } catch (Exception e) {
                 Obsidian.LOGGER.error("[Obsidian] Failed to load obsidian addon!", e);
@@ -177,6 +176,7 @@ public class ConfigHelper {
 
                 String modId = pack.getConfigPackInfo().namespace;
                 String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + pack.getConfigPackInfo().folderName + "/content/" + pack.getConfigPackInfo().namespace;
+                System.out.println(path);
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
@@ -205,7 +205,7 @@ public class ConfigHelper {
                     throwable.printStackTrace();
                 }
 
-                ObsidianAddon addon = (ObsidianAddon) pack;
+                /*ObsidianAddon addon = (ObsidianAddon) pack;
                 try {
                     FabricLoader loader = FabricLoader.getInstance();
                     Method addMod = net.fabricmc.loader.FabricLoader.class.getDeclaredMethod("addMod", ModCandidate.class);
@@ -220,9 +220,9 @@ public class ConfigHelper {
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
-                }
+                }*/
 
-                ResourceManagerHelperImpl.registerBuiltinResourcePack(new Identifier("obsidian", pack.getConfigPackInfo().namespace), pack.getConfigPackInfo().namespace, FabricLoader.getInstance().getModContainer(addon.getConfigPackInfo().namespace).get(), ResourcePackActivationType.ALWAYS_ENABLED);
+//                ResourceManagerHelperImpl.registerBuiltinResourcePack(new Identifier("obsidian", pack.getConfigPackInfo().namespace), pack.getConfigPackInfo().namespace, FabricLoader.getInstance().getModContainer(addon.getConfigPackInfo().namespace).get(), ResourcePackActivationType.ALWAYS_ENABLED);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -312,6 +312,8 @@ public class ConfigHelper {
                         ShieldItemImpl shieldItemImpl = new ShieldItemImpl(shieldItem, new Item.Settings().group(shieldItem.information.getItemGroup()));
                         REGISTRY_HELPER.registerItem(shieldItemImpl, shieldItem.information.name.id.getPath());
                         ShieldRegistry.INSTANCE.add(shieldItemImpl);
+                        FabricModelPredicateProviderRegistry.register(shieldItemImpl, Utils.appendToPath(shieldItem.information.name.id, "_blocking"), (stack, world, entity, seed) ->
+                                entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
                         register(SHIELDS, "shield", shieldItem.information.name.id.toString(), shieldItem);
                     } catch (Exception e) {
                         failedRegistering("shield", shieldItem.information.name.id.toString(), e);
@@ -408,7 +410,7 @@ public class ConfigHelper {
                                                             block.ore_information.config.maximum
                                                     )
                                             )
-                                    ).rangeOf(block.ore_information.config.maximum).spreadHorizontally().repeat(20));
+                                    ).rangeOf(block.ore_information.config.minimum, block.ore_information.config.maximum).spreadHorizontally().repeat(20));
                             BuiltinRegistries.BIOME.forEach(biome -> {
                                 if (block.ore_information.biomes != null) {
                                     for (String biome2 : block.ore_information.biomes) {

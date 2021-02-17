@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import io.github.vampirestudios.obsidian.client.ClientInit;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -32,7 +33,7 @@ public class AnimationData {
     //TODO USE INTERNAL RESOURCE MANAGER
     public static AnimationData load(ResourceManager resourceManager, Identifier identifier) {
         try {
-            Resource resource = resourceManager.getResource(identifier);
+            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 
             AnimationData data;
             try(JsonReader reader = ClientInit.GSON_CLIENT.newJsonReader(new InputStreamReader(resource.getInputStream()))) {

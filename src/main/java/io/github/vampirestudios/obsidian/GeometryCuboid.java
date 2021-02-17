@@ -3,7 +3,6 @@ package io.github.vampirestudios.obsidian;
 import com.google.gson.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.math.*;
 
 import java.lang.reflect.Type;

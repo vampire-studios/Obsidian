@@ -4,7 +4,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.GrassPathBlock;
+import net.minecraft.block.DirtPathBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -25,7 +25,7 @@ import java.util.Random;
 
 import static net.minecraft.block.TntBlock.primeTnt;
 
-public class PathBlockImpl extends GrassPathBlock {
+public class PathBlockImpl extends DirtPathBlock {
 
     public Block block;
 
