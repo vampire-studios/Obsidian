@@ -99,7 +99,7 @@ public abstract class EntityMixin implements EntityExt, Nameable, CommandOutput 
 
     }
 
-    @Inject(method = "toTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;putUuid(Ljava/lang/String;Ljava/util/UUID;)V", shift = At.Shift.AFTER))
+    @Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;putUuid(Ljava/lang/String;Ljava/util/UUID;)V", shift = At.Shift.AFTER))
     public void toTagAnim(CompoundTag tag, CallbackInfoReturnable<CompoundTag> info) {
         if(!getServerAnimationData().isEmpty()) {
             ListTag list = new ListTag();
@@ -114,7 +114,7 @@ public abstract class EntityMixin implements EntityExt, Nameable, CommandOutput 
         }
     }
 
-    @Inject(method = "fromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setAir(I)V", shift = At.Shift.AFTER))
+    @Inject(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setAir(I)V", shift = At.Shift.AFTER))
     public void fromTagAnim(CompoundTag tag, CallbackInfo info) {
         ListTag anim = tag.getList("animations", NbtType.COMPOUND);
         anim.forEach(t -> {

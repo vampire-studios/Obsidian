@@ -3,8 +3,10 @@ package io.github.vampirestudios.obsidian;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.serialization.Lifecycle;
+import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.Event;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
+import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.BreakDoorAnnotationComponent;
@@ -39,8 +41,11 @@ public class Obsidian implements ModInitializer {
             .setPrettyPrinting()
             .create();
 
+    public static final boolean perWorld = true;
+
     public NetworkHandler networkHandler;
 
+    public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(id("addon_modules")), Lifecycle.stable());
     public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "item_groups")), Lifecycle.stable());
     public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
     public static final Registry<Class<? extends Event>> BEDROCK_BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_event_registry")), Lifecycle.stable());
@@ -56,52 +61,52 @@ public class Obsidian implements ModInitializer {
         LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "20w51a"));
 
         //Item Groups
-        Registry.register(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
-        Registry.register(ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
-        Registry.register(ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);
-        Registry.register(ITEM_GROUP_REGISTRY, "transportation", ItemGroup.TRANSPORTATION);
-        Registry.register(ITEM_GROUP_REGISTRY, "misc", ItemGroup.MISC);
-        Registry.register(ITEM_GROUP_REGISTRY, "food", ItemGroup.FOOD);
-        Registry.register(ITEM_GROUP_REGISTRY, "tools", ItemGroup.TOOLS);
-        Registry.register(ITEM_GROUP_REGISTRY, "combat", ItemGroup.COMBAT);
-        Registry.register(ITEM_GROUP_REGISTRY, "brewing", ItemGroup.BREWING);
-        Registry.register(ITEM_GROUP_REGISTRY, "search", ItemGroup.SEARCH);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "transportation", ItemGroup.TRANSPORTATION);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "misc", ItemGroup.MISC);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "food", ItemGroup.FOOD);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "tools", ItemGroup.TOOLS);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "combat", ItemGroup.COMBAT);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "brewing", ItemGroup.BREWING);
+        registerInRegistry(ITEM_GROUP_REGISTRY, "search", ItemGroup.SEARCH);
 
         //Entity Components
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
 
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "agable", AgeableComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "barter", BarterComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "block_sensor", BlockSensorComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "boostable", BoostableComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "boss", BossComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "break_blocks", BreakBlocksComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "breathable", BreathableComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "celebrate", CelebrateBehaviourComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "namable", NamableComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "agable", AgeableComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "barter", BarterComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "block_sensor", BlockSensorComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "boostable", BoostableComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "boss", BossComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "break_blocks", BreakBlocksComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "breathable", BreathableComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "celebrate", CelebrateBehaviourComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "namable", NamableComponent.class);
 
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
 
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
-        Registry.register(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
+        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
 
         //Bedrock Block Events
-        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "add_mob_effect", AddMobEffect.class);
-        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "damage", Damage.class);
-        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "decrement_stack", DecrementStack.class);
-        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "die", Die.class);
-        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "play_effect", PlayEffect.class);
+        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "add_mob_effect", AddMobEffect.class);
+        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "damage", Damage.class);
+        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "decrement_stack", DecrementStack.class);
+        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "die", Die.class);
+        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "play_effect", PlayEffect.class);
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "play_sound", LookAtPlayerBehaviourComponent.class);
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "remove_mob_effect", LookAtPlayerBehaviourComponent.class);
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "run_command", LookAtPlayerBehaviourComponent.class);
@@ -113,11 +118,21 @@ public class Obsidian implements ModInitializer {
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
+        registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
+
         ConfigHelper.loadDefaultObsidianAddons();
-        BedrockAddonLoader.loadDefaultBedrockAddons();
         CompletableFuture.runAsync(ConfigHelper::loadObsidianAddons, ConfigHelper.EXECUTOR_SERVICE);
+        BedrockAddonLoader.loadDefaultBedrockAddons();
         CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
         networkHandler = new NetworkHandler();
+    }
+
+    public <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
+        Registry.register(registry, name, idk);
     }
 
 }

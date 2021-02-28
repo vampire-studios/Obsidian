@@ -66,9 +66,7 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
     }
 
     @Override
-    public void emitFormatWarnings(Logger logger) {
-
-    }
+    public void emitFormatWarnings(Logger logger) {}
 
     @Override
     public String getType() {
@@ -82,7 +80,7 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
 
     @Override
     public Collection<String> getProvides() {
-        return null;
+        return Collections.emptySet();
     }
 
     @Override
@@ -97,7 +95,7 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
 
     @Override
     public Collection<ModDependency> getDepends() {
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     @Override

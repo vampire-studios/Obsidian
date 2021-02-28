@@ -15,9 +15,11 @@
     "EntityBowUseMixin",
     "EntityCrossbowUseMixin",
     "EntityMixin",
+    "GameProfileAccessor",
     "ItemMixin",
     "ItemRendererMixin",
     "JoinWorldMixin",
+    "MixinClientPlayNetworkHandler",
     "MixinPlayerManager",
     "ProjectileUtilMixin",
     "TridentAttackGoalMixin"

@@ -8,7 +8,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
-import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import io.github.vampirestudios.obsidian.network.ClientNetworkHandler;
@@ -16,6 +15,7 @@ import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
@@ -53,9 +53,7 @@ public class ClientInit implements ClientModInitializer {
         animationManager = new AnimationManager(MinecraftClient.getInstance().getResourceManager());
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(geometryManager);
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(animationManager);
-        Iterator<Entity> entities = ConfigHelper.ENTITIES.iterator();
-        while(entities.hasNext()) {
-            Entity entity = entities.next();
+        for (Entity entity : ConfigHelper.ENTITIES) {
             EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.information.identifier);
             if (entity.information.custom_model) {
                 EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new JsonEntityRenderer(ctx, entity));
@@ -63,9 +61,7 @@ public class ClientInit implements ClientModInitializer {
                 EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
             }
         }
-        Iterator<ItemGroup> itemGroups = ConfigHelper.ITEM_GROUPS.iterator();
-        while(itemGroups.hasNext()) {
-            ItemGroup itemGroup = itemGroups.next();
+        for (ItemGroup itemGroup : ConfigHelper.ITEM_GROUPS) {
             Artifice.registerAssetPack(String.format("%s:%s_item_group_assets", itemGroup.name.id.getNamespace(), itemGroup.name.id.getPath()), clientResourcePackBuilder -> {
                 itemGroup.name.translated.forEach((languageId, name) ->
                         clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
@@ -220,9 +216,7 @@ public class ClientInit implements ClientModInitializer {
                 }
             }
         }
-        Iterator<Item> items = ConfigHelper.ITEMS.iterator();
-        while(items.hasNext()) {
-            Item item = items.next();
+        ConfigHelper.ITEMS.iterator().forEachRemaining(item -> {
             Identifier identifier = item.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_item_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 item.information.name.translated.forEach((languageId, name) ->
@@ -249,7 +243,7 @@ public class ClientInit implements ClientModInitializer {
                     e.printStackTrace();
                 }
             });
-        }
+        });
         ConfigHelper.ARMORS.iterator().forEachRemaining(armor -> {
             Identifier identifier = armor.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_armor_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
@@ -412,6 +406,39 @@ public class ClientInit implements ClientModInitializer {
                     clientResourcePackBuilder.dumpResources("testing", "assets");
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            });
+        });
+        ConfigHelper.ELYTRAS.iterator().forEachRemaining(elytra -> {
+            Identifier identifier = elytra.information.name.id;
+            Artifice.registerAssetPack(String.format("%s:%s_elytra_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
+                elytra.information.name.translated.forEach((languageId, name) ->
+                        clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                translationBuilder.entry(String.format("item.%s.%s", elytra.information.name.id.getNamespace(), elytra.information.name.id.getPath()), name)));
+                if (elytra.display != null && elytra.display.model != null) {
+                    clientResourcePackBuilder.addItemModel(elytra.information.name.id, modelBuilder -> {
+                        modelBuilder.parent(elytra.display.model.parent);
+                        elytra.display.model.textures.forEach(modelBuilder::texture);
+                    });
+                }
+                if (elytra.display != null && elytra.display.lore.length != 0) {
+                    for (TooltipInformation lore : elytra.display.lore) {
+                        if (lore.text.textType.equals("translatable")) {
+                            lore.text.translated.forEach((languageId, name) ->
+                                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                            translationBuilder.entry(lore.text.text, name)));
+                        }
+                    }
+                }
+                try {
+                    clientResourcePackBuilder.dumpResources("testing", "assets");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, livingEntityRenderer, registrationHelper, context) -> {
+                if(entityType == EntityType.PLAYER) {
+                    registrationHelper.register(new CustomElytraFeatureRenderer<>(Registry.ITEM.get(identifier), elytra.texture, livingEntityRenderer, context.getModelLoader()));
                 }
             });
         });

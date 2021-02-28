@@ -34,7 +34,7 @@ public class OptionsScreenMixin extends Screen {
 
     private void idk(ResourcePackManager resourcePackManager) {
         for (File file : Objects.requireNonNull(ConfigHelper.OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
-            ConfigHelper.register(file);
+            ConfigHelper.register(file, "addon.info.pack");
         }
     }
 
