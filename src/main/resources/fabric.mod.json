@@ -24,13 +24,11 @@
     ],
     "client": [
       "io.github.vampirestudios.obsidian.client.ClientInit"
-    ],
-    "modmenu": [
-      "io.github.vampirestudios.obsidian.configPack.REIModMenuEntryPoint"
     ]
   },
   "mixins": [
-    "obsidian.mixins.json"
+    "obsidian.mixins.json",
+    "fabric-combat-api-v1.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 

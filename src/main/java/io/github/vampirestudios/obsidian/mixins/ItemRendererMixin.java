@@ -26,7 +26,7 @@ public abstract class ItemRendererMixin {
 	@Shadow
 	@Final
 	private ItemModels models;
-	@Shadow @Final private BuiltinModelItemRenderer field_27770;
+	@Shadow @Final private BuiltinModelItemRenderer builtinModelItemRenderer;
 
 	@Redirect(method = "getHeldItemModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	public boolean ob_getHeldItemModel(ItemStack itemStack, Item item) {
@@ -50,7 +50,7 @@ public abstract class ItemRendererMixin {
 			matrices.translate(-0.5D, -0.5D, -0.5D);
 
 			if (model.isBuiltin() || stack.getItem() instanceof TridentInterface && !bl) {
-				field_27770.render(stack, renderMode, matrices, vertexConsumers, light, overlay);
+				builtinModelItemRenderer.render(stack, renderMode, matrices, vertexConsumers, light, overlay);
 			} else {
 				RenderLayer renderLayer = RenderLayers.getItemLayer(stack, true);
 				VertexConsumer vertexConsumer4;

@@ -7,19 +7,12 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "AbstractSkeletonEntityMixin",
-    "BowItemMixin",
     "BuiltinModelItemRendererMixin",
     "CrossbowItemMixin",
     "DynamicRegistryManagerMixin",
-    "EntityBowUseMixin",
     "EntityCrossbowUseMixin",
-    "EntityMixin",
-    "GameProfileAccessor",
     "ItemMixin",
     "ItemRendererMixin",
-    "JoinWorldMixin",
-    "MixinClientPlayNetworkHandler",
     "MixinPlayerManager",
     "ProjectileUtilMixin",
     "TridentAttackGoalMixin"

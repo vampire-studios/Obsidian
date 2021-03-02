@@ -5,7 +5,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
-import net.minecraft.item.Item;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +17,7 @@ public class Items implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		io.github.vampirestudios.obsidian.api.obsidian.item.Item item = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
 		try {
-			RegistryUtils.registerItem(new ItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
+			RegistryUtils.registerItem(new ItemImpl(item, new net.minecraft.item.Item.Settings().group(item.information.getItemGroup())
 					.maxCount(item.information.max_count)), item.information.name.id);
 			register(ITEMS, "item", item.information.name.id.toString(), item);
 		} catch (Exception e) {
@@ -28,6 +27,6 @@ public class Items implements AddonModule {
 
 	@Override
 	public String getType() {
-		return null;
+		return "items";
 	}
 }

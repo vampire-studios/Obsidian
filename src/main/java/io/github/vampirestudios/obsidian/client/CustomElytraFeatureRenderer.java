@@ -48,7 +48,7 @@ public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends Entit
 				} else if (abstractClientPlayerEntity.canRenderCapeTexture() && abstractClientPlayerEntity.getCapeTexture() != null && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE) && elytra.shouldRenderCapeTexture) {
 					identifier4 = abstractClientPlayerEntity.getCapeTexture();
 				} else {
-					abstractClientPlayerEntity.isPartVisible()
+					System.out.println(abstractClientPlayerEntity.getModel());
 					identifier4 = elytra.texture;
 				}
 			} else {

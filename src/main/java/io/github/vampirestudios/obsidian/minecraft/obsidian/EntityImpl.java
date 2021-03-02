@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.EntityExt;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.BreathableComponent;
@@ -15,17 +14,18 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EntityImpl extends PathAwareEntity {
+public class EntityImpl extends PathAwareEntity implements IAnimatable {
     private final Entity entity;
     private final float health;
     private final Map<String, Component> components;
@@ -108,10 +108,13 @@ public class EntityImpl extends PathAwareEntity {
     }
 
     @Override
-    protected ActionResult interactMob(PlayerEntity player, Hand hand) {
-        if(!((EntityExt)this).getServerAnimationData().isEmpty()) ((EntityExt)this).removeAnimation(entity.information.entity_model.animationLocation, false);
-        else ((EntityExt)this).addAnimation(entity.information.entity_model.animationLocation, false);
-        return ActionResult.SUCCESS;
+    public void registerControllers(AnimationData animationData) {
+
+    }
+
+    @Override
+    public AnimationFactory getFactory() {
+        return null;
     }
 
 }

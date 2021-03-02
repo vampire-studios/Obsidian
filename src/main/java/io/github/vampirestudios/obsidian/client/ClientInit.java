@@ -1,26 +1,20 @@
 package io.github.vampirestudios.obsidian.client;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.swordglowsblue.artifice.api.Artifice;
-import io.github.vampirestudios.obsidian.*;
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
-import io.github.vampirestudios.obsidian.network.ClientNetworkHandler;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.LivingEntityFeatureRendererRegistrationCallback;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.EntityType;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.text.WordUtils;
@@ -32,27 +26,10 @@ public class ClientInit implements ClientModInitializer {
 
     public static ClientInit INSTANCE;
 
-    public GeometryManager geometryManager;
-    public AnimationManager animationManager;
-
-    public ClientNetworkHandler networkHandler;
-
-    public static Gson GSON_CLIENT = new GsonBuilder()
-            .registerTypeAdapter(AnimationBone.class, new AnimationBone.Deserializer())
-            .registerTypeAdapter(AnimationData.class, new AnimationData.Deserializer())
-            .registerTypeAdapter(GeometryData.class, new GeometryData.Deserializer())
-            .registerTypeAdapter(GeometryBone.class, new GeometryBone.Deserializer())
-            .registerTypeAdapter(GeometryCuboid.class, new GeometryCuboid.Deserializer())
-            .create();
-
     @Override
     public void onInitializeClient() {
         INSTANCE = this;
 
-        geometryManager = new GeometryManager(MinecraftClient.getInstance().getResourceManager());
-        animationManager = new AnimationManager(MinecraftClient.getInstance().getResourceManager());
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(geometryManager);
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(animationManager);
         for (Entity entity : ConfigHelper.ENTITIES) {
             EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.information.identifier);
             if (entity.information.custom_model) {
@@ -438,11 +415,10 @@ public class ClientInit implements ClientModInitializer {
             });
             LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, livingEntityRenderer, registrationHelper, context) -> {
                 if(entityType == EntityType.PLAYER) {
-                    registrationHelper.register(new CustomElytraFeatureRenderer<>(Registry.ITEM.get(identifier), elytra.texture, livingEntityRenderer, context.getModelLoader()));
+                    registrationHelper.register(new CustomElytraFeatureRenderer<>(Registry.ITEM.get(identifier), elytra, livingEntityRenderer, context.getModelLoader()));
                 }
             });
         });
-        networkHandler = new ClientNetworkHandler();
     }
 
 }

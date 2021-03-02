@@ -16,6 +16,7 @@ repositories {
     jcenter()
     maven{ url="https://jitpack.io" }
     maven{ url="http://server.bbkr.space/artifactory/libs-release/" }
+    maven { url 'https://repo.repsy.io/mvn/xxx_inaksis_xxx/inaksis' }
 }
 
 minecraft {
@@ -28,8 +29,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation ("com.lettuce.fudge:artifice:0.15.0+20w49a") { exclude group: "net.fabricmc.fabric-api" }
-    include ("com.lettuce.fudge:artifice:0.15.0+20w49a") { exclude group: "net.fabricmc.fabric-api" }
+    modImplementation ("com.lettuce.fudge:artifice:0.15.2+21w07a") { exclude group: "net.fabricmc.fabric-api" }
+    include ("com.lettuce.fudge:artifice:0.15.2+21w07a") { exclude group: "net.fabricmc.fabric-api" }
 
     modImplementation ("io.github.vampirestudios:VampireLib-Fabric:2.3.1+build.1-21w07a") {
         exclude group: "net.fabricmc.fabric-api"
@@ -39,6 +40,9 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
+
+    // INclude GeckoLib for each module, uses experimental 1.17 snapshot fork.
+    modImplementation 'software.bernie.geckolib:geckolib-fabric-1.17:3.0.20:dev'
 }
 
 processResources {

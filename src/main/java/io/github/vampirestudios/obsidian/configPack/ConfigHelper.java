@@ -1,47 +1,24 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import com.google.common.base.Joiner;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.SimpleBowItem;
-import io.github.vampirestudios.obsidian.api.SimpleCrossbowItem;
-import io.github.vampirestudios.obsidian.api.SimpleTridentItem;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.AddonModuleVersionIndependent;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
-import io.github.vampirestudios.obsidian.api.obsidian.currency.Currency;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.components.BreathableComponent;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.components.MovementComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
-import io.github.vampirestudios.obsidian.utils.*;
-import io.github.vampirestudios.vampirelib.api.ShieldRegistry;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
 import net.minecraft.state.property.Property;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -152,18 +129,7 @@ public class ConfigHelper {
     private static void init(ModIdAndAddonPath id) {
         try {
             Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(id, addonModule));
-            String path = id.getPath();
-            parseTools(path);
-            parseRangedWeapons(path);
-            parseWeapons(path);
-            parseFood(path);
-            parsePotions(path);
-            parseCommands(path);
-            parseEnchantments(path);
-            parseStatusEffects(path);
-            parseEntities(path);
-            parseCurrencies(path);
-            parseShields(path);
+            Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(id, addonModule));
 //            parseElytras(path);
 //            parseVillagerProfessions(path);
 //            parseVillagerBiomeType(path);
@@ -203,6 +169,7 @@ public class ConfigHelper {
     }
 
     private static void loadAddonModule(ModIdAndAddonPath id, AddonModule addonModule) {
+        System.out.println("Id: %s" + id.getPath() + " Type: " + addonModule.getType());
         if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {
@@ -216,297 +183,33 @@ public class ConfigHelper {
         }
     }
 
-    private static void parseShields(String path) throws FileNotFoundException {
-        if (Paths.get(path, "shields").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "shields").toFile().listFiles())) {
+    private static void loadAddonModule(ModIdAndAddonPath id, AddonModuleVersionIndependent addonModule) {
+        if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
+            for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {
-                    ShieldItem shieldItem = Obsidian.GSON.fromJson(new FileReader(file), ShieldItem.class);
                     try {
-                        if(shieldItem == null) continue;
-                        ShieldItemImpl shieldItemImpl = new ShieldItemImpl(shieldItem, new Item.Settings().group(shieldItem.information.getItemGroup()));
-                        REGISTRY_HELPER.registerItem(shieldItemImpl, shieldItem.information.name.id.getPath());
-                        ShieldRegistry.INSTANCE.add(shieldItemImpl);
-                        FabricModelPredicateProviderRegistry.register(shieldItemImpl, Utils.appendToPath(shieldItem.information.name.id, "_blocking"), (stack, world, entity, seed) ->
-                                entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
-                        register(SHIELDS, "shield", shieldItem.information.name.id.toString(), shieldItem);
-                    } catch (Exception e) {
-                        failedRegistering("shield", shieldItem.information.name.id.toString(), e);
+                        addonModule.init(file, id, "obsidian");
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
     }
 
-    private static void parseTools(String path) throws FileNotFoundException {
-        if (Paths.get(path, "items", "tools").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "items", "tools").toFile().listFiles())) {
-                if (file.isFile()) {
-                    io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
-                    try {
-                        CustomToolMaterial material = new CustomToolMaterial(tool.material);
-                        switch (tool.toolType) {
-                            case "pickaxe":
-                                RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                .group(tool.information.getItemGroup()).maxCount(tool.information.max_count)),
-                                        tool.information.name.id);
-                                break;
-                            case "shovel":
-                                RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                .group(tool.information.getItemGroup()).maxCount(tool.information.max_count)),
-                                        tool.information.name.id);
-                                break;
-                            case "hoe":
-                                RegistryUtils.registerItem(new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                .group(tool.information.getItemGroup()).maxCount(tool.information.max_count)),
-                                        tool.information.name.id);
-                                break;
-                            case "axe":
-                                RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, new Item.Settings()
-                                                .group(tool.information.getItemGroup()).maxCount(tool.information.max_count)),
-                                        tool.information.name.id);
-                                break;
-                            case "bow":
-                                RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(tool.information.getItemGroup())
-                                        .maxCount(tool.information.max_count)), tool.information.name.id);
-                                break;
-                            case "crossbow":
-                                RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(tool.information.getItemGroup())
-                                        .maxCount(tool.information.max_count)), tool.information.name.id);
-                                break;
-                            case "trident":
-                                RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(tool.information.getItemGroup())
-                                        .maxCount(tool.information.max_count)), tool.information.name.id);
-                                break;
-                        }
-                        register(TOOLS, "tool", tool.information.name.id.toString(), tool);
-                    } catch (Exception e) {
-                        failedRegistering("tool", tool.information.name.id.toString(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseRangedWeapons(String path) throws FileNotFoundException {
-        if (Paths.get(path, "items", "weapons", "ranged").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "items", "weapons", "ranged").toFile().listFiles())) {
-                if (file.isFile()) {
-                    RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
-                    try {
-                        switch (rangedWeapon.weapon_type) {
-                            case "bow":
-                                RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                                        .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                                break;
-                            case "crossbow":
-                                RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                                        .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                                break;
-                            case "trident":
-                                RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                                        .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                                break;
-                        }
-                        register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id.toString(), rangedWeapon);
-                    } catch (Exception e) {
-                        failedRegistering("ranged_weapon", rangedWeapon.information.name.id.toString(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseWeapons(String path) throws FileNotFoundException {
-        if (Paths.get(path, "items", "weapons").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "items", "weapons").toFile().listFiles())) {
-                if (file.isFile()) {
-                    WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
-                    try {
-                        CustomToolMaterial material = new CustomToolMaterial(weapon.material);
-                        RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
-                                .group(weapon.information.getItemGroup())
-                                .maxCount(weapon.information.max_count)), weapon.information.name.id);
-                        register(WEAPONS, "weapon", weapon.information.name.id.toString(), weapon);
-                    } catch (Exception e) {
-                        failedRegistering("weapon", weapon.information.name.id.toString(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseFood(String path) throws FileNotFoundException {
-        if (Paths.get(path, "items", "food").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "items", "food").toFile().listFiles())) {
-                if (file.isFile()) {
-                    FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
-                    try {
-                        FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
-                        Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, new Item.Settings()
-                                .group(foodItem.information.getItemGroup())
-                                .maxCount(foodItem.information.max_count)
-                                .maxDamage(foodItem.information.use_duration)
-                                .food(foodComponent)));
-                        register(FOODS, "food", foodItem.information.name.id.toString(), foodItem);
-                    } catch (Exception e) {
-                        failedRegistering("food", foodItem.information.name.id.toString(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parsePotions(String path) throws FileNotFoundException {
-        if (Paths.get(path, "potions").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "potions").toFile().listFiles())) {
-                if (file.isFile()) {
-                    Potion potion = Obsidian.GSON.fromJson(new FileReader(file), Potion.class);
-                    try {
-                        if (potion == null) continue;
-                        Registry.register(Registry.POTION, potion.name,
-                                new net.minecraft.potion.Potion(new StatusEffectInstance(potion.getEffectType(), potion.getEffects().duration * 20, potion.getEffects().amplifier)));
-                        register(POTIONS, "potion", potion.name.toString(), potion);
-                    } catch (Exception e) {
-                        failedRegistering("potion", potion.name.toString(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseCommands(String path) throws FileNotFoundException {
-        if (Paths.get(path, "commands").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "commands").toFile().listFiles())) {
-                if (file.isFile()) {
-                    Command command = Obsidian.GSON.fromJson(new FileReader(file), Command.class);
-                    try {
-                        if(command == null) continue;
-                        // Using a lambda
-                        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-                            // This command will be registered regardless of the server being dedicated or integrated
-                            CommandImpl.register(command, dispatcher);
-                        });
-                        register(COMMANDS, "command", command.name, command);
-                    } catch (Exception e) {
-                        failedRegistering("command", command.name, e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseEnchantments(String path) throws FileNotFoundException {
-        if (Paths.get(path, "enchantments").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "enchantments").toFile().listFiles())) {
-                if (file.isFile()) {
-                    Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
-                    try {
-                        if(enchantment == null) continue;
-                        Registry.register(Registry.ENCHANTMENT, enchantment.name.id, new EnchantmentImpl(enchantment));
-                        register(ENCHANTMENTS, "enchantment", enchantment.name.id.getPath(), enchantment);
-                    } catch (Exception e) {
-                        failedRegistering("enchantment", enchantment.name.id.getPath(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseStatusEffects(String path) throws FileNotFoundException {
-        if (Paths.get(path, "status_effects").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "status_effects").toFile().listFiles())) {
-                if (file.isFile()) {
-                    StatusEffect statusEffect = Obsidian.GSON.fromJson(new FileReader(file), StatusEffect.class);
-                    try {
-                        if(statusEffect == null) continue;
-                        String color1 = statusEffect.color.replace("#", "").replace("0x", "");
-                        Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect.getStatusEffectType(), Integer.parseInt(color1, 16)));
-                        register(STATUS_EFFECTS, "status effect", statusEffect.name.translated.get("en_us"), statusEffect);
-                    } catch (Exception e) {
-                        failedRegistering("status effect", statusEffect.name.translated.get("en_us"), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseEntities(String path) throws FileNotFoundException {
-        if (Paths.get(path, "entities").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "entities").toFile().listFiles())) {
-                if (file.isFile()) {
-                    JsonObject entityJson = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
-                    Entity entity = Obsidian.GSON.fromJson(entityJson, Entity.class);
-                    try {
-                        if(entity == null) continue; // TODO: add error log here
-                        String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
-                        String overlayColor = entity.information.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
-                        entity.components = new HashMap<>();
-                        JsonObject components = JsonHelper.getObject(entityJson, "components");
-                        for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
-                            Identifier identifier = new Identifier(entry.getKey());
-                            Class<? extends Component> componentClass = Obsidian.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() -> new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
-
-                            entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));
-                        }
-
-                        CollisionBoxComponent collisionBoxComponent = null;
-                        Component c = entity.components.get("minecraft:collision_box");
-                        if (c instanceof CollisionBoxComponent) {
-                            collisionBoxComponent = (CollisionBoxComponent) c;
-                        }
-                        HealthComponent healthComponent = null;
-                        c = entity.components.get("minecraft:health");
-                        if (c instanceof HealthComponent) {
-                            healthComponent = (HealthComponent) c;
-                        }
-
-                        MovementComponent movementComponent = null;
-                        c = entity.components.get("minecraft:movement");
-                        if (c instanceof MovementComponent) {
-                            movementComponent = (MovementComponent) c;
-                        }
-
-                        BreathableComponent breathableComponent = null;
-                        c = entity.components.get("minecraft:breathable");
-                        if (c instanceof BreathableComponent) {
-                            breathableComponent = (BreathableComponent) c;
-                        }
-
-                        assert collisionBoxComponent != null;
-                        assert movementComponent != null;
-                        HealthComponent finalHealthComponent = healthComponent;
-                        BreathableComponent finalBreathableComponent = breathableComponent;
-                        EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)
-                                .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value, finalBreathableComponent))
-                                .category(entity.entity_components.getCategory())
-                                .dimensions(EntityDimensions.fixed(collisionBoxComponent.width, collisionBoxComponent.height))
-                                .summonable(entity.information.summonable)
-                                .hasEgg(entity.information.spawnable)
-                                .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
-                                .build();
-                        FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(finalHealthComponent.max, movementComponent.value));
-                        register(ENTITIES, "entity", entity.information.identifier.toString(), entity);
-                    } catch (Exception e) {
-                        failedRegistering("entity", entity.information.identifier.toString(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseCurrencies(String path) throws FileNotFoundException {
+    /*private static void parseCurrencies(String path) throws FileNotFoundException {
         if (Paths.get(path, "currency").toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(path, "currency").toFile().listFiles())) {
                 if (file.isFile()) {
                     Currency currency = Obsidian.GSON.fromJson(new FileReader(file), Currency.class);
                     try {
                         if(currency == null) continue;
-                        /*PlayerJoinCallback.EVENT.register(player -> {
+                        *//*PlayerJoinCallback.EVENT.register(player -> {
                             Scoreboard scoreboard = player.getScoreboard();
                             if (!scoreboard.containsObjective(currency.name.toLowerCase())) {
                                 scoreboard.addObjective(currency.name.toLowerCase(), ScoreboardCriterion.DUMMY, new LiteralText(currency.name), ScoreboardCriterion.RenderType.INTEGER);
                             }
-                        });*/
+                        });*//*
                         Obsidian.LOGGER.info(String.format("Registered a currency called %s", currency.name));
                     } catch (Exception e) {
                         failedRegistering("currency", currency.name, e);
@@ -514,7 +217,7 @@ public class ConfigHelper {
                 }
             }
         }
-    }
+    }*/
 
     public static <T> void register(List<T> list, String type, String name, T idk) {
         list.add(idk);

@@ -7,6 +7,7 @@ import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.Event;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.AddonModuleVersionIndependent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.BreakDoorAnnotationComponent;
@@ -15,7 +16,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviou
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
-import io.github.vampirestudios.obsidian.network.NetworkHandler;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.ItemGroup;
@@ -25,6 +25,7 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import software.bernie.geckolib3.GeckoLib;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -41,11 +42,8 @@ public class Obsidian implements ModInitializer {
             .setPrettyPrinting()
             .create();
 
-    public static final boolean perWorld = true;
-
-    public NetworkHandler networkHandler;
-
     public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(id("addon_modules")), Lifecycle.stable());
+    public static final Registry<AddonModuleVersionIndependent> ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(id("addon_modules_version_independent")), Lifecycle.stable());
     public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "item_groups")), Lifecycle.stable());
     public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
     public static final Registry<Class<? extends Event>> BEDROCK_BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_event_registry")), Lifecycle.stable());
@@ -58,7 +56,9 @@ public class Obsidian implements ModInitializer {
     @Override
     public void onInitialize() {
         INSTANCE = this;
-        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "20w51a"));
+        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w08b"));
+        // Initialize GeckoLib for all modules
+        GeckoLib.initialize();
 
         //Item Groups
         registerInRegistry(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
@@ -123,12 +123,21 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
         registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "weapon", new Weapons());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "commands", new Commands());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "entities", new Entities());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
 
         ConfigHelper.loadDefaultObsidianAddons();
         CompletableFuture.runAsync(ConfigHelper::loadObsidianAddons, ConfigHelper.EXECUTOR_SERVICE);
         BedrockAddonLoader.loadDefaultBedrockAddons();
         CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
-        networkHandler = new NetworkHandler();
     }
 
     public <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
