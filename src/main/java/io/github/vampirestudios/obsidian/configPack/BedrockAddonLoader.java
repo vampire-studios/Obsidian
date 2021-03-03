@@ -160,8 +160,8 @@ public class BedrockAddonLoader {
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
-                    Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
-                    Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
+//                    Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
+//                    Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
 //                    parseItemGroup(path);
 //                    parseBlock(path);
 //                    parseBasicItems(path);

@@ -49,6 +49,20 @@ public class RegistryHelper {
         return block;
     }
 
+    public Block registerBlock(Block block, String name, ItemGroup itemGroup, Item.Settings settings) {
+        Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
+        BlockItem item = new BlockItem(block, settings.group(itemGroup));
+        item.appendBlocks(Item.BLOCK_ITEMS, item);
+        Registry.register(Registry.ITEM, new Identifier(this.modId, name), item);
+        return block;
+    }
+
+    public Block registerBlock(Block block, String name, Item.Settings settings) {
+        Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
+        Registry.register(Registry.ITEM, new Identifier(this.modId, name), new BlockItem(block, settings));
+        return block;
+    }
+
     public Block registerBlockWithWallBlock(Block block, Block wallBlock, String name) {
         Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
         Registry.register(Registry.ITEM, new Identifier(this.modId, name), new WallStandingBlockItem(block, wallBlock, (new Settings()).group(ItemGroup.DECORATIONS)));
@@ -65,6 +79,12 @@ public class RegistryHelper {
         return this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) -> {
             return blockState.get(PillarBlock.AXIS) == Axis.Y ? materialColor : materialColor2;
         }).strength(2.0F).sounds(BlockSoundGroup.WOOD)), name);
+    }
+
+    public Block registerLog(String name, MapColor materialColor, MapColor materialColor2, Item.Settings settings) {
+        return this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) -> {
+            return blockState.get(PillarBlock.AXIS) == Axis.Y ? materialColor : materialColor2;
+        }).strength(2.0F).sounds(BlockSoundGroup.WOOD)), name, settings);
     }
 
     public Block registerBlockWithoutItem(Block block, String name) {

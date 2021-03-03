@@ -21,6 +21,7 @@ public class RangedWeapons implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
         try {
+            if(rangedWeapon == null) return;
             switch (rangedWeapon.weapon_type) {
                 case "bow":
                     RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())

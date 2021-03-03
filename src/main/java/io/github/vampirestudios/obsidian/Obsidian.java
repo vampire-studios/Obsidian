@@ -133,6 +133,9 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
         registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
         registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
 
         ConfigHelper.loadDefaultObsidianAddons();
         CompletableFuture.runAsync(ConfigHelper::loadObsidianAddons, ConfigHelper.EXECUTOR_SERVICE);

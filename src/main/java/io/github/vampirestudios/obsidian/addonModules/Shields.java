@@ -21,6 +21,7 @@ public class Shields implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         ShieldItem shieldItem = Obsidian.GSON.fromJson(new FileReader(file), ShieldItem.class);
         try {
+            if(shieldItem == null) return;
             ShieldItemImpl shieldItemImpl = new ShieldItemImpl(shieldItem, new Item.Settings().group(shieldItem.information.getItemGroup()));
             REGISTRY_HELPER.registerItem(shieldItemImpl, shieldItem.information.name.id.getPath());
             ShieldRegistry.INSTANCE.add(shieldItemImpl);

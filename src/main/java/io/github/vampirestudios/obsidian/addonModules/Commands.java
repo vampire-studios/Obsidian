@@ -18,6 +18,7 @@ public class Commands implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         Command command = Obsidian.GSON.fromJson(new FileReader(file), Command.class);
         try {
+            if(command == null) return;
             // Using a lambda
             CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
                 // This command will be registered regardless of the server being dedicated or integrated

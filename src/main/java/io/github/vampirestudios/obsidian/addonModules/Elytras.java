@@ -20,6 +20,7 @@ public class Elytras implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		Elytra item = Obsidian.GSON.fromJson(new FileReader(file), Elytra.class);
 		try {
+			if(item == null) return;
 			Item elytra = RegistryUtils.registerItem(new ElytraItem(new Item.Settings().group(item.information.getItemGroup())
 					.maxCount(1)), item.information.name.id);
 			ElytraRegistry.INSTANCE.add(elytra);

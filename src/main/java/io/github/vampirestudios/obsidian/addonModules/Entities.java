@@ -35,6 +35,7 @@ public class Entities implements AddonModule {
         JsonObject entityJson = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
         Entity entity = Obsidian.GSON.fromJson(entityJson, Entity.class);
         try {
+            if(entity == null) return;
             String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
             String overlayColor = entity.information.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
             entity.components = new HashMap<>();

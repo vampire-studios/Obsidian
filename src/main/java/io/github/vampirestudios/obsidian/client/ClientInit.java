@@ -4,7 +4,6 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
@@ -13,6 +12,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.Identifier;
@@ -20,7 +20,6 @@ import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 public class ClientInit implements ClientModInitializer {
 
@@ -43,32 +42,32 @@ public class ClientInit implements ClientModInitializer {
                 itemGroup.name.translated.forEach((languageId, name) ->
                         clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
                                 translationBuilder.entry(String.format("itemGroup.%s.%s", itemGroup.name.id.getNamespace(), itemGroup.name.id.getPath()), name)));
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         }
-        Iterator<Block> blocks = ConfigHelper.BLOCKS.iterator();
-        synchronized (blocks) {
-            while(blocks.hasNext()) {
-                Block block = blocks.next();
-                if (block.information.translucent) {
-                    net.minecraft.block.Block block1 = Registry.BLOCK.get(block.information.name.id);
-                    BlockRenderLayerMap.INSTANCE.putBlock(block1, RenderLayer.getTranslucent());
-                }
-                Artifice.registerAssetPack(String.format("%s:%s_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
-                    block.information.name.translated.forEach((languageId, name) -> {
-                        String blockName;
-                        if (name.contains("_")) {
-                            blockName = WordUtils.capitalizeFully(name.replace("_", " "));
-                        } else {
-                            blockName = name;
-                        }
-                        clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder ->
-                                translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), blockName));
-                    });
+        ConfigHelper.BLOCKS.forEach(block -> {
+            net.minecraft.block.Block block1 = Registry.BLOCK.get(block.information.name.id);
+            BlockRenderLayerMap.INSTANCE.putBlock(block1, block.information.translucent ? RenderLayer.getTranslucent() : RenderLayer.getCutoutMipped());
+            Artifice.registerAssetPack(String.format("%s:%s_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                new Thread(() -> {
+                    if (block.information.name.translated != null) {
+                        block.information.name.translated.forEach((languageId, name) -> {
+                            String blockName;
+                            if (name.contains("_")) {
+                                blockName = WordUtils.capitalizeFully(name.replace("_", " "));
+                            } else {
+                                blockName = name;
+                            }
+                            clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder ->
+                                    translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), blockName));
+                        });
+                    }
                     if (block.display != null) {
                         if (block.display.lore.length != 0) {
                             for (TooltipInformation lore : block.display.lore) {
@@ -132,68 +131,89 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                     try {
-                        clientResourcePackBuilder.dumpResources("testing", "assets");
+                        if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                            clientResourcePackBuilder.dumpResources("testing", "assets");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                });
-                if (block.additional_information != null) {
-                    if (block.additional_information.stairs) {
-                        Artifice.registerAssetPack(String.format("%s:%s_stairs_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
-                            block.information.name.translated.forEach((languageId, name) ->
-                                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                                            translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_stairs"),
-                                                    name + " Stairs")));
+                }).start();
+            });
+            if (block.additional_information != null) {
+                if (block.additional_information.stairs) {
+                    Artifice.registerAssetPack(String.format("%s:%s_stairs_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        new Thread(() -> {
+                            if (block.information.name.translated != null) {
+                                block.information.name.translated.forEach((languageId, name) ->
+                                        clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                                translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_stairs"),
+                                                        name + " Stairs")));
+                            }
                             try {
-                                clientResourcePackBuilder.dumpResources("testing", "assets");
+                                if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                                    clientResourcePackBuilder.dumpResources("testing", "assets");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        });
-                    }
-                    if (block.additional_information.fence) {
-                        Artifice.registerAssetPack(String.format("%s:%s_fence_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
-                            block.information.name.translated.forEach((languageId, name) ->
-                                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                                            translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence"),
-                                                    name + " Fence")));
+                        }).start();
+                    });
+                }
+                if (block.additional_information.fence) {
+                    Artifice.registerAssetPack(String.format("%s:%s_fence_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        new Thread(() -> {
+                            if (block.information.name.translated != null) {
+                                block.information.name.translated.forEach((languageId, name) ->
+                                        clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                                translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence"),
+                                                        name + " Fence")));
+                            }
                             try {
-                                clientResourcePackBuilder.dumpResources("testing", "assets");
+                                if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                                    clientResourcePackBuilder.dumpResources("testing", "assets");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        });
-                    }
-                    if (block.additional_information.fenceGate) {
-                        Artifice.registerAssetPack(String.format("%s:%s_fence_gate_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
-                            block.information.name.translated.forEach((languageId, name) ->
-                                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                                            translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence_gate"),
-                                                    name + " Fence Gate")));
+                        }).start();
+                    });
+                }
+                if (block.additional_information.fenceGate) {
+                    Artifice.registerAssetPack(String.format("%s:%s_fence_gate_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        new Thread(() -> {
+                            if (block.information.name.translated != null) {
+                                block.information.name.translated.forEach((languageId, name) ->
+                                        clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                                translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence_gate"),
+                                                        name + " Fence Gate")));
+                            }
                             try {
-                                clientResourcePackBuilder.dumpResources("testing", "assets");
+                                if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                                    clientResourcePackBuilder.dumpResources("testing", "assets");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        });
-                    }
-                    if (block.additional_information.walls) {
-                        Artifice.registerAssetPack(String.format("%s:%s_wall_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
-                            block.information.name.translated.forEach((languageId, name) ->
-                                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                                            translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_wall"),
-                                                    name + " Wall")));
+                        }).start();
+                    });
+                }
+                if (block.additional_information.walls) {
+                    Artifice.registerAssetPack(String.format("%s:%s_wall_assets", block.information.name.id.getNamespace(), block.information.name.id.getPath()), clientResourcePackBuilder -> {
+                        new Thread(() -> {
+                            if (block.information.name.translated != null) {
+                                block.information.name.translated.forEach((languageId, name) ->
+                                        clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                                translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_wall"),
+                                                        name + " Wall")));
+                            }
                             try {
-                                clientResourcePackBuilder.dumpResources("testing", "assets");
+                                if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                                    clientResourcePackBuilder.dumpResources("testing", "assets");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        });
-                    }
+                        }).start();
+                    });
                 }
             }
-        }
-        ConfigHelper.ITEMS.iterator().forEachRemaining(item -> {
+        });
+        new Thread(() -> ConfigHelper.ITEMS.forEach(item -> {
             Identifier identifier = item.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_item_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 item.information.name.translated.forEach((languageId, name) ->
@@ -214,14 +234,17 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 }
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(() -> {
+                    try {
+                        if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                            clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
-        });
-        ConfigHelper.ARMORS.iterator().forEachRemaining(armor -> {
+        })).start();
+        ConfigHelper.ARMORS.forEach(armor -> {
             Identifier identifier = armor.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_armor_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 armor.information.name.translated.forEach((languageId, name) ->
@@ -242,14 +265,16 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 }
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         });
-        ConfigHelper.WEAPONS.iterator().forEachRemaining(weapon -> {
+        ConfigHelper.WEAPONS.forEach(weapon -> {
             Identifier identifier = weapon.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_weapon_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 weapon.information.name.translated.forEach((languageId, name) ->
@@ -270,14 +295,16 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 }
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         });
-        ConfigHelper.TOOLS.iterator().forEachRemaining(tool -> {
+        ConfigHelper.TOOLS.forEach(tool -> {
             Identifier identifier = tool.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_armor_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 tool.information.name.translated.forEach((languageId, name) ->
@@ -298,14 +325,16 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 }
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         });
-        ConfigHelper.FOODS.iterator().forEachRemaining(foodItem -> {
+        ConfigHelper.FOODS.forEach(foodItem -> {
             Identifier identifier = foodItem.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_food_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 foodItem.information.name.translated.forEach((languageId, name) ->
@@ -326,27 +355,31 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 }
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         });
-        ConfigHelper.ENCHANTMENTS.iterator().forEachRemaining(enchantment -> {
+        ConfigHelper.ENCHANTMENTS.forEach(enchantment -> {
             Identifier identifier = enchantment.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_armor_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 enchantment.name.translated.forEach((languageId, name) ->
                         clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
                                 translationBuilder.entry(String.format("enchantment.%s.%s", enchantment.name.id.getNamespace(), enchantment.name.id.getPath()), name)));
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         });
-        ConfigHelper.SHIELDS.iterator().forEachRemaining(shield -> {
+        ConfigHelper.SHIELDS.forEach(shield -> {
             Identifier identifier = shield.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_shield_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 shield.information.name.translated.forEach((languageId, name) ->
@@ -361,14 +394,16 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 }
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         });
-        ConfigHelper.ENTITIES.iterator().forEachRemaining(entity -> {
+        ConfigHelper.ENTITIES.forEach(entity -> {
             Identifier identifier = entity.information.identifier;
             Artifice.registerAssetPack(String.format("%s:%s_entity_assets", entity.information.identifier.getNamespace(), entity.information.identifier.getPath()), clientResourcePackBuilder -> {
                 clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, "en_us"), translationBuilder ->
@@ -379,14 +414,16 @@ public class ClientInit implements ClientModInitializer {
                                 entity.information.name + " Spawn Egg"));
                 clientResourcePackBuilder.addItemModel(new Identifier(entity.information.identifier.getNamespace(), entity.information.identifier.getPath() + "_spawn_egg"), modelBuilder ->
                         modelBuilder.parent(new Identifier("item/template_spawn_egg")));
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         });
-        ConfigHelper.ELYTRAS.iterator().forEachRemaining(elytra -> {
+        ConfigHelper.ELYTRAS.forEach(elytra -> {
             Identifier identifier = elytra.information.name.id;
             Artifice.registerAssetPack(String.format("%s:%s_elytra_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
                 elytra.information.name.translated.forEach((languageId, name) ->
@@ -407,16 +444,16 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }
                 }
-                try {
-                    clientResourcePackBuilder.dumpResources("testing", "assets");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(()-> {
+                    try {
+                        if(FabricLoader.getInstance().isDevelopmentEnvironment()) clientResourcePackBuilder.dumpResources("testing", "assets");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
             LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, livingEntityRenderer, registrationHelper, context) -> {
-                if(entityType == EntityType.PLAYER) {
-                    registrationHelper.register(new CustomElytraFeatureRenderer<>(Registry.ITEM.get(identifier), elytra, livingEntityRenderer, context.getModelLoader()));
-                }
+                registrationHelper.register(new CustomElytraFeatureRenderer<>(Registry.ITEM.get(identifier), elytra, livingEntityRenderer, context.getModelLoader()));
             });
         });
     }

@@ -26,14 +26,14 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
 	private final ElytraEntityModel<T> elytraEntityModel;
-	private Item elytraItem;
-	private Elytra elytra;
+	private final Item elytraItem;
+	private final Elytra elytra;
 
 	public CustomElytraFeatureRenderer(Item elytraItem, Elytra elytra, FeatureRendererContext<T, M> context, EntityModelLoader entityModelLoader) {
 		super(context);
 		this.elytraItem = elytraItem;
 		this.elytra = elytra;
-		this.elytraEntityModel = new ElytraEntityModel(entityModelLoader.getModelPart(EntityModelLayers.ELYTRA));
+		this.elytraEntityModel = new ElytraEntityModel<>(entityModelLoader.getModelPart(EntityModelLayers.ELYTRA));
 	}
 
 	@Override
@@ -48,7 +48,6 @@ public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends Entit
 				} else if (abstractClientPlayerEntity.canRenderCapeTexture() && abstractClientPlayerEntity.getCapeTexture() != null && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE) && elytra.shouldRenderCapeTexture) {
 					identifier4 = abstractClientPlayerEntity.getCapeTexture();
 				} else {
-					System.out.println(abstractClientPlayerEntity.getModel());
 					identifier4 = elytra.texture;
 				}
 			} else {

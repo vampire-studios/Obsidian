@@ -19,6 +19,7 @@ public class Armor implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
 		try {
+			if(armor == null) return;
 			CustomArmorMaterial material = new CustomArmorMaterial(armor.material);
 			RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
 							.group(armor.information.getItemGroup()).maxCount(armor.information.max_count)),

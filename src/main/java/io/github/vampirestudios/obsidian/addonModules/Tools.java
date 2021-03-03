@@ -21,6 +21,7 @@ public class Tools implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
         try {
+            if(tool == null) return;
             CustomToolMaterial material = new CustomToolMaterial(tool.material);
             switch (tool.toolType) {
                 case "pickaxe":

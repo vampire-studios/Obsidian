@@ -14,6 +14,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
+import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerBiomeType;
+import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerProfession;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.loader.api.FabricLoader;
@@ -55,6 +57,8 @@ public class ConfigHelper {
     public static List<Elytra> ELYTRAS = new ArrayList<>();
     public static List<CauldronType> CAULDRON_TYPES = new ArrayList<>();
     public static List<ShieldItem> SHIELDS = new ArrayList<>();
+    public static List<VillagerProfession> VILLAGER_PROFESSIONS = new ArrayList<>();
+    public static List<VillagerBiomeType> VILLAGER_BIOME_TYPES = new ArrayList<>();
 
     public static void loadDefaultObsidianAddons() {
         if (!OBSIDIAN_ADDON_DIRECTORY.exists())
@@ -84,45 +88,27 @@ public class ConfigHelper {
     }
 
     public static void loadObsidianAddons() {
-        try {
-            FabricLoader.getInstance().getEntrypoints("obsidian:obsidian_packs", IAddonPack.class).forEach(supplier -> {
-                try {
-                    OBSIDIAN_ADDONS.add(supplier);
-                    Obsidian.LOGGER.info(String.format("[Obsidian] Registering an obsidian addon: %s from an entrypoint",
-                            supplier.getConfigPackInfo().displayName));
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }
-            });
-            for (File file : Objects.requireNonNull(OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
-                // Load Packs
-                register(file, "addon.info.pack");
-            }
-            String moduleText;
-            if (OBSIDIAN_ADDONS.size() > 1) {
-                moduleText = "Loading %d obsidian addons:";
-            } else {
-                moduleText = "Loading %d obsidian addon:";
-            }
+        for (File file : Objects.requireNonNull(OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
+            // Load Packs
+            register(file, "addon.info.pack");
+        }
+        String moduleText;
+        if (OBSIDIAN_ADDONS.size() > 1) {
+            moduleText = "Loading %d obsidian addons:";
+        } else {
+            moduleText = "Loading %d obsidian addon:";
+        }
 
-            Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.size()));
+        Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.size()));
 
-            for(IAddonPack pack : OBSIDIAN_ADDONS) {
-                Obsidian.LOGGER.info(String.format(" - %s", pack.getConfigPackInfo().displayName));
+        for(IAddonPack pack : OBSIDIAN_ADDONS) {
+            Obsidian.LOGGER.info(String.format(" - %s", pack.getConfigPackInfo().displayName));
 
-                String modId = pack.getConfigPackInfo().namespace;
-                String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + pack.getConfigPackInfo().folderName + "/content/" + pack.getConfigPackInfo().namespace;
-                System.out.println(path);
-                REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
+            String modId = pack.getConfigPackInfo().namespace;
+            String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + pack.getConfigPackInfo().folderName + "/content/" + pack.getConfigPackInfo().namespace;
+            REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
-                init(new ModIdAndAddonPath(modId, path));
-
-//                ObsidianAddon addon = (ObsidianAddon) pack;
-//                Utils.registerMod(addon, addon.getFile(), addon.getConfigPackInfo().namespace);
-            }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            System.exit(0);
+            init(new ModIdAndAddonPath(modId, path));
         }
     }
 
@@ -130,7 +116,6 @@ public class ConfigHelper {
         try {
             Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(id, addonModule));
             Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(id, addonModule));
-//            parseElytras(path);
 //            parseVillagerProfessions(path);
 //            parseVillagerBiomeType(path);
 //            parseVillagerTrades(path);
@@ -169,7 +154,7 @@ public class ConfigHelper {
     }
 
     private static void loadAddonModule(ModIdAndAddonPath id, AddonModule addonModule) {
-        System.out.println("Id: %s" + id.getPath() + " Type: " + addonModule.getType());
+//        System.out.println("Id: %s" + id.getPath() + " Type: " + addonModule.getType());
         if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {

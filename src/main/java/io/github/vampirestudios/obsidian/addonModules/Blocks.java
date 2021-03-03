@@ -2,35 +2,20 @@ package io.github.vampirestudios.obsidian.addonModules;
 
 import com.google.gson.JsonObject;
 import com.swordglowsblue.artifice.api.Artifice;
-import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import io.github.vampirestudios.vampirelib.blocks.CustomLadderBlock;
+import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
+import io.github.vampirestudios.vampirelib.blocks.TorchBaseBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.BarrelBlock;
-import net.minecraft.block.ChainBlock;
-import net.minecraft.block.LanternBlock;
+import net.minecraft.block.*;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.structure.rule.BlockMatchRuleTest;
-import net.minecraft.structure.rule.BlockStateMatchRuleTest;
-import net.minecraft.structure.rule.RuleTest;
-import net.minecraft.structure.rule.TagMatchRuleTest;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.YOffset;
-import net.minecraft.world.gen.decorator.Decorator;
-import net.minecraft.world.gen.decorator.RangeDecoratorConfig;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.OreFeatureConfig;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,6 +29,7 @@ public class Blocks implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 		try {
+			if(block == null) return;
 			FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
 					.strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
 					.collidable(block.information.collidable).slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) ->
@@ -60,35 +46,7 @@ public class Blocks implements AddonModule {
 			if (block.information.is_bouncy) {
 				blockSettings.jumpVelocityMultiplier(block.information.jump_velocity_modifier);
 			}
-			if (block.information.is_light_block) {
-				blockSettings.lightLevel(value -> block.information.luminance);
-			}
-			net.minecraft.block.Block blockImpl;
-			if(block.additional_information != null) {
-				if(block.additional_information.rotatable) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new FacingBlockImpl(block, blockSettings), block.information.name.id.getPath());
-				} else if(block.additional_information.horizontal_rotatable) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingBlockImpl(block, blockSettings), block.information.name.id.getPath());
-				} else if(block.additional_information.pillar) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new PillarBlockImpl(block, blockSettings), block.information.name.id.getPath());
-				} else if(block.additional_information.path) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new PathBlockImpl(blockSettings, block), block.information.name.id.getPath());
-				} else if(block.additional_information.lantern) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new LanternBlock(blockSettings), block.information.name.id.getPath());
-				} else if(block.additional_information.barrel) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BarrelBlock(blockSettings), block.information.name.id.getPath());
-				} else if(block.additional_information.leaves) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new LeavesBaseBlock(), block.information.name.id.getPath());
-				} else if(block.additional_information.chains) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new ChainBlock(blockSettings), block.information.name.id.getPath());
-				} else if(block.additional_information.cake_like) {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new CakeBlockImpl(block), block.information.name.id.getPath());
-				} else {
-					blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
-				}
-			} else {
-				blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
-			}
+
 			Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
 			if (block.food_information != null) {
 				FoodComponent foodComponent = block.food_information.getBuilder().build();
@@ -97,46 +55,97 @@ public class Blocks implements AddonModule {
 			if (block.information.fireproof) {
 				settings.fireproof();
 			}
-			REGISTRY_HELPER.registerItem(new CustomBlockItem(block, blockImpl, settings), block.information.name.id.getPath());
-			net.minecraft.block.Block finalBlockImpl = blockImpl;
 
-			if (block.ore_information != null) {
-				RuleTest test;
-				if (block.ore_information.test_type.equals("tag")) {
-					Tag<net.minecraft.block.Block> tag = BlockTags.getTagGroup().getTag(block.ore_information.target_state.block);
-					test = new TagMatchRuleTest(tag == null ? BlockTags.BASE_STONE_OVERWORLD : tag);
-				} else if (block.ore_information.test_type.equals("blockstate")) {
-					test = new BlockStateMatchRuleTest(getState(Registry.BLOCK.get(block.ore_information.target_state.block), block.ore_information.target_state.properties));
-				} else {
-					test = new BlockMatchRuleTest(Registry.BLOCK.get(block.ore_information.target_state.block));
-				}
-				ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
-						Feature.ORE.configure(
-								new OreFeatureConfig(
-										test,
-										finalBlockImpl.getDefaultState(),
-										block.ore_information.size
-								)
-						).decorate(
-								Decorator.RANGE.configure(
-										new RangeDecoratorConfig(
-												YOffset.fixed(block.ore_information.config.bottom_offset),
-												YOffset.fixed(block.ore_information.config.top_offset)
-										)
-								)
-						).rangeOf(YOffset.fixed(block.ore_information.config.minimum), YOffset.fixed(block.ore_information.config.maximum)).spreadHorizontally().repeat(20));
-				BuiltinRegistries.BIOME.forEach(biome -> {
-					if (block.ore_information.biomes != null) {
-						for (String biome2 : block.ore_information.biomes) {
-							if (BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2)) {
-								BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
-							}
-						}
+			if (block.block_type == null) {
+				if(block.additional_information != null) {
+					if(block.additional_information.rotatable) {
+						REGISTRY_HELPER.registerBlock(new FacingBlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.horizontal_rotatable) {
+						REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.pillar) {
+						REGISTRY_HELPER.registerBlock(new PillarBlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.path) {
+						REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.lantern) {
+						REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.barrel) {
+						REGISTRY_HELPER.registerBlock(new BarrelBlock(blockSettings), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.leaves) {
+						REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.chains) {
+						REGISTRY_HELPER.registerBlock(new ChainBlock(blockSettings), block.information.name.id.getPath(), settings);
+					} else if(block.additional_information.cake_like) {
+						REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block.information.name.id.getPath(), settings);
 					} else {
-						BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
+						REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
 					}
-				});
+				} else {
+					REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
+				}
+			} else {
+				switch(block.block_type) {
+					case CAMPFIRE:
+						REGISTRY_HELPER.registerBlock(new CampfireBlockImpl(block.campfire_properties), block.information.name.id.getPath(), settings);
+						break;
+					case STAIRS:
+						REGISTRY_HELPER.registerBlock(new StairsImpl(block), block.information.name.id.getPath(), settings);
+						break;
+					case SLAB:
+						REGISTRY_HELPER.registerBlock(new SlabImpl(block), block.information.name.id.getPath(), settings);
+						break;
+					case FENCE:
+						REGISTRY_HELPER.registerBlock(new FenceImpl(block), block.information.name.id.getPath(), settings);
+						break;
+					case FENCE_GATE:
+						REGISTRY_HELPER.registerBlock(new FenceGateImpl(block), block.information.name.id.getPath(), settings);
+						break;
+					case CAKE:
+						REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block.information.name.id.getPath(), settings);
+						break;
+					case TRAPDOOR:
+						REGISTRY_HELPER.registerBlock(new TrapdoorBlockImpl(blockSettings), block.information.name.id.getPath(), settings);
+						break;
+					case DOOR:
+						REGISTRY_HELPER.registerBlock(new DoorBaseBlock(blockSettings), block.information.name.id.getPath(), settings);
+						break;
+					case LOG:
+						REGISTRY_HELPER.registerLog(block.information.name.id.getPath(), block.information.getMaterial().getColor(),
+								block.information.getMaterial().getColor(), settings);
+						break;
+					case OXIDIZING_BLOCK:
+						Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings), "oxidized_" + block.information.name.id.getPath());
+						Block weathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.WEATHERED, oxidized),
+								"weathered_" + block.information.name.id.getPath());
+						Block exposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.EXPOSED, weathered),
+								"exposed_" + block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.UNAFFECTED, exposed),
+								block.information.name.id.getPath() + "_block");
+						break;
+					case PLANT:
+						REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block.information.name.id.getPath());
+						break;
+					case SAPLING:
+//						REGISTRY_HELPER.registerBlock(new SaplingBaseBlock(block, blockSettings), block.information.name.id.getPath());
+						break;
+					case TORCH:
+						//TODO: Add particle lookup registry/method
+						REGISTRY_HELPER.registerBlock(new TorchBaseBlock(), block.information.name.id.getPath());
+						break;
+					case BEE_HIVE:
+						REGISTRY_HELPER.registerBlock(new BeehiveBlock(blockSettings), block.information.name.id.getPath());
+						break;
+					case LEAVES:
+						REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block.information.name.id.getPath());
+						break;
+					case LADDER:
+						REGISTRY_HELPER.registerBlock(new CustomLadderBlock(), block.information.name.id.getPath());
+						break;
+					case PATH:
+						REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block.information.name.id.getPath());
+						break;
+				}
 			}
+
 			Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder ->
 					serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
 						lootTableBuilder.type(new Identifier("block"));
@@ -155,7 +164,7 @@ public class Blocks implements AddonModule {
 			if (block.additional_information != null) {
 				if (block.additional_information.slab) {
 					REGISTRY_HELPER.registerBlock(new SlabImpl(block),
-							Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS);
+							Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
 					Artifice.registerDataPack(String.format("%s:%s_slab_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
 						serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_slab"), lootTableBuilder -> {
 							lootTableBuilder.type(new Identifier("block"));
@@ -219,7 +228,7 @@ public class Blocks implements AddonModule {
 				}
 				if (block.additional_information.fence) {
 					REGISTRY_HELPER.registerBlock(new FenceImpl(block),
-							new Identifier(id.getModId(), block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS);
+							new Identifier(id.getModId(), block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
 					Artifice.registerDataPack(String.format("%s:%s_fence_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
 						serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence"), lootTableBuilder -> {
 							lootTableBuilder.type(new Identifier("block"));
@@ -248,7 +257,7 @@ public class Blocks implements AddonModule {
 				}
 				if (block.additional_information.fenceGate) {
 					REGISTRY_HELPER.registerBlock(new FenceGateImpl(block),
-							Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE);
+							Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
 					Artifice.registerDataPack(String.format("%s:%s_fence_gate_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
 						serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence_gate"), lootTableBuilder -> {
 							lootTableBuilder.type(new Identifier("block"));
@@ -275,7 +284,7 @@ public class Blocks implements AddonModule {
 				}
 				if (block.additional_information.walls) {
 					REGISTRY_HELPER.registerBlock(new WallImpl(block),
-							Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS);
+							Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
 					Artifice.registerDataPack(String.format("%s:%s_wall_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder ->
 							serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_wall"), lootTableBuilder -> {
 								lootTableBuilder.type(new Identifier("block"));

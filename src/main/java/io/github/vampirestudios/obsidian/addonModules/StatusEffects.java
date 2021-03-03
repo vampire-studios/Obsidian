@@ -18,6 +18,7 @@ public class StatusEffects implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         StatusEffect statusEffect = Obsidian.GSON.fromJson(new FileReader(file), StatusEffect.class);
         try {
+            if(statusEffect == null) return;
             String color1 = statusEffect.color.replace("#", "").replace("0x", "");
             Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect.getStatusEffectType(), Integer.parseInt(color1, 16)));
             register(STATUS_EFFECTS, "status_effect", statusEffect.name.translated.get("en_us"), statusEffect);

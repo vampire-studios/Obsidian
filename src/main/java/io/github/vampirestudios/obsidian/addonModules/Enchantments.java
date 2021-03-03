@@ -18,6 +18,7 @@ public class Enchantments implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
         try {
+            if(enchantment == null) return;
             Registry.register(Registry.ENCHANTMENT, enchantment.name.id, new EnchantmentImpl(enchantment));
             register(ENCHANTMENTS, "enchantment", enchantment.name.id.getPath(), enchantment);
         } catch (Exception e) {

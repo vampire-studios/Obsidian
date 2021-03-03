@@ -20,6 +20,7 @@ public class Weapons implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
         try {
+            if(weapon == null) return;
             CustomToolMaterial material = new CustomToolMaterial(weapon.material);
             RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
                     .group(weapon.information.getItemGroup())

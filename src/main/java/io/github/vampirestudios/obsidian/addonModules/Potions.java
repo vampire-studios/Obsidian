@@ -18,6 +18,7 @@ public class Potions implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         Potion potion = Obsidian.GSON.fromJson(new FileReader(file), Potion.class);
         try {
+            if(potion == null) return;
             Registry.register(Registry.POTION, potion.name,
                     new net.minecraft.potion.Potion(new StatusEffectInstance(potion.getEffectType(), potion.getEffects().duration * 20, potion.getEffects().amplifier)));
             register(POTIONS, "potion", potion.name.toString(), potion);

@@ -9,11 +9,11 @@ import net.minecraft.util.Identifier;
 
 public class BlockInformation {
 
-    public String material;
+    public String material = "minecraft:stone";
     public NameInformation name;
-    public String item_group;
+    public Identifier item_group;
     public boolean collidable = true;
-    public String sound_group = "";
+    public String sound_group = "minecraft:stone";
     public float explosion_resistance = 0.0F;
     public float destroy_time = 0.0F;
     public boolean randomTicks = false;
@@ -26,8 +26,6 @@ public class BlockInformation {
     public boolean has_glint = false;
     public boolean is_enchantable = false;
     public int enchantability = 5;
-    public boolean is_light_block = false;
-    public int luminance = 1;
     public boolean is_emissive = false;
     public boolean fireproof = false;
     public float light_absorption_value = 0.0F;
@@ -35,7 +33,7 @@ public class BlockInformation {
     public int cake_slices = 1;
 
     public BlockSoundGroup getBlockSoundGroup() {
-        switch (sound_group) {
+        switch (sound_group.toString()) {
             case "minecraft:wood":
                 return BlockSoundGroup.WOOD;
             case "minecraft:gravel":
@@ -199,7 +197,7 @@ public class BlockInformation {
     }
 
     public ItemGroup getItemGroup() {
-        return Obsidian.ITEM_GROUP_REGISTRY.get(new Identifier(item_group));
+        return Obsidian.ITEM_GROUP_REGISTRY.get(item_group);
     }
 
 }

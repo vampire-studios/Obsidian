@@ -20,6 +20,7 @@ public class Food implements AddonModule {
     public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
         FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
         try {
+            if(foodItem == null) return;
             FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
             Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, new Item.Settings()
                     .group(foodItem.information.getItemGroup())
