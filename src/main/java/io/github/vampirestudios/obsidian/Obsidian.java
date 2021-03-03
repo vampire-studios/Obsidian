@@ -14,7 +14,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.OpenDoorAnnotationComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
-import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.api.ModInitializer;
@@ -119,6 +118,7 @@ public class Obsidian implements ModInitializer {
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
         registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
         registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
         registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
@@ -135,12 +135,11 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
         registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
         registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
-        registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
 
         ConfigHelper.loadDefaultObsidianAddons();
         CompletableFuture.runAsync(ConfigHelper::loadObsidianAddons, ConfigHelper.EXECUTOR_SERVICE);
-        BedrockAddonLoader.loadDefaultBedrockAddons();
-        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
+//        BedrockAddonLoader.loadDefaultBedrockAddons();
+//        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
     }
 
     public <T> void registerInRegistry(Registry<T> registry, String name, T idk) {

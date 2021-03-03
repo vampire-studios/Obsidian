@@ -44,7 +44,8 @@ public class Block {
         BEE_HIVE,
         LEAVES,
         LADDER,
-        PATH
+        PATH,
+        BUTTON
     }
 
     public static class CampfireProperties {

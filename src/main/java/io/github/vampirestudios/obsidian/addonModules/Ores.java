@@ -97,7 +97,7 @@ public class Ores implements AddonModule {
 						});
 					})
 			);
-			register(BLOCKS, "ore", block.information.name.id.toString(), block);
+			register(ORES, "ore", block.information.name.id.toString(), block);
 		} catch (Exception e) {
 			failedRegistering("ore", block.information.name.id.toString(), e);
 		}

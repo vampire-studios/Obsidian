@@ -12,7 +12,7 @@ public class CustomEntityRenderer extends MobEntityRenderer<EntityImpl, EntityMo
 
     private final Entity entity;
 
-    protected CustomEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
+    public CustomEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
         super(context, entity.information.getEntityModel(context), 1.0F);
         this.entity = entity;
     }

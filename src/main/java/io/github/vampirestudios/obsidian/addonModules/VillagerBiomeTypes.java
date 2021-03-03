@@ -35,6 +35,6 @@ public class VillagerBiomeTypes implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "items/elytra";
+		return "villagers/biome_types";
 	}
 }

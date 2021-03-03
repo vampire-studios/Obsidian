@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -37,28 +38,29 @@ public class ConfigHelper {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
     public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "obsidian_addons");
-    public static final List<IAddonPack> OBSIDIAN_ADDONS = new ArrayList<>();
+    public static final CopyOnWriteArrayList<IAddonPack> OBSIDIAN_ADDONS = new  CopyOnWriteArrayList<>();
     public static RegistryHelper REGISTRY_HELPER;
     public static final int PACK_VERSION = 2;
 
-    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.Item> ITEMS = new ArrayList<>();
-    public static List<FoodItem> FOODS = new ArrayList<>();
-    public static List<WeaponItem> WEAPONS = new ArrayList<>();
-    public static List<RangedWeaponItem> RANGED_WEAPONS = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new ArrayList<>();
-    public static List<Block> BLOCKS = new ArrayList<>();
-    public static List<Potion> POTIONS = new ArrayList<>();
-    public static List<Command> COMMANDS = new ArrayList<>();
-    public static List<StatusEffect> STATUS_EFFECTS = new ArrayList<>();
-    public static List<Enchantment> ENCHANTMENTS = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new ArrayList<>();
-    public static List<Entity> ENTITIES = new ArrayList<>();
-    public static List<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> ARMORS = new ArrayList<>();
-    public static List<Elytra> ELYTRAS = new ArrayList<>();
-    public static List<CauldronType> CAULDRON_TYPES = new ArrayList<>();
-    public static List<ShieldItem> SHIELDS = new ArrayList<>();
-    public static List<VillagerProfession> VILLAGER_PROFESSIONS = new ArrayList<>();
-    public static List<VillagerBiomeType> VILLAGER_BIOME_TYPES = new ArrayList<>();
+    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.Item> ITEMS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<FoodItem> FOODS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<WeaponItem> WEAPONS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<RangedWeaponItem> RANGED_WEAPONS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Block> BLOCKS = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Block> ORES = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Potion> POTIONS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Command> COMMANDS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<StatusEffect> STATUS_EFFECTS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Enchantment> ENCHANTMENTS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Entity> ENTITIES = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> ARMORS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Elytra> ELYTRAS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<CauldronType> CAULDRON_TYPES = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<ShieldItem> SHIELDS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<VillagerProfession> VILLAGER_PROFESSIONS = new  CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<VillagerBiomeType> VILLAGER_BIOME_TYPES = new  CopyOnWriteArrayList<>();
 
     public static void loadDefaultObsidianAddons() {
         if (!OBSIDIAN_ADDON_DIRECTORY.exists())

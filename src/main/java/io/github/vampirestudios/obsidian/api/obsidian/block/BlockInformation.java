@@ -33,7 +33,7 @@ public class BlockInformation {
     public int cake_slices = 1;
 
     public BlockSoundGroup getBlockSoundGroup() {
-        switch (sound_group.toString()) {
+        switch (sound_group) {
             case "minecraft:wood":
                 return BlockSoundGroup.WOOD;
             case "minecraft:gravel":
@@ -98,6 +98,20 @@ public class BlockInformation {
                 return BlockSoundGroup.AMETHYST_CLUSTER;
             case "minecraft:amethyst_block":
                 return BlockSoundGroup.AMETHYST_BLOCK;
+            case "minecraft:deepslate":
+                return BlockSoundGroup.DEEPSLATE;
+            case "minecraft:deepslate_bricks":
+                return BlockSoundGroup.DEEPSLATE_BRICKS;
+            case "minecraft:deepslate_tiles":
+                return BlockSoundGroup.DEEPSLATE_TILES;
+            case "minecraft:polished_deepslate":
+                return BlockSoundGroup.POLISHED_DEEPSLATE;
+            case "minecraft:azalea":
+                return BlockSoundGroup.AZALEA;
+            case "minecraft:azalea_leaves":
+                return BlockSoundGroup.AZALEA_LEAVES;
+            case "minecraft:flowering_azalea":
+                return BlockSoundGroup.FLOWERING_AZALEA;
             case "minecraft:candle":
                 return BlockSoundGroup.CANDLE;
             case "minecraft:stone":
@@ -188,8 +202,10 @@ public class BlockInformation {
                 return Material.GOURD;
             case "minecraft:egg":
                 return Material.EGG;
-            case "minecraft:cake":
-                return Material.CAKE;
+            case "minecraft:amethyst":
+                return Material.AMETHYST;
+            case "minecraft:powdered_snow":
+                return Material.POWDER_SNOW;
             case "minecraft:air":
             default:
                 return Material.AIR;

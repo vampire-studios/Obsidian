@@ -12,7 +12,7 @@ import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 public class JsonEntityRenderer extends GeoEntityRenderer<EntityImpl> {
 
-    protected JsonEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
+    public JsonEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
         super(context, new EntityJsonModel(entity));
     }
 

@@ -37,6 +37,6 @@ public class VillagerProfessions implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "items/elytra";
+		return "villagers/professions";
 	}
 }
