@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.threadhandlers;
+package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.Obsidian;

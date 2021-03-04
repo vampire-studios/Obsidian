@@ -14,9 +14,11 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.OpenDoorAnnotationComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
+import io.github.vampirestudios.obsidian.commands.GeneratorCommand;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -48,6 +50,8 @@ public class Obsidian implements ModInitializer {
     public static final Registry<Class<? extends Event>> BEDROCK_BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_event_registry")), Lifecycle.stable());
     public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.Component>> BEDROCK_BLOCK_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_components_registry")), Lifecycle.stable());
 
+    public static final Identifier GENERATOR_BREAKOUT_PACKET = id("generator_packet");
+
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
     }
@@ -58,6 +62,8 @@ public class Obsidian implements ModInitializer {
         LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w08b"));
         // Initialize GeckoLib for all modules
         GeckoLib.initialize();
+
+        CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> GeneratorCommand.register(commandDispatcher));
 
         //Item Groups
         registerInRegistry(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);

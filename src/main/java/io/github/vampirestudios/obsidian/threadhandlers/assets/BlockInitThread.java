@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.threadhandlers;
+package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.Obsidian;
@@ -51,7 +51,20 @@ public class BlockInitThread implements Runnable {
 					}
 					if (block.display.model != null) {
 						if (block.additional_information != null) {
-							if (block.additional_information.rotatable) {
+							if (block.additional_information.horizontal_rotatable) {
+								clientResourcePackBuilder.addBlockState(block.information.name.id, blockStateBuilder -> {
+									blockStateBuilder.variant("facing=north", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/")));
+									blockStateBuilder.variant("facing=south", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/")).rotationY(180));
+									blockStateBuilder.variant("facing=east", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/")).rotationY(90));
+									blockStateBuilder.variant("facing=west", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/")).rotationY(270));
+								});
+								clientResourcePackBuilder.addBlockModel(block.information.name.id, modelBuilder -> {
+									modelBuilder.parent(block.display.model.parent);
+									block.display.model.textures.forEach(modelBuilder::texture);
+								});
+								clientResourcePackBuilder.addItemModel(block.information.name.id, modelBuilder ->
+										modelBuilder.parent(Utils.prependToPath(block.information.name.id, "block/")));
+							} else if (block.additional_information.rotatable) {
 								clientResourcePackBuilder.addBlockState(block.information.name.id, blockStateBuilder -> {
 									blockStateBuilder.variant("facing=north", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/")));
 									blockStateBuilder.variant("facing=south", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/")).rotationY(180));
