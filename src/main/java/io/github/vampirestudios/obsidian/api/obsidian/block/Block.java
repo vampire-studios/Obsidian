@@ -42,13 +42,14 @@ public class Block {
         HORIZONTAL_FACING_PLANT,
         SAPLING,
         TORCH,
-        BEE_HIVE,
+        BEEHIVE,
         LEAVES,
         LADDER,
         PATH,
         BUTTON,
         DOUBLE_PLANT,
-        HORIZONTAL_FACING_DOUBLE_PLANT
+        HORIZONTAL_FACING_DOUBLE_PLANT,
+        HANGING_DOUBLE_LEAVES
     }
 
     public static class CampfireProperties {

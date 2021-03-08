@@ -14,6 +14,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.OpenDoorAnnotationComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
+import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
 import io.github.vampirestudios.obsidian.commands.GeneratorCommand;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
@@ -63,6 +64,7 @@ public class Obsidian implements ModInitializer {
         // Initialize GeckoLib for all modules
         GeckoLib.initialize();
 
+        CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
         CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> GeneratorCommand.register(commandDispatcher));
 
         //Item Groups
