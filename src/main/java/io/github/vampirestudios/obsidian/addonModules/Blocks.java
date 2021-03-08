@@ -6,9 +6,9 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.CustomLadderBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
-import io.github.vampirestudios.vampirelib.blocks.TorchBaseBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.item.FoodComponent;
@@ -112,35 +112,49 @@ public class Blocks implements AddonModule {
 								block.information.getMaterial().getColor(), settings);
 						break;
 					case OXIDIZING_BLOCK:
-						Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings), block, "oxidized_" + block.information.name.id.getPath());
+						Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings), block,
+								"oxidized_" + block.information.name.id.getPath(), settings);
 						Block weathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.WEATHERED, oxidized), block,
-								"weathered_" + block.information.name.id.getPath());
+								"weathered_" + block.information.name.id.getPath(), settings);
 						Block exposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.EXPOSED, weathered), block,
-								"exposed_" + block.information.name.id.getPath());
+								"exposed_" + block.information.name.id.getPath(), settings);
 						REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.UNAFFECTED, exposed), block,
-								block.information.name.id.getPath() + "_block");
+								block.information.name.id.getPath() + "_block", settings);
 						break;
 					case PLANT:
-						REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+						break;
+					case HORIZONTAL_FACING_PLANT:
+						REGISTRY_HELPER.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
 						break;
 					case SAPLING:
 //						REGISTRY_HELPER.registerBlock(new SaplingBaseBlock(block, blockSettings), block.information.name.id.getPath());
 						break;
 					case TORCH:
 						//TODO: Add particle lookup registry/method
-						REGISTRY_HELPER.registerBlock(new TorchBaseBlock(), block, block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new TorchBaseBlock(), block, block.information.name.id.getPath(), settings);
 						break;
 					case BEE_HIVE:
-						REGISTRY_HELPER.registerBlock(new BeehiveBlock(blockSettings), block, block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new BeehiveBlock(blockSettings), block, block.information.name.id.getPath(), settings);
 						break;
 					case LEAVES:
-						REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath(), settings);
 						break;
 					case LADDER:
-						REGISTRY_HELPER.registerBlock(new CustomLadderBlock(), block, block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new CustomLadderBlock(), block, block.information.name.id.getPath(), settings);
 						break;
 					case PATH:
-						REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, block.information.name.id.getPath(), settings);
+						break;
+					case BUTTON:
+						//TODO: Unhardcode wooden
+						REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, blockSettings), block, block.information.name.id.getPath(), settings);
+						break;
+					case DOUBLE_PLANT:
+						REGISTRY_HELPER.registerTallBlock(new TallFlowerBlockImpl(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+						break;
+					case HORIZONTAL_FACING_DOUBLE_PLANT:
+						REGISTRY_HELPER.registerTallBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
 						break;
 				}
 			}

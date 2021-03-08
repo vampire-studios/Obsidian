@@ -6,6 +6,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.TallBlockItem;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
@@ -93,6 +94,20 @@ public class RegistryHelper {
     public Block registerBlockWithWallBlock(Block block, Block wallBlock, String name) {
         Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
         Registry.register(Registry.ITEM, new Identifier(this.modId, name), new WallStandingBlockItem(block, wallBlock, (new Settings()).group(ItemGroup.DECORATIONS)));
+        return block;
+    }
+
+    public Block registerTallBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name) {
+        Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
+        Registry.register(Registry.ITEM, new Identifier(this.modId, name), new TallBlockItem(block2, block, new Settings().group(ItemGroup.DECORATIONS)));
+        return block;
+    }
+
+
+
+    public Block registerTallBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
+        Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
+        Registry.register(Registry.ITEM, new Identifier(this.modId, name), new TallBlockItem(block2, block, settings));
         return block;
     }
 

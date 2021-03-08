@@ -23,8 +23,8 @@ import org.liquidengine.legui.style.flex.FlexStyle.JustifyContent;
 
 public class DemoPanel extends Panel {
     public DemoPanel(int width, int height) {
-        super(0.0F, 0.0F, 480, 720);
-        Label title = new Label("Generator", this.getSize().x / 2, 10.0F, 100.0F, 30.0F);
+        super(0.0F, 0.0F, width, height);
+        Label title = new Label("Generator", 100, 10.0F, 100.0F, 30.0F);
         title.getStyle().setTextColor(0.0F, 0.5F, 1.0F, 1.0F).setFontSize(30.0F).setFont("roboto-bold");
         this.add(title);
         TextArea desc = new TextArea(10.0F, 45.0F, 400.0F, 160.0F);

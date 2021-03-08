@@ -39,13 +39,16 @@ public class Block {
         LOG,
         OXIDIZING_BLOCK,
         PLANT,
+        HORIZONTAL_FACING_PLANT,
         SAPLING,
         TORCH,
         BEE_HIVE,
         LEAVES,
         LADDER,
         PATH,
-        BUTTON
+        BUTTON,
+        DOUBLE_PLANT,
+        HORIZONTAL_FACING_DOUBLE_PLANT
     }
 
     public static class CampfireProperties {
