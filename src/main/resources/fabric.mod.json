@@ -27,8 +27,7 @@
     ]
   },
   "mixins": [
-    "obsidian.mixins.json",
-    "fabric-combat-api-v1.mixins.json"
+    "obsidian.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 
