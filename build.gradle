@@ -46,6 +46,7 @@ dependencies {
 
     // INclude GeckoLib for each module, uses experimental 1.17 snapshot fork.
     modImplementation 'software.bernie.geckolib:geckolib-fabric-1.17:3.0.20:dev'
+    include 'software.bernie.geckolib:geckolib-fabric-1.17:3.0.20:dev'
 
     modCompile "com.github.raphydaphy:breakoutapi:$breakoutapi_version"
 
