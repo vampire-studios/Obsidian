@@ -7,13 +7,15 @@ import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
-import io.github.vampirestudios.vampirelib.blocks.CustomLadderBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.util.Identifier;
 
 import java.io.File;
@@ -134,11 +136,13 @@ public class Blocks implements AddonModule {
 						//TODO: Add particle lookup registry/method
 						REGISTRY_HELPER.registerBlock(new TorchBaseBlock(), block, block.information.name.id.getPath(), settings);
 						break;
-					case BEE_HIVE:
-						REGISTRY_HELPER.registerBlock(new BeehiveBlock(blockSettings), block, block.information.name.id.getPath(), settings);
+					case BEEHIVE:
+						Block beeHive = REGISTRY_HELPER.registerBlock(new BeehiveBlockImpl(blockSettings), block, block.information.name.id.getPath(), settings);
+						REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beeHive), block.information.name.id.getPath() + "_beehive_be");
 						break;
 					case LEAVES:
-						REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath(), settings);
+						Block leaves = REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath(), settings);
+						BlockTags.LEAVES.values().add(leaves);
 						break;
 					case LADDER:
 						REGISTRY_HELPER.registerBlock(new CustomLadderBlock(), block, block.information.name.id.getPath(), settings);
@@ -155,6 +159,9 @@ public class Blocks implements AddonModule {
 						break;
 					case HORIZONTAL_FACING_DOUBLE_PLANT:
 						REGISTRY_HELPER.registerTallBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+						break;
+					case HANGING_DOUBLE_LEAVES:
+						REGISTRY_HELPER.registerTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
 						break;
 				}
 			}

@@ -7,6 +7,7 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.TallBlockItem;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
@@ -14,7 +15,6 @@ import net.minecraft.block.Material;
 import net.minecraft.block.PillarBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.BlockEntityType.Builder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.*;
@@ -144,9 +144,9 @@ public class RegistryHelper {
         return Registry.register(Registry.ITEM, new Identifier(this.modId, name), item);
     }
 
-    public <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(Builder<T> builder, String name) {
+    public <T extends BlockEntity> void registerBlockEntity(FabricBlockEntityTypeBuilder<T> builder, String name) {
         BlockEntityType<T> blockEntityType = builder.build(null);
-        return Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(this.modId, name), blockEntityType);
+        Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(this.modId, name), blockEntityType);
     }
 
     public Block registerCompatBlock(String modName, String blockName, Block block, ItemGroup itemGroup) {
