@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.api.combat.v1.bow;
+package net.fabricmc.fabric.api.item.v1.bow;
 
+import net.fabricmc.fabric.api.item.v1.ShotProjectileEvents;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
-
-import net.fabricmc.fabric.api.combat.v1.ShotProjectileEvents;
 
 /**
  * An interface to implement for all custom bows in fabric. <br>
  * This is meant to be used on a {@link BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work.
  *
- * @see FabricBowItem
+ * @see net.fabricmc.fabric.api.item.v1.bow.FabricBowItem
  */
 public interface FabricBowExtensions extends ShotProjectileEvents.ModifyProjectileFromBow {
 	/**
 	 * Returns the pull progress of the bow between 0 and 1.
 	 *
-	 * @param useTicks The number of ticks the bow has been pulled.
-	 * @param bowStack The ItemStack for the bow
-	 * @return The progress of the pull from 0.0f to 1.0f.
+	 * @param useTicks the number of ticks the bow has been pulled.
+	 * @param bowStack the ItemStack for the bow
+	 * @return the progress of the pull from {@code 0.0f} to {@code 1.0f}.
 	 */
 	default float getCustomPullProgress(int useTicks, ItemStack bowStack) {
 		return BowItem.getPullProgress(useTicks);

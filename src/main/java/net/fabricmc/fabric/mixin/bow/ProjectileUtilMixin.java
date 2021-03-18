@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.combat;
+package net.fabricmc.fabric.mixin.bow;
 
 import net.fabricmc.fabric.api.item.v1.bow.FabricBowExtensions;
 import net.minecraft.entity.LivingEntity;

@@ -16,7 +16,7 @@
 
 package net.fabricmc.fabric.mixin.combat.client;
 
-import net.fabricmc.fabric.api.combat.v1.bow.FabricBowExtensions;
+import net.fabricmc.fabric.api.item.v1.bow.FabricBowExtensions;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

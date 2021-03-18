@@ -12,6 +12,9 @@ public class AdditionalBlockInformation {
     public boolean door = false;
     public boolean trapdoor = false;
 
+    public boolean hasWaxed = false;
+    public boolean hasCut = false;
+
     public boolean rotatable = false;
     public boolean horizontal_rotatable = false;
     public boolean pillar = false;

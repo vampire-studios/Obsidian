@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.combat;
+package net.fabricmc.fabric.mixin.bow;
 
 import net.fabricmc.fabric.api.combat.v1.ShotProjectileEvents;
 import net.minecraft.entity.Entity;

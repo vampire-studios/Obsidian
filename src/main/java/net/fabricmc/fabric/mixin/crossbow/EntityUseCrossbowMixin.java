@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.combat;
+package net.fabricmc.fabric.mixin.crossbow;
 
-import net.fabricmc.fabric.api.item.v1.bow.FabricBowExtensions;
-import net.minecraft.entity.mob.AbstractSkeletonEntity;
-import net.minecraft.item.BowItem;
+import net.minecraft.entity.mob.PiglinEntity;
+import net.minecraft.entity.mob.PillagerEntity;
+import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.RangedWeaponItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AbstractSkeletonEntity.class)
-public abstract class EntityUseBowMixin {
-	// Allows Entities that use bows to use custom bows.
-	@Inject(method = "canUseRangedWeapon", at = @At("HEAD"), cancellable = true)
+// Allows Crossbow users to use custom crossbows
+@Mixin({PiglinEntity.class, PillagerEntity.class})
+public class EntityUseCrossbowMixin {
+	@Inject(method = "canUseRangedWeapon", at = @At("HEAD"))
 	public void canUseRangedWeapon(RangedWeaponItem weapon, CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(weapon instanceof BowItem || weapon instanceof FabricBowExtensions);
+		if (weapon instanceof CrossbowItem) {
+			cir.setReturnValue(true);
+		}
 	}
 }

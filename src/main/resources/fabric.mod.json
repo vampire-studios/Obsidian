@@ -27,7 +27,9 @@
     ]
   },
   "mixins": [
-    "obsidian.mixins.json"
+    "obsidian.mixins.json",
+    "fabric-item-api-v1-elytra.mixins.json",
+    "fabric-combat-api-v1.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 

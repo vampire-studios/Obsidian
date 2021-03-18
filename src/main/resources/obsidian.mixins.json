@@ -8,6 +8,8 @@
   },
   "mixins": [
     "BuiltinModelItemRendererMixin",
+    "class_5953Accessor",
+//    "class_5955Accessor",
     "CrossbowItemMixin",
     "DynamicRegistryManagerMixin",
     "EntityCrossbowUseMixin",

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.combat;
+package net.fabricmc.fabric.mixin.item;
 
-import net.fabricmc.fabric.api.item.v1.bow.FabricBowExtensions;
+import net.fabricmc.fabric.api.item.v1.crossbow.FabricCrossbowExtensions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
@@ -36,8 +36,8 @@ public abstract class ProjectileUtilMixin {
 	@Inject(method = "getHandPossiblyHolding", at = @At(value = "HEAD"), cancellable = true)
 	private static void getHandPossiblyHolding(LivingEntity entity, Item item, CallbackInfoReturnable<Hand> cir) {
 		for (Hand hand : HANDS) {
-			if (item == Items.BOW) { // Make sure we only check for bows when searching for bows and allow for other items like crossbows in future
-				if (entity.getStackInHand(hand).getItem() instanceof FabricBowExtensions) {
+			if (item == Items.CROSSBOW) { // Make sure we only check for crossbows when searching for crossbows and allow for other items like bows in future
+				if (entity.getStackInHand(hand).getItem() instanceof FabricCrossbowExtensions) {
 					cir.setReturnValue(hand);
 					return;
 				}

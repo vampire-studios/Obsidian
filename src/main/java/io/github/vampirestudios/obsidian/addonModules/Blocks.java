@@ -1,8 +1,12 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
+import com.google.common.base.Suppliers;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.Maps;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
+import io.github.vampirestudios.obsidian.mixins.class_5953Accessor;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
@@ -12,6 +16,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
+import net.minecraft.class_5955;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -114,14 +119,88 @@ public class Blocks implements AddonModule {
 								block.information.getMaterial().getColor(), settings);
 						break;
 					case OXIDIZING_BLOCK:
-						Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings), block,
+						Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.OXIDIZED, blockSettings), block,
 								"oxidized_" + block.information.name.id.getPath(), settings);
-						Block weathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.WEATHERED, oxidized), block,
+						Block weathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.WEATHERED, blockSettings), block,
 								"weathered_" + block.information.name.id.getPath(), settings);
-						Block exposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.EXPOSED, weathered), block,
+						Block exposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.EXPOSED, blockSettings), block,
 								"exposed_" + block.information.name.id.getPath(), settings);
-						REGISTRY_HELPER.registerBlock(new OxidizableBlock(blockSettings, Oxidizable.OxidizationLevel.UNAFFECTED, exposed), block,
+						Block unaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.UNAFFECTED, blockSettings), block,
 								block.information.name.id.getPath() + "_block", settings);
+//						BiMap<Block, Block> oxidizedBlocks = Maps.synchronizedBiMap(class_5955Accessor.getField_29564().get());
+//						oxidizedBlocks.put(unaffected, exposed);
+//						oxidizedBlocks.put(exposed, weathered);
+//						oxidizedBlocks.put(weathered, oxidized);
+//						class_5955Accessor.setField_29564(Suppliers.ofInstance(oxidizedBlocks));
+//
+//						BiMap<Block, Block> oxidizedBlocksReverse = Maps.synchronizedBiMap(class_5955Accessor.getField_29565().get());
+//						oxidizedBlocksReverse.put(oxidized, weathered);
+//						oxidizedBlocksReverse.put(weathered, exposed);
+//						oxidizedBlocksReverse.put(exposed, unaffected);
+//						class_5955Accessor.setField_29565(Suppliers.ofInstance(oxidizedBlocksReverse));
+
+						if (block.additional_information.hasCut) {
+							Block cutOxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.OXIDIZED, blockSettings), block,
+									"oxidized_" + block.information.name.id.getPath(), settings);
+							Block cutWeathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.WEATHERED, blockSettings), block,
+									"weathered_" + block.information.name.id.getPath(), settings);
+							Block cutExposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.EXPOSED, blockSettings), block,
+									"exposed_" + block.information.name.id.getPath(), settings);
+							Block cutUnaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.UNAFFECTED, blockSettings), block,
+									block.information.name.id.getPath() + "_block", settings);
+//							BiMap<Block, Block> cutOxidizedBlocks = Maps.synchronizedBiMap(class_5955Accessor.getField_29564().get());
+//							cutOxidizedBlocks.put(cutUnaffected, cutExposed);
+//							cutOxidizedBlocks.put(cutExposed, cutWeathered);
+//							cutOxidizedBlocks.put(cutWeathered, cutOxidized);
+//							class_5955Accessor.setField_29564(Suppliers.ofInstance(cutOxidizedBlocks));
+//
+//							BiMap<Block, Block> cutOxidizedBlocksReverse = Maps.synchronizedBiMap(class_5955Accessor.getField_29565().get());
+//							cutOxidizedBlocksReverse.put(cutOxidized, cutWeathered);
+//							cutOxidizedBlocksReverse.put(cutWeathered, cutExposed);
+//							cutOxidizedBlocksReverse.put(cutExposed, cutUnaffected);
+//							class_5955Accessor.setField_29565(Suppliers.ofInstance(cutOxidizedBlocksReverse));
+
+							if (block.additional_information.hasWaxed) {
+								Block cutWeatheredWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.WEATHERED, blockSettings), block,
+										"waxed_weathered_cut_" + block.information.name.id.getPath(), settings);
+								Block cutExposedWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.EXPOSED, blockSettings), block,
+										"waxed_exposed_cut_" + block.information.name.id.getPath(), settings);
+								Block cutUnaffectedWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.UNAFFECTED, blockSettings), block,
+										"waxed_cut_" + block.information.name.id.getPath() + "_block", settings);
+								BiMap<Block, Block> blocks = Maps.synchronizedBiMap(class_5953Accessor.getField_29560().get());
+								blocks.put(cutUnaffected, cutUnaffectedWaxed);
+								blocks.put(cutExposed, cutExposedWaxed);
+								blocks.put(cutWeathered, cutWeatheredWaxed);
+								class_5953Accessor.setField_29560(Suppliers.ofInstance(blocks));
+
+								BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(class_5953Accessor.getField_29561().get());
+								blocksReverse.put(cutUnaffectedWaxed, cutUnaffected);
+								blocksReverse.put(cutExposedWaxed, cutExposed);
+								blocksReverse.put(cutWeatheredWaxed, cutWeathered);
+								class_5953Accessor.setField_29561(Suppliers.ofInstance(blocksReverse));
+							}
+						}
+
+						if (block.additional_information.hasWaxed) {
+							Block waxedWeathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.WEATHERED, blockSettings), block,
+									"waxed_weathered_" + block.information.name.id.getPath(), settings);
+							Block waxedExposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.EXPOSED, blockSettings), block,
+									"waxed_exposed_" + block.information.name.id.getPath(), settings);
+							Block waxedUnaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.UNAFFECTED, blockSettings), block,
+									"waxed_" + block.information.name.id.getPath() + "_block", settings);
+							BiMap<Block, Block> blocks = Maps.synchronizedBiMap(class_5953Accessor.getField_29560().get());
+							blocks.put(unaffected, waxedUnaffected);
+							blocks.put(exposed, waxedExposed);
+							blocks.put(weathered, waxedWeathered);
+							class_5953Accessor.setField_29560(Suppliers.ofInstance(blocks));
+
+							BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(class_5953Accessor.getField_29561().get());
+							blocksReverse.put(waxedWeathered, weathered);
+							blocksReverse.put(waxedExposed, exposed);
+							blocksReverse.put(waxedUnaffected, unaffected);
+							class_5953Accessor.setField_29561(Suppliers.ofInstance(blocksReverse));
+						}
+
 						break;
 					case PLANT:
 						REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);

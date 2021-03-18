@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.api.combat.v1.bow;
-
-import org.jetbrains.annotations.NotNull;
+package net.fabricmc.fabric.api.item.v1.bow;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This is the default implementation for {@link FabricBowExtensions}, allowing for the easy creation of new bows with no new modded functionality.
