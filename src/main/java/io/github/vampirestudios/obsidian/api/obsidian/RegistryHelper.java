@@ -129,10 +129,10 @@ public class RegistryHelper {
         }).strength(2.0F).sounds(BlockSoundGroup.WOOD)), name, settings);
     }
 
-    public Block registerLog(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor materialColor, MapColor materialColor2, Item.Settings settings) {
-        return this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) -> {
-            return blockState.get(PillarBlock.AXIS) == Axis.Y ? materialColor : materialColor2;
-        }).strength(2.0F).sounds(BlockSoundGroup.WOOD)), block, name, settings);
+    public void registerLog(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor materialColor, MapColor materialColor2, Settings settings) {
+        this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
+                blockState.get(PillarBlock.AXIS) == Axis.Y ? materialColor : materialColor2)
+                .strength(2.0F).sounds(BlockSoundGroup.WOOD)), block, name, settings);
     }
 
     public Block registerBlockWithoutItem(Block block, String name) {

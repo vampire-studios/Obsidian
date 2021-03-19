@@ -37,6 +37,7 @@ public class Block {
         TRAPDOOR,
         DOOR,
         LOG,
+        WOOD,
         OXIDIZING_BLOCK,
         PLANT,
         HORIZONTAL_FACING_PLANT,

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.addonModules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
@@ -38,3 +39,4 @@ public class Shields implements AddonModule {
         return "items/shields";
     }
 }
+*/

@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.ArmorProvider;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -10,7 +9,9 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import software.bernie.geckolib3.ArmorProvider;
 
 import java.util.List;
 
@@ -43,8 +44,8 @@ public class ArmorItemImpl extends ArmorItem implements ArmorProvider {
     }
 
     @Override
-    public String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
-        return item.material.texture;
+    public Identifier getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, Identifier defaultTexture) {
+        return new Identifier(item.material.texture.getNamespace(), "textures/models/armor/" + item.material.texture.getPath());
     }
 
 }

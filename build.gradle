@@ -35,11 +35,11 @@ dependencies {
     modImplementation ("com.lettuce.fudge:artifice:0.15.2+21w07a") { exclude group: "net.fabricmc.fabric-api" }
     include ("com.lettuce.fudge:artifice:0.15.2+21w07a") { exclude group: "net.fabricmc.fabric-api" }
 
-    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:2.3.1+build.1-21w07a") {
+    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:2.4.0+build.1-21w11a") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
-    include ("io.github.vampirestudios:VampireLib-Fabric:2.3.1+build.1-21w07a") {
+    include ("io.github.vampirestudios:VampireLib-Fabric:2.4.0+build.1-21w11a") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }

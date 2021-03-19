@@ -16,7 +16,7 @@
 
 package net.fabricmc.fabric.mixin.bow;
 
-import net.fabricmc.fabric.api.combat.v1.ShotProjectileEvents;
+import net.fabricmc.fabric.api.item.v1.ShotProjectileEvents;
 import net.fabricmc.fabric.api.item.v1.bow.FabricBowExtensions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

@@ -18,8 +18,7 @@ public class ArmorInitThread implements Runnable
 	}
 
 	@Override
-	public void run()
-	{
+	public void run() {
 		Identifier identifier = armor.information.name.id;
 		Artifice.registerAssetPack(String.format("%s:%s_armor_assets", identifier.getNamespace(), identifier.getPath()), clientResourcePackBuilder -> {
 			if (armor.information.name.translated != null)

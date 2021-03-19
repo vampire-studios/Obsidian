@@ -8,7 +8,6 @@ import io.github.vampirestudios.obsidian.client.CustomElytraFeatureRenderer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.IOException;
 
@@ -50,8 +49,7 @@ public class ElytraInitThread implements Runnable {
 				e.printStackTrace();
 			}
 		});
-		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, livingEntityRenderer, registrationHelper, context) -> {
-			registrationHelper.register(new CustomElytraFeatureRenderer<>(Registry.ITEM.get(identifier), elytra, livingEntityRenderer, context.getModelLoader()));
-		});
+		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, livingEntityRenderer, registrationHelper, context) ->
+				registrationHelper.register(new CustomElytraFeatureRenderer<>(elytra, livingEntityRenderer, context.getModelLoader())));
 	}
 }

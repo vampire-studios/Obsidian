@@ -20,7 +20,6 @@ import net.minecraft.class_5955;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.Identifier;
 
 import java.io.File;
@@ -118,6 +117,10 @@ public class Blocks implements AddonModule {
 						REGISTRY_HELPER.registerLog(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(),
 								block.information.getMaterial().getColor(), settings);
 						break;
+					case WOOD:
+						REGISTRY_HELPER.registerLog(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(),
+								block.information.getMaterial().getColor(), settings);
+						break;
 					case OXIDIZING_BLOCK:
 						Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.OXIDIZED, blockSettings), block,
 								"oxidized_" + block.information.name.id.getPath(), settings);
@@ -160,7 +163,7 @@ public class Blocks implements AddonModule {
 //							cutOxidizedBlocksReverse.put(cutExposed, cutUnaffected);
 //							class_5955Accessor.setField_29565(Suppliers.ofInstance(cutOxidizedBlocksReverse));
 
-							if (block.additional_information.hasWaxed) {
+							if (block.additional_information.hasCut && block.additional_information.hasWaxed) {
 								Block cutWeatheredWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.WEATHERED, blockSettings), block,
 										"waxed_weathered_cut_" + block.information.name.id.getPath(), settings);
 								Block cutExposedWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(class_5955.OxidizationLevel.EXPOSED, blockSettings), block,
@@ -221,7 +224,6 @@ public class Blocks implements AddonModule {
 						break;
 					case LEAVES:
 						Block leaves = REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath(), settings);
-						BlockTags.LEAVES.values().add(leaves);
 						break;
 					case LADDER:
 						REGISTRY_HELPER.registerBlock(new CustomLadderBlock(), block, block.information.name.id.getPath(), settings);

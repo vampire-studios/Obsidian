@@ -9,7 +9,7 @@
   "mixins": [
     "BuiltinModelItemRendererMixin",
     "class_5953Accessor",
-//    "class_5955Accessor",
+    "class_5955Mixin",
     "CrossbowItemMixin",
     "DynamicRegistryManagerMixin",
     "EntityCrossbowUseMixin",
@@ -20,7 +20,6 @@
     "TridentAttackGoalMixin"
   ],
   "client": [
-    "ArmorFeatureRendererMixin",
     "OptionsScreenMixin",
     "PlayerEntityRendererMixin",
     "ReloadableResourceManagerImplMixin"

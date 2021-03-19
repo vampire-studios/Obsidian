@@ -16,7 +16,7 @@
 
 package net.fabricmc.fabric.mixin.combat;
 
-import net.fabricmc.fabric.api.combat.v1.ShotProjectileEvents;
+import net.fabricmc.fabric.api.item.v1.ShotProjectileEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
