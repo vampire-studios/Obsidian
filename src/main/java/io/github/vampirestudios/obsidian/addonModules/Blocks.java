@@ -34,7 +34,7 @@ public class Blocks implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 		try {
-			if(block == null) return;
+			if (block == null) return;
 			FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
 					.strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
 					.collidable(block.information.collidable).slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) ->
@@ -62,24 +62,24 @@ public class Blocks implements AddonModule {
 			}
 
 			if (block.block_type == null) {
-				if(block.additional_information != null) {
-					if(block.additional_information.rotatable) {
+				if (block.additional_information != null) {
+					if (block.additional_information.rotatable) {
 						REGISTRY_HELPER.registerBlock(new FacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.horizontal_rotatable) {
+					} else if (block.additional_information.horizontal_rotatable) {
 						REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.pillar) {
+					} else if (block.additional_information.pillar) {
 						REGISTRY_HELPER.registerBlock(new PillarBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.path) {
+					} else if (block.additional_information.path) {
 						REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.lantern) {
+					} else if (block.additional_information.lantern) {
 						REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.barrel) {
+					} else if (block.additional_information.barrel) {
 						REGISTRY_HELPER.registerBlock(new BarrelBlock(blockSettings), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.leaves) {
+					} else if (block.additional_information.leaves) {
 						REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.chains) {
+					} else if (block.additional_information.chains) {
 						REGISTRY_HELPER.registerBlock(new ChainBlock(blockSettings), block, block.information.name.id.getPath(), settings);
-					} else if(block.additional_information.cake_like) {
+					} else if (block.additional_information.cake_like) {
 						REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block, block.information.name.id.getPath(), settings);
 					} else {
 						REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
@@ -88,7 +88,7 @@ public class Blocks implements AddonModule {
 					REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
 				}
 			} else {
-				switch(block.block_type) {
+				switch (block.block_type) {
 					case CAMPFIRE:
 						REGISTRY_HELPER.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, block.information.name.id.getPath(), settings);
 						break;

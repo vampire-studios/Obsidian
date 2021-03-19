@@ -11,25 +11,25 @@ import java.util.function.Supplier;
 
 @Mixin(class_5953.class)
 public interface class_5953Accessor {
-    @Accessor
-    static Supplier<BiMap<Block, Block>> getField_29560() {
-        throw new UnsupportedOperationException();
-    }
+	@Accessor
+	static Supplier<BiMap<Block, Block>> getField_29560() {
+		throw new UnsupportedOperationException();
+	}
 
-    @Mutable
-    @Accessor
-    static void setField_29560(Supplier<BiMap<Block, Block>> field_29560) {
-        throw new UnsupportedOperationException();
-    }
+	@Mutable
+	@Accessor
+	static void setField_29560(Supplier<BiMap<Block, Block>> field_29560) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Accessor
-    static Supplier<BiMap<Block, Block>> getField_29561() {
-        throw new UnsupportedOperationException();
-    }
+	@Accessor
+	static Supplier<BiMap<Block, Block>> getField_29561() {
+		throw new UnsupportedOperationException();
+	}
 
-    @Mutable
-    @Accessor
-    static void setField_29561(Supplier<BiMap<Block, Block>> field_29561) {
-        throw new UnsupportedOperationException();
-    }
+	@Mutable
+	@Accessor
+	static void setField_29561(Supplier<BiMap<Block, Block>> field_29561) {
+		throw new UnsupportedOperationException();
+	}
 }

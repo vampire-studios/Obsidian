@@ -13,22 +13,22 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class GeneratorCommand {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(literal("generator").then(literal("block").executes(context -> {
-            BreakoutAPI.LOGGER.info("GUI Breakout test requested on server");
+	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+		dispatcher.register(literal("generator").then(literal("block").executes(context -> {
+			BreakoutAPI.LOGGER.info("GUI Breakout test requested on server");
 
-            ServerPlayerEntity player = context.getSource().getPlayer();
-            ServerPlayNetworking.send(player, Obsidian.GENERATOR_BREAKOUT_PACKET, PacketByteBufs.create().writeString("block"));
+			ServerPlayerEntity player = context.getSource().getPlayer();
+			ServerPlayNetworking.send(player, Obsidian.GENERATOR_BREAKOUT_PACKET, PacketByteBufs.create().writeString("block"));
 
-            return 0;
-        })).then(literal("item").executes(context -> {
-            BreakoutAPI.LOGGER.info("Integrated Breakout test requested on server");
+			return 0;
+		})).then(literal("item").executes(context -> {
+			BreakoutAPI.LOGGER.info("Integrated Breakout test requested on server");
 
-            ServerPlayerEntity player = context.getSource().getPlayer();
-            ServerPlayNetworking.send(player, ModPackets.BREAKOUT_TEST_PACKET, PacketByteBufs.create().writeString("item"));
+			ServerPlayerEntity player = context.getSource().getPlayer();
+			ServerPlayNetworking.send(player, ModPackets.BREAKOUT_TEST_PACKET, PacketByteBufs.create().writeString("item"));
 
-            return 0;
-        })));
-    }
+			return 0;
+		})));
+	}
 
 }

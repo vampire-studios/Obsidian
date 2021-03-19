@@ -19,7 +19,7 @@ public class CauldronTypes implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		CauldronType cauldronType = Obsidian.GSON.fromJson(new FileReader(file), CauldronType.class);
 		try {
-			if(cauldronType == null) return;
+			if (cauldronType == null) return;
 			CauldronBehavior cauldronBehavior = (state, world, pos, player, hand, stack) -> {
 				BlockState blockState = getState(Registry.BLOCK.get(cauldronType.blockstate.block), cauldronType.blockstate.properties);
 				return CauldronBehavior.fillCauldron(world, pos, player, hand, stack, blockState, Registry.SOUND_EVENT.get(cauldronType.sound_event));

@@ -14,21 +14,21 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class StatusEffects implements AddonModule {
-    @Override
-    public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
-        StatusEffect statusEffect = Obsidian.GSON.fromJson(new FileReader(file), StatusEffect.class);
-        try {
-            if(statusEffect == null) return;
-            String color1 = statusEffect.color.replace("#", "").replace("0x", "");
-            Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect.getStatusEffectType(), Integer.parseInt(color1, 16)));
-            register(STATUS_EFFECTS, "status_effect", statusEffect.name.translated.get("en_us"), statusEffect);
-        } catch (Exception e) {
-            failedRegistering("status_effect", statusEffect.name.translated.get("en_us"), e);
-        }
-    }
+	@Override
+	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+		StatusEffect statusEffect = Obsidian.GSON.fromJson(new FileReader(file), StatusEffect.class);
+		try {
+			if (statusEffect == null) return;
+			String color1 = statusEffect.color.replace("#", "").replace("0x", "");
+			Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect.getStatusEffectType(), Integer.parseInt(color1, 16)));
+			register(STATUS_EFFECTS, "status_effect", statusEffect.name.translated.get("en_us"), statusEffect);
+		} catch (Exception e) {
+			failedRegistering("status_effect", statusEffect.name.translated.get("en_us"), e);
+		}
+	}
 
-    @Override
-    public String getType() {
-        return "status_effects";
-    }
+	@Override
+	public String getType() {
+		return "status_effects";
+	}
 }

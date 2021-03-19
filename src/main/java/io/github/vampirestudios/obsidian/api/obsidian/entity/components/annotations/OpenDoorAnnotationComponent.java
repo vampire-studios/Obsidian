@@ -2,4 +2,5 @@ package io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotat
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 
-public class OpenDoorAnnotationComponent extends Component {}
+public class OpenDoorAnnotationComponent extends Component {
+}

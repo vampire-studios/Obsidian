@@ -19,25 +19,25 @@ import java.util.List;
 
 @Mixin(DynamicRegistryManager.class)
 public class DynamicRegistryManagerMixin {
-    @Inject(method = "net/minecraft/util/registry/DynamicRegistryManager.method_30531()Lcom/google/common/collect/ImmutableMap;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void registerCustomDynamicRegistries(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
-        List<DynamicRegistryProvider> providers = FabricLoader.getInstance().getEntrypoints("dynamic-registry-provider", DynamicRegistryProvider.class);
-        for (DynamicRegistryProvider provider : providers) {
-            provider.addDynamicRegistries((customDynamicRegistry) -> {
-                addRegistry(customDynamicRegistry);
-                builder.put(customDynamicRegistry.getRegistryRef(), getInfo(customDynamicRegistry));
-            });
-        }
-    }
+	@Inject(method = "net/minecraft/util/registry/DynamicRegistryManager.method_30531()Lcom/google/common/collect/ImmutableMap;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+	private static void registerCustomDynamicRegistries(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
+		List<DynamicRegistryProvider> providers = FabricLoader.getInstance().getEntrypoints("dynamic-registry-provider", DynamicRegistryProvider.class);
+		for (DynamicRegistryProvider provider : providers) {
+			provider.addDynamicRegistries((customDynamicRegistry) -> {
+				addRegistry(customDynamicRegistry);
+				builder.put(customDynamicRegistry.getRegistryRef(), getInfo(customDynamicRegistry));
+			});
+		}
+	}
 
-    @Unique
-    private static <T> DynamicRegistryManager.Info<T> getInfo(CustomDynamicRegistry<T> customDynamicRegistry) {
-        return new DynamicRegistryManager.Info<>(customDynamicRegistry.getRegistryRef(), customDynamicRegistry.getCodec(), null);
-    }
+	@Unique
+	private static <T> DynamicRegistryManager.Info<T> getInfo(CustomDynamicRegistry<T> customDynamicRegistry) {
+		return new DynamicRegistryManager.Info<>(customDynamicRegistry.getRegistryRef(), customDynamicRegistry.getCodec(), null);
+	}
 
-    @Unique
-    private static <T> void addRegistry(CustomDynamicRegistry<T> customDynamicRegistry) {
-        BuiltinRegistries.addRegistry(customDynamicRegistry.getRegistryRef(), customDynamicRegistry.getRegistry(), customDynamicRegistry.getDefaultValueSupplier(), customDynamicRegistry.getLifecycle());
-    }
+	@Unique
+	private static <T> void addRegistry(CustomDynamicRegistry<T> customDynamicRegistry) {
+		BuiltinRegistries.addRegistry(customDynamicRegistry.getRegistryRef(), customDynamicRegistry.getRegistry(), customDynamicRegistry.getDefaultValueSupplier(), customDynamicRegistry.getLifecycle());
+	}
 
 }

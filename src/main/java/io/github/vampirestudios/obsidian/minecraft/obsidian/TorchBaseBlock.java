@@ -6,11 +6,11 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleTypes;
 
 public class TorchBaseBlock extends TorchBlock {
-    public TorchBaseBlock() {
-        super(Settings.of(Material.WOOD), ParticleTypes.FLAME);
-    }
+	public TorchBaseBlock() {
+		super(Settings.of(Material.WOOD), ParticleTypes.FLAME);
+	}
 
-    public TorchBaseBlock(DefaultParticleType particleType) {
-        super(Settings.of(Material.WOOD), particleType);
-    }
+	public TorchBaseBlock(DefaultParticleType particleType) {
+		super(Settings.of(Material.WOOD), particleType);
+	}
 }

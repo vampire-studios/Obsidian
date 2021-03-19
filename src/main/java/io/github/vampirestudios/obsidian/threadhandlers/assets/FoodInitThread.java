@@ -12,6 +12,7 @@ import java.io.IOException;
 public class FoodInitThread implements Runnable {
 
 	private final FoodItem foodItem;
+
 	public FoodInitThread(FoodItem foodItemIn) {
 		foodItem = foodItemIn;
 	}

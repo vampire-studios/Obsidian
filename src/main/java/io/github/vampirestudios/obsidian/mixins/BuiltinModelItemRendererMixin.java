@@ -29,7 +29,8 @@ import java.util.List;
 @Mixin(BuiltinModelItemRenderer.class)
 public class BuiltinModelItemRendererMixin {
 
-	@Shadow private ShieldEntityModel modelShield;
+	@Shadow
+	private ShieldEntityModel modelShield;
 
 	@Inject(at = @At("HEAD"), method = "render", cancellable = true)
 	private void render(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrixStack, VertexConsumerProvider consumerProvider, int light, int overlay,
@@ -40,14 +41,16 @@ public class BuiltinModelItemRendererMixin {
 			matrixStack.push();
 			matrixStack.scale(1.0F, -1.0F, -1.0F);
 			SpriteIdentifier spriteIdentifier;
-			if(((ShieldItemImpl)item).shieldItem.can_have_banner) spriteIdentifier = bl ? new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, ((ShieldItemImpl)item).shieldItem.shieldBase)
-					: new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, ((ShieldItemImpl)item).shieldItem.shieldBaseNoPattern);
-			else spriteIdentifier = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, ((ShieldItemImpl)item).shieldItem.shieldBaseNoPattern);
+			if (((ShieldItemImpl) item).shieldItem.can_have_banner)
+				spriteIdentifier = bl ? new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, ((ShieldItemImpl) item).shieldItem.shieldBase)
+						: new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, ((ShieldItemImpl) item).shieldItem.shieldBaseNoPattern);
+			else
+				spriteIdentifier = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, ((ShieldItemImpl) item).shieldItem.shieldBaseNoPattern);
 			VertexConsumer vertexConsumer = spriteIdentifier.getSprite()
 					.getTextureSpecificVertexConsumer(ItemRenderer.getDirectItemGlintConsumer(consumerProvider,
 							modelShield.getLayer(spriteIdentifier.getAtlasId()), true, stack.hasGlint()));
 			modelShield.getHandle().render(matrixStack, vertexConsumer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-			if (bl && ((ShieldItemImpl)item).shieldItem.can_have_banner) {
+			if (bl && ((ShieldItemImpl) item).shieldItem.can_have_banner) {
 				List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.getPatternsFromNbt(ShieldItem.getColor(stack),
 						BannerBlockEntity.getPatternListTag(stack));
 				BannerBlockEntityRenderer.renderCanvas(matrixStack, consumerProvider, light, overlay,

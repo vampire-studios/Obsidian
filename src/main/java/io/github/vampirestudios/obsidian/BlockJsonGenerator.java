@@ -16,7 +16,7 @@ public class BlockJsonGenerator {
 	public static void generate(String name, String folderName, String template, String variant, String type) throws IOException {
 		String json;
 		FileWriter fileWriter;
-		if(!name.isEmpty()) {
+		if (!name.isEmpty()) {
 			json = template.replace("$$", name + "_" + variant + "_" + type)
 					.replace("$folder$", folderName)
 					.replace("$big$", WordUtils.capitalizeFully(name + " " + variant + " " + type));
@@ -59,7 +59,7 @@ public class BlockJsonGenerator {
 				"    }\n" +
 				"  }\n" +
 				"}";
-		for(DyeColor color : DyeColor.values()) {
+		for (DyeColor color : DyeColor.values()) {
 			generate(color.getName(), "mushroom", template, "fungal", "planks");
 		}
 		generate("", "mushroom", template, "fungal", "planks");

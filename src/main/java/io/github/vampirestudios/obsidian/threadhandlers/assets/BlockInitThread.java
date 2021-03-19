@@ -17,6 +17,7 @@ import java.io.IOException;
 public class BlockInitThread implements Runnable {
 
 	private final Block block;
+
 	public BlockInitThread(Block blockIn) {
 		block = blockIn;
 	}
@@ -187,7 +188,7 @@ public class BlockInitThread implements Runnable {
 					});
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

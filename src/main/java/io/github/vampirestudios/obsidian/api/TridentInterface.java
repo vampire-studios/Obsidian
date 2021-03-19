@@ -19,7 +19,6 @@ public interface TridentInterface {
 	ModelIdentifier getInventoryModelIdentifier();
 
 	/**
-	 *
 	 * @return The Identifier for the texture of the trident entity
 	 */
 	Identifier getEntityTexture();
@@ -27,6 +26,7 @@ public interface TridentInterface {
 	/**
 	 * Modifies the trident entity for this trident item, allowing for custom tridents that have different features. <br>
 	 * Look at {@link SimpleTridentItem#modifyTridentEntity} for an example of how to construct a new trident entity from a vanilla one.
+	 *
 	 * @param trident The vanilla trident to base custom trident of off
 	 * @return The custom trident
 	 */

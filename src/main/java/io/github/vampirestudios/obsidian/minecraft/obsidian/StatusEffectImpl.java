@@ -6,13 +6,13 @@ import net.minecraft.entity.effect.StatusEffectType;
 
 public class StatusEffectImpl extends StatusEffect {
 
-    public StatusEffectImpl(StatusEffectType type, int color) {
-        super(type, color);
-    }
+	public StatusEffectImpl(StatusEffectType type, int color) {
+		super(type, color);
+	}
 
-    @Override
-    public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-        super.applyUpdateEffect(entity, amplifier);
-    }
+	@Override
+	public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+		super.applyUpdateEffect(entity, amplifier);
+	}
 
 }

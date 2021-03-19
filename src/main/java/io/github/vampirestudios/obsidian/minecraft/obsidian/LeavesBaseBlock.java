@@ -10,7 +10,7 @@ import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
 
 public class LeavesBaseBlock extends LeavesBlock {
-    public LeavesBaseBlock() {
-        super(Settings.of(Material.LEAVES).strength(0.2F).ticksRandomly().sounds(BlockSoundGroup.GRASS));
-    }
+	public LeavesBaseBlock() {
+		super(Settings.of(Material.LEAVES).strength(0.2F).ticksRandomly().sounds(BlockSoundGroup.GRASS));
+	}
 }

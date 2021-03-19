@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  * public class ExampleDynamicRegistryProvider implements DynamicRegistryProvider {
  * 	public void addDynamicRegistries(Consumer&lt;CustomDynamicRegistry&lt;?&gt;&gt; adder) {
  * 		adder.accept(new CustomDynamicRegistry&lt;&gt;(CUSTOM_REGISTRY, () -> DEFAULT_VALUE, RegistryItem.CODEC));
- * 	}
+ *    }
  * }
  * </code></pre>
  *

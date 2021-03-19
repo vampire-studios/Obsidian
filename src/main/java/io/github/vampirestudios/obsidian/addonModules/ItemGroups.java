@@ -19,7 +19,7 @@ public class ItemGroups implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
 		try {
-			if(itemGroup == null) return;
+			if (itemGroup == null) return;
 			ItemGroup itemGroup1 = FabricItemGroupBuilder.create(itemGroup.name.id)
 					.icon(() -> new ItemStack(Registry.ITEM.get(itemGroup.icon)))
 					.build();

@@ -6,18 +6,18 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 
 public class Argument {
 
-    public String name;
-    public String type;
+	public String name;
+	public String type;
 
-    public ArgumentType<?> getBasicArgumentType() {
-        switch(type) {
-            case "string":
-                return StringArgumentType.greedyString();
-            case "integer":
-                return IntegerArgumentType.integer();
-            default:
-                return null;
-        }
-    }
+	public ArgumentType<?> getBasicArgumentType() {
+		switch (type) {
+			case "string":
+				return StringArgumentType.greedyString();
+			case "integer":
+				return IntegerArgumentType.integer();
+			default:
+				return null;
+		}
+	}
 
 }

@@ -5,7 +5,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.registry.Registry;
 
 public class CustomToolMaterial implements ToolMaterial {
-	
+
 	public io.github.vampirestudios.obsidian.api.obsidian.item.ToolMaterial toolMaterial;
 
 	public CustomToolMaterial(io.github.vampirestudios.obsidian.api.obsidian.item.ToolMaterial toolMaterial) {

@@ -11,6 +11,7 @@ import java.io.IOException;
 public class EnchantmentInitThread implements Runnable {
 
 	private final Enchantment enchantment;
+
 	public EnchantmentInitThread(Enchantment enchantmentIn) {
 		enchantment = enchantmentIn;
 	}

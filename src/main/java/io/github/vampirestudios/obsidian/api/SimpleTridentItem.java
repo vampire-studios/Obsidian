@@ -27,7 +27,7 @@ public class SimpleTridentItem extends TridentItem implements TridentInterface {
 	@Override
 	public ModelIdentifier getInventoryModelIdentifier() {
 		// super hacky, probably a better way but it works
-		return new ModelIdentifier(Registry.ITEM.getId(this).toString() + "#inventory");
+		return new ModelIdentifier(Registry.ITEM.getId(this) + "#inventory");
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import java.io.IOException;
 public class ToolInitThread implements Runnable {
 
 	private final ToolItem tool;
+
 	public ToolInitThread(ToolItem toolIn) {
 		tool = toolIn;
 	}

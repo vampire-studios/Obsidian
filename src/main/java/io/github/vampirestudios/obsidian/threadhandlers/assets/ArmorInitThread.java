@@ -9,11 +9,10 @@ import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
-public class ArmorInitThread implements Runnable
-{
-	 private final ArmorItem armor;
-	public ArmorInitThread(ArmorItem armor_in)
-	{
+public class ArmorInitThread implements Runnable {
+	private final ArmorItem armor;
+
+	public ArmorInitThread(ArmorItem armor_in) {
 		armor = armor_in;
 	}
 
@@ -39,15 +38,12 @@ public class ArmorInitThread implements Runnable
 					if (lore.text.textType.equals("translatable")) lore.text.translated.forEach((languageId, name) ->
 							clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId),
 									translationBuilder -> translationBuilder.entry(lore.text.text, name)));
-				try
-				{
-					if (FabricLoader.getInstance().isDevelopmentEnvironment())
-						clientResourcePackBuilder.dumpResources("testing", "assets");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+			try {
+				if (FabricLoader.getInstance().isDevelopmentEnvironment())
+					clientResourcePackBuilder.dumpResources("testing", "assets");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		});
 	}
 }

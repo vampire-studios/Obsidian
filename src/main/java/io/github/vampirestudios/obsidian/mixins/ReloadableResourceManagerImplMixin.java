@@ -19,13 +19,13 @@ import java.util.concurrent.Executor;
 @Mixin(ReloadableResourceManagerImpl.class)
 public abstract class ReloadableResourceManagerImplMixin {
 
-    @Inject (method = "beginMonitoredReload", at = @At (value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    private void registerAdditionalPacks(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReloadMonitor> cir) {
-        this.addPack(new ObsidianAddonResourcePack());
-        this.addPack(new BedrockAddonResourcePack());
-    }
+	@Inject(method = "beginMonitoredReload", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+	private void registerAdditionalPacks(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReloadMonitor> cir) {
+		this.addPack(new ObsidianAddonResourcePack());
+		this.addPack(new BedrockAddonResourcePack());
+	}
 
-    @Shadow
-    public abstract void addPack(ResourcePack resourcePack);
+	@Shadow
+	public abstract void addPack(ResourcePack resourcePack);
 
 }

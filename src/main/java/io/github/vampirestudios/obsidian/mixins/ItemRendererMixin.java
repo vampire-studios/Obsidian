@@ -26,7 +26,9 @@ public abstract class ItemRendererMixin {
 	@Shadow
 	@Final
 	private ItemModels models;
-	@Shadow @Final private BuiltinModelItemRenderer builtinModelItemRenderer;
+	@Shadow
+	@Final
+	private BuiltinModelItemRenderer builtinModelItemRenderer;
 
 	@Redirect(method = "getHeldItemModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	public boolean ob_getHeldItemModel(ItemStack itemStack, Item item) {

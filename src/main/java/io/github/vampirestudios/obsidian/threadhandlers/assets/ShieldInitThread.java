@@ -12,6 +12,7 @@ import java.io.IOException;
 public class ShieldInitThread implements Runnable {
 
 	private final ShieldItem shield;
+
 	public ShieldInitThread(ShieldItem shieldIn) {
 		shield = shieldIn;
 	}

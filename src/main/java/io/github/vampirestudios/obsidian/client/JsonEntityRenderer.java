@@ -12,15 +12,15 @@ import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 public class JsonEntityRenderer extends GeoEntityRenderer<EntityImpl> {
 
-    public JsonEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
-        super(context, new EntityJsonModel(entity));
-    }
+	public JsonEntityRenderer(EntityRendererFactory.Context context, Entity entity) {
+		super(context, new EntityJsonModel(entity));
+	}
 
-    @Override
-    public RenderLayer getRenderType(EntityImpl animatable, float partialTicks, MatrixStack stack,
-                                     VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder,
-                                     int packedLightIn, Identifier textureLocation) {
-        return RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable));
-    }
+	@Override
+	public RenderLayer getRenderType(EntityImpl animatable, float partialTicks, MatrixStack stack,
+									 VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder,
+									 int packedLightIn, Identifier textureLocation) {
+		return RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable));
+	}
 
 }

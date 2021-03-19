@@ -7,11 +7,16 @@ import java.util.Collection;
 
 public interface IAddonInformation {
 
-    String getDisplayName();
-    public String getVersion();
-    public String getDescription();
-    public Identifier getId();
-    public String getNamespace();
-    public Collection<Person> getAuthors();
+	String getDisplayName();
+
+	String getVersion();
+
+	String getDescription();
+
+	Identifier getId();
+
+	String getNamespace();
+
+	Collection<Person> getAuthors();
 
 }

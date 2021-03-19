@@ -21,7 +21,7 @@ public class VillagerProfessions implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		VillagerProfession villagerProfession = Obsidian.GSON.fromJson(new FileReader(file), VillagerProfession.class);
 		try {
-			if(villagerProfession == null) return;
+			if (villagerProfession == null) return;
 			PointOfInterestType pointOfInterestType = PointOfInterestHelper.register(villagerProfession.poi.id, villagerProfession.poi.ticket_count, villagerProfession.poi.search_distance, villagerProfession.poi.getBlocks().toArray(new Block[0]));
 			VillagerProfessionBuilder.create()
 					.id(villagerProfession.name.id)

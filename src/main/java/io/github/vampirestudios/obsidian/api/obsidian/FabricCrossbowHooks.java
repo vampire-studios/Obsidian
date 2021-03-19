@@ -5,7 +5,6 @@ import net.minecraft.item.ArrowItem;
 
 /**
  * An interface to implement on all custom crossbows.
- *
  */
 public interface FabricCrossbowHooks {
 	/**

@@ -5,12 +5,12 @@ import net.minecraft.util.Identifier;
 
 public class AddMobEffect extends Event {
 
-    public int amplifier;
+	public int amplifier;
 
-    public float duration;
+	public float duration;
 
-    public Identifier effect;
+	public Identifier effect;
 
-    public String target;
+	public String target;
 
 }

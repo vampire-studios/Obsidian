@@ -26,20 +26,22 @@ public class ObsidianAddonResourcePack implements ResourcePack {
 
 	@Override
 	public InputStream openRoot(String var1) throws IOException {
-		for(ResourcePack virtualPack : virtualPacks) {
+		for (ResourcePack virtualPack : virtualPacks) {
 			try {
 				return virtualPack.openRoot(var1);
-			} catch (Throwable ignored) {}
+			} catch (Throwable ignored) {
+			}
 		}
 		throw new FileNotFoundException();
 	}
 
 	@Override
 	public InputStream open(ResourceType var1, Identifier var2) throws IOException {
-		for(ResourcePack virtualPack : virtualPacks) {
+		for (ResourcePack virtualPack : virtualPacks) {
 			try {
 				return virtualPack.open(var1, var2);
-			} catch (Throwable ignored) {}
+			} catch (Throwable ignored) {
+			}
 		}
 		throw new FileNotFoundException();
 	}
@@ -47,7 +49,7 @@ public class ObsidianAddonResourcePack implements ResourcePack {
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
 		Set<Identifier> resources = new HashSet<>();
-		for(ResourcePack virtualPack : virtualPacks) {
+		for (ResourcePack virtualPack : virtualPacks) {
 			resources.addAll(virtualPack.findResources(type, namespace, prefix, maxDepth, pathFilter));
 		}
 		return resources;
@@ -55,8 +57,8 @@ public class ObsidianAddonResourcePack implements ResourcePack {
 
 	@Override
 	public boolean contains(ResourceType var1, Identifier var2) {
-		for(ResourcePack virtualPack : virtualPacks) {
-			if(virtualPack.contains(var1, var2))
+		for (ResourcePack virtualPack : virtualPacks) {
+			if (virtualPack.contains(var1, var2))
 				return true;
 		}
 		return false;
@@ -65,7 +67,7 @@ public class ObsidianAddonResourcePack implements ResourcePack {
 	@Override
 	public Set<String> getNamespaces(ResourceType var1) {
 		Set<String> namespaces = new HashSet<>();
-		for(ResourcePack virtualPack : virtualPacks) {
+		for (ResourcePack virtualPack : virtualPacks) {
 			namespaces.addAll(virtualPack.getNamespaces(var1));
 		}
 		return namespaces;
@@ -74,7 +76,7 @@ public class ObsidianAddonResourcePack implements ResourcePack {
 	@Override
 	public <T> T parseMetadata(ResourceMetadataReader<T> metadataReader) {
 		JsonObject object = new JsonObject();
-		if(metadataReader.getKey().equals("pack")) {
+		if (metadataReader.getKey().equals("pack")) {
 			object.addProperty("description", "Default pack for config packs.\n" + virtualPacks.length + " packs loaded.");
 			object.addProperty("pack_format", 7);
 		}
@@ -88,7 +90,7 @@ public class ObsidianAddonResourcePack implements ResourcePack {
 
 	@Override
 	public void close() {
-		for(ResourcePack virtualPack : virtualPacks) {
+		for (ResourcePack virtualPack : virtualPacks) {
 			try {
 				virtualPack.close();
 			} catch (Throwable e) {

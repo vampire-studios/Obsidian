@@ -21,13 +21,13 @@ public class VillagerBiomeTypes implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		VillagerBiomeType villagerBiomeType = Obsidian.GSON.fromJson(new FileReader(file), VillagerBiomeType.class);
 		try {
-			if(villagerBiomeType == null) return;
+			if (villagerBiomeType == null) return;
 			VillagerType villagerType = VillagerTypeHelper.register(villagerBiomeType.name.id);
 			villagerBiomeType.getBiomes().forEach(biome -> {
 				RegistryKey<Biome> registryKey = BuiltinRegistries.BIOME.getKey(biome).get();
 				VillagerTypeHelper.addVillagerTypeToBiome(registryKey, villagerType);
 			});
-;			register(VILLAGER_BIOME_TYPES, "villager_biome_type", villagerBiomeType.name.id.toString(), villagerBiomeType);
+			register(VILLAGER_BIOME_TYPES, "villager_biome_type", villagerBiomeType.name.id.toString(), villagerBiomeType);
 		} catch (Exception e) {
 			failedRegistering("villager_biome_type", villagerBiomeType.name.id.toString(), e);
 		}

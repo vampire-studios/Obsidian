@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 
 /**
  * An interface to implement for all custom bows.
- *
  */
 public interface FabricBowHooks {
 	/**

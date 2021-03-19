@@ -5,12 +5,12 @@ import net.minecraft.util.Identifier;
 
 public interface IBedrockAddon {
 
-    ManifestFile getManifestFile();
+	ManifestFile getManifestFile();
 
-    Identifier getIdentifier();
+	Identifier getIdentifier();
 
-    String getDisplayName();
+	String getDisplayName();
 
-    ResourcePack getVirtualResourcePack();
+	ResourcePack getVirtualResourcePack();
 
 }

@@ -16,7 +16,7 @@ public class AngryComponent extends Component {
 	public Identifier calm_event;
 	public int duration = 25;
 	public int duration_delta = 0;
-	public int[] sound_interval = new int[] {
+	public int[] sound_interval = new int[]{
 			0, 0
 	};
 

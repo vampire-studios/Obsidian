@@ -14,6 +14,7 @@ import java.io.IOException;
 public class ElytraInitThread implements Runnable {
 
 	private final Elytra elytra;
+
 	public ElytraInitThread(Elytra elytraIn) {
 		elytra = elytraIn;
 	}

@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class TextureAndModelInformation {
 
-    public Map<String, Identifier> textures;
-    public Identifier parent;
+	public Map<String, Identifier> textures;
+	public Identifier parent;
 
 }

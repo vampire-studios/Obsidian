@@ -12,6 +12,7 @@ import java.io.IOException;
 public class WeaponInitThread implements Runnable {
 
 	private final WeaponItem weapon;
+
 	public WeaponInitThread(WeaponItem weaponIn) {
 		weapon = weaponIn;
 	}

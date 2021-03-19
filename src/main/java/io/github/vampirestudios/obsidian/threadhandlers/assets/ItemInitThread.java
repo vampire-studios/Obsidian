@@ -12,6 +12,7 @@ import java.io.IOException;
 public class ItemInitThread implements Runnable {
 
 	private final Item item;
+
 	public ItemInitThread(Item itemIn) {
 		item = itemIn;
 	}

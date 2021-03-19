@@ -2,4 +2,5 @@ package io.github.vampirestudios.obsidian.api.obsidian.entity.components.behavio
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 
-public class CelebrateBehaviourComponent extends Component { }
+public class CelebrateBehaviourComponent extends Component {
+}

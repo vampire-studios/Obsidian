@@ -17,33 +17,33 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class RangedWeapons implements AddonModule {
-    @Override
-    public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
-        RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
-        try {
-            if(rangedWeapon == null) return;
-            switch (rangedWeapon.weapon_type) {
-                case "bow":
-                    RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                            .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                    break;
-                case "crossbow":
-                    RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                            .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                    break;
-                case "trident":
-                    RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                            .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                    break;
-            }
-            register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id.toString(), rangedWeapon);
-        } catch (Exception e) {
-            failedRegistering("ranged_weapon", rangedWeapon.information.name.id.toString(), e);
-        }
-    }
+	@Override
+	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+		RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
+		try {
+			if (rangedWeapon == null) return;
+			switch (rangedWeapon.weapon_type) {
+				case "bow":
+					RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
+							.maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
+					break;
+				case "crossbow":
+					RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
+							.maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
+					break;
+				case "trident":
+					RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
+							.maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
+					break;
+			}
+			register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id.toString(), rangedWeapon);
+		} catch (Exception e) {
+			failedRegistering("ranged_weapon", rangedWeapon.information.name.id.toString(), e);
+		}
+	}
 
-    @Override
-    public String getType() {
-        return "items/weapons/ranged";
-    }
+	@Override
+	public String getType() {
+		return "items/weapons/ranged";
+	}
 }

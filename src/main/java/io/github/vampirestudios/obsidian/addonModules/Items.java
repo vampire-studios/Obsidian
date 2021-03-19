@@ -17,7 +17,7 @@ public class Items implements AddonModule {
 	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
 		io.github.vampirestudios.obsidian.api.obsidian.item.Item item = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
 		try {
-			if(item == null) return;
+			if (item == null) return;
 			RegistryUtils.registerItem(new ItemImpl(item, new net.minecraft.item.Item.Settings().group(item.information.getItemGroup())
 					.maxCount(item.information.max_count)), item.information.name.id);
 			register(ITEMS, "item", item.information.name.id.toString(), item);
