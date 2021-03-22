@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian;
 
+import io.github.vampirestudios.vampirelib.utils.Rands;
 import net.minecraft.util.DyeColor;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 public class BlockJsonGenerator {
 
 	public static void generate(String name, String template, String variant, String type) throws IOException {
+		Rands
 		generate(name, variant + "_" + type, template, variant, type);
 	}
 

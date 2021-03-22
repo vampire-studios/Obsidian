@@ -1,9 +1,6 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.SimpleBowItem;
-import io.github.vampirestudios.obsidian.api.SimpleCrossbowItem;
-import io.github.vampirestudios.obsidian.api.SimpleTridentItem;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;

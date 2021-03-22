@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.SimpleTridentItemEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;

@@ -212,8 +212,9 @@ public class ConfigHelper {
 	}
 
 	public static void failedRegistering(String type, String name, Exception e) {
-		e.printStackTrace();
 		Obsidian.LOGGER.error("[Obsidian] Failed to register {} {}.", type, name);
+		e.printStackTrace();
+		Obsidian.LOGGER.error(e.getMessage());
 	}
 
 }

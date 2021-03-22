@@ -1,7 +1,5 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.BowInterface;
-import io.github.vampirestudios.obsidian.api.CrossbowInterface;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -1,7 +1,5 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.BowInterface;
-import io.github.vampirestudios.obsidian.api.CrossbowInterface;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
