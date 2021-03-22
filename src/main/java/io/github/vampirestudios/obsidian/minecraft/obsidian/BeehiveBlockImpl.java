@@ -24,7 +24,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -245,14 +245,14 @@ public class BeehiveBlockImpl extends BlockWithEntity {
 				int i = state.get(HONEY_LEVEL);
 				boolean bl = !beehiveBlockEntity.hasNoBees();
 				if (bl || i > 0) {
-					CompoundTag compoundTag2;
+					NbtCompound compoundTag2;
 					if (bl) {
-						compoundTag2 = new CompoundTag();
+						compoundTag2 = new NbtCompound();
 						compoundTag2.put("Bees", beehiveBlockEntity.getBees());
 						itemStack.putSubTag("BlockEntityTag", compoundTag2);
 					}
 
-					compoundTag2 = new CompoundTag();
+					compoundTag2 = new NbtCompound();
 					compoundTag2.putInt("honey_level", i);
 					itemStack.putSubTag("BlockStateTag", compoundTag2);
 					ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);

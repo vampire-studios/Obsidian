@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.6-SNAPSHOT'
+    id 'fabric-loom' version '0.7-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -9,9 +9,6 @@ targetCompatibility = JavaVersion.VERSION_1_8
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
-
-def lwjgl_version="3.2.2"
-def breakoutapi_version="0a8061b"
 
 repositories {
     mavenCentral()
@@ -32,33 +29,37 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation ("com.lettuce.fudge:artifice:0.15.2+21w07a") { exclude group: "net.fabricmc.fabric-api" }
-    include ("com.lettuce.fudge:artifice:0.15.2+21w07a") { exclude group: "net.fabricmc.fabric-api" }
+    modImplementation ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
+    include ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
 
-    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:2.4.0+build.1-21w11a") {
+    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:${project.vampirelib_version}") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
-    include ("io.github.vampirestudios:VampireLib-Fabric:2.4.0+build.1-21w11a") {
+    include ("io.github.vampirestudios:VampireLib-Fabric:${project.vampirelib_version}") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
+    }
+
+    modCompile ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
+    include ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
+
+    modCompile("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1u}") {
+        exclude group: "net.fabricmc.fabric-api"
+        force = true
+    }
+    include("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1u}") {
+        exclude group: "net.fabricmc.fabric-api"
+        force = true
+    }
+
+    modApi("me.shedaniel.cloth.api:cloth-api:${project.cloth_events_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+        transitive = false
     }
 
     // INclude GeckoLib for each module, uses experimental 1.17 snapshot fork.
     modImplementation 'software.bernie.geckolib:geckolib-fabric-1.17:3.0.20:dev'
-
-    modCompile "com.github.raphydaphy:breakoutapi:$breakoutapi_version"
-    include "com.github.raphydaphy:breakoutapi:$breakoutapi_version"
-
-    implementation "org.lwjgl:lwjgl-nanovg:$lwjgl_version"
-    runtimeOnly "org.lwjgl:lwjgl-nanovg:$lwjgl_version:natives-windows"
-    runtimeOnly "org.lwjgl:lwjgl-nanovg:$lwjgl_version:natives-linux"
-    runtimeOnly "org.lwjgl:lwjgl-nanovg:$lwjgl_version:natives-macos"
-
-    implementation "org.lwjgl:lwjgl-yoga:$lwjgl_version"
-    runtimeOnly "org.lwjgl:lwjgl-yoga:$lwjgl_version:natives-windows"
-    runtimeOnly "org.lwjgl:lwjgl-yoga:$lwjgl_version:natives-linux"
-    runtimeOnly "org.lwjgl:lwjgl-yoga:$lwjgl_version:natives-macos"
 }
 
 processResources {

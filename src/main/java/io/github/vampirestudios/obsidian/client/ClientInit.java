@@ -1,87 +1,47 @@
 package io.github.vampirestudios.obsidian.client;
 
-import com.raphydaphy.breakoutapi.BreakoutAPI;
-import com.raphydaphy.breakoutapi.BreakoutAPIClient;
-import com.raphydaphy.breakoutapi.demo.integrated.DemoIntegratedBreakout;
-import io.github.vampirestudios.obsidian.Obsidian;
+import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
-import io.github.vampirestudios.obsidian.breakout.BlockBreakout;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 
-import java.util.Random;
+import java.io.IOException;
 
 public class ClientInit implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		for (Entity entity : ConfigHelper.ENTITIES) new EntityInitThread(entity).run();
-		for (ItemGroup itemGroup : ConfigHelper.ITEM_GROUPS) new ItemGroupInitThread(itemGroup).run();
-		for (Block block : ConfigHelper.BLOCKS) new BlockInitThread(block).run();
-		for (Block block : ConfigHelper.ORES) new BlockInitThread(block).run();
-		for (Item item : ConfigHelper.ITEMS) new ItemInitThread(item).run();
-		for (ArmorItem armor : ConfigHelper.ARMORS) new ArmorInitThread(armor).run();
-		for (WeaponItem weapon : ConfigHelper.WEAPONS) new WeaponInitThread(weapon).run();
-		for (ToolItem tool : ConfigHelper.TOOLS) new ToolInitThread(tool).run();
-		for (FoodItem foodItem : ConfigHelper.FOODS) new FoodInitThread(foodItem).run();
-		for (Enchantment enchantment : ConfigHelper.ENCHANTMENTS) new EnchantmentInitThread(enchantment).run();
-		for (ShieldItem shield : ConfigHelper.SHIELDS) new ShieldInitThread(shield).run();
-		for (Elytra elytra : ConfigHelper.ELYTRAS) new ElytraInitThread(elytra).run();
-
-		ClientPlayNetworking.registerGlobalReceiver(Obsidian.GENERATOR_BREAKOUT_PACKET, (client, handler, buf, responseSender) -> {
-			String type = buf.readString();
-			client.execute(() -> {
-				String randomId = "" + (new Random()).nextDouble();
-				Identifier id;
-				switch (type) {
-					case "block":
-						id = new Identifier(BreakoutAPI.MODID, "block-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new BlockBreakout(id));
-						break;
-					case "item":
-						id = new Identifier(BreakoutAPI.MODID, "item-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					case "entity":
-						id = new Identifier(BreakoutAPI.MODID, "entity-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					case "cauldron_type":
-						id = new Identifier(BreakoutAPI.MODID, "cauldron_type-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					case "enchantments":
-						id = new Identifier(BreakoutAPI.MODID, "enchantments-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					case "potion":
-						id = new Identifier(BreakoutAPI.MODID, "potion-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					case "villager_profession":
-						id = new Identifier(BreakoutAPI.MODID, "villager_profession-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					case "villager_biome_type":
-						id = new Identifier(BreakoutAPI.MODID, "villager_biome_type-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					case "status_effects":
-						id = new Identifier(BreakoutAPI.MODID, "status_effects-" + randomId);
-						BreakoutAPIClient.openBreakout(id, new DemoIntegratedBreakout(id));
-						break;
-					default:
-						BreakoutAPI.LOGGER.warn("Tried to trigger invalid breakout type '" + type + "'");
-						break;
-				}
-
+		ConfigHelper.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
+			String name = iAddonPack.getDisplayNameObsidian();
+			Artifice.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
+				clientResourcePackBuilder.setDisplayName(name);
+				for (Entity entity : ConfigHelper.ENTITIES) if (entity.information.identifier.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new EntityInitThread(clientResourcePackBuilder, entity).run();
+				for (ItemGroup itemGroup : ConfigHelper.ITEM_GROUPS) if (itemGroup.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new ItemGroupInitThread(clientResourcePackBuilder, itemGroup).run();
+				for (Block block : ConfigHelper.BLOCKS) if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new BlockInitThread(clientResourcePackBuilder, block).run();
+				for (Block block : ConfigHelper.ORES) if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new BlockInitThread(clientResourcePackBuilder, block).run();
+				for (Item item : ConfigHelper.ITEMS) if (item.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new ItemInitThread(clientResourcePackBuilder, item).run();
+				for (ArmorItem armor : ConfigHelper.ARMORS) if (armor.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new ArmorInitThread(clientResourcePackBuilder, armor).run();
+				for (WeaponItem weapon : ConfigHelper.WEAPONS) if (weapon.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new WeaponInitThread(clientResourcePackBuilder, weapon).run();
+				for (ToolItem tool : ConfigHelper.TOOLS) if (tool.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new ToolInitThread(clientResourcePackBuilder, tool).run();
+				for (FoodItem foodItem : ConfigHelper.FOODS) if (foodItem.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new FoodInitThread(clientResourcePackBuilder, foodItem).run();
+				for (Enchantment enchantment : ConfigHelper.ENCHANTMENTS) if (enchantment.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new EnchantmentInitThread(clientResourcePackBuilder, enchantment).run();
+				for (ShieldItem shield : ConfigHelper.SHIELDS) if (shield.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new ShieldInitThread(clientResourcePackBuilder, shield).run();
+				for (Elytra elytra : ConfigHelper.ELYTRAS) if (elytra.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new ElytraInitThread(clientResourcePackBuilder, elytra).run();
+				if (FabricLoader.getInstance().isDevelopmentEnvironment()) new Thread(() -> {
+					try {
+						if (FabricLoader.getInstance().isDevelopmentEnvironment())
+							clientResourcePackBuilder.dumpResources("testing/" + iAddonPack.getDisplayNameObsidian(), "assets");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}).start();
 			});
 		});
 	}

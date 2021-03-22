@@ -37,7 +37,7 @@ import java.util.zip.ZipFile;
 public class ConfigHelper {
 
 	public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
-	public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), "obsidian_addons");
+	public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), Obsidian.config.addon_folder);
 	public static final CopyOnWriteArrayList<IAddonPack> OBSIDIAN_ADDONS = new CopyOnWriteArrayList<>();
 	public static RegistryHelper REGISTRY_HELPER;
 	public static final int PACK_VERSION = 2;
@@ -110,20 +110,12 @@ public class ConfigHelper {
 			String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + pack.getConfigPackInfo().folderName + "/content/" + pack.getConfigPackInfo().namespace;
 			REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
-			init(new ModIdAndAddonPath(modId, path));
-		}
-	}
-
-	private static void init(ModIdAndAddonPath id) {
-		try {
-			Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(id, addonModule));
-			Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(id, addonModule));
-//            parseVillagerProfessions(path);
-//            parseVillagerBiomeType(path);
-//            parseVillagerTrades(path);
-//            parseFluids(path);
-		} catch (Throwable throwable) {
-			throwable.printStackTrace();
+			try {
+				Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
+				Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
+			} catch (Throwable throwable) {
+				throwable.printStackTrace();
+			}
 		}
 	}
 
@@ -156,7 +148,6 @@ public class ConfigHelper {
 	}
 
 	private static void loadAddonModule(ModIdAndAddonPath id, AddonModule addonModule) {
-//        System.out.println("Id: %s" + id.getPath() + " Type: " + addonModule.getType());
 		if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
 			for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
 				if (file.isFile()) {
@@ -183,28 +174,6 @@ public class ConfigHelper {
 			}
 		}
 	}
-
-    /*private static void parseCurrencies(String path) throws FileNotFoundException {
-        if (Paths.get(path, "currency").toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(path, "currency").toFile().listFiles())) {
-                if (file.isFile()) {
-                    Currency currency = Obsidian.GSON.fromJson(new FileReader(file), Currency.class);
-                    try {
-                        if(currency == null) continue;
-                        *//*PlayerJoinCallback.EVENT.register(player -> {
-                            Scoreboard scoreboard = player.getScoreboard();
-                            if (!scoreboard.containsObjective(currency.name.toLowerCase())) {
-                                scoreboard.addObjective(currency.name.toLowerCase(), ScoreboardCriterion.DUMMY, new LiteralText(currency.name), ScoreboardCriterion.RenderType.INTEGER);
-                            }
-                        });*//*
-                        Obsidian.LOGGER.info(String.format("Registered a currency called %s", currency.name));
-                    } catch (Exception e) {
-                        failedRegistering("currency", currency.name, e);
-                    }
-                }
-            }
-        }
-    }*/
 
 	public static <T> void register(List<T> list, String type, String name, T idk) {
 		list.add(idk);

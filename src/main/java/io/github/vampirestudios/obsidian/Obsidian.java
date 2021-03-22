@@ -15,9 +15,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
 import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
-import io.github.vampirestudios.obsidian.commands.GeneratorCommand;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
+import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.item.ItemGroup;
@@ -45,6 +46,7 @@ public class Obsidian implements ModInitializer {
 			.registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
 			.setPrettyPrinting()
 			.create();
+	public static ModConfig config;
 
 	public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(id("addon_modules")), Lifecycle.stable());
 	public static final Registry<AddonModuleVersionIndependent> ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(id("addon_modules_version_independent")), Lifecycle.stable());
@@ -54,8 +56,6 @@ public class Obsidian implements ModInitializer {
 	public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.Component>> BEDROCK_BLOCK_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_components_registry")), Lifecycle.stable());
 	public static final Registry<ConvertableOxidizableBlock> CONVERTABLE_OXIDIZABLE_BLOCKS = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "convertable_oxidizable_blocks")), Lifecycle.stable());
 
-	public static final Identifier GENERATOR_BREAKOUT_PACKET = id("generator_packet");
-
 	public static Identifier id(String path) {
 		return new Identifier(MOD_ID, path);
 	}
@@ -63,12 +63,14 @@ public class Obsidian implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		INSTANCE = this;
-		LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w08b"));
+		LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w11a"));
 		// Initialize GeckoLib for all modules
 		GeckoLib.initialize();
 
 		CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
-		CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> GeneratorCommand.register(commandDispatcher));
+
+		AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
+		config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 
 		//Item Groups
 		registerInRegistry(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);

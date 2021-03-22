@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.mixins;
 import io.github.vampirestudios.obsidian.ConvertableOxidizableBlock;
 import io.github.vampirestudios.obsidian.Obsidian;
 import net.minecraft.block.Block;
-import net.minecraft.class_5955;
+import net.minecraft.block.Oxidizable;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -11,14 +11,14 @@ import org.spongepowered.asm.mixin.Overwrite;
 import java.util.Objects;
 import java.util.Optional;
 
-@Mixin(class_5955.class)
-public interface class_5955Mixin {
+@Mixin(Oxidizable.class)
+public interface OxidizableMixin {
 
 	/**
 	 * @author Olivia
 	 */
 	@Overwrite
-	static Optional<Block> method_34737(Block block) {
+	static Optional<Block> getScraped(Block block) {
 		return Optional.ofNullable(Objects.requireNonNull(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS.get(Registry.BLOCK.getId(block))).right);
 	}
 
@@ -26,7 +26,7 @@ public interface class_5955Mixin {
 	 * @author Olivia, CatCore
 	 */
 	@Overwrite
-	static Optional<Block> method_34732(Block block) {
+	static Optional<Block> getDegraded(Block block) {
 		Block block1 = null;
 
 		for (ConvertableOxidizableBlock convertableOxidizableBlock : Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS) {

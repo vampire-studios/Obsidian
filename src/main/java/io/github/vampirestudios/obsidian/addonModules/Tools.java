@@ -41,18 +41,6 @@ public class Tools implements AddonModule {
 									.group(tool.information.getItemGroup()).maxCount(tool.information.max_count)),
 							tool.information.name.id);
 					break;
-				case "bow":
-					RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(tool.information.getItemGroup())
-							.maxCount(tool.information.max_count)), tool.information.name.id);
-					break;
-				case "crossbow":
-					RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(tool.information.getItemGroup())
-							.maxCount(tool.information.max_count)), tool.information.name.id);
-					break;
-				case "trident":
-					RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(tool.information.getItemGroup())
-							.maxCount(tool.information.max_count)), tool.information.name.id);
-					break;
 			}
 			register(TOOLS, "tool", tool.information.name.id.toString(), tool);
 		} catch (Exception e) {

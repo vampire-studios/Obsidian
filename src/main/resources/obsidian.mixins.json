@@ -8,20 +8,16 @@
   },
   "mixins": [
     "BuiltinModelItemRendererMixin",
-    "class_5953Accessor",
-    "class_5955Mixin",
-    "CrossbowItemMixin",
+    "HoneycombItemAccessor",
+    "OxidizableMixin",
     "DynamicRegistryManagerMixin",
-    "EntityCrossbowUseMixin",
     "ItemMixin",
     "ItemRendererMixin",
     "MixinPlayerManager",
-    "ProjectileUtilMixin",
     "TridentAttackGoalMixin"
   ],
   "client": [
     "OptionsScreenMixin",
-    "PlayerEntityRendererMixin",
     "ReloadableResourceManagerImplMixin"
   ]
 }

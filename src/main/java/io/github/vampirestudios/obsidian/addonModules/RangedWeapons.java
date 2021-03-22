@@ -1,10 +1,13 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.SimpleTridentItem;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import net.fabricmc.fabric.api.item.v1.bow.FabricBowItem;
+import net.fabricmc.fabric.api.item.v1.crossbow.SimpleCrossbowItem;
 import net.minecraft.item.Item;
 
 import java.io.File;
@@ -21,7 +24,7 @@ public class RangedWeapons implements AddonModule {
 			if (rangedWeapon == null) return;
 			switch (rangedWeapon.weapon_type) {
 				case "bow":
-					RegistryUtils.registerItem(new SimpleBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
+					RegistryUtils.registerItem(new FabricBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
 							.maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
 					break;
 				case "crossbow":
