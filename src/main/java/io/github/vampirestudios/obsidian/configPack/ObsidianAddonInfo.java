@@ -11,5 +11,7 @@ public class ObsidianAddonInfo {
 	public String description;
 	public List<String> authors;
 	public int addonVersion;
+	public boolean hasAssets = false;
+	public boolean hasData = false;
 
 }

@@ -11,6 +11,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.Breathab
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.MovementComponent;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
 import io.github.vampirestudios.obsidian.utils.EntityUtils;
@@ -31,7 +32,8 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Entities implements AddonModule {
 	@Override
-	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+		File file = addon.getFile();
 		JsonObject entityJson = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
 		Entity entity = Obsidian.GSON.fromJson(entityJson, Entity.class);
 		try {

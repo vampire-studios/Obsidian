@@ -4,6 +4,7 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
@@ -36,7 +37,8 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 public class Ores implements AddonModule {
 
 	@Override
-	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+		File file = addon.getFile();
 		io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 		try {
 			if (block == null) return;

@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.addonModules;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.registry.Registry;
@@ -15,7 +16,8 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Potions implements AddonModule {
 	@Override
-	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+		File file = addon.getFile();
 		Potion potion = Obsidian.GSON.fromJson(new FileReader(file), Potion.class);
 		try {
 			if (potion == null) return;

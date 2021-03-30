@@ -24,8 +24,7 @@ public class ArmorInitThread implements Runnable {
 									armor.information.name.id.getPath()), name)));
 
 		if (armor.display != null && armor.display.model != null)
-			clientResourcePackBuilder.addItemModel(armor.information.name.id, modelBuilder ->
-			{
+			clientResourcePackBuilder.addItemModel(armor.information.name.id, modelBuilder -> {
 				modelBuilder.parent(armor.display.model.parent);
 				armor.display.model.textures.forEach(modelBuilder::texture);
 			});

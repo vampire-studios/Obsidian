@@ -6,9 +6,9 @@ import com.google.common.collect.Maps;
 import io.github.vampirestudios.obsidian.ConvertableOxidizableBlock;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.mixins.HoneycombItemAccessor;
-import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
@@ -32,7 +32,8 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 public class Blocks implements AddonModule {
 
 	@Override
-	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+		File file = addon.getFile();
 		io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 		try {
 			if (block == null) return;
@@ -276,7 +277,9 @@ public class Blocks implements AddonModule {
 				}
 			}
 
-			new BlockInitThread(block);
+			if(addon.getConfigPackInfo().hasData) {
+				new 
+			}
 
 			register(BLOCKS, "block", block.information.name.id.toString(), block);
 		} catch (Exception e) {

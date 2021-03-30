@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.addonModules;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.minecraft.item.FoodComponent;
@@ -17,7 +18,8 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Food implements AddonModule {
 	@Override
-	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+		File file = addon.getFile();
 		FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
 		try {
 			if (foodItem == null) return;

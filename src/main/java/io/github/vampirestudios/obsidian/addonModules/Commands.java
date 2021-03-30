@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.addonModules;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CommandImpl;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -15,7 +16,8 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Commands implements AddonModule {
 	@Override
-	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+		File file = addon.getFile();
 		Command command = Obsidian.GSON.fromJson(new FileReader(file), Command.class);
 		try {
 			if (command == null) return;

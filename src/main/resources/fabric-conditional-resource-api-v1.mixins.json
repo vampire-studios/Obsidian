@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.fabricmc.fabric.mixin.conditionalresource",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "NamespaceResourceManagerMixin",
+    "ReloadableResourceManagerImplMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

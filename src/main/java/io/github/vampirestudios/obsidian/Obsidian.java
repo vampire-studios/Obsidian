@@ -63,8 +63,6 @@ public class Obsidian implements ModInitializer {
 	public void onInitialize() {
 		INSTANCE = this;
 		LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w11a"));
-		// Initialize GeckoLib for all modules
-//		GeckoLib.initialize();
 
 		CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 

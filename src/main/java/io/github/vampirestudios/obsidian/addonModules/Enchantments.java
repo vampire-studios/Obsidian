@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.addonModules;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EnchantmentImpl;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.minecraft.util.registry.Registry;
@@ -15,7 +16,8 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Enchantments implements AddonModule {
 	@Override
-	public void init(File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+		File file = addon.getFile();
 		Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
 		try {
 			if (enchantment == null) return;
