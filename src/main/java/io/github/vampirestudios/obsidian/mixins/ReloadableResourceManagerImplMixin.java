@@ -5,7 +5,7 @@ import io.github.vampirestudios.obsidian.client.resource.BedrockAddonResourcePac
 import io.github.vampirestudios.obsidian.client.resource.ObsidianAddonResourcePack;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceReloadMonitor;
+import net.minecraft.resource.ResourceReload;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,8 +19,8 @@ import java.util.concurrent.Executor;
 @Mixin(ReloadableResourceManagerImpl.class)
 public abstract class ReloadableResourceManagerImplMixin {
 
-	@Inject(method = "beginMonitoredReload", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-	private void registerAdditionalPacks(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReloadMonitor> cir) {
+	@Inject(method = "reload", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+	private void registerAdditionalPacks(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReload> cir) {
 		this.addPack(new ObsidianAddonResourcePack());
 		this.addPack(new BedrockAddonResourcePack());
 	}

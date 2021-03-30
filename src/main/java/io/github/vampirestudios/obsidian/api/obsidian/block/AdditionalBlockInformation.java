@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 public class AdditionalBlockInformation {
 
+	public String extraBlocksName = "";
 	public boolean slab = false;
 	public boolean stairs = false;
 	public boolean walls = false;

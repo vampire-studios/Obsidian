@@ -3,7 +3,6 @@ package io.github.vampirestudios.obsidian;
 import net.minecraft.block.Block;
 
 public class ConvertableOxidizableBlock {
-
 	public Block left;
 	public Block right;
 

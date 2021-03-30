@@ -4,7 +4,6 @@ import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
 import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
@@ -22,7 +21,7 @@ public class ClientInit implements ClientModInitializer {
 			String name = iAddonPack.getDisplayNameObsidian();
 			Artifice.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
 				clientResourcePackBuilder.setDisplayName(name);
-				for (Entity entity : ConfigHelper.ENTITIES) if (entity.information.identifier.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new EntityInitThread(clientResourcePackBuilder, entity).run();
+//				for (Entity entity : ConfigHelper.ENTITIES) if (entity.information.identifier.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new EntityInitThread(clientResourcePackBuilder, entity).run();
 				for (ItemGroup itemGroup : ConfigHelper.ITEM_GROUPS) if (itemGroup.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new ItemGroupInitThread(clientResourcePackBuilder, itemGroup).run();
 				for (Block block : ConfigHelper.BLOCKS) if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new BlockInitThread(clientResourcePackBuilder, block).run();
 				for (Block block : ConfigHelper.ORES) if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new BlockInitThread(clientResourcePackBuilder, block).run();

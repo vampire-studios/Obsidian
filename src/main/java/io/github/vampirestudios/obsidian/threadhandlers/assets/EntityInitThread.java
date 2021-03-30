@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
@@ -40,11 +41,14 @@ public class EntityInitThread implements Runnable {
 				modelBuilder.parent(new Identifier("item/template_spawn_egg")));
 	}
 
-	private EntityRenderer<EntityImpl> create(EntityRendererFactory.Context ctx) {
+	*/
+/*private EntityRenderer<EntityImpl> create(EntityRendererFactory.Context ctx) {
 		return new JsonEntityRenderer(ctx, entity);
-	}
+	}*//*
+
 
 	private EntityRenderer<EntityImpl> create2(EntityRendererFactory.Context ctx) {
 		return new CustomEntityRenderer(ctx, entity);
 	}
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
@@ -23,4 +24,4 @@ public class JsonEntityRenderer extends GeoEntityRenderer<EntityImpl> {
 		return RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable));
 	}
 
-}
+}*/

@@ -17,15 +17,12 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EntityImpl extends PathAwareEntity implements IAnimatable {
+public class EntityImpl extends PathAwareEntity {
 	private final Entity entity;
 	private final float health;
 	private final Map<String, Component> components;
@@ -105,16 +102,6 @@ public class EntityImpl extends PathAwareEntity implements IAnimatable {
 		}
 		assert lookAtPlayerBehaviourComponent != null;
 		this.goalSelector.add(lookAtPlayerBehaviourComponent.priority, new LookAtEntityGoal(this, PlayerEntity.class, lookAtPlayerBehaviourComponent.look_distance, lookAtPlayerBehaviourComponent.probability));
-	}
-
-	@Override
-	public void registerControllers(AnimationData animationData) {
-
-	}
-
-	@Override
-	public AnimationFactory getFactory() {
-		return null;
 	}
 
 }

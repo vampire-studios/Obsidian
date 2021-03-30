@@ -3,12 +3,9 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -21,8 +18,6 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-
-import static net.minecraft.block.TntBlock.primeTnt;
 
 public class BlockImpl extends Block {
 
@@ -40,7 +35,7 @@ public class BlockImpl extends Block {
 
 	@Override
 	public ActionResult onUse(BlockState blockState_1, World world_1, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
-		if (block.information.action.equals("explode")) {
+		/*if (block.information.action.equals("explode")) {
 			ItemStack itemStack_1 = playerEntity_1.getStackInHand(hand_1);
 			Item item_1 = itemStack_1.getItem();
 			if (item_1 != Items.FLINT_AND_STEEL && item_1 != Items.FIRE_CHARGE) {
@@ -56,7 +51,7 @@ public class BlockImpl extends Block {
 
 				return ActionResult.SUCCESS;
 			}
-		}
+		}*/
         /*if (!world_1.isClient && block.functions.on_use != null) {
             if (world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).isPresent()) {
                 world_1.getServer().getCommandFunctionManager().execute(world_1.getServer().getCommandFunctionManager().getFunction(block.functions.on_use).get(), world_1.getServer().getCommandSource());

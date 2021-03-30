@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
@@ -27,4 +28,4 @@ public class EntityJsonModel extends AnimatedGeoModel<EntityImpl> {
 	public Identifier getAnimationFileLocation(EntityImpl entity) {
 		return this.entity.information.entity_model.animationLocation;
 	}
-}
+}*/

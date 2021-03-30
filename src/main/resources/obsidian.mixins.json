@@ -8,12 +8,13 @@
   },
   "mixins": [
     "BuiltinModelItemRendererMixin",
-    "HoneycombItemAccessor",
-    "OxidizableMixin",
     "DynamicRegistryManagerMixin",
+//    "HeldItemRendererMixin",
+    "HoneycombItemAccessor",
     "ItemMixin",
     "ItemRendererMixin",
     "MixinPlayerManager",
+    "OxidizableMixin",
     "TridentAttackGoalMixin"
   ],
   "client": [

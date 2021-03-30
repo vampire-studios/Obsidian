@@ -21,7 +21,6 @@ public class HeldItemRendererMixin {
 		return itemStack.getItem() instanceof FabricBowExtensions;
 	}
 
-
 	@Redirect(method = "method_33303", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z", ordinal = 1))
 	private static boolean ob_renderItemBow2(ItemStack itemStack, Item item) {
 		return itemStack.getItem() instanceof FabricBowExtensions;

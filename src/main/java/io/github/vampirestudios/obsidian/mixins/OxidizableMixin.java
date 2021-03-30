@@ -18,7 +18,7 @@ public interface OxidizableMixin {
 	 * @author Olivia
 	 */
 	@Overwrite
-	static Optional<Block> getScraped(Block block) {
+	static Optional<Block> getIncreasedOxidationBlock(Block block) {
 		return Optional.ofNullable(Objects.requireNonNull(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS.get(Registry.BLOCK.getId(block))).right);
 	}
 
@@ -26,7 +26,7 @@ public interface OxidizableMixin {
 	 * @author Olivia, CatCore
 	 */
 	@Overwrite
-	static Optional<Block> getDegraded(Block block) {
+	static Optional<Block> getDecreasedOxidationBlock(Block block) {
 		Block block1 = null;
 
 		for (ConvertableOxidizableBlock convertableOxidizableBlock : Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS) {

@@ -28,7 +28,6 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.bernie.geckolib3.GeckoLib;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -65,7 +64,7 @@ public class Obsidian implements ModInitializer {
 		INSTANCE = this;
 		LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w11a"));
 		// Initialize GeckoLib for all modules
-		GeckoLib.initialize();
+//		GeckoLib.initialize();
 
 		CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 

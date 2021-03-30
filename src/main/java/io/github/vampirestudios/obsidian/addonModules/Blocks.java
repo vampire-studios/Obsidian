@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.addonModules;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Maps;
+import io.github.vampirestudios.obsidian.ConvertableOxidizableBlock;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
@@ -20,6 +21,7 @@ import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,12 +37,8 @@ public class Blocks implements AddonModule {
 		try {
 			if (block == null) return;
 			FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-					.strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
-					.collidable(block.information.collidable).slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) ->
-							block.information.is_emissive).nonOpaque();
-			if (block.information.dynamicBounds) {
-				blockSettings.dynamicBounds();
-			}
+					.strength(block.information.destroy_time, block.information.explosion_resistance).collidable(block.information.collidable)
+					.slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) -> block.information.is_emissive);
 			if (block.information.randomTicks) {
 				blockSettings.ticksRandomly();
 			}
@@ -129,17 +127,10 @@ public class Blocks implements AddonModule {
 								"exposed_" + block.information.name.id.getPath(), settings);
 						Block unaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
 								block.information.name.id.getPath() + "_block", settings);
-//						BiMap<Block, Block> oxidizedBlocks = Maps.synchronizedBiMap(class_5955Accessor.getField_29564().get());
-//						oxidizedBlocks.put(unaffected, exposed);
-//						oxidizedBlocks.put(exposed, weathered);
-//						oxidizedBlocks.put(weathered, oxidized);
-//						class_5955Accessor.setField_29564(Suppliers.ofInstance(oxidizedBlocks));
-//
-//						BiMap<Block, Block> oxidizedBlocksReverse = Maps.synchronizedBiMap(class_5955Accessor.getField_29565().get());
-//						oxidizedBlocksReverse.put(oxidized, weathered);
-//						oxidizedBlocksReverse.put(weathered, exposed);
-//						oxidizedBlocksReverse.put(exposed, unaffected);
-//						class_5955Accessor.setField_29565(Suppliers.ofInstance(oxidizedBlocksReverse));
+
+						Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(unaffected, exposed));
+						Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(exposed, weathered));
+						Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(weathered, oxidized));
 
 						if (block.additional_information.hasCut) {
 							Block cutOxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.OXIDIZED, blockSettings), block,
@@ -150,17 +141,9 @@ public class Blocks implements AddonModule {
 									"exposed_" + block.information.name.id.getPath(), settings);
 							Block cutUnaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
 									block.information.name.id.getPath() + "_block", settings);
-//							BiMap<Block, Block> cutOxidizedBlocks = Maps.synchronizedBiMap(class_5955Accessor.getField_29564().get());
-//							cutOxidizedBlocks.put(cutUnaffected, cutExposed);
-//							cutOxidizedBlocks.put(cutExposed, cutWeathered);
-//							cutOxidizedBlocks.put(cutWeathered, cutOxidized);
-//							class_5955Accessor.setField_29564(Suppliers.ofInstance(cutOxidizedBlocks));
-//
-//							BiMap<Block, Block> cutOxidizedBlocksReverse = Maps.synchronizedBiMap(class_5955Accessor.getField_29565().get());
-//							cutOxidizedBlocksReverse.put(cutOxidized, cutWeathered);
-//							cutOxidizedBlocksReverse.put(cutWeathered, cutExposed);
-//							cutOxidizedBlocksReverse.put(cutExposed, cutUnaffected);
-//							class_5955Accessor.setField_29565(Suppliers.ofInstance(cutOxidizedBlocksReverse));
+							Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(cutUnaffected, cutExposed));
+							Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(cutExposed, cutWeathered));
+							Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(cutWeathered, cutOxidized));
 
 							if (block.additional_information.hasCut && block.additional_information.hasWaxed) {
 								Block cutWeatheredWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.WEATHERED, blockSettings), block,
@@ -169,17 +152,17 @@ public class Blocks implements AddonModule {
 										"waxed_exposed_cut_" + block.information.name.id.getPath(), settings);
 								Block cutUnaffectedWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
 										"waxed_cut_" + block.information.name.id.getPath() + "_block", settings);
-								BiMap<Block, Block> blocks = Maps.synchronizedBiMap(HoneycombItemAccessor.getWAXED_BLOCKS().get());
+								BiMap<Block, Block> blocks = Maps.synchronizedBiMap(HoneycombItemAccessor.getUNWAXED_TO_WAXED_BLOCKS().get());
 								blocks.put(cutUnaffected, cutUnaffectedWaxed);
 								blocks.put(cutExposed, cutExposedWaxed);
 								blocks.put(cutWeathered, cutWeatheredWaxed);
-								HoneycombItemAccessor.setWAXED_BLOCKS(Suppliers.ofInstance(blocks));
+								HoneycombItemAccessor.setUNWAXED_TO_WAXED_BLOCKS(Suppliers.ofInstance(blocks));
 
-								BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(HoneycombItemAccessor.getUNWAXED_BLOCKS().get());
+								BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(HoneycombItemAccessor.getWAXED_TO_UNWAXED_BLOCKS().get());
 								blocksReverse.put(cutUnaffectedWaxed, cutUnaffected);
 								blocksReverse.put(cutExposedWaxed, cutExposed);
 								blocksReverse.put(cutWeatheredWaxed, cutWeathered);
-								HoneycombItemAccessor.setUNWAXED_BLOCKS(Suppliers.ofInstance(blocksReverse));
+								HoneycombItemAccessor.setWAXED_TO_UNWAXED_BLOCKS(Suppliers.ofInstance(blocksReverse));
 							}
 						}
 
@@ -190,17 +173,17 @@ public class Blocks implements AddonModule {
 									"waxed_exposed_" + block.information.name.id.getPath(), settings);
 							Block waxedUnaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
 									"waxed_" + block.information.name.id.getPath() + "_block", settings);
-							BiMap<Block, Block> blocks = Maps.synchronizedBiMap(HoneycombItemAccessor.getWAXED_BLOCKS().get());
+							BiMap<Block, Block> blocks = Maps.synchronizedBiMap(HoneycombItemAccessor.getUNWAXED_TO_WAXED_BLOCKS().get());
 							blocks.put(unaffected, waxedUnaffected);
 							blocks.put(exposed, waxedExposed);
 							blocks.put(weathered, waxedWeathered);
-							HoneycombItemAccessor.setWAXED_BLOCKS(Suppliers.ofInstance(blocks));
+							HoneycombItemAccessor.setUNWAXED_TO_WAXED_BLOCKS(Suppliers.ofInstance(blocks));
 
-							BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(HoneycombItemAccessor.getUNWAXED_BLOCKS().get());
+							BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(HoneycombItemAccessor.getWAXED_TO_UNWAXED_BLOCKS().get());
 							blocksReverse.put(waxedWeathered, weathered);
 							blocksReverse.put(waxedExposed, exposed);
 							blocksReverse.put(waxedUnaffected, unaffected);
-							HoneycombItemAccessor.setUNWAXED_BLOCKS(Suppliers.ofInstance(blocksReverse));
+							HoneycombItemAccessor.setWAXED_TO_UNWAXED_BLOCKS(Suppliers.ofInstance(blocksReverse));
 						}
 
 						break;
@@ -247,25 +230,49 @@ public class Blocks implements AddonModule {
 			}
 
 			if (block.additional_information != null) {
-				if (block.additional_information.slab) {
-					REGISTRY_HELPER.registerBlock(new SlabImpl(block), block,
-							Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
-				}
-				if (block.additional_information.stairs) {
-					REGISTRY_HELPER.registerBlock(new StairsImpl(block), block, new Identifier(id.getModId(), block.information.name.id.getPath() + "_stairs").getPath(),
-							ItemGroup.BUILDING_BLOCKS);
-				}
-				if (block.additional_information.fence) {
-					REGISTRY_HELPER.registerBlock(new FenceImpl(block), block,
-							new Identifier(id.getModId(), block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
-				}
-				if (block.additional_information.fenceGate) {
-					REGISTRY_HELPER.registerBlock(new FenceGateImpl(block), block,
-							Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
-				}
-				if (block.additional_information.walls) {
-					REGISTRY_HELPER.registerBlock(new WallImpl(block), block,
-							Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+				if(!block.additional_information.extraBlocksName.isEmpty()) {
+					Identifier identifier = new Identifier(block.information.name.id.getNamespace(), block.additional_information.extraBlocksName);
+					if (block.additional_information.slab) {
+						REGISTRY_HELPER.registerBlock(new SlabImpl(block), block,
+								Utils.appendToPath(identifier, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
+					}
+					if (block.additional_information.stairs) {
+						REGISTRY_HELPER.registerBlock(new StairsImpl(block), block, new Identifier(id.getModId(), identifier.getPath() + "_stairs").getPath(),
+								ItemGroup.BUILDING_BLOCKS);
+					}
+					if (block.additional_information.fence) {
+						REGISTRY_HELPER.registerBlock(new FenceImpl(block), block,
+								new Identifier(id.getModId(), identifier.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
+					}
+					if (block.additional_information.fenceGate) {
+						REGISTRY_HELPER.registerBlock(new FenceGateImpl(block), block,
+								Utils.appendToPath(identifier, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
+					}
+					if (block.additional_information.walls) {
+						REGISTRY_HELPER.registerBlock(new WallImpl(block), block,
+								Utils.appendToPath(identifier, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+					}
+				} else {
+					if (block.additional_information.slab) {
+						REGISTRY_HELPER.registerBlock(new SlabImpl(block), block,
+								Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
+					}
+					if (block.additional_information.stairs) {
+						REGISTRY_HELPER.registerBlock(new StairsImpl(block), block, new Identifier(id.getModId(), block.information.name.id.getPath() + "_stairs").getPath(),
+								ItemGroup.BUILDING_BLOCKS);
+					}
+					if (block.additional_information.fence) {
+						REGISTRY_HELPER.registerBlock(new FenceImpl(block), block,
+								new Identifier(id.getModId(), block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
+					}
+					if (block.additional_information.fenceGate) {
+						REGISTRY_HELPER.registerBlock(new FenceGateImpl(block), block,
+								Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
+					}
+					if (block.additional_information.walls) {
+						REGISTRY_HELPER.registerBlock(new WallImpl(block), block,
+								Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+					}
 				}
 			}
 
