@@ -9,6 +9,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.mixins.HoneycombItemAccessor;
+import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
@@ -277,8 +278,8 @@ public class Blocks implements AddonModule {
 				}
 			}
 
-			if(addon.getConfigPackInfo().hasData) {
-				new 
+			if(!addon.getConfigPackInfo().hasData) {
+				new BlockInitThread(block);
 			}
 
 			register(BLOCKS, "block", block.information.name.id.toString(), block);
