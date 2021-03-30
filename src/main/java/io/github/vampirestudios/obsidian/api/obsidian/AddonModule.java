@@ -7,8 +7,8 @@ import java.io.FileNotFoundException;
 
 public interface AddonModule {
 
-	void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException;
+    void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException;
 
-	String getType();
+    String getType();
 
 }

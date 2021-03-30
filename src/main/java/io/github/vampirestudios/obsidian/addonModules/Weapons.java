@@ -17,24 +17,24 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Weapons implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
-		try {
-			if (weapon == null) return;
-			CustomToolMaterial material = new CustomToolMaterial(weapon.material);
-			RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
-					.group(weapon.information.getItemGroup())
-					.maxCount(weapon.information.max_count)), weapon.information.name.id);
-			register(WEAPONS, "weapon", weapon.information.name.id.toString(), weapon);
-		} catch (Exception e) {
-			failedRegistering("weapon", weapon.information.name.id.toString(), e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
+        try {
+            if (weapon == null) return;
+            CustomToolMaterial material = new CustomToolMaterial(weapon.material);
+            RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
+                    .group(weapon.information.getItemGroup())
+                    .maxCount(weapon.information.max_count)), weapon.information.name.id);
+            register(WEAPONS, "weapon", weapon.information.name.id.toString(), weapon);
+        } catch (Exception e) {
+            failedRegistering("weapon", weapon.information.name.id.toString(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "items/weapons";
-	}
+    @Override
+    public String getType() {
+        return "items/weapons";
+    }
 }

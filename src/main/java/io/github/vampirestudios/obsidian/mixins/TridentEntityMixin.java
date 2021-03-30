@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 // Modify how the trident entity data is sent, changing it from the uuid to the Registry ID for the item
 @Mixin(PersistentProjectileEntity.class)
 public class TridentEntityMixin {
-	@Inject(method = "createSpawnPacket", at = @At("HEAD"), cancellable = true)
-	public void ob_sendTridentTypeToClient(CallbackInfoReturnable<Packet<?>> cir) {
-		if ((PersistentProjectileEntity) (Object) this instanceof TridentEntity) {
-			cir.setReturnValue(new EntitySpawnS2CPacket((PersistentProjectileEntity) (Object) this, Registry.ITEM.getRawId(((TridentEntityAccessor) this).getTridentStack().getItem())));
-		}
-	}
+    @Inject(method = "createSpawnPacket", at = @At("HEAD"), cancellable = true)
+    public void ob_sendTridentTypeToClient(CallbackInfoReturnable<Packet<?>> cir) {
+        if ((PersistentProjectileEntity) (Object) this instanceof TridentEntity) {
+            cir.setReturnValue(new EntitySpawnS2CPacket((PersistentProjectileEntity) (Object) this, Registry.ITEM.getRawId(((TridentEntityAccessor) this).getTridentStack().getItem())));
+        }
+    }
 }

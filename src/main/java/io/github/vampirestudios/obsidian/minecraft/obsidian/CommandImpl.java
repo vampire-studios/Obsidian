@@ -12,16 +12,16 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class CommandImpl {
 
-	public static void register(Command command, CommandDispatcher<ServerCommandSource> dispatcher) {
-		LiteralArgumentBuilder<ServerCommandSource> basenode = dispatcher.register(literal(command.name)).createBuilder();
-		for (Argument argument : command.arguments) {
-			basenode.then(CommandManager.argument(argument.name, argument.getBasicArgumentType()));
-		}
-	}
+    public static void register(Command command, CommandDispatcher<ServerCommandSource> dispatcher) {
+        LiteralArgumentBuilder<ServerCommandSource> basenode = dispatcher.register(literal(command.name)).createBuilder();
+        for (Argument argument : command.arguments) {
+            basenode.then(CommandManager.argument(argument.name, argument.getBasicArgumentType()));
+        }
+    }
 
-	private static int execute(ServerCommandSource source, Command command) {
-		source.sendFeedback(new LiteralText(command.name), false);
-		return 1;
-	}
+    private static int execute(ServerCommandSource source, Command command) {
+        source.sendFeedback(new LiteralText(command.name), false);
+        return 1;
+    }
 
 }

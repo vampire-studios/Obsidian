@@ -9,12 +9,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 
 public class BlockTemplate {
 
-	public String name;
-	public BlockInformation information;
-	public DisplayInformation display;
-	public AdditionalBlockInformation additional_information;
-	public Functions functions;
-	public OreInformation ore_information;
-	public FoodInformation food_information;
+    public String name;
+    public BlockInformation information;
+    public DisplayInformation display;
+    public AdditionalBlockInformation additional_information;
+    public Functions functions;
+    public OreInformation ore_information;
+    public FoodInformation food_information;
 
 }

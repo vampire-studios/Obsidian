@@ -13,24 +13,24 @@ import java.util.List;
 
 public class ShieldItemImpl extends net.minecraft.item.ShieldItem {
 
-	public ShieldItem shieldItem;
+    public ShieldItem shieldItem;
 
-	public ShieldItemImpl(ShieldItem shieldItem, Item.Settings settings) {
-		super(settings);
-		this.shieldItem = shieldItem;
-	}
+    public ShieldItemImpl(ShieldItem shieldItem, Item.Settings settings) {
+        super(settings);
+        this.shieldItem = shieldItem;
+    }
 
-	@Override
-	public Text getName() {
-		return shieldItem.information.name.getName("item");
-	}
+    @Override
+    public Text getName() {
+        return shieldItem.information.name.getName("item");
+    }
 
-	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-		if (shieldItem.display != null && shieldItem.display.lore.length != 0) {
-			for (TooltipInformation tooltipInformation : shieldItem.display.lore) {
-				tooltip.add(tooltipInformation.getTextType("tooltip"));
-			}
-		}
-	}
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        if (shieldItem.display != null && shieldItem.display.lore.length != 0) {
+            for (TooltipInformation tooltipInformation : shieldItem.display.lore) {
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
+            }
+        }
+    }
 }

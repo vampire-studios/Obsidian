@@ -13,16 +13,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
 public class TrapdoorBlockImpl extends TrapdoorBlock implements Climbable {
-	public TrapdoorBlockImpl(Settings settings) {
-		super(settings);
-	}
+    public TrapdoorBlockImpl(Settings settings) {
+        super(settings);
+    }
 
-	@Override
-	public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
-		return true;
-	}
+    @Override
+    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+        return true;
+    }
 
-	public ClimbBehavior getClimbBehavior(Entity entity, BlockState state, BlockPos pos) {
-		return ClimbBehavior.Ladder;
-	}
+    public ClimbBehavior getClimbBehavior(Entity entity, BlockState state, BlockPos pos) {
+        return ClimbBehavior.Ladder;
+    }
 }

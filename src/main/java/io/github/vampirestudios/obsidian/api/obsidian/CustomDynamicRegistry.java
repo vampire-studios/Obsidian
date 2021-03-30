@@ -30,33 +30,33 @@ import java.util.function.Supplier;
  * @param <T> the type that the registry holds
  */
 public class CustomDynamicRegistry<T> {
-	private final SimpleRegistry<T> registry;
-	private final Supplier<T> defaultValueSupplier;
-	private final Codec<T> codec;
+    private final SimpleRegistry<T> registry;
+    private final Supplier<T> defaultValueSupplier;
+    private final Codec<T> codec;
 
-	public CustomDynamicRegistry(SimpleRegistry<T> registry, Supplier<T> defaultValueSupplier, Codec<T> codec) {
-		this.registry = registry;
-		this.defaultValueSupplier = defaultValueSupplier;
-		this.codec = codec;
-	}
+    public CustomDynamicRegistry(SimpleRegistry<T> registry, Supplier<T> defaultValueSupplier, Codec<T> codec) {
+        this.registry = registry;
+        this.defaultValueSupplier = defaultValueSupplier;
+        this.codec = codec;
+    }
 
-	public SimpleRegistry<T> getRegistry() {
-		return this.registry;
-	}
+    public SimpleRegistry<T> getRegistry() {
+        return this.registry;
+    }
 
-	public RegistryKey<? extends Registry<T>> getRegistryRef() {
-		return this.registry.getKey();
-	}
+    public RegistryKey<? extends Registry<T>> getRegistryRef() {
+        return this.registry.getKey();
+    }
 
-	public Lifecycle getLifecycle() {
-		return this.registry.getLifecycle();
-	}
+    public Lifecycle getLifecycle() {
+        return this.registry.getLifecycle();
+    }
 
-	public Supplier<T> getDefaultValueSupplier() {
-		return this.defaultValueSupplier;
-	}
+    public Supplier<T> getDefaultValueSupplier() {
+        return this.defaultValueSupplier;
+    }
 
-	public Codec<T> getCodec() {
-		return this.codec;
-	}
+    public Codec<T> getCodec() {
+        return this.codec;
+    }
 } 

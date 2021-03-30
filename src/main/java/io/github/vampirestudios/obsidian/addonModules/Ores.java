@@ -36,78 +36,78 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Ores implements AddonModule {
 
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-		try {
-			if (block == null) return;
-			FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-					.strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
-					.slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) -> block.information.is_emissive)
-					.nonOpaque();
-			net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
-			REGISTRY_HELPER.registerItem(new CustomBlockItem(block, blockImpl, new Item.Settings().group(block.information.getItemGroup())), block.information.name.id.getPath());
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+        try {
+            if (block == null) return;
+            FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
+                    .strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
+                    .slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) -> block.information.is_emissive)
+                    .nonOpaque();
+            net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
+            REGISTRY_HELPER.registerItem(new CustomBlockItem(block, blockImpl, new Item.Settings().group(block.information.getItemGroup())), block.information.name.id.getPath());
 
-			RuleTest test;
-			if (block.ore_information.test_type.equals("tag")) {
-				Tag<net.minecraft.block.Block> tag = BlockTags.getTagGroup().getTag(block.ore_information.target_state.block);
-				test = new TagMatchRuleTest(tag == null ? BlockTags.BASE_STONE_OVERWORLD : tag);
-			} else if (block.ore_information.test_type.equals("blockstate")) {
-				test = new BlockStateMatchRuleTest(getState(Registry.BLOCK.get(block.ore_information.target_state.block), block.ore_information.target_state.properties));
-			} else {
-				test = new BlockMatchRuleTest(Registry.BLOCK.get(block.ore_information.target_state.block));
-			}
-			ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
-					Feature.ORE.configure(
-							new OreFeatureConfig(
-									test,
-									blockImpl.getDefaultState(),
-									block.ore_information.size
-							)
-					).decorate(
-							Decorator.RANGE.configure(
-									new RangeDecoratorConfig(
-											YOffset.fixed(block.ore_information.config.bottom_offset),
-											YOffset.fixed(block.ore_information.config.top_offset)
-									)
-							)
-					).rangeOf(YOffset.fixed(block.ore_information.config.minimum), YOffset.fixed(block.ore_information.config.maximum)).spreadHorizontally().repeat(20));
-			BuiltinRegistries.BIOME.forEach(biome -> {
-				if (block.ore_information.biomes != null) {
-					for (String biome2 : block.ore_information.biomes) {
-						if (BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2)) {
-							BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
-						}
-					}
-				} else {
-					BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
-				}
-			});
-			Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder ->
-					serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
-						lootTableBuilder.type(new Identifier("block"));
-						lootTableBuilder.pool(pool -> {
-							pool.rolls(1);
-							pool.entry(entry -> {
-								entry.type(new Identifier("item"));
-								entry.name(block.information.name.id);
-							});
-							pool.condition(new Identifier("survives_explosion"), jsonObjectBuilder -> {
+            RuleTest test;
+            if (block.ore_information.test_type.equals("tag")) {
+                Tag<net.minecraft.block.Block> tag = BlockTags.getTagGroup().getTag(block.ore_information.target_state.block);
+                test = new TagMatchRuleTest(tag == null ? BlockTags.BASE_STONE_OVERWORLD : tag);
+            } else if (block.ore_information.test_type.equals("blockstate")) {
+                test = new BlockStateMatchRuleTest(getState(Registry.BLOCK.get(block.ore_information.target_state.block), block.ore_information.target_state.properties));
+            } else {
+                test = new BlockMatchRuleTest(Registry.BLOCK.get(block.ore_information.target_state.block));
+            }
+            ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
+                    Feature.ORE.configure(
+                            new OreFeatureConfig(
+                                    test,
+                                    blockImpl.getDefaultState(),
+                                    block.ore_information.size
+                            )
+                    ).decorate(
+                            Decorator.RANGE.configure(
+                                    new RangeDecoratorConfig(
+                                            YOffset.fixed(block.ore_information.config.bottom_offset),
+                                            YOffset.fixed(block.ore_information.config.top_offset)
+                                    )
+                            )
+                    ).rangeOf(YOffset.fixed(block.ore_information.config.minimum), YOffset.fixed(block.ore_information.config.maximum)).spreadHorizontally().repeat(20));
+            BuiltinRegistries.BIOME.forEach(biome -> {
+                if (block.ore_information.biomes != null) {
+                    for (String biome2 : block.ore_information.biomes) {
+                        if (BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2)) {
+                            BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
+                        }
+                    }
+                } else {
+                    BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
+                }
+            });
+            Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+                    serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
+                        lootTableBuilder.type(new Identifier("block"));
+                        lootTableBuilder.pool(pool -> {
+                            pool.rolls(1);
+                            pool.entry(entry -> {
+                                entry.type(new Identifier("item"));
+                                entry.name(block.information.name.id);
+                            });
+                            pool.condition(new Identifier("survives_explosion"), jsonObjectBuilder -> {
 
-							});
-						});
-					})
-			);
-			register(ORES, "ore", block.information.name.id.toString(), block);
-		} catch (Exception e) {
-			failedRegistering("ore", block.information.name.id.toString(), e);
-		}
-	}
+                            });
+                        });
+                    })
+            );
+            register(ORES, "ore", block.information.name.id.toString(), block);
+        } catch (Exception e) {
+            failedRegistering("ore", block.information.name.id.toString(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "blocks/ores";
-	}
+    @Override
+    public String getType() {
+        return "blocks/ores";
+    }
 
 }

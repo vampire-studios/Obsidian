@@ -15,22 +15,22 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Potions implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		Potion potion = Obsidian.GSON.fromJson(new FileReader(file), Potion.class);
-		try {
-			if (potion == null) return;
-			Registry.register(Registry.POTION, potion.name,
-					new net.minecraft.potion.Potion(new StatusEffectInstance(potion.getEffectType(), potion.getEffects().duration * 20, potion.getEffects().amplifier)));
-			register(POTIONS, "potion", potion.name.toString(), potion);
-		} catch (Exception e) {
-			failedRegistering("potion", potion.name.toString(), e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        Potion potion = Obsidian.GSON.fromJson(new FileReader(file), Potion.class);
+        try {
+            if (potion == null) return;
+            Registry.register(Registry.POTION, potion.name,
+                    new net.minecraft.potion.Potion(new StatusEffectInstance(potion.getEffectType(), potion.getEffects().duration * 20, potion.getEffects().amplifier)));
+            register(POTIONS, "potion", potion.name.toString(), potion);
+        } catch (Exception e) {
+            failedRegistering("potion", potion.name.toString(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "potions";
-	}
+    @Override
+    public String getType() {
+        return "potions";
+    }
 }

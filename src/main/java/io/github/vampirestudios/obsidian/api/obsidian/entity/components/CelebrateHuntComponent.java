@@ -5,12 +5,12 @@ import net.minecraft.util.Identifier;
 
 public class CelebrateHuntComponent extends Component {
 
-	public boolean broadcast = true;
-	public Identifier celebrate_sound;
-	public int duration = 4;
-	public double radius = 12;
-	public int[] sound_interval = new int[]{
-			0
-	};
+    public boolean broadcast = true;
+    public Identifier celebrate_sound;
+    public int duration = 4;
+    public double radius = 12;
+    public int[] sound_interval = new int[]{
+            0
+    };
 
 }

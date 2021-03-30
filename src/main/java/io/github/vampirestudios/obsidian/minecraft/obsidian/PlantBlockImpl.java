@@ -5,12 +5,12 @@ import net.minecraft.block.PlantBlock;
 
 public class PlantBlockImpl extends PlantBlock {
 
-	private final Block block;
+    private final Block block;
 
-	public PlantBlockImpl(Block block, Settings settings) {
-		super(settings);
-		this.block = block;
-	}
+    public PlantBlockImpl(Block block, Settings settings) {
+        super(settings);
+        this.block = block;
+    }
 
 	/*@Override
 	protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {

@@ -38,5 +38,5 @@ import java.util.function.Consumer;
  * @see net.fabricmc.loader.api.FabricLoader#getEntrypointContainers(String, Class)
  */
 public interface DynamicRegistryProvider {
-	void addDynamicRegistries(Consumer<CustomDynamicRegistry<?>> adder);
+    void addDynamicRegistries(Consumer<CustomDynamicRegistry<?>> adder);
 } 

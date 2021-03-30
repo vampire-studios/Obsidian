@@ -16,22 +16,22 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Elytras implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		Elytra item = Obsidian.GSON.fromJson(new FileReader(file), Elytra.class);
-		try {
-			if (item == null) return;
-			RegistryUtils.registerItem(new ElytraItemImpl(new Item.Settings().group(item.information.getItemGroup())
-					.maxCount(1)), item.information.name.id);
-			register(ELYTRAS, "elytra", item.information.name.id.toString(), item);
-		} catch (Exception e) {
-			failedRegistering("elytra", item.information.name.id.toString(), e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        Elytra item = Obsidian.GSON.fromJson(new FileReader(file), Elytra.class);
+        try {
+            if (item == null) return;
+            RegistryUtils.registerItem(new ElytraItemImpl(new Item.Settings().group(item.information.getItemGroup())
+                    .maxCount(1)), item.information.name.id);
+            register(ELYTRAS, "elytra", item.information.name.id.toString(), item);
+        } catch (Exception e) {
+            failedRegistering("elytra", item.information.name.id.toString(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "items/elytra";
-	}
+    @Override
+    public String getType() {
+        return "items/elytra";
+    }
 }

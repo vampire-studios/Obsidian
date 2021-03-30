@@ -17,78 +17,78 @@ import net.minecraft.util.registry.Registry;
 
 public class RegistryUtils {
 
-	public static Block register(Block block, Identifier name) {
-		register(block, name, ItemGroup.DECORATIONS);
-		return block;
-	}
+    public static Block register(Block block, Identifier name) {
+        register(block, name, ItemGroup.DECORATIONS);
+        return block;
+    }
 
-	public static Block register(String name, Block block) {
-		register(block, new Identifier(Obsidian.MOD_ID, name), ItemGroup.DECORATIONS);
-		return block;
-	}
+    public static Block register(String name, Block block) {
+        register(block, new Identifier(Obsidian.MOD_ID, name), ItemGroup.DECORATIONS);
+        return block;
+    }
 
-	public static Block register(Block block, Identifier name, ItemGroup itemGroup) {
-		Registry.register(Registry.BLOCK, name, block);
-		BlockItem item = new BlockItem(block, (new Settings()).group(itemGroup));
-		item.appendBlocks(Item.BLOCK_ITEMS, item);
-		Registry.register(Registry.ITEM, name, item);
-		return block;
-	}
+    public static Block register(Block block, Identifier name, ItemGroup itemGroup) {
+        Registry.register(Registry.BLOCK, name, block);
+        BlockItem item = new BlockItem(block, (new Settings()).group(itemGroup));
+        item.appendBlocks(Item.BLOCK_ITEMS, item);
+        Registry.register(Registry.ITEM, name, item);
+        return block;
+    }
 
-	public static Block registerBlockWithoutItem(Block block, Identifier identifier) {
-		Registry.register(Registry.BLOCK, identifier, block);
-		return block;
-	}
+    public static Block registerBlockWithoutItem(Block block, Identifier identifier) {
+        Registry.register(Registry.BLOCK, identifier, block);
+        return block;
+    }
 
-	public static Block registerBlockWithoutItem(String name, Block block) {
-		Registry.register(Registry.BLOCK, new Identifier(Obsidian.MOD_ID, name), block);
-		return block;
-	}
+    public static Block registerBlockWithoutItem(String name, Block block) {
+        Registry.register(Registry.BLOCK, new Identifier(Obsidian.MOD_ID, name), block);
+        return block;
+    }
 
-	public static Item registerItem(Item item, Identifier name) {
-		if (Registry.ITEM.containsId(name)) {
-			return Registry.ITEM.get(name);
-		} else {
-			return Registry.register(Registry.ITEM, name, item);
-		}
-	}
+    public static Item registerItem(Item item, Identifier name) {
+        if (Registry.ITEM.containsId(name)) {
+            return Registry.ITEM.get(name);
+        } else {
+            return Registry.register(Registry.ITEM, name, item);
+        }
+    }
 
-	public static Item registerItem(String name, Item item) {
-		return Registry.register(Registry.ITEM, new Identifier(Obsidian.MOD_ID, name), item);
-	}
+    public static Item registerItem(String name, Item item) {
+        return Registry.register(Registry.ITEM, new Identifier(Obsidian.MOD_ID, name), item);
+    }
 
-	public static Block registerBlockWithWallBlock(Block block, Block wallBlock, Identifier name) {
-		Registry.register(Registry.BLOCK, name, block);
-		Registry.register(Registry.ITEM, name, new WallStandingBlockItem(block, wallBlock, new Settings().group(ItemGroup.DECORATIONS)));
-		return block;
-	}
+    public static Block registerBlockWithWallBlock(Block block, Block wallBlock, Identifier name) {
+        Registry.register(Registry.BLOCK, name, block);
+        Registry.register(Registry.ITEM, name, new WallStandingBlockItem(block, wallBlock, new Settings().group(ItemGroup.DECORATIONS)));
+        return block;
+    }
 
-	public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(Builder<T> builder, Identifier name) {
-		BlockEntityType<T> blockEntityType = builder.build(null);
-		Registry.register(Registry.BLOCK_ENTITY_TYPE, name, blockEntityType);
-		return blockEntityType;
-	}
+    public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(Builder<T> builder, Identifier name) {
+        BlockEntityType<T> blockEntityType = builder.build(null);
+        Registry.register(Registry.BLOCK_ENTITY_TYPE, name, blockEntityType);
+        return blockEntityType;
+    }
 
-	public static Block registerNetherStem(Identifier name, MapColor MapColor) {
-		return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> MapColor)
-				.strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), name);
-	}
+    public static Block registerNetherStem(Identifier name, MapColor MapColor) {
+        return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> MapColor)
+                .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), name);
+    }
 
-	public static Block registerLog(Identifier name, MapColor MapColor, MapColor MapColor2) {
-		return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
-				blockState.get(PillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
-				.strength(2.0F).sounds(BlockSoundGroup.WOOD)), name);
-	}
+    public static Block registerLog(Identifier name, MapColor MapColor, MapColor MapColor2) {
+        return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
+                blockState.get(PillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
+                .strength(2.0F).sounds(BlockSoundGroup.WOOD)), name);
+    }
 
-	public static Block registerNetherStem(String name, MapColor MapColor) {
-		return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> MapColor)
-				.strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), new Identifier(Obsidian.MOD_ID, name));
-	}
+    public static Block registerNetherStem(String name, MapColor MapColor) {
+        return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> MapColor)
+                .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), new Identifier(Obsidian.MOD_ID, name));
+    }
 
-	public static Block registerLog(String name, MapColor MapColor, MapColor MapColor2) {
-		return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
-				blockState.get(PillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
-				.strength(2.0F).sounds(BlockSoundGroup.WOOD)), new Identifier(Obsidian.MOD_ID, name));
-	}
+    public static Block registerLog(String name, MapColor MapColor, MapColor MapColor2) {
+        return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
+                blockState.get(PillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
+                .strength(2.0F).sounds(BlockSoundGroup.WOOD)), new Identifier(Obsidian.MOD_ID, name));
+    }
 
 }

@@ -10,55 +10,55 @@ import java.util.List;
 
 public class Block {
 
-	public BlockType block_type;
-	public BlockInformation information;
-	public DisplayInformation display;
-	public AdditionalBlockInformation additional_information;
-	public Functions functions;
-	public OreInformation ore_information;
-	public FoodInformation food_information;
-	public CampfireProperties campfire_properties;
-	public List<Identifier> can_plant_on;
-	public Identifier particle_type;
+    public BlockType block_type;
+    public BlockInformation information;
+    public DisplayInformation display;
+    public AdditionalBlockInformation additional_information;
+    public Functions functions;
+    public OreInformation ore_information;
+    public FoodInformation food_information;
+    public CampfireProperties campfire_properties;
+    public List<Identifier> can_plant_on;
+    public Identifier particle_type;
 
-	public List<net.minecraft.block.Block> getSupportableBlocks() {
-		List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
-		can_plant_on.forEach(identifier -> blocks2.add(Registry.BLOCK.get(identifier)));
-		return blocks2;
-	}
+    public List<net.minecraft.block.Block> getSupportableBlocks() {
+        List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
+        can_plant_on.forEach(identifier -> blocks2.add(Registry.BLOCK.get(identifier)));
+        return blocks2;
+    }
 
-	public enum BlockType {
-		CAMPFIRE,
-		STAIRS,
-		SLAB,
-		FENCE,
-		FENCE_GATE,
-		CAKE,
-		TRAPDOOR,
-		DOOR,
-		LOG,
-		WOOD,
-		OXIDIZING_BLOCK,
-		PLANT,
-		HORIZONTAL_FACING_PLANT,
-		SAPLING,
-		TORCH,
-		BEEHIVE,
-		LEAVES,
-		LADDER,
-		PATH,
-		BUTTON,
-		DOUBLE_PLANT,
-		HORIZONTAL_FACING_DOUBLE_PLANT,
-		HANGING_DOUBLE_LEAVES
-	}
+    public enum BlockType {
+        CAMPFIRE,
+        STAIRS,
+        SLAB,
+        FENCE,
+        FENCE_GATE,
+        CAKE,
+        TRAPDOOR,
+        DOOR,
+        LOG,
+        WOOD,
+        OXIDIZING_BLOCK,
+        PLANT,
+        HORIZONTAL_FACING_PLANT,
+        SAPLING,
+        TORCH,
+        BEEHIVE,
+        LEAVES,
+        LADDER,
+        PATH,
+        BUTTON,
+        DOUBLE_PLANT,
+        HORIZONTAL_FACING_DOUBLE_PLANT,
+        HANGING_DOUBLE_LEAVES
+    }
 
-	public static class CampfireProperties {
+    public static class CampfireProperties {
 
-		public boolean emits_particles;
-		public int fire_damage;
-		public int luminance;
+        public boolean emits_particles;
+        public int fire_damage;
+        public int luminance;
 
-	}
+    }
 
 }

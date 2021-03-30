@@ -4,10 +4,10 @@ import net.minecraft.text.Text;
 
 public class TooltipInformation {
 
-	public NameInformation text;
+    public NameInformation text;
 
-	public Text getTextType(String type) {
-		return text.getName(type);
-	}
+    public Text getTextType(String type) {
+        return text.getName(type);
+    }
 
 }

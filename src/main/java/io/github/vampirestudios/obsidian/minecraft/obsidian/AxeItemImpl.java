@@ -13,39 +13,39 @@ import java.util.List;
 
 public class AxeItemImpl extends AxeItem {
 
-	public Item item;
+    public Item item;
 
-	public AxeItemImpl(Item item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
-		super(material, attackDamage, attackSpeed, settings);
-		this.item = item;
-	}
+    public AxeItemImpl(Item item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
+        super(material, attackDamage, attackSpeed, settings);
+        this.item = item;
+    }
 
-	@Override
-	public boolean hasGlint(ItemStack stack) {
-		return item.information.has_glint;
-	}
+    @Override
+    public boolean hasGlint(ItemStack stack) {
+        return item.information.has_glint;
+    }
 
-	@Override
-	public boolean isEnchantable(ItemStack stack) {
-		return item.information.is_enchantable;
-	}
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return item.information.is_enchantable;
+    }
 
-	@Override
-	public int getEnchantability() {
-		return item.information.enchantability;
-	}
+    @Override
+    public int getEnchantability() {
+        return item.information.enchantability;
+    }
 
-	@Override
-	public Text getName() {
-		return item.information.name.getName("item");
-	}
+    @Override
+    public Text getName() {
+        return item.information.name.getName("item");
+    }
 
-	@Override
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-		if (item.display != null && item.display.lore.length != 0) {
-			for (TooltipInformation tooltipInformation : item.display.lore) {
-				tooltip.add(tooltipInformation.getTextType("tooltip"));
-			}
-		}
-	}
+    @Override
+    public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+        if (item.display != null && item.display.lore.length != 0) {
+            for (TooltipInformation tooltipInformation : item.display.lore) {
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
+            }
+        }
+    }
 }

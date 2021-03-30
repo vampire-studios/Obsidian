@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(TridentEntity.class)
 public interface TridentEntityAccessor {
-	@Accessor("tridentStack")
-	ItemStack getTridentStack();
+    @Accessor("tridentStack")
+    ItemStack getTridentStack();
 
-	@Accessor("tridentStack")
-	void setTridentStack(ItemStack tridentStack);
+    @Accessor("tridentStack")
+    void setTridentStack(ItemStack tridentStack);
 }

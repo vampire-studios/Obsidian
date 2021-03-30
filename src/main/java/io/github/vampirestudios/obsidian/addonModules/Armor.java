@@ -16,24 +16,24 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Armor implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
-		try {
-			if (armor == null) return;
-			CustomArmorMaterial material = new CustomArmorMaterial(armor.material);
-			RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
-							.group(armor.information.getItemGroup()).maxCount(armor.information.max_count)),
-					armor.information.name.id);
-			register(ARMORS, "armor", armor.information.name.id.toString(), armor);
-		} catch (Exception e) {
-			failedRegistering("armor", armor.information.name.id.toString(), e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
+        try {
+            if (armor == null) return;
+            CustomArmorMaterial material = new CustomArmorMaterial(armor.material);
+            RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
+                            .group(armor.information.getItemGroup()).maxCount(armor.information.max_count)),
+                    armor.information.name.id);
+            register(ARMORS, "armor", armor.information.name.id.toString(), armor);
+        } catch (Exception e) {
+            failedRegistering("armor", armor.information.name.id.toString(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "items/armor";
-	}
+    @Override
+    public String getType() {
+        return "items/armor";
+    }
 }

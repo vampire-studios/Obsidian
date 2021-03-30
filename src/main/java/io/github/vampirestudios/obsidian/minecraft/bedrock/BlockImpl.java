@@ -5,11 +5,11 @@ import net.minecraft.block.Block;
 
 public class BlockImpl extends Block {
 
-	public BaseBlock block;
+    public BaseBlock block;
 
-	public BlockImpl(BaseBlock block, Settings settings) {
-		super(settings);
-		this.block = block;
-	}
+    public BlockImpl(BaseBlock block, Settings settings) {
+        super(settings);
+        this.block = block;
+    }
 
 }

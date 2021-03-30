@@ -10,15 +10,15 @@ import java.util.List;
 
 public class VillagerProfession {
 
-	public NameInformation name;
-	public List<Identifier> harvestable_items;
-	public PointOfInterest poi;
-	public Identifier work_sound;
+    public NameInformation name;
+    public List<Identifier> harvestable_items;
+    public PointOfInterest poi;
+    public Identifier work_sound;
 
-	public List<Item> getHarvestableItems() {
-		List<Item> items = new ArrayList<>();
-		harvestable_items.forEach(identifier -> items.add(Registry.ITEM.get(identifier)));
-		return items;
-	}
+    public List<Item> getHarvestableItems() {
+        List<Item> items = new ArrayList<>();
+        harvestable_items.forEach(identifier -> items.add(Registry.ITEM.get(identifier)));
+        return items;
+    }
 
 }

@@ -27,51 +27,51 @@ import static net.minecraft.block.TntBlock.primeTnt;
 
 public class FacingBlockImpl extends FacingBlock {
 
-	public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
+    public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-	public FacingBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Settings settings) {
-		super(settings);
-		this.block = block;
-		this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.UP));
-	}
+    public FacingBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Settings settings) {
+        super(settings);
+        this.block = block;
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.UP));
+    }
 
-	@Override
-	public ActionResult onUse(BlockState blockState_1, World world_1, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
-		if (block.information.action.equals("explode")) {
-			ItemStack itemStack_1 = playerEntity_1.getStackInHand(hand_1);
-			Item item_1 = itemStack_1.getItem();
-			if (item_1 != Items.FLINT_AND_STEEL && item_1 != Items.FIRE_CHARGE) {
-				return super.onUse(blockState_1, world_1, blockPos_1, playerEntity_1, hand_1, blockHitResult_1);
-			} else {
-				primeTnt(world_1, blockPos_1);
-				world_1.setBlockState(blockPos_1, Blocks.AIR.getDefaultState(), 11);
-				if (item_1 == Items.FLINT_AND_STEEL) {
-					itemStack_1.damage(1, playerEntity_1, playerEntity -> playerEntity.sendToolBreakStatus(hand_1));
-				} else {
-					itemStack_1.decrement(1);
-				}
+    @Override
+    public ActionResult onUse(BlockState blockState_1, World world_1, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
+        if (block.information.action.equals("explode")) {
+            ItemStack itemStack_1 = playerEntity_1.getStackInHand(hand_1);
+            Item item_1 = itemStack_1.getItem();
+            if (item_1 != Items.FLINT_AND_STEEL && item_1 != Items.FIRE_CHARGE) {
+                return super.onUse(blockState_1, world_1, blockPos_1, playerEntity_1, hand_1, blockHitResult_1);
+            } else {
+                primeTnt(world_1, blockPos_1);
+                world_1.setBlockState(blockPos_1, Blocks.AIR.getDefaultState(), 11);
+                if (item_1 == Items.FLINT_AND_STEEL) {
+                    itemStack_1.damage(1, playerEntity_1, playerEntity -> playerEntity.sendToolBreakStatus(hand_1));
+                } else {
+                    itemStack_1.decrement(1);
+                }
 
-				return ActionResult.SUCCESS;
-			}
-		}
-		return ActionResult.FAIL;
-	}
+                return ActionResult.SUCCESS;
+            }
+        }
+        return ActionResult.FAIL;
+    }
 
-	@Override
-	public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
-		if (block.display != null && block.display.lore.length != 0) {
-			for (TooltipInformation tooltipInformation : block.display.lore) {
-				tooltip.add(tooltipInformation.getTextType("tooltip"));
-			}
-		}
-	}
+    @Override
+    public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
+        if (block.display != null && block.display.lore.length != 0) {
+            for (TooltipInformation tooltipInformation : block.display.lore) {
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
+            }
+        }
+    }
 
-	public BlockState getPlacementState(ItemPlacementContext ctx) {
-		return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
-	}
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
+    }
 
-	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(FACING);
-	}
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
 
 }

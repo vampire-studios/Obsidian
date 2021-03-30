@@ -5,10 +5,10 @@ import net.minecraft.resource.ResourcePack;
 
 public interface IAddonPack {
 
-	ObsidianAddonInfo getConfigPackInfo();
+    ObsidianAddonInfo getConfigPackInfo();
 
-	String getDisplayNameObsidian();
+    String getDisplayNameObsidian();
 
-	ResourcePack getVirtualResourcePack();
+    ResourcePack getVirtualResourcePack();
 
 }

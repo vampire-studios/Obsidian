@@ -5,13 +5,13 @@ import net.minecraft.text.TranslatableText;
 
 public class ConfigAddonsListScreen extends Screen {
 
-	public ConfigAddonsListScreen(Screen previousGui) {
-		super(new TranslatableText("config_packs.title"));
-	}
+    public ConfigAddonsListScreen(Screen previousGui) {
+        super(new TranslatableText("config_packs.title"));
+    }
 
-	@Override
-	protected void init() {
-		super.init();
-	}
+    @Override
+    protected void init() {
+        super.init();
+    }
 
 }

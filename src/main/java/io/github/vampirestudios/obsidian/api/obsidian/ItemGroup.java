@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 
 public class ItemGroup {
 
-	public NameInformation name;
-	public Identifier icon;
+    public NameInformation name;
+    public Identifier icon;
 
 }

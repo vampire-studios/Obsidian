@@ -15,21 +15,21 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Enchantments implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
-		try {
-			if (enchantment == null) return;
-			Registry.register(Registry.ENCHANTMENT, enchantment.name.id, new EnchantmentImpl(enchantment));
-			register(ENCHANTMENTS, "enchantment", enchantment.name.id.getPath(), enchantment);
-		} catch (Exception e) {
-			failedRegistering("enchantment", enchantment.name.id.getPath(), e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
+        try {
+            if (enchantment == null) return;
+            Registry.register(Registry.ENCHANTMENT, enchantment.name.id, new EnchantmentImpl(enchantment));
+            register(ENCHANTMENTS, "enchantment", enchantment.name.id.getPath(), enchantment);
+        } catch (Exception e) {
+            failedRegistering("enchantment", enchantment.name.id.getPath(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "enchantments";
-	}
+    @Override
+    public String getType() {
+        return "enchantments";
+    }
 }

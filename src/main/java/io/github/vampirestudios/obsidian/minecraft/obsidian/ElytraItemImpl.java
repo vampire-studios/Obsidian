@@ -5,8 +5,8 @@ import net.minecraft.item.ElytraItem;
 
 public class ElytraItemImpl extends ElytraItem implements FabricElytraExtensions {
 
-	public ElytraItemImpl(Settings settings) {
-		super(settings);
-	}
+    public ElytraItemImpl(Settings settings) {
+        super(settings);
+    }
 
 }

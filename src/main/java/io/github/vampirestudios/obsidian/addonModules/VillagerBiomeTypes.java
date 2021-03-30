@@ -18,25 +18,25 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class VillagerBiomeTypes implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		VillagerBiomeType villagerBiomeType = Obsidian.GSON.fromJson(new FileReader(file), VillagerBiomeType.class);
-		try {
-			if (villagerBiomeType == null) return;
-			VillagerType villagerType = VillagerTypeHelper.register(villagerBiomeType.name.id);
-			villagerBiomeType.getBiomes().forEach(biome -> {
-				RegistryKey<Biome> registryKey = BuiltinRegistries.BIOME.getKey(biome).get();
-				VillagerTypeHelper.addVillagerTypeToBiome(registryKey, villagerType);
-			});
-			register(VILLAGER_BIOME_TYPES, "villager_biome_type", villagerBiomeType.name.id.toString(), villagerBiomeType);
-		} catch (Exception e) {
-			failedRegistering("villager_biome_type", villagerBiomeType.name.id.toString(), e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        VillagerBiomeType villagerBiomeType = Obsidian.GSON.fromJson(new FileReader(file), VillagerBiomeType.class);
+        try {
+            if (villagerBiomeType == null) return;
+            VillagerType villagerType = VillagerTypeHelper.register(villagerBiomeType.name.id);
+            villagerBiomeType.getBiomes().forEach(biome -> {
+                RegistryKey<Biome> registryKey = BuiltinRegistries.BIOME.getKey(biome).get();
+                VillagerTypeHelper.addVillagerTypeToBiome(registryKey, villagerType);
+            });
+            register(VILLAGER_BIOME_TYPES, "villager_biome_type", villagerBiomeType.name.id.toString(), villagerBiomeType);
+        } catch (Exception e) {
+            failedRegistering("villager_biome_type", villagerBiomeType.name.id.toString(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "villagers/biome_types";
-	}
+    @Override
+    public String getType() {
+        return "villagers/biome_types";
+    }
 }

@@ -8,12 +8,12 @@ import java.util.List;
 
 public class AgeableComponent extends Component {
 
-	@SerializedName("drop_items")
-	public List<Identifier> dropItems;
-	public float duration;
-	@SerializedName("feed_items")
-	public List<Identifier> feedItems;
-	@SerializedName("grow_up")
-	public String growUp;
+    @SerializedName("drop_items")
+    public List<Identifier> dropItems;
+    public float duration;
+    @SerializedName("feed_items")
+    public List<Identifier> feedItems;
+    @SerializedName("grow_up")
+    public String growUp;
 
 }

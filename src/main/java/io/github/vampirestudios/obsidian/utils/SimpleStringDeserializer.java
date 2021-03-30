@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface SimpleStringDeserializer<T> extends Function<String, T>, JsonDeserializer<T> {
-	default T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-		return this.apply(json.getAsString());
-	}
+    default T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        return this.apply(json.getAsString());
+    }
 }

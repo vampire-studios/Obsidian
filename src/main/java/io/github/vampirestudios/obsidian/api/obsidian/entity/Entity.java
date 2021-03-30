@@ -7,12 +7,12 @@ import java.util.Map;
 
 public class Entity {
 
-	public Information information;
-	public transient Map<String, Component> components = new HashMap<>();
-	public List<ComponentTwo> components_two = new ArrayList<>();
-	public Map<String, ComponentGroup> component_groups = new HashMap<>();
-	public Map<String, Event> events;
+    public Information information;
+    public transient Map<String, Component> components = new HashMap<>();
+    public List<ComponentTwo> components_two = new ArrayList<>();
+    public Map<String, ComponentGroup> component_groups = new HashMap<>();
+    public Map<String, Event> events;
 
-	public EntityComponents entity_components;
+    public EntityComponents entity_components;
 
 }

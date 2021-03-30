@@ -13,30 +13,30 @@ import java.util.List;
 
 public class MeleeWeaponImpl extends SwordItem {
 
-	public Item item;
+    public Item item;
 
-	public MeleeWeaponImpl(Item item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
-		super(material, attackDamage, attackSpeed, settings);
-		this.item = item;
-	}
+    public MeleeWeaponImpl(Item item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
+        super(material, attackDamage, attackSpeed, settings);
+        this.item = item;
+    }
 
-	@Override
-	public boolean hasGlint(ItemStack stack) {
-		return item.information.has_glint;
-	}
+    @Override
+    public boolean hasGlint(ItemStack stack) {
+        return item.information.has_glint;
+    }
 
-	@Override
-	public Text getName() {
-		return item.information.name.getName("item");
-	}
+    @Override
+    public Text getName() {
+        return item.information.name.getName("item");
+    }
 
-	@Override
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-		if (item.display != null && item.display.lore.length != 0) {
-			for (TooltipInformation tooltipInformation : item.display.lore) {
-				tooltip.add(tooltipInformation.getTextType("tooltip"));
-			}
-		}
-	}
+    @Override
+    public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+        if (item.display != null && item.display.lore.length != 0) {
+            for (TooltipInformation tooltipInformation : item.display.lore) {
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
+            }
+        }
+    }
 
 }

@@ -7,31 +7,31 @@ import net.minecraft.client.util.InputUtil;
 
 public class Keybinding {
 
-	public String translationKey;
-	public String categoryTranslationKey;
-	public String type;
-	public String keyCode;
+    public String translationKey;
+    public String categoryTranslationKey;
+    public String type;
+    public String keyCode;
 
-	public InputUtil.Type getType() {
-		return parseInputType(type);
-	}
+    @Environment(EnvType.CLIENT)
+    public static InputUtil.Type parseInputType(String string) {
+        InputUtil.Type t;
+        try {
+            if (string == null) {
+                return InputUtil.Type.KEYSYM;
+            }
+            t = InputUtil.Type.valueOf(string);
+        } catch (IllegalArgumentException ex) {
+            t = InputUtil.Type.KEYSYM;
+        }
+        return t;
+    }
 
-	public int getKeyCode() {
-		return ConstantUtil.getKey(keyCode);
-	}
+    public InputUtil.Type getType() {
+        return parseInputType(type);
+    }
 
-	@Environment(EnvType.CLIENT)
-	public static InputUtil.Type parseInputType(String string) {
-		InputUtil.Type t;
-		try {
-			if (string == null) {
-				return InputUtil.Type.KEYSYM;
-			}
-			t = InputUtil.Type.valueOf(string);
-		} catch (IllegalArgumentException ex) {
-			t = InputUtil.Type.KEYSYM;
-		}
-		return t;
-	}
+    public int getKeyCode() {
+        return ConstantUtil.getKey(keyCode);
+    }
 
 }

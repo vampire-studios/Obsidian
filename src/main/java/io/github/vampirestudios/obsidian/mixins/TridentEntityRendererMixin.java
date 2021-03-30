@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(TridentEntityRenderer.class)
 public class TridentEntityRendererMixin {
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/TridentEntityRenderer;getTexture(Lnet/minecraft/entity/projectile/TridentEntity;)Lnet/minecraft/util/Identifier;"))
-	public Identifier ob_getTextureMixin(TridentEntityRenderer renderer, TridentEntity entity) {
-		Item tridentItem = ((TridentEntityAccessor) entity).getTridentStack().getItem();
-		return tridentItem instanceof TridentInterface ? ((TridentInterface) tridentItem).getEntityTexture() : TridentEntityRenderer.TEXTURE;
-	}
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/TridentEntityRenderer;getTexture(Lnet/minecraft/entity/projectile/TridentEntity;)Lnet/minecraft/util/Identifier;"))
+    public Identifier ob_getTextureMixin(TridentEntityRenderer renderer, TridentEntity entity) {
+        Item tridentItem = ((TridentEntityAccessor) entity).getTridentStack().getItem();
+        return tridentItem instanceof TridentInterface ? ((TridentInterface) tridentItem).getEntityTexture() : TridentEntityRenderer.TEXTURE;
+    }
 }

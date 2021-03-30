@@ -18,27 +18,27 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class VillagerProfessions implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		VillagerProfession villagerProfession = Obsidian.GSON.fromJson(new FileReader(file), VillagerProfession.class);
-		try {
-			if (villagerProfession == null) return;
-			PointOfInterestType pointOfInterestType = PointOfInterestHelper.register(villagerProfession.poi.id, villagerProfession.poi.ticket_count, villagerProfession.poi.search_distance, villagerProfession.poi.getBlocks().toArray(new Block[0]));
-			VillagerProfessionBuilder.create()
-					.id(villagerProfession.name.id)
-					.harvestableItems(villagerProfession.getHarvestableItems())
-					.workstation(pointOfInterestType)
-					.workSound(Registry.SOUND_EVENT.get(villagerProfession.work_sound))
-					.build();
-			register(VILLAGER_PROFESSIONS, "villager_profession", villagerProfession.name.id.toString(), villagerProfession);
-		} catch (Exception e) {
-			failedRegistering("villager_profession", villagerProfession.name.id.toString(), e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        VillagerProfession villagerProfession = Obsidian.GSON.fromJson(new FileReader(file), VillagerProfession.class);
+        try {
+            if (villagerProfession == null) return;
+            PointOfInterestType pointOfInterestType = PointOfInterestHelper.register(villagerProfession.poi.id, villagerProfession.poi.ticket_count, villagerProfession.poi.search_distance, villagerProfession.poi.getBlocks().toArray(new Block[0]));
+            VillagerProfessionBuilder.create()
+                    .id(villagerProfession.name.id)
+                    .harvestableItems(villagerProfession.getHarvestableItems())
+                    .workstation(pointOfInterestType)
+                    .workSound(Registry.SOUND_EVENT.get(villagerProfession.work_sound))
+                    .build();
+            register(VILLAGER_PROFESSIONS, "villager_profession", villagerProfession.name.id.toString(), villagerProfession);
+        } catch (Exception e) {
+            failedRegistering("villager_profession", villagerProfession.name.id.toString(), e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "villagers/professions";
-	}
+    @Override
+    public String getType() {
+        return "villagers/professions";
+    }
 }

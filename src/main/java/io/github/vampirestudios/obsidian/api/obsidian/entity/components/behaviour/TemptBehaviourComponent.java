@@ -6,9 +6,9 @@ import java.util.List;
 
 public class TemptBehaviourComponent extends Component {
 
-	public int priority;
-	public float speed_multiplier;
-	public List<String> items;
-	public boolean can_be_scared = false;
+    public int priority;
+    public float speed_multiplier;
+    public List<String> items;
+    public boolean can_be_scared = false;
 
 }

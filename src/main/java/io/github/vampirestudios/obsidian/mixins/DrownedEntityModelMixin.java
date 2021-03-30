@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(DrownedEntityModel.class)
 public class DrownedEntityModelMixin {
-	@Redirect(method = "animateModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
-	public boolean ob_getItem(ItemStack itemStack, Item item) {
-		return itemStack.getItem() instanceof TridentInterface;
-	}
+    @Redirect(method = "animateModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
+    public boolean ob_getItem(ItemStack itemStack, Item item) {
+        return itemStack.getItem() instanceof TridentInterface;
+    }
 }

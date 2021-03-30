@@ -13,33 +13,33 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 public class HorizontalFacingTallFlowerBlockImpl extends TallPlantBlock implements Fertilizable {
-	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 
-	public HorizontalFacingTallFlowerBlockImpl(AbstractBlock.Settings settings) {
-		super(settings);
-	}
+    public HorizontalFacingTallFlowerBlockImpl(AbstractBlock.Settings settings) {
+        super(settings);
+    }
 
-	public boolean canReplace(BlockState state, ItemPlacementContext context) {
-		return false;
-	}
+    public boolean canReplace(BlockState state, ItemPlacementContext context) {
+        return false;
+    }
 
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
-	}
+    public BlockState getPlacementState(ItemPlacementContext context) {
+        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
+    }
 
-	protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
-		builder.add(FACING);
-	}
+    protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
+        builder.add(FACING);
+    }
 
-	public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
-		return true;
-	}
+    public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
+        return true;
+    }
 
-	public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
-		return true;
-	}
+    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
+        return true;
+    }
 
-	public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-		dropStack(world, pos, new ItemStack(this));
-	}
+    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
+        dropStack(world, pos, new ItemStack(this));
+    }
 }

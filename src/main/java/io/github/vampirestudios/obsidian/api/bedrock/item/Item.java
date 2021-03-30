@@ -5,6 +5,6 @@ import io.github.vampirestudios.obsidian.api.bedrock.Description;
 
 public class Item extends BaseInformation {
 
-	public Description description;
+    public Description description;
 
 }

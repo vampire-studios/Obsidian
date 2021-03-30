@@ -9,15 +9,15 @@ import java.util.List;
 
 public class PointOfInterest {
 
-	public Identifier id;
-	public int ticket_count;
-	public int search_distance;
-	public List<Identifier> blocks;
+    public Identifier id;
+    public int ticket_count;
+    public int search_distance;
+    public List<Identifier> blocks;
 
-	public List<Block> getBlocks() {
-		List<Block> blocks2 = new ArrayList<>();
-		blocks.forEach(identifier -> blocks2.add(Registry.BLOCK.get(identifier)));
-		return blocks2;
-	}
+    public List<Block> getBlocks() {
+        List<Block> blocks2 = new ArrayList<>();
+        blocks.forEach(identifier -> blocks2.add(Registry.BLOCK.get(identifier)));
+        return blocks2;
+    }
 
 }

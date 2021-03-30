@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class TargetState {
 
-	public Identifier block;
-	public Map<String, String> properties;
+    public Identifier block;
+    public Map<String, String> properties;
 
 }

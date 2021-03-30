@@ -16,28 +16,28 @@ import java.io.FileReader;
 import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class CauldronTypes implements AddonModule {
-	@Override
-	public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-		File file = addon.getFile();
-		CauldronType cauldronType = Obsidian.GSON.fromJson(new FileReader(file), CauldronType.class);
-		try {
-			if (cauldronType == null) return;
-			CauldronBehavior cauldronBehavior = (state, world, pos, player, hand, stack) -> {
-				BlockState blockState = getState(Registry.BLOCK.get(cauldronType.blockstate.block), cauldronType.blockstate.properties);
-				return CauldronBehavior.fillCauldron(world, pos, player, hand, stack, blockState, Registry.SOUND_EVENT.get(cauldronType.sound_event));
-			};
-			CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
-			CauldronBehavior.WATER_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
-			CauldronBehavior.LAVA_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
-			CauldronBehavior.POWDER_SNOW_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
-			register(CAULDRON_TYPES, "cauldron_type", cauldronType.name, cauldronType);
-		} catch (Exception e) {
-			failedRegistering("cauldron_types", cauldronType.name, e);
-		}
-	}
+    @Override
+    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
+        File file = addon.getFile();
+        CauldronType cauldronType = Obsidian.GSON.fromJson(new FileReader(file), CauldronType.class);
+        try {
+            if (cauldronType == null) return;
+            CauldronBehavior cauldronBehavior = (state, world, pos, player, hand, stack) -> {
+                BlockState blockState = getState(Registry.BLOCK.get(cauldronType.blockstate.block), cauldronType.blockstate.properties);
+                return CauldronBehavior.fillCauldron(world, pos, player, hand, stack, blockState, Registry.SOUND_EVENT.get(cauldronType.sound_event));
+            };
+            CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+            CauldronBehavior.WATER_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+            CauldronBehavior.LAVA_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+            CauldronBehavior.POWDER_SNOW_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
+            register(CAULDRON_TYPES, "cauldron_type", cauldronType.name, cauldronType);
+        } catch (Exception e) {
+            failedRegistering("cauldron_types", cauldronType.name, e);
+        }
+    }
 
-	@Override
-	public String getType() {
-		return "cauldron_types";
-	}
+    @Override
+    public String getType() {
+        return "cauldron_types";
+    }
 }

@@ -12,41 +12,41 @@ import java.util.Map;
 
 public class SpecialText {
 
-	public String text;
-	@SerializedName("type")
-	public String textType;
-	public Map<String, String> translated;
-	public String color;
-	public String[] formatting = new String[0];
+    public String text;
+    @SerializedName("type")
+    public String textType;
+    public Map<String, String> translated;
+    public String color;
+    public String[] formatting = new String[0];
 
-	public Text getName(Identifier id, String type) {
-		String color1 = color.replace("#", "").replace("0x", "");
-		if (!text.isEmpty()) {
-			switch (textType) {
-				case "literal":
-					LiteralText literalText = new LiteralText(text);
-					for (String formatting1 : formatting) {
-						literalText = (LiteralText) literalText.formatted(Formatting.byName(formatting1));
-					}
-					literalText = (LiteralText) literalText.setStyle(literalText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
-					return literalText;
-				default:
-				case "translatable":
-					TranslatableText translatableText = new TranslatableText(text);
-					for (String formatting1 : formatting) {
-						translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
-					}
-					translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
-					return translatableText;
-			}
-		} else {
-			TranslatableText translatableText = new TranslatableText(String.format(type + ".%s.%s", id.getNamespace(), id.getPath()));
-			for (String formatting1 : formatting) {
-				translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
-			}
-			translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
-			return translatableText;
-		}
-	}
+    public Text getName(Identifier id, String type) {
+        String color1 = color.replace("#", "").replace("0x", "");
+        if (!text.isEmpty()) {
+            switch (textType) {
+                case "literal":
+                    LiteralText literalText = new LiteralText(text);
+                    for (String formatting1 : formatting) {
+                        literalText = (LiteralText) literalText.formatted(Formatting.byName(formatting1));
+                    }
+                    literalText = (LiteralText) literalText.setStyle(literalText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
+                    return literalText;
+                default:
+                case "translatable":
+                    TranslatableText translatableText = new TranslatableText(text);
+                    for (String formatting1 : formatting) {
+                        translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
+                    }
+                    translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
+                    return translatableText;
+            }
+        } else {
+            TranslatableText translatableText = new TranslatableText(String.format(type + ".%s.%s", id.getNamespace(), id.getPath()));
+            for (String formatting1 : formatting) {
+                translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
+            }
+            translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(new TextColor(Integer.parseInt(color1, 16))));
+            return translatableText;
+        }
+    }
 
 }

@@ -13,25 +13,25 @@ import java.util.List;
 
 public class ArmorItemImpl extends ArmorItem {
 
-	public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
+    public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
 
-	public ArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Settings settings) {
-		super(material, EquipmentSlot.byName(item.armorSlot), settings);
-		this.item = item;
-	}
+    public ArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Settings settings) {
+        super(material, EquipmentSlot.byName(item.armorSlot), settings);
+        this.item = item;
+    }
 
-	@Override
-	public boolean hasGlint(ItemStack stack) {
-		return item.information.has_glint;
-	}
+    @Override
+    public boolean hasGlint(ItemStack stack) {
+        return item.information.has_glint;
+    }
 
-	@Override
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-		if (item.display != null && item.display.lore.length != 0) {
-			for (TooltipInformation tooltipInformation : item.display.lore) {
-				tooltip.add(tooltipInformation.getTextType("tooltip"));
-			}
-		}
-	}
+    @Override
+    public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+        if (item.display != null && item.display.lore.length != 0) {
+            for (TooltipInformation tooltipInformation : item.display.lore) {
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
+            }
+        }
+    }
 
 }

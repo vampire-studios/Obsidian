@@ -26,10 +26,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Item.class)
 public class ItemMixin {
-	@Inject(method = "isUsedOnRelease", at = @At("HEAD"), cancellable = true)
-	public void ob_isUsedOnRelease(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
-		if (itemStack.getItem() instanceof FabricCrossbowExtensions) {
-			cir.setReturnValue(true);
-		}
-	}
+    @Inject(method = "isUsedOnRelease", at = @At("HEAD"), cancellable = true)
+    public void ob_isUsedOnRelease(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
+        if (itemStack.getItem() instanceof FabricCrossbowExtensions) {
+            cir.setReturnValue(true);
+        }
+    }
 }

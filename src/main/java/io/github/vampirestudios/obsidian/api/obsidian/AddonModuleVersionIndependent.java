@@ -7,8 +7,8 @@ import java.io.FileNotFoundException;
 
 public interface AddonModuleVersionIndependent {
 
-	void init(File file, ModIdAndAddonPath id, String version) throws FileNotFoundException;
+    void init(File file, ModIdAndAddonPath id, String version) throws FileNotFoundException;
 
-	String getType();
+    String getType();
 
 }

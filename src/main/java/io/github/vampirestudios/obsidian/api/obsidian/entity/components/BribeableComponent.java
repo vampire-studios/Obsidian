@@ -7,7 +7,7 @@ import java.util.List;
 
 public class BribeableComponent extends Component {
 
-	public double bribe_cooldown;
-	public List<Identifier> bribe_items;
+    public double bribe_cooldown;
+    public List<Identifier> bribe_items;
 
 }

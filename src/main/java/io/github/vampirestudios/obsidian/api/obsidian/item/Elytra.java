@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 
 public class Elytra extends Item {
 
-	public Identifier texture;
-	public boolean shouldRenderCapeTexture = false;
+    public Identifier texture;
+    public boolean shouldRenderCapeTexture = false;
 
 }

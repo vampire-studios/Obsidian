@@ -7,6 +7,6 @@ import java.util.List;
 
 public class BreakBlocksComponent extends Component {
 
-	public List<Identifier> breakable_blocks;
+    public List<Identifier> breakable_blocks;
 
 }

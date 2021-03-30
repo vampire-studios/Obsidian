@@ -9,11 +9,11 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 
 public class SpecialBlock extends Block {
 
-	public String type;
-	public BlockInformation information;
-	public DisplayInformation display;
-	public Functions functions;
-	public OreInformation ore_information;
-	public FoodInformation food_information;
+    public String type;
+    public BlockInformation information;
+    public DisplayInformation display;
+    public Functions functions;
+    public OreInformation ore_information;
+    public FoodInformation food_information;
 
 }

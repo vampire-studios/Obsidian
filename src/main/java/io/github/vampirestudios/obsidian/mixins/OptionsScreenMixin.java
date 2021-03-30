@@ -21,21 +21,21 @@ import java.util.Objects;
 
 @Mixin(OptionsScreen.class)
 public class OptionsScreenMixin extends Screen {
-	protected OptionsScreenMixin(Text title) {
-		super(title);
-	}
+    protected OptionsScreenMixin(Text title) {
+        super(title);
+    }
 
-	@Inject(method = "init", at = @At("RETURN"))
-	protected void init(CallbackInfo ci) {
-		this.addButton(new ButtonWidget(this.width / 2 - 100, this.height / 6 + 140, 200, 20, new LiteralText("Obsidian Packs"), (buttonWidget) -> {
-			this.client.openScreen(new PackScreen(this, new ResourcePackManager(ResourceType.CLIENT_RESOURCES, new FileResourcePackProvider(ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, text -> new LiteralText("Addon made by Obsidian"))), this::idk, ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, new TranslatableText("addonPacks.title")));
-		}));
-	}
+    @Inject(method = "init", at = @At("RETURN"))
+    protected void init(CallbackInfo ci) {
+        this.addButton(new ButtonWidget(this.width / 2 - 100, this.height / 6 + 140, 200, 20, new LiteralText("Obsidian Packs"), (buttonWidget) -> {
+            this.client.openScreen(new PackScreen(this, new ResourcePackManager(ResourceType.CLIENT_RESOURCES, new FileResourcePackProvider(ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, text -> new LiteralText("Addon made by Obsidian"))), this::idk, ConfigHelper.OBSIDIAN_ADDON_DIRECTORY, new TranslatableText("addonPacks.title")));
+        }));
+    }
 
-	private void idk(ResourcePackManager resourcePackManager) {
-		for (File file : Objects.requireNonNull(ConfigHelper.OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
-			ConfigHelper.register(file, "addon.info.pack");
-		}
-	}
+    private void idk(ResourcePackManager resourcePackManager) {
+        for (File file : Objects.requireNonNull(ConfigHelper.OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
+            ConfigHelper.register(file, "addon.info.pack");
+        }
+    }
 
 }

@@ -10,13 +10,13 @@ import java.util.List;
 
 public class VillagerBiomeType {
 
-	public NameInformation name;
-	public List<Identifier> biomes;
+    public NameInformation name;
+    public List<Identifier> biomes;
 
-	public List<Biome> getBiomes() {
-		List<Biome> biomes2 = new ArrayList<>();
-		biomes.forEach(identifier -> biomes2.add(BuiltinRegistries.BIOME.get(identifier)));
-		return biomes2;
-	}
+    public List<Biome> getBiomes() {
+        List<Biome> biomes2 = new ArrayList<>();
+        biomes.forEach(identifier -> biomes2.add(BuiltinRegistries.BIOME.get(identifier)));
+        return biomes2;
+    }
 
 }
