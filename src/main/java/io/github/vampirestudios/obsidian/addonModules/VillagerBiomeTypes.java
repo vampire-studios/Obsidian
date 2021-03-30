@@ -19,8 +19,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class VillagerBiomeTypes implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         VillagerBiomeType villagerBiomeType = Obsidian.GSON.fromJson(new FileReader(file), VillagerBiomeType.class);
         try {
             if (villagerBiomeType == null) return;

@@ -19,8 +19,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class RangedWeapons implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
         try {
             if (rangedWeapon == null) return;

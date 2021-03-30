@@ -7,6 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
+import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -37,8 +38,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 public class Ores implements AddonModule {
 
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
         try {
             if (block == null) return;
@@ -99,6 +99,11 @@ public class Ores implements AddonModule {
                         });
                     })
             );
+
+            if (!addon.getConfigPackInfo().hasData) {
+                new BlockInitThread(block);
+            }
+
             register(ORES, "ore", block.information.name.id.toString(), block);
         } catch (Exception e) {
             failedRegistering("ore", block.information.name.id.toString(), e);

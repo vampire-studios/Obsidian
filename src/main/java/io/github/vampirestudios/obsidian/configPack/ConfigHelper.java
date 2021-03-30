@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import com.google.common.base.Joiner;
+import io.github.vampirestudios.obsidian.ModConfig;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModuleVersionIndependent;
@@ -37,7 +38,7 @@ import java.util.zip.ZipFile;
 public class ConfigHelper {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
-    public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), Obsidian.config.addon_folder);
+    public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), ModConfig.addon_folder.getValue());
     public static final CopyOnWriteArrayList<IAddonPack> OBSIDIAN_ADDONS = new CopyOnWriteArrayList<>();
     public static final int PACK_VERSION = 2;
     public static RegistryHelper REGISTRY_HELPER;
@@ -103,6 +104,7 @@ public class ConfigHelper {
         Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.size()));
 
         for (IAddonPack pack : OBSIDIAN_ADDONS) {
+            ObsidianAddon addon = (ObsidianAddon) pack;
             Obsidian.LOGGER.info(String.format(" - %s", pack.getConfigPackInfo().displayName));
 
             String modId = pack.getConfigPackInfo().namespace;
@@ -110,8 +112,7 @@ public class ConfigHelper {
             REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
             try {
-                Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
-                Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
+                Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(addon, new ModIdAndAddonPath(modId, path), addonModule));
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
@@ -146,12 +147,12 @@ public class ConfigHelper {
         return blockstate;
     }
 
-    private static void loadAddonModule(ModIdAndAddonPath id, AddonModule addonModule) {
+    private static void loadAddonModule(ObsidianAddon addon, ModIdAndAddonPath id, AddonModule addonModule) {
         if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
             for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {
                     try {
-                        addonModule.init(file, id);
+                        addonModule.init(addon, file, id);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

@@ -20,7 +20,7 @@ import net.fabricmc.fabric.impl.conditionalresource.NamespaceResourceManagerExte
 import net.minecraft.resource.NamespaceResourceManager;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceReloadMonitor;
+import net.minecraft.resource.ResourceReload;
 import net.minecraft.util.Unit;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,8 +40,8 @@ public abstract class ReloadableResourceManagerImplMixin {
 	@Final
 	private Map<String, NamespaceResourceManager> namespaceManagers;
 
-	@Inject(method = "beginMonitoredReload", at = @At("HEAD"))
-	private void beginMonitoredReload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> listeners, CallbackInfoReturnable<ResourceReloadMonitor> cir) {
+	@Inject(method = "reload", at = @At("HEAD"))
+	private void beginMonitoredReload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> listeners, CallbackInfoReturnable<ResourceReload> cir) {
 		for (NamespaceResourceManager manager : namespaceManagers.values()) {
 			((NamespaceResourceManagerExtensions) manager).fabric_indexFabricMeta();
 		}

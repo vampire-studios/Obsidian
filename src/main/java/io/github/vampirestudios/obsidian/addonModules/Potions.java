@@ -16,8 +16,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Potions implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         Potion potion = Obsidian.GSON.fromJson(new FileReader(file), Potion.class);
         try {
             if (potion == null) return;

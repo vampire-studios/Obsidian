@@ -19,8 +19,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class VillagerProfessions implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         VillagerProfession villagerProfession = Obsidian.GSON.fromJson(new FileReader(file), VillagerProfession.class);
         try {
             if (villagerProfession == null) return;

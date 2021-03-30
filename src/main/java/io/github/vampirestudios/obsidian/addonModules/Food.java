@@ -18,8 +18,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Food implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
         try {
             if (foodItem == null) return;

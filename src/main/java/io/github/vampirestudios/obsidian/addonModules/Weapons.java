@@ -18,8 +18,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Weapons implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
         try {
             if (weapon == null) return;

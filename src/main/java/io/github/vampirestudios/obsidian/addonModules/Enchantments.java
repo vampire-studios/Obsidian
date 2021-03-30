@@ -16,8 +16,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Enchantments implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
         try {
             if (enchantment == null) return;

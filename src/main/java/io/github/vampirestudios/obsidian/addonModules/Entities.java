@@ -32,8 +32,7 @@ import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
 
 public class Entities implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, ModIdAndAddonPath id) throws FileNotFoundException {
-        File file = addon.getFile();
+    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
         JsonObject entityJson = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
         Entity entity = Obsidian.GSON.fromJson(entityJson, Entity.class);
         try {

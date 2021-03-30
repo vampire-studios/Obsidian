@@ -193,7 +193,7 @@ public class BedrockAddonLoader {
             for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {
                     try {
-                        addonModule.init(file, id);
+                        addonModule.init(null, file, id);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

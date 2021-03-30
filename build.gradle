@@ -17,6 +17,7 @@ repositories {
     maven{ url="https://jitpack.io" }
     maven{ url="http://server.bbkr.space/artifactory/libs-release/" }
     maven { url='https://repo.repsy.io/mvn/xxx_inaksis_xxx/inaksis' }
+    maven { url "https://hephaestus.dev/release" }
 }
 
 minecraft {
@@ -57,6 +58,8 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
         transitive = false
     }
+
+    modImplementation 'com.github.Haven-King:Conrad:0.1.0'
 
     // INclude GeckoLib for each module, uses experimental 1.17 snapshot fork.
     modImplementation 'software.bernie.geckolib:geckolib-fabric-1.17:3.0.20:dev'
