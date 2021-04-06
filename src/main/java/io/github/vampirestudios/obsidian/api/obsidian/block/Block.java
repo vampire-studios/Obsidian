@@ -20,6 +20,7 @@ public class Block {
     public CampfireProperties campfire_properties;
     public List<Identifier> can_plant_on;
     public Identifier particle_type;
+    public Growable growable;
 
     public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();

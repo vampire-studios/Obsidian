@@ -31,6 +31,7 @@ public class BlockInformation {
     public float light_absorption_value = 0.0F;
     public boolean translucent = false;
     public int cake_slices = 1;
+    public boolean has_item = true;
 
     public BlockSoundGroup getBlockSoundGroup() {
         switch (sound_group) {

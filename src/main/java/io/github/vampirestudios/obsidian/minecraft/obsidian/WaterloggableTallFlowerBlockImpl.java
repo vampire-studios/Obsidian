@@ -2,32 +2,35 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.fabricmc.yarn.constants.SetBlockStateFlags;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Fertilizable;
 import net.minecraft.block.TallPlantBlock;
+import net.minecraft.block.Waterloggable;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable {
+public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements Fertilizable, Waterloggable {
     public static IntProperty AGE;
+    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     private final Block block;
 
-    public TallFlowerBlockImpl(Block block, AbstractBlock.Settings settings) {
+    public WaterloggableTallFlowerBlockImpl(Block block, Settings settings) {
         super(settings);
         this.block = block;
-        if (block.growable != null) {
-            AGE = IntProperty.of("age", block.growable.min_age, block.growable.max_age);
-            this.setDefaultState(this.stateManager.getDefaultState().with(this.getAgeProperty(), 0));
-        }
+        AGE = IntProperty.of("age", block.growable.min_age, block.growable.max_age);
+        this.setDefaultState(this.stateManager.getDefaultState().with(this.getAgeProperty(), 0).with(WATERLOGGED, false));
     }
 
     public IntProperty getAgeProperty() {
@@ -50,6 +53,14 @@ public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable 
         dropStack(world, pos, new ItemStack(this));
     }
 
+    @Nullable
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        BlockPos blockPos = ctx.getBlockPos();
+        World world = ctx.getWorld();
+        boolean bl = world.getFluidState(blockPos).getFluid() == Fluids.WATER;
+        return blockPos.getY() < world.getTopY() - 1 && world.getBlockState(blockPos.up()).with(WATERLOGGED, bl).canReplace(ctx) ? super.getPlacementState(ctx) : null;
+    }
+
     public int getMaxAge() {
         return block.growable.max_age;
     }
@@ -67,10 +78,7 @@ public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable 
     }
 
     public boolean hasRandomTicks(BlockState state) {
-        if (block.growable != null) {
-            return !this.isMature(state);
-        }
-        return false;
+        return !this.isMature(state);
     }
 
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {

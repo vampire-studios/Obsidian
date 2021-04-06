@@ -24,9 +24,6 @@
     ],
     "client": [
       "io.github.vampirestudios.obsidian.client.ClientInit"
-    ],
-    "config": [
-      "io.github.vampirestudios.obsidian.ModConfig"
     ]
   },
   "mixins": [

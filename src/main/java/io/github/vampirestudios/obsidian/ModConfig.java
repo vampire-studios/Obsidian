@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian;
 
 import com.google.gson.JsonObject;
@@ -25,4 +26,4 @@ public class ModConfig extends Config<JsonObject> {
     public @NotNull SaveType getSaveType() {
         return SaveType.USER;
     }
-}
+}*/

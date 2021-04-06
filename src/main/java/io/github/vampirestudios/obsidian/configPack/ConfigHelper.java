@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import com.google.common.base.Joiner;
-import io.github.vampirestudios.obsidian.ModConfig;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModuleVersionIndependent;
@@ -38,7 +37,7 @@ import java.util.zip.ZipFile;
 public class ConfigHelper {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
-    public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), ModConfig.addon_folder.getValue());
+    public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), /*ModConfig.addon_folder.getValue()*/"obsidian_addons");
     public static final CopyOnWriteArrayList<IAddonPack> OBSIDIAN_ADDONS = new CopyOnWriteArrayList<>();
     public static final int PACK_VERSION = 2;
     public static RegistryHelper REGISTRY_HELPER;

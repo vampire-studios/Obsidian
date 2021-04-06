@@ -8,5 +8,8 @@ public class FoodPotionEffect {
     public float chance;
     public int duration;
     public int amplifier;
+    public boolean showParticles = true;
+    public boolean showIcon = true;
+    public boolean ambient = false;
 
 }

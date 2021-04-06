@@ -87,7 +87,7 @@ public class RegistryHelper {
 
     public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
         Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
-        Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, settings));
+        if (block2.information.has_item) Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, settings));
         return block;
     }
 
@@ -102,7 +102,6 @@ public class RegistryHelper {
         Registry.register(Registry.ITEM, new Identifier(this.modId, name), new TallBlockItem(block2, block, new Settings().group(ItemGroup.DECORATIONS)));
         return block;
     }
-
 
     public Block registerTallBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
         Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);

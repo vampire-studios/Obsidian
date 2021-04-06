@@ -26,5 +26,6 @@ public class AdditionalBlockInformation {
     public boolean plant = false;
     public boolean chains = false;
     public boolean cake_like = false;
+    public boolean waterloggable = false;
 
 }

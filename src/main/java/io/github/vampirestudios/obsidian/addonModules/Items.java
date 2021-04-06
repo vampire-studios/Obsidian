@@ -3,9 +3,11 @@ package io.github.vampirestudios.obsidian.addonModules;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +21,9 @@ public class Items implements AddonModule {
         io.github.vampirestudios.obsidian.api.obsidian.item.Item item = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
         try {
             if (item == null) return;
-            RegistryUtils.registerItem(new ItemImpl(item, new net.minecraft.item.Item.Settings().group(item.information.getItemGroup())
+            if (item.information.can_place_block) RegistryUtils.registerItem(new BlockItemImpl(item, Registry.BLOCK.get(item.information.placable_block), new net.minecraft.item.Item.Settings().group(item.information.getItemGroup())
+                    .maxCount(item.information.max_count)), item.information.name.id);
+            else RegistryUtils.registerItem(new ItemImpl(item, new net.minecraft.item.Item.Settings().group(item.information.getItemGroup())
                     .maxCount(item.information.max_count)), item.information.name.id);
             register(ITEMS, "item", item.information.name.id.toString(), item);
         } catch (Exception e) {

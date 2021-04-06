@@ -14,6 +14,7 @@ import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
+import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
@@ -38,10 +39,12 @@ public class Blocks implements AddonModule {
         try {
             if (block == null) return;
             FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-                    .strength(block.information.destroy_time, block.information.explosion_resistance).collidable(block.information.collidable)
                     .slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) -> block.information.is_emissive);
             if (block.information.randomTicks) {
                 blockSettings.ticksRandomly();
+            }
+            if (!block.information.collidable) {
+                blockSettings.noCollision();
             }
             if (block.information.translucent) {
                 blockSettings.nonOpaque();
@@ -79,6 +82,12 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new ChainBlock(blockSettings), block, block.information.name.id.getPath(), settings);
                     } else if (block.additional_information.cake_like) {
                         REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block, block.information.name.id.getPath(), settings);
+                    } else if (block.additional_information.plant) {
+                        REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                    } else if (block.additional_information.waterloggable) {
+                        REGISTRY_HELPER.registerBlock(new WaterloggableBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                    } else if (block.additional_information.waterloggable & block.additional_information.plant) {
+                        REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                     } else {
                         REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                     }
@@ -189,10 +198,16 @@ public class Blocks implements AddonModule {
 
                         break;
                     case PLANT:
-                        REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        if (block.additional_information != null) {
+                            if(block.additional_information.waterloggable) {
+                                REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                            }
+                        } else {
+                            REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                        }
                         break;
                     case HORIZONTAL_FACING_PLANT:
-                        REGISTRY_HELPER.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                         break;
                     case SAPLING:
 //						REGISTRY_HELPER.registerBlock(new SaplingBaseBlock(block, blockSettings), block.information.name.id.getPath());
@@ -219,7 +234,7 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case DOUBLE_PLANT:
-                        REGISTRY_HELPER.registerTallBlock(new TallFlowerBlockImpl(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerTallBlock(new TallFlowerBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                         break;
                     case HORIZONTAL_FACING_DOUBLE_PLANT:
                         REGISTRY_HELPER.registerTallBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
@@ -252,6 +267,14 @@ public class Blocks implements AddonModule {
                     if (block.additional_information.walls) {
                         REGISTRY_HELPER.registerBlock(new WallImpl(block), block,
                                 Utils.appendToPath(identifier, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+                    }
+                    if (block.additional_information.pressurePlate) {
+                        REGISTRY_HELPER.registerBlock(new PressurePlateBaseBlock(blockSettings, PressurePlateBlock.ActivationRule.EVERYTHING), block,
+                                Utils.appendToPath(identifier, "_pressure_plate").getPath(), ItemGroup.REDSTONE, settings);
+                    }
+                    if (block.additional_information.button) {
+                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, blockSettings), block,
+                                Utils.appendToPath(identifier, "_button").getPath(), ItemGroup.REDSTONE, settings);
                     }
                 } else {
                     if (block.additional_information.slab) {
