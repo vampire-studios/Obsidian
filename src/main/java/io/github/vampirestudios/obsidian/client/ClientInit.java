@@ -12,8 +12,12 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientInit implements ClientModInitializer {
+
+    public static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
 
     @Override
     public void onInitializeClient() {
@@ -49,13 +53,19 @@ public class ClientInit implements ClientModInitializer {
                             new FoodInitThread(clientResourcePackBuilder, foodItem).run();
                     for (Enchantment enchantment : ConfigHelper.ENCHANTMENTS)
                         if (enchantment.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
-                            new EnchantmentInitThread(clientResourcePackBuilder, enchantment).run();
+                            new EnchantmentInitThread(enchantment).run();
                     for (ShieldItem shield : ConfigHelper.SHIELDS)
                         if (shield.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ShieldInitThread(clientResourcePackBuilder, shield).run();
                     for (Elytra elytra : ConfigHelper.ELYTRAS)
                         if (elytra.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ElytraInitThread(clientResourcePackBuilder, elytra).run();
+                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
+                        translations.forEach((unTranslated, translated) ->
+                            clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId), translationBuilder ->
+                                translationBuilder.entry(unTranslated, translated))
+                        )
+                    ));
                     if (FabricLoader.getInstance().isDevelopmentEnvironment()) new Thread(() -> {
                         try {
                             if (FabricLoader.getInstance().isDevelopmentEnvironment())

@@ -1,15 +1,15 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
+import com.google.common.collect.ImmutableMap;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.apache.commons.lang3.text.WordUtils;
 
 public class BlockInitThread implements Runnable {
 
@@ -27,24 +27,31 @@ public class BlockInitThread implements Runnable {
             net.minecraft.block.Block block1 = Registry.BLOCK.get(block.information.name.id);
             BlockRenderLayerMap.INSTANCE.putBlock(block1, block.information.translucent ? RenderLayer.getTranslucent() : RenderLayer.getCutoutMipped());
             if (block.information.name.translated != null) {
-                block.information.name.translated.forEach((languageId, name) -> {
-                    String blockName;
-                    if (name.contains("_")) {
-                        blockName = WordUtils.capitalizeFully(name.replace("_", " "));
-                    } else {
-                        blockName = name;
-                    }
-                    clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder ->
-                            translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()), blockName));
-                });
+                block.information.name.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                        block.information.name.id.getNamespace(),
+                        ImmutableMap.of(
+                                languageId,
+                                ImmutableMap.of(
+                                        String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath()),
+                                        name
+                                )
+                        )
+                ));
             }
             if (block.display != null) {
                 if (block.display.lore.length != 0) {
                     for (TooltipInformation lore : block.display.lore) {
                         if (lore.text.textType.equals("translatable")) {
-                            lore.text.translated.forEach((languageId, name) ->
-                                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                                            translationBuilder.entry(lore.text.text, name)));
+                            lore.text.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                                    block.information.name.id.getNamespace(),
+                                    ImmutableMap.of(
+                                            languageId,
+                                            ImmutableMap.of(
+                                                    lore.text.text,
+                                                    name
+                                            )
+                                    )
+                            ));
                         }
                     }
                 }
@@ -91,6 +98,23 @@ public class BlockInitThread implements Runnable {
                             clientResourcePackBuilder.addItemModel(block.information.name.id, modelBuilder ->
                                     modelBuilder.parent(Utils.prependToPath(block.information.name.id, "block/")));
                         } else {
+                            if(block.block_type != null) {
+                                if (block.block_type == Block.BlockType.LOG) {
+                                    clientResourcePackBuilder.addBlockState(block.information.name.id, blockStateBuilder -> {
+                                        blockStateBuilder.variant("axis=x", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/"))
+                                                .rotationX(90).rotationY(90));
+                                        blockStateBuilder.variant("axis=y", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/")));
+                                        blockStateBuilder.variant("axis=z", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/"))
+                                                .rotationX(90));
+                                    });
+                                    clientResourcePackBuilder.addBlockModel(block.information.name.id, modelBuilder -> {
+                                        modelBuilder.parent(block.display.model.parent);
+                                        block.display.model.textures.forEach(modelBuilder::texture);
+                                    });
+                                    clientResourcePackBuilder.addItemModel(block.information.name.id, modelBuilder ->
+                                            modelBuilder.parent(Utils.prependToPath(block.information.name.id, "block/")));
+                                }
+                            }
                             clientResourcePackBuilder.addBlockState(block.information.name.id, blockStateBuilder ->
                                     blockStateBuilder.variant("", variant -> variant.model(Utils.prependToPath(block.information.name.id, "block/"))));
                             clientResourcePackBuilder.addBlockModel(block.information.name.id, modelBuilder -> {
@@ -117,7 +141,7 @@ public class BlockInitThread implements Runnable {
                 if (block.additional_information.stairs) {
                     if (block.information.name.translated != null) {
                         block.information.name.translated.forEach((languageId, name) ->
-                                clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder ->
                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_stairs"),
                                                 name + " Stairs")));
                     }
@@ -125,7 +149,7 @@ public class BlockInitThread implements Runnable {
                 if (block.additional_information.fence) {
                     if (block.information.name.translated != null) {
                         block.information.name.translated.forEach((languageId, name) ->
-                                clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder ->
                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence"),
                                                 name + " Fence")));
                     }
@@ -133,7 +157,7 @@ public class BlockInitThread implements Runnable {
                 if (block.additional_information.fenceGate) {
                     if (block.information.name.translated != null) {
                         block.information.name.translated.forEach((languageId, name) ->
-                                clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder ->
                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_fence_gate"),
                                                 name + " Fence Gate")));
                     }
@@ -141,7 +165,7 @@ public class BlockInitThread implements Runnable {
                 if (block.additional_information.walls) {
                     if (block.information.name.translated != null) {
                         block.information.name.translated.forEach((languageId, name) ->
-                                clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
+                                clientResourcePackBuilder.addTranslations(new Identifier(block.information.name.id.getNamespace(), languageId), translationBuilder ->
                                         translationBuilder.entry(String.format("block.%s.%s", block.information.name.id.getNamespace(), block.information.name.id.getPath() + "_wall"),
                                                 name + " Wall")));
                     }

@@ -59,7 +59,7 @@ dependencies {
         transitive = false
     }
 
-    modImplementation 'com.github.Haven-King:Conrad:0.1.0'
+//    modImplementation 'com.github.Haven-King:Conrad:0.3.0'
 
     // INclude GeckoLib for each module, uses experimental 1.17 snapshot fork.
     modImplementation 'software.bernie.geckolib:geckolib-fabric-1.17:3.0.20:dev'

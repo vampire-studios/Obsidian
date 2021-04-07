@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
+import com.google.common.collect.ImmutableMap;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
-import net.minecraft.util.Identifier;
+import io.github.vampirestudios.obsidian.client.ClientInit;
 
 public class FoodInitThread implements Runnable {
 
@@ -19,9 +19,16 @@ public class FoodInitThread implements Runnable {
     @Override
     public void run() {
         if (foodItem.information.name.translated != null) {
-            foodItem.information.name.translated.forEach((languageId, name) ->
-                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                            translationBuilder.entry(String.format("item.%s.%s", foodItem.information.name.id.getNamespace(), foodItem.information.name.id.getPath()), name)));
+            foodItem.information.name.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                    foodItem.information.name.id.getNamespace(),
+                    ImmutableMap.of(
+                            languageId,
+                            ImmutableMap.of(
+                                    String.format("item.%s.%s", foodItem.information.name.id.getNamespace(), foodItem.information.name.id.getPath()),
+                                    name
+                            )
+                    )
+            ));
         }
         if (foodItem.display != null && foodItem.display.model != null) {
             clientResourcePackBuilder.addItemModel(foodItem.information.name.id, modelBuilder -> {
@@ -32,9 +39,16 @@ public class FoodInitThread implements Runnable {
         if (foodItem.display != null && foodItem.display.lore.length != 0) {
             for (TooltipInformation lore : foodItem.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) ->
-                            clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                                    translationBuilder.entry(lore.text.text, name)));
+                    lore.text.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                            foodItem.information.name.id.getNamespace(),
+                            ImmutableMap.of(
+                                    languageId,
+                                    ImmutableMap.of(
+                                            lore.text.text,
+                                            name
+                                    )
+                            )
+                    ));
                 }
             }
         }

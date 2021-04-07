@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
+import com.google.common.collect.ImmutableMap;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
-import net.minecraft.util.Identifier;
+import io.github.vampirestudios.obsidian.client.ClientInit;
 
 public class ArmorInitThread implements Runnable {
     private final ArmorItem armor;
@@ -18,10 +18,16 @@ public class ArmorInitThread implements Runnable {
     @Override
     public void run() {
         if (armor.information.name.translated != null)
-            armor.information.name.translated.forEach((languageId, name) -> clientResourcePackBuilder.addTranslations(
-                    new Identifier(Obsidian.MOD_ID, languageId), translationBuilder -> translationBuilder.entry(
-                            String.format("item.%s.%s", armor.information.name.id.getNamespace(),
-                                    armor.information.name.id.getPath()), name)));
+            armor.information.name.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                    armor.information.name.id.getNamespace(),
+                    ImmutableMap.of(
+                            languageId,
+                            ImmutableMap.of(
+                                    String.format("item.%s.%s", armor.information.name.id.getNamespace(), armor.information.name.id.getPath()),
+                                    name
+                            )
+                    )
+            ));
 
         if (armor.display != null && armor.display.model != null)
             clientResourcePackBuilder.addItemModel(armor.information.name.id, modelBuilder -> {
@@ -31,8 +37,16 @@ public class ArmorInitThread implements Runnable {
 
         if (armor.display != null && armor.display.lore.length != 0)
             for (TooltipInformation lore : armor.display.lore)
-                if (lore.text.textType.equals("translatable")) lore.text.translated.forEach((languageId, name) ->
-                        clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId),
-                                translationBuilder -> translationBuilder.entry(lore.text.text, name)));
+                if (lore.text.textType.equals("translatable"))
+                    lore.text.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                            armor.information.name.id.getNamespace(),
+                            ImmutableMap.of(
+                                    languageId,
+                                    ImmutableMap.of(
+                                            lore.text.text,
+                                            name
+                                    )
+                            )
+                    ));
     }
 }

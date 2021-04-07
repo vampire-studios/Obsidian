@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
+import com.google.common.collect.ImmutableMap;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ShieldItem;
-import net.minecraft.util.Identifier;
+import io.github.vampirestudios.obsidian.client.ClientInit;
 
 public class ShieldInitThread implements Runnable {
 
@@ -19,16 +19,30 @@ public class ShieldInitThread implements Runnable {
     @Override
     public void run() {
         if (shield.information.name.translated != null) {
-            shield.information.name.translated.forEach((languageId, name) ->
-                    clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                            translationBuilder.entry(String.format("enchantment.%s.%s", shield.information.name.id.getNamespace(), shield.information.name.id.getPath()), name)));
+            shield.information.name.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                    shield.information.name.id.getNamespace(),
+                    ImmutableMap.of(
+                            languageId,
+                            ImmutableMap.of(
+                                    String.format("item.%s.%s", shield.information.name.id.getNamespace(), shield.information.name.id.getPath()),
+                                    name
+                            )
+                    )
+            ));
         }
         if (shield.display != null && shield.display.lore.length != 0) {
             for (TooltipInformation lore : shield.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) ->
-                            clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, languageId), translationBuilder ->
-                                    translationBuilder.entry(lore.text.text, name)));
+                    lore.text.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
+                            shield.information.name.id.getNamespace(),
+                            ImmutableMap.of(
+                                    languageId,
+                                    ImmutableMap.of(
+                                            lore.text.text,
+                                            name
+                                    )
+                            )
+                    ));
                 }
             }
         }
