@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import net.fabricmc.yarn.constants.SetBlockStateFlags;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Fertilizable;
@@ -79,7 +78,7 @@ public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable 
             if (i < this.getMaxAge()) {
                 float f = 1.0F;
                 if (random.nextInt((int)(25.0F / f) + 1) == 0) {
-                    world.setBlockState(pos, this.withAge(i + 1), SetBlockStateFlags.NOTIFY_LISTENERS);
+                    world.setBlockState(pos, this.withAge(i + 1), 2);
                 }
             }
         }
@@ -92,8 +91,7 @@ public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable 
         if (i > j) {
             i = j;
         }
-
-        world.setBlockState(pos, this.withAge(i), SetBlockStateFlags.NOTIFY_LISTENERS);
+        world.setBlockState(pos, this.withAge(i), 2);
     }
 
     protected int getGrowthAmount(World world) {

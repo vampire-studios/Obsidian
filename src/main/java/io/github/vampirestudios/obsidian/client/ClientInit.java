@@ -26,6 +26,7 @@ public class ClientInit implements ClientModInitializer {
             Artifice.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
                 if (!iAddonPack.getConfigPackInfo().hasAssets) {
                     clientResourcePackBuilder.setDisplayName(name);
+                    clientResourcePackBuilder.shouldOverwrite();
 //				for (Entity entity : ConfigHelper.ENTITIES) if (entity.information.identifier.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new EntityInitThread(clientResourcePackBuilder, entity).run();
                     for (ItemGroup itemGroup : ConfigHelper.ITEM_GROUPS)
                         if (itemGroup.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
@@ -60,12 +61,15 @@ public class ClientInit implements ClientModInitializer {
                     for (Elytra elytra : ConfigHelper.ELYTRAS)
                         if (elytra.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ElytraInitThread(clientResourcePackBuilder, elytra).run();
-                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
-                        translations.forEach((unTranslated, translated) ->
-                            clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId), translationBuilder ->
-                                translationBuilder.entry(unTranslated, translated))
-                        )
-                    ));
+                    clientResourcePackBuilder.addTranslations(new Identifier(iAddonPack.getConfigPackInfo().namespace, "en_us"), translationBuilder ->
+                            translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
+                                    translations.forEach(translationBuilder::entry))));
+//                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
+//                        translations.forEach((unTranslated, translated) ->
+//                            clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId), translationBuilder ->
+//                                    translationBuilder.entry(unTranslated, translated))
+//                        )
+//                    ));
                     if (FabricLoader.getInstance().isDevelopmentEnvironment()) new Thread(() -> {
                         try {
                             if (FabricLoader.getInstance().isDevelopmentEnvironment())

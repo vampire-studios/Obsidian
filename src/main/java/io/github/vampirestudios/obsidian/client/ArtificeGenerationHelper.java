@@ -9,6 +9,8 @@ import net.minecraft.block.enums.StairShape;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
+import java.util.Map;
+
 public class ArtificeGenerationHelper {
 
     public static void generateBasicBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
@@ -55,7 +57,7 @@ public class ArtificeGenerationHelper {
         });
     }
 
-    public static void generateHorizonalFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
+    public static void generateHorizontalFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
         clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
             blockStateBuilder.variant("facing=north", variant ->
                     variant.model(Utils.prependToPath(name, "block/")));
@@ -134,6 +136,13 @@ public class ArtificeGenerationHelper {
         clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
             modelBuilder.parent(new Identifier("block/ladder"));
             modelBuilder.texture("texture", Utils.prependToPath(name, "block/"));
+        });
+    }
+
+    public static void generateBlockModel(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures) {
+        clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
+            modelBuilder.parent(parent);
+            textures.forEach(modelBuilder::texture);
         });
     }
 

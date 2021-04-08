@@ -197,8 +197,8 @@ public class BlockInformation {
                 return Material.BARRIER;
             case "minecraft:piston":
                 return Material.PISTON;
-            case "minecraft:unused_plant":
-                return Material.UNUSED_PLANT;
+            case "minecraft:moss_block":
+                return Material.MOSS_BLOCK;
             case "minecraft:gourd":
                 return Material.GOURD;
             case "minecraft:egg":

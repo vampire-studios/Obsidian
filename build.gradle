@@ -14,10 +14,11 @@ repositories {
     mavenCentral()
     mavenLocal()
     jcenter()
-    maven{ url="https://jitpack.io" }
-    maven{ url="http://server.bbkr.space/artifactory/libs-release/" }
+    maven { url="https://jitpack.io" }
+    maven { url="http://server.bbkr.space/artifactory/libs-release/" }
     maven { url='https://repo.repsy.io/mvn/xxx_inaksis_xxx/inaksis' }
-    maven { url "https://hephaestus.dev/release" }
+    maven { url="https://hephaestus.dev/release" }
+    maven { url="https://maven.terraformersmc.com/" }
 }
 
 minecraft {
@@ -59,10 +60,7 @@ dependencies {
         transitive = false
     }
 
-//    modImplementation 'com.github.Haven-King:Conrad:0.3.0'
-
-    // INclude GeckoLib for each module, uses experimental 1.17 snapshot fork.
-    modImplementation 'software.bernie.geckolib:geckolib-fabric-1.17:3.0.20:dev'
+    modImplementation "com.terraformersmc:modmenu:2.0.0-beta.3"
 }
 
 processResources {
