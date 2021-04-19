@@ -10,7 +10,7 @@ public class EnchantmentImpl extends Enchantment {
     private final io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment enchantment;
 
     public EnchantmentImpl(io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment enchantment) {
-        super(enchantment.getRarity(), enchantment.getEnchantmentTarget(), enchantment.getEquipmentSlots());
+        super(enchantment.getRarity(), enchantment.getEnchantmentTarget().get().getVanilla(), enchantment.getEquipmentSlots());
         this.enchantment = enchantment;
     }
 

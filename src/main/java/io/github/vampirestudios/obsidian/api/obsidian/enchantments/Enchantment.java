@@ -1,8 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian.enchantments;
 
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
+
+import java.util.Optional;
 
 public class Enchantment {
 
@@ -25,8 +26,8 @@ public class Enchantment {
         return net.minecraft.enchantment.Enchantment.Rarity.valueOf(rarity);
     }
 
-    public EnchantmentTarget getEnchantmentTarget() {
-        return EnchantmentTarget.valueOf(target);
+    public Optional<EnchantmentTargetExtended> getEnchantmentTarget() {
+        return EnchantmentTargetFactoryRegistryImpl.INSTANCE.get(target);
     }
 
     public EquipmentSlot[] getEquipmentSlots() {
