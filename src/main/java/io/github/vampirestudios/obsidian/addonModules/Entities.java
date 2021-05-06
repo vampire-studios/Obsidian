@@ -28,7 +28,7 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class Entities implements AddonModule {
     @Override

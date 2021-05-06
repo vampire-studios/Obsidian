@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import static io.github.vampirestudios.obsidian.configPack.ConfigHelper.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class Tools implements AddonModule {
     @Override

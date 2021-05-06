@@ -14,7 +14,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
 import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
-import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -153,8 +153,8 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_exposed_stairs_to_cut_weathered_stairs", new ConvertableOxidizableBlock(EXPOSED_CUT_COPPER_STAIRS, WEATHERED_CUT_COPPER_STAIRS));
         registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_weathered_stairs_to_cut_oxidized_stairs", new ConvertableOxidizableBlock(WEATHERED_CUT_COPPER_STAIRS, OXIDIZED_CUT_COPPER_STAIRS));
 
-        ConfigHelper.loadDefaultObsidianAddons();
-        CompletableFuture.runAsync(ConfigHelper::loadObsidianAddons, ConfigHelper.EXECUTOR_SERVICE);
+        ObsidianAddonLoader.loadDefaultObsidianAddons();
+        CompletableFuture.runAsync(ObsidianAddonLoader::loadObsidianAddons, ObsidianAddonLoader.EXECUTOR_SERVICE);
 //        BedrockAddonLoader.loadDefaultBedrockAddons();
 //        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
     }

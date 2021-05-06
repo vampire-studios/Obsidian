@@ -6,7 +6,7 @@
 package io.github.vampirestudios.obsidian.utils;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonModMetadata;
@@ -45,8 +45,8 @@ public class Utils {
     public static void registerAddon(Reader reader, File file) {
         ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(reader, ObsidianAddonInfo.class);
         ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, file);
-        if (!ConfigHelper.OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == ConfigHelper.PACK_VERSION) {
-            ConfigHelper.OBSIDIAN_ADDONS.add(obsidianAddon);
+        if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == ObsidianAddonLoader.PACK_VERSION) {
+            ObsidianAddonLoader.OBSIDIAN_ADDONS.add(obsidianAddon);
             Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
         } else {
             Obsidian.LOGGER.info(String.format("[Obsidian] Found incompatible obsidian addon: %s with a version of %d", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion));
@@ -56,8 +56,8 @@ public class Utils {
     public static void registerAddon(Reader reader) {
         ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(reader, ObsidianAddonInfo.class);
         ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo);
-        if (!ConfigHelper.OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == ConfigHelper.PACK_VERSION) {
-            ConfigHelper.OBSIDIAN_ADDONS.add(obsidianAddon);
+        if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.contains(obsidianAddon) && obsidianAddon.getConfigPackInfo().addonVersion == ObsidianAddonLoader.PACK_VERSION) {
+            ObsidianAddonLoader.OBSIDIAN_ADDONS.add(obsidianAddon);
             Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
         } else {
             Obsidian.LOGGER.info(String.format("[Obsidian] Found incompatible obsidian addon: %s with a version of %d", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion));

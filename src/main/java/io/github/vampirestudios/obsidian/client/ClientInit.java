@@ -5,7 +5,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
-import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -21,44 +21,44 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ConfigHelper.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
+        ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String name = iAddonPack.getDisplayNameObsidian();
             Artifice.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
                 if (!iAddonPack.getConfigPackInfo().hasAssets) {
                     clientResourcePackBuilder.setDisplayName(name);
                     clientResourcePackBuilder.shouldOverwrite();
 //				for (Entity entity : ConfigHelper.ENTITIES) if (entity.information.identifier.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace)) new EntityInitThread(clientResourcePackBuilder, entity).run();
-                    for (ItemGroup itemGroup : ConfigHelper.ITEM_GROUPS)
+                    for (ItemGroup itemGroup : ObsidianAddonLoader.ITEM_GROUPS)
                         if (itemGroup.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ItemGroupInitThread(clientResourcePackBuilder, itemGroup).run();
-                    for (Block block : ConfigHelper.BLOCKS)
+                    for (Block block : ObsidianAddonLoader.BLOCKS)
                         if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new BlockInitThread(clientResourcePackBuilder, block).run();
-                    for (Block block : ConfigHelper.ORES)
+                    for (Block block : ObsidianAddonLoader.ORES)
                         if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new BlockInitThread(clientResourcePackBuilder, block).run();
-                    for (Item item : ConfigHelper.ITEMS)
+                    for (Item item : ObsidianAddonLoader.ITEMS)
                         if (item.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ItemInitThread(clientResourcePackBuilder, item).run();
-                    for (ArmorItem armor : ConfigHelper.ARMORS)
+                    for (ArmorItem armor : ObsidianAddonLoader.ARMORS)
                         if (armor.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ArmorInitThread(clientResourcePackBuilder, armor).run();
-                    for (WeaponItem weapon : ConfigHelper.WEAPONS)
+                    for (WeaponItem weapon : ObsidianAddonLoader.WEAPONS)
                         if (weapon.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new WeaponInitThread(clientResourcePackBuilder, weapon).run();
-                    for (ToolItem tool : ConfigHelper.TOOLS)
+                    for (ToolItem tool : ObsidianAddonLoader.TOOLS)
                         if (tool.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ToolInitThread(clientResourcePackBuilder, tool).run();
-                    for (FoodItem foodItem : ConfigHelper.FOODS)
+                    for (FoodItem foodItem : ObsidianAddonLoader.FOODS)
                         if (foodItem.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new FoodInitThread(clientResourcePackBuilder, foodItem).run();
-                    for (Enchantment enchantment : ConfigHelper.ENCHANTMENTS)
+                    for (Enchantment enchantment : ObsidianAddonLoader.ENCHANTMENTS)
                         if (enchantment.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new EnchantmentInitThread(enchantment).run();
-                    for (ShieldItem shield : ConfigHelper.SHIELDS)
+                    for (ShieldItem shield : ObsidianAddonLoader.SHIELDS)
                         if (shield.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ShieldInitThread(clientResourcePackBuilder, shield).run();
-                    for (Elytra elytra : ConfigHelper.ELYTRAS)
+                    for (Elytra elytra : ObsidianAddonLoader.ELYTRAS)
                         if (elytra.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ElytraInitThread(clientResourcePackBuilder, elytra).run();
                     clientResourcePackBuilder.addTranslations(new Identifier(iAddonPack.getConfigPackInfo().namespace, "en_us"), translationBuilder ->

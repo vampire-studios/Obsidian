@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.client.resource;
 
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.configPack.ConfigHelper;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
@@ -21,7 +21,7 @@ public class ObsidianAddonResourcePack implements ResourcePack {
     protected ResourcePack[] virtualPacks;
 
     public ObsidianAddonResourcePack() {
-        virtualPacks = ConfigHelper.OBSIDIAN_ADDONS.stream().map(IAddonPack::getVirtualResourcePack).filter(Objects::nonNull).toArray(ResourcePack[]::new);
+        virtualPacks = ObsidianAddonLoader.OBSIDIAN_ADDONS.stream().map(IAddonPack::getVirtualResourcePack).filter(Objects::nonNull).toArray(ResourcePack[]::new);
     }
 
     @Override
