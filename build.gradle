@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.7-SNAPSHOT'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -13,12 +13,13 @@ group = project.maven_group
 repositories {
     mavenCentral()
     mavenLocal()
-    jcenter()
     maven { url="https://jitpack.io" }
-    maven { url="http://server.bbkr.space/artifactory/libs-release/" }
+    maven { url "https://maven.shedaniel.me" }
+    maven { url="https://server.bbkr.space/artifactory/libs-release/" }
     maven { url='https://repo.repsy.io/mvn/xxx_inaksis_xxx/inaksis' }
     maven { url="https://hephaestus.dev/release" }
     maven { url="https://maven.terraformersmc.com/" }
+    maven { url "https://raw.githubusercontent.com/vampire-studios/VampireStudiosMaven/main/" }
 }
 
 minecraft {
@@ -31,22 +32,19 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
-    include ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
-
-    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:${project.vampirelib_version}") {
+    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:3.0.2+build.2-21w20a") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
-    include ("io.github.vampirestudios:VampireLib-Fabric:${project.vampirelib_version}") {
+    include ("io.github.vampirestudios:VampireLib-Fabric:3.0.2+build.2-21w20a") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
 
-    modCompile ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
+    modImplementation ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
     include ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
 
-    modCompile("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1u}") {
+    modImplementation("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1u}") {
         exclude group: "net.fabricmc.fabric-api"
         force = true
     }
@@ -61,6 +59,7 @@ dependencies {
     }
 
     modImplementation "com.terraformersmc:modmenu:2.0.0-beta.3"
+    modImplementation "com.github.shnupbups:oxidizelib:1.0.0a"
 }
 
 processResources {

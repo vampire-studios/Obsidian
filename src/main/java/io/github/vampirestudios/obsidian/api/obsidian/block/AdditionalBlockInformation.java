@@ -13,7 +13,6 @@ public class AdditionalBlockInformation {
     public boolean door = false;
     public boolean trapdoor = false;
 
-    public boolean hasWaxed = false;
     public boolean hasCut = false;
 
     public boolean rotatable = false;
@@ -27,5 +26,9 @@ public class AdditionalBlockInformation {
     public boolean chains = false;
     public boolean cake_like = false;
     public boolean waterloggable = false;
+
+    //EXPERIMENTAL
+    public int verticalBlockAmount = 1;
+    public int horizontalBlockAmount = 1;
 
 }

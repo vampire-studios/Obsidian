@@ -28,8 +28,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraft.block.Blocks.*;
-
 public class Obsidian implements ModInitializer {
 
     public static final Gson GSON = new GsonBuilder()
@@ -42,7 +40,6 @@ public class Obsidian implements ModInitializer {
     public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
     public static final Registry<Class<? extends Event>> BEDROCK_BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_event_registry")), Lifecycle.stable());
     public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.Component>> BEDROCK_BLOCK_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_components_registry")), Lifecycle.stable());
-    public static final Registry<ConvertableOxidizableBlock> CONVERTABLE_OXIDIZABLE_BLOCKS = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "convertable_oxidizable_blocks")), Lifecycle.stable());
     public static String NAME = "Obsidian";
     public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
     public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
@@ -56,7 +53,7 @@ public class Obsidian implements ModInitializer {
     @Override
     public void onInitialize() {
         INSTANCE = this;
-        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w11a"));
+        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w20a"));
 
         CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 
@@ -136,22 +133,6 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
         registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
         registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
-
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "normal_to_exposed", new ConvertableOxidizableBlock(COPPER_BLOCK, EXPOSED_COPPER));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "exposed_to_weathered", new ConvertableOxidizableBlock(EXPOSED_COPPER, WEATHERED_COPPER));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "weathered_to_oxidized", new ConvertableOxidizableBlock(WEATHERED_COPPER, OXIDIZED_COPPER));
-
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_normal_to_cut_exposed", new ConvertableOxidizableBlock(CUT_COPPER, EXPOSED_CUT_COPPER));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_exposed_to_cut_weathered", new ConvertableOxidizableBlock(EXPOSED_CUT_COPPER, WEATHERED_CUT_COPPER));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_weathered_to_cut_oxidized", new ConvertableOxidizableBlock(WEATHERED_CUT_COPPER, OXIDIZED_CUT_COPPER));
-
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_normal_slab_to_cut_exposed_slab", new ConvertableOxidizableBlock(CUT_COPPER_SLAB, EXPOSED_CUT_COPPER_SLAB));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_exposed_slab_to_cut_weathered_slab", new ConvertableOxidizableBlock(EXPOSED_CUT_COPPER_SLAB, WEATHERED_CUT_COPPER_SLAB));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_weathered_slab_to_cut_oxidized_slab", new ConvertableOxidizableBlock(WEATHERED_CUT_COPPER_SLAB, OXIDIZED_CUT_COPPER_SLAB));
-
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_normal_stairs_to_cut_exposed_stairs", new ConvertableOxidizableBlock(CUT_COPPER_STAIRS, EXPOSED_CUT_COPPER_STAIRS));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_exposed_stairs_to_cut_weathered_stairs", new ConvertableOxidizableBlock(EXPOSED_CUT_COPPER_STAIRS, WEATHERED_CUT_COPPER_STAIRS));
-        registerInRegistry(CONVERTABLE_OXIDIZABLE_BLOCKS, "cut_weathered_stairs_to_cut_oxidized_stairs", new ConvertableOxidizableBlock(WEATHERED_CUT_COPPER_STAIRS, OXIDIZED_CUT_COPPER_STAIRS));
 
         ObsidianAddonLoader.loadDefaultObsidianAddons();
         CompletableFuture.runAsync(ObsidianAddonLoader::loadObsidianAddons, ObsidianAddonLoader.EXECUTOR_SERVICE);

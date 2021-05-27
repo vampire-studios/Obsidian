@@ -1,14 +1,11 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
-import com.google.common.base.Suppliers;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.Maps;
-import io.github.vampirestudios.obsidian.ConvertableOxidizableBlock;
+import com.shnupbups.oxidizelib.OxidizableFamily;
+import com.shnupbups.oxidizelib.OxidizeLib;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
-import io.github.vampirestudios.obsidian.mixins.HoneycombItemAccessor;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
@@ -23,7 +20,6 @@ import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -137,10 +133,22 @@ public class Blocks implements AddonModule {
                                 "exposed_" + block.information.name.id.getPath(), settings);
                         Block unaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
                                 block.information.name.id.getPath() + "_block", settings);
+                        Block waxedOxidized = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                "oxidized_" + block.information.name.id.getPath(), settings);
+                        Block waxedWeathered = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                "waxed_weathered_" + block.information.name.id.getPath(), settings);
+                        Block waxedExposed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                "waxed_exposed_" + block.information.name.id.getPath(), settings);
+                        Block waxedUnaffected = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                "waxed_" + block.information.name.id.getPath() + "_block", settings);
 
-                        Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(unaffected, exposed));
-                        Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(exposed, weathered));
-                        Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(weathered, oxidized));
+                        OxidizableFamily family = new OxidizableFamily.Builder()
+                                .oxidized(oxidized, waxedOxidized)
+                                .weathered(weathered, waxedWeathered)
+                                .exposed(exposed, waxedExposed)
+                                .unaffected(unaffected, waxedUnaffected)
+                                .build();
+                        OxidizeLib.registerOxidizableFamily(family);
 
                         if (block.additional_information.hasCut) {
                             Block cutOxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.OXIDIZED, blockSettings), block,
@@ -151,49 +159,22 @@ public class Blocks implements AddonModule {
                                     "exposed_" + block.information.name.id.getPath(), settings);
                             Block cutUnaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
                                     block.information.name.id.getPath() + "_block", settings);
-                            Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(cutUnaffected, cutExposed));
-                            Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(cutExposed, cutWeathered));
-                            Registry.register(Obsidian.CONVERTABLE_OXIDIZABLE_BLOCKS, block.information.name.id, new ConvertableOxidizableBlock(cutWeathered, cutOxidized));
+                            Block cutOxidizedWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                    "oxidized_" + block.information.name.id.getPath(), settings);
+                            Block cutWeatheredWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                    "waxed_weathered_cut_" + block.information.name.id.getPath(), settings);
+                            Block cutExposedWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                    "waxed_exposed_cut_" + block.information.name.id.getPath(), settings);
+                            Block cutUnaffectedWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
+                                    "waxed_cut_" + block.information.name.id.getPath() + "_block", settings);
 
-                            if (block.additional_information.hasCut && block.additional_information.hasWaxed) {
-                                Block cutWeatheredWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.WEATHERED, blockSettings), block,
-                                        "waxed_weathered_cut_" + block.information.name.id.getPath(), settings);
-                                Block cutExposedWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.EXPOSED, blockSettings), block,
-                                        "waxed_exposed_cut_" + block.information.name.id.getPath(), settings);
-                                Block cutUnaffectedWaxed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
-                                        "waxed_cut_" + block.information.name.id.getPath() + "_block", settings);
-                                BiMap<Block, Block> blocks = Maps.synchronizedBiMap(HoneycombItemAccessor.getUNWAXED_TO_WAXED_BLOCKS().get());
-                                blocks.put(cutUnaffected, cutUnaffectedWaxed);
-                                blocks.put(cutExposed, cutExposedWaxed);
-                                blocks.put(cutWeathered, cutWeatheredWaxed);
-                                HoneycombItemAccessor.setUNWAXED_TO_WAXED_BLOCKS(Suppliers.ofInstance(blocks));
-
-                                BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(HoneycombItemAccessor.getWAXED_TO_UNWAXED_BLOCKS().get());
-                                blocksReverse.put(cutUnaffectedWaxed, cutUnaffected);
-                                blocksReverse.put(cutExposedWaxed, cutExposed);
-                                blocksReverse.put(cutWeatheredWaxed, cutWeathered);
-                                HoneycombItemAccessor.setWAXED_TO_UNWAXED_BLOCKS(Suppliers.ofInstance(blocksReverse));
-                            }
-                        }
-
-                        if (block.additional_information.hasWaxed) {
-                            Block waxedWeathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.WEATHERED, blockSettings), block,
-                                    "waxed_weathered_" + block.information.name.id.getPath(), settings);
-                            Block waxedExposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.EXPOSED, blockSettings), block,
-                                    "waxed_exposed_" + block.information.name.id.getPath(), settings);
-                            Block waxedUnaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
-                                    "waxed_" + block.information.name.id.getPath() + "_block", settings);
-                            BiMap<Block, Block> blocks = Maps.synchronizedBiMap(HoneycombItemAccessor.getUNWAXED_TO_WAXED_BLOCKS().get());
-                            blocks.put(unaffected, waxedUnaffected);
-                            blocks.put(exposed, waxedExposed);
-                            blocks.put(weathered, waxedWeathered);
-                            HoneycombItemAccessor.setUNWAXED_TO_WAXED_BLOCKS(Suppliers.ofInstance(blocks));
-
-                            BiMap<Block, Block> blocksReverse = Maps.synchronizedBiMap(HoneycombItemAccessor.getWAXED_TO_UNWAXED_BLOCKS().get());
-                            blocksReverse.put(waxedWeathered, weathered);
-                            blocksReverse.put(waxedExposed, exposed);
-                            blocksReverse.put(waxedUnaffected, unaffected);
-                            HoneycombItemAccessor.setWAXED_TO_UNWAXED_BLOCKS(Suppliers.ofInstance(blocksReverse));
+                            family = new OxidizableFamily.Builder()
+                                    .oxidized(cutOxidized, cutOxidizedWaxed)
+                                    .weathered(cutWeathered, cutWeatheredWaxed)
+                                    .exposed(cutExposed, cutExposedWaxed)
+                                    .unaffected(cutUnaffected, cutUnaffectedWaxed)
+                                    .build();
+                            OxidizeLib.registerOxidizableFamily(family);
                         }
 
                         break;
