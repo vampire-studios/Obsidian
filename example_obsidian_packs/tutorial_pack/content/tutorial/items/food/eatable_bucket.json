@@ -3,8 +3,7 @@
     "name": {
       "id": "tutorial:eatable_bucket",
       "translated": {
-        "en_us": "Eatable Bucket",
-        "nb_no": "Spiselig "
+        "en_us": "Eatable Bucket"
       },
       "color": "#ca165f",
       "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]

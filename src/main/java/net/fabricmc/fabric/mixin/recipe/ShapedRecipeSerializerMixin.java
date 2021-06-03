@@ -39,7 +39,7 @@ public abstract class ShapedRecipeSerializerMixin implements FabricRecipeSeriali
 
 		factory.group(recipe.getGroup());
 
-		DefaultedList<Ingredient> recipeIngredients = recipe.getPreviewInputs();
+		DefaultedList<Ingredient> recipeIngredients = recipe.getIngredients();
 		Object2CharMap<Ingredient> ingredients = new Object2CharOpenHashMap<>();
 		ingredients.defaultReturnValue(' ');
 		char currentChar = 'A';

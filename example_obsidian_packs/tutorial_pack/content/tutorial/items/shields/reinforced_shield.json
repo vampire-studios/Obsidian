@@ -1,0 +1,13 @@
+{
+  "information": {
+    "name": {
+      "id": "tutorial:reinforced_shield",
+      "translated": {
+        "en_us": "Reinforced Shield"
+      }
+    },
+    "item_group": "minecraft:combat"
+  },
+  "shield_base": "tutorial:entities/shield/reinforced_shield_base",
+  "shield_base_no_pattern": "tutorial:entities/shield/reinforced_shield_base_nopattern"
+}

@@ -29,6 +29,6 @@ public abstract class ShapelessRecipeSerializerMixin implements FabricRecipeSeri
 	@Override
 	public JsonObject toJson(ShapelessRecipe recipe) {
 		return new ShapelessRecipeJsonProvider(recipe.getId(), recipe.getOutput().getItem(), recipe.getOutput().getCount(),
-				recipe.getGroup(), recipe.getPreviewInputs(), null, null).toJson();
+				recipe.getGroup(), recipe.getIngredients(), null, null).toJson();
 	}
 }

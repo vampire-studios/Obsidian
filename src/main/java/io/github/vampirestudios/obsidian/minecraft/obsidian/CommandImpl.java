@@ -2,11 +2,12 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import io.github.vampirestudios.obsidian.api.obsidian.command.Argument;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.server.function.CommandFunctionManager;
+
+import java.util.Objects;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -14,13 +15,27 @@ public class CommandImpl {
 
     public static void register(Command command, CommandDispatcher<ServerCommandSource> dispatcher) {
         LiteralArgumentBuilder<ServerCommandSource> basenode = dispatcher.register(literal(command.name)).createBuilder();
-        for (Argument argument : command.arguments) {
-            basenode.then(CommandManager.argument(argument.name, argument.getBasicArgumentType()));
-        }
+        basenode.requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(command.op_level));
+        command.arguments.forEach((name, node) -> {
+            if (!node.getExecute().isEmpty()) {
+                node.getExecute().forEach(s -> {
+                    String[] strings = s.split(" ");
+                    for (String string : strings) {
+                        if (string.equals("give")) {
+                            System.out.println("Test");
+                        }
+                    }
+                });
+            }
+        });
+        basenode.executes(context -> execute(context.getSource(), command));
     }
 
     private static int execute(ServerCommandSource source, Command command) {
-        source.sendFeedback(new LiteralText(command.name), false);
+        CommandFunctionManager commandFunctionManager = Objects.requireNonNull(MinecraftClient.getInstance().getServer()).getCommandFunctionManager();
+        if (commandFunctionManager.getFunction(command.execute).isPresent()) {
+            commandFunctionManager.execute(commandFunctionManager.getFunction(command.execute).get(), source);
+        }
         return 1;
     }
 

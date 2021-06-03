@@ -28,6 +28,7 @@ import net.minecraft.world.gen.decorator.RangeDecoratorConfig;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.heightprovider.UniformHeightProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -67,12 +68,12 @@ public class Ores implements AddonModule {
                             )
                     ).decorate(
                             Decorator.RANGE.configure(
-                                    new RangeDecoratorConfig(
+                                    new RangeDecoratorConfig(UniformHeightProvider.create(
                                             YOffset.fixed(block.ore_information.config.bottom_offset),
                                             YOffset.fixed(block.ore_information.config.top_offset)
-                                    )
+                                    ))
                             )
-                    ).rangeOf(YOffset.fixed(block.ore_information.config.minimum), YOffset.fixed(block.ore_information.config.maximum)).spreadHorizontally().repeat(20));
+                    ).spreadHorizontally().repeat(20));
             BuiltinRegistries.BIOME.forEach(biome -> {
                 if (block.ore_information.biomes != null) {
                     for (String biome2 : block.ore_information.biomes) {

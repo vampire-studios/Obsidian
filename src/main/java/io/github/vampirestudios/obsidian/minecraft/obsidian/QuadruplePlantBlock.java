@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.hidden_gems.CProperties;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -28,20 +27,20 @@ import java.util.ArrayList;
  * @author ShadewEnder redgalaxysw@gmail.com
  */
 public class QuadruplePlantBlock extends PlantBlock {
-    public static final EnumProperty<io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart> PART = CProperties.QUADRUPLE_BLOCK_PART;
+    public static final EnumProperty<QuadrupleBlockPart> PART = CProperties.QUADRUPLE_BLOCK_PART;
 
     public QuadruplePlantBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER));
+        this.setDefaultState(this.stateManager.getDefaultState().with(PART, QuadrupleBlockPart.LOWER));
     }
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
-        io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart part = state.get(PART);
-        if (direction == Direction.UP && part != io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER) {
+        QuadrupleBlockPart part = state.get(PART);
+        if (direction == Direction.UP && part != QuadrupleBlockPart.UPPER) {
             Block block = newState.getBlock();
             if (block != this) return Blocks.AIR.getDefaultState();
-        } else if (direction == Direction.DOWN && part != io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER) {
+        } else if (direction == Direction.DOWN && part != QuadrupleBlockPart.LOWER) {
             Block block = newState.getBlock();
             if (block != this) return Blocks.AIR.getDefaultState();
         }
@@ -62,36 +61,36 @@ public class QuadruplePlantBlock extends PlantBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        world.setBlockState(pos.up(1), this.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER_MIDDLE), 3);
-        world.setBlockState(pos.up(2), this.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER_MIDDLE), 3);
-        world.setBlockState(pos.up(3), this.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER), 3);
+        world.setBlockState(pos.up(1), this.getDefaultState().with(PART, QuadrupleBlockPart.LOWER_MIDDLE), 3);
+        world.setBlockState(pos.up(2), this.getDefaultState().with(PART, QuadrupleBlockPart.UPPER_MIDDLE), 3);
+        world.setBlockState(pos.up(3), this.getDefaultState().with(PART, QuadrupleBlockPart.UPPER), 3);
     }
 
     @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        if (state.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER) {
+        if (state.get(PART) == QuadrupleBlockPart.LOWER) {
             return super.canPlaceAt(state, world, pos);
-        } else if(state.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER_MIDDLE) {
+        } else if(state.get(PART) == QuadrupleBlockPart.LOWER_MIDDLE) {
             BlockState blockStateDown1 = world.getBlockState(pos.down(1));
-            return (blockStateDown1.isOf(this) && blockStateDown1.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER);
-        } else if(state.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER_MIDDLE) {
+            return (blockStateDown1.isOf(this) && blockStateDown1.get(PART) == QuadrupleBlockPart.LOWER);
+        } else if(state.get(PART) == QuadrupleBlockPart.UPPER_MIDDLE) {
             BlockState blockStateDown1 = world.getBlockState(pos.down(1));
-            return (blockStateDown1.isOf(this) && blockStateDown1.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER_MIDDLE);
+            return (blockStateDown1.isOf(this) && blockStateDown1.get(PART) == QuadrupleBlockPart.LOWER_MIDDLE);
         } else {
             BlockState blockStateDown1 = world.getBlockState(pos.down(1));
             BlockState blockStateDown2 = world.getBlockState(pos.down(2));
             BlockState blockStateDown3 = world.getBlockState(pos.down(3));
-            return (blockStateDown1.isOf(this) && blockStateDown1.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER_MIDDLE)
-                && (blockStateDown2.isOf(this) && blockStateDown2.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER_MIDDLE)
-                && (blockStateDown3.isOf(this) && blockStateDown3.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER);
+            return (blockStateDown1.isOf(this) && blockStateDown1.get(PART) == QuadrupleBlockPart.UPPER_MIDDLE)
+                && (blockStateDown2.isOf(this) && blockStateDown2.get(PART) == QuadrupleBlockPart.LOWER_MIDDLE)
+                && (blockStateDown3.isOf(this) && blockStateDown3.get(PART) == QuadrupleBlockPart.LOWER);
         }
     }
 
     public void placeAt(WorldAccess world, BlockPos pos, int flags) {
-        world.setBlockState(pos, this.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER), flags);
-        world.setBlockState(pos.up(1), this.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER_MIDDLE), flags);
-        world.setBlockState(pos.up(2), this.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER_MIDDLE), flags);
-        world.setBlockState(pos.up(3), this.getDefaultState().with(PART, io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER), flags);
+        world.setBlockState(pos, this.getDefaultState().with(PART, QuadrupleBlockPart.LOWER), flags);
+        world.setBlockState(pos.up(1), this.getDefaultState().with(PART, QuadrupleBlockPart.LOWER_MIDDLE), flags);
+        world.setBlockState(pos.up(2), this.getDefaultState().with(PART, QuadrupleBlockPart.UPPER_MIDDLE), flags);
+        world.setBlockState(pos.up(3), this.getDefaultState().with(PART, QuadrupleBlockPart.UPPER), flags);
     }
 
     @Override
@@ -114,19 +113,19 @@ public class QuadruplePlantBlock extends PlantBlock {
 
     protected static void onBreakInCreative(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         ArrayList<BlockPos> positions = new ArrayList<>();
-        io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart tripleBlockPart = state.get(PART);
+        QuadrupleBlockPart tripleBlockPart = state.get(PART);
 
-        if (tripleBlockPart == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER) {
+        if (tripleBlockPart == QuadrupleBlockPart.UPPER) {
             positions.add(pos.down(1));
             positions.add(pos.down(2));
-        } else if (tripleBlockPart == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER_MIDDLE) {
+        } else if (tripleBlockPart == QuadrupleBlockPart.LOWER_MIDDLE) {
             positions.add(pos.down(1));
             positions.add(pos.up(1));
-        } else if (tripleBlockPart == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.UPPER_MIDDLE) {
+        } else if (tripleBlockPart == QuadrupleBlockPart.UPPER_MIDDLE) {
             positions.add(pos.down(1));
             positions.add(pos.down(2));
             positions.add(pos.up(1));
-        } else if (tripleBlockPart == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER) {
+        } else if (tripleBlockPart == QuadrupleBlockPart.LOWER) {
             positions.add(pos.up(1));
             positions.add(pos.up(2));
         }
@@ -151,6 +150,6 @@ public class QuadruplePlantBlock extends PlantBlock {
     @Override
     @Environment(EnvType.CLIENT)
     public long getRenderingSeed(BlockState state, BlockPos pos) {
-        return MathHelper.hashCode(pos.getX(), pos.down(state.get(PART) == io.github.vampirestudios.hidden_gems.block.QuadrupleBlockPart.LOWER ? 0 : 1).getY(), pos.getZ());
+        return MathHelper.hashCode(pos.getX(), pos.down(state.get(PART) == QuadrupleBlockPart.LOWER ? 0 : 1).getY(), pos.getZ());
     }
 }

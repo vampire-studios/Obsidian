@@ -29,7 +29,7 @@ public abstract class CuttingRecipeSerializerMixin<T extends CuttingRecipe> impl
 	@Override
 	public JsonObject toJson(T recipe) {
 		return new SingleItemRecipeJsonProvider(recipe.getId(), this, recipe.getGroup(),
-				recipe.getPreviewInputs().get(0), recipe.getOutput().getItem(), recipe.getOutput().getCount(),
+				recipe.getIngredients().get(0), recipe.getOutput().getItem(), recipe.getOutput().getCount(),
 				null, null)
 				.toJson();
 	}

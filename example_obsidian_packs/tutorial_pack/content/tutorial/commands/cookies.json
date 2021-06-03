@@ -1,27 +1,27 @@
 {
     "name": "cookies",
     "description": "Allow to give a number of cookies at yourself",
-    "only_op": false,
-    "arguments": [
-        {
-            "name": "test",
-            "type": "string"
+    "op_level": 2,
+    "arguments": {
+        "amount" : {
+            "type": "integer",
+            "execute": [
+                "give @s cookie"
+            ]
         },
-        {
-            "name": "test2",
-            "type": "string"
-        },
-        {
-            "name": "test3",
-            "type": "string"
-        },
-        {
-            "name": "test4",
-            "type": "string"
-        },
-        {
-            "name": "test5",
-            "type": "string"
+        "user": {
+            "type": "player",
+            "execute": [
+                "give {user} cookie"
+            ],
+            "arguments": {
+                "amount": {
+                    "type": "integer",
+                    "execute": [
+                        "give {user} cookie {amount}"
+                    ]
+                }
+            }
         }
-    ]
+    }
 }
