@@ -1,8 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.command;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.util.Identifier;
 
-import java.util.List;
 import java.util.Map;
 
 public class Command {
@@ -13,76 +16,30 @@ public class Command {
     public Map<String, Node> arguments;
     public Identifier execute;
 
-    public static class Node {
-        Map<String, ArgumentNode> arguments;
-        Map<String, LiteralNode> literals;
-        List<String> execute;
-        int opLevel;
-
-        public Node(Map<String, ArgumentNode> arguments, Map<String, LiteralNode> literals, List<String> execute, int opLevel) {
-            this.arguments = arguments;
-            this.literals = literals;
-            this.execute = execute;
-            this.opLevel = opLevel;
-        }
-
-        public Map<String, ArgumentNode> getArguments() {
-            return arguments;
-        }
-
-        public Map<String, LiteralNode> getLiterals() {
-            return literals;
-        }
-
-        public List<String> getExecute() {
-            return execute;
-        }
-
-        public int getOpLevel() {
-            return opLevel;
+    public abstract class Node {
+        public Map<String, ArgumentNode> arguments;
+        public Map<String, LiteralNode> literals;
+        public String[] executes;
+        public Integer oplevel;
+    }
+    
+    public class CommandNode extends Node {
+        public String name;
+    }
+    
+    public class ArgumentNode extends Node {
+        public String argumentType;
+        public ArgumentType<?> getArgumentType() {
+            return switch (argumentType) {
+                case "string" -> StringArgumentType.string();
+                case "player" -> EntityArgumentType.player();
+                case "blockpos" -> BlockPosArgumentType.blockPos();
+                // Add your custom types here
+                default -> null;
+            };
         }
     }
-
-    public static class ArgumentNode extends Node {
-        private final ArgumentType argumentType;
-
-        public ArgumentNode(ArgumentType type, Map<String, ArgumentNode> arguments, Map<String, LiteralNode> literals, List<String> execute, int opLevel) {
-            super(arguments, literals, execute, opLevel);
-            this.argumentType = type;
-        }
-
-        public ArgumentType getType() {
-            return argumentType;
-        }
+    public class LiteralNode extends Node {
     }
 
-    public static class LiteralNode extends Node {
-        public LiteralNode(Map<String, ArgumentNode> arguments, Map<String, LiteralNode> literals, List<String> execute, int opLevel) {
-            super(arguments, literals, execute, opLevel);
-        }
-    }
-
-    public static class CommandNode extends Node {
-        private final String name;
-
-        public CommandNode(String name, Map<String, ArgumentNode> arguments, Map<String, LiteralNode> literals, List<String> execute, int opLevel) {
-            super(arguments, literals, execute, opLevel);
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    public static enum ArgumentType {
-        BLOCK_POS,
-        PLAYER,
-        ENTITY,
-        INTEGER,
-        LONG,
-        BOOLEAN,
-        DOUBLE,
-        BIOME
-    }
 }

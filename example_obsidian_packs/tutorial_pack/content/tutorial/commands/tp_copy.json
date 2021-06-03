@@ -1,0 +1,20 @@
+{
+  "name": "tp_copy",
+  "oplevel": 2,
+  "arguments": {
+    "targetpos" : {
+      "type": "blockpos",
+      "execute": "tp @s {targetpos}"
+    },
+    "user": {
+      "type": "player",
+      "executes": "tp @s {user}",
+      "arguments": {
+        "target": {
+          "type": "player",
+          "execute": "tp {user} {target}"
+        }
+      }
+    }
+  }
+}

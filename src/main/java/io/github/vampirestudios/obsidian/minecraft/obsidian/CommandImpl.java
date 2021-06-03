@@ -17,16 +17,6 @@ public class CommandImpl {
         LiteralArgumentBuilder<ServerCommandSource> basenode = dispatcher.register(literal(command.name)).createBuilder();
         basenode.requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(command.op_level));
         command.arguments.forEach((name, node) -> {
-            if (!node.getExecute().isEmpty()) {
-                node.getExecute().forEach(s -> {
-                    String[] strings = s.split(" ");
-                    for (String string : strings) {
-                        if (string.equals("give")) {
-                            System.out.println("Test");
-                        }
-                    }
-                });
-            }
         });
         basenode.executes(context -> execute(context.getSource(), command));
     }
