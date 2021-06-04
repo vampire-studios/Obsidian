@@ -26,10 +26,10 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*
 public class Commands implements AddonModule {
     @Override
     public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
-        Command.Node command = Obsidian.GSON.fromJson(new FileReader(file), Command.Node.class);
+        Command.CommandNode command = Obsidian.GSON.fromJson(new FileReader(file), Command.CommandNode.class);
         String tmpl = """
                 {
-                  "command_name": "tp_copy",
+                  "name": "testing",
                   "oplevel": 2,
                   "arguments": {
                     "target_pos" : {
@@ -64,9 +64,9 @@ public class Commands implements AddonModule {
 //                CommandImpl.register(command, dispatcher);
                 parseNodes(dispatcher, tmpl);
             });
-            register(COMMANDS, "command", command.command_name, command);
+            register(COMMANDS, "command", command.name, command);
         } catch (Exception e) {
-            failedRegistering("command", command.command_name, e);
+            failedRegistering("command", command.name, e);
         }
     }
 

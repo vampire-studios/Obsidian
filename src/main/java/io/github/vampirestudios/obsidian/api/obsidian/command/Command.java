@@ -7,9 +7,7 @@ import java.util.Map;
 
 public class Command {
 
-    public class Node {
-        public String command_name;
-        public String description;
+    public abstract class Node {
         public Integer oplevel;
         public Map<String, ArgumentNode> arguments;
         public Map<String, LiteralNode> literals;
@@ -18,6 +16,7 @@ public class Command {
     
     public class CommandNode extends Node {
         public String name;
+        public String description;
     }
     
     public class ArgumentNode extends Node {
