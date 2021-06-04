@@ -26,19 +26,47 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*
 public class Commands implements AddonModule {
     @Override
     public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
-        Command command = Obsidian.GSON.fromJson(new FileReader(file), Command.class);
-        String commandAsString = Obsidian.GSON.fromJson(new FileReader(file), String.class);
+        Command.Node command = Obsidian.GSON.fromJson(new FileReader(file), Command.Node.class);
+        String tmpl = """
+                {
+                  "command_name": "tp_copy",
+                  "oplevel": 2,
+                  "arguments": {
+                    "target_pos" : {
+                      "argumentType": "block_pos",
+                      "execute": [
+                        "tp @s {target_pos}"
+                      ]
+                    },
+                    "user": {
+                      "argumentType": "player",
+                      "executes": [
+                        "tp @s {user}"
+                      ],
+                      "arguments": {
+                        "target": {
+                          "argumentType": "player",
+                          "execute": [
+                            "tp {user} {target}"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+                """;
+//        String commandAsString = Obsidian.GSON.fromJson(new FileReader(file), String.class);
         try {
             if (command == null) return;
             // Using a lambda
             CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
                 // This command will be registered regardless of the server being dedicated or integrated
 //                CommandImpl.register(command, dispatcher);
-                parseNodes(dispatcher, commandAsString);
+                parseNodes(dispatcher, tmpl);
             });
-            register(COMMANDS, "command", command.name, command);
+            register(COMMANDS, "command", command.command_name, command);
         } catch (Exception e) {
-            failedRegistering("command", command.name, e);
+            failedRegistering("command", command.command_name, e);
         }
     }
 
@@ -50,7 +78,7 @@ public class Commands implements AddonModule {
     void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, String json) {
         Command.CommandNode node = Obsidian.GSON.fromJson(json, Command.CommandNode.class);
         LiteralArgumentBuilder<ServerCommandSource> root = LiteralArgumentBuilder.literal(node.name);
-        parse(root, node, new String[] {});
+        parse(root, node, new String[]{ });
         dispatcher.register(root);
     }
 

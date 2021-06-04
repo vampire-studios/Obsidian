@@ -49,7 +49,7 @@ public class ObsidianAddonLoader {
     public static CopyOnWriteArrayList<Block> BLOCKS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Block> ORES = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Potion> POTIONS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Command> COMMANDS = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Command.Node> COMMANDS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<StatusEffect> STATUS_EFFECTS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Enchantment> ENCHANTMENTS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new CopyOnWriteArrayList<>();

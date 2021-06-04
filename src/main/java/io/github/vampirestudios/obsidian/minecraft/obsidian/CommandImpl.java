@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -30,3 +31,4 @@ public class CommandImpl {
     }
 
 }
+*/
