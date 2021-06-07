@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -32,46 +32,31 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:3.0.2+build.2-21w20a") {
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:5.0.34") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    include("me.shedaniel.cloth:cloth-config-fabric:5.0.34") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+
+    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:3.0.2+build.3-1.17-pre1") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
-    include ("io.github.vampirestudios:VampireLib-Fabric:3.0.2+build.2-21w20a") {
+    include ("io.github.vampirestudios:VampireLib-Fabric:3.0.2+build.3-1.17-pre1") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
 
-    modImplementation ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
-    include ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
-
-    modImplementation("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1u}") {
-        exclude group: "net.fabricmc.fabric-api"
-        force = true
-    }
-    include("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1u}") {
-        exclude group: "net.fabricmc.fabric-api"
-        force = true
-    }
-
-    modApi("me.shedaniel.cloth.api:cloth-api:${project.cloth_events_version}") {
-        exclude group: "net.fabricmc.fabric-api"
-        transitive = false
-    }
-
-    modImplementation "com.terraformersmc:modmenu:2.0.0-beta.3"
+    modImplementation "com.terraformersmc:modmenu:2.0.0-beta.7"
     modImplementation "com.github.shnupbups:oxidizelib:1.0.0a"
 }
 
 processResources {
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
     }
 }
 
