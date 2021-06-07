@@ -43,7 +43,8 @@ public class Entities implements AddonModule {
             JsonObject components = JsonHelper.getObject(entityJson, "components");
             for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
                 Identifier identifier = new Identifier(entry.getKey());
-                Class<? extends Component> componentClass = Obsidian.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() -> new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
+                Class<? extends Component> componentClass = Obsidian.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() ->
+                        new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
 
                 entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));
             }

@@ -26,6 +26,16 @@ public class MeleeWeaponImpl extends SwordItem {
     }
 
     @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return item.information.is_enchantable;
+    }
+
+    @Override
+    public int getEnchantability() {
+        return item.information.enchantability;
+    }
+
+    @Override
     public Text getName() {
         return item.information.name.getName("item");
     }

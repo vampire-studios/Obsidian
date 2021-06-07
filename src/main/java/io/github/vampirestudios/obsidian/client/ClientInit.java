@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class ClientInit implements ClientModInitializer {
 
-    public static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
+    public static Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
 
     @Override
     public void onInitializeClient() {
@@ -61,9 +61,10 @@ public class ClientInit implements ClientModInitializer {
                     for (Elytra elytra : ObsidianAddonLoader.ELYTRAS)
                         if (elytra.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ElytraInitThread(clientResourcePackBuilder, elytra).run();
-                    clientResourcePackBuilder.addTranslations(new Identifier(iAddonPack.getConfigPackInfo().namespace, "en_us"), translationBuilder ->
-                            translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
-                                    translations.forEach(translationBuilder::entry))));
+                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
+                        clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId),
+                                translationBuilder -> translations.forEach(translationBuilder::entry));
+                    }));
 //                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
 //                        translations.forEach((unTranslated, translated) ->
 //                            clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId), translationBuilder ->

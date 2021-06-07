@@ -21,17 +21,12 @@ public class ItemInformation {
     public Identifier placable_block;
 
     public Rarity getRarity() {
-        switch (rarity) {
-            case "uncommon":
-                return Rarity.UNCOMMON;
-            case "rare":
-                return Rarity.RARE;
-            case "epic":
-                return Rarity.EPIC;
-            case "common":
-            default:
-                return Rarity.COMMON;
-        }
+		return switch (rarity) {
+			default -> Rarity.COMMON;
+			case "uncommon" -> Rarity.UNCOMMON;
+			case "rare" -> Rarity.RARE;
+			case "epic" -> Rarity.EPIC;
+		};
     }
 
     public ItemGroup getItemGroup() {

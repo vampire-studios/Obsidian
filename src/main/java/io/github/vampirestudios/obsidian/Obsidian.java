@@ -33,6 +33,7 @@ public class Obsidian implements ModInitializer {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
             .setPrettyPrinting()
+            .setLenient()
             .create();
     public static String MOD_ID = "obsidian";
     public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(id("addon_modules")), Lifecycle.stable());

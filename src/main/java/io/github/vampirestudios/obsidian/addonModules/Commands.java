@@ -10,16 +10,17 @@ import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -30,11 +31,11 @@ public class Commands implements AddonModule {
         String tmpl = """
                 {
                   "name": "testing",
-                  "oplevel": 2,
+                  "op_level": 2,
                   "arguments": {
                     "target_pos" : {
                       "argumentType": "block_pos",
-                      "execute": [
+                      "executes": [
                         "tp @s {target_pos}"
                       ]
                     },
@@ -46,7 +47,7 @@ public class Commands implements AddonModule {
                       "arguments": {
                         "target": {
                           "argumentType": "player",
-                          "execute": [
+                          "executes": [
                             "tp {user} {target}"
                           ]
                         }
@@ -55,19 +56,25 @@ public class Commands implements AddonModule {
                   }
                 }
                 """;
-//        String commandAsString = Obsidian.GSON.fromJson(new FileReader(file), String.class);
+        String json;
         try {
-            if (command == null) return;
-            // Using a lambda
-            CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-                // This command will be registered regardless of the server being dedicated or integrated
-//                CommandImpl.register(command, dispatcher);
-                parseNodes(dispatcher, tmpl);
-            });
+            json = readFileAsString(file.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            json = tmpl;
+        }
+        try {
+            if (command == null || json.isEmpty()) return;
+            String finalJson = json;
+            CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> parseNodes(dispatcher, finalJson));
             register(COMMANDS, "command", command.name, command);
         } catch (Exception e) {
             failedRegistering("command", command.name, e);
         }
+    }
+
+    public static String readFileAsString(String file) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(file)));
     }
 
     @Override
@@ -77,19 +84,19 @@ public class Commands implements AddonModule {
 
     void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, String json) {
         Command.CommandNode node = Obsidian.GSON.fromJson(json, Command.CommandNode.class);
-        LiteralArgumentBuilder<ServerCommandSource> root = LiteralArgumentBuilder.literal(node.name);
+        LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name);
         parse(root, node, new String[]{ });
         dispatcher.register(root);
     }
 
     void parse(ArgumentBuilder<ServerCommandSource, ?> parent, Command.LiteralNode node, String name, String[] args) {
-        LiteralArgumentBuilder<ServerCommandSource> _this = LiteralArgumentBuilder.literal(name);
+        LiteralArgumentBuilder<ServerCommandSource> _this = CommandManager.literal(name);
         parse(_this, node, args);
         parent.then(_this);
     }
 
     void parse(ArgumentBuilder<ServerCommandSource, ?> parent, Command.ArgumentNode node, String name, String[] args) {
-        RequiredArgumentBuilder<ServerCommandSource, ?> _this = RequiredArgumentBuilder.argument(name, node.getArgumentType());
+        RequiredArgumentBuilder<ServerCommandSource, ?> _this = CommandManager.argument(name, node.getArgumentType());
         parse(_this, node, args);
         parent.then(_this);
     }
@@ -97,7 +104,7 @@ public class Commands implements AddonModule {
     void parse(ArgumentBuilder<ServerCommandSource, ?> parent, Command.Node node, String[] args) {
         if (node.arguments != null) {
             node.arguments.forEach((_name, _node) -> {
-                List<String> list = Arrays.asList(args);
+                ArrayList<String> list = new ArrayList<>(Arrays.asList(args));
                 list.add(_name);
                 parse(parent, _node, _name, list.toArray(new String[0]));
             });
@@ -105,8 +112,8 @@ public class Commands implements AddonModule {
         if (node.literals != null) {
             node.literals.forEach((_name, _node) -> parse(parent, _node, _name, args));
         }
-        if (node.oplevel != null) {
-            parent.requires((ctx) -> ctx.hasPermissionLevel(node.oplevel));
+        if (node.op_level != null) {
+            parent.requires((ctx) -> ctx.hasPermissionLevel(node.op_level));
         }
         if (node.executes != null) {
             parent.executes((ctx) -> {
@@ -119,9 +126,9 @@ public class Commands implements AddonModule {
 
                 for (String command : node.executes) {
                     String formatted = sub.replace(command);
-                    System.out.println("Running: " + formatted);
-                    // TODO: Run `formatted` without permission checks
-                    // Maybe with a custom ServerCommandSource that always has permission level 4?
+                    ServerCommandSource source = ctx.getSource().withLevel(4);
+                    source.getMinecraftServer().getCommandManager()
+                            .getDispatcher().execute(formatted, source);
                 }
                 return 0;
             });

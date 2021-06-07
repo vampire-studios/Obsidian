@@ -2,6 +2,9 @@ package io.github.vampirestudios.obsidian;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStep;
@@ -20,6 +23,13 @@ public class BiomeUtils {
             biomeFeatures.add(Lists.newArrayList());
         }
         biomeFeatures.get(feature.ordinal()).add(() -> configuredFeature);
+    }
+
+    public static void displayTitle(Text title, Text subtitle, int fadeIn, int stay, int fadeOut) {
+        InGameHud hud = MinecraftClient.getInstance().inGameHud;
+        hud.setTitle(title);
+        hud.setSubtitle(subtitle);
+        hud.setTitleTicks(fadeIn, stay, fadeOut);
     }
 
     private static void convertImmutableFeatures(Biome biome) {

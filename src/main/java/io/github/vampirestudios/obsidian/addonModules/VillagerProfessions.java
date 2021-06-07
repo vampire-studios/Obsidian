@@ -23,7 +23,8 @@ public class VillagerProfessions implements AddonModule {
         VillagerProfession villagerProfession = Obsidian.GSON.fromJson(new FileReader(file), VillagerProfession.class);
         try {
             if (villagerProfession == null) return;
-            PointOfInterestType pointOfInterestType = PointOfInterestHelper.register(villagerProfession.poi.id, villagerProfession.poi.ticket_count, villagerProfession.poi.search_distance, villagerProfession.poi.getBlocks().toArray(new Block[0]));
+            PointOfInterestType pointOfInterestType = PointOfInterestHelper.register(villagerProfession.poi.id, villagerProfession.poi.ticket_count,
+                    villagerProfession.poi.search_distance, villagerProfession.poi.getBlocks().toArray(new Block[0]));
             VillagerProfessionBuilder.create()
                     .id(villagerProfession.name.id)
                     .harvestableItems(villagerProfession.getHarvestableItems())

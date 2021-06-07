@@ -25,6 +25,21 @@ public class BlockItemImpl extends BlockItem {
     }
 
     @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return item.information.is_enchantable;
+    }
+
+    @Override
+    public int getEnchantability() {
+        return item.information.enchantability;
+    }
+
+    @Override
+    public Text getName() {
+        return item.information.name.getName("block");
+    }
+
+    @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : item.display.lore) {

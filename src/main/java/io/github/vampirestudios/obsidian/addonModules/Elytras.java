@@ -21,7 +21,7 @@ public class Elytras implements AddonModule {
         Elytra item = Obsidian.GSON.fromJson(new FileReader(file), Elytra.class);
         try {
             if (item == null) return;
-            RegistryUtils.registerItem(new ElytraItemImpl(new Item.Settings().group(item.information.getItemGroup())
+            RegistryUtils.registerItem(new ElytraItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
                     .maxCount(1)), item.information.name.id);
             register(ELYTRAS, "elytra", item.information.name.id.toString(), item);
         } catch (Exception e) {

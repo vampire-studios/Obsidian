@@ -8,7 +8,7 @@ import java.util.Map;
 public class Command {
 
     public abstract class Node {
-        public Integer oplevel;
+        public Integer op_level;
         public Map<String, ArgumentNode> arguments;
         public Map<String, LiteralNode> literals;
         public String[] executes;
@@ -29,6 +29,9 @@ public class Command {
                 case "word" -> StringArgumentType.word();
                 case "greedy" -> StringArgumentType.greedyString();
                 case "player" -> EntityArgumentType.player();
+                case "players" -> EntityArgumentType.players();
+                case "entity" -> EntityArgumentType.entity();
+                case "entities" -> EntityArgumentType.entities();
                 case "block_pos" -> BlockPosArgumentType.blockPos();
                 case "boolean" -> BoolArgumentType.bool();
                 case "double" -> DoubleArgumentType.doubleArg();

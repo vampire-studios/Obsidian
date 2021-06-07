@@ -21,6 +21,21 @@ public class ShieldItemImpl extends net.minecraft.item.ShieldItem {
     }
 
     @Override
+    public boolean hasGlint(ItemStack stack) {
+        return shieldItem.information.has_glint;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return shieldItem.information.is_enchantable;
+    }
+
+    @Override
+    public int getEnchantability() {
+        return shieldItem.information.enchantability;
+    }
+
+    @Override
     public Text getName() {
         return shieldItem.information.name.getName("item");
     }

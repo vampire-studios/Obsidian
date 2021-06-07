@@ -22,10 +22,10 @@ public class Food implements AddonModule {
         FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
         try {
             if (foodItem == null) return;
+            Item.Settings settings = new Item.Settings().group(foodItem.information.getItemGroup())
+                    .maxCount(foodItem.information.max_count).rarity(foodItem.information.getRarity());
             FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
-            Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, new Item.Settings()
-                    .group(foodItem.information.getItemGroup())
-                    .maxCount(foodItem.information.max_count)
+            Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, settings
                     .maxDamage(foodItem.information.use_duration)
                     .food(foodComponent)));
             register(FOODS, "food", foodItem.information.name.id.toString(), foodItem);

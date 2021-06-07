@@ -22,10 +22,11 @@ public class Weapons implements AddonModule {
         WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
         try {
             if (weapon == null) return;
+            Item.Settings settings = new Item.Settings().group(weapon.information.getItemGroup())
+                    .maxCount(weapon.information.max_count).rarity(weapon.information.getRarity());
             CustomToolMaterial material = new CustomToolMaterial(weapon.material);
-            RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, new Item.Settings()
-                    .group(weapon.information.getItemGroup())
-                    .maxCount(weapon.information.max_count)), weapon.information.name.id);
+            RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings),
+                    weapon.information.name.id);
             register(WEAPONS, "weapon", weapon.information.name.id.toString(), weapon);
         } catch (Exception e) {
             failedRegistering("weapon", weapon.information.name.id.toString(), e);

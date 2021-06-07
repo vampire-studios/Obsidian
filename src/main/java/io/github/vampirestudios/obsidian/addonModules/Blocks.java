@@ -82,7 +82,7 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                     } else if (block.additional_information.waterloggable) {
                         REGISTRY_HELPER.registerBlock(new WaterloggableBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                    } else if (block.additional_information.waterloggable & block.additional_information.plant) {
+                    } else if (block.additional_information.waterloggable && block.additional_information.plant) {
                         REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                     } else {
                         REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);

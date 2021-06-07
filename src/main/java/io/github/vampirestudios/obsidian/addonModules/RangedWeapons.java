@@ -23,19 +23,12 @@ public class RangedWeapons implements AddonModule {
         RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
         try {
             if (rangedWeapon == null) return;
+            Item.Settings settings = new Item.Settings().group(rangedWeapon.information.getItemGroup())
+                    .maxCount(rangedWeapon.information.max_count).rarity(rangedWeapon.information.getRarity());
             switch (rangedWeapon.weapon_type) {
-                case "bow":
-                    RegistryUtils.registerItem(new FabricBowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                            .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                    break;
-                case "crossbow":
-                    RegistryUtils.registerItem(new SimpleCrossbowItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                            .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                    break;
-                case "trident":
-                    RegistryUtils.registerItem(new SimpleTridentItem(new Item.Settings().group(rangedWeapon.information.getItemGroup())
-                            .maxCount(rangedWeapon.information.max_count)), rangedWeapon.information.name.id);
-                    break;
+                case "bow" -> RegistryUtils.registerItem(new FabricBowItem(settings), rangedWeapon.information.name.id);
+                case "crossbow" -> RegistryUtils.registerItem(new SimpleCrossbowItem(settings), rangedWeapon.information.name.id);
+                case "trident" -> RegistryUtils.registerItem(new SimpleTridentItem(settings), rangedWeapon.information.name.id);
             }
             register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id.toString(), rangedWeapon);
         } catch (Exception e) {
