@@ -45,7 +45,7 @@ public class Obsidian implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
     public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
     public static Obsidian INSTANCE;
-    public static String VERSION = "0.2.0";
+    public static String VERSION = "0.3.0";
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
@@ -54,7 +54,7 @@ public class Obsidian implements ModInitializer {
     @Override
     public void onInitialize() {
         INSTANCE = this;
-        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "21w20a"));
+        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "1.17"));
 
         CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 
