@@ -48,6 +48,10 @@ dependencies {
         exclude group: "io.github.cottonmc"
     }
 
+
+    modImplementation "com.github.EnnuiL:LibZoomer:${project.libzoomer_version}"
+    include "com.github.EnnuiL:LibZoomer:${project.libzoomer_version}"
+
     modImplementation "com.terraformersmc:modmenu:2.0.0-beta.7"
     modImplementation "com.github.shnupbups:oxidizelib:1.0.0a"
 }
