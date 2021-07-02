@@ -1,7 +1,5 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
-import com.shnupbups.oxidizelib.OxidizableFamily;
-import com.shnupbups.oxidizelib.OxidizeLib;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
@@ -125,7 +123,12 @@ public class Blocks implements AddonModule {
                                 block.information.getMaterial().getColor(), settings);
                         break;
                     case OXIDIZING_BLOCK:
-                        Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.OXIDIZED, blockSettings), block,
+                        for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                            for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
+                                REGISTRY_HELPER.registerBlock(new Block(blockSettings), block, variantBlock.name.getPath(), settings);
+                            }
+                        }
+                        /*Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.OXIDIZED, blockSettings), block,
                                 "oxidized_" + block.information.name.id.getPath(), settings);
                         Block weathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.WEATHERED, blockSettings), block,
                                 "weathered_" + block.information.name.id.getPath(), settings);
@@ -175,7 +178,7 @@ public class Blocks implements AddonModule {
                                     .unaffected(cutUnaffected, cutUnaffectedWaxed)
                                     .build();
                             OxidizeLib.registerOxidizableFamily(family);
-                        }
+                        }*/
 
                         break;
                     case PLANT:
@@ -285,9 +288,25 @@ public class Blocks implements AddonModule {
                 new BlockInitThread(block);
             }
 
-            register(BLOCKS, "block", block.information.name.id.toString(), block);
+            if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
+                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                    for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
+                        register(BLOCKS, "block", variantBlock.name.toString(), block);
+                    }
+                }
+            } else {
+                register(BLOCKS, "block", block.information.name.id.toString(), block);
+            }
         } catch (Exception e) {
-            failedRegistering("block", block.information.name.id.toString(), e);
+            if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
+                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                    for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
+                        failedRegistering("block", variantBlock.name.toString(), e);
+                    }
+                }
+            } else {
+                failedRegistering("block", block.information.name.id.toString(), e);
+            }
         }
     }
 

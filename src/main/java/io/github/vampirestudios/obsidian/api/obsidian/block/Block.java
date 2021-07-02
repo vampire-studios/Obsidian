@@ -21,6 +21,7 @@ public class Block {
     public List<Identifier> can_plant_on;
     public Identifier particle_type;
     public Growable growable;
+    public OxidizableProperties oxidizable_properties;
 
     public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
@@ -52,6 +53,29 @@ public class Block {
         DOUBLE_PLANT,
         HORIZONTAL_FACING_DOUBLE_PLANT,
         HANGING_DOUBLE_LEAVES
+    }
+
+    public static class OxidizableProperties {
+
+        public OxidationStage[] stages;
+        public String[] cycle;
+
+        public static class OxidationStage {
+
+            public boolean can_be_waxed;
+            public VariantBlock[] blocks;
+            public boolean stairs;
+            public boolean slab;
+
+            public static class VariantBlock {
+
+                public Identifier name;
+                public DisplayInformation display;
+
+            }
+
+        }
+
     }
 
     public static class CampfireProperties {

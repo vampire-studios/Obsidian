@@ -67,6 +67,14 @@ public class BlockInitThread implements Runnable {
                             if (block.block_type == Block.BlockType.LOG) {
                                 ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                            } else if (block.block_type == Block.BlockType.OXIDIZING_BLOCK) {
+                                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                                    for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
+                                        textureAndModelInformation = variantBlock.display.model;
+                                        ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name);
+                                        ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                    }
+                                }
                             }
                         }
                         ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);

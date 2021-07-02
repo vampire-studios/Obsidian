@@ -2,10 +2,7 @@ package io.github.vampirestudios.obsidian.configPack;
 
 import com.google.common.base.Joiner;
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.api.obsidian.AddonModuleVersionIndependent;
-import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
+import io.github.vampirestudios.obsidian.api.obsidian.*;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
@@ -47,6 +44,7 @@ public class ObsidianAddonLoader {
     public static CopyOnWriteArrayList<RangedWeaponItem> RANGED_WEAPONS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Block> BLOCKS = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<FuelSource> FUEL_SOURCES = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Block> ORES = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Potion> POTIONS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Command.CommandNode> COMMANDS = new CopyOnWriteArrayList<>();
@@ -56,6 +54,7 @@ public class ObsidianAddonLoader {
     public static CopyOnWriteArrayList<Entity> ENTITIES = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> ARMORS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Elytra> ELYTRAS = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<ZoomableItem> ZOOMABLE_ITEMS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<CauldronType> CAULDRON_TYPES = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<ShieldItem> SHIELDS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<VillagerProfession> VILLAGER_PROFESSIONS = new CopyOnWriteArrayList<>();

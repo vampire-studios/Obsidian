@@ -122,6 +122,7 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
         registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
         registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
         registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
         registerInRegistry(ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
@@ -134,6 +135,7 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
         registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
         registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
 
         ObsidianAddonLoader.loadDefaultObsidianAddons();
         CompletableFuture.runAsync(ObsidianAddonLoader::loadObsidianAddons, ObsidianAddonLoader.EXECUTOR_SERVICE);

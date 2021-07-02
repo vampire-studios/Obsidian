@@ -52,7 +52,7 @@ public class ClientPlayNetworkHandlerMixin {
         tridentEntity.refreshPositionAfterTeleport(d, e, f);
         tridentEntity.setPitch(packet.getPitch() * 360 / 256.0F);
         tridentEntity.setYaw(packet.getYaw() * 360 / 256.0F);
-        tridentEntity.setEntityId(i);
+        tridentEntity.setId(i);
         tridentEntity.setUuid(packet.getUuid());
         world.addEntity(i, tridentEntity);
         info.cancel();
