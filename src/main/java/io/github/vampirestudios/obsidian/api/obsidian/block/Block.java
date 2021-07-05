@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Block {
-
     public BlockType block_type;
     public BlockInformation information;
     public DisplayInformation display;
@@ -56,34 +55,26 @@ public class Block {
     }
 
     public static class OxidizableProperties {
-
         public OxidationStage[] stages;
         public String[] cycle;
 
         public static class OxidationStage {
-
             public boolean can_be_waxed;
             public VariantBlock[] blocks;
             public boolean stairs;
             public boolean slab;
 
             public static class VariantBlock {
-
                 public Identifier name;
                 public DisplayInformation display;
-
             }
-
         }
-
     }
 
     public static class CampfireProperties {
-
         public boolean emits_particles;
         public int fire_damage;
         public int luminance;
-
     }
 
 }

@@ -119,11 +119,10 @@ public class Blocks implements AddonModule {
                                 block.information.getMaterial().getColor(), settings);
                         break;
                     case WOOD:
-                        REGISTRY_HELPER.registerLog(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(),
-                                block.information.getMaterial().getColor(), settings);
+                        REGISTRY_HELPER.registerBlock(new Block(blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case OXIDIZING_BLOCK:
-                        for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                        for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                             for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
                                 REGISTRY_HELPER.registerBlock(new Block(blockSettings), block, variantBlock.name.getPath(), settings);
                             }
@@ -183,7 +182,7 @@ public class Blocks implements AddonModule {
                         break;
                     case PLANT:
                         if (block.additional_information != null) {
-                            if(block.additional_information.waterloggable) {
+                            if (block.additional_information.waterloggable) {
                                 REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                             }
                         } else {
@@ -289,7 +288,7 @@ public class Blocks implements AddonModule {
             }
 
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
                         register(BLOCKS, "block", variantBlock.name.toString(), block);
                     }
@@ -299,7 +298,7 @@ public class Blocks implements AddonModule {
             }
         } catch (Exception e) {
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
                         failedRegistering("block", variantBlock.name.toString(), e);
                     }
