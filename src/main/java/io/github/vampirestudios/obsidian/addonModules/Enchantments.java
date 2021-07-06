@@ -21,7 +21,7 @@ public class Enchantments implements AddonModule {
         try {
             if (enchantment == null) return;
             Registry.register(Registry.ENCHANTMENT, enchantment.name.id, new EnchantmentImpl(enchantment));
-            register(ENCHANTMENTS, "enchantment", enchantment.name.id.getPath(), enchantment);
+            register(ENCHANTMENTS, "enchantment", enchantment.name.id, enchantment);
         } catch (Exception e) {
             failedRegistering("enchantment", enchantment.name.id.getPath(), e);
         }

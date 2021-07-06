@@ -69,7 +69,7 @@ public class Commands implements AddonModule {
             CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> parseNodes(dispatcher, finalJson));
             register(COMMANDS, "command", command.name, command);
         } catch (Exception e) {
-            failedRegistering("command", command.name, e);
+            failedRegistering("command", command.name.toString(), e);
         }
     }
 
@@ -84,7 +84,7 @@ public class Commands implements AddonModule {
 
     void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, String json) {
         Command.CommandNode node = Obsidian.GSON.fromJson(json, Command.CommandNode.class);
-        LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name);
+        LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name.getPath());
         parse(root, node, new String[]{ });
         dispatcher.register(root);
     }

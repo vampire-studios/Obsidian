@@ -85,7 +85,7 @@ public class Entities implements AddonModule {
                     .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                     .build();
             FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(finalHealthComponent.max, movementComponent.value));
-            register(ENTITIES, "entity", entity.information.identifier.toString(), entity);
+            register(ENTITIES, "entity", entity.information.identifier, entity);
         } catch (Exception e) {
             failedRegistering("entity", entity.information.identifier.toString(), e);
         }

@@ -5,7 +5,7 @@ import net.minecraft.util.Identifier;
 
 public class CauldronType {
 
-    public String name;
+    public Identifier name;
     public Identifier item;
     public TargetState blockstate;
     public Identifier sound_event;

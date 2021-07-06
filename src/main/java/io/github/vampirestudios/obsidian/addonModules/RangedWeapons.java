@@ -69,7 +69,7 @@ public class RangedWeapons implements AddonModule {
                     });
                 }
             }
-            register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id.toString(), rangedWeapon);
+            register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id, rangedWeapon);
         } catch (Exception e) {
             failedRegistering("ranged_weapon", rangedWeapon.information.name.id.toString(), e);
         }

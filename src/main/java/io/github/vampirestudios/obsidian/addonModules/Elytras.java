@@ -23,7 +23,7 @@ public class Elytras implements AddonModule {
             if (item == null) return;
             RegistryUtils.registerItem(new ElytraItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
                     .maxCount(1)), item.information.name.id);
-            register(ELYTRAS, "elytra", item.information.name.id.toString(), item);
+            register(ELYTRAS, "elytra", item.information.name.id, item);
         } catch (Exception e) {
             failedRegistering("elytra", item.information.name.id.toString(), e);
         }

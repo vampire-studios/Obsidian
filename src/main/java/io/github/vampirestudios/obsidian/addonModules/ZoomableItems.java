@@ -37,7 +37,7 @@ public class ZoomableItems implements AddonModule {
                 zoomInstance.setZoom(client.options.getPerspective().isFirstPerson() && (client.player.isUsingItem() &&
                         client.player.getActiveItem().isOf(item)));
             });
-            register(ZOOMABLE_ITEMS, "zoomable_item", zoomableItem.information.name.id.toString(), zoomableItem);
+            register(ZOOMABLE_ITEMS, "zoomable_item", zoomableItem.information.name.id, zoomableItem);
         } catch (Exception e) {
             failedRegistering("zoomable_item", zoomableItem.information.name.id.toString(), e);
         }

@@ -28,7 +28,7 @@ public class VillagerBiomeTypes implements AddonModule {
                 RegistryKey<Biome> registryKey = BuiltinRegistries.BIOME.getKey(biome).get();
                 VillagerTypeHelper.addVillagerTypeToBiome(registryKey, villagerType);
             });
-            register(VILLAGER_BIOME_TYPES, "villager_biome_type", villagerBiomeType.name.id.toString(), villagerBiomeType);
+            register(VILLAGER_BIOME_TYPES, "villager_biome_type", villagerBiomeType.name.id, villagerBiomeType);
         } catch (Exception e) {
             failedRegistering("villager_biome_type", villagerBiomeType.name.id.toString(), e);
         }

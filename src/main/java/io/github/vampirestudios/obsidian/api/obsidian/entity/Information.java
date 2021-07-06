@@ -5,10 +5,11 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityModelImpl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityModelLayerRegistry;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.*;
 import net.minecraft.util.Identifier;
+
+import java.util.Optional;
 
 public class Information {
 
@@ -24,19 +25,14 @@ public class Information {
     public SpawnEgg spawn_egg;
 
     public EntityModel<EntityImpl> getNewEntityModel(EntityRendererFactory.Context context) {
-        var ref = new Object() {
-            EntityModel<EntityImpl> entityModel = getEntityModel(context);
-        };
-        EntityModelLayer entityModelLayer = EntityModelLayers.registerMain(identifier.getPath());
-        EntityModelLayerRegistry.registerModelLayer(entityModelLayer, EntityModelImpl::getTexturedModelData);
-        ObsidianAddonLoader.ENTITY_MODELS.forEach(entityModel1 -> {
-            if(entityModel1.name == entityModelPath && entityModelPath != null) {
-                if (ref.entityModel != null) {
-                    ref.entityModel = new EntityModelImpl<>(context.getPart(entityModelLayer), entityModel1);
-                }
-            }
-        });
-        return ref.entityModel;
+        EntityModel<EntityImpl> entityModel;
+        Optional<io.github.vampirestudios.obsidian.api.obsidian.EntityModel> model = ObsidianAddonLoader.ENTITY_MODELS.getOrEmpty(entityModelPath);
+        if(model.isPresent()) {
+            entityModel = new EntityModelImpl<>(model.get());
+        } else {
+            entityModel = getEntityModel(context);
+        }
+        return entityModel;
     }
 
     @Environment(EnvType.CLIENT)

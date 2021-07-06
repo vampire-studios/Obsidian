@@ -27,7 +27,7 @@ public class Items implements AddonModule {
             if (item.information.can_place_block) RegistryUtils.registerItem(new BlockItemImpl(item, Registry.BLOCK.get(item.information.placable_block),
                             settings), item.information.name.id);
             else RegistryUtils.registerItem(new ItemImpl(item, settings), item.information.name.id);
-            register(ITEMS, "item", item.information.name.id.toString(), item);
+            register(ITEMS, "item", item.information.name.id, item);
         } catch (Exception e) {
             failedRegistering("item", item.information.name.id.toString(), e);
         }

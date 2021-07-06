@@ -31,7 +31,7 @@ public class CauldronTypes implements AddonModule {
             CauldronBehavior.POWDER_SNOW_CAULDRON_BEHAVIOR.put(Registry.ITEM.get(cauldronType.item), cauldronBehavior);
             register(CAULDRON_TYPES, "cauldron_type", cauldronType.name, cauldronType);
         } catch (Exception e) {
-            failedRegistering("cauldron_types", cauldronType.name, e);
+            failedRegistering("cauldron_types", cauldronType.name.toString(), e);
         }
     }
 

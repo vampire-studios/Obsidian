@@ -22,7 +22,7 @@ public class Potions implements AddonModule {
             if (potion == null) return;
             Registry.register(Registry.POTION, potion.name,
                     new net.minecraft.potion.Potion(new StatusEffectInstance(potion.getEffectType(), potion.getEffects().duration * 20, potion.getEffects().amplifier)));
-            register(POTIONS, "potion", potion.name.toString(), potion);
+            register(POTIONS, "potion", potion.name, potion);
         } catch (Exception e) {
             failedRegistering("potion", potion.name.toString(), e);
         }

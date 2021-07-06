@@ -27,7 +27,7 @@ public class Weapons implements AddonModule {
             CustomToolMaterial material = new CustomToolMaterial(weapon.material);
             RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings),
                     weapon.information.name.id);
-            register(WEAPONS, "weapon", weapon.information.name.id.toString(), weapon);
+            register(WEAPONS, "weapon", weapon.information.name.id, weapon);
         } catch (Exception e) {
             failedRegistering("weapon", weapon.information.name.id.toString(), e);
         }

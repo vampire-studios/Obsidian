@@ -26,7 +26,7 @@ public class Armor implements AddonModule {
             CustomArmorMaterial material = new CustomArmorMaterial(armor.material);
             RegistryUtils.registerItem(new ArmorItemImpl(material, armor, settings),
                     armor.information.name.id);
-            register(ARMORS, "armor", armor.information.name.id.toString(), armor);
+            register(ARMORS, "armor", armor.information.name.id, armor);
         } catch (Exception e) {
             failedRegistering("armor", armor.information.name.id.toString(), e);
         }

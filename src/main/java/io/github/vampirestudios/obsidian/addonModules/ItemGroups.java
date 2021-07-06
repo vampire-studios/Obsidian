@@ -26,7 +26,7 @@ public class ItemGroups implements AddonModule {
                     .icon(() -> new ItemStack(Registry.ITEM.get(itemGroup.icon)))
                     .build();
             Registry.register(Obsidian.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup1);
-            ObsidianAddonLoader.register(ObsidianAddonLoader.ITEM_GROUPS, "block", itemGroup.name.id.toString(), itemGroup);
+            ObsidianAddonLoader.register(ObsidianAddonLoader.ITEM_GROUPS, "block", itemGroup.name.id, itemGroup);
         } catch (Exception e) {
             ObsidianAddonLoader.failedRegistering("item group", itemGroup.name.id.toString(), e);
         }

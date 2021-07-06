@@ -50,7 +50,7 @@ public class FuelSources implements AddonModule {
                     }
                 }
             }
-            register(FUEL_SOURCES, "fuel_source", file.getName(), fuelSource);
+            register(FUEL_SOURCES, "fuel_source", new Identifier(id.getModId(), file.getName().replace(".json", "")), fuelSource);
         } catch (Exception e) {
             failedRegistering("fuel_source", file.getName(), e);
         }

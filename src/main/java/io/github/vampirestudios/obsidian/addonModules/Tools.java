@@ -33,7 +33,7 @@ public class Tools implements AddonModule {
                 case "axe" -> RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
                         tool.information.name.id);
             }
-            register(TOOLS, "tool", tool.information.name.id.toString(), tool);
+            register(TOOLS, "tool", tool.information.name.id, tool);
         } catch (Exception e) {
             failedRegistering("tool", tool.information.name.id.toString(), e);
         }

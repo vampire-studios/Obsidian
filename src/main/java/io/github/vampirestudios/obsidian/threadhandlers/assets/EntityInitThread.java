@@ -6,8 +6,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.client.CustomEntityRenderer;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -25,7 +23,7 @@ public class EntityInitThread implements Runnable {
 	@Override
 	public void run() {
 		EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.information.identifier);
-        EntityRendererRegistry.INSTANCE.register(entityType, this::create2);
+        EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
 		Identifier identifier = entity.information.identifier;
 		clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, "en_us"), translationBuilder ->
 				translationBuilder.entry(String.format("entity.%s.%s", identifier.getNamespace(), identifier.getPath()),
@@ -35,7 +33,4 @@ public class EntityInitThread implements Runnable {
 				modelBuilder.parent(new Identifier("item/template_spawn_egg")));
 	}
 
-	private EntityRenderer<EntityImpl> create2(EntityRendererFactory.Context ctx) {
-		return new CustomEntityRenderer(ctx, entity);
-	}
 }

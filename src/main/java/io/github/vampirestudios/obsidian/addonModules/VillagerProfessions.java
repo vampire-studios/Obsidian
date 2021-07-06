@@ -31,7 +31,7 @@ public class VillagerProfessions implements AddonModule {
                     .workstation(pointOfInterestType)
                     .workSound(Registry.SOUND_EVENT.get(villagerProfession.work_sound))
                     .build();
-            register(VILLAGER_PROFESSIONS, "villager_profession", villagerProfession.name.id.toString(), villagerProfession);
+            register(VILLAGER_PROFESSIONS, "villager_profession", villagerProfession.name.id, villagerProfession);
         } catch (Exception e) {
             failedRegistering("villager_profession", villagerProfession.name.id.toString(), e);
         }

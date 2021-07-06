@@ -28,7 +28,7 @@ public class Food implements AddonModule {
             Registry.register(Registry.ITEM, foodItem.information.name.id, new ItemImpl(foodItem, settings
                     .maxDamage(foodItem.information.use_duration)
                     .food(foodComponent)));
-            register(FOODS, "food", foodItem.information.name.id.toString(), foodItem);
+            register(FOODS, "food", foodItem.information.name.id, foodItem);
         } catch (Exception e) {
             failedRegistering("food", foodItem.information.name.id.toString(), e);
         }

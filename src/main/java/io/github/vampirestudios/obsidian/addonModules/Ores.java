@@ -105,7 +105,7 @@ public class Ores implements AddonModule {
                 new BlockInitThread(block);
             }
 
-            register(ORES, "ore", block.information.name.id.toString(), block);
+            register(ORES, "ore", block.information.name.id, block);
         } catch (Exception e) {
             failedRegistering("ore", block.information.name.id.toString(), e);
         }

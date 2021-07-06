@@ -290,11 +290,11 @@ public class Blocks implements AddonModule {
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
                 for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                        register(BLOCKS, "block", variantBlock.name.toString(), block);
+                        register(BLOCKS, "block", variantBlock.name, block);
                     }
                 }
             } else {
-                register(BLOCKS, "block", block.information.name.id.toString(), block);
+                register(BLOCKS, "block", block.information.name.id, block);
             }
         } catch (Exception e) {
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {

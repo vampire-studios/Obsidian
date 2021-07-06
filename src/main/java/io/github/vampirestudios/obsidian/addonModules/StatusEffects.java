@@ -23,9 +23,9 @@ public class StatusEffects implements AddonModule {
             String color1 = statusEffect.color.replace("#", "").replace("0x", "");
             Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect.getStatusEffectType(),
                     Integer.parseInt(color1, 16)));
-            register(STATUS_EFFECTS, "status_effect", statusEffect.name.translated.get("en_us"), statusEffect);
+            register(STATUS_EFFECTS, "status_effect", statusEffect.name.id, statusEffect);
         } catch (Exception e) {
-            failedRegistering("status_effect", statusEffect.name.translated.get("en_us"), e);
+            failedRegistering("status_effect", statusEffect.name.id.toString(), e);
         }
     }
 

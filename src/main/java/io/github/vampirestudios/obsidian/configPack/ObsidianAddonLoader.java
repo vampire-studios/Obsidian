@@ -15,9 +15,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerBiomeType
 import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerProfession;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.property.Property;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +34,8 @@ import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static io.github.vampirestudios.obsidian.Obsidian.id;
+
 public class ObsidianAddonLoader {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
@@ -38,28 +43,28 @@ public class ObsidianAddonLoader {
     public static final CopyOnWriteArrayList<IAddonPack> OBSIDIAN_ADDONS = new CopyOnWriteArrayList<>();
     public static final int PACK_VERSION = 2;
     public static RegistryHelper REGISTRY_HELPER;
-    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.Item> ITEMS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<FoodItem> FOODS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<WeaponItem> WEAPONS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<RangedWeaponItem> RANGED_WEAPONS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem> TOOLS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Block> BLOCKS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<FuelSource> FUEL_SOURCES = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Block> ORES = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Potion> POTIONS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Command.CommandNode> COMMANDS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<StatusEffect> STATUS_EFFECTS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Enchantment> ENCHANTMENTS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Entity> ENTITIES = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<EntityModel> ENTITY_MODELS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> ARMORS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Elytra> ELYTRAS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<ZoomableItem> ZOOMABLE_ITEMS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<CauldronType> CAULDRON_TYPES = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<ShieldItem> SHIELDS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<VillagerProfession> VILLAGER_PROFESSIONS = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<VillagerBiomeType> VILLAGER_BIOME_TYPES = new CopyOnWriteArrayList<>();
+    public static Registry<Item> ITEMS = FabricRegistryBuilder.createSimple(Item.class, id("items")).buildAndRegister();
+    public static Registry<FoodItem> FOODS = FabricRegistryBuilder.createSimple(FoodItem.class, id("foods")).buildAndRegister();
+    public static Registry<WeaponItem> WEAPONS = FabricRegistryBuilder.createSimple(WeaponItem.class, id("weapons")).buildAndRegister();
+    public static Registry<RangedWeaponItem> RANGED_WEAPONS = FabricRegistryBuilder.createSimple(RangedWeaponItem.class, id("ranged_weapons")).buildAndRegister();
+    public static Registry<ToolItem> TOOLS = FabricRegistryBuilder.createSimple(ToolItem.class, id("tools")).buildAndRegister();
+    public static Registry<Block> BLOCKS = FabricRegistryBuilder.createSimple(Block.class, id("blocks")).buildAndRegister();
+    public static Registry<FuelSource> FUEL_SOURCES = FabricRegistryBuilder.createSimple(FuelSource.class, id("fuel_sources")).buildAndRegister();
+    public static Registry<Block> ORES = FabricRegistryBuilder.createSimple(Block.class, id("ores")).buildAndRegister();
+    public static Registry<Potion> POTIONS = FabricRegistryBuilder.createSimple(Potion.class, id("potions")).buildAndRegister();
+    public static Registry<Command.CommandNode> COMMANDS = FabricRegistryBuilder.createSimple(Command.CommandNode.class, id("commands")).buildAndRegister();
+    public static Registry<StatusEffect> STATUS_EFFECTS = FabricRegistryBuilder.createSimple(StatusEffect.class, id("status_effects")).buildAndRegister();
+    public static Registry<Enchantment> ENCHANTMENTS = FabricRegistryBuilder.createSimple(Enchantment.class, id("enchantments")).buildAndRegister();
+    public static Registry<ItemGroup> ITEM_GROUPS = FabricRegistryBuilder.createSimple(ItemGroup.class, id("item_groups")).buildAndRegister();
+    public static Registry<Entity> ENTITIES = FabricRegistryBuilder.createSimple(Entity.class, id("entities")).buildAndRegister();
+    public static Registry<EntityModel> ENTITY_MODELS = FabricRegistryBuilder.createSimple(EntityModel.class, id("entity_models")).buildAndRegister();
+    public static Registry<ArmorItem> ARMORS = FabricRegistryBuilder.createSimple(ArmorItem.class, id("armors")).buildAndRegister();
+    public static Registry<Elytra> ELYTRAS = FabricRegistryBuilder.createSimple(Elytra.class, id("elytras")).buildAndRegister();
+    public static Registry<ZoomableItem> ZOOMABLE_ITEMS = FabricRegistryBuilder.createSimple(ZoomableItem.class, id("zoomable_items")).buildAndRegister();
+    public static Registry<CauldronType> CAULDRON_TYPES = FabricRegistryBuilder.createSimple(CauldronType.class, id("cauldron_types")).buildAndRegister();
+    public static Registry<ShieldItem> SHIELDS = FabricRegistryBuilder.createSimple(ShieldItem.class, id("shields")).buildAndRegister();
+    public static Registry<VillagerProfession> VILLAGER_PROFESSIONS = FabricRegistryBuilder.createSimple(VillagerProfession.class, id("villager_professions")).buildAndRegister();
+    public static Registry<VillagerBiomeType> VILLAGER_BIOME_TYPES = FabricRegistryBuilder.createSimple(VillagerBiomeType.class, id("villager_biome_types")).buildAndRegister();
 
     public static void loadDefaultObsidianAddons() {
         if (!OBSIDIAN_ADDON_DIRECTORY.exists())
@@ -174,8 +179,8 @@ public class ObsidianAddonLoader {
         }
     }
 
-    public static <T> void register(List<T> list, String type, String name, T idk) {
-        list.add(idk);
+    public static <T> void register(Registry<T> list, String type, Identifier name, T idk) {
+        Registry.register(list, name, idk);
         Obsidian.LOGGER.info("[Obsidian] Registered a {} {}.", type, name);
     }
 

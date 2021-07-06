@@ -20,7 +20,7 @@ public class EntityModels implements AddonModule {
         EntityModel entityModel = Obsidian.GSON.fromJson(entityJson, EntityModel.class);
         try {
             if (entityModel == null) return;
-            register(ENTITY_MODELS, "entity_model", entityModel.name.toString(), entityModel);
+            register(ENTITY_MODELS, "entity_model", entityModel.name, entityModel);
         } catch (Exception e) {
             failedRegistering("entity_model", entityModel.name.toString(), e);
         }

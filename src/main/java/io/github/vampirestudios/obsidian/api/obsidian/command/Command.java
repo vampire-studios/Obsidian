@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.command;
 
 import com.mojang.brigadier.arguments.*;
 import net.minecraft.command.argument.*;
+import net.minecraft.util.Identifier;
 
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public class Command {
     }
     
     public class CommandNode extends Node {
-        public String name;
+        public Identifier name;
         public String description;
     }
     
