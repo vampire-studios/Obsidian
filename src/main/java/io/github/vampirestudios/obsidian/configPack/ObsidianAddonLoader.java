@@ -52,6 +52,7 @@ public class ObsidianAddonLoader {
     public static CopyOnWriteArrayList<Enchantment> ENCHANTMENTS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Entity> ENTITIES = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<EntityModel> ENTITY_MODELS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem> ARMORS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Elytra> ELYTRAS = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<ZoomableItem> ZOOMABLE_ITEMS = new CopyOnWriteArrayList<>();

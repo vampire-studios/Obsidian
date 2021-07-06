@@ -129,6 +129,7 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "weapon", new Weapons());
         registerInRegistry(ADDON_MODULE_REGISTRY, "commands", new Commands());
         registerInRegistry(ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "entity_models", new EntityModels());
         registerInRegistry(ADDON_MODULE_REGISTRY, "entities", new Entities());
 //        registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
         registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());

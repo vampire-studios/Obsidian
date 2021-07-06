@@ -3,25 +3,10 @@ accessible method net/minecraft/text/TextColor <init> (I)V
 accessible method net/minecraft/enchantment/Enchantment <init> (Lnet/minecraft/enchantment/Enchantment$Rarity;Lnet/minecraft/enchantment/EnchantmentTarget;[Lnet/minecraft/entity/EquipmentSlot;)V
 
 extendable class net/minecraft/world/biome/Biome
-accessible class net/minecraft/world/biome/Biome
-accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/Biome$Category;FFLnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;Ljava/util/Optional;)V
-extendable class net/minecraft/world/biome/Biome$Weather
+accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/Biome$Category;FFLnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;)V
 accessible class net/minecraft/world/biome/Biome$Weather
+accessible class net/minecraft/world/biome/layer/BiomeLayers$Category
 accessible method net/minecraft/world/biome/Biome$Weather <init> (Lnet/minecraft/world/biome/Biome$Precipitation;FLnet/minecraft/world/biome/Biome$TemperatureModifier;F)V
-mutable field net/minecraft/world/biome/GenerationSettings surfaceBuilder Ljava/util/function/Supplier;
-accessible field net/minecraft/world/biome/GenerationSettings surfaceBuilder Ljava/util/function/Supplier;
-mutable field net/minecraft/world/biome/GenerationSettings carvers Ljava/util/Map;
-accessible field net/minecraft/world/biome/GenerationSettings carvers Ljava/util/Map;
-mutable field net/minecraft/world/biome/GenerationSettings features Ljava/util/List;
-accessible field net/minecraft/world/biome/GenerationSettings features Ljava/util/List;
-mutable field net/minecraft/world/biome/GenerationSettings structureFeatures Ljava/util/List;
-accessible field net/minecraft/world/biome/GenerationSettings structureFeatures Ljava/util/List;
-mutable field net/minecraft/world/biome/GenerationSettings flowerFeatures Ljava/util/List;
-accessible field net/minecraft/world/biome/GenerationSettings flowerFeatures Ljava/util/List;
-mutable field net/minecraft/world/biome/Biome generationSettings Lnet/minecraft/world/biome/GenerationSettings;
-accessible field net/minecraft/world/biome/Biome generationSettings Lnet/minecraft/world/biome/GenerationSettings;
-accessible method net/minecraft/util/WorldSavePath <init> (Ljava/lang/String;)V
-extendable method net/minecraft/util/WorldSavePath <init> (Ljava/lang/String;)V
 
 accessible method net/minecraft/resource/ResourceType <init> (Ljava/lang/String;)V
 extendable method net/minecraft/resource/ResourceType <init> (Ljava/lang/String;)V
@@ -30,3 +15,5 @@ accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
 accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;
 
 accessible class net/minecraft/entity/mob/DrownedEntity$TridentAttackGoal
+
+accessible method net/minecraft/client/render/entity/model/EntityModelLayers registerMain (Ljava/lang/String;)Lnet/minecraft/client/render/entity/model/EntityModelLayer;
