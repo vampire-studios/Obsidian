@@ -9,7 +9,11 @@ import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.fabricmc.fabric.api.item.v1.bow.FabricBowItem;
 import net.fabricmc.fabric.api.item.v1.crossbow.SimpleCrossbowItem;
+import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
+import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.Identifier;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,9 +30,44 @@ public class RangedWeapons implements AddonModule {
             Item.Settings settings = new Item.Settings().group(rangedWeapon.information.getItemGroup())
                     .maxCount(rangedWeapon.information.max_count).rarity(rangedWeapon.information.getRarity());
             switch (rangedWeapon.weapon_type) {
-                case "bow" -> RegistryUtils.registerItem(new FabricBowItem(settings), rangedWeapon.information.name.id);
-                case "crossbow" -> RegistryUtils.registerItem(new SimpleCrossbowItem(settings), rangedWeapon.information.name.id);
-                case "trident" -> RegistryUtils.registerItem(new SimpleTridentItem(settings), rangedWeapon.information.name.id);
+                case "bow" -> {
+                    Item item = RegistryUtils.registerItem(new FabricBowItem(settings), rangedWeapon.information.name.id);
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
+                        if (entity == null) {
+                            return 0.0F;
+                        } else {
+                            return entity.getActiveItem() != stack ? 0.0F : (float)(stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / 20.0F;
+                        }
+                    });
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pulling"), (stack, world, entity, seed) -> {
+                        return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F;
+                    });
+                }
+                case "crossbow" ->  {
+                    Item item = RegistryUtils.registerItem(new SimpleCrossbowItem(settings), rangedWeapon.information.name.id);
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
+                        if (entity == null) {
+                            return 0.0F;
+                        } else {
+                            return CrossbowItem.isCharged(stack) ? 0.0F : (float)(stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / (float)CrossbowItem.getPullTime(stack);
+                        }
+                    });
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pulling"), (stack, world, entity, seed) -> {
+                        return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack && !CrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
+                    });
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("charged"), (stack, world, entity, seed) -> {
+                        return entity != null && CrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
+                    });
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("firework"), (stack, world, entity, seed) -> {
+                        return entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.hasProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
+                    });
+                }
+                case "trident" -> {
+                    Item item = RegistryUtils.registerItem(new SimpleTridentItem(settings), rangedWeapon.information.name.id);
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("throwing"), (stack, world, entity, seed) -> {
+                        return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F;
+                    });
+                }
             }
             register(RANGED_WEAPONS, "ranged_weapon", rangedWeapon.information.name.id.toString(), rangedWeapon);
         } catch (Exception e) {
