@@ -51,7 +51,7 @@ public class EntityModel {
 
                 modelPartBuilder.mirrored(cube.mirrored);
             }
-            if (!part.parent.isEmpty()) modelPartData.getChild(part.parent)
+            if (part.parent != null && !part.parent.isEmpty() && !part.parent.isBlank()) modelPartData.getChild(part.parent)
                     .addChild(part.name, modelPartBuilder,
                             ModelTransform.of(
                                     part.pivot[0], part.pivot[1], part.pivot[2],
