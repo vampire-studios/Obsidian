@@ -16,6 +16,7 @@
 
 package net.fabricmc.fabric.api.item.v1.bow;
 
+import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.BowItem;
@@ -26,8 +27,16 @@ import org.jetbrains.annotations.NotNull;
  * This is the default implementation for {@link FabricBowExtensions}, allowing for the easy creation of new bows with no new modded functionality.
  */
 public class FabricBowItem extends BowItem implements FabricBowExtensions {
-	public FabricBowItem(Settings settings) {
+	public RangedWeaponItem rangedWeaponItem;
+
+	public FabricBowItem(RangedWeaponItem rangedWeaponItem, Settings settings) {
 		super(settings);
+		this.rangedWeaponItem = rangedWeaponItem;
+	}
+
+	@Override
+	public boolean isDamageable() {
+		return rangedWeaponItem.damageable;
 	}
 
 	@Override

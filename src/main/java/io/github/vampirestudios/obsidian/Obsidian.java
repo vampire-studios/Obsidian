@@ -120,6 +120,7 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
         registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
         registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
         registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
         registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());

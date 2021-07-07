@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
+import io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
@@ -13,11 +13,16 @@ import java.util.List;
 
 public class PickaxeItemImpl extends PickaxeItem {
 
-    public Item item;
+    public ToolItem item;
 
-    public PickaxeItemImpl(Item item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
+    public PickaxeItemImpl(ToolItem item, ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
         super(material, attackDamage, attackSpeed, settings);
         this.item = item;
+    }
+
+    @Override
+    public boolean isDamageable() {
+        return item.damageable;
     }
 
     @Override

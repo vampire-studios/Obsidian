@@ -6,5 +6,6 @@ public class ToolItem extends Item {
     public String toolType;
     public int attackDamage;
     public float attackSpeed;
+    public boolean damageable = true;
 
 }

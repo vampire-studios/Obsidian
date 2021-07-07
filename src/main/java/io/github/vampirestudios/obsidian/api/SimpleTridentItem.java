@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api;
 
+import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import net.minecraft.client.render.entity.model.TridentEntityModel;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.projectile.TridentEntity;
@@ -14,14 +15,21 @@ public class SimpleTridentItem extends TridentItem implements TridentInterface {
     private static final Identifier DEFAULT_TEXTURE = TridentEntityModel.TEXTURE;
 
     private final Identifier tridentEntityIdentifier;
+    public RangedWeaponItem rangedWeaponItem;
 
-    public SimpleTridentItem(Settings settings) {
-        this(settings, DEFAULT_TEXTURE);
+    public SimpleTridentItem(RangedWeaponItem rangedWeaponItem, Settings settings) {
+        this(rangedWeaponItem, DEFAULT_TEXTURE, settings);
     }
 
-    public SimpleTridentItem(Settings settings, Identifier tridentEntityTexture) {
+    public SimpleTridentItem(RangedWeaponItem rangedWeaponItem, Identifier tridentEntityTexture, Settings settings) {
         super(settings);
         this.tridentEntityIdentifier = tridentEntityTexture;
+        this.rangedWeaponItem = rangedWeaponItem;
+    }
+
+    @Override
+    public boolean isDamageable() {
+        return rangedWeaponItem.damageable;
     }
 
     @Override

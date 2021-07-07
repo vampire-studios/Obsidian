@@ -9,10 +9,11 @@
   "mixins": [
     "BuiltinModelItemRendererMixin",
     "DynamicRegistryManagerMixin",
-//    "HeldItemRendererMixin",
     "HoneycombItemAccessor",
     "ItemMixin",
     "ItemRendererMixin",
+    "MixinArmorFeatureRenderer",
+    "MixinItem",
     "MixinPlayerManager",
     "TridentAttackGoalMixin"
   ],

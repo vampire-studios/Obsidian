@@ -12,7 +12,8 @@ public class ArmorMaterial {
     public float toughness;
     public float knockback_resistance;
     public Identifier repair_item;
+    public int durability;
 
     public Identifier texture;
-    public int durability;
+    public Identifier customArmorModel;
 }

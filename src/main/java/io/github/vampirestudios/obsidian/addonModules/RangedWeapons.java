@@ -31,7 +31,7 @@ public class RangedWeapons implements AddonModule {
                     .maxCount(rangedWeapon.information.max_count).rarity(rangedWeapon.information.getRarity());
             switch (rangedWeapon.weapon_type) {
                 case "bow" -> {
-                    Item item = RegistryUtils.registerItem(new FabricBowItem(settings), rangedWeapon.information.name.id);
+                    Item item = RegistryUtils.registerItem(new FabricBowItem(rangedWeapon, settings), rangedWeapon.information.name.id);
                     FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
                         if (entity == null) {
                             return 0.0F;
@@ -44,7 +44,7 @@ public class RangedWeapons implements AddonModule {
                     });
                 }
                 case "crossbow" ->  {
-                    Item item = RegistryUtils.registerItem(new SimpleCrossbowItem(settings), rangedWeapon.information.name.id);
+                    Item item = RegistryUtils.registerItem(new SimpleCrossbowItem(rangedWeapon, settings), rangedWeapon.information.name.id);
                     FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
                         if (entity == null) {
                             return 0.0F;
@@ -63,7 +63,7 @@ public class RangedWeapons implements AddonModule {
                     });
                 }
                 case "trident" -> {
-                    Item item = RegistryUtils.registerItem(new SimpleTridentItem(settings), rangedWeapon.information.name.id);
+                    Item item = RegistryUtils.registerItem(new SimpleTridentItem(rangedWeapon, settings), rangedWeapon.information.name.id);
                     FabricModelPredicateProviderRegistry.register(item, new Identifier("throwing"), (stack, world, entity, seed) -> {
                         return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F;
                     });
