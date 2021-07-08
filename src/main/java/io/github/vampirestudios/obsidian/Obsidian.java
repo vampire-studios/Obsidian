@@ -116,9 +116,9 @@ public class Obsidian implements ModInitializer {
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
 //        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
+        registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
         registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
         registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
-        registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
         registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());

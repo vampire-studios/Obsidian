@@ -82,6 +82,8 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new WaterloggableBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                     } else if (block.additional_information.waterloggable && block.additional_information.plant) {
                         REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                    } else if(block.additional_information.dyable) {
+                        REGISTRY_HELPER.registerBlock(new DyableBlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
                     } else {
                         REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                     }
@@ -127,58 +129,6 @@ public class Blocks implements AddonModule {
                                 REGISTRY_HELPER.registerBlock(new Block(blockSettings), block, variantBlock.name.getPath(), settings);
                             }
                         }
-                        /*Block oxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.OXIDIZED, blockSettings), block,
-                                "oxidized_" + block.information.name.id.getPath(), settings);
-                        Block weathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.WEATHERED, blockSettings), block,
-                                "weathered_" + block.information.name.id.getPath(), settings);
-                        Block exposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.EXPOSED, blockSettings), block,
-                                "exposed_" + block.information.name.id.getPath(), settings);
-                        Block unaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
-                                block.information.name.id.getPath() + "_block", settings);
-                        Block waxedOxidized = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                "oxidized_" + block.information.name.id.getPath(), settings);
-                        Block waxedWeathered = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                "waxed_weathered_" + block.information.name.id.getPath(), settings);
-                        Block waxedExposed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                "waxed_exposed_" + block.information.name.id.getPath(), settings);
-                        Block waxedUnaffected = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                "waxed_" + block.information.name.id.getPath() + "_block", settings);
-
-                        OxidizableFamily family = new OxidizableFamily.Builder()
-                                .oxidized(oxidized, waxedOxidized)
-                                .weathered(weathered, waxedWeathered)
-                                .exposed(exposed, waxedExposed)
-                                .unaffected(unaffected, waxedUnaffected)
-                                .build();
-                        OxidizeLib.registerOxidizableFamily(family);
-
-                        if (block.additional_information.hasCut) {
-                            Block cutOxidized = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.OXIDIZED, blockSettings), block,
-                                    "oxidized_" + block.information.name.id.getPath(), settings);
-                            Block cutWeathered = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.WEATHERED, blockSettings), block,
-                                    "weathered_" + block.information.name.id.getPath(), settings);
-                            Block cutExposed = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.EXPOSED, blockSettings), block,
-                                    "exposed_" + block.information.name.id.getPath(), settings);
-                            Block cutUnaffected = REGISTRY_HELPER.registerBlock(new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, blockSettings), block,
-                                    block.information.name.id.getPath() + "_block", settings);
-                            Block cutOxidizedWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                    "oxidized_" + block.information.name.id.getPath(), settings);
-                            Block cutWeatheredWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                    "waxed_weathered_cut_" + block.information.name.id.getPath(), settings);
-                            Block cutExposedWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                    "waxed_exposed_cut_" + block.information.name.id.getPath(), settings);
-                            Block cutUnaffectedWaxed = REGISTRY_HELPER.registerBlock(new Block(blockSettings), block,
-                                    "waxed_cut_" + block.information.name.id.getPath() + "_block", settings);
-
-                            family = new OxidizableFamily.Builder()
-                                    .oxidized(cutOxidized, cutOxidizedWaxed)
-                                    .weathered(cutWeathered, cutWeatheredWaxed)
-                                    .exposed(cutExposed, cutExposedWaxed)
-                                    .unaffected(cutUnaffected, cutUnaffectedWaxed)
-                                    .build();
-                            OxidizeLib.registerOxidizableFamily(family);
-                        }*/
-
                         break;
                     case PLANT:
                         if (block.additional_information != null) {

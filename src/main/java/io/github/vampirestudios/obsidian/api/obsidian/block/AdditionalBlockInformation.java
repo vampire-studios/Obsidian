@@ -26,6 +26,7 @@ public class AdditionalBlockInformation {
     public boolean chains = false;
     public boolean cake_like = false;
     public boolean waterloggable = false;
+    public boolean dyable = false;
 
     //EXPERIMENTAL
     public int verticalBlockAmount = 1;

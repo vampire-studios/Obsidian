@@ -142,9 +142,10 @@ public class RegistryHelper {
         return Registry.register(Registry.ITEM, new Identifier(this.modId, name), item);
     }
 
-    public <T extends BlockEntity> void registerBlockEntity(FabricBlockEntityTypeBuilder<T> builder, String name) {
+    public <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(FabricBlockEntityTypeBuilder<T> builder, String name) {
         BlockEntityType<T> blockEntityType = builder.build(null);
         Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(this.modId, name), blockEntityType);
+        return blockEntityType;
     }
 
     public Block registerCompatBlock(String modName, String blockName, Block block, ItemGroup itemGroup) {
