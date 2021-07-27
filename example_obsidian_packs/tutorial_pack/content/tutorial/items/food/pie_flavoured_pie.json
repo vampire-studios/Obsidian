@@ -14,7 +14,7 @@
     "use_duration": 64
   },
   "food_information": {
-    "nutrition": 69,
+    "hunger": 69,
     "saturation_modifier": "supernatural"
   },
   "display": {

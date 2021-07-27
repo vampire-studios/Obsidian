@@ -50,7 +50,7 @@ public class DumpRegistriesCommand {
         boolean stopSpamFlag = false;
         Path dataPackPath = dataPackPath(commandSource.getSource().getWorld().getServer().getSavePath(WorldSavePath.DATAPACKS), modId);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        DynamicRegistryManager manager = commandSource.getSource().getMinecraftServer().getRegistryManager();
+        DynamicRegistryManager manager = commandSource.getSource().getServer().getRegistryManager();
         Registry<Biome> biomeRegistry = manager.get(Registry.BIOME_KEY);
         Registry<ConfiguredFeature<?, ?>> featuresRegistry = manager.get(Registry.CONFIGURED_FEATURE_KEY);
         Registry<ConfiguredStructureFeature<?, ?>> structuresRegistry = manager.get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);

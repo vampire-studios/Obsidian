@@ -26,8 +26,8 @@ public class WallImpl extends WallBlock {
 
     public Block block;
 
-    public WallImpl(Block block) {
-        super(Settings.of(block.information.getMaterial()));
+    public WallImpl(Block block, Settings settings) {
+        super(settings);
         this.block = block;
     }
 

@@ -259,12 +259,12 @@ public class BeehiveBlockImpl extends BlockWithEntity {
                     if (bl) {
                         compoundTag2 = new NbtCompound();
                         compoundTag2.put("Bees", beehiveBlockEntity.getBees());
-                        itemStack.putSubTag("BlockEntityTag", compoundTag2);
+                        itemStack.setSubNbt("BlockEntityTag", compoundTag2);
                     }
 
                     compoundTag2 = new NbtCompound();
                     compoundTag2.putInt("honey_level", i);
-                    itemStack.putSubTag("BlockStateTag", compoundTag2);
+                    itemStack.setSubNbt("BlockStateTag", compoundTag2);
                     ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
                     itemEntity.setToDefaultPickupDelay();
                     world.spawnEntity(itemEntity);

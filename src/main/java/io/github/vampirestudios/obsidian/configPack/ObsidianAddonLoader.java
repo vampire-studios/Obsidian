@@ -9,6 +9,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
+import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerBiomeType;
@@ -45,6 +46,8 @@ public class ObsidianAddonLoader {
     public static RegistryHelper REGISTRY_HELPER;
     public static Registry<Item> ITEMS = FabricRegistryBuilder.createSimple(Item.class, id("items")).buildAndRegister();
     public static Registry<FoodItem> FOODS = FabricRegistryBuilder.createSimple(FoodItem.class, id("foods")).buildAndRegister();
+    public static Registry<MusicDisc> MUSIC_DISCS = FabricRegistryBuilder.createSimple(MusicDisc.class, id("music_discs")).buildAndRegister();
+    public static Registry<Particle> PARTICLES = FabricRegistryBuilder.createSimple(Particle.class, id("particles")).buildAndRegister();
     public static Registry<WeaponItem> WEAPONS = FabricRegistryBuilder.createSimple(WeaponItem.class, id("weapons")).buildAndRegister();
     public static Registry<RangedWeaponItem> RANGED_WEAPONS = FabricRegistryBuilder.createSimple(RangedWeaponItem.class, id("ranged_weapons")).buildAndRegister();
     public static Registry<ToolItem> TOOLS = FabricRegistryBuilder.createSimple(ToolItem.class, id("tools")).buildAndRegister();

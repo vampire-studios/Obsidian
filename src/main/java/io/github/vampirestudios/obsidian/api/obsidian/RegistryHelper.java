@@ -6,6 +6,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.HangingTallBlockItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.TallBlockItem;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
@@ -26,6 +27,8 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.registry.Registry;
+
+import java.util.function.BiFunction;
 
 public class RegistryHelper {
     private final String modId;
@@ -85,6 +88,12 @@ public class RegistryHelper {
         return block;
     }
 
+    public Block register(Block block, String id, Item.Settings settings, BiFunction<Block, Settings, Item> item) {
+        Registry.register(Registry.BLOCK, new Identifier(this.modId, id), block);
+        Registry.register(Registry.ITEM, new Identifier(this.modId, id), item.apply(block, settings));
+        return block;
+    }
+
     public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
         Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
         if (block2.information.has_item) Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, settings));
@@ -106,6 +115,12 @@ public class RegistryHelper {
     public Block registerTallBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
         Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
         Registry.register(Registry.ITEM, new Identifier(this.modId, name), new TallBlockItem(block2, block, settings));
+        return block;
+    }
+
+    public Block registerHangingTallBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
+        Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
+        Registry.register(Registry.ITEM, new Identifier(this.modId, name), new HangingTallBlockItem(block2, block, settings));
         return block;
     }
 

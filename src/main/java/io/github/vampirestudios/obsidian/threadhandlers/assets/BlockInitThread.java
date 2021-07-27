@@ -9,20 +9,15 @@ import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.client.ArtificeGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.minecraft.ModBlockColor;
-import io.github.vampirestudios.obsidian.minecraft.ModItemColor;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.DyableBlockEntity;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.DyableBlockImpl;
+import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.Map;
-
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.REGISTRY_HELPER;
 
 public class BlockInitThread implements Runnable {
 
@@ -127,29 +122,66 @@ public class BlockInitThread implements Runnable {
                             ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
                             ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                         }
+
+                        if (block.additional_information.slab) {
+                            ArtificeGenerationHelper.generateSlabBlockState(clientResourcePackBuilder, Utils.appendToPath(blockId, "_slab"), blockId);
+                            ArtificeGenerationHelper.generateSlabBlockModels(clientResourcePackBuilder, Utils.appendToPath(blockId, "_slab"), textureAndModelInformation.textures);
+                            ArtificeGenerationHelper.generateBlockItemModel(clientResourcePackBuilder, Utils.appendToPath(blockId, "_slab"), Utils.appendToPath(blockId, "_slab"));
+                        }
+
+                        if (block.additional_information.stairs) {
+                            ArtificeGenerationHelper.generateStairsBlockState(clientResourcePackBuilder, Utils.appendToPath(blockId, "_stairs"));
+                            ArtificeGenerationHelper.generateStairsBlockModels(clientResourcePackBuilder, Utils.appendToPath(blockId, "_stairs"), textureAndModelInformation.textures);
+                            ArtificeGenerationHelper.generateBlockItemModel(clientResourcePackBuilder, Utils.appendToPath(blockId, "_stairs"), Utils.appendToPath(blockId, "_stairs"));
+                        }
+
+                        if (block.additional_information.walls) {
+                            ArtificeGenerationHelper.generateWallBlockState(clientResourcePackBuilder, Utils.appendToPath(blockId, "_wall"));
+                            ArtificeGenerationHelper.generateWallBlockModels(clientResourcePackBuilder, Utils.appendToPath(blockId, "_wall"), textureAndModelInformation.textures);
+                            ArtificeGenerationHelper.generateBlockItemModel(clientResourcePackBuilder, Utils.appendToPath(blockId, "_wall"), Utils.appendToPath(blockId, "_wall_inventory"));
+                        }
                     } else {
                         if(block.block_type != null) {
-                            if (block.block_type == Block.BlockType.LOG) {
-                                ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
-                                ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
-                            } else if (block.block_type == Block.BlockType.OXIDIZING_BLOCK) {
-                                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
-                                    for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                        textureAndModelInformation = variantBlock.display.blockModel;
-                                        ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name);
-                                        ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                            switch(block.block_type) {
+                                case HORIZONTAL_FACING_BLOCK:
+                                    ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
+                                    ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                    break;
+                                case ROTATABLE_BLOCK:
+                                    ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId);
+                                    ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                    break;
+                                case LOG:
+                                    ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                                    ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                    break;
+                                case OXIDIZING_BLOCK:
+                                    for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                                        for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
+                                            textureAndModelInformation = variantBlock.display.blockModel;
+                                            ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name);
+                                            ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                        }
                                     }
-                                }
+                                    break;
+                                case EIGHT_DIRECTIONAL_BLOCK:
+                                    ArtificeGenerationHelper.generateEightDirectionalBlockState(clientResourcePackBuilder, blockId);
+                                    ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                    break;
+                                default:
+                                    ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
+                                    ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                    break;
                             }
+                        } else {
+                            ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
+                            ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                         }
-                        ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
-                        ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                     }
                     ArtificeGenerationHelper.generateBlockItemModel(clientResourcePackBuilder, blockId);
                 }
                 if (block.display.itemModel != null) {
                     TextureAndModelInformation textureAndModelInformation = block.display.itemModel;
-//                    ArtificeGenerationHelper.generateBlockItemModel(clientResourcePackBuilder, blockId);
                     clientResourcePackBuilder.addItemModel(block.information.name.id, modelBuilder -> {
                         modelBuilder.parent(textureAndModelInformation.parent);
                         textureAndModelInformation.textures.forEach(modelBuilder::texture);
@@ -173,13 +205,14 @@ public class BlockInitThread implements Runnable {
 
             if(block.additional_information != null && block.additional_information.dyable) {
                 net.minecraft.block.Block registeredBlock = Registry.BLOCK.get(block.information.name.id);
-                REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
-                        block.information.name.id.getPath() + "_be");
-                ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        ((ModBlockColor) state.getBlock()).getColor(state, world, pos, tintIndex), registeredBlock);
-                ColorProviderRegistry.ITEM.register((stack, tintIndex) ->
-                        ((ModItemColor) stack.getItem()).getColor(stack, tintIndex), registeredBlock.asItem());
+                ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> {
+                    if (state.getBlock() instanceof DyableBlockImpl) {
+                        return ((DyableBlockImpl) state.getBlock()).getColor(state, world, pos, tintIndex);
+                    }
+                    return 0;
+                }, registeredBlock);
+//                ColorProviderRegistry.ITEM.register((stack, tintIndex) ->
+//                        tintIndex == 0 ? ((DyeableItem) stack.getItem()).getColor(stack) : -1, registeredBlock.asItem());
             }
         } catch (Exception e) {
             e.printStackTrace();

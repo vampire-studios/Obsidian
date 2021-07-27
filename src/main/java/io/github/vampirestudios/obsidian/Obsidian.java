@@ -45,7 +45,7 @@ public class Obsidian implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
     public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
     public static Obsidian INSTANCE;
-    public static String VERSION = "0.3.0";
+    public static String VERSION = "0.4.0";
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
@@ -54,67 +54,67 @@ public class Obsidian implements ModInitializer {
     @Override
     public void onInitialize() {
         INSTANCE = this;
-        LOGGER.info(String.format("You're now running %s v%s for %s", NAME, VERSION, "1.17"));
+        LOGGER.info(String.format("You're now running Obsidian v%s for 1.17.1", VERSION));
 
         CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 
         //Item Groups
-        registerInRegistry(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "transportation", ItemGroup.TRANSPORTATION);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "misc", ItemGroup.MISC);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "food", ItemGroup.FOOD);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "tools", ItemGroup.TOOLS);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "combat", ItemGroup.COMBAT);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "brewing", ItemGroup.BREWING);
-        registerInRegistry(ITEM_GROUP_REGISTRY, "search", ItemGroup.SEARCH);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "transportation", ItemGroup.TRANSPORTATION);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "misc", ItemGroup.MISC);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "food", ItemGroup.FOOD);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "tools", ItemGroup.TOOLS);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "combat", ItemGroup.COMBAT);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "brewing", ItemGroup.BREWING);
+        registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "search", ItemGroup.SEARCH);
 
         //Entity Components
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
 
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "agable", AgeableComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "barter", BarterComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "block_sensor", BlockSensorComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "boostable", BoostableComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "boss", BossComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "break_blocks", BreakBlocksComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "breathable", BreathableComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "celebrate", CelebrateBehaviourComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "namable", NamableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "agable", AgeableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "barter", BarterComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "block_sensor", BlockSensorComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "boostable", BoostableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "boss", BossComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "break_blocks", BreakBlocksComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "breathable", BreathableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "celebrate", CelebrateBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "namable", NamableComponent.class);
 
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
 
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
-        registerInRegistry(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
 
         //Bedrock Block Events
-        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "add_mob_effect", AddMobEffect.class);
-        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "damage", Damage.class);
-        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "decrement_stack", DecrementStack.class);
-        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "die", Die.class);
-        registerInRegistry(BEDROCK_BLOCK_EVENT_REGISTRY, "play_effect", PlayEffect.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "play_sound", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "remove_mob_effect", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "run_command", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_at_pos", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_property", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "spawn_loot", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "swing", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
-//        Registry.register(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
+        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "add_mob_effect", AddMobEffect.class);
+        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "damage", Damage.class);
+        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "decrement_stack", DecrementStack.class);
+        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "die", Die.class);
+        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_effect", PlayEffect.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_sound", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "remove_mob_effect", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "run_command", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_at_pos", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_property", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "spawn_loot", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "swing", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
+//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
         registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
         registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
@@ -126,6 +126,9 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
         registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
         registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "particle", new Particles());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "sound_events", new SoundEvents());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "music_discs", new MusicDiscs());
         registerInRegistry(ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
         registerInRegistry(ADDON_MODULE_REGISTRY, "weapon", new Weapons());
         registerInRegistry(ADDON_MODULE_REGISTRY, "commands", new Commands());
@@ -145,8 +148,12 @@ public class Obsidian implements ModInitializer {
 //        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
     }
 
-    public <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
+    public <T> void registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
         Registry.register(registry, name, idk);
+    }
+
+    public <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
+        Registry.register(registry, new Identifier(MOD_ID, name), idk);
     }
 
 }

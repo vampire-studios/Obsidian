@@ -14,7 +14,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
-import net.minecraft.item.FoodComponent;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -32,29 +32,23 @@ public class Blocks implements AddonModule {
         io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
         try {
             if (block == null) return;
-            FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-                    .slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) -> block.information.is_emissive);
-            if (block.information.randomTicks) {
-                blockSettings.ticksRandomly();
-            }
-            if (!block.information.collidable) {
-                blockSettings.noCollision();
-            }
-            if (block.information.translucent) {
-                blockSettings.nonOpaque();
-            }
-            if (block.information.is_bouncy) {
-                blockSettings.jumpVelocityMultiplier(block.information.jump_velocity_modifier);
-            }
+            FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial())
+                    .hardness(block.information.hardness).resistance(block.information.resistance)
+                    .sounds(block.information.getBlockSoundGroup())
+                    .slipperiness(block.information.slipperiness)
+                    .emissiveLighting((state, world, pos) -> block.information.is_emissive)
+                    .luminance(block.information.luminance)
+                    .velocityMultiplier(block.information.velocity_modifier)
+                    .jumpVelocityMultiplier(block.information.jump_velocity_modifier);
+            if (block.information.randomTicks) blockSettings.ticksRandomly();
+            if (block.information.instant_break) blockSettings.breakInstantly();
+            if (!block.information.collidable) blockSettings.noCollision();
+            if (block.information.translucent) blockSettings.nonOpaque();
+            if (block.information.dynamic_boundaries) blockSettings.dynamicBounds();
 
             Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
-            if (block.food_information != null) {
-                FoodComponent foodComponent = block.food_information.getBuilder().build();
-                settings.food(foodComponent);
-            }
-            if (block.information.fireproof) {
-                settings.fireproof();
-            }
+            if (block.food_information != null) settings.food(block.food_information.getBuilder().build());
+            if (block.information.fireproof) settings.fireproof();
 
             if (block.block_type == null) {
                 if (block.additional_information != null) {
@@ -77,13 +71,16 @@ public class Blocks implements AddonModule {
                     } else if (block.additional_information.cake_like) {
                         REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block, block.information.name.id.getPath(), settings);
                     } else if (block.additional_information.plant) {
-                        REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                    } else if(block.additional_information.dyable) {
+                        net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlock(new DyableBlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
+                                        (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
+                                block.information.name.id.getPath() + "_be");
                     } else if (block.additional_information.waterloggable) {
                         REGISTRY_HELPER.registerBlock(new WaterloggableBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                     } else if (block.additional_information.waterloggable && block.additional_information.plant) {
                         REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
-                    } else if(block.additional_information.dyable) {
-                        REGISTRY_HELPER.registerBlock(new DyableBlockImpl(block, blockSettings), block.information.name.id.getPath(), settings);
                     } else {
                         REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                     }
@@ -92,20 +89,29 @@ public class Blocks implements AddonModule {
                 }
             } else {
                 switch (block.block_type) {
+                    case BLOCK:
+                        REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case HORIZONTAL_FACING_BLOCK:
+                        REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case ROTATABLE_BLOCK:
+                        REGISTRY_HELPER.registerBlock(new FacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
                     case CAMPFIRE:
                         REGISTRY_HELPER.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, block.information.name.id.getPath(), settings);
                         break;
                     case STAIRS:
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case SLAB:
-                        REGISTRY_HELPER.registerBlock(new SlabImpl(block), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case FENCE:
-                        REGISTRY_HELPER.registerBlock(new FenceImpl(block), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case FENCE_GATE:
-                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case CAKE:
                         REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block, block.information.name.id.getPath(), settings);
@@ -121,12 +127,12 @@ public class Blocks implements AddonModule {
                                 block.information.getMaterial().getColor(), settings);
                         break;
                     case WOOD:
-                        REGISTRY_HELPER.registerBlock(new Block(blockSettings), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case OXIDIZING_BLOCK:
                         for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                             for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                REGISTRY_HELPER.registerBlock(new Block(blockSettings), block, variantBlock.name.getPath(), settings);
+                                REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, variantBlock.name.getPath(), settings);
                             }
                         }
                         break;
@@ -136,8 +142,11 @@ public class Blocks implements AddonModule {
                                 REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                             }
                         } else {
-                            REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                            REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         }
+                        break;
+                    case PILLAR:
+                        REGISTRY_HELPER.registerBlock(new PillarBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case HORIZONTAL_FACING_PLANT:
                         REGISTRY_HELPER.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
@@ -150,11 +159,11 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new TorchBaseBlock(), block, block.information.name.id.getPath(), settings);
                         break;
                     case BEEHIVE:
-                        Block beeHive = REGISTRY_HELPER.registerBlock(new BeehiveBlockImpl(blockSettings), block, block.information.name.id.getPath(), settings);
+                        net.minecraft.block.Block beeHive = REGISTRY_HELPER.registerBlock(new BeehiveBlockImpl(blockSettings), block, block.information.name.id.getPath(), settings);
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beeHive), block.information.name.id.getPath() + "_beehive_be");
                         break;
                     case LEAVES:
-                        Block leaves = REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, block.information.name.id.getPath(), settings);
                         break;
                     case LADDER:
                         REGISTRY_HELPER.registerBlock(new CustomLadderBlock(), block, block.information.name.id.getPath(), settings);
@@ -173,7 +182,10 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerTallBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                         break;
                     case HANGING_DOUBLE_LEAVES:
-                        REGISTRY_HELPER.registerTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                        REGISTRY_HELPER.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case EIGHT_DIRECTIONAL_BLOCK:
+                        REGISTRY_HELPER.registerBlock(new EightDirectionBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                 }
             }
@@ -182,23 +194,23 @@ public class Blocks implements AddonModule {
                 if (!block.additional_information.extraBlocksName.isEmpty()) {
                     Identifier identifier = new Identifier(block.information.name.id.getNamespace(), block.additional_information.extraBlocksName);
                     if (block.additional_information.slab) {
-                        REGISTRY_HELPER.registerBlock(new SlabImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block,
                                 Utils.appendToPath(identifier, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
                     }
                     if (block.additional_information.stairs) {
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block), block, new Identifier(id.getModId(), identifier.getPath() + "_stairs").getPath(),
+                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.getModId(), identifier.getPath() + "_stairs").getPath(),
                                 ItemGroup.BUILDING_BLOCKS);
                     }
                     if (block.additional_information.fence) {
-                        REGISTRY_HELPER.registerBlock(new FenceImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block,
                                 new Identifier(id.getModId(), identifier.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
                     }
                     if (block.additional_information.fenceGate) {
-                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block,
                                 Utils.appendToPath(identifier, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
                     }
                     if (block.additional_information.walls) {
-                        REGISTRY_HELPER.registerBlock(new WallImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
                                 Utils.appendToPath(identifier, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
                     }
                     if (block.additional_information.pressurePlate) {
@@ -211,23 +223,23 @@ public class Blocks implements AddonModule {
                     }
                 } else {
                     if (block.additional_information.slab) {
-                        REGISTRY_HELPER.registerBlock(new SlabImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block,
                                 Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
                     }
                     if (block.additional_information.stairs) {
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block), block, new Identifier(id.getModId(), block.information.name.id.getPath() + "_stairs").getPath(),
+                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.getModId(), block.information.name.id.getPath() + "_stairs").getPath(),
                                 ItemGroup.BUILDING_BLOCKS);
                     }
                     if (block.additional_information.fence) {
-                        REGISTRY_HELPER.registerBlock(new FenceImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block,
                                 new Identifier(id.getModId(), block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
                     }
                     if (block.additional_information.fenceGate) {
-                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block,
                                 Utils.appendToPath(block.information.name.id, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
                     }
                     if (block.additional_information.walls) {
-                        REGISTRY_HELPER.registerBlock(new WallImpl(block), block,
+                        REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
                                 Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
                     }
                 }

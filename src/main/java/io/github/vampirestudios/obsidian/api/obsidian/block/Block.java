@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import io.github.vampirestudios.obsidian.api.obsidian.BlockstateInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.util.Identifier;
@@ -21,6 +22,7 @@ public class Block {
     public Identifier particle_type;
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
+    public BlockstateInformation blockState;
 
     public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
@@ -29,6 +31,9 @@ public class Block {
     }
 
     public enum BlockType {
+        BLOCK,
+        HORIZONTAL_FACING_BLOCK,
+        ROTATABLE_BLOCK,
         CAMPFIRE,
         STAIRS,
         SLAB,
@@ -41,6 +46,7 @@ public class Block {
         WOOD,
         OXIDIZING_BLOCK,
         PLANT,
+        PILLAR,
         HORIZONTAL_FACING_PLANT,
         SAPLING,
         TORCH,
@@ -51,7 +57,8 @@ public class Block {
         BUTTON,
         DOUBLE_PLANT,
         HORIZONTAL_FACING_DOUBLE_PLANT,
-        HANGING_DOUBLE_LEAVES
+        HANGING_DOUBLE_LEAVES,
+        EIGHT_DIRECTIONAL_BLOCK
     }
 
     public static class OxidizableProperties {

@@ -26,8 +26,8 @@ public class FenceImpl extends FenceBlock {
 
     public Block block;
 
-    public FenceImpl(Block block) {
-        super(Settings.of(block.information.getMaterial()));
+    public FenceImpl(Block block, Settings settings) {
+        super(settings);
         this.block = block;
     }
 

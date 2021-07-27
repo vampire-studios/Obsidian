@@ -8,7 +8,7 @@ public class PlantBlockImpl extends PlantBlock {
     private final Block block;
 
     public PlantBlockImpl(Block block, Settings settings) {
-        super(settings);
+        super(settings.noCollision().breakInstantly());
         this.block = block;
     }
 

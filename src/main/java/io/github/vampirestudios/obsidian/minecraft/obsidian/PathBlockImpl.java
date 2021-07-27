@@ -5,10 +5,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.block.DirtPathBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.world.BlockView;
 
 import java.util.List;
+import java.util.Map;
 
 public class PathBlockImpl extends DirtPathBlock {
 

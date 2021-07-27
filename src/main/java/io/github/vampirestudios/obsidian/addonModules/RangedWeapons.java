@@ -7,7 +7,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
-import net.fabricmc.fabric.api.item.v1.bow.FabricBowItem;
 import net.fabricmc.fabric.api.item.v1.crossbow.SimpleCrossbowItem;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.item.CrossbowItem;
@@ -30,7 +29,7 @@ public class RangedWeapons implements AddonModule {
             Item.Settings settings = new Item.Settings().group(rangedWeapon.information.getItemGroup())
                     .maxCount(rangedWeapon.information.max_count).rarity(rangedWeapon.information.getRarity());
             switch (rangedWeapon.weapon_type) {
-                case "bow" -> {
+                /*case "bow" -> {
                     Item item = RegistryUtils.registerItem(new FabricBowItem(rangedWeapon, settings), rangedWeapon.information.name.id);
                     FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
                         if (entity == null) {
@@ -42,7 +41,7 @@ public class RangedWeapons implements AddonModule {
                     FabricModelPredicateProviderRegistry.register(item, new Identifier("pulling"), (stack, world, entity, seed) -> {
                         return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F;
                     });
-                }
+                }*/
                 case "crossbow" ->  {
                     Item item = RegistryUtils.registerItem(new SimpleCrossbowItem(rangedWeapon, settings), rangedWeapon.information.name.id);
                     FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {

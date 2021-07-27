@@ -37,7 +37,7 @@ public class BuiltinModelItemRendererMixin {
                         CallbackInfo info) {
         Item item = stack.getItem();
         if (item instanceof ShieldItemImpl) {
-            boolean bl = stack.getSubTag("BlockEntityTag") != null;
+            boolean bl = stack.getSubNbt("BlockEntityTag") != null;
             matrixStack.push();
             matrixStack.scale(1.0F, -1.0F, -1.0F);
             SpriteIdentifier spriteIdentifier;

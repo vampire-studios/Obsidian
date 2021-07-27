@@ -27,8 +27,8 @@ public class OptionsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("RETURN"))
     protected void init(CallbackInfo ci) {
-        this.addDrawable(new ButtonWidget(this.width / 2 - 100, this.height / 6 + 140, 200, 20, new LiteralText("Obsidian Packs"), (buttonWidget) -> {
-            this.client.openScreen(new PackScreen(this, new ResourcePackManager(ResourceType.CLIENT_RESOURCES, new FileResourcePackProvider(ObsidianAddonLoader.OBSIDIAN_ADDON_DIRECTORY, text -> new LiteralText("Addon made by Obsidian"))), this::idk, ObsidianAddonLoader.OBSIDIAN_ADDON_DIRECTORY, new TranslatableText("addonPacks.title")));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height / 6 + 140, 200, 20, new LiteralText("Obsidian Packs"), (buttonWidget) -> {
+            this.client.setScreen(new PackScreen(this, new ResourcePackManager(ResourceType.CLIENT_RESOURCES, new FileResourcePackProvider(ObsidianAddonLoader.OBSIDIAN_ADDON_DIRECTORY, text -> new LiteralText("Addon made by Obsidian"))), this::idk, ObsidianAddonLoader.OBSIDIAN_ADDON_DIRECTORY, new TranslatableText("addonPacks.title")));
         }));
     }
 

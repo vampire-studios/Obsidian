@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.PillarBlock;
@@ -9,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -18,6 +20,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Map;
 
 import static net.minecraft.block.TntBlock.primeTnt;
 
@@ -25,7 +28,7 @@ public class PillarBlockImpl extends PillarBlock {
 
     public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-    public PillarBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Settings settings) {
+    public PillarBlockImpl(Block block, Settings settings) {
         super(settings);
         this.block = block;
     }

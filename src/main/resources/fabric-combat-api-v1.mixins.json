@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "AbstractSkeletonEntityMixin",
-    "BowAttackGoalMixin",
+//    "BowAttackGoalMixin",
     "BowAttackMixin",
     "BowItemMixin",
     "EntityUseBowMixin",
@@ -12,7 +12,7 @@
   ],
   "client": [
     "client.HeldItemRendererMixin",
-    "client.SkeletonEntityModelMixin"
+//    "client.SkeletonEntityModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

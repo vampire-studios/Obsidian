@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
 import com.swordglowsblue.artifice.api.Artifice;
-import io.github.vampirestudios.obsidian.BiomeUtils;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
@@ -10,6 +9,7 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
 import net.minecraft.structure.rule.BlockMatchRuleTest;
@@ -44,7 +44,7 @@ public class Ores implements AddonModule {
         try {
             if (block == null) return;
             FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial()).sounds(block.information.getBlockSoundGroup())
-                    .strength(block.information.destroy_time, block.information.explosion_resistance).drops(block.information.drop)
+                    .strength(block.information.hardness, block.information.resistance).drops(block.information.drop)
                     .slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) -> block.information.is_emissive)
                     .nonOpaque();
             net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
@@ -77,12 +77,13 @@ public class Ores implements AddonModule {
             BuiltinRegistries.BIOME.forEach(biome -> {
                 if (block.ore_information.biomes != null) {
                     for (String biome2 : block.ore_information.biomes) {
-                        if (BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2)) {
-                            BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
-                        }
+                        BiomeModifications.addFeature(biomeSelectionContext -> BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2),
+                                GenerationStep.Feature.UNDERGROUND_ORES, BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature).get());
                     }
                 } else {
-                    BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
+//                    BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
+//                    BiomeModifications.addFeature(BiomeSelectors.,
+//                            GenerationStep.Feature.UNDERGROUND_ORES, BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature).get());
                 }
             });
             Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder ->

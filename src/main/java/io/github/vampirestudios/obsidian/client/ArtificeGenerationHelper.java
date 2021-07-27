@@ -3,9 +3,7 @@ package io.github.vampirestudios.obsidian.client;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
 import com.swordglowsblue.artifice.api.resource.StringResource;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.block.enums.StairShape;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
@@ -87,6 +85,27 @@ public class ArtificeGenerationHelper {
         });
     }
 
+    public static void generateEightDirectionalBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
+        clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
+            blockStateBuilder.variant("rotation=0", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(0));
+            blockStateBuilder.variant("rotation=1", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(45));
+            blockStateBuilder.variant("rotation=2", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(90));
+            blockStateBuilder.variant("rotation=3", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(135));
+            blockStateBuilder.variant("rotation=4", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(180));
+            blockStateBuilder.variant("rotation=5", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(225));
+            blockStateBuilder.variant("rotation=6", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(270));
+            blockStateBuilder.variant("rotation=7", variant ->
+                    variant.model(Utils.prependToPath(name, "block/")).rotationY(315));
+        });
+    }
+
     public static void generateAllBlockModel(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
         clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
             modelBuilder.parent(new Identifier("block/cube_all"));
@@ -142,7 +161,7 @@ public class ArtificeGenerationHelper {
     public static void generateBlockModel(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures) {
         clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
             modelBuilder.parent(parent);
-            textures.forEach(modelBuilder::texture);
+            if (textures != null) textures.forEach(modelBuilder::texture);
         });
     }
 
@@ -163,221 +182,59 @@ public class ArtificeGenerationHelper {
     }
 
     public static void generateStairsBlockState(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name) {
-        pack.addBlockState(name, state -> {
-            for (Direction d : Direction.values()) {
-                if (!(d.equals(Direction.DOWN) || d.equals(Direction.UP))) {
-                    for (BlockHalf h : BlockHalf.values()) {
-                        for (StairShape s : StairShape.values()) {
-                            String varname = "facing=" + d.asString() + ",half=" + h.asString() + ",shape=" + s.asString();
-                            state.variant(varname, var -> {
-                                var.uvlock(true);
-                                int y = 0;
-                                switch (s) {
-                                    case STRAIGHT:
-                                        var.model(Utils.prependToPath(name, "block/"));
-                                        switch (d) {
-                                            case EAST:
-                                                y = 0;
-                                                break;
-                                            case WEST:
-                                                y = 180;
-                                                break;
-                                            case NORTH:
-                                                y = 270;
-                                                break;
-                                            case SOUTH:
-                                                y = 90;
-                                                break;
-                                        }
-                                        break;
-                                    case OUTER_RIGHT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_outer"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 90;
-                                                        break;
-                                                    case WEST:
-                                                        y = 270;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 0;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 180;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                    case OUTER_LEFT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_outer"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 270;
-                                                        break;
-                                                    case WEST:
-                                                        y = 90;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 180;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 0;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                    case INNER_RIGHT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_inner"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 90;
-                                                        break;
-                                                    case WEST:
-                                                        y = 270;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 0;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 180;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                    case INNER_LEFT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_inner"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 270;
-                                                        break;
-                                                    case WEST:
-                                                        y = 90;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 180;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 0;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                }
-                                if (h.equals(BlockHalf.TOP)) var.rotationX(180);
-                                var.rotationY(y);
-                            });
-                        }
-                    }
-                }
-            }
-            state.variant("facing=east,half=bottom,shape=straight", var -> {
-                var.model(Utils.prependToPath(name, "block/"));
-            });
-            state.variant("facing=west,half=bottom,shape=straight", var -> {
-                var.model(Utils.prependToPath(name, "block/"));
-                var.rotationY(180);
-                var.uvlock(true);
-            });
-        });
+        String JSON = JsonTemplates.STAIRS_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        pack.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
     }
 
-    public static void generateStairsBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Identifier texture) {
+    public static void generateStairsBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
         pack.addBlockModel(Utils.appendToPath(name, "_inner"), model -> {
             model.parent(new Identifier("block/stairs_inner"));
-            model.texture("particle", texture);
-            model.texture("side", texture);
-            model.texture("top", texture);
-            model.texture("bottom", texture);
+            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_outer"), model -> {
             model.parent(new Identifier("block/stairs_inner"));
-            model.texture("particle", texture);
-            model.texture("side", texture);
-            model.texture("top", texture);
-            model.texture("bottom", texture);
+            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
         });
         pack.addBlockModel(name, model -> {
             model.parent(new Identifier("block/stairs"));
-            model.texture("particle", texture);
-            model.texture("side", texture);
-            model.texture("top", texture);
-            model.texture("bottom", texture);
+            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+        });
+    }
+
+    public static void generateWallBlockState(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name) {
+        String JSON = JsonTemplates.WALL_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        pack.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
+    }
+
+    public static void generateWallBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
+        pack.addBlockModel(Utils.appendToPath(name, "_inventory"), model -> {
+            model.parent(new Identifier("block/wall_inventory"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_post"), model -> {
+            model.parent(new Identifier("block/template_wall_post"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_side"), model -> {
+            model.parent(new Identifier("block/template_wall_side"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_side_tall"), model -> {
+            model.parent(new Identifier("block/template_wall_side_tall"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
         });
     }
 
@@ -386,15 +243,9 @@ public class ArtificeGenerationHelper {
             for (SlabType t : SlabType.values()) {
                 state.variant("type=" + t.asString(), var -> {
                     switch (t) {
-                        case BOTTOM:
-                            var.model(Utils.prependToPath(name, "block/"));
-                            break;
-                        case TOP:
-                            var.model(Utils.appendAndPrependToPath(name, "block/", "_top"));
-                            break;
-                        case DOUBLE:
-                            var.model(Utils.prependToPath(doubleBlockName, "block/"));
-                            break;
+                        case BOTTOM -> var.model(Utils.prependToPath(name, "block/"));
+                        case TOP -> var.model(Utils.appendAndPrependToPath(name, "block/", "_top"));
+                        case DOUBLE -> var.model(Utils.prependToPath(doubleBlockName, "block/"));
                     }
                 });
             }
@@ -418,6 +269,23 @@ public class ArtificeGenerationHelper {
         });
     }
 
+    public static void generateSlabBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
+        pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
+            model.parent(new Identifier("block/slab_top"));
+            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+        });
+        pack.addBlockModel(name, model -> {
+            model.parent(new Identifier("block/slab"));
+            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+        });
+    }
+
     public static void generateFenceBlockState(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name) {
         pack.addBlockState(name, state -> {
             state.multipartCase(caze -> {
@@ -433,15 +301,9 @@ public class ArtificeGenerationHelper {
                             var.model(Utils.appendAndPrependToPath(name, "block/", "_side"));
                             var.uvlock(true);
                             switch (d) {
-                                case EAST:
-                                    var.rotationY(90);
-                                    break;
-                                case WEST:
-                                    var.rotationY(270);
-                                    break;
-                                case SOUTH:
-                                    var.rotationY(180);
-                                    break;
+                                case EAST -> var.rotationY(90);
+                                case WEST -> var.rotationY(270);
+                                case SOUTH -> var.rotationY(180);
                             }
                         });
                     });
@@ -467,66 +329,42 @@ public class ArtificeGenerationHelper {
 
     public static void generateFenceGateBlockState(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name) {
         pack.addBlockState(name, state -> {
-            for (Direction d : Direction.values()) {
-                if (d != Direction.UP && d != Direction.DOWN) {
-                    state.variant("facing=" + d.asString() + ",in_wall=false,open=false", var -> {
+            for (Direction direction : Direction.values()) {
+                if (direction != Direction.UP && direction != Direction.DOWN) {
+                    state.variant("facing=" + direction.asString() + ",in_wall=false,open=false", var -> {
                         var.model(Utils.prependToPath(name, "block/"));
                         var.uvlock(true);
-                        switch (d) {
-                            case NORTH:
-                                var.rotationY(180);
-                                break;
-                            case WEST:
-                                var.rotationY(90);
-                                break;
-                            case EAST:
-                                var.rotationY(270);
-                                break;
+                        switch (direction) {
+                            case NORTH -> var.rotationY(180);
+                            case WEST -> var.rotationY(90);
+                            case EAST -> var.rotationY(270);
                         }
                     });
-                    state.variant("facing=" + d.asString() + ",in_wall=true,open=false", var -> {
+                    state.variant("facing=" + direction.asString() + ",in_wall=true,open=false", var -> {
                         var.model(Utils.appendAndPrependToPath(name, "block/", "_wall"));
                         var.uvlock(true);
-                        switch (d) {
-                            case NORTH:
-                                var.rotationY(180);
-                                break;
-                            case WEST:
-                                var.rotationY(90);
-                                break;
-                            case EAST:
-                                var.rotationY(270);
-                                break;
+                        switch (direction) {
+                            case NORTH -> var.rotationY(180);
+                            case WEST -> var.rotationY(90);
+                            case EAST -> var.rotationY(270);
                         }
                     });
-                    state.variant("facing=" + d.asString() + ",in_wall=false,open=true", var -> {
+                    state.variant("facing=" + direction.asString() + ",in_wall=false,open=true", var -> {
                         var.model(Utils.appendAndPrependToPath(name, "block/", "_open"));
                         var.uvlock(true);
-                        switch (d) {
-                            case NORTH:
-                                var.rotationY(180);
-                                break;
-                            case WEST:
-                                var.rotationY(90);
-                                break;
-                            case EAST:
-                                var.rotationY(270);
-                                break;
+                        switch (direction) {
+                            case NORTH -> var.rotationY(180);
+                            case WEST -> var.rotationY(90);
+                            case EAST -> var.rotationY(270);
                         }
                     });
-                    state.variant("facing=" + d.asString() + ",in_wall=true,open=true", var -> {
+                    state.variant("facing=" + direction.asString() + ",in_wall=true,open=true", var -> {
                         var.model(Utils.appendAndPrependToPath(name, "block/", "_wall_open"));
                         var.uvlock(true);
-                        switch (d) {
-                            case NORTH:
-                                var.rotationY(180);
-                                break;
-                            case WEST:
-                                var.rotationY(90);
-                                break;
-                            case EAST:
-                                var.rotationY(270);
-                                break;
+                        switch (direction) {
+                            case NORTH -> var.rotationY(180);
+                            case WEST -> var.rotationY(90);
+                            case EAST -> var.rotationY(270);
                         }
                     });
                 }

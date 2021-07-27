@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.item.TooltipContext;
@@ -27,14 +28,9 @@ public class CakeBlockImpl extends CakeBaseBlock {
 
     public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-    public CakeBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+    public CakeBlockImpl(Block block) {
         super(block.information.cake_slices);
         this.block = block;
-    }
-
-    @Override
-    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.light_absorption_value;
     }
 
     @Override

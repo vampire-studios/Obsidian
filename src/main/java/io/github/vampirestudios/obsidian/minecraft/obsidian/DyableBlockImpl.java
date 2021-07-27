@@ -1,25 +1,33 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import io.github.vampirestudios.obsidian.minecraft.ModBlockColor;
-import io.github.vampirestudios.obsidian.minecraft.ModItemColor;
-import net.minecraft.block.Block;
+import io.github.vampirestudios.obsidian.utils.ColorUtil;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class DyableBlockImpl extends Block implements ModBlockColor, ModItemColor {
+public class DyableBlockImpl extends BlockWithEntity {
 
     public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
@@ -52,6 +60,37 @@ public class DyableBlockImpl extends Block implements ModBlockColor, ModItemColo
     }
 
     @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        BlockEntity blockEntity = Objects.requireNonNull(world).getBlockEntity(pos);
+        if (blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
+            if (!world.isClient) {
+                if (player.getStackInHand(hand).getItem() instanceof DyeItem dyeItem) {
+                    int newColor = ColorUtil.toIntRgb(dyeItem.getColor().getColorComponents());
+                    dyableBlockEntity.markDirty();
+                    dyableBlockEntity.setColorAndSync(newColor);
+                    player.sendMessage(new LiteralText("Dyed a block: " + newColor).formatted(Formatting.ITALIC), true);
+                    return ActionResult.CONSUME;
+                }
+                System.out.println("Server Color: " + dyableBlockEntity.getDyeColor());
+            } else {
+                System.out.println("Client Color: " + dyableBlockEntity.getDyeColor());
+            }
+        }
+
+        return ActionResult.FAIL;
+    }
+
+    @Override
+    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+        var stack = new ItemStack(this);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if(blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
+//            ((DyeableItem) stack.getItem()).setColor(stack, dyableBlockEntity.getDyeColor());
+        }
+        return stack;
+    }
+
+    @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
         if (block.display != null && block.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.display.lore) {
@@ -60,17 +99,33 @@ public class DyableBlockImpl extends Block implements ModBlockColor, ModItemColo
         }
     }
 
-    @Override
-    public int getColor(BlockState blockState, BlockRenderView blockRenderView, BlockPos blockPos, int color) {
-        return getColor(color);
+    /*@Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
+        ItemStack dropStack = new ItemStack(this);
+        int destruction = state.get(dy);
+        dropStack.getOrCreateTag().putInt(BaseAnvilItem.DESTRUCTION, destruction);
+        return Lists.newArrayList(dropStack);
+    }*/
+
+    public int getColor(BlockState blockState, BlockRenderView blockRenderView, BlockPos blockPos, int tintIndex) {
+        if (tintIndex == 0 && blockRenderView != null) {
+            BlockEntity blockEntity = blockRenderView.getBlockEntity(blockPos);
+            if (blockEntity instanceof DyableBlockEntity) {
+                return ((DyableBlockEntity) blockEntity).getDyeColor();
+            }
+        }
+        return 0;
     }
 
     @Override
-    public int getColor(ItemStack stack, int color) {
-        return getColor(color);
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 
-    public int getColor(int tintIndex) {
-        return tintIndex == 0 ? DyeColor.CYAN.getId() : -1;
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new DyableBlockEntity(this.block, pos, state);
     }
+
 }

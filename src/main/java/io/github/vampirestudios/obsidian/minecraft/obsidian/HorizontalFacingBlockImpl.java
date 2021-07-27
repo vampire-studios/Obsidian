@@ -36,6 +36,16 @@ public class HorizontalFacingBlockImpl extends HorizontalFacingBlock {
     }
 
     @Override
+    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
+        return block.information.translucent;
+    }
+
+    @Override
+    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+        return block.information.translucent;
+    }
+
+    @Override
     public ActionResult onUse(BlockState blockState_1, World world_1, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
         if (block.information.action.equals("explode")) {
             ItemStack itemStack_1 = playerEntity_1.getStackInHand(hand_1);

@@ -127,7 +127,7 @@ public class Commands implements AddonModule {
                 for (String command : node.executes) {
                     String formatted = sub.replace(command);
                     ServerCommandSource source = ctx.getSource().withLevel(4);
-                    source.getMinecraftServer().getCommandManager()
+                    source.getServer().getCommandManager()
                             .getDispatcher().execute(formatted, source);
                 }
                 return 0;

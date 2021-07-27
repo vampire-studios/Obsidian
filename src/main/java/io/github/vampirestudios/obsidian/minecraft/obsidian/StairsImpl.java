@@ -27,8 +27,8 @@ public class StairsImpl extends StairsBlock {
 
     public Block block;
 
-    public StairsImpl(Block block) {
-        super(Registry.BLOCK.get(block.information.name.id).getDefaultState(), Settings.copy(Registry.BLOCK.get(block.information.name.id)));
+    public StairsImpl(Block block, Settings settings) {
+        super(Registry.BLOCK.get(block.information.name.id).getDefaultState(), settings);
         this.block = block;
     }
 

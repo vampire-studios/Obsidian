@@ -15,7 +15,8 @@
     "MixinArmorFeatureRenderer",
     "MixinItem",
     "MixinPlayerManager",
-    "TridentAttackGoalMixin"
+    "TridentAttackGoalMixin",
+    "TridentEntityAccessor"
   ],
   "client": [
     "OptionsScreenMixin",

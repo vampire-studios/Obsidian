@@ -14,7 +14,7 @@
     "use_duration": 32
   },
   "food_information": {
-    "nutrition": 20,
+    "hunger": 20,
     "saturation_modifier": "good"
   }
 }
