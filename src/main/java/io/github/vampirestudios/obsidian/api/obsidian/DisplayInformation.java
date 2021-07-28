@@ -8,7 +8,7 @@ public class DisplayInformation {
     @Deprecated public TextureAndModelInformation model;
     public TextureAndModelInformation itemModel;
 //    public Map<String, Property> blockState;
-    public BlockstateInformation blockState;
+    public BlockProperty blockState;
     public TooltipInformation[] lore = new TooltipInformation[0];
 
     public static class Property {

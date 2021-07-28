@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import io.github.vampirestudios.obsidian.api.obsidian.BlockstateInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.util.Identifier;
@@ -8,6 +8,7 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Block {
     public BlockType block_type;
@@ -22,7 +23,7 @@ public class Block {
     public Identifier particle_type;
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
-    public BlockstateInformation blockState;
+    public Map<String, BlockProperty> events;
 
     public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
@@ -58,7 +59,10 @@ public class Block {
         DOUBLE_PLANT,
         HORIZONTAL_FACING_DOUBLE_PLANT,
         HANGING_DOUBLE_LEAVES,
-        EIGHT_DIRECTIONAL_BLOCK
+        EIGHT_DIRECTIONAL_BLOCK,
+        LANTERN,
+        CHAIN,
+        BARS
     }
 
     public static class OxidizableProperties {

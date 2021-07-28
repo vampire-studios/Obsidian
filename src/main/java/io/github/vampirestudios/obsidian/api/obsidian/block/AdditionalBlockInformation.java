@@ -3,17 +3,19 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 public class AdditionalBlockInformation {
 
     public String extraBlocksName = "";
+
     public boolean slab = false;
     public boolean stairs = false;
+
     public boolean walls = false;
     public boolean fence = false;
     public boolean fenceGate = false;
+
     public boolean button = false;
     public boolean pressurePlate = false;
+
     public boolean door = false;
     public boolean trapdoor = false;
-
-    public boolean hasCut = false;
 
     public boolean rotatable = false;
     public boolean horizontal_rotatable = false;
@@ -27,6 +29,8 @@ public class AdditionalBlockInformation {
     public boolean cake_like = false;
     public boolean waterloggable = false;
     public boolean dyable = false;
+
+    public boolean hasSoulVariant = false;
 
     //EXPERIMENTAL
     public int verticalBlockAmount = 1;

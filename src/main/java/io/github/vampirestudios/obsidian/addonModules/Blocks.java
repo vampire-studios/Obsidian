@@ -90,6 +90,7 @@ public class Blocks implements AddonModule {
             } else {
                 switch (block.block_type) {
                     case BLOCK:
+                    case WOOD:
                         REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case HORIZONTAL_FACING_BLOCK:
@@ -125,9 +126,6 @@ public class Blocks implements AddonModule {
                     case LOG:
                         REGISTRY_HELPER.registerLog(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(),
                                 block.information.getMaterial().getColor(), settings);
-                        break;
-                    case WOOD:
-                        REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case OXIDIZING_BLOCK:
                         for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
@@ -186,6 +184,15 @@ public class Blocks implements AddonModule {
                         break;
                     case EIGHT_DIRECTIONAL_BLOCK:
                         REGISTRY_HELPER.registerBlock(new EightDirectionBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case LANTERN:
+                        REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case CHAIN:
+                        REGISTRY_HELPER.registerBlock(new ChainBlock(blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case BARS:
+                        REGISTRY_HELPER.registerBlock(new PaneBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                 }
             }

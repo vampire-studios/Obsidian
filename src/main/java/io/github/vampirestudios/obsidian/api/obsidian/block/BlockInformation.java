@@ -1,11 +1,14 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.block.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+
+import java.util.Map;
 
 public class BlockInformation {
 
@@ -33,6 +36,8 @@ public class BlockInformation {
     public boolean dynamic_boundaries = false;
     public int cake_slices = 1;
     public boolean has_item = true;
+    public Map<String, BlockProperty> properties;
+    public String renderLayer;
 
     public BlockSoundGroup getBlockSoundGroup() {
         return switch (sound_group) {

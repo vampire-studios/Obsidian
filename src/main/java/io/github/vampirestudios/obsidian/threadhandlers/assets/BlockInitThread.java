@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import com.google.common.collect.ImmutableMap;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.api.obsidian.BlockstateInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.TextureAndModelInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
@@ -51,7 +51,7 @@ public class BlockInitThread implements Runnable {
                     }
                 }
                 if (block.display.blockState != null) {
-                    BlockstateInformation textureAndModelInformation = block.display.blockState;
+                    BlockProperty textureAndModelInformation = block.display.blockState;
                     if (block.additional_information != null) {
                         if (block.additional_information.horizontal_rotatable) {
                             ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId);

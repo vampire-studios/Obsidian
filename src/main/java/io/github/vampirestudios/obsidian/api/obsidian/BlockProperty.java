@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.Map;
 
-public class BlockstateInformation {
+public class BlockProperty {
 
     public Map<String, Blockstate> variants;
 //    public Map<String, Blockstate> properties;
