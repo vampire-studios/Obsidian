@@ -227,7 +227,6 @@ public class BlockInitThread implements Runnable {
                 ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubNbt("display").contains("color") ?
                         stack.getOrCreateSubNbt("display").getInt("color") : 16777215, registeredBlock.asItem());
             }
-            clientResourcePackBuilder.add();
         } catch (Exception e) {
             e.printStackTrace();
         }
