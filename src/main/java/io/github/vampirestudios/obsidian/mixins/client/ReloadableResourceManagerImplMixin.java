@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.mixins;
+package io.github.vampirestudios.obsidian.mixins.client;
 
 import com.mojang.datafixers.util.Unit;
 import io.github.vampirestudios.obsidian.client.resource.BedrockAddonResourcePack;
@@ -21,8 +21,10 @@ public abstract class ReloadableResourceManagerImplMixin {
 
     @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private void registerAdditionalPacks(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs, CallbackInfoReturnable<ResourceReload> cir) {
+        System.out.println("Count before: " + packs.size());
         this.addPack(new ObsidianAddonResourcePack());
         this.addPack(new BedrockAddonResourcePack());
+        System.out.println("Count after: " + packs.size());
     }
 
     @Shadow

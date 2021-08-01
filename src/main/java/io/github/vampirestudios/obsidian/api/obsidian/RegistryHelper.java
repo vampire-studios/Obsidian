@@ -10,10 +10,7 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.HangingTallBlockItem
 import io.github.vampirestudios.obsidian.minecraft.obsidian.TallBlockItem;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
-import net.minecraft.block.PillarBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityType;
@@ -25,6 +22,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.registry.Registry;
 
@@ -130,6 +128,16 @@ public class RegistryHelper {
         }).strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), name, ItemGroup.BUILDING_BLOCKS);
     }
 
+    public Block registerLeavesBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
+        Block block = registerBlockWithoutItem(new LeavesBlock(AbstractBlock.Settings.of(Material.LEAVES).strength(0.2F)
+                .ticksRandomly().sounds(block2.information.getBlockSoundGroup()).nonOpaque()
+                .allowsSpawning((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
+                .suffocates((state, world, pos) -> false)
+                .blockVision((state, world, pos) -> false)), name);
+        if (block2.information.has_item) registerItem(new CustomBlockItem(block2, block, settings), name);
+        return block;
+    }
+
     public Block registerLog(String name, MapColor materialColor, MapColor materialColor2) {
         return this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) -> {
             return blockState.get(PillarBlock.AXIS) == Axis.Y ? materialColor : materialColor2;
@@ -142,9 +150,9 @@ public class RegistryHelper {
         }).strength(2.0F).sounds(BlockSoundGroup.WOOD)), name, settings);
     }
 
-    public void registerLog(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor materialColor, MapColor materialColor2, Settings settings) {
-        this.registerBlock(new PillarBlock(net.minecraft.block.AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
-                blockState.get(PillarBlock.AXIS) == Axis.Y ? materialColor : materialColor2)
+    public void registerLog(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor topMapColor, MapColor sideMapColor, Settings settings) {
+        this.registerBlock(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (state) ->
+            state.get(PillarBlock.AXIS) == Direction.Axis.Y ? topMapColor : sideMapColor)
                 .strength(2.0F).sounds(BlockSoundGroup.WOOD)), block, name, settings);
     }
 

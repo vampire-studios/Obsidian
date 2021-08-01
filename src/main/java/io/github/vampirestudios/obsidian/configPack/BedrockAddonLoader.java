@@ -8,7 +8,6 @@ import io.github.vampirestudios.obsidian.api.bedrock.IBedrockAddon;
 import io.github.vampirestudios.obsidian.api.bedrock.ManifestFile;
 import io.github.vampirestudios.obsidian.api.bedrock.block.BaseBlock;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.api.obsidian.AddonModuleVersionIndependent;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -194,20 +193,6 @@ public class BedrockAddonLoader {
                 if (file.isFile()) {
                     try {
                         addonModule.init(null, file, id);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    private static void loadAddonModule(ModIdAndAddonPath id, AddonModuleVersionIndependent addonModule) {
-        if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
-                if (file.isFile()) {
-                    try {
-                        addonModule.init(file, id, "bedrock");
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

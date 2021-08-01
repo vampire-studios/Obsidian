@@ -17,9 +17,6 @@ public class AdditionalBlockInformation {
     public boolean door = false;
     public boolean trapdoor = false;
 
-    public boolean rotatable = false;
-    public boolean horizontal_rotatable = false;
-    public boolean pillar = false;
     public boolean path = false;
     public boolean lantern = false;
     public boolean barrel = false;
@@ -29,11 +26,5 @@ public class AdditionalBlockInformation {
     public boolean cake_like = false;
     public boolean waterloggable = false;
     public boolean dyable = false;
-
-    public boolean hasSoulVariant = false;
-
-    //EXPERIMENTAL
-    public int verticalBlockAmount = 1;
-    public int horizontalBlockAmount = 1;
 
 }

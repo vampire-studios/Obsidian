@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Block {
-    public BlockType block_type;
+    public BlockType block_type = BlockType.BLOCK;
     public BlockInformation information;
     public DisplayInformation display;
     public AdditionalBlockInformation additional_information;
@@ -38,6 +39,7 @@ public class Block {
         CAMPFIRE,
         STAIRS,
         SLAB,
+        WALL,
         FENCE,
         FENCE_GATE,
         CAKE,
@@ -62,21 +64,22 @@ public class Block {
         EIGHT_DIRECTIONAL_BLOCK,
         LANTERN,
         CHAIN,
-        BARS
+        PANE,
+        DYEABLE
     }
 
     public static class OxidizableProperties {
-        public OxidationStage[] stages;
-        public String[] cycle;
+        public List<OxidationStage> stages;
+        public List<String> cycle;
 
         public static class OxidationStage {
             public boolean can_be_waxed;
-            public VariantBlock[] blocks;
+            public List<VariantBlock> blocks;
             public boolean stairs;
             public boolean slab;
 
             public static class VariantBlock {
-                public Identifier name;
+                public NameInformation name;
                 public DisplayInformation display;
             }
         }

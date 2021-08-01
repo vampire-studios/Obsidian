@@ -29,8 +29,7 @@ public class ObsidianAddonResourcePack implements ResourcePack {
         for (ResourcePack virtualPack : virtualPacks) {
             try {
                 return virtualPack.openRoot(var1);
-            } catch (Throwable ignored) {
-            }
+            } catch (Throwable ignored) { }
         }
         throw new FileNotFoundException();
     }

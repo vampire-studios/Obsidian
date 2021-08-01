@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class PaneBlockImpl extends PaneBlock {
-    private io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
+    private final io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
     public PaneBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Settings settings) {
         super(settings);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.vampirestudios.obsidian.mixins;
+package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.ArmorRenderingRegistry;
 import net.fabricmc.api.EnvType;
@@ -45,12 +45,12 @@ import java.util.Objects;
 
 @Mixin(ArmorFeatureRenderer.class)
 @Environment(EnvType.CLIENT)
-public abstract class MixinArmorFeatureRenderer extends FeatureRenderer {
+public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
 	@Shadow
 	@Final
 	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
 
-	public MixinArmorFeatureRenderer(FeatureRendererContext context) {
+	public MixinArmorFeatureRenderer(FeatureRendererContext<T, M> context) {
 		super(context);
 	}
 
@@ -58,6 +58,13 @@ public abstract class MixinArmorFeatureRenderer extends FeatureRenderer {
 	private LivingEntity storedEntity;
 	@Unique
 	private EquipmentSlot storedSlot;
+	@Unique
+	private FeatureRendererContext<T, M> context;
+
+	@Inject(method = "<init>", at=@At("RETURN"))
+	private void onInit(FeatureRendererContext<T, M> context, A leggingsModel, A bodyModel, CallbackInfo ci) {
+		this.context = context;
+	}
 
 	@Inject(method = "render", at = @At("HEAD"))
 	private void storeEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {

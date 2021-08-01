@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.mixins;
+package io.github.vampirestudios.obsidian.mixins.client;
 
 import com.mojang.datafixers.util.Pair;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ShieldItemImpl;

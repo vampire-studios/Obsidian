@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.mixins;
+package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.api.TridentInterface;
 import net.minecraft.client.render.RenderLayer;

@@ -16,7 +16,7 @@ public class ParticleImpl extends SpriteBillboardParticle {
         this.colorGreen = particle.green_color;
         this.colorBlue = particle.blue_color;
         this.maxAge = particle.max_age;
-        this.scale *= this.random.nextFloat() * 0.4F + 0.7F;
+        this.scale *= /*this.random.nextFloat() * 0.4F + 0.7F*/particle.size;
         this.setBoundingBoxSpacing(0.01F, 0.01F);
     }
 

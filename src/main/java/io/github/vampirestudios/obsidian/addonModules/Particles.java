@@ -6,6 +6,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ParticleImpl;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.DefaultParticleType;
@@ -17,6 +19,7 @@ import java.io.FileReader;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
+@Environment(EnvType.CLIENT)
 public class Particles implements AddonModule {
     @Override
     public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {

@@ -38,27 +38,28 @@ public class BlockJsonGenerator {
     }
 
     public static void main(String[] args) throws IOException {
-        String template = "{\n" +
-                "  \"information\": {\n" +
-                "    \"name\": {\n" +
-                "      \"id\": \"origin_realms:$$\",\n" +
-                "      \"translated\": {\n" +
-                "        \"en_us\": \"$big$\"\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"item_group\": \"minecraft:building_blocks\",\n" +
-                "    \"material\": \"minecraft:stone\",\n" +
-                "    \"sound_group\": \"minecraft:stone\"\n" +
-                "  },\n" +
-                "  \"display\": {\n" +
-                "    \"model\": {\n" +
-                "      \"parent\": \"block/cube_all\",\n" +
-                "      \"textures\": {\n" +
-                "        \"all\": \"origin_realms:block/$folder$/$$\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
+        String template = """
+                {
+                  "information": {
+                    "name": {
+                      "id": "origin_realms:$$",
+                      "translated": {
+                        "en_us": "$big$"
+                      }
+                    },
+                    "item_group": "minecraft:building_blocks",
+                    "material": "minecraft:stone",
+                    "sound_group": "minecraft:stone"
+                  },
+                  "display": {
+                    "model": {
+                      "parent": "block/cube_all",
+                      "textures": {
+                        "all": "origin_realms:block/$folder$/$$"
+                      }
+                    }
+                  }
+                }""";
         for (DyeColor color : DyeColor.values()) {
             generate(color.getName(), "mushroom", template, "fungal", "planks");
         }

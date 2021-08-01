@@ -4,9 +4,11 @@ import io.github.vampirestudios.obsidian.utils.ConstantUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 
-public class Keybinding {
+public class KeyBinding {
 
+    public Identifier id;
     public String translationKey;
     public String categoryTranslationKey;
     public String type;

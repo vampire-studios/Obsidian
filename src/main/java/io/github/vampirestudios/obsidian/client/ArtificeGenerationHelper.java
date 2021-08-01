@@ -23,6 +23,24 @@ public class ArtificeGenerationHelper {
                         variant.model(Utils.prependToPath(modelId, "block/"))));
     }
 
+    public static void generateLanternBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
+        clientResourcePackBuilder.addBlockState(name, blockStateBuilder ->
+            blockStateBuilder
+                .variant("hanging=false", variant -> variant.model(Utils.prependToPath(name, "block/")))
+                .variant("hanging=true", variant -> variant.model(Utils.appendAndPrependToPath(name, "block/", "_hanging"))));
+    }
+
+    public static void generateLanternBlockModels(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures, Identifier parentHanging, Map<String, Identifier> texturesHanging) {
+        clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
+            modelBuilder.parent(parent);
+            if (textures != null) textures.forEach(modelBuilder::texture);
+        });
+        clientResourcePackBuilder.addBlockModel(Utils.appendToPath(name, "_hanging"), modelBuilder -> {
+            modelBuilder.parent(parentHanging);
+            if (texturesHanging != null) textures.forEach(modelBuilder::texture);
+        });
+    }
+
     public static void generatePillarBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
         clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
             blockStateBuilder.variant("axis=y", variant ->
@@ -391,101 +409,58 @@ public class ArtificeGenerationHelper {
         });
     }
 
-    public static void generateDoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Identifier topTexture, Identifier bottomTexture) {
-        pack.addBlockModel(Utils.appendToPath(name, "_bottom"), model -> {
-            model.parent(new Identifier("block/door_bottom"));
-            model.texture("texture", bottomTexture);
-        });
-        pack.addBlockModel(Utils.appendToPath(name, "_bottom_hinge"), model -> {
-            model.parent(new Identifier("block/door_bottom_rh"));
-            model.texture("texture", bottomTexture);
-        });
-        pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
-            model.parent(new Identifier("block/door_top"));
-            model.texture("texture", topTexture);
-        });
-        pack.addBlockModel(Utils.appendToPath(name, "_top_hinge"), model -> {
-            model.parent(new Identifier("block/door_top_rh"));
-            model.texture("texture", topTexture);
-        });
+    public static void generateDoorBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
+        String JSON = JsonTemplates.DOOR_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
     }
 
-    public static void generateDoorBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
-        String DOOR_JSON_TEMPLATE = "{\n" +
-                "    \"variants\": {\n" +
-                "        \"facing=east,half=lower,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_bottom\" },\n" +
-                "        \"facing=south,half=lower,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 90 },\n" +
-                "        \"facing=west,half=lower,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 180 },\n" +
-                "        \"facing=north,half=lower,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 270 },\n" +
-                "        \"facing=east,half=lower,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_bottom_hinge\" },\n" +
-                "        \"facing=south,half=lower,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 90 },\n" +
-                "        \"facing=west,half=lower,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 180 },\n" +
-                "        \"facing=north,half=lower,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 270 },\n" +
-                "        \"facing=east,half=lower,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 90 },\n" +
-                "        \"facing=south,half=lower,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 180 },\n" +
-                "        \"facing=west,half=lower,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 270 },\n" +
-                "        \"facing=north,half=lower,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_bottom_hinge\" },\n" +
-                "        \"facing=east,half=lower,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 270 },\n" +
-                "        \"facing=south,half=lower,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_bottom\" },\n" +
-                "        \"facing=west,half=lower,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 90 },\n" +
-                "        \"facing=north,half=lower,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 180 },\n" +
-                "        \"facing=east,half=upper,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_top\" },\n" +
-                "        \"facing=south,half=upper,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 90 },\n" +
-                "        \"facing=west,half=upper,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_top\", \"y\": 180 },\n" +
-                "        \"facing=north,half=upper,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 270 },\n" +
-                "        \"facing=east,half=upper,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_top_hinge\" },\n" +
-                "        \"facing=south,half=upper,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 90 },\n" +
-                "        \"facing=west,half=upper,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 180 },\n" +
-                "        \"facing=north,half=upper,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 270 },\n" +
-                "        \"facing=east,half=upper,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 90 },\n" +
-                "        \"facing=south,half=upper,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 180 },\n" +
-                "        \"facing=west,half=upper,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 270 },\n" +
-                "        \"facing=north,half=upper,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_top_hinge\" },\n" +
-                "        \"facing=east,half=upper,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_top\", \"y\": 270 },\n" +
-                "        \"facing=south,half=upper,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_top\" },\n" +
-                "        \"facing=west,half=upper,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_top\", \"y\": 90 },\n" +
-                "        \"facing=north,half=upper,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 180 }\n" +
-                "    }\n" +
-                "}";
-        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(DOOR_JSON_TEMPLATE.replace("$namespace$", name.getNamespace()).replace("$$", name.getPath())));
+    public static void generateDoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name,
+                                               Identifier topParent, Map<String, Identifier> topTextures,
+                                               Identifier topHingeParent, Map<String, Identifier> topHingeTextures,
+                                               Identifier bottomParent, Map<String, Identifier> bottomTextures,
+                                               Identifier bottomHingeParent, Map<String, Identifier> bottomHingeTextures) {
+        pack.addBlockModel(Utils.appendToPath(name, "_bottom"), model -> {
+            model.parent(bottomParent != null ? bottomParent : new Identifier("block/door_bottom"));
+            bottomTextures.forEach(model::texture);
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_bottom_hinge"), model -> {
+            model.parent(bottomHingeParent != null ? bottomHingeParent : new Identifier("block/door_bottom_rh"));
+            bottomHingeTextures.forEach(model::texture);
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
+            model.parent(topParent != null ? topParent : new Identifier("block/door_top"));
+            topTextures.forEach(model::texture);
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_top_hinge"), model -> {
+            model.parent(topHingeParent != null ? topHingeParent : new Identifier("block/door_top_rh"));
+            topHingeTextures.forEach(model::texture);
+        });
     }
 
     public static void generateTrapdoorBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
-        String TRAPDOOR_JSON_TEMPLATE = "{\n" +
-                "    \"variants\": {\n" +
-                "        \"facing=north,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\" },\n" +
-                "        \"facing=south,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 180 },\n" +
-                "        \"facing=east,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 90 },\n" +
-                "        \"facing=west,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 270 },\n" +
-                "        \"facing=north,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\" },\n" +
-                "        \"facing=south,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 180 },\n" +
-                "        \"facing=east,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 90 },\n" +
-                "        \"facing=west,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 270 },\n" +
-                "        \"facing=north,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\" },\n" +
-                "        \"facing=south,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"y\": 180 },\n" +
-                "        \"facing=east,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"y\": 90 },\n" +
-                "        \"facing=west,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"y\": 270 },\n" +
-                "        \"facing=north,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 180 },\n" +
-                "        \"facing=south,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 0 },\n" +
-                "        \"facing=east,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 270 },\n" +
-                "        \"facing=west,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 90 }\n" +
-                "    }\n" +
-                "}\n";
-        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(TRAPDOOR_JSON_TEMPLATE.replace("$namespace$", name.getNamespace()).replace("$$", name.getPath())));
+        String JSON = JsonTemplates.TRAPDOOR_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
     }
 
-    public static void generateTrapdoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Identifier texture) {
+    public static void generateTrapdoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name,
+                                                   Identifier topParent, Map<String, Identifier> topTextures,
+                                                   Identifier openParent, Map<String, Identifier> openTextures,
+                                                   Identifier bottomParent, Map<String, Identifier> bottomTextures) {
         pack.addBlockModel(Utils.appendToPath(name, "_bottom"), model -> {
-            model.parent(new Identifier("block/template_orientable_trapdoor_bottom"));
-            model.texture("texture", texture);
+            model.parent(bottomParent);
+            bottomTextures.forEach(model::texture);
         });
         pack.addBlockModel(Utils.appendToPath(name, "_open"), model -> {
-            model.parent(new Identifier("block/template_orientable_trapdoor_open"));
-            model.texture("texture", texture);
+            model.parent(openParent);
+            openTextures.forEach(model::texture);
         });
         pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
-            model.parent(new Identifier("block/template_orientable_trapdoor_top"));
-            model.texture("texture", texture);
+            model.parent(topParent);
+            topTextures.forEach(model::texture);
         });
     }
 

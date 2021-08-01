@@ -6,7 +6,6 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.registry.Registry;
 
@@ -39,8 +38,7 @@ public class ItemGroups implements AddonModule {
                 }
             }*/
 
-            ItemGroup itemGroup2 = itemGroup1.build();
-            Registry.register(Obsidian.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup2);
+            Registry.register(Obsidian.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup1.build());
             ObsidianAddonLoader.register(ObsidianAddonLoader.ITEM_GROUPS, "item_group", itemGroup.name.id, itemGroup);
         } catch (Exception e) {
             ObsidianAddonLoader.failedRegistering("item_group", itemGroup.name.id.toString(), e);

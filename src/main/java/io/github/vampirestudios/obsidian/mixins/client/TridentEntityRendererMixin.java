@@ -1,6 +1,7 @@
-package io.github.vampirestudios.obsidian.mixins;
+package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.api.TridentInterface;
+import io.github.vampirestudios.obsidian.mixins.TridentEntityAccessor;
 import net.minecraft.client.render.entity.TridentEntityRenderer;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.Item;

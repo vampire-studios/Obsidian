@@ -59,13 +59,14 @@ public class ArmorModel {
                                 part.rotation[0], part.rotation[1], part.rotation[2]
                         )
                 );
+            } else {
+                modelPartData.addChild(part.name, modelPartBuilder,
+                        ModelTransform.of(
+                                part.pivot[0], part.pivot[1], part.pivot[2],
+                                part.rotation[0], part.rotation[1], part.rotation[2]
+                        )
+                );
             }
-            else modelPartData.addChild(part.name, modelPartBuilder,
-                    ModelTransform.of(
-                            part.pivot[0], part.pivot[1], part.pivot[2],
-                            part.rotation[0], part.rotation[1], part.rotation[2]
-                    )
-            );
         }
         return TexturedModelData.of(modelData, textureWidth, textureHeight);
     }

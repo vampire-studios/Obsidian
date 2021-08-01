@@ -15,6 +15,13 @@ public class CustomBlockItem extends BlockItem {
     }
 
     @Override
+    public ItemStack getDefaultStack() {
+        ItemStack stack = super.getDefaultStack();
+        block.information.getRemovedTooltipSections().forEach(stack::addHideFlag);
+        return stack;
+    }
+
+    @Override
     public boolean hasGlint(ItemStack stack) {
         return block.information.has_glint;
     }

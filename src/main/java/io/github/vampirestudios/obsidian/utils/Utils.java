@@ -6,9 +6,9 @@
 package io.github.vampirestudios.obsidian.utils;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonModMetadata;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -19,27 +19,10 @@ import net.minecraft.util.Identifier;
 import java.io.File;
 import java.io.Reader;
 import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 public class Utils {
     public Utils() {
-    }
-
-    public static String toTitleCase(String lowerCase) {
-        return "" + Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
-    }
-
-    public static String nameToId(String name, Map<String, String> specialCharMap) {
-        Entry specialChar;
-        for (Iterator var2 = specialCharMap.entrySet().iterator(); var2.hasNext(); name = name.replace((CharSequence) specialChar.getKey(), (CharSequence) specialChar.getValue())) {
-            specialChar = (Entry) var2.next();
-        }
-
-        return name.toLowerCase(Locale.ENGLISH);
     }
 
     public static void registerAddon(Reader reader, File file) {
@@ -94,11 +77,4 @@ public class Utils {
         return new Identifier(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
     }
 
-    public static double dist(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x2 - x1, 2.0D) + Math.pow(y2 - y1, 2.0D));
-    }
-
-    public static boolean checkBitFlag(int toCheck, int flag) {
-        return (toCheck & flag) == flag;
-    }
 }

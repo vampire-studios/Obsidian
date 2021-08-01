@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.vampirestudios.obsidian.mixins;
+package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.ArmorProviderExtensions;
 import io.github.vampirestudios.obsidian.ArmorRenderingRegistry;

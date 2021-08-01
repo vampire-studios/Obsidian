@@ -38,7 +38,11 @@ public class FoodItemImpl extends Item {
         }
 
         if (stack.isEmpty()) {
-            return new ItemStack(Registry.ITEM.get(item.food_information.returnItem));
+            if (item.food_information.returnItem != null) {
+                return new ItemStack(Registry.ITEM.get(item.food_information.returnItem));
+            } else {
+                return ItemStack.EMPTY;
+            }
         } else {
             if (user instanceof PlayerEntity playerEntity && !((PlayerEntity)user).getAbilities().creativeMode) {
                 ItemStack itemStack = new ItemStack(Registry.ITEM.get(item.food_information.returnItem));

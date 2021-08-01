@@ -12,6 +12,7 @@ public class Particle {
     public float red_color = 1.0F;
     public float green_color = 1.0F;
     public float blue_color = 1.0F;
+    public float size = 1.0F;
     public int max_age = 1;
 
     public ParticleTextureSheet getType() {

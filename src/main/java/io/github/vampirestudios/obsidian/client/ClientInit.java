@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.client;
 
 import com.swordglowsblue.artifice.api.Artifice;
+import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -22,6 +23,7 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        DataExchangeAPI.prepareClientside();
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String name = iAddonPack.getDisplayNameObsidian();
             Artifice.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
@@ -37,6 +39,17 @@ public class ClientInit implements ClientModInitializer {
                     for (Block block : ObsidianAddonLoader.BLOCKS)
                         if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new BlockInitThread(clientResourcePackBuilder, block).run();
+                        /*if (block.block_type == Block.BlockType.OXIDIZING_BLOCK) {
+                            for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                                for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
+                                    if (variantBlock.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
+                                        new BlockInitThread(variantBlock.name, clientResourcePackBuilder, block).run();
+                                }
+                            }
+                        } else {
+                            if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
+                                new BlockInitThread(block.information.name, clientResourcePackBuilder, block).run();
+                        }*/
                     for (Block block : ObsidianAddonLoader.ORES)
                         if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new BlockInitThread(clientResourcePackBuilder, block).run();

@@ -2,6 +2,67 @@ package io.github.vampirestudios.obsidian.client;
 
 public class JsonTemplates {
 
+    public static final String DOOR_BLOCKSTATE = """
+                {
+                    "variants": {
+                        "facing=east,half=lower,hinge=left,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom" },
+                        "facing=south,half=lower,hinge=left,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 90 },
+                        "facing=west,half=lower,hinge=left,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 180 },
+                        "facing=north,half=lower,hinge=left,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 270 },
+                        "facing=east,half=lower,hinge=right,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge" },
+                        "facing=south,half=lower,hinge=right,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge", "y": 90 },
+                        "facing=west,half=lower,hinge=right,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge", "y": 180 },
+                        "facing=north,half=lower,hinge=right,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge", "y": 270 },
+                        "facing=east,half=lower,hinge=left,open=true":\t{ "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge", "y": 90 },
+                        "facing=south,half=lower,hinge=left,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge", "y": 180 },
+                        "facing=west,half=lower,hinge=left,open=true":\t{ "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge", "y": 270 },
+                        "facing=north,half=lower,hinge=left,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom_hinge" },
+                        "facing=east,half=lower,hinge=right,open=true":  { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 270 },
+                        "facing=south,half=lower,hinge=right,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom" },
+                        "facing=west,half=lower,hinge=right,open=true":  { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 90 },
+                        "facing=north,half=lower,hinge=right,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 180 },
+                        "facing=east,half=upper,hinge=left,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_top" },
+                        "facing=south,half=upper,hinge=left,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 90 },
+                        "facing=west,half=upper,hinge=left,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 180 },
+                        "facing=north,half=upper,hinge=left,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 270 },
+                        "facing=east,half=upper,hinge=right,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge" },
+                        "facing=south,half=upper,hinge=right,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge", "y": 90 },
+                        "facing=west,half=upper,hinge=right,open=false":  { "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge", "y": 180 },
+                        "facing=north,half=upper,hinge=right,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge", "y": 270 },
+                        "facing=east,half=upper,hinge=left,open=true":\t{ "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge", "y": 90 },
+                        "facing=south,half=upper,hinge=left,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge", "y": 180 },
+                        "facing=west,half=upper,hinge=left,open=true":\t{ "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge", "y": 270 },
+                        "facing=north,half=upper,hinge=left,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_top_hinge" },
+                        "facing=east,half=upper,hinge=right,open=true":  { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 270 },
+                        "facing=south,half=upper,hinge=right,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_top" },
+                        "facing=west,half=upper,hinge=right,open=true":  { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 90 },
+                        "facing=north,half=upper,hinge=right,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 180 }
+                    }
+                }""";
+
+    public static final String TRAPDOOR_BLOCKSTATE = """
+                {
+                    "variants": {
+                        "facing=north,half=bottom,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom" },
+                        "facing=south,half=bottom,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 180 },
+                        "facing=east,half=bottom,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 90 },
+                        "facing=west,half=bottom,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_bottom", "y": 270 },
+                        "facing=north,half=top,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top" },
+                        "facing=south,half=top,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 180 },
+                        "facing=east,half=top,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 90 },
+                        "facing=west,half=top,open=false": { "model": "%MOD_ID%:block/%BLOCK_ID%_top", "y": 270 },
+                        "facing=north,half=bottom,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open" },
+                        "facing=south,half=bottom,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open", "y": 180 },
+                        "facing=east,half=bottom,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open", "y": 90 },
+                        "facing=west,half=bottom,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open", "y": 270 },
+                        "facing=north,half=top,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open", "x": 180, "y": 180 },
+                        "facing=south,half=top,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open", "x": 180, "y": 0 },
+                        "facing=east,half=top,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open", "x": 180, "y": 270 },
+                        "facing=west,half=top,open=true": { "model": "%MOD_ID%:block/%BLOCK_ID%_open", "x": 180, "y": 90 }
+                    }
+                }
+                """;
+
     public static final String STAIRS_BLOCKSTATE = """
             {
                 "variants": {

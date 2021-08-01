@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.mojang.serialization.Lifecycle;
 import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
+import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
+import io.github.vampirestudios.obsidian.api.dataexchange.HelloServer;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
@@ -16,9 +18,11 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement
 import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -139,13 +143,13 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
         registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
         registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
-        registerInRegistry(ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "paintings", new Paintings());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
         registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
         registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
         registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
         registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
-        registerInRegistry(ADDON_MODULE_REGISTRY, "particle", new Particles());
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) registerInRegistry(ADDON_MODULE_REGISTRY, "particle", new Particles());
         registerInRegistry(ADDON_MODULE_REGISTRY, "sound_events", new SoundEvents());
         registerInRegistry(ADDON_MODULE_REGISTRY, "music_discs", new MusicDiscs());
         registerInRegistry(ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
@@ -165,6 +169,9 @@ public class Obsidian implements ModInitializer {
         CompletableFuture.runAsync(ObsidianAddonLoader::loadObsidianAddons, ObsidianAddonLoader.EXECUTOR_SERVICE);
 //        BedrockAddonLoader.loadDefaultBedrockAddons();
 //        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
+
+
+        DataExchangeAPI.registerDescriptor(HelloServer.DESCRIPTOR);
     }
 
     public <T> void registerInRegistryVanilla(Registry<T> registry, String name, T idk) {

@@ -7,19 +7,18 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "BuiltinModelItemRendererMixin",
-    "DynamicRegistryManagerMixin",
-    "HoneycombItemAccessor",
+    "BlockItemInject",
     "ItemMixin",
-    "ItemRendererMixin",
-    "MixinArmorFeatureRenderer",
-    "MixinItem",
+    "MinecraftServerMixin",
     "MixinPlayerManager",
     "TridentAttackGoalMixin",
     "TridentEntityAccessor"
   ],
   "client": [
-    "OptionsScreenMixin",
-    "ReloadableResourceManagerImplMixin"
+    "client.BuiltinModelItemRendererMixin",
+    "client.MixinArmorFeatureRenderer",
+    "client.MixinItem",
+    "client.ItemRendererMixin",
+    "client.ReloadableResourceManagerImplMixin"
   ]
 }

@@ -24,6 +24,9 @@
     ],
     "client": [
       "io.github.vampirestudios.obsidian.client.ClientInit"
+    ],
+    "server": [
+      "io.github.vampirestudios.obsidian.ObsidianServer"
     ]
   },
   "mixins": [

@@ -21,8 +21,8 @@ repositories {
     maven { url="https://hephaestus.dev/release" }
 }
 
-minecraft {
-    accessWidener = file("src/main/resources/obsidian.accesswidener")
+loom {
+    accessWidenerPath = file("src/main/resources/obsidian.accesswidener")
 }
 
 dependencies {

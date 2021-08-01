@@ -1,12 +1,11 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.Keybinding;
-import net.minecraft.client.option.KeyBinding;
+import io.github.vampirestudios.obsidian.api.obsidian.KeyBinding;
 
-public class KeybindingImpl extends KeyBinding {
+public class KeybindingImpl extends net.minecraft.client.option.KeyBinding {
 
-    public KeybindingImpl(Keybinding block) {
-        super(block.translationKey, block.getType(), block.getKeyCode(), block.categoryTranslationKey);
+    public KeybindingImpl(KeyBinding keyBinding) {
+        super(keyBinding.translationKey, keyBinding.getType(), keyBinding.getKeyCode(), keyBinding.categoryTranslationKey);
     }
 
 }

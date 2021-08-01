@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.mixins;
+package io.github.vampirestudios.obsidian.mixins.client;
 
 import net.fabricmc.fabric.api.item.v1.bow.FabricBowExtensions;
 import net.fabricmc.fabric.api.item.v1.crossbow.FabricCrossbowExtensions;

@@ -16,8 +16,8 @@ public class FoodInformation {
     public FoodPotionEffect[] effects = new FoodPotionEffect[0];
     public Identifier returnItem;
     public boolean drinkable;
-    public Identifier drinkSound;
-    public Identifier eatSound;
+    public Identifier drinkSound = new Identifier("entity.generic.drink");
+    public Identifier eatSound = new Identifier("entity.generic.eat");
     public int use_time;
 
     public float getSaturationModifier() {
