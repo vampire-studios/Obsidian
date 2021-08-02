@@ -290,17 +290,17 @@ public class ArtificeGenerationHelper {
     public static void generateSlabBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
         pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
             model.parent(new Identifier("block/slab_top"));
-            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+//            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
             model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
-            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
-            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
         pack.addBlockModel(name, model -> {
             model.parent(new Identifier("block/slab"));
-            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+//            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
             model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
-            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
-            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
     }
 
