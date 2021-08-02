@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.client;
 
-import com.swordglowsblue.artifice.api.Artifice;
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
@@ -26,7 +26,7 @@ public class ClientInit implements ClientModInitializer {
         DataExchangeAPI.prepareClientside();
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String name = iAddonPack.getDisplayNameObsidian();
-            Artifice.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
+            Obsidian.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
                 if (!iAddonPack.getConfigPackInfo().hasAssets) {
                     clientResourcePackBuilder.setDisplayName(name);
                     clientResourcePackBuilder.shouldOverwrite();

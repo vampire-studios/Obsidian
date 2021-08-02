@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.data;
 
 import com.google.gson.JsonObject;
-import com.swordglowsblue.artifice.api.Artifice;
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.recipe.v1.RecipeManagerHelper;
@@ -23,7 +23,7 @@ public class BlockInitThread implements Runnable {
 
     @Override
     public void run() {
-        Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+        Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {
             serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
                 lootTableBuilder.type(new Identifier("block"));
                 lootTableBuilder.pool(pool -> {
@@ -50,7 +50,7 @@ public class BlockInitThread implements Runnable {
                                 .ingredient('W', Registry.BLOCK.get(block.information.name.id))
                                 .output(new ItemStack(Registry.BLOCK.get(Utils.appendToPath(block.information.name.id, "_slab")), 6))
                                 .build(id, new Identifier(block.information.name.id.getNamespace(), "slabs").toString())));
-                Artifice.registerDataPack(String.format("%s:%s_slab_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_slab_data"), serverResourcePackBuilder -> {
                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_slab"), lootTableBuilder -> {
                         lootTableBuilder.type(new Identifier("block"));
                         lootTableBuilder.pool(pool -> {
@@ -82,7 +82,7 @@ public class BlockInitThread implements Runnable {
                                 .ingredient('W', Registry.BLOCK.get(block.information.name.id))
                                 .output(new ItemStack(Registry.BLOCK.get(Utils.appendToPath(block.information.name.id, "_stairs")), 4))
                                 .build(id, new Identifier(block.information.name.id.getNamespace(), "stairs").toString())));
-                Artifice.registerDataPack(String.format("%s:%s_stairs_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_stairs_data"), serverResourcePackBuilder -> {
                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_stairs"), lootTableBuilder -> {
                         lootTableBuilder.type(new Identifier("block"));
                         lootTableBuilder.pool(pool -> {
@@ -105,7 +105,7 @@ public class BlockInitThread implements Runnable {
                                 .ingredient('#', Items.STICK)
                                 .output(new ItemStack(Registry.BLOCK.get(Utils.appendToPath(block.information.name.id, "_fence")), 3))
                                 .build(id, new Identifier(block.information.name.id.getNamespace(), "fences").toString())));
-                Artifice.registerDataPack(String.format("%s:%s_fence_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_fence_data"), serverResourcePackBuilder -> {
                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence"), lootTableBuilder -> {
                         lootTableBuilder.type(new Identifier("block"));
                         lootTableBuilder.pool(pool -> {
@@ -128,7 +128,7 @@ public class BlockInitThread implements Runnable {
                                 .ingredient('#', Items.STICK)
                                 .output(new ItemStack(Registry.BLOCK.get(Utils.appendToPath(block.information.name.id, "_fence_gate")), 3))
                                 .build(id, new Identifier(block.information.name.id.getNamespace(), "fence_gates").toString())));
-                Artifice.registerDataPack(String.format("%s:%s_fence_gate_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_fence_gate_data"), serverResourcePackBuilder -> {
                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_fence_gate"), lootTableBuilder -> {
                         lootTableBuilder.type(new Identifier("block"));
                         lootTableBuilder.pool(pool -> {
@@ -149,7 +149,7 @@ public class BlockInitThread implements Runnable {
                                 .ingredient('W', Registry.BLOCK.get(block.information.name.id))
                                 .output(new ItemStack(Registry.BLOCK.get(Utils.appendToPath(block.information.name.id, "_wall")), 3))
                                 .build(id, new Identifier(block.information.name.id.getNamespace(), "walls").toString())));
-                Artifice.registerDataPack(String.format("%s:%s_wall_data", block.information.name.id.getPath(), block.information.name.id.getPath()), serverResourcePackBuilder -> {
+                Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_wall_data"), serverResourcePackBuilder -> {
                     serverResourcePackBuilder.addLootTable(Utils.appendToPath(block.information.name.id, "_wall"), lootTableBuilder -> {
                         lootTableBuilder.type(new Identifier("block"));
                         lootTableBuilder.pool(pool -> {

@@ -93,8 +93,10 @@ public class RegistryHelper {
     }
 
     public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
-        Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
-        if (block2.information.has_item) Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, settings));
+        if (Registry.BLOCK.containsId(new Identifier(this.modId, name))) block = Registry.BLOCK.get(new Identifier(this.modId, name));
+        else block = Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
+        if (block2.information.has_item) if (Registry.ITEM.containsId(new Identifier(this.modId, name))) Registry.ITEM.get(new Identifier(this.modId, name));
+        else Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, settings));
         return block;
     }
 

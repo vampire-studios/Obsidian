@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
-import com.swordglowsblue.artifice.api.Artifice;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
@@ -86,7 +85,7 @@ public class Ores implements AddonModule {
 //                            GenerationStep.Feature.UNDERGROUND_ORES, BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature).get());
                 }
             });
-            Artifice.registerDataPack(String.format("%s:%s_data", block.information.name.id.getNamespace(), block.information.name.id.getPath()), serverResourcePackBuilder ->
+            Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder ->
                     serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
                         lootTableBuilder.type(new Identifier("block"));
                         lootTableBuilder.pool(pool -> {

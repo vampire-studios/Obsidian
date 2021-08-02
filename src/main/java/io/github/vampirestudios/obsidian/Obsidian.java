@@ -3,6 +3,13 @@ package io.github.vampirestudios.obsidian;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.serialization.Lifecycle;
+import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import com.swordglowsblue.artifice.api.util.Processor;
+import com.swordglowsblue.artifice.common.ArtificeRegistry;
+import com.swordglowsblue.artifice.common.ClientResourcePackProfileLike;
+import com.swordglowsblue.artifice.common.ServerResourcePackProfileLike;
+import com.swordglowsblue.artifice.impl.ArtificeImpl;
+import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
 import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
@@ -19,11 +26,13 @@ import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -170,6 +179,10 @@ public class Obsidian implements ModInitializer {
 //        BedrockAddonLoader.loadDefaultBedrockAddons();
 //        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
 
+        /*ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> FabricLoader.getInstance().getModContainer(MOD_ID)
+                .map(container -> ResourceManagerHelper.registerBuiltinResourcePack(new Identifier(MOD_ID, iAddonPack.getConfigPackInfo().namespace),
+                        container, ResourcePackActivationType.ALWAYS_ENABLED))
+                .filter(success -> !success).ifPresent(success -> LOGGER.warn("Could not register built-in resource pack.")));*/
 
         DataExchangeAPI.registerDescriptor(HelloServer.DESCRIPTOR);
     }
@@ -180,6 +193,17 @@ public class Obsidian implements ModInitializer {
 
     public <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
         Registry.register(registry, new Identifier(MOD_ID, name), idk);
+    }
+
+    public static ServerResourcePackProfileLike registerDataPack(Identifier id, Processor<ArtificeResourcePack.ServerResourcePackBuilder> register) {
+        if (ArtificeRegistry.DATA_PACKS.containsId(id)) return ArtificeRegistry.DATA_PACKS.get(id);
+        else return ArtificeImpl.registerSafely(ArtificeRegistry.DATA_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static ClientResourcePackProfileLike registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
+        if (ArtificeRegistry.RESOURCE_PACKS.containsId(id)) return ArtificeRegistry.RESOURCE_PACKS.get(id);
+        else return ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
     }
 
 }
