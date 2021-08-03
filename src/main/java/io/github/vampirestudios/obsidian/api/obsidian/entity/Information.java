@@ -17,7 +17,7 @@ public class Information {
     public String name;
     public boolean spawnable;
     public boolean summonable;
-    public Identifier vanilla_entity_type;
+    public Identifier vanilla_entity_type = new Identifier("minecraft:pig");
     public boolean custom_model;
     public Identifier textureLocation;
     public Identifier entityModelPath;
