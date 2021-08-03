@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
-import com.google.common.collect.ImmutableMap;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.TextureAndModelInformation;
@@ -47,8 +46,8 @@ public class BlockInitThread implements Runnable {
                 if (block.display.lore.length != 0) {
                     for (TooltipInformation lore : block.display.lore) {
                         if (lore.text.textType.equals("translatable")) {
-                            lore.text.translated.forEach((languageId, name) -> ClientInit.translationMap.put(
-                                    blockId.getNamespace(), ImmutableMap.of(languageId, ImmutableMap.of(lore.text.text, name))
+                            lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                            		blockId.getNamespace(), languageId, lore.text.text, name
                             ));
                         }
                     }
@@ -238,8 +237,9 @@ public class BlockInitThread implements Runnable {
     }
 
     private void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {
-        translated.forEach((languageId, name) -> ClientInit.translationMap.put(
-                blockId.getNamespace(), ImmutableMap.of(languageId, ImmutableMap.of(String.format("block.%s.%s", blockId.getNamespace(), blockId.getPath() + unTranslatedType), name + translatedType))
+        translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                blockId.getNamespace(), languageId,
+                "block." + blockId.getNamespace() + "." + blockId.getPath() + unTranslatedType, name + translatedType
         ));
     }
 

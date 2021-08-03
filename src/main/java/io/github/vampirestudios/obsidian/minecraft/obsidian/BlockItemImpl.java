@@ -35,6 +35,11 @@ public class BlockItemImpl extends BlockItem {
     }
 
     @Override
+    public String getTranslationKey() {
+        return super.getTranslationKey();
+    }
+
+    @Override
     public Text getName() {
         return item.information.name.getName("block");
     }

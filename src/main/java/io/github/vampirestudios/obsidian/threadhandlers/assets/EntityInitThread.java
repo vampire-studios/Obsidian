@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
+import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.client.CustomEntityRenderer;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
@@ -25,10 +25,16 @@ public class EntityInitThread implements Runnable {
 		EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.information.identifier);
         EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
 		Identifier identifier = entity.information.identifier;
-		clientResourcePackBuilder.addTranslations(new Identifier(Obsidian.MOD_ID, "en_us"), translationBuilder ->
-				translationBuilder.entry(String.format("entity.%s.%s", identifier.getNamespace(), identifier.getPath()),
-						entity.information.name).entry(String.format("item.%s.%s_spawn_egg", identifier.getNamespace(), identifier.getPath()),
-						entity.information.name + " Spawn Egg"));
+		ClientInit.addTranslation(
+				identifier.getNamespace(), "en_us",
+				"entity." + identifier.getNamespace() + "." + identifier.getPath(),
+				entity.information.name
+		);
+		ClientInit.addTranslation(
+				identifier.getNamespace(), "en_us",
+				"item." + identifier.getNamespace() + "." + identifier.getPath() + "_spawn_egg",
+				entity.information.name + " Spawn Egg"
+		);
 		clientResourcePackBuilder.addItemModel(new Identifier(entity.information.identifier.getNamespace(), entity.information.identifier.getPath() + "_spawn_egg"), modelBuilder ->
 				modelBuilder.parent(new Identifier("item/template_spawn_egg")));
 	}

@@ -19,7 +19,18 @@ import java.util.Map;
 
 public class ClientInit implements ClientModInitializer {
 
-    public static Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
+    /**
+     * This is a map from the addon id to a map from the language id to a map from the translation key to the translation
+     */
+    private static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
+
+    public static void addTranslation(String addonId, String languageId, String translationKey, String translation) {
+        synchronized (translationMap) {
+            Map<String, Map<String, String>> addonTranslations = translationMap.computeIfAbsent(addonId, key -> new HashMap<>());
+            Map<String, String> addonLanuageTranslations = addonTranslations.computeIfAbsent(languageId, key -> new HashMap<>());
+            addonLanuageTranslations.put(translationKey, translation);
+        }
+    }
 
     @Override
     public void onInitializeClient() {

@@ -40,7 +40,7 @@ import static io.github.vampirestudios.obsidian.Obsidian.id;
 public class ObsidianAddonLoader {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
-    public static final File OBSIDIAN_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDirectory(), /*ModConfig.addon_folder.getValue()*/"obsidian_addons");
+    public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve("obsidian_addons").toFile();
     public static final CopyOnWriteArrayList<IAddonPack> OBSIDIAN_ADDONS = new CopyOnWriteArrayList<>();
     public static final int PACK_VERSION = 2;
     public static RegistryHelper REGISTRY_HELPER;
