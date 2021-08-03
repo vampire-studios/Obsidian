@@ -8,7 +8,9 @@
   },
   "mixins": [
     "BlockItemInject",
+    "CraftingScreenHandlerMixin",
     "ItemMixin",
+    "LoomScreenHandlerMixin",
     "MinecraftServerMixin",
     "MixinPlayerManager",
     "TridentAttackGoalMixin",
@@ -16,9 +18,9 @@
   ],
   "client": [
     "client.BuiltinModelItemRendererMixin",
+    "client.ItemRendererMixin",
     "client.MixinArmorFeatureRenderer",
     "client.MixinItem",
-    "client.ItemRendererMixin",
     "client.ReloadableResourceManagerImplMixin"
   ]
 }

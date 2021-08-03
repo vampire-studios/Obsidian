@@ -2,18 +2,9 @@ package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import com.google.common.collect.ImmutableMap;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.ArmorRenderingRegistry;
-import io.github.vampirestudios.obsidian.api.obsidian.ArmorModel;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.ArmorModelImpl;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.registry.Registry;
-
-import java.util.Optional;
 
 public class ArmorInitThread implements Runnable {
     private final ArmorItem armor;
@@ -60,16 +51,27 @@ public class ArmorInitThread implements Runnable {
                 }
             }
         }
-        ArmorRenderingRegistry.registerModel((entity, stack, slot, defaultModel) -> {
-            BipedEntityModel<LivingEntity> entityModel;
-            Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
-            if(model.isPresent()) {
-                entityModel = new ArmorModelImpl<>(model.get());
-            } else {
-                entityModel = defaultModel;
+        /*ArmorRenderer.register(new ArmorRenderer() {
+            @Override
+            public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
+                Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
+                if(model.isPresent()) {
+                    BipedEntityModel<LivingEntity> entityModel = new ArmorModelImpl<>(model.get());
+                    contextModel.setAttributes(entityModel);
+                    ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, entityModel, armor.material.texture);
+                }
             }
-            return entityModel;
-        }, Registry.ITEM.get(armor.information.name.id));
-        ArmorRenderingRegistry.registerTexture((entity, stack, slot, secondLayer, suffix, defaultTexture) -> armor.material.texture, Registry.ITEM.get(armor.information.name.id));
+        }, Registry.ITEM.get(armor.information.name.id));*/
+//        ArmorRenderingRegistry.registerModel((entity, stack, slot, defaultModel) -> {
+//            BipedEntityModel<LivingEntity> entityModel;
+//            Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
+//            if(model.isPresent()) {
+//                entityModel = new ArmorModelImpl<>(model.get());
+//            } else {
+//                entityModel = defaultModel;
+//            }
+//            return entityModel;
+//        }, );
+//        ArmorRenderingRegistry.registerTexture((entity, stack, slot, secondLayer, suffix, defaultTexture) -> armor.material.texture, Registry.ITEM.get(armor.information.name.id));
     }
 }

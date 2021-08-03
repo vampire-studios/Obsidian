@@ -206,6 +206,20 @@ public class Blocks implements AddonModule {
                                         (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
                                 block.information.name.id.getPath() + "_be");
                         break;
+                    case LOOM:
+                        REGISTRY_HELPER.registerBlock(new LoomBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case CRAFTING_TABLE:
+                        REGISTRY_HELPER.registerBlock(new CraftingTableBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    /*case PANE:
+//                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(block.information.name.id, "_base"));
+
+                        REGISTRY_HELPER.registerBlock(new PaneBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case PANE:
+                        REGISTRY_HELPER.registerBlock(new PaneBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;*/
                 }
             }
 

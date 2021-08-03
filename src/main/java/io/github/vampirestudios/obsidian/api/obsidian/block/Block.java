@@ -65,7 +65,22 @@ public class Block {
         LANTERN,
         CHAIN,
         PANE,
-        DYEABLE
+        DYEABLE,
+        LOOM,
+        GRINDSTONE,
+        CRAFTING_TABLE,
+        PISTON,
+        NOTEBLOCK,
+        JUKEBOX,
+        SMOKER,
+        FURNACE,
+        BLAST_FURNACE,
+        LECTERN,
+        FLETCHING_TABLE,
+        BARREL,
+        COMPOSTER,
+        RAILS,
+        CARTOGRAPHY_TABLE
     }
 
     public static class OxidizableProperties {

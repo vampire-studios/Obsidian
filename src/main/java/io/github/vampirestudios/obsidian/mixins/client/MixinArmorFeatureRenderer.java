@@ -16,7 +16,7 @@
 
 package io.github.vampirestudios.obsidian.mixins.client;
 
-import io.github.vampirestudios.obsidian.ArmorRenderingRegistry;
+import io.github.vampirestudios.obsidian.ArmorRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -27,82 +27,27 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
-import java.util.Map;
-import java.util.Objects;
 
 @Mixin(ArmorFeatureRenderer.class)
 @Environment(EnvType.CLIENT)
-public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
-	@Shadow
-	@Final
-	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
-
-	public MixinArmorFeatureRenderer(FeatureRendererContext<T, M> context) {
+public abstract class MixinArmorFeatureRenderer extends FeatureRenderer<LivingEntity, BipedEntityModel<LivingEntity>> {
+	private MixinArmorFeatureRenderer(FeatureRendererContext<LivingEntity, BipedEntityModel<LivingEntity>> context) {
 		super(context);
 	}
 
-	@Unique
-	private LivingEntity storedEntity;
-	@Unique
-	private EquipmentSlot storedSlot;
-	@Unique
-	private FeatureRendererContext<T, M> context;
+	@Inject(method = "renderArmor", at = @At("HEAD"), cancellable = true)
+	private void renderArmor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity entity, EquipmentSlot armorSlot, int light, BipedEntityModel<LivingEntity>model, CallbackInfo ci){
+		ItemStack stack = entity.getEquippedStack(armorSlot);
+		ArmorRenderer renderer = ArmorRenderer.getRenderer(stack.getItem());
 
-	@Inject(method = "<init>", at=@At("RETURN"))
-	private void onInit(FeatureRendererContext<T, M> context, A leggingsModel, A bodyModel, CallbackInfo ci) {
-		this.context = context;
-	}
-
-	@Inject(method = "render", at = @At("HEAD"))
-	private void storeEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		// We store the living entity wearing the armor before we render
-		this.storedEntity = livingEntity;
-	}
-
-	@Inject(method = "renderArmor", at = @At("HEAD"))
-	private void storeSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel bipedEntityModel, CallbackInfo ci) {
-		// We store the current armor slot that is rendering before we render each armor piece
-		this.storedSlot = slot;
-	}
-
-	@Inject(method = "render", at = @At("RETURN"))
-	private void removeStored(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		// We remove the stored data after we render
-		this.storedEntity = null;
-		this.storedSlot = null;
-	}
-
-	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
-	private void selectArmorModel(EquipmentSlot slot, CallbackInfoReturnable<BipedEntityModel<LivingEntity>> cir) {
-		ItemStack stack = storedEntity.getEquippedStack(slot);
-
-		BipedEntityModel<LivingEntity> defaultModel = cir.getReturnValue();
-		BipedEntityModel<LivingEntity> model = ArmorRenderingRegistry.getArmorModel(storedEntity, stack, slot, defaultModel);
-
-		if (model != defaultModel) {
-			cir.setReturnValue(model);
-		}
-	}
-
-	@Inject(method = "getArmorTexture", at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	private void getArmorTexture(ArmorItem armorItem, boolean secondLayer, /* @Nullable */ String suffix, CallbackInfoReturnable<Identifier> cir, String vanillaIdentifier) {
-		String texture = ArmorRenderingRegistry.getArmorTexture(storedEntity, storedEntity.getEquippedStack(storedSlot), storedSlot, secondLayer, suffix, new Identifier(vanillaIdentifier)).toString();
-
-		if (!Objects.equals(texture, vanillaIdentifier)) {
-			cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(texture, Identifier::new));
+		if (renderer != null){
+			renderer.render(matrices, vertexConsumers, stack, entity, armorSlot, light, getContextModel());
+			ci.cancel();
 		}
 	}
 }
