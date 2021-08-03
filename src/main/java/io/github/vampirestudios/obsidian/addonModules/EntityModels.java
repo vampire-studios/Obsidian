@@ -26,6 +26,6 @@ public class EntityModels implements AddonModule {
 
     @Override
     public String getType() {
-        return "entity/models";
+        return "entities/models";
     }
 }
