@@ -50,6 +50,8 @@ dependencies {
     modImplementation "com.github.EnnuiL:LibZoomer:${project.libzoomer_version}"
     include "com.github.EnnuiL:LibZoomer:${project.libzoomer_version}"
 
+    modRuntime("com.github.astei:lazydfu:master-SNAPSHOT")
+
 //    modImplementation "com.terraformersmc:modmenu:2.0.0-beta.7"
 }
 
