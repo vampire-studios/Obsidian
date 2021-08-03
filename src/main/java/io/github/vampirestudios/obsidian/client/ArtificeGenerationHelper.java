@@ -209,24 +209,30 @@ public class ArtificeGenerationHelper {
     public static void generateStairsBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
         pack.addBlockModel(Utils.appendToPath(name, "_inner"), model -> {
             model.parent(new Identifier("block/stairs_inner"));
-            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
+                    textures.get("end") : textures.get("all");
+            model.texture("particle", particle);
             model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
-            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
-            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_outer"), model -> {
             model.parent(new Identifier("block/stairs_inner"));
-            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
+                    textures.get("end") : textures.get("all");
+            model.texture("particle", particle);
             model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
-            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
-            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
         pack.addBlockModel(name, model -> {
             model.parent(new Identifier("block/stairs"));
-            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
+                    textures.get("end") : textures.get("all");
+            model.texture("particle", particle);
             model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
-            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.get("all"));
-            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
     }
 
@@ -240,19 +246,19 @@ public class ArtificeGenerationHelper {
     public static void generateWallBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
         pack.addBlockModel(Utils.appendToPath(name, "_inventory"), model -> {
             model.parent(new Identifier("block/wall_inventory"));
-            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_post"), model -> {
             model.parent(new Identifier("block/template_wall_post"));
-            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_side"), model -> {
             model.parent(new Identifier("block/template_wall_side"));
-            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_side_tall"), model -> {
             model.parent(new Identifier("block/template_wall_side_tall"));
-            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.get("all"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
         });
     }
 
