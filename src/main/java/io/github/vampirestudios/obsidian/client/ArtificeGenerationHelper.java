@@ -208,7 +208,7 @@ public class ArtificeGenerationHelper {
 
     public static void generateStairsBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
         pack.addBlockModel(Utils.appendToPath(name, "_inner"), model -> {
-            model.parent(new Identifier("block/stairs_inner"));
+            model.parent(new Identifier("block/inner_stairs"));
             Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
                     textures.get("end") : textures.get("all");
             model.texture("particle", particle);
@@ -217,7 +217,7 @@ public class ArtificeGenerationHelper {
             model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_outer"), model -> {
-            model.parent(new Identifier("block/stairs_inner"));
+            model.parent(new Identifier("block/outer_stairs"));
             Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
                     textures.get("end") : textures.get("all");
             model.texture("particle", particle);

@@ -45,6 +45,8 @@ public class BlockInformation {
     public Map<String, BlockProperty> properties;
     public String renderLayer = "SOLID";
     public List<String> removedTooltipSections;
+    public boolean requires_mod_loaded = false;
+    public String required_mod_id;
 
     public List<ItemStack.TooltipSection> getRemovedTooltipSections() {
         return List.of();

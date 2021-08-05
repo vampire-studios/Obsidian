@@ -198,6 +198,9 @@ public class BlockInitThread implements Runnable {
                 }
             }
             if (block.additional_information != null && translated != null) {
+                if (block.additional_information.slab) {
+                    translation(translated, blockId, "_slab", " Slab");
+                }
                 if (block.additional_information.stairs) {
                     translation(translated, blockId, "_stairs", " Stairs");
                 }
@@ -231,12 +234,12 @@ public class BlockInitThread implements Runnable {
         }
     }
 
-    private int getBlockEntityColor(BlockView view, BlockPos pos) {
+    public static int getBlockEntityColor(BlockView view, BlockPos pos) {
         BlockEntity entity = view.getBlockEntity(pos);
         return entity != null ? ((ChromaEntity) Objects.requireNonNull(((ChromaEntity) entity).getRenderAttachmentData())).getColor() : 16777215;
     }
 
-    private void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {
+    public static void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {
         translated.forEach((languageId, name) -> ClientInit.addTranslation(
                 blockId.getNamespace(), languageId,
                 "block." + blockId.getNamespace() + "." + blockId.getPath() + unTranslatedType, name + translatedType

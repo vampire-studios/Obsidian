@@ -41,6 +41,9 @@ public class ClientInit implements ClientModInitializer {
                 if (!iAddonPack.getConfigPackInfo().hasAssets) {
                     clientResourcePackBuilder.setDisplayName(name);
                     clientResourcePackBuilder.shouldOverwrite();
+//                    for (AddonModule addonModule : Obsidian.ADDON_MODULE_REGISTRY) {
+//                        addonModule.assets(clientResourcePackBuilder);
+//                    }
 				    for (Entity entity : ObsidianAddonLoader.ENTITIES)
 				        if (entity.information.identifier.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
 				            new EntityInitThread(clientResourcePackBuilder, entity).run();
@@ -50,17 +53,6 @@ public class ClientInit implements ClientModInitializer {
                     for (Block block : ObsidianAddonLoader.BLOCKS)
                         if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new BlockInitThread(clientResourcePackBuilder, block).run();
-                        /*if (block.block_type == Block.BlockType.OXIDIZING_BLOCK) {
-                            for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
-                                for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                    if (variantBlock.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
-                                        new BlockInitThread(variantBlock.name, clientResourcePackBuilder, block).run();
-                                }
-                            }
-                        } else {
-                            if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
-                                new BlockInitThread(block.information.name, clientResourcePackBuilder, block).run();
-                        }*/
                     for (Block block : ObsidianAddonLoader.ORES)
                         if (block.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new BlockInitThread(clientResourcePackBuilder, block).run();

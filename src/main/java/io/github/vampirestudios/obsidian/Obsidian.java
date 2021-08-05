@@ -40,8 +40,6 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.CompletableFuture;
-
 public class Obsidian implements ModInitializer {
 
     public static final Gson GSON = new GsonBuilder()
@@ -175,7 +173,7 @@ public class Obsidian implements ModInitializer {
         registerInRegistry(ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
 
         ObsidianAddonLoader.loadDefaultObsidianAddons();
-        CompletableFuture.runAsync(ObsidianAddonLoader::loadObsidianAddons, ObsidianAddonLoader.EXECUTOR_SERVICE);
+        ObsidianAddonLoader.loadObsidianAddons();
 //        BedrockAddonLoader.loadDefaultBedrockAddons();
 //        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
 

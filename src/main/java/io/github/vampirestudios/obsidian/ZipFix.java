@@ -43,8 +43,8 @@ public class ZipFix {
      * @param args element 0 should contain the input zip file. Element 1 should contain the output folder.
      */
     public static void main(String[] args) throws IOException {
-		String path = "F:\\Backup Main 201120\\testing\\mmc-develop-win32\\MultiMC\\instances\\Origin Realms Modpack\\.minecraft\\server-resource-packs\\";
-		String packVersion = "0e0fc2ce423542cbf776104c2ed8c48b5f271d26";
+		String path = "D:\\Backup Main 201120\\testing\\mmc-develop-win32\\MultiMC\\instances\\Modpack\\.minecraft\\server-resource-packs\\";
+		String packVersion = "3b320ed482dc5a35bce7090271f511ee3565489a";
 		fix(path + packVersion, path + packVersion + "_extracted");
     }
 }

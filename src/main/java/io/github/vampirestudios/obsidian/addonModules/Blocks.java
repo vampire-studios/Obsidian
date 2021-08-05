@@ -137,7 +137,7 @@ public class Blocks implements AddonModule {
                         block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
                             if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
                         }));
-                        names.forEach(identifier -> REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), identifier.getPath(), settings));
+                        names.forEach(identifier -> REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, identifier.getPath(), settings));
                         break;
                     case PLANT:
                         if (block.additional_information != null) {
