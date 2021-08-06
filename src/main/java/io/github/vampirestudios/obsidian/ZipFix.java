@@ -44,7 +44,7 @@ public class ZipFix {
      */
     public static void main(String[] args) throws IOException {
 		String path = "D:\\Backup Main 201120\\testing\\mmc-develop-win32\\MultiMC\\instances\\Modpack\\.minecraft\\server-resource-packs\\";
-		String packVersion = "3b320ed482dc5a35bce7090271f511ee3565489a";
+		String packVersion = "2c10e590b1a8c001324bb11f16804810a7280206";
 		fix(path + packVersion, path + packVersion + "_extracted");
     }
 }

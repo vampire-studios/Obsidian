@@ -10,6 +10,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 
@@ -27,14 +28,15 @@ public class ClientInit implements ClientModInitializer {
     public static void addTranslation(String addonId, String languageId, String translationKey, String translation) {
         synchronized (translationMap) {
             Map<String, Map<String, String>> addonTranslations = translationMap.computeIfAbsent(addonId, key -> new HashMap<>());
-            Map<String, String> addonLanuageTranslations = addonTranslations.computeIfAbsent(languageId, key -> new HashMap<>());
-            addonLanuageTranslations.put(translationKey, translation);
+            Map<String, String> addonLanguageTranslations = addonTranslations.computeIfAbsent(languageId, key -> new HashMap<>());
+            addonLanguageTranslations.put(translationKey, translation);
         }
     }
 
     @Override
     public void onInitializeClient() {
         DataExchangeAPI.prepareClientside();
+        EntityRendererRegistry.INSTANCE.register(Obsidian.SEAT, SeatEntityRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String name = iAddonPack.getDisplayNameObsidian();
             Obsidian.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
