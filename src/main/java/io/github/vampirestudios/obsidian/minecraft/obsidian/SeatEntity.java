@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.block.SittableBlock;
+import io.github.vampirestudios.obsidian.Obsidian;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.PistonBlockEntity;
@@ -21,6 +21,10 @@ import java.util.List;
  * Author: MrCrayfish
  */
 public class SeatEntity extends Entity {
+
+    public SeatEntity(World world) {
+        this(Obsidian.SEAT, world);
+    }
 
     public SeatEntity(EntityType<?> entityType, World world) {
         super(entityType, world);

@@ -9,7 +9,6 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.HangingTallBlockItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.TallBlockItem;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -18,7 +17,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.Settings;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.WallStandingBlockItem;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -36,17 +34,17 @@ public record RegistryHelper(String modId) {
     }
 
     public void registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, ItemGroup itemGroup) {
-        if (block2.information.requires_mod_loaded && FabricLoader.getInstance().isModLoaded(block2.information.required_mod_id)) {
+//        if (block2.information.requires_mod_loaded && FabricLoader.getInstance().isModLoaded(block2.information.required_mod_id)) {
             Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
             Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, new Settings().group(itemGroup)));
-        }
+//        }
     }
 
     public void registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, ItemGroup itemGroup, Settings settings) {
-        if (block2.information.requires_mod_loaded && FabricLoader.getInstance().isModLoaded(block2.information.required_mod_id)) {
+//        if (block2.information.requires_mod_loaded && FabricLoader.getInstance().isModLoaded(block2.information.required_mod_id)) {
             Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
             Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, settings.group(itemGroup)));
-        }
+//        }
     }
 
     public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Settings settings) {
@@ -57,12 +55,6 @@ public record RegistryHelper(String modId) {
             Registry.ITEM.get(new Identifier(this.modId, name));
         else
             Registry.register(Registry.ITEM, new Identifier(this.modId, name), new CustomBlockItem(block2, block, settings));
-        return block;
-    }
-
-    public Block registerBlockWithWallBlock(Block block, Block wallBlock, String name) {
-        Registry.register(Registry.BLOCK, new Identifier(this.modId, name), block);
-        Registry.register(Registry.ITEM, new Identifier(this.modId, name), new WallStandingBlockItem(block, wallBlock, (new Settings()).group(ItemGroup.DECORATIONS)));
         return block;
     }
 

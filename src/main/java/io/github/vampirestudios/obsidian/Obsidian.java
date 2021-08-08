@@ -79,7 +79,7 @@ public class Obsidian implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 
         SEAT = Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, "seat"), FabricEntityTypeBuilder.
-                create(SpawnGroup.MISC, SeatEntity::new)
+                <SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
                 .dimensions(EntityDimensions.fixed(6F / 16F, 0.5F))
                 .trackable(10, Integer.MAX_VALUE, false)
                 .build());

@@ -18,15 +18,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BlockItemInject {
     @Inject(
         cancellable = true,
-        method = {"writeTagToBlockEntity(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;)Z"},
-        at = {@At("HEAD")}
+        method = "writeTagToBlockEntity",
+        at = @At("HEAD")
     )
     private static void injected(World world, PlayerEntity player, BlockPos pos, ItemStack stack, CallbackInfoReturnable<Boolean> info) {
         if (stack.getItem() instanceof ChromaItem) {
             MinecraftServer minecraftServer = world.getServer();
-            if (minecraftServer == null) {
-                info.setReturnValue(false);
-            } else {
+            if (minecraftServer != null) {
                 NbtCompound compoundTag = stack.getSubNbt("display");
                 if (compoundTag != null) {
                     BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -52,9 +50,8 @@ public class BlockItemInject {
                         }
                     }
                 }
-
-                info.setReturnValue(false);
             }
+            info.setReturnValue(false);
         }
 
     }

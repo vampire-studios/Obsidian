@@ -19,14 +19,9 @@ public class ZipFix {
 				Path outPath = Paths.get(outFolder, zipEntry.getName());
 				File outFile = outPath.toFile();
 				File parent = outFile.getParentFile();
-				if(!parent.exists()) {
-					parent.mkdirs();
-				}
-				if(outFile.exists()) {
-					System.out.print("Overriding ");
-				} else {
-					System.out.print("Extrating ");
-				}
+				if(!parent.exists()) parent.mkdirs();
+				if(outFile.exists()) System.out.print("Overriding ");
+				else System.out.print("Extrating ");
 				System.out.print(zipEntry.getName() + "... ");
 				try {
 					Files.copy(zipFile.getInputStream(zipEntry), outPath);
@@ -40,11 +35,11 @@ public class ZipFix {
 	}
 
     /**
-     * @param args element 0 should contain the input zip file. Element 1 should contain the output folder.
+     * @param args element 0 should contain the input path. Element 1 should contain the name of the pack.
      */
     public static void main(String[] args) throws IOException {
-		String path = "D:\\Backup Main 201120\\testing\\mmc-develop-win32\\MultiMC\\instances\\Modpack\\.minecraft\\server-resource-packs\\";
-		String packVersion = "2c10e590b1a8c001324bb11f16804810a7280206";
+		String path = args[0];
+		String packVersion = args[1];
 		fix(path + packVersion, path + packVersion + "_extracted");
     }
 }

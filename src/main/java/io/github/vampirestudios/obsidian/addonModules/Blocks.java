@@ -93,8 +93,20 @@ public class Blocks implements AddonModule {
                         } else REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case HORIZONTAL_FACING_BLOCK:
-                        if (block.additional_information != null && block.additional_information.dyable) {
+                        if (block.additional_information != null && block.additional_information.dyable && block.additional_information.sittable) {
+                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableAndDyableBlock(block, blockSettings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
+                                            (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
+                                    block.information.name.id.getPath() + "_be");
+                        } else if (block.additional_information != null && block.additional_information.dyable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingDyableBlockImpl(block, blockSettings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
+                                            (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
+                                    block.information.name.id.getPath() + "_be");
+                        } else if (block.additional_information != null && block.additional_information.sittable) {
+                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableBlock(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
                                             (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),

@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,7 +24,7 @@ public class SittableBlock extends BlockImpl {
             return super.onUse(state, world, pos, player, hand, hit);
 
         if(!world.isClient) {
-            SeatEntity entity = new SeatEntity(Obsidian.SEAT, world);
+            SeatEntity entity = new SeatEntity(world);
             entity.setPos(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5);
 
             world.spawnEntity(entity);

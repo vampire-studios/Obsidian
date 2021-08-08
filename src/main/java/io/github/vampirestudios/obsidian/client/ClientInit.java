@@ -43,9 +43,6 @@ public class ClientInit implements ClientModInitializer {
                 if (!iAddonPack.getConfigPackInfo().hasAssets) {
                     clientResourcePackBuilder.setDisplayName(name);
                     clientResourcePackBuilder.shouldOverwrite();
-//                    for (AddonModule addonModule : Obsidian.ADDON_MODULE_REGISTRY) {
-//                        addonModule.assets(clientResourcePackBuilder);
-//                    }
 				    for (Entity entity : ObsidianAddonLoader.ENTITIES)
 				        if (entity.information.identifier.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
 				            new EntityInitThread(clientResourcePackBuilder, entity).run();
