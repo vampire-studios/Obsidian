@@ -17,9 +17,6 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-/**
- * Author: MrCrayfish
- */
 public class SeatEntity extends Entity {
 
     public SeatEntity(World world) {

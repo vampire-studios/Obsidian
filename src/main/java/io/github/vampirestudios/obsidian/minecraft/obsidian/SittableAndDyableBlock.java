@@ -10,7 +10,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class SittableAndDyableBlock extends ChromaBlock {
+public class SittableAndDyableBlock extends DyeableBlock {
 
     public static final BooleanProperty OCCUPIED = BooleanProperty.of("occupied");
 

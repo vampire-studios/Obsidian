@@ -11,10 +11,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
-public class ChromaEntity extends BlockEntity implements BlockEntityClientSerializable, RenderAttachmentBlockEntity {
+public class DyeableBlockEntity extends BlockEntity implements BlockEntityClientSerializable, RenderAttachmentBlockEntity {
     private int color = 16777215;
 
-    public ChromaEntity(Block block, BlockPos pos, BlockState state) {
+    public DyeableBlockEntity(Block block, BlockPos pos, BlockState state) {
         super(Registry.BLOCK_ENTITY_TYPE.get(Utils.appendToPath(block.information.name.id, "_be")), pos, state);
     }
 

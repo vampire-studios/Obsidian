@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.client.ArtificeGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.ChromaEntity;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableBlockEntity;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
@@ -236,7 +236,7 @@ public class BlockInitThread implements Runnable {
 
     public static int getBlockEntityColor(BlockView view, BlockPos pos) {
         BlockEntity entity = view.getBlockEntity(pos);
-        return entity != null ? ((ChromaEntity) Objects.requireNonNull(((ChromaEntity) entity).getRenderAttachmentData())).getColor() : 16777215;
+        return entity != null ? ((DyeableBlockEntity) Objects.requireNonNull(((DyeableBlockEntity) entity).getRenderAttachmentData())).getColor() : 16777215;
     }
 
     public static void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {

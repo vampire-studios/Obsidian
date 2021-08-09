@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
@@ -12,8 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 
-public class ChromaItem extends CustomBlockItem implements DyeableItem {
-    public ChromaItem(Block block, net.minecraft.block.Block blockImpl, Settings settings) {
+public class CustomDyeableItem extends CustomBlockItem implements DyeableItem {
+    public CustomDyeableItem(Block block, net.minecraft.block.Block blockImpl, Settings settings) {
         super(block, blockImpl, settings);
     }
 

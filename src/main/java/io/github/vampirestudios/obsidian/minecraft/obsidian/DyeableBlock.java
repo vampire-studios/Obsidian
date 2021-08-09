@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
@@ -26,10 +21,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class ChromaBlock extends BlockWithEntity {
+public class DyeableBlock extends BlockWithEntity {
     private final Block block;
 
-    public ChromaBlock(Block block, AbstractBlock.Settings settings) {
+    public DyeableBlock(Block block, AbstractBlock.Settings settings) {
         super(settings);
         this.block = block;
     }
@@ -79,7 +74,7 @@ public class ChromaBlock extends BlockWithEntity {
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new ChromaEntity(block, pos, state);
+        return new DyeableBlockEntity(block, pos, state);
     }
 
     @Override
@@ -90,10 +85,10 @@ public class ChromaBlock extends BlockWithEntity {
     @Override
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getPickStack(world, pos, state);
-        if (stack.getItem() instanceof ChromaItem item) {
+        if (stack.getItem() instanceof CustomDyeableItem item) {
             BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof ChromaEntity chromaEntity) {
-                item.setColor(stack, chromaEntity.getColor());
+            if (entity instanceof DyeableBlockEntity dyeableBlockEntity) {
+                item.setColor(stack, dyeableBlockEntity.getColor());
             }
         }
         return stack;
@@ -103,12 +98,12 @@ public class ChromaBlock extends BlockWithEntity {
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof ChromaEntity) {
+        if (blockEntity instanceof DyeableBlockEntity) {
             int hue = itemStack.getOrCreateSubNbt("display").getInt("color");
             if (hue != 0) {
-                ((ChromaEntity)blockEntity).setColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
+                ((DyeableBlockEntity)blockEntity).setColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
             } else {
-                ((ChromaEntity)blockEntity).setColor(16777215);
+                ((DyeableBlockEntity)blockEntity).setColor(16777215);
             }
         }
 

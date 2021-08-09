@@ -85,31 +85,31 @@ public class Blocks implements AddonModule {
                     case BLOCK:
                     case WOOD:
                         if (block.additional_information != null && block.additional_information.dyable) {
-                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new ChromaBlock(block, blockSettings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
+                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case HORIZONTAL_FACING_BLOCK:
                         if (block.additional_information != null && block.additional_information.dyable && block.additional_information.sittable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableAndDyableBlock(block, blockSettings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.dyable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingDyableBlockImpl(block, blockSettings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.sittable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableBlock(block, blockSettings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
+                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
@@ -212,10 +212,10 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new PaneBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case DYEABLE:
-                        net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new ChromaBlock(block, blockSettings), block.information.name.id.getPath());
-                        REGISTRY_HELPER.registerItem(new ChromaItem(block, registeredBlock, settings), block.information.name.id.getPath());
+                        net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), block.information.name.id.getPath());
+                        REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                        (blockPos, blockState) -> new ChromaEntity(block, blockPos, blockState), registeredBlock),
+                                        (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
                                 block.information.name.id.getPath() + "_be");
                         break;
                     case LOOM:

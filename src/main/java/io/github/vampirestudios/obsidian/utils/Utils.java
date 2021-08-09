@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package io.github.vampirestudios.obsidian.utils;
 
 import io.github.vampirestudios.obsidian.Obsidian;

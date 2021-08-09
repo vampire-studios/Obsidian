@@ -30,7 +30,7 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlock imple
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new ChromaEntity(block, pos, state);
+        return new DyeableBlockEntity(block, pos, state);
     }
 
     @Override
@@ -41,10 +41,10 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlock imple
     @Override
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getPickStack(world, pos, state);
-        if (stack.getItem() instanceof ChromaItem item) {
+        if (stack.getItem() instanceof CustomDyeableItem item) {
             BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof ChromaEntity chromaEntity) {
-                item.setColor(stack, chromaEntity.getColor());
+            if (entity instanceof DyeableBlockEntity dyeableBlockEntity) {
+                item.setColor(stack, dyeableBlockEntity.getColor());
             }
         }
         return stack;
@@ -54,12 +54,12 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlock imple
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof ChromaEntity) {
+        if (blockEntity instanceof DyeableBlockEntity) {
             int hue = itemStack.getOrCreateSubNbt("display").getInt("color");
             if (hue != 0) {
-                ((ChromaEntity)blockEntity).setColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
+                ((DyeableBlockEntity)blockEntity).setColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
             } else {
-                ((ChromaEntity)blockEntity).setColor(16777215);
+                ((DyeableBlockEntity)blockEntity).setColor(16777215);
             }
         }
 
