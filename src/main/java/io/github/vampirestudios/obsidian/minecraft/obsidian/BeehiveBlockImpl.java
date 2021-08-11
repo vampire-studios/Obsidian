@@ -95,7 +95,7 @@ public class BeehiveBlockImpl extends BlockWithEntity {
                 this.angerNearbyBees(world, pos);
             }
 
-            Criteria.BEE_NEST_DESTROYED.trigger((ServerPlayerEntity) player, state, stack, beehiveBlockEntity.getBeeCount());
+            Criteria.BEE_NEST_DESTROYED.test((ServerPlayerEntity) player, state, stack, beehiveBlockEntity.getBeeCount());
         }
 
     }

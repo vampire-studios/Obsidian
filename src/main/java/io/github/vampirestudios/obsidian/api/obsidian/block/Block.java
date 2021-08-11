@@ -46,6 +46,7 @@ public class Block {
         TRAPDOOR,
         DOOR,
         LOG,
+        STEM,
         WOOD,
         OXIDIZING_BLOCK,
         PLANT,

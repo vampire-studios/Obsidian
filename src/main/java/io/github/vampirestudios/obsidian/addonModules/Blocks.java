@@ -144,6 +144,9 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerLog(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(),
                                 block.information.getMaterial().getColor(), settings);
                         break;
+                    case STEM:
+                        REGISTRY_HELPER.registerNetherStemBlock(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(), settings);
+                        break;
                     case OXIDIZING_BLOCK:
                         List<Identifier> names = new ArrayList<>();
                         block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {

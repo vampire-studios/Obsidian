@@ -81,8 +81,8 @@ public class EightDirectionalBakedModel implements FabricBakedModel, BakedModel,
     }
 
     @Override
-    public Sprite getParticleSprite() {
-        return this.model.getParticleSprite();
+    public Sprite getSprite() {
+        return this.model.getSprite();
     }
 
     @Override

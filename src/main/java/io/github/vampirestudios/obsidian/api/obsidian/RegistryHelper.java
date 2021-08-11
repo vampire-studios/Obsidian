@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.HangingTallBlockItem;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.PillarBlockImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.TallBlockItem;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
@@ -73,9 +74,14 @@ public record RegistryHelper(String modId) {
     }
 
     public void registerLog(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor topMapColor, MapColor sideMapColor, Settings settings) {
-        this.registerBlock(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (state) ->
+        this.registerBlock(new PillarBlockImpl(block, AbstractBlock.Settings.of(Material.WOOD, (state) ->
                         state.get(PillarBlock.AXIS) == Direction.Axis.Y ? topMapColor : sideMapColor)
                 .strength(2.0F).sounds(BlockSoundGroup.WOOD)), block, name, settings);
+    }
+
+    public void registerNetherStemBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor mapColor, Settings settings) {
+        this.registerBlock(new PillarBlockImpl(block, AbstractBlock.Settings.of(Material.NETHER_WOOD, (state) -> mapColor).strength(2.0F).sounds(BlockSoundGroup.NETHER_STEM)),
+                block, name, settings);
     }
 
     public Block registerBlockWithoutItem(Block block, String name) {

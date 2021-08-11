@@ -1,13 +1,24 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.util.registry.Registry;
 
 public class StatusEffectImpl extends StatusEffect {
 
-    public StatusEffectImpl(StatusEffectType type, int color) {
-        super(type, color);
+    public io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect statusEffect;
+
+    public StatusEffectImpl(io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect statusEffect, int color) {
+        super(statusEffect.getStatusEffectType(), color);
+        for (io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect.EffectAttributes attribute : statusEffect.attributes) {
+            this.addAttributeModifier(Registry.ATTRIBUTE.get(attribute.attribute), attribute.uuid, attribute.amount, EntityAttributeModifier.Operation.valueOf(attribute.operation));
+        }
+    }
+
+    public StatusEffectImpl(StatusEffectType effectType, int color) {
+        super(effectType, color);
     }
 
     @Override
