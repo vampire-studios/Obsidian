@@ -29,9 +29,6 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -39,9 +36,8 @@ import static io.github.vampirestudios.obsidian.Obsidian.id;
 
 public class ObsidianAddonLoader {
 
-    public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian"));
-    public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve("obsidian_addons").toFile();
-    public static final CopyOnWriteArrayList<IAddonPack> OBSIDIAN_ADDONS = new CopyOnWriteArrayList<>();
+    public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve(Obsidian.CONFIG.addonsFolder).toFile();
+    public static final Registry<IAddonPack> OBSIDIAN_ADDONS = FabricRegistryBuilder.createSimple(IAddonPack.class, id("obsidian_addons")).buildAndRegister();
     public static final int PACK_VERSION = 2;
     public static RegistryHelper REGISTRY_HELPER;
     public static Registry<Item> ITEMS = FabricRegistryBuilder.createSimple(Item.class, id("items")).buildAndRegister();
@@ -105,13 +101,13 @@ public class ObsidianAddonLoader {
             register(file, "addon.info.pack");
         }
         String moduleText;
-        if (OBSIDIAN_ADDONS.size() > 1) {
+        if (OBSIDIAN_ADDONS.getEntries().size() > 1) {
             moduleText = "Loading %d obsidian addons:";
         } else {
             moduleText = "Loading %d obsidian addon:";
         }
 
-        Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.size()));
+        Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.getEntries().size()));
 
         for (IAddonPack pack : OBSIDIAN_ADDONS) {
             ObsidianAddon addon = (ObsidianAddon) pack;

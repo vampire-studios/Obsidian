@@ -17,9 +17,10 @@ public class PlantBlockImpl extends PlantBlock {
 
 	@Override
 	protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
-		for(net.minecraft.block.Block block1 : block.getSupportableBlocks()) {
+		/*for(net.minecraft.block.Block block1 : block.getSupportableBlocks()) {
 			return floor.isOf(block1);
 		}
-		return false;
+		return false;*/
+		return !floor.isAir() && !floor.isOpaque();
 	}
 }

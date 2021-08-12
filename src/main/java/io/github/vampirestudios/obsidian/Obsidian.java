@@ -23,9 +23,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
 import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
+import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
@@ -64,6 +67,7 @@ public class Obsidian implements ModInitializer {
     public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
     public static Obsidian INSTANCE;
     public static String VERSION = "0.4.0";
+    public static ObsidianConfig CONFIG;
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
@@ -75,6 +79,8 @@ public class Obsidian implements ModInitializer {
     public void onInitialize() {
         INSTANCE = this;
         LOGGER.info(String.format("You're now running Obsidian v%s for 1.17.1", VERSION));
+        AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
+        CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 
         CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 
@@ -198,11 +204,11 @@ public class Obsidian implements ModInitializer {
         DataExchangeAPI.registerDescriptor(HelloServer.DESCRIPTOR);
     }
 
-    public <T> void registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
+    public static <T> void registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
         Registry.register(registry, name, idk);
     }
 
-    public <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
+    public static <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
         Registry.register(registry, new Identifier(MOD_ID, name), idk);
     }
 
