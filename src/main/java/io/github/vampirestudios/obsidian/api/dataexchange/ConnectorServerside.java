@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.dataexchange;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.dataexchange.handler.DataExchange;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
@@ -8,9 +9,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-class ConnectorServerside extends Connector {
+public class ConnectorServerside extends Connector {
 	private MinecraftServer server;
-	ConnectorServerside(DataExchangeAPI api) {
+	ConnectorServerside(DataExchange api) {
 		super(api);
 		server = null;
 	}
@@ -20,7 +21,7 @@ class ConnectorServerside extends Connector {
 		return false;
 	}
 
-	protected void onPlayInit(ServerPlayNetworkHandler handler, MinecraftServer server){
+	public void onPlayInit(ServerPlayNetworkHandler handler, MinecraftServer server){
 		if (this.server!=null && this.server != server){
 			Obsidian.LOGGER.warn("Server changed!");
 		}
@@ -32,7 +33,7 @@ class ConnectorServerside extends Connector {
 		}
 	}
 
-	void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server){
+	public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server){
 		for(DataHandlerDescriptor desc : getDescriptors()){
 			if (desc.sendOnJoin){
 				DataHandler h = desc.JOIN_INSTANCE.get();
@@ -43,7 +44,7 @@ class ConnectorServerside extends Connector {
 		}
 	}
 
-	void onPlayDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server){
+	public void onPlayDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server){
 		for(DataHandlerDescriptor desc : getDescriptors()){
 			ServerPlayNetworking.unregisterReceiver(handler, desc.IDENTIFIER);
 		}
@@ -54,7 +55,7 @@ class ConnectorServerside extends Connector {
 		h.receiveFromClient(server, player, handler, buf, responseSender);
 	}
 
-	void sendToClient(DataHandler h){
+	public void sendToClient(DataHandler h){
 		if (server==null){
 			throw new RuntimeException("[internal error] Server not initialized yet!");
 		}

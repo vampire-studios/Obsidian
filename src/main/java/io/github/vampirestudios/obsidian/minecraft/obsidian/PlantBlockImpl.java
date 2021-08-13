@@ -21,6 +21,6 @@ public class PlantBlockImpl extends PlantBlock {
 			return floor.isOf(block1);
 		}
 		return false;*/
-		return !floor.isAir() && !floor.isOpaque();
+		return !floor.isAir() && !floor.isOpaqueFullCube(world, pos);
 	}
 }

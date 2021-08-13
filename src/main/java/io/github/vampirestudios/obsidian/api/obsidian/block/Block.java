@@ -20,7 +20,7 @@ public class Block {
     public OreInformation ore_information;
     public FoodInformation food_information;
     public CampfireProperties campfire_properties;
-    public List<Identifier> can_plant_on;
+    public List<Identifier> can_plant_on = new ArrayList<>();
     public Identifier particle_type;
     public Growable growable;
     public OxidizableProperties oxidizable_properties;

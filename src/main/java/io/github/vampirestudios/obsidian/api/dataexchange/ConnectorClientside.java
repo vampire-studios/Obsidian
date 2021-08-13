@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.dataexchange;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.dataexchange.handler.DataExchange;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -10,9 +11,10 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 
 @Environment(EnvType.CLIENT)
+public
 class ConnectorClientside extends Connector {
 	private MinecraftClient client;
-	ConnectorClientside(DataExchangeAPI api) {
+	ConnectorClientside(DataExchange api) {
 		super(api);
 		this.client = null;
 	}
@@ -23,7 +25,7 @@ class ConnectorClientside extends Connector {
 		return true;
 	}
 
-	protected void onPlayInit(ClientPlayNetworkHandler handler, MinecraftClient client){
+	public void onPlayInit(ClientPlayNetworkHandler handler, MinecraftClient client){
 		if (this.client!=null && this.client != client){
 			Obsidian.LOGGER.warn("Client changed!");
 		}
@@ -35,7 +37,7 @@ class ConnectorClientside extends Connector {
 		}
 	}
 
-	void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client){
+	public void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client){
 		for(DataHandlerDescriptor desc : getDescriptors()){
 			if (desc.sendOnJoin){
 				DataHandler h = desc.JOIN_INSTANCE.get();
@@ -46,7 +48,7 @@ class ConnectorClientside extends Connector {
 		}
 	}
 
-	void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client){
+	public void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client){
 		for(DataHandlerDescriptor desc : getDescriptors()) {
 			ClientPlayNetworking.unregisterReceiver(desc.IDENTIFIER);
 		}
@@ -57,7 +59,7 @@ class ConnectorClientside extends Connector {
 		h.receiveFromServer(client, handler, buf, responseSender);
 	}
 
-	void sendToServer(DataHandler h){
+	public void sendToServer(DataHandler h){
 		if (client==null){
 			throw new RuntimeException("[internal error] Client not initialized yet!");
 		}

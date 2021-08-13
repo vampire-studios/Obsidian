@@ -1,6 +1,9 @@
-package io.github.vampirestudios.obsidian.api.dataexchange;
+package io.github.vampirestudios.obsidian.api.dataexchange.handler;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
+import io.github.vampirestudios.obsidian.api.dataexchange.DataHandler;
+import io.github.vampirestudios.obsidian.api.dataexchange.DataHandlerDescriptor;
 import io.github.vampirestudios.obsidian.utils.ModVersionUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

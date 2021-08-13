@@ -13,7 +13,7 @@ import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
 import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
-import io.github.vampirestudios.obsidian.api.dataexchange.HelloServer;
+import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloServer;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
