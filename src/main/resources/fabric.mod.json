@@ -27,6 +27,12 @@
     ],
     "server": [
       "io.github.vampirestudios.obsidian.ObsidianServer"
+    ],
+    "mealapi": [
+      "io.github.vampirestudios.obsidian.Obsidian"
+    ],
+    "appleskin": [
+      "io.github.vampirestudios.obsidian.Obsidian"
     ]
   },
   "mixins": [

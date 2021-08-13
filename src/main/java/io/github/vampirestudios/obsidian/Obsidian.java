@@ -10,6 +10,7 @@ import com.swordglowsblue.artifice.common.ClientResourcePackProfileLike;
 import com.swordglowsblue.artifice.common.ServerResourcePackProfileLike;
 import com.swordglowsblue.artifice.impl.ArtificeImpl;
 import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
+import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
 import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
@@ -47,8 +48,9 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import squeek.appleskin.api.AppleSkinApi;
 
-public class Obsidian implements ModInitializer {
+public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinApi {
 
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
@@ -193,13 +195,6 @@ public class Obsidian implements ModInitializer {
 
         ObsidianAddonLoader.loadDefaultObsidianAddons();
         ObsidianAddonLoader.loadObsidianAddons();
-//        BedrockAddonLoader.loadDefaultBedrockAddons();
-//        CompletableFuture.runAsync(BedrockAddonLoader::loadBedrockAddons, BedrockAddonLoader.EXECUTOR_SERVICE);
-
-        /*ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> FabricLoader.getInstance().getModContainer(MOD_ID)
-                .map(container -> ResourceManagerHelper.registerBuiltinResourcePack(new Identifier(MOD_ID, iAddonPack.getConfigPackInfo().namespace),
-                        container, ResourcePackActivationType.ALWAYS_ENABLED))
-                .filter(success -> !success).ifPresent(success -> LOGGER.warn("Could not register built-in resource pack.")));*/
 
         DataExchangeAPI.registerDescriptor(HelloServer.DESCRIPTOR);
     }
@@ -221,6 +216,16 @@ public class Obsidian implements ModInitializer {
     public static ClientResourcePackProfileLike registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
         if (ArtificeRegistry.RESOURCE_PACKS.containsId(id)) return ArtificeRegistry.RESOURCE_PACKS.get(id);
         else return ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
+    }
+
+    @Override
+    public void onMealApiInit() {
+        Obsidian.ADDON_MODULE_REGISTRY.forEach(AddonModule::initMealApi);
+    }
+
+    @Override
+    public void registerEvents() {
+        Obsidian.ADDON_MODULE_REGISTRY.forEach(AddonModule::initAppleSkin);
     }
 
 }

@@ -7,7 +7,8 @@ import net.minecraft.util.registry.Registry;
 
 public class FoodInformation {
 
-    public Integer hunger = 4;
+    public int hunger = 4;
+    public int fullness = 0;
     public float saturation = 8.0F;
     public String saturation_modifier = "";
     public boolean can_always_eat = false;
