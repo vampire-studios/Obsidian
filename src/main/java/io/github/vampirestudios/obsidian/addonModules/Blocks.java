@@ -71,12 +71,6 @@ public class Blocks implements AddonModule {
                     REGISTRY_HELPER.registerBlock(new ChainBlock(blockSettings), block, block.information.name.id.getPath(), settings);
                 } else if (block.additional_information.cake_like) {
                     REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block, block.information.name.id.getPath(), settings);
-                } else if (block.additional_information.plant) {
-                    REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                } else if (block.additional_information.waterloggable) {
-                    REGISTRY_HELPER.registerBlock(new WaterloggableBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                } else if (block.additional_information.waterloggable && block.additional_information.plant) {
-                    REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                 }
             }
 
@@ -115,6 +109,9 @@ public class Blocks implements AddonModule {
                         break;
                     case ROTATABLE_BLOCK:
                         REGISTRY_HELPER.registerBlock(new FacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case BED:
+                        REGISTRY_HELPER.registerBlock(new BedBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case CAMPFIRE:
                         REGISTRY_HELPER.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, block.information.name.id.getPath(), settings);
@@ -194,7 +191,13 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case DOUBLE_PLANT:
-                        REGISTRY_HELPER.registerTallBlock(new TallFlowerBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                        if (block.additional_information != null) {
+                            if (block.additional_information.waterloggable) {
+                                REGISTRY_HELPER.registerTallBlock(new WaterloggableTallFlowerBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
+                            }
+                        } else {
+                            REGISTRY_HELPER.registerTallBlock(new TallFlowerBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        }
                         break;
                     case HORIZONTAL_FACING_DOUBLE_PLANT:
                         REGISTRY_HELPER.registerTallBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);

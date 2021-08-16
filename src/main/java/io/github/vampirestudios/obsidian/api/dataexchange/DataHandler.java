@@ -19,6 +19,19 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.charset.StandardCharsets;
 
 public abstract class DataHandler {
+
+	public abstract static class WithoutPayload extends DataHandler{
+		protected WithoutPayload(Identifier identifier, boolean originatesOnServer) {
+			super(identifier, originatesOnServer);
+		}
+
+		protected void serializeData(PacketByteBuf buf) {
+		}
+
+		protected void deserializeFromIncomingData(PacketByteBuf buf, PacketSender responseSender, boolean isClient){
+		}
+	}
+
 	private final boolean originatesOnServer;
 	@NotNull
 	private final Identifier identifier;
@@ -32,35 +45,31 @@ public abstract class DataHandler {
 		return originatesOnServer;
 	}
 
-	final public @NotNull Identifier getIdentifier(){
+	final public Identifier getIdentifier(){
 		return identifier;
 	}
 
 	@Environment(EnvType.CLIENT)
 	void receiveFromServer(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender){
-		deserializeFromIncomingData(buf, responseSender, false);
-		client.execute(() -> runOnClient(client));
-	}
-
-	void receiveFromClient(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender){
 		deserializeFromIncomingData(buf, responseSender, true);
-		server.execute(() -> runOnServer(server));
+		client.execute(() -> runOnGameThread(client, null, true));
 	}
 
-	protected void deserializeFromIncomingData(PacketByteBuf buf, PacketSender responseSender, boolean fromClient){
+	private ServerPlayerEntity lastMessageSender;
+	void receiveFromClient(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender){
+		lastMessageSender = player;
+		deserializeFromIncomingData(buf, responseSender, false);
+		server.execute(() -> runOnGameThread(null, server, false));
 	}
 
-	@Environment(EnvType.CLIENT)
-	protected void runOnClient(MinecraftClient client){
+	abstract protected void serializeData(PacketByteBuf buf) ;
+	abstract protected void deserializeFromIncomingData(PacketByteBuf buf, PacketSender responseSender, boolean isClient);
+	abstract protected void runOnGameThread(MinecraftClient client, MinecraftServer server, boolean isClient);
 
-	}
-
-	protected void runOnServer(MinecraftServer server){
-
-	}
-
-	protected void serializeData(PacketByteBuf buf) {
-
+	final protected boolean reply(DataHandler message, MinecraftServer server){
+		if (lastMessageSender==null) return false;
+		message.sendToClient(server, lastMessageSender);
+		return true;
 	}
 
 	void sendToClient(MinecraftServer server){

@@ -14,7 +14,10 @@ import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
 import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
+import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloClient;
 import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloServer;
+import io.github.vampirestudios.obsidian.api.dataexchange.handler.RequestFiles;
+import io.github.vampirestudios.obsidian.api.dataexchange.handler.SendFiles;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
@@ -49,6 +52,9 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import squeek.appleskin.api.AppleSkinApi;
+
+import java.io.FileNotFoundException;
+import java.util.List;
 
 public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinApi {
 
@@ -196,7 +202,12 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
         ObsidianAddonLoader.loadDefaultObsidianAddons();
         ObsidianAddonLoader.loadObsidianAddons();
 
-        DataExchangeAPI.registerDescriptor(HelloServer.DESCRIPTOR);
+        DataExchangeAPI.registerDescriptors(List.of(
+                HelloClient.DESCRIPTOR,
+                HelloServer.DESCRIPTOR,
+                RequestFiles.DESCRIPTOR,
+                SendFiles.DESCRIPTOR
+        ));
     }
 
     public static <T> void registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
@@ -220,12 +231,24 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 
     @Override
     public void onMealApiInit() {
-        Obsidian.ADDON_MODULE_REGISTRY.forEach(AddonModule::initMealApi);
+        Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
+            try {
+                addonModule.initMealApi();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
     public void registerEvents() {
-        Obsidian.ADDON_MODULE_REGISTRY.forEach(AddonModule::initAppleSkin);
+        Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
+            try {
+                addonModule.initAppleSkin();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }

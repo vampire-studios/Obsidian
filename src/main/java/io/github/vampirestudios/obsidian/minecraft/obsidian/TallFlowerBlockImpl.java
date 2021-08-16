@@ -21,7 +21,7 @@ public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable 
     private final Block block;
 
     public TallFlowerBlockImpl(Block block, AbstractBlock.Settings settings) {
-        super(settings);
+        super(settings.dynamicBounds());
         this.block = block;
         if (block.growable != null) {
             AGE = IntProperty.of("age", block.growable.min_age, block.growable.max_age);

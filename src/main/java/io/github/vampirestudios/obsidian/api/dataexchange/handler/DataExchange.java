@@ -7,7 +7,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import org.jetbrains.annotations.NotNull;
-import ru.bclib.api.dataexchange.*;
 
 import java.io.File;
 import java.util.*;
@@ -170,7 +169,7 @@ abstract public class DataExchange {
      *                       entire file from the client to the server.
      *                       <p>
      *                       You should only use this option, if you need to compare parts of the file in order to decide
-     *                       If the File needs to be copied. Normally using the {@link ru.bclib.api.dataexchange.FileHash}
+     *                       If the File needs to be copied. Normally using the {@link FileHash}
      *                       for comparison is sufficient.
      */
     protected void addAutoSyncFileData(String modID, File fileName, boolean requestContent, NeedTransferPredicate needTransfer){
@@ -181,7 +180,7 @@ abstract public class DataExchange {
      * Registers a File for automatic client syncing.
      *
      * @param modID The ID of the calling Mod
-     * @param uniqueID A unique Identifier for the File. (see {@link ru.bclib.api.dataexchange.FileHash#uniqueID} for
+     * @param uniqueID A unique Identifier for the File. (see {@link FileHash#uniqueID} for
      *                 Details
      * @param needTransfer If the predicate returns true, the file needs to get copied to the server.
      * @param fileName The name of the File
@@ -189,7 +188,7 @@ abstract public class DataExchange {
      *                       entire file from the client to the server.
      *                       <p>
      *                       You should only use this option, if you need to compare parts of the file in order to decide
-     *                       If the File needs to be copied. Normally using the {@link ru.bclib.api.dataexchange.FileHash}
+     *                       If the File needs to be copied. Normally using the {@link FileHash}
      *                       for comparison is sufficient.
      */
     protected void addAutoSyncFileData(String modID, String uniqueID, File fileName, boolean requestContent, NeedTransferPredicate needTransfer){

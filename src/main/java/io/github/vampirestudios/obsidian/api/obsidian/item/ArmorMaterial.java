@@ -14,6 +14,7 @@ public class ArmorMaterial {
     public Identifier repair_item;
     public int durability;
 
-    public Identifier texture;
+    public Identifier texture1;
+    public Identifier texture2;
     public Identifier customArmorModel;
 }

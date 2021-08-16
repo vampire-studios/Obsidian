@@ -4,6 +4,8 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataHandler;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataHandlerDescriptor;
+import io.github.vampirestudios.obsidian.gui.screens.SyncFilesScreen;
+import io.github.vampirestudios.obsidian.gui.screens.WarnBCLibVersionMismatch;
 import io.github.vampirestudios.obsidian.utils.ModVersionUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -47,23 +49,24 @@ public class HelloClient extends DataHandler {
 		final List<String> mods = DataExchangeAPI.registeredMods();
 
 		//write BCLibVersion (=protocol version)
-		buf.writeInt(DataFixerAPI.getModVersion(vbclib));
+		buf.writeInt(ModVersionUtils.getModVersion(vbclib));
 
-		if (Configs.MAIN_CONFIG.getBoolean(Configs.MAIN_SYNC_CATEGORY, "offerMods", true)) {
-			//write Plugin Versions
-			buf.writeInt(mods.size());
-			for (String modID : mods) {
-				writeString(buf, modID);
-				final String ver = getModVersion(modID);
-				buf.writeInt(DataFixerAPI.getModVersion(ver));
-				BCLib.LOGGER.info("    - Listing Mod " + modID + " v" + ver);
-			}
+		/*if (Configs.MAIN_CONFIG.getBoolean(Configs.MAIN_SYNC_CATEGORY, "offerMods", true)) {
+
 		} else {
 			Obsidian.LOGGER.info("Server will not list Mods.");
 			buf.writeInt(0);
+		}*/
+		//write Plugin Versions
+		buf.writeInt(mods.size());
+		for (String modID : mods) {
+			writeString(buf, modID);
+			final String ver = getModVersion(modID);
+			buf.writeInt(ModVersionUtils.getModVersion(ver));
+			Obsidian.LOGGER.info("    - Listing Mod " + modID + " v" + ver);
 		}
 
-		if (Configs.MAIN_CONFIG.getBoolean(Configs.MAIN_SYNC_CATEGORY, "offerConfigs", true)) {
+		/*if (Configs.MAIN_CONFIG.getBoolean(Configs.MAIN_SYNC_CATEGORY, "offerConfigs", true)) {
 			//do only include files that exist on the server
 			final List<AutoFileSyncEntry> existingAutoSyncFiles = DataExchange
 					.getInstance()
@@ -81,6 +84,20 @@ public class HelloClient extends DataHandler {
 		} else {
 			Obsidian.LOGGER.info("Server will not offer Configs.");
 			buf.writeInt(0);
+		}*/
+		//do only include files that exist on the server
+		final List<AutoFileSyncEntry> existingAutoSyncFiles = DataExchange
+				.getInstance()
+				.autoSyncFiles
+				.stream()
+				.filter(e -> e.fileName.exists())
+				.collect(Collectors.toList());
+
+		//send config Data
+		buf.writeInt(existingAutoSyncFiles.size());
+		for (AutoFileSyncEntry entry : existingAutoSyncFiles) {
+			entry.serialize(buf);
+			Obsidian.LOGGER.info("    - Offering File " + entry);
 		}
 	}
 
@@ -97,7 +114,7 @@ public class HelloClient extends DataHandler {
 		int count = buf.readInt();
 		for (int i=0; i< count; i++) {
 			String id = readString(buf);
-			String version = DataFixerAPI.getModVersion(buf.readInt());
+			String version = ModVersionUtils.getModVersion(buf.readInt());
 			modVersion.put(id, version);
 		}
 
@@ -122,25 +139,25 @@ public class HelloClient extends DataHandler {
 		// 	return;
 		// }
 
-		List<AutoSyncID> filesToRequest = new ArrayList<>(4);
+		List<DataExchange.AutoSyncID> filesToRequest = new ArrayList<>(4);
 
 		for (Map.Entry<String, String> e : modVersion.entrySet()){
 			String ver = getModVersion(e.getKey());
-			BCLib.LOGGER.info("    - " + e.getKey() + " (client="+ver+", server="+ver+")");
+			Obsidian.LOGGER.info("    - " + e.getKey() + " (client="+ver+", server="+ver+")");
 		}
 
 		if (autoSyncedFiles.size()>0) {
-			BCLib.LOGGER.info("Files offered by Server:");
+			Obsidian.LOGGER.info("Files offered by Server:");
 		}
 		final String requestText = SendFiles.acceptFiles()?"requesting":"differs";
 		for (DataExchange.AutoSyncTriple e : autoSyncedFiles) {
 			boolean willRequest = false;
 			if (e.third == null) {
 				willRequest = true;
-				filesToRequest.add(new AutoSyncID(e.first.modID, e.first.uniqueID));
+				filesToRequest.add(new DataExchange.AutoSyncID(e.first.modID, e.first.uniqueID));
 			} else if (e.third.needTransfer.test(e.third.getFileHash(), e.first, e.second)) {
 				willRequest = true;
-				filesToRequest.add(new AutoSyncID(e.first.modID, e.first.uniqueID));
+				filesToRequest.add(new DataExchange.AutoSyncID(e.first.modID, e.first.uniqueID));
 			}
 
 			Obsidian.LOGGER.info("    - " + e + ": " + (willRequest ? (" ("+requestText+")" ):""));
@@ -166,9 +183,9 @@ public class HelloClient extends DataHandler {
 	}
 
 	@Environment(EnvType.CLIENT)
-	protected void showDonwloadConfigs(MinecraftClient client, List<AutoSyncID> files){
+	protected void showDownloadConfigs(MinecraftClient client, List<DataExchange.AutoSyncID> files){
 		client.setScreen(new SyncFilesScreen((download) -> {
-			Minecraft.getInstance().setScreen((Screen)null);
+			MinecraftClient.getInstance().setScreen((Screen)null);
 			if (download){
 				requestFileDownloads(files);
 			}
@@ -181,7 +198,7 @@ public class HelloClient extends DataHandler {
 		whenFinished.accept(true);
 	}
 
-	private void requestFileDownloads(List<AutoSyncID> files){
+	private void requestFileDownloads(List<DataExchange.AutoSyncID> files){
 		Obsidian.LOGGER.info("Starting download of Files:" + files.size());
 		DataExchangeAPI.send(new RequestFiles(files));
 	}

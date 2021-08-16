@@ -43,6 +43,7 @@ public class Block {
         FENCE,
         FENCE_GATE,
         CAKE,
+        BED,
         TRAPDOOR,
         DOOR,
         LOG,

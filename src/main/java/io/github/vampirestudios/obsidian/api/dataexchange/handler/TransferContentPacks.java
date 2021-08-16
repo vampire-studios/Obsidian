@@ -3,13 +3,12 @@ package io.github.vampirestudios.obsidian.api.dataexchange.handler;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataHandler;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataHandlerDescriptor;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 import java.io.BufferedInputStream;
@@ -24,7 +23,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
 public class TransferContentPacks extends DataHandler {
-	public static DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new Identifier(Obsidian.MOD_ID, "transfer_content_packs"), TransferContentPacks::new, true);
+	public static DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new Identifier(Obsidian.MOD_ID, "transfer_content_packs"), TransferContentPacks::new, true, true);
 
 	public TransferContentPacks() {
 		super(DESCRIPTOR.IDENTIFIER, true);
@@ -49,8 +48,7 @@ public class TransferContentPacks extends DataHandler {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	protected void runOnClient(MinecraftClient client) {
+	protected void runOnGameThread(MinecraftClient client, MinecraftServer server, boolean isClient) {
 
 	}
 

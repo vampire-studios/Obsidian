@@ -9,6 +9,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
@@ -28,8 +29,12 @@ public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements 
     public WaterloggableTallFlowerBlockImpl(Block block, Settings settings) {
         super(settings);
         this.block = block;
-        AGE = IntProperty.of("age", block.growable.min_age, block.growable.max_age);
-        this.setDefaultState(this.stateManager.getDefaultState().with(this.getAgeProperty(), 0).with(WATERLOGGED, false));
+        if (block.growable != null) {
+            AGE = IntProperty.of("age", block.growable.min_age, block.growable.max_age);
+            this.setDefaultState(this.stateManager.getDefaultState().with(this.getAgeProperty(), 0).with(WATERLOGGED, false));
+        } else {
+            this.setDefaultState(this.stateManager.getDefaultState().with(WATERLOGGED, false));
+        }
     }
 
     public IntProperty getAgeProperty() {
@@ -78,6 +83,12 @@ public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements 
 
     public boolean hasRandomTicks(BlockState state) {
         return !this.isMature(state);
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
+        super.appendProperties(builder);
+        builder.add(WATERLOGGED);
     }
 
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {

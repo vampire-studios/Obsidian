@@ -13,25 +13,9 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public class GridLayout {
-	record LablePos(MultilineText label, int top) {}
-	
-	class ButtonPos {
-		final int top;
-		final int height;
-		final int width;
-		final float alpha;
-		final Text component;
-		final ButtonWidget.PressAction onPress;
-		
-		ButtonPos(float alpha, int top, int width, int height, Text component, ButtonWidget.PressAction onPress) {
-			this.height = height;
-			this.width = width;
-			this.top = top;
-			this.alpha = alpha;
-			this.component = component;
-			this.onPress = onPress;
-		}
-	}
+	record LabelPos(MultilineText label, int top) {}
+	record ButtonPos(float alpha, int top, int width, int height, Text component, ButtonWidget.PressAction onPress) {}
+
 	public final int width;
 	public final int height;
 	@NotNull
@@ -44,8 +28,8 @@ public class GridLayout {
 	private int currentRowMargin = 6;
 	private int lastRowMargin = 0;
 	
-	final private List<LablePos> labels;
-	final private List<List<ButtonPos>> buttons;
+	private final List<LabelPos> labels;
+	private final List<List<ButtonPos>> buttons;
 	private List<ButtonPos> currentButtonRow;
 	
 	public GridLayout(int topStart, int width, int height, TextRenderer font, Consumer<ButtonWidget> addButtonFunction){
@@ -70,7 +54,7 @@ public class GridLayout {
 	}
 	
 	public void addMessageRow(MultilineText lb){
-		labels.add(new LablePos(lb, top));
+		labels.add(new LabelPos(lb, top));
 		int promptLines = lb.count() + 1;
 		int height = promptLines * 9;
 		
@@ -102,9 +86,7 @@ public class GridLayout {
 		final int BUTTON_SPACING = 10;
 		for (List<ButtonPos> row : this.buttons) {
 			int count = row.size();
-			int rowWidth = row.stream()
-										   .map(b -> b.width)
-										   .reduce(0, Integer::sum) + (count - 1) * BUTTON_SPACING;
+			int rowWidth = row.stream().map(b -> b.width).reduce(0, Integer::sum) + (count - 1) * BUTTON_SPACING;
 			int left = (width - rowWidth) / 2;
 			
 			for (ButtonPos bp : row) {

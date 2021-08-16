@@ -13,7 +13,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
-import ru.bclib.config.Configs;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +36,7 @@ public class SendFiles extends DataHandler {
 	}
 
 	public static boolean acceptFiles() {
-		return Configs.CLIENT_CONFIG.getBoolean(Configs.MAIN_SYNC_CATEGORY, "acceptFiles", true);
+		return /*Configs.CLIENT_CONFIG.getBoolean("client_sync", "acceptFiles", true)*/true;
 	}
 	
 	@Override
