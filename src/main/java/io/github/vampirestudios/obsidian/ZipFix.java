@@ -23,7 +23,6 @@ public class ZipFix {
 				if (outFile.exists()) System.out.print("Overriding ");
 				else System.out.print("Extrating ");
 				System.out.print(zipEntry.getName() + "... ");
-
 				if (outFile.isDirectory()) outFile.mkdirs();
 				else {
 					try {
