@@ -1,18 +1,18 @@
 package io.github.vampirestudios.obsidian;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class ZipFix {
 
-	public static void fix(String filePath, String outFolder) throws IOException {
-		try(ZipFile zipFile = new ZipFile(filePath)) {
+    public static void fix(String filePath, String outFolder) throws IOException {
+		/*try(ZipFile zipFile = new ZipFile(filePath)) {
 			Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
 			while(zipEnum.hasMoreElements()) {
 				ZipEntry zipEntry = zipEnum.nextElement();
@@ -34,9 +34,9 @@ public class ZipFix {
 					}
 				}
 			}
-		}
-		/*try (InputStream is = Files.newInputStream(Paths.get(filePath));
-			 ZipInputStream zis = new ZipInputStream(is)) {
+		}*/
+        try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
+			ZipInputStream zis = new ZipInputStream(is);
 			ZipEntry entry = zis.getNextEntry();
 			while (entry != null) {
 				Path root = Paths.get(outFolder);
@@ -58,15 +58,15 @@ public class ZipFix {
 				entry = zis.getNextEntry();
 			}
 			zis.closeEntry();
-		}*/
-	}
+		}
+    }
 
     /**
      * @param args element 0 should contain the input path. Element 1 should contain the name of the pack.
      */
     public static void main(String[] args) throws IOException {
-		String path = args[0];
-		String packVersion = args[1];
-		fix(path + packVersion, path + packVersion + "_extracted");
+        String path = args[0];
+        String packVersion = args[1];
+        fix(path + packVersion, path + packVersion + "_extracted");
     }
 }
