@@ -6,8 +6,6 @@
     "NamespaceResourceManagerMixin",
     "ReloadableResourceManagerImplMixin"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }

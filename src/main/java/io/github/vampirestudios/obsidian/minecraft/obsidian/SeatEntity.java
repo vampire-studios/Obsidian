@@ -1,26 +1,25 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.PistonBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MovementType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class SeatEntity extends Entity {
+    public static final HashMap<Vec3d,BlockPos> OCCUPIED = new HashMap<>();
 
     public SeatEntity(World world) {
-        this(Obsidian.SEAT, world);
+        super(Obsidian.SEAT, world);
+        noClip = true;
     }
 
     public SeatEntity(EntityType<?> entityType, World world) {
@@ -31,66 +30,29 @@ public class SeatEntity extends Entity {
     protected void initDataTracker() {}
 
     @Override
-    public void tick() {
-        super.tick();
-
-        List<Entity> passengers = getPassengerList();
-        boolean dead = passengers.isEmpty();
-
-        BlockPos pos = getBlockPos();
-        BlockState state = world.getBlockState(pos);
-
-        if(!dead) {
-            if(!(state.getBlock() instanceof SittableBlock)) {
-                PistonBlockEntity piston = null;
-                boolean didOffset = false;
-
-                BlockEntity tile = world.getBlockEntity(pos);
-                if(tile instanceof PistonBlockEntity && ((PistonBlockEntity) tile).getPushedBlock().getBlock() instanceof SittableBlock)
-                    piston = (PistonBlockEntity) tile;
-                else for(Direction d : Direction.values()) {
-                    BlockPos offPos = pos.offset(d, 1);
-                    tile = world.getBlockEntity(offPos);
-
-                    if(tile instanceof PistonBlockEntity && ((PistonBlockEntity) tile).getPushedBlock().getBlock() instanceof SittableBlock) {
-                        piston = (PistonBlockEntity) tile;
-                        break;
-                    }
-                }
-
-                if(piston != null) {
-                    Direction dir = piston.getMovementDirection();
-                    move(MovementType.PISTON, new Vec3d( dir.getOffsetX() * 0.33,  dir.getOffsetY() * 0.33,  dir.getOffsetZ() * 0.33));
-
-                    didOffset = true;
-                }
-
-                dead = !didOffset;
-            }
-
-            if(dead && !world.isClient) {
-                kill();
-
-                if(state.getBlock() instanceof SittableBlock)
-                    world.setBlockState(pos, state.with(SittableBlock.OCCUPIED, false));
+    public Vec3d updatePassengerForDismount(LivingEntity passenger) {
+        if(passenger instanceof PlayerEntity) {
+            BlockPos pos = OCCUPIED.remove(getPos());
+            if(pos != null) {
+                remove(RemovalReason.DISCARDED);
+                return new Vec3d(pos.getX(), pos.getY(), pos.getZ());
             }
         }
+        remove(RemovalReason.DISCARDED);
+        return super.updatePassengerForDismount(passenger);
     }
 
     @Override
-    protected void readCustomDataFromNbt(NbtCompound var1) {
-
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        OCCUPIED.remove(getPos());
     }
 
     @Override
-    protected void writeCustomDataToNbt(NbtCompound var1) {
-
-    }
+    protected void readCustomDataFromNbt(NbtCompound var1) {}
 
     @Override
-    public double getMountedHeightOffset() {
-        return 0;
-    }
+    protected void writeCustomDataToNbt(NbtCompound var1) {}
 
     @Override
     public Packet<?> createSpawnPacket() {

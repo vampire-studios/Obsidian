@@ -1,18 +1,18 @@
 package io.github.vampirestudios.obsidian;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 public class ZipFix {
 
     public static void fix(String filePath, String outFolder) throws IOException {
-		/*try(ZipFile zipFile = new ZipFile(filePath)) {
+		try(ZipFile zipFile = new ZipFile(filePath)) {
 			Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
 			while(zipEnum.hasMoreElements()) {
 				ZipEntry zipEntry = zipEnum.nextElement();
@@ -34,8 +34,8 @@ public class ZipFix {
 					}
 				}
 			}
-		}*/
-        try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
+		}
+        /*try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
 			ZipInputStream zis = new ZipInputStream(is);
 			ZipEntry entry = zis.getNextEntry();
 			while (entry != null) {
@@ -58,7 +58,7 @@ public class ZipFix {
 				entry = zis.getNextEntry();
 			}
 			zis.closeEntry();
-		}
+		}*/
     }
 
     /**

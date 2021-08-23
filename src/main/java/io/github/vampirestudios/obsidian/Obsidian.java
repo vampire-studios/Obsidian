@@ -29,7 +29,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement
 import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
 import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -37,15 +37,19 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -94,8 +98,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 
         SEAT = Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, "seat"), FabricEntityTypeBuilder.
                 <SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
-                .dimensions(EntityDimensions.fixed(6F / 16F, 0.5F))
-                .trackable(10, Integer.MAX_VALUE, false)
+                .dimensions(EntityDimensions.fixed(0.001F, 0.001F))
                 .build());
 
         //Item Groups
@@ -201,6 +204,37 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 
         ObsidianAddonLoader.loadDefaultObsidianAddons();
         ObsidianAddonLoader.loadObsidianAddons();
+
+        UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
+            if(world.isClient)
+                return ActionResult.PASS;
+
+            if(!world.canPlayerModifyAt(player, hit.getBlockPos()))
+                return ActionResult.PASS;
+
+            BlockState s = world.getBlockState(hit.getBlockPos());
+            net.minecraft.block.Block b = world.getBlockState(hit.getBlockPos()).getBlock();
+
+            if((b instanceof SittableBlock || b instanceof HorizontalFacingSittableBlock || b instanceof SittableAndDyableBlock || b instanceof HorizontalFacingSittableAndDyableBlock) && !SeatEntity.OCCUPIED.containsKey(new Vec3d(hit.getBlockPos().getX(), hit.getBlockPos().getY(), hit.getBlockPos().getZ())) && player.getStackInHand(hand).isEmpty()) {
+                Vec3d comparePos = new Vec3d(player.getBlockPos().getX() + 0.5D, player.getBlockPos().getY() + 1.25D, player.getBlockPos().getZ() + 0.5D);
+
+                //only allow sitting when rightclicking the top face of a block, and disallow sitting players from sitting again
+                if(SeatEntity.OCCUPIED.containsKey(comparePos))
+                    return ActionResult.PASS;
+
+                SeatEntity sit = Obsidian.SEAT.create(world);
+                Vec3d vec3d = new Vec3d(hit.getBlockPos().getX() + 0.5D, hit.getBlockPos().getY() + 0.25D, hit.getBlockPos().getZ() + 0.5D);
+
+                SeatEntity.OCCUPIED.put(vec3d, player.getBlockPos());
+                assert sit != null;
+                sit.updatePosition(vec3d.getX(), vec3d.getY(), vec3d.getZ());
+                world.spawnEntity(sit);
+                player.startRiding(sit);
+                return ActionResult.SUCCESS;
+            }
+
+            return ActionResult.PASS;
+        });
 
         DataExchangeAPI.registerDescriptors(List.of(
                 HelloClient.DESCRIPTOR,
