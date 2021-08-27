@@ -12,12 +12,17 @@ import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
+import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
+import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -292,6 +297,65 @@ public class Blocks implements AddonModule {
                     if (block.additional_information.walls) {
                         REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
                                 Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+                    }
+                }
+
+                if (block.additional_information.flattenable) {
+                    if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
+                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
+                                Registry.BLOCK.get(block.additional_information.transformed_block).getDefaultState());
+                    }  else if (block.additional_information.parent_block != null) {
+                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
+                                Registry.BLOCK.get(block.information.name.id).getDefaultState());
+                    } else if (block.additional_information.transformed_block != null) {
+                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id),
+                                Registry.BLOCK.get(block.additional_information.transformed_block).getDefaultState());
+                    }
+                }
+
+                if (block.additional_information.strippable) {
+                    if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
+                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
+                                Registry.BLOCK.get(block.additional_information.transformed_block));
+                    }  else if (block.additional_information.parent_block != null) {
+                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
+                                Registry.BLOCK.get(block.information.name.id));
+                    } else if (block.additional_information.transformed_block != null) {
+                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id),
+                                Registry.BLOCK.get(block.additional_information.transformed_block));
+                    }
+                }
+
+                if (block.additional_information.tilable) {
+                    if (block.additional_information.drops_item) {
+                        Item item = Registry.ITEM.get(block.additional_information.dropped_item);
+                        if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
+                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
+                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.additional_information.transformed_block)
+                                                    .getDefaultState(), item));
+                        }  else if (block.additional_information.parent_block != null) {
+                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
+                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.information.name.id)
+                                                    .getDefaultState(), item));
+                        } else if (block.additional_information.transformed_block != null) {
+                            TillableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id), context -> true,
+                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.additional_information.transformed_block)
+                                                    .getDefaultState(), item));
+                        }
+                    } else {
+                        if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
+                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
+                                    HoeItem.createTillAction(Registry.BLOCK.get(block.additional_information.transformed_block)
+                                            .getDefaultState()));
+                        }  else if (block.additional_information.parent_block != null) {
+                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
+                                    HoeItem.createTillAction(Registry.BLOCK.get(block.information.name.id)
+                                            .getDefaultState()));
+                        } else if (block.additional_information.transformed_block != null) {
+                            TillableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id), context -> true,
+                                    HoeItem.createTillAction(Registry.BLOCK.get(block.additional_information.transformed_block)
+                                            .getDefaultState()));
+                        }
                     }
                 }
             }

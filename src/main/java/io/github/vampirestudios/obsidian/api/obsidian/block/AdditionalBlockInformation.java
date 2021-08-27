@@ -1,5 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import net.minecraft.util.Identifier;
+
 public class AdditionalBlockInformation {
 
     public String extraBlocksName = "";
@@ -28,5 +30,12 @@ public class AdditionalBlockInformation {
 
     public boolean dyable = false;
     public boolean sittable = false;
+    public boolean strippable = false;
+    public boolean tilable = false;
+    public boolean flattenable = false;
+    public boolean drops_item = false;
+    public Identifier parent_block;
+    public Identifier transformed_block;
+    public Identifier dropped_item;
 
 }

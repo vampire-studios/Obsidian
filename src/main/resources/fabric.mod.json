@@ -41,7 +41,6 @@
     "fabric-combat-api-v1.mixins.json",
     "fabric-recipe-api-v1.mixins.json",
     "fabric-conditional-resource-api-v1.mixins.json",
-    "fabric-content-registries-v0.mixins.json",
     "fabric-mining-level-api-v1.mixins.json",
     "fabric-resouce-conditions-v1.mixins.json",
     "oxidizelib.mixins.json"
