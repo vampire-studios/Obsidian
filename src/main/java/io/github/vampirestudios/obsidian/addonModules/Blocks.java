@@ -210,9 +210,6 @@ public class Blocks implements AddonModule {
                     case HANGING_DOUBLE_LEAVES:
                         REGISTRY_HELPER.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                         break;
-                    case EIGHT_DIRECTIONAL_BLOCK:
-                        REGISTRY_HELPER.registerBlock(new EightDirectionBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                        break;
                     case LANTERN:
                         REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block, block.information.name.id.getPath(), settings);
                         break;

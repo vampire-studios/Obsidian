@@ -171,10 +171,6 @@ public class BlockInitThread implements Runnable {
                                     }
                                 }
                                 break;
-                            case EIGHT_DIRECTIONAL_BLOCK:
-                                ArtificeGenerationHelper.generateEightDirectionalBlockState(clientResourcePackBuilder, blockId);
-                                ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
-                                break;
                             case LANTERN:
                                 TextureAndModelInformation textureAndModelInformation2 = block.display.hangingModel;
                                 ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId);
