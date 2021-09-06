@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.api;
+package io.github.vampirestudios.obsidian.api.fabric;
 
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import net.minecraft.client.render.entity.model.TridentEntityModel;

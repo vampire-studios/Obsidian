@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.mixins.client;
 
-import io.github.vampirestudios.obsidian.api.TridentInterface;
+import io.github.vampirestudios.obsidian.api.fabric.TridentInterface;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumer;

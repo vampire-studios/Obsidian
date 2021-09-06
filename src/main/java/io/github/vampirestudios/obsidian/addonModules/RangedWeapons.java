@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.SimpleTridentItem;
+import io.github.vampirestudios.obsidian.api.fabric.SimpleTridentItem;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;

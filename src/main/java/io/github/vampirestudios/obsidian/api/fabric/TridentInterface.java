@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.api;
+package io.github.vampirestudios.obsidian.api.fabric;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.projectile.TridentEntity;

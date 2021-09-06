@@ -14,7 +14,8 @@
     "MinecraftServerMixin",
     "MixinPlayerManager",
     "TridentAttackGoalMixin",
-    "TridentEntityAccessor"
+    "TridentEntityAccessor",
+    "fabric.MixinFluidRenderer"
   ],
   "client": [
     "client.BuiltinModelItemRendererMixin",

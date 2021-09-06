@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.api.TridentInterface;
+import io.github.vampirestudios.obsidian.api.fabric.TridentInterface;
 import net.minecraft.entity.mob.DrownedEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
