@@ -71,6 +71,11 @@ public class EightDirectionalBakedModel implements FabricBakedModel, BakedModel,
     }
 
     @Override
+    public Sprite getParticleSprite() {
+        return this.model.getParticleSprite();
+    }
+
+    @Override
     public boolean hasDepth() {
         return false;
     }
@@ -78,11 +83,6 @@ public class EightDirectionalBakedModel implements FabricBakedModel, BakedModel,
     @Override
     public boolean isSideLit() {
         return false;
-    }
-
-    @Override
-    public Sprite getSprite() {
-        return this.model.getSprite();
     }
 
     @Override

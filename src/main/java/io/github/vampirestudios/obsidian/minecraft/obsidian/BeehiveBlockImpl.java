@@ -87,15 +87,14 @@ public class BeehiveBlockImpl extends BlockWithEntity {
 
     public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
         super.afterBreak(world, player, pos, state, blockEntity, stack);
-        if (!world.isClient && blockEntity instanceof BeehiveBlockEntity) {
-            BeehiveBlockEntity beehiveBlockEntity = (BeehiveBlockEntity) blockEntity;
+        if (!world.isClient && blockEntity instanceof BeehiveBlockEntity beehiveBlockEntity) {
             if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, stack) == 0) {
                 beehiveBlockEntity.angerBees(player, state, BeeState.EMERGENCY);
                 world.updateComparators(pos, this);
                 this.angerNearbyBees(world, pos);
             }
 
-            Criteria.BEE_NEST_DESTROYED.test((ServerPlayerEntity) player, state, stack, beehiveBlockEntity.getBeeCount());
+            Criteria.BEE_NEST_DESTROYED.trigger((ServerPlayerEntity) player, state, stack, beehiveBlockEntity.getBeeCount());
         }
 
     }
