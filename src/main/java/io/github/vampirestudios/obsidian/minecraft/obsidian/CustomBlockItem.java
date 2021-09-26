@@ -7,11 +7,18 @@ import net.minecraft.text.Text;
 
 public class CustomBlockItem extends BlockItem {
 
-    private Block block;
+    private final Block block;
 
     public CustomBlockItem(Block block, net.minecraft.block.Block blockImpl, Settings settings) {
         super(blockImpl, settings);
         this.block = block;
+    }
+
+    @Override
+    public ItemStack getDefaultStack() {
+        ItemStack stack = super.getDefaultStack();
+        block.information.getRemovedTooltipSections().forEach(stack::addHideFlag);
+        return stack;
     }
 
     @Override
@@ -31,7 +38,7 @@ public class CustomBlockItem extends BlockItem {
 
     @Override
     public Text getName() {
-        return block.information.name.getName(true);
+        return block.information.name.getName("block");
     }
 
 }

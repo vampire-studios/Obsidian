@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.configPack;
 
 import com.google.common.collect.ImmutableMap;
@@ -25,4 +26,4 @@ public class REIModMenuEntryPoint implements ModMenuApi {
         }
         return Collections.emptyMap();
     }
-}
+}*/

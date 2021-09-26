@@ -46,7 +46,11 @@ public class RegistryUtils {
     }
 
     public static Item registerItem(Item item, Identifier name) {
-        return Registry.register(Registry.ITEM, name, item);
+        if (Registry.ITEM.containsId(name)) {
+            return Registry.ITEM.get(name);
+        } else {
+            return Registry.register(Registry.ITEM, name, item);
+        }
     }
 
     public static Item registerItem(String name, Item item) {

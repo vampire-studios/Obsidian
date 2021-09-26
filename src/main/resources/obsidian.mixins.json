@@ -2,39 +2,26 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.github.vampirestudios.obsidian.mixins",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "AbstractSkeletonEntityMixin",
-    "AccessorScreen",
-    "BowAttackGoalMixin",
-    "BowItemMixin",
-    "ClientPlayNetworkHandlerMixin",
-    "CrossbowItemMixin",
-    "DrownedEntityModelMixin",
-    "DynamicRegistryManagerMixin",
-    "EntityBowUseMixin",
-    "EntityCrossbowUseMixin",
-    "EntityMixin",
-    "HeldItemRendererMixin",
+    "BlockItemInject",
+    "CraftingScreenHandlerMixin",
     "ItemMixin",
-    "ItemRendererMixin",
+    "LoomScreenHandlerMixin",
+    "MinecraftServerMixin",
     "MixinPlayerManager",
-    "MixinVideoOptionsScreen",
-    "ProjectileUtilMixin",
-    "SkeletonEntityModelMixin",
     "TridentAttackGoalMixin",
     "TridentEntityAccessor",
-    "TridentEntityMixin",
-    "TridentEntityRendererMixin",
-    "TridentItemMixin"
+    "fabric.MixinFluidRenderer"
   ],
   "client": [
-    "ArmorFeatureRendererMixin",
-    "OptionsScreenMixin",
-    "PlayerEntityRendererMixin",
-    "ReloadableResourceManagerImplMixin"
+    "client.BuiltinModelItemRendererMixin",
+    "client.ItemRendererMixin",
+    "client.MixinArmorFeatureRenderer",
+    "client.MixinItem",
+    "client.ReloadableResourceManagerImplMixin"
   ]
 }

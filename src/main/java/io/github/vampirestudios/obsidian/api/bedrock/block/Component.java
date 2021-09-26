@@ -45,8 +45,8 @@ public class Component {
 
     public static class EntityCollision {
 
-        public float[] origin = new float[] { -8.0F, 0.0F, -8.0F };
-        public float[] size = new float[] { 16.0F, 16.0F, 16.0F };
+        public float[] origin = new float[]{-8.0F, 0.0F, -8.0F};
+        public float[] size = new float[]{16.0F, 16.0F, 16.0F};
 
     }
 }

@@ -32,8 +32,10 @@ public class Biome {
         if (surfaceConfig.equals(new Identifier("stone_config"))) return SurfaceBuilder.STONE_CONFIG;
         if (surfaceConfig.equals(new Identifier("coarse_dirt_config"))) return SurfaceBuilder.COARSE_DIRT_CONFIG;
         if (surfaceConfig.equals(new Identifier("sand_config"))) return SurfaceBuilder.SAND_CONFIG;
-        if (surfaceConfig.equals(new Identifier("grass_sand_underwater_config"))) return SurfaceBuilder.GRASS_SAND_UNDERWATER_CONFIG;
-        if (surfaceConfig.equals(new Identifier("sand_sand_underwater_config"))) return SurfaceBuilder.SAND_SAND_UNDERWATER_CONFIG;
+        if (surfaceConfig.equals(new Identifier("grass_sand_underwater_config")))
+            return SurfaceBuilder.GRASS_SAND_UNDERWATER_CONFIG;
+        if (surfaceConfig.equals(new Identifier("sand_sand_underwater_config")))
+            return SurfaceBuilder.SAND_SAND_UNDERWATER_CONFIG;
         if (surfaceConfig.equals(new Identifier("badlands_config"))) return SurfaceBuilder.BADLANDS_CONFIG;
         if (surfaceConfig.equals(new Identifier("mycelium_config"))) return SurfaceBuilder.MYCELIUM_CONFIG;
         if (surfaceConfig.equals(new Identifier("nether_config"))) return SurfaceBuilder.NETHER_CONFIG;

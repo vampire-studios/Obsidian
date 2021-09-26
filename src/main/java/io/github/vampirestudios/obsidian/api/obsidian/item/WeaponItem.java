@@ -5,5 +5,6 @@ public class WeaponItem extends Item {
     public int attackDamage;
     public float attackSpeed;
     public ToolMaterial material;
+    public boolean damageable = true;
 
 }

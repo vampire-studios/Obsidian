@@ -1,6 +1,10 @@
 {
-  "id": "tutorial:aggressive_reaction",
-  "name": "Aggressive Reaction",
+  "name": {
+    "id": "tutorial:aggressive_reaction",
+    "translated": {
+      "en_us": "Aggressive Reaction"
+    }
+  },
   "slots": [
     "mainhand",
     "offhand"

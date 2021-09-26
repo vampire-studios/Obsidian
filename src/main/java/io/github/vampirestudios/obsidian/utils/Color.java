@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package io.github.vampirestudios.obsidian.utils;
 
 public class Color {
@@ -23,7 +18,7 @@ public class Color {
     }
 
     public Color(float r, float g, float b) {
-        this((int)((double)(r * 255.0F) + 0.5D), (int)((double)(g * 255.0F) + 0.5D), (int)((double)(b * 255.0F) + 0.5D));
+        this((int) ((double) (r * 255.0F) + 0.5D), (int) ((double) (g * 255.0F) + 0.5D), (int) ((double) (b * 255.0F) + 0.5D));
     }
 
     public static int[] intToRgb(int color) {
@@ -38,43 +33,43 @@ public class Color {
         int g = 0;
         int b = 0;
         if (saturation == 0.0F) {
-            r = g = b = (int)(brightness * 255.0F + 1.0F);
+            r = g = b = (int) (brightness * 255.0F + 1.0F);
         } else {
-            float h = (hue - (float)Math.floor((double)hue)) * 6.0F;
-            float f = h - (float)Math.floor((double)h);
+            float h = (hue - (float) Math.floor(hue)) * 6.0F;
+            float f = h - (float) Math.floor(h);
             float p = brightness * (1.0F - saturation);
             float q = brightness * (1.0F - saturation * f);
             float t = brightness * (1.0F - saturation * (1.0F - f));
-            switch((int)h) {
-            case 0:
-                r = (int)(brightness * 255.0F + 1.0F);
-                g = (int)(t * 255.0F + 1.0F);
-                b = (int)(p * 255.0F + 1.0F);
-                break;
-            case 1:
-                r = (int)(q * 255.0F + 1.0F);
-                g = (int)(brightness * 255.0F + 1.0F);
-                b = (int)(p * 255.0F + 1.0F);
-                break;
-            case 2:
-                r = (int)(p * 255.0F + 1.0F);
-                g = (int)(brightness * 255.0F + 1.0F);
-                b = (int)(t * 255.0F + 1.0F);
-                break;
-            case 3:
-                r = (int)(p * 255.0F + 1.0F);
-                g = (int)(q * 255.0F + 1.0F);
-                b = (int)(brightness * 255.0F + 1.0F);
-                break;
-            case 4:
-                r = (int)(t * 255.0F + 1.0F);
-                g = (int)(p * 255.0F + 1.0F);
-                b = (int)(brightness * 255.0F + 1.0F);
-                break;
-            case 5:
-                r = (int)(brightness * 255.0F + 1.0F);
-                g = (int)(p * 255.0F + 1.0F);
-                b = (int)(q * 255.0F + 1.0F);
+            switch ((int) h) {
+                case 0:
+                    r = (int) (brightness * 255.0F + 1.0F);
+                    g = (int) (t * 255.0F + 1.0F);
+                    b = (int) (p * 255.0F + 1.0F);
+                    break;
+                case 1:
+                    r = (int) (q * 255.0F + 1.0F);
+                    g = (int) (brightness * 255.0F + 1.0F);
+                    b = (int) (p * 255.0F + 1.0F);
+                    break;
+                case 2:
+                    r = (int) (p * 255.0F + 1.0F);
+                    g = (int) (brightness * 255.0F + 1.0F);
+                    b = (int) (t * 255.0F + 1.0F);
+                    break;
+                case 3:
+                    r = (int) (p * 255.0F + 1.0F);
+                    g = (int) (q * 255.0F + 1.0F);
+                    b = (int) (brightness * 255.0F + 1.0F);
+                    break;
+                case 4:
+                    r = (int) (t * 255.0F + 1.0F);
+                    g = (int) (p * 255.0F + 1.0F);
+                    b = (int) (brightness * 255.0F + 1.0F);
+                    break;
+                case 5:
+                    r = (int) (brightness * 255.0F + 1.0F);
+                    g = (int) (p * 255.0F + 1.0F);
+                    b = (int) (q * 255.0F + 1.0F);
             }
         }
 
@@ -96,10 +91,10 @@ public class Color {
             cmin = b;
         }
 
-        float brightness = (float)cmax / 255.0F;
+        float brightness = (float) cmax / 255.0F;
         float saturation;
         if (cmax != 0) {
-            saturation = (float)(cmax - cmin) / (float)cmax;
+            saturation = (float) (cmax - cmin) / (float) cmax;
         } else {
             saturation = 0.0F;
         }
@@ -108,9 +103,9 @@ public class Color {
         if (saturation == 0.0F) {
             hue = 0.0F;
         } else {
-            float redc = (float)(cmax - r) / (float)(cmax - cmin);
-            float greenc = (float)(cmax - g) / (float)(cmax - cmin);
-            float bluec = (float)(cmax - b) / (float)(cmax - cmin);
+            float redc = (float) (cmax - r) / (float) (cmax - cmin);
+            float greenc = (float) (cmax - g) / (float) (cmax - cmin);
+            float bluec = (float) (cmax - b) / (float) (cmax - cmin);
             if (r == cmax) {
                 hue = bluec - greenc;
             } else if (g == cmax) {
@@ -165,20 +160,20 @@ public class Color {
     }
 
     public int getHue() {
-        float r = (float)this.getRed() / 255.0F;
-        float g = (float)this.getGreen() / 255.0F;
-        float b = (float)this.getBlue() / 255.0F;
+        float r = (float) this.getRed() / 255.0F;
+        float g = (float) this.getGreen() / 255.0F;
+        float b = (float) this.getBlue() / 255.0F;
         float max = Math.max(Math.max(r, g), b);
         float min = Math.min(Math.min(r, g), b);
         float chroma = max - min;
         if (chroma == 0.0F) {
             return 0;
         } else if (max >= r) {
-            return (int)((g - b) / chroma % 6.0F * 60.0F);
+            return (int) ((g - b) / chroma % 6.0F * 60.0F);
         } else if (max >= g) {
-            return (int)(((b - r) / chroma + 2.0F) * 60.0F);
+            return (int) (((b - r) / chroma + 2.0F) * 60.0F);
         } else {
-            return max >= b ? (int)(((r - g) / chroma + 4.0F) * 60.0F) : 0;
+            return max >= b ? (int) (((r - g) / chroma + 4.0F) * 60.0F) : 0;
         }
     }
 
@@ -192,10 +187,10 @@ public class Color {
     }
 
     public int getLuma() {
-        float r = (float)this.getRed() / 255.0F;
-        float g = (float)this.getGreen() / 255.0F;
-        float b = (float)this.getBlue() / 255.0F;
-        return (int)((0.2126F * r + 0.7152F * g + 0.0722F * b) * 255.0F);
+        float r = (float) this.getRed() / 255.0F;
+        float g = (float) this.getGreen() / 255.0F;
+        float b = (float) this.getBlue() / 255.0F;
+        return (int) ((0.2126F * r + 0.7152F * g + 0.0722F * b) * 255.0F);
     }
 
     public int getValue() {
@@ -206,19 +201,19 @@ public class Color {
     }
 
     public float getHSVSaturation() {
-        float v = (float)this.getValue();
+        float v = (float) this.getValue();
         if (v == 0.0F) {
             return 0.0F;
         } else {
-            float c = (float)this.getChroma();
+            float c = (float) this.getChroma();
             return c / v;
         }
     }
 
     public float getHSLSaturation() {
-        float l = (float)this.getLuma() / 255.0F;
+        float l = (float) this.getLuma() / 255.0F;
         if (l != 0.0F && l != 1.0F) {
-            float c = (float)this.getChroma() / 255.0F;
+            float c = (float) this.getChroma() / 255.0F;
             return c / (1.0F - Math.abs(2.0F * l - 1.0F));
         } else {
             return 0.0F;
@@ -246,11 +241,11 @@ public class Color {
                 b = i;
             }
 
-            return new Color(Math.min((int)((double)r / 0.7D), 255), Math.min((int)((double)g / 0.7D), 255), Math.min((int)((double)b / 0.7D), 255), alpha);
+            return new Color(Math.min((int) ((double) r / 0.7D), 255), Math.min((int) ((double) g / 0.7D), 255), Math.min((int) ((double) b / 0.7D), 255), alpha);
         }
     }
 
     public Color darker() {
-        return new Color(Math.max((int)((double)this.getRed() * 0.7D), 0), Math.max((int)((double)this.getGreen() * 0.7D), 0), Math.max((int)((double)this.getBlue() * 0.7D), 0), this.getAlpha());
+        return new Color(Math.max((int) ((double) this.getRed() * 0.7D), 0), Math.max((int) ((double) this.getGreen() * 0.7D), 0), Math.max((int) ((double) this.getBlue() * 0.7D), 0), this.getAlpha());
     }
 }

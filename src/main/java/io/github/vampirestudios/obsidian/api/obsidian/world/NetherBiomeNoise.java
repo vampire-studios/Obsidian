@@ -6,5 +6,5 @@ public class NetherBiomeNoise {
     public float humidity;
     public float altitude;
     public float weirdness;
-    
+
 }

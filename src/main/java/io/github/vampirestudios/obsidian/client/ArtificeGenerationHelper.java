@@ -3,11 +3,11 @@ package io.github.vampirestudios.obsidian.client;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
 import com.swordglowsblue.artifice.api.resource.StringResource;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.block.enums.StairShape;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+
+import java.util.Map;
 
 public class ArtificeGenerationHelper {
 
@@ -21,6 +21,24 @@ public class ArtificeGenerationHelper {
         clientResourcePackBuilder.addBlockState(name, blockStateBuilder ->
                 blockStateBuilder.variant("", variant ->
                         variant.model(Utils.prependToPath(modelId, "block/"))));
+    }
+
+    public static void generateLanternBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
+        clientResourcePackBuilder.addBlockState(name, blockStateBuilder ->
+            blockStateBuilder
+                .variant("hanging=false", variant -> variant.model(Utils.prependToPath(name, "block/")))
+                .variant("hanging=true", variant -> variant.model(Utils.appendAndPrependToPath(name, "block/", "_hanging"))));
+    }
+
+    public static void generateLanternBlockModels(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures, Identifier parentHanging, Map<String, Identifier> texturesHanging) {
+        clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
+            modelBuilder.parent(parent);
+            if (textures != null) textures.forEach(modelBuilder::texture);
+        });
+        clientResourcePackBuilder.addBlockModel(Utils.appendToPath(name, "_hanging"), modelBuilder -> {
+            modelBuilder.parent(parentHanging);
+            if (texturesHanging != null) textures.forEach(modelBuilder::texture);
+        });
     }
 
     public static void generatePillarBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
@@ -55,7 +73,7 @@ public class ArtificeGenerationHelper {
         });
     }
 
-    public static void generateHorizonalFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
+    public static void generateHorizontalFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
         clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
             blockStateBuilder.variant("facing=north", variant ->
                     variant.model(Utils.prependToPath(name, "block/")));
@@ -137,6 +155,13 @@ public class ArtificeGenerationHelper {
         });
     }
 
+    public static void generateBlockModel(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures) {
+        clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
+            modelBuilder.parent(parent);
+            if (textures != null) textures.forEach(modelBuilder::texture);
+        });
+    }
+
     public static void generateBlockItemModel(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
         clientResourcePackBuilder.addItemModel(name, modelBuilder -> modelBuilder.parent(Utils.prependToPath(name, "block/")));
     }
@@ -154,221 +179,65 @@ public class ArtificeGenerationHelper {
     }
 
     public static void generateStairsBlockState(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name) {
-        pack.addBlockState(name, state -> {
-            for (Direction d : Direction.values()) {
-                if (!(d.equals(Direction.DOWN) || d.equals(Direction.UP))) {
-                    for (BlockHalf h : BlockHalf.values()) {
-                        for (StairShape s : StairShape.values()) {
-                            String varname = "facing=" + d.asString() + ",half=" + h.asString() + ",shape=" + s.asString();
-                            state.variant(varname, var -> {
-                                var.uvlock(true);
-                                int y = 0;
-                                switch (s) {
-                                    case STRAIGHT:
-                                        var.model(Utils.prependToPath(name, "block/"));
-                                        switch (d) {
-                                            case EAST:
-                                                y = 0;
-                                                break;
-                                            case WEST:
-                                                y = 180;
-                                                break;
-                                            case NORTH:
-                                                y = 270;
-                                                break;
-                                            case SOUTH:
-                                                y = 90;
-                                                break;
-                                        }
-                                        break;
-                                    case OUTER_RIGHT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_outer"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 90;
-                                                        break;
-                                                    case WEST:
-                                                        y = 270;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 0;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 180;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                    case OUTER_LEFT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_outer"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 270;
-                                                        break;
-                                                    case WEST:
-                                                        y = 90;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 180;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 0;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                    case INNER_RIGHT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_inner"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 90;
-                                                        break;
-                                                    case WEST:
-                                                        y = 270;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 0;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 180;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                    case INNER_LEFT:
-                                        var.model(Utils.appendAndPrependToPath(name, "block/", "_inner"));
-                                        switch (h) {
-                                            case BOTTOM:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 270;
-                                                        break;
-                                                    case WEST:
-                                                        y = 90;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 180;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 0;
-                                                        break;
-                                                }
-                                                break;
-                                            case TOP:
-                                                switch (d) {
-                                                    case EAST:
-                                                        y = 0;
-                                                        break;
-                                                    case WEST:
-                                                        y = 180;
-                                                        break;
-                                                    case NORTH:
-                                                        y = 270;
-                                                        break;
-                                                    case SOUTH:
-                                                        y = 90;
-                                                        break;
-                                                }
-                                                break;
-                                        }
-                                        break;
-                                }
-                                if (h.equals(BlockHalf.TOP)) var.rotationX(180);
-                                var.rotationY(y);
-                            });
-                        }
-                    }
-                }
-            }
-            state.variant("facing=east,half=bottom,shape=straight", var -> {
-                var.model(Utils.prependToPath(name, "block/"));
-            });
-            state.variant("facing=west,half=bottom,shape=straight", var -> {
-                var.model(Utils.prependToPath(name, "block/"));
-                var.rotationY(180);
-                var.uvlock(true);
-            });
-        });
+        String JSON = JsonTemplates.STAIRS_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        pack.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
     }
 
-    public static void generateStairsBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Identifier texture) {
+    public static void generateStairsBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
         pack.addBlockModel(Utils.appendToPath(name, "_inner"), model -> {
-            model.parent(new Identifier("block/stairs_inner"));
-            model.texture("particle", texture);
-            model.texture("side", texture);
-            model.texture("top", texture);
-            model.texture("bottom", texture);
+            model.parent(new Identifier("block/inner_stairs"));
+            Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
+                    textures.get("end") : textures.get("all");
+            model.texture("particle", particle);
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_outer"), model -> {
-            model.parent(new Identifier("block/stairs_inner"));
-            model.texture("particle", texture);
-            model.texture("side", texture);
-            model.texture("top", texture);
-            model.texture("bottom", texture);
+            model.parent(new Identifier("block/outer_stairs"));
+            Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
+                    textures.get("end") : textures.get("all");
+            model.texture("particle", particle);
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
         pack.addBlockModel(name, model -> {
             model.parent(new Identifier("block/stairs"));
-            model.texture("particle", texture);
-            model.texture("side", texture);
-            model.texture("top", texture);
-            model.texture("bottom", texture);
+            Identifier particle = textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
+                    textures.get("end") : textures.get("all");
+            model.texture("particle", particle);
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+        });
+    }
+
+    public static void generateWallBlockState(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name) {
+        String JSON = JsonTemplates.WALL_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        pack.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
+    }
+
+    public static void generateWallBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
+        pack.addBlockModel(Utils.appendToPath(name, "_inventory"), model -> {
+            model.parent(new Identifier("block/wall_inventory"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_post"), model -> {
+            model.parent(new Identifier("block/template_wall_post"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_side"), model -> {
+            model.parent(new Identifier("block/template_wall_side"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_side_tall"), model -> {
+            model.parent(new Identifier("block/template_wall_side_tall"));
+            model.texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"));
         });
     }
 
@@ -406,6 +275,23 @@ public class ArtificeGenerationHelper {
             model.texture("side", texture);
             model.texture("top", texture);
             model.texture("bottom", texture);
+        });
+    }
+
+    public static void generateSlabBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
+        pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
+            model.parent(new Identifier("block/slab_top"));
+//            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+        });
+        pack.addBlockModel(name, model -> {
+            model.parent(new Identifier("block/slab"));
+//            model.texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.get("all"));
+            model.texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"));
+            model.texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
+            model.texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
         });
     }
 
@@ -544,101 +430,58 @@ public class ArtificeGenerationHelper {
         });
     }
 
-    public static void generateDoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Identifier topTexture, Identifier bottomTexture) {
+    public static void generateDoorBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
+        String JSON = JsonTemplates.DOOR_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
+    }
+
+    public static void generateDoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name,
+                                               Identifier topParent, Map<String, Identifier> topTextures,
+                                               Identifier topHingeParent, Map<String, Identifier> topHingeTextures,
+                                               Identifier bottomParent, Map<String, Identifier> bottomTextures,
+                                               Identifier bottomHingeParent, Map<String, Identifier> bottomHingeTextures) {
         pack.addBlockModel(Utils.appendToPath(name, "_bottom"), model -> {
-            model.parent(new Identifier("block/door_bottom"));
-            model.texture("texture", bottomTexture);
+            model.parent(bottomParent != null ? bottomParent : new Identifier("block/door_bottom"));
+            bottomTextures.forEach(model::texture);
         });
         pack.addBlockModel(Utils.appendToPath(name, "_bottom_hinge"), model -> {
-            model.parent(new Identifier("block/door_bottom_rh"));
-            model.texture("texture", bottomTexture);
+            model.parent(bottomHingeParent != null ? bottomHingeParent : new Identifier("block/door_bottom_rh"));
+            bottomHingeTextures.forEach(model::texture);
         });
         pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
-            model.parent(new Identifier("block/door_top"));
-            model.texture("texture", topTexture);
+            model.parent(topParent != null ? topParent : new Identifier("block/door_top"));
+            topTextures.forEach(model::texture);
         });
         pack.addBlockModel(Utils.appendToPath(name, "_top_hinge"), model -> {
-            model.parent(new Identifier("block/door_top_rh"));
-            model.texture("texture", topTexture);
+            model.parent(topHingeParent != null ? topHingeParent : new Identifier("block/door_top_rh"));
+            topHingeTextures.forEach(model::texture);
         });
     }
 
-    public static void generateDoorBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
-        String DOOR_JSON_TEMPLATE = "{\n" +
-                "    \"variants\": {\n" +
-                "        \"facing=east,half=lower,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_bottom\" },\n" +
-                "        \"facing=south,half=lower,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 90 },\n" +
-                "        \"facing=west,half=lower,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 180 },\n" +
-                "        \"facing=north,half=lower,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 270 },\n" +
-                "        \"facing=east,half=lower,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_bottom_hinge\" },\n" +
-                "        \"facing=south,half=lower,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 90 },\n" +
-                "        \"facing=west,half=lower,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 180 },\n" +
-                "        \"facing=north,half=lower,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 270 },\n" +
-                "        \"facing=east,half=lower,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 90 },\n" +
-                "        \"facing=south,half=lower,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 180 },\n" +
-                "        \"facing=west,half=lower,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_bottom_hinge\", \"y\": 270 },\n" +
-                "        \"facing=north,half=lower,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_bottom_hinge\" },\n" +
-                "        \"facing=east,half=lower,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 270 },\n" +
-                "        \"facing=south,half=lower,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_bottom\" },\n" +
-                "        \"facing=west,half=lower,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 90 },\n" +
-                "        \"facing=north,half=lower,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 180 },\n" +
-                "        \"facing=east,half=upper,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_top\" },\n" +
-                "        \"facing=south,half=upper,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 90 },\n" +
-                "        \"facing=west,half=upper,hinge=left,open=false\":  { \"model\": \"$namespace$:block/$$_top\", \"y\": 180 },\n" +
-                "        \"facing=north,half=upper,hinge=left,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 270 },\n" +
-                "        \"facing=east,half=upper,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_top_hinge\" },\n" +
-                "        \"facing=south,half=upper,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 90 },\n" +
-                "        \"facing=west,half=upper,hinge=right,open=false\":  { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 180 },\n" +
-                "        \"facing=north,half=upper,hinge=right,open=false\": { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 270 },\n" +
-                "        \"facing=east,half=upper,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 90 },\n" +
-                "        \"facing=south,half=upper,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 180 },\n" +
-                "        \"facing=west,half=upper,hinge=left,open=true\":\t{ \"model\": \"$namespace$:block/$$_top_hinge\", \"y\": 270 },\n" +
-                "        \"facing=north,half=upper,hinge=left,open=true\": { \"model\": \"$namespace$:block/$$_top_hinge\" },\n" +
-                "        \"facing=east,half=upper,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_top\", \"y\": 270 },\n" +
-                "        \"facing=south,half=upper,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_top\" },\n" +
-                "        \"facing=west,half=upper,hinge=right,open=true\":  { \"model\": \"$namespace$:block/$$_top\", \"y\": 90 },\n" +
-                "        \"facing=north,half=upper,hinge=right,open=true\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 180 }\n" +
-                "    }\n" +
-                "}";
-        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(DOOR_JSON_TEMPLATE.replace("$namespace$", name.getNamespace()).replace("$$", name.getPath())));
-    }
-    
     public static void generateTrapdoorBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
-        String TRAPDOOR_JSON_TEMPLATE = "{\n" +
-                "    \"variants\": {\n" +
-                "        \"facing=north,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\" },\n" +
-                "        \"facing=south,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 180 },\n" +
-                "        \"facing=east,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 90 },\n" +
-                "        \"facing=west,half=bottom,open=false\": { \"model\": \"$namespace$:block/$$_bottom\", \"y\": 270 },\n" +
-                "        \"facing=north,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\" },\n" +
-                "        \"facing=south,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 180 },\n" +
-                "        \"facing=east,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 90 },\n" +
-                "        \"facing=west,half=top,open=false\": { \"model\": \"$namespace$:block/$$_top\", \"y\": 270 },\n" +
-                "        \"facing=north,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\" },\n" +
-                "        \"facing=south,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"y\": 180 },\n" +
-                "        \"facing=east,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"y\": 90 },\n" +
-                "        \"facing=west,half=bottom,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"y\": 270 },\n" +
-                "        \"facing=north,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 180 },\n" +
-                "        \"facing=south,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 0 },\n" +
-                "        \"facing=east,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 270 },\n" +
-                "        \"facing=west,half=top,open=true\": { \"model\": \"$namespace$:block/$$_open\", \"x\": 180, \"y\": 90 }\n" +
-                "    }\n" +
-                "}\n";
-        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(TRAPDOOR_JSON_TEMPLATE.replace("$namespace$", name.getNamespace()).replace("$$", name.getPath())));
+        String JSON = JsonTemplates.TRAPDOOR_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
     }
 
-    public static void generateTrapdoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Identifier texture) {
+    public static void generateTrapdoorBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name,
+                                                   Identifier topParent, Map<String, Identifier> topTextures,
+                                                   Identifier openParent, Map<String, Identifier> openTextures,
+                                                   Identifier bottomParent, Map<String, Identifier> bottomTextures) {
         pack.addBlockModel(Utils.appendToPath(name, "_bottom"), model -> {
-            model.parent(new Identifier("block/template_orientable_trapdoor_bottom"));
-            model.texture("texture", texture);
+            model.parent(bottomParent);
+            bottomTextures.forEach(model::texture);
         });
         pack.addBlockModel(Utils.appendToPath(name, "_open"), model -> {
-            model.parent(new Identifier("block/template_orientable_trapdoor_open"));
-            model.texture("texture", texture);
+            model.parent(openParent);
+            openTextures.forEach(model::texture);
         });
         pack.addBlockModel(Utils.appendToPath(name, "_top"), model -> {
-            model.parent(new Identifier("block/template_orientable_trapdoor_top"));
-            model.texture("texture", texture);
+            model.parent(topParent);
+            topTextures.forEach(model::texture);
         });
     }
 

@@ -9,7 +9,7 @@ public class Potion {
     public EffectInstance[] effects;
 
     public EffectInstance getEffects() {
-        for(EffectInstance effectInstance : effects) {
+        for (EffectInstance effectInstance : effects) {
             return effectInstance;
         }
         return null;

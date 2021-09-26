@@ -67,7 +67,6 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
 
     @Override
     public void emitFormatWarnings(Logger logger) {
-
     }
 
     @Override
@@ -78,6 +77,11 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
     @Override
     public String getId() {
         return addon.getConfigPackInfo().namespace;
+    }
+
+    @Override
+    public Collection<String> getProvides() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -92,7 +96,7 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
 
     @Override
     public Collection<ModDependency> getDepends() {
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     @Override

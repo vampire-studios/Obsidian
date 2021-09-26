@@ -1,11 +1,8 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.ArmorProvider;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
@@ -14,7 +11,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ArmorItemImpl extends ArmorItem implements ArmorProvider {
+public class ArmorItemImpl extends ArmorItem {
 
     public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
 
@@ -29,22 +26,27 @@ public class ArmorItemImpl extends ArmorItem implements ArmorProvider {
     }
 
     @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return item.information.is_enchantable;
+    }
+
+    @Override
+    public int getEnchantability() {
+        return item.information.enchantability;
+    }
+
+    @Override
+    public Text getName() {
+        return item.information.name.getName("item");
+    }
+
+    @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : item.display.lore) {
-                tooltip.add(tooltipInformation.getTextType());
+                tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }
-    }
-
-    @Override
-    public BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel) {
-        return defaultModel;
-    }
-
-    @Override
-    public String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
-        return item.material.texture;
     }
 
 }

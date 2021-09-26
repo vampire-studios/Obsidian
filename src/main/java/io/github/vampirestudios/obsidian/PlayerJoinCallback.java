@@ -11,13 +11,13 @@ import net.minecraft.server.network.ServerPlayerEntity;
  * <p>It hooks in at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(ClientConnection, ServerPlayerEntity)} through {@link io.github.vampirestudios.obsidian.mixins.MixinPlayerManager}.
  */
 public interface PlayerJoinCallback {
-	Event<PlayerJoinCallback> EVENT = EventFactory.createArrayBacked(PlayerJoinCallback.class,
-			(listeners) -> (playerEntity) -> {
-				for (PlayerJoinCallback event : listeners) {
-					event.onPlayerJoin(playerEntity);
-				}
-			}
-	);
+    Event<PlayerJoinCallback> EVENT = EventFactory.createArrayBacked(PlayerJoinCallback.class,
+            (listeners) -> (playerEntity) -> {
+                for (PlayerJoinCallback event : listeners) {
+                    event.onPlayerJoin(playerEntity);
+                }
+            }
+    );
 
-	void onPlayerJoin(ServerPlayerEntity player);
+    void onPlayerJoin(ServerPlayerEntity player);
 }

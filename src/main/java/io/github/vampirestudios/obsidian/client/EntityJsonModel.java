@@ -1,19 +1,31 @@
+/*
 package io.github.vampirestudios.obsidian.client;
 
-import io.github.vampirestudios.obsidian.EntityGeometryModel;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
+import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class EntityJsonModel extends EntityGeometryModel<EntityImpl> {
+public class EntityJsonModel extends AnimatedGeoModel<EntityImpl> {
 
-    public EntityJsonModel(Identifier model) {
-        super(RenderLayer::getEntityCutoutNoCull, model);
-    }
+	private final Entity entity;
 
-    @Override
-    public void setAngles(EntityImpl entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+	public EntityJsonModel(Entity entity) {
+		this.entity = entity;
+	}
 
-    }
+	@Override
+	public Identifier getModelLocation(EntityImpl entity) {
+		return this.entity.information.entity_model.modelLocation;
+	}
 
-}
+	@Override
+	public Identifier getTextureLocation(EntityImpl entity) {
+		return this.entity.information.entity_model.textureLocation;
+	}
+
+	@Override
+	public Identifier getAnimationFileLocation(EntityImpl entity) {
+		return this.entity.information.entity_model.animationLocation;
+	}
+}*/

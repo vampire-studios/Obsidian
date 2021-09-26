@@ -25,12 +25,25 @@
     "client": [
       "io.github.vampirestudios.obsidian.client.ClientInit"
     ],
-    "modmenu": [
-      "io.github.vampirestudios.obsidian.configPack.REIModMenuEntryPoint"
+    "server": [
+      "io.github.vampirestudios.obsidian.ObsidianServer"
+    ],
+    "mealapi": [
+      "io.github.vampirestudios.obsidian.Obsidian"
+    ],
+    "appleskin": [
+      "io.github.vampirestudios.obsidian.Obsidian"
     ]
   },
   "mixins": [
-    "obsidian.mixins.json"
+    "obsidian.mixins.json",
+    "fabric-item-api-v1-elytra.mixins.json",
+    "fabric-combat-api-v1.mixins.json",
+    "fabric-recipe-api-v1.mixins.json",
+    "fabric-conditional-resource-api-v1.mixins.json",
+    "fabric-mining-level-api-v1.mixins.json",
+    "fabric-resouce-conditions-v1.mixins.json",
+    "oxidizelib.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 

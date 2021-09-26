@@ -1,0 +1,14 @@
+{
+  "block_type": "BEEHIVE",
+  "information": {
+    "name": {
+      "id": "tutorial:test_beehive",
+      "translated": {
+        "en_us": "Test Bee Hive"
+      }
+    },
+    "material": "minecraft:wood",
+    "item_group": "minecraft:building_blocks",
+    "sound_group": "minecraft:wood"
+  }
+}

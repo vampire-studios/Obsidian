@@ -37,9 +37,9 @@ public class BedrockAddon implements IBedrockAddon {
 
     @Override
     public ResourcePack getVirtualResourcePack() {
-		if(file == null) return null;
-		if(file.isDirectory()) return new DirectoryResourcePack(file);
-		return new ZipResourcePack(file);
+        if (file == null) return null;
+        if (file.isDirectory()) return new DirectoryResourcePack(file);
+        return new ZipResourcePack(file);
     }
 
 }

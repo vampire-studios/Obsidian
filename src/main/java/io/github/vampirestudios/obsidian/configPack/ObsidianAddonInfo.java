@@ -1,17 +1,17 @@
 package io.github.vampirestudios.obsidian.configPack;
 
-import net.minecraft.util.Identifier;
-
 import java.util.List;
 
 public class ObsidianAddonInfo {
 
     public String displayName;
+    public String folderName;
+    public String namespace;
     public String version;
     public String description;
-    public Identifier id;
-    public String namespace;
     public List<String> authors;
     public int addonVersion;
+    public boolean hasAssets = false;
+    public boolean hasData = false;
 
 }

@@ -1,32 +1,40 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package io.github.vampirestudios.obsidian.utils;
 
+import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import net.minecraft.util.Identifier;
 
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.io.File;
+import java.io.Reader;
 
 public class Utils {
     public Utils() {
     }
 
-    public static String toTitleCase(String lowerCase) {
-        return "" + Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
+    public static void registerAddon(Reader reader, File file) {
+        ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(reader, ObsidianAddonInfo.class);
+        ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, file);
+        if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.containsId(new Identifier(Obsidian.MOD_ID, obsidianAddon.getConfigPackInfo().namespace)) && obsidianAddon.getConfigPackInfo().addonVersion ==
+                ObsidianAddonLoader.PACK_VERSION) {
+            Obsidian.registerInRegistry(ObsidianAddonLoader.OBSIDIAN_ADDONS, obsidianAddon.getConfigPackInfo().namespace, obsidianAddon);
+            Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
+        } else {
+            Obsidian.LOGGER.info(String.format("[Obsidian] Found incompatible obsidian addon: %s with a version of %d", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion));
+        }
     }
 
-    public static String nameToId(String name, Map<String, String> specialCharMap) {
-        Entry specialChar;
-        for(Iterator var2 = specialCharMap.entrySet().iterator(); var2.hasNext(); name = name.replace((CharSequence)specialChar.getKey(), (CharSequence)specialChar.getValue())) {
-            specialChar = (Entry)var2.next();
+    public static void registerAddon(Reader reader) {
+        ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(reader, ObsidianAddonInfo.class);
+        ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo);
+        if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.containsId(new Identifier(Obsidian.MOD_ID, obsidianAddon.getConfigPackInfo().namespace)) && obsidianAddon.getConfigPackInfo().addonVersion ==
+                ObsidianAddonLoader.PACK_VERSION) {
+            Obsidian.registerInRegistry(ObsidianAddonLoader.OBSIDIAN_ADDONS, obsidianAddon.getConfigPackInfo().namespace, obsidianAddon);
+            Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
+        } else {
+            Obsidian.LOGGER.info(String.format("[Obsidian] Found incompatible obsidian addon: %s with a version of %d", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion));
         }
-
-        return name.toLowerCase(Locale.ENGLISH);
     }
 
     public static Identifier appendToPath(Identifier identifier, String suffix) {
@@ -41,11 +49,4 @@ public class Utils {
         return new Identifier(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
     }
 
-    public static double dist(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x2 - x1, 2.0D) + Math.pow(y2 - y1, 2.0D));
-    }
-
-    public static boolean checkBitFlag(int toCheck, int flag) {
-        return (toCheck & flag) == flag;
-    }
 }

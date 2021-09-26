@@ -1,13 +1,15 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ItemInformation {
 
     public String rarity = "common";
-    public String item_group = "";
+    public Identifier item_group;
     public Integer max_count = 64;
     public NameInformation name;
     public boolean has_glint = false;
@@ -15,45 +17,20 @@ public class ItemInformation {
     public int enchantability = 5;
     public boolean hand_equipped = false;
     public int use_duration = 5;
+    public boolean can_place_block = false;
+    public Identifier placable_block;
 
     public Rarity getRarity() {
-        switch (rarity) {
-            case "uncommon":
-                return Rarity.UNCOMMON;
-            case "rare":
-                return Rarity.RARE;
-            case "epic":
-                return Rarity.EPIC;
-            case "common":
-            default:
-                return Rarity.COMMON;
-        }
+		return switch (rarity) {
+			default -> Rarity.COMMON;
+			case "uncommon" -> Rarity.UNCOMMON;
+			case "rare" -> Rarity.RARE;
+			case "epic" -> Rarity.EPIC;
+		};
     }
 
     public ItemGroup getItemGroup() {
-        switch (item_group) {
-            case "minecraft:building_blocks":
-                return ItemGroup.BUILDING_BLOCKS;
-            case "minecraft:decorations":
-                return ItemGroup.DECORATIONS;
-            case "minecraft:redstone":
-                return ItemGroup.REDSTONE;
-            case "minecraft:transportation":
-                return ItemGroup.TRANSPORTATION;
-            case "minecraft:misc":
-                return ItemGroup.MISC;
-            case "minecraft:food":
-                return ItemGroup.FOOD;
-            case "minecraft:tools":
-                return ItemGroup.TOOLS;
-            case "minecraft:combat":
-                return ItemGroup.COMBAT;
-            case "minecraft:brewing":
-                return ItemGroup.BREWING;
-            case "minecraft:search":
-            default:
-                return ItemGroup.SEARCH;
-        }
+        return Obsidian.ITEM_GROUP_REGISTRY.get(item_group);
     }
 
 }
