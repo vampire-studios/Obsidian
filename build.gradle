@@ -37,6 +37,10 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
     }
+    include ("io.github.vampirestudios:VampireLib-Fabric:3.0.0+build.2-1.16.5") {
+        exclude group: "net.fabricmc.fabric-api"
+        exclude group: "io.github.cottonmc"
+    }
 }
 
 processResources {
