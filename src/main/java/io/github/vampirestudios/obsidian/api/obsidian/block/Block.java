@@ -23,8 +23,8 @@ public class Block {
     public List<Identifier> can_plant_on = new ArrayList<>();
     public Identifier particle_type;
     public Growable growable;
-    public OxidizableProperties oxidizable_properties;
     public Map<String, BlockProperty> events;
+    public DropInformation dropInformation;
 
     public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
@@ -82,23 +82,6 @@ public class Block {
         COMPOSTER,
         RAILS,
         CARTOGRAPHY_TABLE
-    }
-
-    public static class OxidizableProperties {
-        public List<OxidationStage> stages;
-        public List<String> cycle;
-
-        public static class OxidationStage {
-            public boolean can_be_waxed;
-            public List<VariantBlock> blocks;
-            public boolean stairs;
-            public boolean slab;
-
-            public static class VariantBlock {
-                public NameInformation name;
-                public DisplayInformation display;
-            }
-        }
     }
 
     public static class CampfireProperties {

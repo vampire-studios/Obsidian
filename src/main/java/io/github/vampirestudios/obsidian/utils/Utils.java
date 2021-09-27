@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 
 import java.io.File;
 import java.io.Reader;
+import java.lang.reflect.Array;
 
 public class Utils {
     public Utils() {
@@ -47,6 +48,24 @@ public class Utils {
 
     public static Identifier appendAndPrependToPath(Identifier identifier, String prefix, String suffix) {
         return new Identifier(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
+    }
+
+    public static <T> T[] stripNulls(T[] arr) {
+        int i = 0;
+        for(T t : arr) {
+            if(t != null) {
+                i ++;
+            }
+        }
+        T[] newArr = (T[]) Array.newInstance(arr.getClass().getComponentType(), i);
+        i = 0;
+        for(T t : arr) {
+            if(t != null) {
+                newArr[i] = t;
+                i++;
+            }
+        }
+        return newArr;
     }
 
 }
