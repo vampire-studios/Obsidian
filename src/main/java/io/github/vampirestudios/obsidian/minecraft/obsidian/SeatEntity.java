@@ -34,17 +34,17 @@ public class SeatEntity extends Entity {
         if(passenger instanceof PlayerEntity) {
             BlockPos pos = OCCUPIED.remove(getPos());
             if(pos != null) {
-                remove(RemovalReason.DISCARDED);
+                remove();
                 return new Vec3d(pos.getX(), pos.getY(), pos.getZ());
             }
         }
-        remove(RemovalReason.DISCARDED);
+        remove();
         return super.updatePassengerForDismount(passenger);
     }
 
     @Override
-    public void remove(RemovalReason reason) {
-        super.remove(reason);
+    public void remove() {
+        super.remove();
         OCCUPIED.remove(getPos());
     }
 

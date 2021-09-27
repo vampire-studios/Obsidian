@@ -96,7 +96,7 @@ public class ExpandedFluidRenderHandlerRegistryImpl implements ExpandedFluidRend
 
 		SpriteAtlasTexture texture = MinecraftClient.getInstance()
 				.getBakedModelManager()
-				.getAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+				.method_24153(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
 
 		for (ExpandedFluidRenderHandler handler : handlers.values()) {
 			handler.reloadTextures(texture);

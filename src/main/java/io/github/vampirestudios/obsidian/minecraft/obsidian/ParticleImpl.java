@@ -25,8 +25,17 @@ public class ParticleImpl extends SpriteBillboardParticle {
         return particle.getType();
     }
 
-    public record Factory(io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle,
-                          SpriteProvider spriteProvider) implements ParticleFactory<DefaultParticleType> {
+    public static class Factory implements ParticleFactory<DefaultParticleType> {
+
+        private final io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle;
+        private final SpriteProvider spriteProvider;
+
+        public Factory(io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle,
+                       SpriteProvider spriteProvider) {
+            this.particle = particle;
+            this.spriteProvider = spriteProvider;
+        }
+
         @Override
         public Particle createParticle(DefaultParticleType parameters, ClientWorld clientWorld, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
             ParticleImpl particle = new ParticleImpl(this.particle, clientWorld, x, y, z, velocityX, velocityY, velocityZ);

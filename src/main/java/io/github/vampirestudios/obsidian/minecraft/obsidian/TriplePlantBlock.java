@@ -52,7 +52,7 @@ public class TriplePlantBlock extends PlantBlock {
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         BlockPos blockPos = ctx.getBlockPos();
-        return blockPos.getY() < ctx.getWorld().getTopY() - 2 && ctx.getWorld().getBlockState(blockPos.up(1)).canReplace(ctx) && ctx.getWorld().getBlockState(blockPos.up(2)).canReplace(ctx)
+        return blockPos.getY() < 254 && ctx.getWorld().getBlockState(blockPos.up(1)).canReplace(ctx) && ctx.getWorld().getBlockState(blockPos.up(2)).canReplace(ctx)
             ? super.getPlacementState(ctx)
             : null;
     }

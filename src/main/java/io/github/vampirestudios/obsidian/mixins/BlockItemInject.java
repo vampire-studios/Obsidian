@@ -25,7 +25,7 @@ public class BlockItemInject {
         if (stack.getItem() instanceof CustomDyeableItem) {
             MinecraftServer minecraftServer = world.getServer();
             if (minecraftServer != null) {
-                NbtCompound compoundTag = stack.getSubNbt("display");
+                NbtCompound compoundTag = stack.getSubTag("display");
                 if (compoundTag != null) {
                     BlockEntity blockEntity = world.getBlockEntity(pos);
                     if (blockEntity != null) {
@@ -44,7 +44,7 @@ public class BlockItemInject {
                         compoundTag2.putInt("y", pos.getY());
                         compoundTag2.putInt("z", pos.getZ());
                         if (!compoundTag2.equals(compoundTag3)) {
-                            blockEntity.readNbt(compoundTag2);
+                            blockEntity.fromTag(world.getBlockState(pos), compoundTag2);
                             blockEntity.markDirty();
                             info.setReturnValue(true);
                         }

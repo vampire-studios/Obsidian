@@ -1,17 +1,13 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.obsidian.ArmorRenderer;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderingRegistry;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class ArmorInitThread implements Runnable {
@@ -49,64 +45,16 @@ public class ArmorInitThread implements Runnable {
                 }
             }
         }
-        if (ArmorRenderer.getRenderer(Registry.ITEM.get(armor.information.name.id)) == null) {
-            ArmorRenderer.register((matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
-                boolean slim = false;
-                if (entity instanceof AbstractClientPlayerEntity player) {
-                    slim = player.getModel().equals("slim");
-                }
-                if (armorModel == null) {
-                    armorModel = new BipedEntityModel<>(MinecraftClient.getInstance().getEntityModelLoader().getModelPart(slim ? EntityModelLayers.PLAYER_SLIM_OUTER_ARMOR : EntityModelLayers.PLAYER_OUTER_ARMOR));
-                }
-                contextModel.setAttributes(armorModel);
-                armorModel.setVisible(false);
-                switch (slot) {
-                    case HEAD -> {
-                        armorModel.head.visible = true;
-                        armorModel.hat.visible = true;
-                    }
-                    case CHEST -> {
-                        armorModel.body.visible = true;
-                        armorModel.rightArm.visible = true;
-                        armorModel.leftArm.visible = true;
-                    }
-                    case LEGS -> {
-                        armorModel.body.visible = true;
-                        armorModel.rightLeg.visible = true;
-                        armorModel.leftLeg.visible = true;
-                    }
-                    case FEET -> {
-                        armorModel.rightLeg.visible = true;
-                        armorModel.leftLeg.visible = true;
-                    }
-                }
-                Identifier texture;
-                if (slot == EquipmentSlot.LEGS) texture = armor.material.texture2;
-                else texture = armor.material.texture1;
-                ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, armorModel, texture);
-            }, Registry.ITEM.get(armor.information.name.id));
-        }
-        /*ArmorRenderer.register(new ArmorRenderer() {
-            @Override
-            public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
-                Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
-                if(model.isPresent()) {
-                    BipedEntityModel<LivingEntity> entityModel = new ArmorModelImpl<>(model.get());
-                    contextModel.setAttributes(entityModel);
-                    ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, entityModel, armor.material.texture);
-                }
+        /*ArmorRenderingRegistry.registerModel((entity, stack, slot, defaultModel) -> {
+            BipedEntityModel<LivingEntity> entityModel;
+            Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
+            if(model.isPresent()) {
+                entityModel = new ArmorModelImpl<>(model.get());
+            } else {
+                entityModel = defaultModel;
             }
+            return entityModel;
         }, Registry.ITEM.get(armor.information.name.id));*/
-//        ArmorRenderingRegistry.registerModel((entity, stack, slot, defaultModel) -> {
-//            BipedEntityModel<LivingEntity> entityModel;
-//            Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
-//            if(model.isPresent()) {
-//                entityModel = new ArmorModelImpl<>(model.get());
-//            } else {
-//                entityModel = defaultModel;
-//            }
-//            return entityModel;
-//        }, );
-//        ArmorRenderingRegistry.registerTexture((entity, stack, slot, secondLayer, suffix, defaultTexture) -> armor.material.texture, Registry.ITEM.get(armor.information.name.id));
+        ArmorRenderingRegistry.registerTexture((entity, stack, slot, secondLayer, suffix, defaultTexture) -> slot == EquipmentSlot.LEGS ? armor.material.texture2 : armor.material.texture1, Registry.ITEM.get(armor.information.name.id));
     }
 }

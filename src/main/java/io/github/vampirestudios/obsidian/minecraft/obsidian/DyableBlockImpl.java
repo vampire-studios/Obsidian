@@ -62,9 +62,11 @@ public class DyableBlockImpl extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         BlockEntity blockEntity = Objects.requireNonNull(world).getBlockEntity(pos);
-        if (blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
+        if (blockEntity instanceof DyableBlockEntity) {
+            DyableBlockEntity dyableBlockEntity = (DyableBlockEntity) blockEntity;
             if (!world.isClient) {
-                if (player.getStackInHand(hand).getItem() instanceof DyeItem dyeItem) {
+                if (player.getStackInHand(hand).getItem() instanceof DyeItem) {
+                    DyeItem dyeItem = (DyeItem) player.getStackInHand(hand).getItem();
                     int newColor = ColorUtil.toIntRgb(dyeItem.getColor().getColorComponents());
                     dyableBlockEntity.markDirty();
                     dyableBlockEntity.setColorAndSync(newColor);
@@ -82,12 +84,7 @@ public class DyableBlockImpl extends BlockWithEntity {
 
     @Override
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
-        var stack = new ItemStack(this);
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if(blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
-//            ((DyeableItem) stack.getItem()).setColor(stack, dyableBlockEntity.getDyeColor());
-        }
-        return stack;
+        return new ItemStack(this);
     }
 
     @Override
@@ -124,8 +121,8 @@ public class DyableBlockImpl extends BlockWithEntity {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new DyableBlockEntity(this.block, pos, state);
+    public BlockEntity createBlockEntity(BlockView world) {
+        return new DyableBlockEntity(this.block);
     }
 
 }

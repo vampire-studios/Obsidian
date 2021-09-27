@@ -25,40 +25,40 @@ public class Command {
         public int min;
         public int max;
         public ArgumentType<?> getArgumentType() {
-            return switch (argumentType) {
-                case "string" -> StringArgumentType.string();
-                case "word" -> StringArgumentType.word();
-                case "greedy" -> StringArgumentType.greedyString();
-                case "player" -> EntityArgumentType.player();
-                case "players" -> EntityArgumentType.players();
-                case "entity" -> EntityArgumentType.entity();
-                case "entities" -> EntityArgumentType.entities();
-                case "block_pos" -> BlockPosArgumentType.blockPos();
-                case "boolean" -> BoolArgumentType.bool();
-                case "double" -> DoubleArgumentType.doubleArg();
-                case "float" -> FloatArgumentType.floatArg();
-                case "integer" -> IntegerArgumentType.integer();
-                case "integer_min" -> IntegerArgumentType.integer(min);
-                case "integer_min_max" -> IntegerArgumentType.integer(min, max);
-                case "angle" -> AngleArgumentType.angle();
-                case "block_state" -> BlockStateArgumentType.blockState();
-                case "color" -> ColorArgumentType.color();
-                case "vec2" -> Vec2ArgumentType.vec2();
-                case "vec3" -> Vec3ArgumentType.vec3();
-                case "time" -> TimeArgumentType.time();
-                case "uuid" -> UuidArgumentType.uuid();
-                case "rotation" -> RotationArgumentType.rotation();
-                case "operation" -> OperationArgumentType.operation();
-                case "particle_effect" -> ParticleEffectArgumentType.particleEffect();
-                case "item_stack" -> ItemStackArgumentType.itemStack();
-                case "nbt_element" -> NbtElementArgumentType.nbtElement();
-                case "nbt_path" -> NbtPathArgumentType.nbtPath();
-                case "float_range" -> NumberRangeArgumentType.floatRange();
-                case "int_range" -> NumberRangeArgumentType.intRange();
-                case "identifier" -> IdentifierArgumentType.identifier();
+            switch (argumentType) {
+                case "string": return StringArgumentType.string();
+                case "word": return StringArgumentType.word();
+                case "greedy": return StringArgumentType.greedyString();
+                case "player": return EntityArgumentType.player();
+                case "players": return EntityArgumentType.players();
+                case "entity": return EntityArgumentType.entity();
+                case "entities": return EntityArgumentType.entities();
+                case "block_pos": return BlockPosArgumentType.blockPos();
+                case "boolean": return BoolArgumentType.bool();
+                case "double": return DoubleArgumentType.doubleArg();
+                case "float": return FloatArgumentType.floatArg();
+                case "integer": return IntegerArgumentType.integer();
+                case "integer_min": return IntegerArgumentType.integer(min);
+                case "integer_min_max": return IntegerArgumentType.integer(min, max);
+                case "angle": return AngleArgumentType.angle();
+                case "block_state": return BlockStateArgumentType.blockState();
+                case "color": return ColorArgumentType.color();
+                case "vec2": return Vec2ArgumentType.vec2();
+                case "vec3": return Vec3ArgumentType.vec3();
+                case "time": return TimeArgumentType.time();
+                case "uuid": return UuidArgumentType.uuid();
+                case "rotation": return RotationArgumentType.rotation();
+                case "operation": return OperationArgumentType.operation();
+                case "particle_effect": return ParticleEffectArgumentType.particleEffect();
+                case "item_stack": return ItemStackArgumentType.itemStack();
+                case "nbt_element": return NbtElementArgumentType.nbtElement();
+                case "nbt_path": return NbtPathArgumentType.nbtPath();
+                case "float_range": return NumberRangeArgumentType.method_30918();
+                case "int_range": return NumberRangeArgumentType.intRange();
+                case "identifier": return IdentifierArgumentType.identifier();
                 // Add your custom types here
-                default -> null;
-            };
+                default: return null;
+            }
         }
     }
 

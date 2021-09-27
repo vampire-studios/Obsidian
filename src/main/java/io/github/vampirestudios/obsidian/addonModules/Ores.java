@@ -21,13 +21,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.YOffset;
 import net.minecraft.world.gen.decorator.Decorator;
 import net.minecraft.world.gen.decorator.RangeDecoratorConfig;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
-import net.minecraft.world.gen.heightprovider.UniformHeightProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,7 +49,7 @@ public class Ores implements AddonModule {
 
             RuleTest test;
             if (block.ore_information.test_type.equals("tag")) {
-                Tag<net.minecraft.block.Block> tag = BlockTags.getTagGroup().getTag(block.ore_information.target_state.block);
+                Tag<net.minecraft.block.Block> tag = BlockTags.getTagGroup().getTag(block.ore_information.target_state.tag);
                 test = new TagMatchRuleTest(tag == null ? BlockTags.BASE_STONE_OVERWORLD : tag);
             } else if (block.ore_information.test_type.equals("blockstate")) {
                 test = new BlockStateMatchRuleTest(getState(Registry.BLOCK.get(block.ore_information.target_state.block), block.ore_information.target_state.properties));
@@ -67,23 +65,16 @@ public class Ores implements AddonModule {
                             )
                     ).decorate(
                             Decorator.RANGE.configure(
-                                    new RangeDecoratorConfig(UniformHeightProvider.create(
-                                            YOffset.fixed(block.ore_information.config.bottom_offset),
-                                            YOffset.fixed(block.ore_information.config.top_offset)
+                                    new RangeDecoratorConfig(
+                                            block.ore_information.config.bottom_offset,
+                                            block.ore_information.config.top_offset,
+                                            block.ore_information.config.maximum
                                     ))
                             )
-                    ).spreadHorizontally().repeat(20));
+                    ).spreadHorizontally().repeat(20);
             BuiltinRegistries.BIOME.forEach(biome -> {
-                if (block.ore_information.biomes != null) {
-                    for (String biome2 : block.ore_information.biomes) {
-                        BiomeModifications.addFeature(biomeSelectionContext -> BuiltinRegistries.BIOME.getId(biome).toString().equals(biome2),
-                                GenerationStep.Feature.UNDERGROUND_ORES, BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature).get());
-                    }
-                } else {
-//                    BiomeUtils.addFeatureToBiome(biome, GenerationStep.Feature.UNDERGROUND_ORES, feature);
-//                    BiomeModifications.addFeature(BiomeSelectors.,
-//                            GenerationStep.Feature.UNDERGROUND_ORES, BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature).get());
-                }
+                BiomeModifications.addFeature(block.ore_information.biomeSelector(),
+                        GenerationStep.Feature.UNDERGROUND_ORES, BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature).get());
             });
             Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder ->
                     serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {

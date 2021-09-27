@@ -37,7 +37,7 @@ public class BuiltinModelItemRendererMixin {
                         CallbackInfo info) {
         Item item = stack.getItem();
         if (item instanceof ShieldItemImpl) {
-            boolean bl = stack.getSubNbt("BlockEntityTag") != null;
+            boolean bl = stack.getSubTag("BlockEntityTag") != null;
             matrixStack.push();
             matrixStack.scale(1.0F, -1.0F, -1.0F);
             SpriteIdentifier spriteIdentifier;
@@ -51,7 +51,7 @@ public class BuiltinModelItemRendererMixin {
                             modelShield.getLayer(spriteIdentifier.getAtlasId()), true, stack.hasGlint()));
             modelShield.getHandle().render(matrixStack, vertexConsumer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
             if (bl && ((ShieldItemImpl) item).shieldItem.can_have_banner) {
-                List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.getPatternsFromNbt(ShieldItem.getColor(stack),
+                List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.method_24280(ShieldItem.getColor(stack),
                         BannerBlockEntity.getPatternListTag(stack));
                 BannerBlockEntityRenderer.renderCanvas(matrixStack, consumerProvider, light, overlay,
                         modelShield.getPlate(), spriteIdentifier, false, list, stack.hasGlint());

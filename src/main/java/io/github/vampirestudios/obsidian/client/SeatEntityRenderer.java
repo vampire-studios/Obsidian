@@ -2,13 +2,13 @@ package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
 import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.util.Identifier;
 
 public class SeatEntityRenderer extends EntityRenderer<SeatEntity> {
 
-	public SeatEntityRenderer(EntityRendererFactory.Context ctx) {
+	public SeatEntityRenderer(EntityRenderDispatcher ctx) {
 		super(ctx);
 	}
 

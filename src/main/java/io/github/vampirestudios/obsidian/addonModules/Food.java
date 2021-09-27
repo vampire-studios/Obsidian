@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
-import io.github.foundationgames.mealapi.api.v0.MealItemRegistry;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
@@ -19,11 +18,8 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*
 
 public class Food implements AddonModule {
 
-    private File file;
-
     @Override
     public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
-        this.file = file;
         FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
         try {
             if (foodItem == null) return;
@@ -37,29 +33,6 @@ public class Food implements AddonModule {
         } catch (Exception e) {
             failedRegistering("food", foodItem.information.name.id.toString(), e);
         }
-    }
-
-    @Override
-    public void initMealApi() throws FileNotFoundException {
-        FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
-        try {
-            if (foodItem == null) return;
-            Item item = Registry.ITEM.get(foodItem.information.name.id);
-            MealItemRegistry.instance().register(item, ((player, stack) -> foodItem.food_information.fullness));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void initAppleSkin() throws FileNotFoundException {
-        /*FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
-        try {
-            if (foodItem == null) return;
-            Item item = Registry.ITEM.get(foodItem.information.name.id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     @Override

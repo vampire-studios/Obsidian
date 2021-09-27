@@ -13,11 +13,10 @@ public class FuelSource {
     public int burn_time = -1;
 
     public Operation getOperation() {
-        return switch(operation) {
-            case "add" -> Operation.ADD;
-            case "remove" -> Operation.REMOVE;
-            default -> /*throw new IllegalStateException("Unexpected value: " + operation)*/Operation.ADD;
-        };
+        if ("remove".equals(operation)) {
+            return Operation.REMOVE;
+        }
+        return Operation.ADD;
     }
 
     public Tag<Item> getTag() {

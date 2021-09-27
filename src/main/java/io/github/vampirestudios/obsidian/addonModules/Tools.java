@@ -24,14 +24,22 @@ public class Tools implements AddonModule {
             Item.Settings settings = new Item.Settings().group(tool.information.getItemGroup())
                     .maxCount(tool.information.max_count).rarity(tool.information.getRarity());
             switch (tool.toolType) {
-                case "pickaxe" -> RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
-                case "shovel" -> RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
-                case "hoe" -> RegistryUtils.registerItem(new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
-                case "axe" -> RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
+                case "pickaxe": {
+                    RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
+                            tool.information.name.id);
+                }
+                case "shovel": {
+                    RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
+                            tool.information.name.id);
+                }
+                case "hoe": {
+                    RegistryUtils.registerItem(new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
+                            tool.information.name.id);
+                }
+                case "axe": {
+                    RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
+                            tool.information.name.id);
+                }
             }
             register(TOOLS, "tool", tool.information.name.id, tool);
         } catch (Exception e) {

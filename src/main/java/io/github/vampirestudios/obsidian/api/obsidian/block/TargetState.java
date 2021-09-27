@@ -7,6 +7,7 @@ import java.util.Map;
 public class TargetState {
 
     public Identifier block;
+    public Identifier tag;
     public Map<String, String> properties;
 
 }

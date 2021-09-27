@@ -11,14 +11,8 @@ import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
-import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
-import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BeehiveBlockEntity;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.HoeItem;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -27,8 +21,7 @@ import net.minecraft.util.registry.Registry;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Supplier;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -58,13 +51,7 @@ public class Blocks implements AddonModule {
             if (block.information.fireproof) settings.fireproof();
 
             if (block.additional_information != null) {
-                    /*if (block.additional_information.rotatable) {
-                        REGISTRY_HELPER.registerBlock(new FacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                    } else if (block.additional_information.horizontal_rotatable) {
-                        REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                    } else if (block.additional_information.pillar) {
-                        REGISTRY_HELPER.registerBlock(new PillarBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                    } else */if (block.additional_information.path) {
+                if (block.additional_information.path) {
                     REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, block.information.name.id.getPath(), settings);
                 } else if (block.additional_information.lantern) {
                     REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block, block.information.name.id.getPath(), settings);
@@ -86,30 +73,26 @@ public class Blocks implements AddonModule {
                         if (block.additional_information != null && block.additional_information.dyable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    block.information.name.id.getPath() + "_be");
+                            Registry.register(Registry.BLOCK_ENTITY_TYPE, Utils.appendToPath(block.information.name.id, "_be"), BlockEntityType.Builder.create((Supplier<DyeableBlockEntity>) () ->
+                                    new DyeableBlockEntity(block), registeredBlock).build(null));
                         } else REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case HORIZONTAL_FACING_BLOCK:
                         if (block.additional_information != null && block.additional_information.dyable && block.additional_information.sittable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableAndDyableBlock(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    block.information.name.id.getPath() + "_be");
+                            Registry.register(Registry.BLOCK_ENTITY_TYPE, Utils.appendToPath(block.information.name.id, "_be"), BlockEntityType.Builder.create((Supplier<DyeableBlockEntity>) () ->
+                                    new DyeableBlockEntity(block), registeredBlock).build(null));
                         } else if (block.additional_information != null && block.additional_information.dyable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingDyableBlockImpl(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    block.information.name.id.getPath() + "_be");
+                            Registry.register(Registry.BLOCK_ENTITY_TYPE, Utils.appendToPath(block.information.name.id, "_be"), BlockEntityType.Builder.create((Supplier<DyeableBlockEntity>) () ->
+                                    new DyeableBlockEntity(block), registeredBlock).build(null));
                         } else if (block.additional_information != null && block.additional_information.sittable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableBlock(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    block.information.name.id.getPath() + "_be");
+                            Registry.register(Registry.BLOCK_ENTITY_TYPE, Utils.appendToPath(block.information.name.id, "_be"), BlockEntityType.Builder.create((Supplier<DyeableBlockEntity>) () ->
+                                    new DyeableBlockEntity(block), registeredBlock).build(null));
                         } else REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case ROTATABLE_BLOCK:
@@ -149,13 +132,6 @@ public class Blocks implements AddonModule {
                     case STEM:
                         REGISTRY_HELPER.registerNetherStemBlock(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(), settings);
                         break;
-                    case OXIDIZING_BLOCK:
-                        List<Identifier> names = new ArrayList<>();
-                        block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
-                            if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
-                        }));
-                        names.forEach(identifier -> REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, identifier.getPath(), settings));
-                        break;
                     case PLANT:
                         if (block.additional_information != null) {
                             if (block.additional_information.waterloggable) {
@@ -177,10 +153,6 @@ public class Blocks implements AddonModule {
                     case TORCH:
                         //TODO: Add particle lookup registry/method
                         REGISTRY_HELPER.registerBlock(new TorchBaseBlock(), block, block.information.name.id.getPath(), settings);
-                        break;
-                    case BEEHIVE:
-                        net.minecraft.block.Block beeHive = REGISTRY_HELPER.registerBlock(new BeehiveBlockImpl(blockSettings), block, block.information.name.id.getPath(), settings);
-                        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beeHive), block.information.name.id.getPath() + "_beehive_be");
                         break;
                     case LEAVES:
                         REGISTRY_HELPER.registerLeavesBlock(block, block.information.name.id.getPath(), settings);
@@ -222,9 +194,8 @@ public class Blocks implements AddonModule {
                     case DYEABLE:
                         net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), block.information.name.id.getPath());
                         REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
-                        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                        (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                block.information.name.id.getPath() + "_be");
+                        Registry.register(Registry.BLOCK_ENTITY_TYPE, Utils.appendToPath(block.information.name.id, "_be"), BlockEntityType.Builder.create((Supplier<DyeableBlockEntity>) () ->
+                                new DyeableBlockEntity(block), registeredBlock).build(null));
                         break;
                     case LOOM:
                         REGISTRY_HELPER.registerBlock(new LoomBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
@@ -296,92 +267,15 @@ public class Blocks implements AddonModule {
                                 Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
                     }
                 }
-
-                if (block.additional_information.flattenable) {
-                    if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.additional_information.transformed_block).getDefaultState());
-                    }  else if (block.additional_information.parent_block != null) {
-                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.information.name.id).getDefaultState());
-                    } else if (block.additional_information.transformed_block != null) {
-                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id),
-                                Registry.BLOCK.get(block.additional_information.transformed_block).getDefaultState());
-                    }
-                }
-
-                if (block.additional_information.strippable) {
-                    if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.additional_information.transformed_block));
-                    }  else if (block.additional_information.parent_block != null) {
-                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.information.name.id));
-                    } else if (block.additional_information.transformed_block != null) {
-                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id),
-                                Registry.BLOCK.get(block.additional_information.transformed_block));
-                    }
-                }
-
-                if (block.additional_information.tilable) {
-                    if (block.additional_information.drops_item) {
-                        Item item = Registry.ITEM.get(block.additional_information.dropped_item);
-                        if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                                    .getDefaultState(), item));
-                        }  else if (block.additional_information.parent_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.information.name.id)
-                                                    .getDefaultState(), item));
-                        } else if (block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id), context -> true,
-                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                                    .getDefaultState(), item));
-                        }
-                    } else {
-                        if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                            .getDefaultState()));
-                        }  else if (block.additional_information.parent_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAction(Registry.BLOCK.get(block.information.name.id)
-                                            .getDefaultState()));
-                        } else if (block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id), context -> true,
-                                    HoeItem.createTillAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                            .getDefaultState()));
-                        }
-                    }
-                }
             }
 
             if (!addon.getConfigPackInfo().hasData) {
                 new BlockInitThread(block);
             }
 
-            if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                List<Identifier> names = new ArrayList<>();
-                block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
-                    if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
-                }));
-                names.forEach(identifier -> {
-                    if (BLOCKS.get(identifier) != null) register(BLOCKS, "block", identifier, block);
-                });
-            } else {
-                register(BLOCKS, "block", block.information.name.id, block);
-            }
+            register(BLOCKS, "block", block.information.name.id, block);
         } catch (Exception e) {
-            if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                List<Identifier> names = new ArrayList<>();
-                block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
-                    if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
-                }));
-                names.forEach(identifier -> failedRegistering("block", identifier.toString(), e));
-            } else {
-                failedRegistering("block", block.information.name.id.toString(), e);
-            }
+            failedRegistering("block", block.information.name.id.toString(), e);
         }
     }
 

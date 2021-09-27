@@ -44,7 +44,7 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
 
             if (name != null && Registry.ITEM.get(new Identifier(name)) != null) {
                 ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier(name)), stackSize);
-                itemStack.setNbt(tagCompound);
+                itemStack.setTag(tagCompound);
                 return itemStack;
             }
         }
@@ -66,8 +66,8 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
 
             jsonObject.addProperty(STACK_SIZE, src.getCount());
 
-            if (src.getNbt() != null) {
-                jsonObject.addProperty(TAG_COMPOUND, src.getNbt().toString());
+            if (src.getTag() != null) {
+                jsonObject.addProperty(TAG_COMPOUND, src.getTag().toString());
             }
 
             return jsonObject;

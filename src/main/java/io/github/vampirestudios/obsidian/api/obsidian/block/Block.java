@@ -49,7 +49,6 @@ public class Block {
         LOG,
         STEM,
         WOOD,
-        OXIDIZING_BLOCK,
         PLANT,
         PILLAR,
         HORIZONTAL_FACING_PLANT,

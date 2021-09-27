@@ -23,7 +23,7 @@ public class EntityInitThread implements Runnable {
 	@Override
 	public void run() {
 		EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) Registry.ENTITY_TYPE.get(entity.information.identifier);
-        EntityRendererRegistry.INSTANCE.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
+        EntityRendererRegistry.INSTANCE.register(entityType, (one, two) -> new CustomEntityRenderer(one, entity));
 		Identifier identifier = entity.information.identifier;
 		ClientInit.addTranslation(
 				identifier.getNamespace(), "en_us",

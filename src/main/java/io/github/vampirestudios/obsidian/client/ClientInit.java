@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -35,8 +34,7 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        DataExchangeAPI.prepareClientside();
-        EntityRendererRegistry.INSTANCE.register(Obsidian.SEAT, SeatEntityRenderer::new);
+        EntityRendererRegistry.INSTANCE.register(Obsidian.SEAT, (manager, context) -> new SeatEntityRenderer(manager));
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String name = iAddonPack.getDisplayNameObsidian();
             Obsidian.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {
@@ -58,9 +56,9 @@ public class ClientInit implements ClientModInitializer {
                     for (Item item : ObsidianAddonLoader.ITEMS)
                         if (item.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ItemInitThread(clientResourcePackBuilder, item).run();
-                    for (ArmorItem armor : ObsidianAddonLoader.ARMORS)
-                        if (armor.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
-                            new ArmorInitThread(clientResourcePackBuilder, armor).run();
+//                    for (ArmorItem armor : ObsidianAddonLoader.ARMORS)
+//                        if (armor.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
+//                            new ArmorInitThread(clientResourcePackBuilder, armor).run();
                     for (WeaponItem weapon : ObsidianAddonLoader.WEAPONS)
                         if (weapon.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new WeaponInitThread(clientResourcePackBuilder, weapon).run();
@@ -94,7 +92,6 @@ public class ClientInit implements ClientModInitializer {
                 }
             });
         });
-        networkHandler = new ClientNetworkHandler();
     }
 
 }

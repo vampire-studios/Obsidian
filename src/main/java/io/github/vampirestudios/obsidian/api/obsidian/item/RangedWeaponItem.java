@@ -1,5 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
+import com.google.common.collect.Lists;
+
 import java.util.List;
 
 public class RangedWeaponItem extends Item {
@@ -9,9 +11,9 @@ public class RangedWeaponItem extends Item {
     public boolean damageable = true;
 
     public List<String> getOverrides() {
-        if (weapon_type.equals("bow")) overrides.addAll(List.of("pull", "pulling"));
-        if (weapon_type.equals("crossbow")) overrides.addAll(List.of("pull", "pulling", "charged", "firework"));
-        if (weapon_type.equals("trident")) overrides.addAll(List.of("throwing"));
+        if (weapon_type.equals("bow")) overrides.addAll(Lists.newArrayList("pull", "pulling"));
+        if (weapon_type.equals("crossbow")) overrides.addAll(Lists.newArrayList("pull", "pulling", "charged", "firework"));
+        if (weapon_type.equals("trident")) overrides.addAll(Lists.newArrayList("throwing"));
         return overrides;
     }
 

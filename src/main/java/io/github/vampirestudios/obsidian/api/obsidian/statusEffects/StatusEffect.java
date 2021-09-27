@@ -14,12 +14,12 @@ public class StatusEffect {
     public List<EffectAttributes> attributes;
 
     public StatusEffectType getStatusEffectType() {
-        return switch (status_effect_type) {
-            case "beneficial" -> StatusEffectType.BENEFICIAL;
-            case "harmful" -> StatusEffectType.HARMFUL;
-            case "neutral" -> StatusEffectType.NEUTRAL;
-            default -> null;
-        };
+        switch (status_effect_type) {
+            case "beneficial": return StatusEffectType.BENEFICIAL;
+            case "harmful": return StatusEffectType.HARMFUL;
+            case "neutral": return StatusEffectType.NEUTRAL;
+            default: return null;
+        }
     }
 
     public static class EffectAttributes {

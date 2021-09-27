@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
+    id 'fabric-loom' version '0.7-SNAPSHOT'
     id 'maven-publish'
     id "io.github.vampirestudios.modrinthmaven" version "1.0.1"
 }
@@ -14,16 +14,10 @@ group = project.maven_group
 repositories {
     mavenCentral()
     mavenLocal()
-    jcenter()
-    maven{ url="https://jitpack.io" }
-    maven { url="http://maven.modmuss50.me"}
-    maven{ url="http://server.bbkr.space/artifactory/libs-release/" }
-    maven {
-        url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
+    maven { url = "https://raw.githubusercontent.com/vampire-studios/VampireStudiosMaven/main/" }
+    maven { url = "https://jitpack.io" }
+    maven { url = "https://maven.fabricmc.net"}
+    maven { url = "https://server.bbkr.space/artifactory/libs-release/" }
 }
 
 minecraft {
@@ -36,18 +30,12 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
-    include ("com.lettuce.fudge:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
+    modImplementation ("io.github.vampirestudios:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
+    include ("io.github.vampirestudios:artifice:${project.artifice_version}") { exclude group: "net.fabricmc.fabric-api" }
 
-    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:2.2.0+build.1-1.16.4") {
+    modImplementation ("io.github.vampirestudios:VampireLib-Fabric:3.0.0+build.2-1.16.5") {
         exclude group: "net.fabricmc.fabric-api"
         exclude group: "io.github.cottonmc"
-    }
-
-    modImplementation "io.github.prospector:modmenu:1.14.13+build.22"
-
-    modImplementation ("me.shedaniel:RoughlyEnoughItems:5.8.10") {
-        exclude group: "net.fabricmc.fabric-api"
     }
 }
 

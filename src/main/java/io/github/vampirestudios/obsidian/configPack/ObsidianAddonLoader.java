@@ -36,7 +36,7 @@ import static io.github.vampirestudios.obsidian.Obsidian.id;
 
 public class ObsidianAddonLoader {
 
-    public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve(Obsidian.CONFIG.addonsFolder).toFile();
+    public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve("obsidian_addons").toFile();
     public static final Registry<IAddonPack> OBSIDIAN_ADDONS = FabricRegistryBuilder.createSimple(IAddonPack.class, id("obsidian_addons")).buildAndRegister();
     public static final int PACK_VERSION = 2;
     public static RegistryHelper REGISTRY_HELPER;
@@ -61,7 +61,6 @@ public class ObsidianAddonLoader {
     public static Registry<ArmorModel> ARMOR_MODELS = FabricRegistryBuilder.createSimple(ArmorModel.class, id("armor_models")).buildAndRegister();
     public static Registry<ArmorItem> ARMORS = FabricRegistryBuilder.createSimple(ArmorItem.class, id("armors")).buildAndRegister();
     public static Registry<Elytra> ELYTRAS = FabricRegistryBuilder.createSimple(Elytra.class, id("elytras")).buildAndRegister();
-    public static Registry<ZoomableItem> ZOOMABLE_ITEMS = FabricRegistryBuilder.createSimple(ZoomableItem.class, id("zoomable_items")).buildAndRegister();
     public static Registry<CauldronType> CAULDRON_TYPES = FabricRegistryBuilder.createSimple(CauldronType.class, id("cauldron_types")).buildAndRegister();
     public static Registry<Painting> PAINTINGS = FabricRegistryBuilder.createSimple(Painting.class, id("paintings")).buildAndRegister();
     public static Registry<ShieldItem> SHIELDS = FabricRegistryBuilder.createSimple(ShieldItem.class, id("shields")).buildAndRegister();

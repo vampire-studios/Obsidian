@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.client.model.*;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -34,47 +33,9 @@ public class ArmorModel {
 
     }
 
-    public TexturedModelData getTexturedModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-        for (ArmorModel.Bone part : bones) {
-            ModelPartBuilder modelPartBuilder = ModelPartBuilder.create();
-            for (ArmorModel.Bone.Cube cube : part.cubes) {
-                modelPartBuilder.uv(cube.uv[0], cube.uv[1]);
-
-                Dilation dilation = Dilation.NONE;
-                if(cube.radiusArray != null) dilation.add(cube.radiusArray[0], cube.radiusArray[1], cube.radiusArray[2]);
-                else if(cube.radius != 0) dilation.add(cube.radius);
-
-                if (cube.name.isEmpty()) modelPartBuilder.cuboid(cube.offset[0], cube.offset[1], cube.offset[2], cube.size[0], cube.size[1], cube.size[2], dilation);
-                else modelPartBuilder.cuboid(cube.name, cube.offset[0], cube.offset[1], cube.offset[2], cube.size[0], cube.size[1], cube.size[2], dilation);
-
-                modelPartBuilder.mirrored(cube.mirrored);
-            }
-            if (notEmpty(part.parent)) {
-                ModelPartData parent = modelPartData.getChild(part.parent);
-                parent.addChild(part.name, modelPartBuilder,
-                        ModelTransform.of(
-                                part.pivot[0], part.pivot[1], part.pivot[2],
-                                part.rotation[0], part.rotation[1], part.rotation[2]
-                        )
-                );
-            } else {
-                modelPartData.addChild(part.name, modelPartBuilder,
-                        ModelTransform.of(
-                                part.pivot[0], part.pivot[1], part.pivot[2],
-                                part.rotation[0], part.rotation[1], part.rotation[2]
-                        )
-                );
-            }
-        }
-        return TexturedModelData.of(modelData, textureWidth, textureHeight);
-    }
-
     private static boolean notEmpty(String str) {
         return str != null && !str.trim().isEmpty();
     }
-
 
     static class Test {
 

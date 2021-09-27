@@ -30,11 +30,6 @@ public class PaneBlockImpl extends PaneBlock {
     }
 
     @Override
-    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.translucent;
-    }
-
-    @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
         return block.information.translucent;
     }

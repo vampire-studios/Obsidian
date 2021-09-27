@@ -26,11 +26,6 @@ public class HorizontalFacingBlockImpl extends HorizontalFacingBlock {
     }
 
     @Override
-    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.translucent;
-    }
-
-    @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
         return block.information.translucent;
     }

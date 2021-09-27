@@ -30,11 +30,6 @@ public class DyeableBlock extends BlockWithEntity {
     }
 
     @Override
-    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.translucent;
-    }
-
-    @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
         return block.information.translucent;
     }
@@ -73,8 +68,8 @@ public class DyeableBlock extends BlockWithEntity {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new DyeableBlockEntity(block, pos, state);
+    public BlockEntity createBlockEntity(BlockView world) {
+        return new DyeableBlockEntity(block);
     }
 
     @Override
@@ -85,9 +80,11 @@ public class DyeableBlock extends BlockWithEntity {
     @Override
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getPickStack(world, pos, state);
-        if (stack.getItem() instanceof CustomDyeableItem item) {
+        if (stack.getItem() instanceof CustomDyeableItem) {
+            CustomDyeableItem item = (CustomDyeableItem) stack.getItem();
             BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof DyeableBlockEntity dyeableBlockEntity) {
+            if (entity instanceof DyeableBlockEntity) {
+                DyeableBlockEntity dyeableBlockEntity = (DyeableBlockEntity) entity;
                 item.setColor(stack, dyeableBlockEntity.getColor());
             }
         }
@@ -99,9 +96,9 @@ public class DyeableBlock extends BlockWithEntity {
         super.onPlaced(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof DyeableBlockEntity) {
-            int hue = itemStack.getOrCreateSubNbt("display").getInt("color");
+            int hue = itemStack.getOrCreateSubTag("display").getInt("color");
             if (hue != 0) {
-                ((DyeableBlockEntity)blockEntity).setColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
+                ((DyeableBlockEntity)blockEntity).setColor(itemStack.getOrCreateSubTag("display").getInt("color"));
             } else {
                 ((DyeableBlockEntity)blockEntity).setColor(16777215);
             }

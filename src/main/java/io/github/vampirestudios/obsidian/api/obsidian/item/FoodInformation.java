@@ -23,14 +23,14 @@ public class FoodInformation {
 
     public float getSaturationModifier() {
         if (!saturation_modifier.isEmpty()) {
-            return switch (saturation_modifier) {
-                case "poor" -> 0.1F;
-                case "low" -> 0.3F;
-                case "normal" -> 0.6F;
-                case "good" -> 0.8F;
-                case "supernatural" -> 1.2F;
-                default -> 0.0F;
-            };
+            switch (saturation_modifier) {
+                case "poor": return 0.1F;
+                case "low": return 0.3F;
+                case "normal": return 0.6F;
+                case "good": return 0.8F;
+                case "supernatural": return 1.2F;
+                default: return 0.0F;
+            }
         } else {
             return saturation;
         }

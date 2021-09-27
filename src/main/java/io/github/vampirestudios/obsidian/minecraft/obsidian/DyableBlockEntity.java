@@ -10,7 +10,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
@@ -19,14 +18,14 @@ public class DyableBlockEntity extends BlockEntity implements BlockEntityClientS
 
     public int dyeColor;
 
-    public DyableBlockEntity(Block block, BlockPos pos, BlockState state) {
-        super(Registry.BLOCK_ENTITY_TYPE.get(Utils.appendToPath(block.information.name.id, "_be")), pos, state);
+    public DyableBlockEntity(Block block) {
+        super(Registry.BLOCK_ENTITY_TYPE.get(Utils.appendToPath(block.information.name.id, "_be")));
         this.dyeColor = 0xFFFFFFFF;
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void fromTag(BlockState state, NbtCompound nbt) {
+        super.fromTag(state, nbt);
         this.setDyeColor(nbt.getInt("dyeColor"));
     }
 
@@ -73,7 +72,7 @@ public class DyableBlockEntity extends BlockEntity implements BlockEntityClientS
     @Override
     public void fromClientTag(NbtCompound tag) {
         dyeColor = tag.getInt("dyeColor");
-        world.updateListeners(pos, getCachedState(), getCachedState(), net.minecraft.block.Block.NOTIFY_ALL);
+//        world.updateListeners(pos, getCachedState(), getCachedState(), net.minecraft.block.Block.);
     }
 
     @Override

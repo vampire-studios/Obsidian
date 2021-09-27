@@ -23,19 +23,19 @@ public enum DuodecupleBlockPart implements StringIdentifiable {
 
     @Override
     public String asString() {
-        return switch (this) {
-            case TOP -> "top";
-            case UPPER -> "upper";
-            case UPPER_MIDDLE -> "upper_middle";
-            case MIDDLE_TOP -> "middle_top";
-            case MIDDLE_UPPER -> "middle_upper";
-            case CENTER_TOP -> "center_top";
-            case CENTER_BOTTOM -> "center_bottom";
-            case MIDDLE_LOWER -> "middle_lower";
-            case MIDDLE_BOTTOM -> "middle_bottom";
-            case LOWER_MIDDLE -> "lower_middle";
-            case LOWER -> "lower";
-            default -> "bottom";
-        };
+        switch (this) {
+            case TOP: return "top";
+            case UPPER: return "upper";
+            case UPPER_MIDDLE: return "upper_middle";
+            case MIDDLE_TOP: return "middle_top";
+            case MIDDLE_UPPER: return "middle_upper";
+            case CENTER_TOP: return "center_top";
+            case CENTER_BOTTOM: return "center_bottom";
+            case MIDDLE_LOWER: return "middle_lower";
+            case MIDDLE_BOTTOM: return "middle_bottom";
+            case LOWER_MIDDLE: return "lower_middle";
+            case LOWER: return "lower";
+            default: return "bottom";
+        }
     }
 }

@@ -18,7 +18,7 @@ public class CustomDyeableItem extends CustomBlockItem implements DyeableItem {
         if (color == 16777215) {
             stack.addHideFlag(ItemStack.TooltipSection.DYE);
         } else {
-            NbtCompound nbtCompound = stack.getOrCreateNbt();
+            NbtCompound nbtCompound = stack.getOrCreateTag();
             nbtCompound.putInt("HideFlags", nbtCompound.getInt("HideFlags") |~ ItemStack.TooltipSection.DYE.getFlag());
         }
     }

@@ -17,13 +17,13 @@ public enum SextupleBlockPart implements StringIdentifiable {
 
     @Override
     public String asString() {
-        return switch (this) {
-            case TOP -> "top";
-            case UPPER -> "upper";
-            case UPPER_MIDDLE -> "upper_middle";
-            case LOWER_MIDDLE -> "lower_middle";
-            case LOWER -> "lower";
-            default -> "bottom";
-        };
+        switch (this) {
+            case TOP: return "top";
+            case UPPER: return "upper";
+            case UPPER_MIDDLE: return "upper_middle";
+            case LOWER_MIDDLE: return "lower_middle";
+            case LOWER: return "lower";
+            default: return "bottom";
+        }
     }
 }

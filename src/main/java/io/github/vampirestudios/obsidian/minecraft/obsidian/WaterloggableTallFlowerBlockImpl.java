@@ -62,7 +62,7 @@ public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements 
         BlockPos blockPos = ctx.getBlockPos();
         World world = ctx.getWorld();
         boolean bl = world.getFluidState(blockPos).getFluid() == Fluids.WATER;
-        return blockPos.getY() < world.getTopY() - 1 && world.getBlockState(blockPos.up()).with(WATERLOGGED, bl).canReplace(ctx) ? super.getPlacementState(ctx) : null;
+        return blockPos.getY() < 255 && world.getBlockState(blockPos.up()).with(WATERLOGGED, bl).canReplace(ctx) ? super.getPlacementState(ctx) : null;
     }
 
     public int getMaxAge() {

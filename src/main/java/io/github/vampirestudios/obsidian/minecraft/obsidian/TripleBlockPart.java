@@ -14,10 +14,10 @@ public enum TripleBlockPart implements StringIdentifiable {
 
     @Override
     public String asString() {
-        return switch (this) {
-            case UPPER -> "upper";
-            case MIDDLE -> "middle";
-            default -> "lower";
-        };
+        switch (this) {
+            case UPPER: return "upper";
+            case MIDDLE: return "middle";
+            default: return "lower";
+        }
     }
 }

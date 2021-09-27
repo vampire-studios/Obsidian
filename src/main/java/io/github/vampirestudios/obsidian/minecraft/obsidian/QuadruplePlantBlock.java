@@ -51,7 +51,7 @@ public class QuadruplePlantBlock extends PlantBlock {
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         BlockPos blockPos = ctx.getBlockPos();
-        return blockPos.getY() < ctx.getWorld().getTopY() - 3 &&
+        return blockPos.getY() < 253 &&
                 ctx.getWorld().getBlockState(blockPos.up(1)).canReplace(ctx) &&
                 ctx.getWorld().getBlockState(blockPos.up(2)).canReplace(ctx) &&
                 ctx.getWorld().getBlockState(blockPos.up(3)).canReplace(ctx)

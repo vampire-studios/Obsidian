@@ -113,61 +113,68 @@ public class SeptupleCeilingPlantBlock extends PlantBlock {
         SeptupleBlockPart tripleBlockPart = state.get(PART);
 
         switch(tripleBlockPart) {
-            case TOP -> {
+            case TOP: {
                 positions.add(pos.down(1));
                 positions.add(pos.down(2));
                 positions.add(pos.down(3));
                 positions.add(pos.down(4));
                 positions.add(pos.down(5));
                 positions.add(pos.down(6));
+                break;
             }
-            case UPPER -> {
+            case UPPER: {
                 positions.add(pos.up(1));
                 positions.add(pos.down(1));
                 positions.add(pos.down(2));
                 positions.add(pos.down(3));
                 positions.add(pos.down(4));
                 positions.add(pos.down(5));
+                break;
             }
-            case UPPER_MIDDLE -> {
+            case UPPER_MIDDLE: {
                 positions.add(pos.down(1));
                 positions.add(pos.down(2));
                 positions.add(pos.down(3));
                 positions.add(pos.down(4));
                 positions.add(pos.up(1));
                 positions.add(pos.up(2));
+                break;
             }
-            case MIDDLE -> {
+            case MIDDLE: {
                 positions.add(pos.down(1));
                 positions.add(pos.down(2));
                 positions.add(pos.down(3));
                 positions.add(pos.up(1));
                 positions.add(pos.up(2));
                 positions.add(pos.up(3));
+                break;
             }
-            case LOWER_MIDDLE -> {
+            case LOWER_MIDDLE: {
                 positions.add(pos.up(1));
                 positions.add(pos.up(2));
                 positions.add(pos.up(3));
                 positions.add(pos.up(4));
                 positions.add(pos.down(1));
                 positions.add(pos.down(2));
+                break;
             }
-            case LOWER -> {
+            case LOWER: {
                 positions.add(pos.up(1));
                 positions.add(pos.up(2));
                 positions.add(pos.up(3));
                 positions.add(pos.up(4));
                 positions.add(pos.up(5));
                 positions.add(pos.down(1));
+                break;
             }
-            case BOTTOM -> {
+            case BOTTOM: {
                 positions.add(pos.up(1));
                 positions.add(pos.up(2));
                 positions.add(pos.up(3));
                 positions.add(pos.up(4));
                 positions.add(pos.up(5));
                 positions.add(pos.up(6));
+                break;
             }
         }
 

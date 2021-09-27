@@ -10,14 +10,6 @@ public interface AddonModule {
 
     void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException;
 
-    default void initMealApi() throws FileNotFoundException {
-
-    }
-
-    default void initAppleSkin() throws FileNotFoundException {
-
-    }
-
     String getType();
 
 }

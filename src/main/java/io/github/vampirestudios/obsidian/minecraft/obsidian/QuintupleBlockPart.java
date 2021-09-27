@@ -16,12 +16,12 @@ public enum QuintupleBlockPart implements StringIdentifiable {
 
     @Override
     public String asString() {
-        return switch (this) {
-            case UPPER -> "upper";
-            case UPPER_MIDDLE -> "upper_middle";
-            case MIDDLE -> "middle";
-            case LOWER_MIDDLE -> "lower_middle";
-            default -> "lower";
-        };
+        switch (this) {
+            case UPPER: return "upper";
+            case UPPER_MIDDLE: return "upper_middle";
+            case MIDDLE: return "middle";
+            case LOWER_MIDDLE: return "lower_middle";
+            default: return "lower";
+        }
     }
 }

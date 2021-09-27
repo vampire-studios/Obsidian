@@ -4,10 +4,7 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.HangingTallBlockItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.PillarBlockImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.TallBlockItem;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -18,7 +15,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
-public record RegistryHelper(String modId) {
+public class RegistryHelper {
+
+    private final String modId;
+
+    public RegistryHelper(String modId) {
+        this.modId = modId;
+    }
+
     public static RegistryHelper createRegistryHelper(String modId) {
         return new RegistryHelper(modId);
     }
@@ -91,11 +95,6 @@ public record RegistryHelper(String modId) {
 
     public Item registerItem(Item item, String name) {
         return Registry.register(Registry.ITEM, new Identifier(this.modId, name), item);
-    }
-
-    public <T extends BlockEntity> void registerBlockEntity(FabricBlockEntityTypeBuilder<T> builder, String name) {
-        BlockEntityType<T> blockEntityType = builder.build(null);
-        Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(this.modId, name), blockEntityType);
     }
 
 }

@@ -7,15 +7,14 @@ import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 public class DyeableBlockEntity extends BlockEntity implements BlockEntityClientSerializable, RenderAttachmentBlockEntity {
     private int color = 16777215;
 
-    public DyeableBlockEntity(Block block, BlockPos pos, BlockState state) {
-        super(Registry.BLOCK_ENTITY_TYPE.get(Utils.appendToPath(block.information.name.id, "_be")), pos, state);
+    public DyeableBlockEntity(Block block) {
+        super(Registry.BLOCK_ENTITY_TYPE.get(Utils.appendToPath(block.information.name.id, "_be")));
     }
 
     public int getColor() {
@@ -28,8 +27,8 @@ public class DyeableBlockEntity extends BlockEntity implements BlockEntityClient
         return tag;
     }
 
-    public void readNbt(NbtCompound tag) {
-        super.readNbt(tag);
+    public void fromTag(BlockState state, NbtCompound tag) {
+        super.fromTag(state, tag);
         this.setColor(tag.getInt("color"));
     }
 
@@ -40,7 +39,7 @@ public class DyeableBlockEntity extends BlockEntity implements BlockEntityClient
     }
 
     public void fromClientTag(NbtCompound compoundTag) {
-        this.readNbt(/*this.method_11010(), */compoundTag);
+        this.fromTag(this.getCachedState(), compoundTag);
     }
 
     public NbtCompound toClientTag(NbtCompound compoundTag) {

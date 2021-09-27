@@ -16,14 +16,14 @@ public class Particle {
     public int max_age = 1;
 
     public ParticleTextureSheet getType() {
-        return switch (sheet_type) {
-            case "TERRAIN_SHEET" -> ParticleTextureSheet.TERRAIN_SHEET;
-            case "PARTICLE_SHEET_OPAQUE" -> ParticleTextureSheet.PARTICLE_SHEET_OPAQUE;
-            case "PARTICLE_SHEET_TRANSLUCENT" -> ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
-            case "PARTICLE_SHEET_LIT" -> ParticleTextureSheet.PARTICLE_SHEET_LIT;
-            case "CUSTOM" -> ParticleTextureSheet.CUSTOM;
-            default -> ParticleTextureSheet.NO_RENDER;
-        };
+        switch (sheet_type) {
+            case "TERRAIN_SHEET": return ParticleTextureSheet.TERRAIN_SHEET;
+            case "PARTICLE_SHEET_OPAQUE": return ParticleTextureSheet.PARTICLE_SHEET_OPAQUE;
+            case "PARTICLE_SHEET_TRANSLUCENT": return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+            case "PARTICLE_SHEET_LIT": return ParticleTextureSheet.PARTICLE_SHEET_LIT;
+            case "CUSTOM": return ParticleTextureSheet.CUSTOM;
+            default: return ParticleTextureSheet.NO_RENDER;
+        }
     }
 
 }

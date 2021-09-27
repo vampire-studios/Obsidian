@@ -32,7 +32,8 @@ public class FoodItemImpl extends Item {
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
         super.finishUsing(stack, world, user);
-        if (user instanceof ServerPlayerEntity serverPlayerEntity) {
+        if (user instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) user;
             Criteria.CONSUME_ITEM.trigger(serverPlayerEntity, stack);
             serverPlayerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
         }
@@ -44,9 +45,10 @@ public class FoodItemImpl extends Item {
                 return ItemStack.EMPTY;
             }
         } else {
-            if (user instanceof PlayerEntity playerEntity && !((PlayerEntity)user).getAbilities().creativeMode) {
+            if (user instanceof PlayerEntity && !((PlayerEntity)user).isCreative()) {
+                PlayerEntity playerEntity = (PlayerEntity) user;
                 ItemStack itemStack = new ItemStack(Registry.ITEM.get(item.food_information.returnItem));
-                if (!playerEntity.getInventory().insertStack(itemStack)) {
+                if (!playerEntity.inventory.insertStack(itemStack)) {
                     playerEntity.dropItem(itemStack, false);
                 }
             }

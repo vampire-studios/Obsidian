@@ -9,12 +9,12 @@ public class AttackDamage {
     public float attack_damage;
 
     public EntityGroup getEntityGroup() {
-        return switch (entity_group) {
-            default -> EntityGroup.DEFAULT;
-            case "undead" -> EntityGroup.UNDEAD;
-            case "arthropod" -> EntityGroup.ARTHROPOD;
-            case "illager" -> EntityGroup.ILLAGER;
-            case "aquatic" -> EntityGroup.AQUATIC;
-        };
+        switch (entity_group) {
+            default: return EntityGroup.DEFAULT;
+            case "undead": return EntityGroup.UNDEAD;
+            case "arthropod": return EntityGroup.ARTHROPOD;
+            case "illager": return EntityGroup.ILLAGER;
+            case "aquatic": return EntityGroup.AQUATIC;
+        }
     }
 }

@@ -16,7 +16,6 @@
 
 package io.github.vampirestudios.obsidian.mixins;
 
-import net.fabricmc.fabric.api.item.v1.crossbow.FabricCrossbowExtensions;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,8 +27,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ItemMixin {
     @Inject(method = "isUsedOnRelease", at = @At("HEAD"), cancellable = true)
     public void ob_isUsedOnRelease(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
-        if (itemStack.getItem() instanceof FabricCrossbowExtensions) {
-            cir.setReturnValue(true);
-        }
+
     }
 }

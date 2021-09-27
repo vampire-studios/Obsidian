@@ -1,13 +1,13 @@
 package io.github.vampirestudios.obsidian.addonModules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.SimpleCrossbowItem;
 import io.github.vampirestudios.obsidian.api.fabric.SimpleTridentItem;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
-import net.fabricmc.fabric.api.item.v1.crossbow.SimpleCrossbowItem;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.Item;
@@ -42,28 +42,29 @@ public class RangedWeapons implements AddonModule {
                         return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F;
                     });
                 }*/
-                case "crossbow" ->  {
-                    Item item = RegistryUtils.registerItem(new SimpleCrossbowItem(rangedWeapon, settings), rangedWeapon.information.name.id);
-                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
+                case "crossbow": {
+                    Item item = RegistryUtils.registerItem(new SimpleCrossbowItem(settings), rangedWeapon.information.name.id);
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity) -> {
                         if (entity == null) {
                             return 0.0F;
                         } else {
                             return CrossbowItem.isCharged(stack) ? 0.0F : (float)(stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / (float)CrossbowItem.getPullTime(stack);
                         }
                     });
-                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pulling"), (stack, world, entity, seed) -> {
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("pulling"), (stack, world, entity) -> {
                         return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack && !CrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
                     });
-                    FabricModelPredicateProviderRegistry.register(item, new Identifier("charged"), (stack, world, entity, seed) -> {
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("charged"), (stack, world, entity) -> {
                         return entity != null && CrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
                     });
-                    FabricModelPredicateProviderRegistry.register(item, new Identifier("firework"), (stack, world, entity, seed) -> {
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("firework"), (stack, world, entity) -> {
                         return entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.hasProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
                     });
+                    break;
                 }
-                case "trident" -> {
+                case "trident": {
                     Item item = RegistryUtils.registerItem(new SimpleTridentItem(rangedWeapon, settings), rangedWeapon.information.name.id);
-                    FabricModelPredicateProviderRegistry.register(item, new Identifier("throwing"), (stack, world, entity, seed) -> {
+                    FabricModelPredicateProviderRegistry.register(item, new Identifier("throwing"), (stack, world, entity) -> {
                         return entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F;
                     });
                 }

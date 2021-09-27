@@ -54,19 +54,10 @@ public class BlockInitThread implements Runnable {
                 }
                 if (block.display.blockState != null) {
                     if(block.block_type != null) {
-                        switch (block.block_type) {
-                            case LOG:
-                                ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
-                                break;
-                            case OXIDIZING_BLOCK:
-                                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
-                                    for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                        ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name.id);
-                                    }
-                                }
-                                break;
-                            default:
-                                ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
+                        if (block.block_type == Block.BlockType.LOG) {
+                            ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                        } else {
+                            ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
                         }
                     }
                 }
@@ -75,13 +66,6 @@ public class BlockInitThread implements Runnable {
                     if(block.block_type != null) {
                         if (block.block_type == Block.BlockType.LOG) {
                             ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
-                        } else if (block.block_type == Block.BlockType.OXIDIZING_BLOCK) {
-                            for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
-                                for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                    textureAndModelInformation = variantBlock.display.blockModel;
-                                    ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
-                                }
-                            }
                         }
                     } else {
                         ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
@@ -162,15 +146,6 @@ public class BlockInitThread implements Runnable {
                                 ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
-                            case OXIDIZING_BLOCK:
-                                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
-                                    for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                        textureAndModelInformation = variantBlock.display.model;
-                                        ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name.id);
-                                        ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
-                                    }
-                                }
-                                break;
                             case LANTERN:
                                 TextureAndModelInformation textureAndModelInformation2 = block.display.hangingModel;
                                 ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId);
@@ -214,16 +189,16 @@ public class BlockInitThread implements Runnable {
             if(block.additional_information != null && block.additional_information.dyable) {
                 net.minecraft.block.Block registeredBlock = Registry.BLOCK.get(nameInformation.id);
                 ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        this.getBlockEntityColor(Objects.requireNonNull(world), pos), registeredBlock);
-                ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubNbt("display").contains("color") ?
-                        stack.getOrCreateSubNbt("display").getInt("color") : 16777215, registeredBlock.asItem());
+                        getBlockEntityColor(Objects.requireNonNull(world), pos), registeredBlock);
+                ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubTag("display").contains("color") ?
+                        stack.getOrCreateSubTag("display").getInt("color") : 16777215, registeredBlock.asItem());
             }
             if(block.block_type != null && block.block_type == Block.BlockType.DYEABLE) {
                 net.minecraft.block.Block registeredBlock = Registry.BLOCK.get(nameInformation.id);
                 ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        this.getBlockEntityColor(Objects.requireNonNull(world), pos), registeredBlock);
-                ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubNbt("display").contains("color") ?
-                        stack.getOrCreateSubNbt("display").getInt("color") : 16777215, registeredBlock.asItem());
+                        getBlockEntityColor(Objects.requireNonNull(world), pos), registeredBlock);
+                ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubTag("display").contains("color") ?
+                        stack.getOrCreateSubTag("display").getInt("color") : 16777215, registeredBlock.asItem());
             }
         } catch (Exception e) {
             e.printStackTrace();

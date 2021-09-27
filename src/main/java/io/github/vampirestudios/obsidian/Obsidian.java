@@ -10,14 +10,8 @@ import com.swordglowsblue.artifice.common.ClientResourcePackProfileLike;
 import com.swordglowsblue.artifice.common.ServerResourcePackProfileLike;
 import com.swordglowsblue.artifice.impl.ArtificeImpl;
 import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
-import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
 import io.github.vampirestudios.obsidian.addonModules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
-import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloClient;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloServer;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.RequestFiles;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.SendFiles;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
@@ -26,17 +20,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.OpenDoorAnnotationComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
-import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
-import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -55,12 +44,8 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import squeek.appleskin.api.AppleSkinApi;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-
-public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinApi {
+public class Obsidian implements ModInitializer {
 
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
@@ -79,7 +64,6 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
     public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
     public static Obsidian INSTANCE;
     public static String VERSION = "0.4.0";
-    public static ObsidianConfig CONFIG;
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
@@ -91,10 +75,6 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
     public void onInitialize() {
         INSTANCE = this;
         LOGGER.info(String.format("You're now running Obsidian v%s for 1.17.1", VERSION));
-        AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
-        CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
-
-        CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 
         SEAT = Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, "seat"), FabricEntityTypeBuilder.
                 <SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
@@ -179,11 +159,9 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
         registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
         registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
         registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
-        registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
         registerInRegistry(ADDON_MODULE_REGISTRY, "paintings", new Paintings());
         registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
         registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
-        registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
         registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
         registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) registerInRegistry(ADDON_MODULE_REGISTRY, "particle", new Particles());
@@ -236,12 +214,6 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
             return ActionResult.PASS;
         });
 
-        DataExchangeAPI.registerDescriptors(List.of(
-                HelloClient.DESCRIPTOR,
-                HelloServer.DESCRIPTOR,
-                RequestFiles.DESCRIPTOR,
-                SendFiles.DESCRIPTOR
-        ));
     }
 
     public static <T> void registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
@@ -261,28 +233,6 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
     public static ClientResourcePackProfileLike registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
         if (ArtificeRegistry.RESOURCE_PACKS.containsId(id)) return ArtificeRegistry.RESOURCE_PACKS.get(id);
         else return ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
-    }
-
-    @Override
-    public void onMealApiInit() {
-        Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
-            try {
-                addonModule.initMealApi();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    @Override
-    public void registerEvents() {
-        Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
-            try {
-                addonModule.initAppleSkin();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
 }
