@@ -25,6 +25,7 @@ public class Block {
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
     public Map<String, BlockProperty> events;
+    public DropInformation dropInformation;
 
     public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();

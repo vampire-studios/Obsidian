@@ -4,24 +4,24 @@
   "package": "io.github.vampirestudios.obsidian.mixins",
   "compatibilityLevel": "JAVA_16",
   "injectors": {
-    "defaultRequire": 1
+	"defaultRequire": 1
   },
   "mixins": [
-    "BlockItemInject",
-    "CraftingScreenHandlerMixin",
-    "ItemMixin",
-    "LoomScreenHandlerMixin",
-    "MinecraftServerMixin",
-    "MixinPlayerManager",
-    "TridentAttackGoalMixin",
-    "TridentEntityAccessor",
-    "fabric.MixinFluidRenderer"
+	"BlockItemInject",
+	"CraftingScreenHandlerMixin",
+	"ItemMixin",
+	"LoomScreenHandlerMixin",
+	"MinecraftServerMixin",
+	"MixinPlayerManager",
+	"TridentAttackGoalMixin",
+	"TridentEntityAccessor",
+	"fabric.MixinFluidRenderer"
   ],
   "client": [
-    "client.BuiltinModelItemRendererMixin",
-    "client.ItemRendererMixin",
-    "client.MixinArmorFeatureRenderer",
-    "client.MixinItem",
-    "client.ReloadableResourceManagerImplMixin"
+	"client.BuiltinModelItemRendererMixin",
+	"client.ItemRendererMixin",
+	"client.MixinArmorFeatureRenderer",
+	"client.MixinItem",
+	"client.ReloadableResourceManagerImplMixin"
   ]
 }
