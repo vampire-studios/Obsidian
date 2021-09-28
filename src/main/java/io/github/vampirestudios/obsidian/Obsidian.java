@@ -276,8 +276,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 										net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState(),
 										30
 								)
-						).uniformRange(YOffset.getBottom(),
-								YOffset.getTop())
+						).uniformRange(YOffset.getBottom(), YOffset.getTop())
 						.spreadHorizontally()
 						.repeat(30));
 

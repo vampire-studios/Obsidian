@@ -54,38 +54,27 @@ public class Ores implements AddonModule {
 
 			register(ORES, "ore", block.information.name.id, block);
 
-			/*RuleTest test;
-			if (block.ore_information.test_type.equals("tag")) {
-				Tag<Block> tag = BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target_state.tag);
-				test = new TagMatchRuleTest(tag == null ? BlockTags.BASE_STONE_OVERWORLD : tag);
-			} else if (block.ore_information.test_type.equals("blockstate")) {
-				test = new BlockStateMatchRuleTest(getState(Registry.BLOCK.get(block.ore_information.target_state.block), block.ore_information.target_state.properties));
-			} else {
-				test = new BlockMatchRuleTest(Registry.BLOCK.get(block.ore_information.target_state.block));
-			}*/
 			ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
 					Feature.ORE.configure(
 							new OreFeatureConfig(
-									new TagMatchRuleTest(BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target_state.tag)),
+									new TagMatchRuleTest(/*BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target_state.tag)*/BlockTags.BASE_STONE_OVERWORLD),
 									blockImpl.getDefaultState(),
-									block.ore_information.size
+									6
 							)
-					).uniformRange(YOffset.fixed(block.ore_information.config.bottom_offset),
-							YOffset.fixed(block.ore_information.config.top_offset))
-							.spreadHorizontally()
-							.repeat(block.ore_information.repeat_amount));
+					).uniformRange(
+						/*YOffset.aboveBottom(block.ore_information.config.above_bottom_offset),
+						YOffset.belowTop(block.ore_information.config.below_top_offset)*/
+						YOffset.fixed(0),
+						YOffset.fixed(30)
+					).spreadHorizontally().applyChance(9));
 
 			Optional<RegistryKey<ConfiguredFeature<?, ?>>> optional = BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature);
-			optional.ifPresent(configuredFeatureRegistryKey ->
-					BiomeModifications.create(Utils.appendToPath(block.information.name.id, "_ore_feature"))
-							.add(ModificationPhase.ADDITIONS, BiomeSelectors.builtIn(),
-									biomeModificationContext -> {
-										biomeModificationContext.getGenerationSettings().addFeature(
-												GenerationStep.Feature.UNDERGROUND_ORES,
-												configuredFeatureRegistryKey
-										);
-									})
-			);
+			BiomeModifications.create(Utils.appendToPath(block.information.name.id, "_ore_feature"))
+					.add(ModificationPhase.ADDITIONS, BiomeSelectors.builtIn(),
+							biomeModificationContext -> biomeModificationContext.getGenerationSettings().addFeature(
+									GenerationStep.Feature.UNDERGROUND_ORES,
+									optional.get()
+							));
 
 			Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder ->
 					serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
