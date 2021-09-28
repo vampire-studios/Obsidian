@@ -66,7 +66,7 @@ public class Ores implements AddonModule {
 			ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
 					Feature.ORE.configure(
 							new OreFeatureConfig(
-									new TagMatchRuleTest(/*BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target_state.tag)*/BlockTags.BASE_STONE_OVERWORLD),
+									new TagMatchRuleTest(BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target_state.tag)),
 									blockImpl.getDefaultState(),
 									block.ore_information.size
 							)
