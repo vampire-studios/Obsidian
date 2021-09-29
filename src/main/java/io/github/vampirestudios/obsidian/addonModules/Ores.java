@@ -33,6 +33,7 @@ import java.io.FileReader;
 import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.ORES;
 
 public class Ores implements AddonModule {
 
@@ -48,25 +49,19 @@ public class Ores implements AddonModule {
 			net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
 			REGISTRY_HELPER.registerItem(new CustomBlockItem(block, blockImpl, new Item.Settings().group(block.information.getItemGroup())), block.information.name.id.getPath());
 
-			if (!addon.getConfigPackInfo().hasData) {
-				new BlockInitThread(block);
-			}
-
-			register(ORES, "ore", block.information.name.id, block);
-
 			ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
 					Feature.ORE.configure(
 							new OreFeatureConfig(
 									new TagMatchRuleTest(/*BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target_state.tag)*/BlockTags.BASE_STONE_OVERWORLD),
 									blockImpl.getDefaultState(),
-									6
+									8
 							)
 					).uniformRange(
 						/*YOffset.aboveBottom(block.ore_information.config.above_bottom_offset),
 						YOffset.belowTop(block.ore_information.config.below_top_offset)*/
-						YOffset.fixed(0),
-						YOffset.fixed(30)
-					).spreadHorizontally().applyChance(9));
+						YOffset.fixed(10),
+						YOffset.fixed(50)
+					).spreadHorizontally()/*.applyChance(12)*/);
 
 			Optional<RegistryKey<ConfiguredFeature<?, ?>>> optional = BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature);
 			BiomeModifications.create(Utils.appendToPath(block.information.name.id, "_ore_feature"))
@@ -133,6 +128,12 @@ public class Ores implements AddonModule {
 						});
 					})
 			);
+
+			if (!addon.getConfigPackInfo().hasData) {
+				new BlockInitThread(block);
+			}
+
+			register(ORES, "ore", block.information.name.id, block);
 		} catch (Exception e) {
 			failedRegistering("ore", block.information.name.id.toString(), e);
 		}
