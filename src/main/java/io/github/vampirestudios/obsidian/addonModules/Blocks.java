@@ -58,13 +58,7 @@ public class Blocks implements AddonModule {
             if (block.information.fireproof) settings.fireproof();
 
             if (block.additional_information != null) {
-                    /*if (block.additional_information.rotatable) {
-                        REGISTRY_HELPER.registerBlock(new FacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                    } else if (block.additional_information.horizontal_rotatable) {
-                        REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                    } else if (block.additional_information.pillar) {
-                        REGISTRY_HELPER.registerBlock(new PillarBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
-                    } else */if (block.additional_information.path) {
+                if (block.additional_information.path) {
                     REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, block.information.name.id.getPath(), settings);
                 } else if (block.additional_information.lantern) {
                     REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block, block.information.name.id.getPath(), settings);
