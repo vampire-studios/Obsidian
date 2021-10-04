@@ -25,9 +25,7 @@ import net.fabricmc.fabric.impl.conditionalresource.ResourceConditionsImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.Version;
-import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.fabricmc.loader.util.version.VersionPredicateParser;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -125,7 +123,7 @@ public final class ResourceConditions {
 
 				boolean matched = false;
 
-				for (String match : versionsToMatch) {
+				/*for (String match : versionsToMatch) {
 					try {
 						if (VersionPredicateParser.matches(version.get(), match)) {
 							matched = true;
@@ -135,7 +133,7 @@ public final class ResourceConditions {
 						e.printStackTrace();
 						return false;
 					}
-				}
+				}*/
 
 				if (!matched) {
 					return false;

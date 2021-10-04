@@ -1,14 +1,12 @@
 package io.github.vampirestudios.obsidian.configPack;
 
-import com.google.gson.JsonElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.metadata.*;
-import net.fabricmc.loader.metadata.EntrypointMetadata;
-import net.fabricmc.loader.metadata.LoaderModMetadata;
-import net.fabricmc.loader.metadata.NestedJarEntry;
-import net.fabricmc.loader.util.version.StringVersion;
-import org.apache.logging.log4j.Logger;
+import net.fabricmc.loader.impl.metadata.EntrypointMetadata;
+import net.fabricmc.loader.impl.metadata.LoaderModMetadata;
+import net.fabricmc.loader.impl.metadata.NestedJarEntry;
+import net.fabricmc.loader.impl.util.version.StringVersion;
 
 import java.util.*;
 
@@ -23,6 +21,11 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
     @Override
     public int getSchemaVersion() {
         return 2;
+    }
+
+    @Override
+    public String getOldStyleLanguageAdapter() {
+        return LoaderModMetadata.super.getOldStyleLanguageAdapter();
     }
 
     @Override
@@ -66,7 +69,8 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
     }
 
     @Override
-    public void emitFormatWarnings(Logger logger) {
+    public void emitFormatWarnings() {
+
     }
 
     @Override
@@ -92,6 +96,11 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
     @Override
     public ModEnvironment getEnvironment() {
         return ModEnvironment.UNIVERSAL;
+    }
+
+    @Override
+    public Collection<ModDependency> getDependencies() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -284,8 +293,4 @@ public class ObsidianAddonModMetadata implements LoaderModMetadata {
         return false;
     }
 
-    @Override
-    public JsonElement getCustomElement(String key) {
-        return null;
-    }
 }

@@ -10,6 +10,7 @@ import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
@@ -354,6 +355,8 @@ public class Blocks implements AddonModule {
             if (!addon.getConfigPackInfo().hasData) {
                 new BlockInitThread(block);
             }
+
+            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(block.information.name.id), block.information.getRenderLayer());
 
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
                 List<Identifier> names = new ArrayList<>();
