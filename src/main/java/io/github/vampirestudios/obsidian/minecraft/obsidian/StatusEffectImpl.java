@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.util.registry.Registry;
 
 public class StatusEffectImpl extends StatusEffect {
@@ -17,7 +17,7 @@ public class StatusEffectImpl extends StatusEffect {
         }
     }
 
-    public StatusEffectImpl(StatusEffectType effectType, int color) {
+    public StatusEffectImpl(StatusEffectCategory effectType, int color) {
         super(effectType, color);
     }
 

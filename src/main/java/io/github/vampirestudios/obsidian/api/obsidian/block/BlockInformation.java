@@ -49,6 +49,8 @@ public class BlockInformation {
     public List<String> removedTooltipSections;
     public boolean requires_mod_loaded = false;
     public String required_mod_id;
+    public boolean wearable = false;
+    public Identifier wearableModel;
 
     public List<ItemStack.TooltipSection> getRemovedTooltipSections() {
         return List.of();

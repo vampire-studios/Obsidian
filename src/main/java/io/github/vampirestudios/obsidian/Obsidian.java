@@ -36,46 +36,36 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.structure.rule.TagMatchRuleTest;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
-import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.YOffset;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.OreFeatureConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinApi {
 
 	public static final Gson GSON = new GsonBuilder()
 			.registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
+			.registerTypeAdapter(ModelIdentifier.class, (SimpleStringDeserializer<?>) ModelIdentifier::new)
 			.setPrettyPrinting()
 			.setLenient()
 			.create();
@@ -90,7 +80,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 	public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
 	public static Obsidian INSTANCE;
-	public static String VERSION = "0.4.0";
+	public static String VERSION = "0.6.1-alpha";
 	public static ObsidianConfig CONFIG;
 	public static EntityType<SeatEntity> SEAT;
 
@@ -234,6 +224,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
 
 		ObsidianAddonLoader.loadDefaultObsidianAddons();
 		ObsidianAddonLoader.loadObsidianAddons();
@@ -269,29 +260,6 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 			return ActionResult.PASS;
 		});
 
-		ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new Identifier("test_ore_feature"),
-				Feature.ORE.configure(
-								new OreFeatureConfig(
-										new TagMatchRuleTest(BlockTags.BASE_STONE_OVERWORLD),
-										net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState(),
-										30
-								)
-						).uniformRange(YOffset.getBottom(), YOffset.getTop())
-						.spreadHorizontally()
-						.repeat(30));
-
-		Optional<RegistryKey<ConfiguredFeature<?, ?>>> optional = BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature);
-		optional.ifPresent(configuredFeatureRegistryKey ->
-				BiomeModifications.create(new Identifier("test_ore_feature"))
-						.add(ModificationPhase.ADDITIONS, BiomeSelectors.builtIn(),
-								biomeModificationContext -> {
-									biomeModificationContext.getGenerationSettings().addFeature(
-											GenerationStep.Feature.UNDERGROUND_ORES,
-											configuredFeatureRegistryKey
-									);
-								})
-		);
-
 		DataExchangeAPI.registerDescriptors(List.of(
 				HelloClient.DESCRIPTOR,
 				HelloServer.DESCRIPTOR,
@@ -302,13 +270,13 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 
 	@Override
 	public void onMealApiInit() {
-		Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
-			try {
-				addonModule.initMealApi();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		});
+//		Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
+//			try {
+//				addonModule.initMealApi();
+//			} catch (FileNotFoundException e) {
+//				e.printStackTrace();
+//			}
+//		});
 	}
 
 	@Override

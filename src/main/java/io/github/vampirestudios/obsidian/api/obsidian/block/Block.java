@@ -26,6 +26,8 @@ public class Block {
     public OxidizableProperties oxidizable_properties;
     public Map<String, BlockProperty> events;
     public DropInformation dropInformation;
+    public boolean isMultiBlock = false;
+    public MultiBlockInformation multiBlockInformation;
 
     public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
@@ -107,6 +109,11 @@ public class Block {
         public boolean emits_particles;
         public int fire_damage;
         public int luminance;
+    }
+
+    public static class MultiBlockInformation {
+        public int width;
+        public int height;
     }
 
 }

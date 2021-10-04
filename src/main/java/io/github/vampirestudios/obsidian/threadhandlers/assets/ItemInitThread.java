@@ -26,7 +26,7 @@ public class ItemInitThread implements Runnable {
         if (item.display != null && item.display.model != null) {
             clientResourcePackBuilder.addItemModel(item.information.name.id, modelBuilder -> {
                 modelBuilder.parent(item.display.model.parent);
-                item.display.model.textures.forEach(modelBuilder::texture);
+                if (item.display.model.textures != null) item.display.model.textures.forEach(modelBuilder::texture);
             });
         }
         if (item.display != null && item.display.lore.length != 0) {

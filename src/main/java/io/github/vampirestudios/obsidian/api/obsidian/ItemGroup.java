@@ -6,5 +6,4 @@ public class ItemGroup {
 
     public NameInformation name;
     public Identifier icon;
-
 }

@@ -11,8 +11,6 @@ import java.io.Reader;
 import java.lang.reflect.Array;
 
 public class Utils {
-    public Utils() {
-    }
 
     public static void registerAddon(Reader reader, File file) {
         ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(reader, ObsidianAddonInfo.class);
@@ -29,8 +27,8 @@ public class Utils {
     public static void registerAddon(Reader reader) {
         ObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(reader, ObsidianAddonInfo.class);
         ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo);
-        if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.containsId(new Identifier(Obsidian.MOD_ID, obsidianAddon.getConfigPackInfo().namespace)) && obsidianAddon.getConfigPackInfo().addonVersion ==
-                ObsidianAddonLoader.PACK_VERSION) {
+        if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.containsId(new Identifier(Obsidian.MOD_ID, obsidianAddon.getConfigPackInfo().namespace)) &&
+                obsidianAddon.getConfigPackInfo().addonVersion == ObsidianAddonLoader.PACK_VERSION) {
             Obsidian.registerInRegistry(ObsidianAddonLoader.OBSIDIAN_ADDONS, obsidianAddon.getConfigPackInfo().namespace, obsidianAddon);
             Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
         } else {

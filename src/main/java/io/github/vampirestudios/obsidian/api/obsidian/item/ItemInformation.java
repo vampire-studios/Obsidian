@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -19,6 +20,9 @@ public class ItemInformation {
     public int use_duration = 5;
     public boolean can_place_block = false;
     public Identifier placable_block;
+    public boolean wearable = false;
+	public boolean customRenderMode = false;
+    public RenderModeModel[] renderModeModels;
 
     public Rarity getRarity() {
 		return switch (rarity) {
@@ -32,5 +36,10 @@ public class ItemInformation {
     public ItemGroup getItemGroup() {
         return Obsidian.ITEM_GROUP_REGISTRY.get(item_group);
     }
+
+    public static class RenderModeModel {
+    	public ModelIdentifier model;
+    	public String[] modes;
+	}
 
 }

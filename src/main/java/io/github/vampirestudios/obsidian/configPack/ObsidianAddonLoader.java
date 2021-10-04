@@ -56,6 +56,7 @@ public class ObsidianAddonLoader {
     public static Registry<StatusEffect> STATUS_EFFECTS = FabricRegistryBuilder.createSimple(StatusEffect.class, id("status_effects")).buildAndRegister();
     public static Registry<Enchantment> ENCHANTMENTS = FabricRegistryBuilder.createSimple(Enchantment.class, id("enchantments")).buildAndRegister();
     public static Registry<ItemGroup> ITEM_GROUPS = FabricRegistryBuilder.createSimple(ItemGroup.class, id("item_groups_registry")).buildAndRegister();
+    public static Registry<ExpandedItemGroup> EXPANDED_ITEM_GROUPS = FabricRegistryBuilder.createSimple(ExpandedItemGroup.class, id("expanded_item_groups_registry")).buildAndRegister();
     public static Registry<Entity> ENTITIES = FabricRegistryBuilder.createSimple(Entity.class, id("entities")).buildAndRegister();
     public static Registry<EntityModel> ENTITY_MODELS = FabricRegistryBuilder.createSimple(EntityModel.class, id("entity_models")).buildAndRegister();
     public static Registry<ArmorModel> ARMOR_MODELS = FabricRegistryBuilder.createSimple(ArmorModel.class, id("armor_models")).buildAndRegister();

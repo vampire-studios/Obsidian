@@ -12,10 +12,13 @@ import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClientInit implements ClientModInitializer {
@@ -24,6 +27,7 @@ public class ClientInit implements ClientModInitializer {
      * This is a map from the addon id to a map from the language id to a map from the translation key to the translation
      */
     private static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
+    public static final List<ModelIdentifier> customModels = new ArrayList<>();
 
     public static void addTranslation(String addonId, String languageId, String translationKey, String translation) {
         synchronized (translationMap) {

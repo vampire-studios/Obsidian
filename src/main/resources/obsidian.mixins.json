@@ -9,12 +9,14 @@
   "mixins": [
 	"BlockItemInject",
 	"CraftingScreenHandlerMixin",
+	"GroupTabLoaderAccessor",
 	"ItemMixin",
 	"LoomScreenHandlerMixin",
 	"MinecraftServerMixin",
 	"MixinPlayerManager",
 	"TridentAttackGoalMixin",
 	"TridentEntityAccessor",
+	"client.ModelLoaderMixin",
 	"fabric.MixinFluidRenderer"
   ],
   "client": [

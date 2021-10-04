@@ -6,5 +6,6 @@ public class Item {
 
     public ItemInformation information;
     public ItemDisplayInformation display;
+    public UseActions useActions;
 
 }
