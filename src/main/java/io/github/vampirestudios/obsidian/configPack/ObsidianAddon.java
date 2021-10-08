@@ -11,6 +11,7 @@ public class ObsidianAddon implements IAddonPack {
 
     private final ObsidianAddonInfo obsidianAddonInfo;
     private final File file;
+    private boolean hasLoaded;
 
     public ObsidianAddon(ObsidianAddonInfo obsidianAddonInfo) {
         this(obsidianAddonInfo, null);
