@@ -19,6 +19,7 @@ import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.BlockItem;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -72,6 +73,20 @@ public class ObsidianAddonLoader {
     public static void loadDefaultObsidianAddons() {
         if (!OBSIDIAN_ADDON_DIRECTORY.exists())
             createObsidianAddonsFolder();
+    }
+
+    public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, net.minecraft.item.ItemGroup tab) {
+        return register(name, block, new net.minecraft.item.Item.Settings().group(tab));
+    }
+
+    public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, net.minecraft.item.Item.Settings properties) {
+        return register(name, block, new BlockItem(block, properties));
+    }
+
+    public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, BlockItem item) {
+        Registry.register(Registry.BLOCK, name, block);
+        Registry.register(Registry.ITEM, name, item);
+        return block;
     }
 
     public static void register(File file, String mainFile) {

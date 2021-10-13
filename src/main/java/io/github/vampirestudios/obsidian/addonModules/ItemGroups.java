@@ -6,6 +6,7 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.registry.Registry;
 
@@ -22,8 +23,8 @@ public class ItemGroups implements AddonModule {
 
         try {
             if (itemGroup == null) return;
-            FabricItemGroupBuilder itemGroup1 = FabricItemGroupBuilder.create(itemGroup.name.id)
-                    .icon(() -> new ItemStack(Registry.ITEM.get(itemGroup.icon)));
+            ItemGroup itemGroup1 = FabricItemGroupBuilder.build(itemGroup.name.id,
+                    () -> new ItemStack(Registry.ITEM.get(itemGroup.icon)));
 
             /*if (itemGroup.tags != null) {
                 for (Identifier tag : itemGroup.tags) {
@@ -39,7 +40,7 @@ public class ItemGroups implements AddonModule {
                 }
             }*/
 
-            Registry.register(Obsidian.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup1.build());
+            Registry.register(Obsidian.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup1);
             ObsidianAddonLoader.register(ObsidianAddonLoader.ITEM_GROUPS, "item_group", itemGroup.name.id, itemGroup);
         } catch (Exception e) {
             ObsidianAddonLoader.failedRegistering("item_group", itemGroup.name.id.toString(), e);

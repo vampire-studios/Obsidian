@@ -1,14 +1,15 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import com.glisco.owo.itemgroup.json.GroupTabLoader;
+import com.glisco.owo.moddata.ModDataConsumer;
 import com.google.gson.JsonObject;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(GroupTabLoader.class)
+@Mixin(ModDataConsumer.class)
 public interface GroupTabLoaderAccessor {
 	@Invoker
-	static void callLoadGroups(JsonObject json) {
+	default void callAcceptParsedFile(Identifier id, JsonObject json) {
 		throw new UnsupportedOperationException();
 	}
 }
