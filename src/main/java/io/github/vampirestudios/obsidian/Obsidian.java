@@ -6,8 +6,6 @@ import com.mojang.serialization.Lifecycle;
 import com.swordglowsblue.artifice.api.ArtificeResourcePack;
 import com.swordglowsblue.artifice.api.util.Processor;
 import com.swordglowsblue.artifice.common.ArtificeRegistry;
-import com.swordglowsblue.artifice.common.ClientResourcePackProfileLike;
-import com.swordglowsblue.artifice.common.ServerResourcePackProfileLike;
 import com.swordglowsblue.artifice.impl.ArtificeImpl;
 import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
 import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
@@ -96,17 +94,13 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		Registry.register(registry, new Identifier(MOD_ID, name), idk);
 	}
 
-	public static ServerResourcePackProfileLike registerDataPack(Identifier id, Processor<ArtificeResourcePack.ServerResourcePackBuilder> register) {
-		if (ArtificeRegistry.DATA_PACKS.containsId(id)) return ArtificeRegistry.DATA_PACKS.get(id);
-		else
-			return ArtificeImpl.registerSafely(ArtificeRegistry.DATA_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
+	public static void registerDataPack(Identifier id, Processor<ArtificeResourcePack.ServerResourcePackBuilder> register) {
+		if (!ArtificeRegistry.DATA_PACKS.containsId(id)) ArtificeImpl.registerSafely(ArtificeRegistry.DATA_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
 	}
 
 	@Environment(EnvType.CLIENT)
-	public static ClientResourcePackProfileLike registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
-		if (ArtificeRegistry.RESOURCE_PACKS.containsId(id)) return ArtificeRegistry.RESOURCE_PACKS.get(id);
-		else
-			return ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
+	public static void registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
+		if (!ArtificeRegistry.RESOURCE_PACKS.containsId(id)) ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
 	}
 
 	@Override
