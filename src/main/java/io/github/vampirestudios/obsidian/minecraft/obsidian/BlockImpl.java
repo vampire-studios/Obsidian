@@ -32,8 +32,13 @@ public class BlockImpl extends Block {
     }
 
     @Override
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+        return !block.information.translucent ? 0.2F : 1.0F;
+    }
+
+    @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.translucent;
+        return !block.information.translucent;
     }
 
     @Override

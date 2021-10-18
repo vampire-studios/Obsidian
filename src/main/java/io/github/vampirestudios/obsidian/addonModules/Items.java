@@ -5,9 +5,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ItemInformation;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockItemImpl;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.WearableItemImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.minecraft.item.Item;
@@ -37,9 +35,17 @@ public class Items implements AddonModule {
                     }
                 }
                 if (item.information.wearable) {
-                    RegistryUtils.registerItem(new WearableItemImpl(item, settings), item.information.name.id);
+                    if (item.information.dyeable) {
+                        RegistryUtils.registerItem(new DyeableWearableItemImpl(item, settings), item.information.name.id);
+                    } else {
+                        RegistryUtils.registerItem(new WearableItemImpl(item, settings), item.information.name.id);
+                    }
                 } else {
-                    RegistryUtils.registerItem(new ItemImpl(item, settings), item.information.name.id);
+                    if (item.information.dyeable) {
+                        RegistryUtils.registerItem(new DyeableItemImpl(item, settings), item.information.name.id);
+                    } else {
+                        RegistryUtils.registerItem(new ItemImpl(item, settings), item.information.name.id);
+                    }
                 }
             }
             register(ITEMS, "item", item.information.name.id, item);

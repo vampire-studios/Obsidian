@@ -212,7 +212,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistry(ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "entity_models", new EntityModels());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "entities", new Entities());
-//        registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
+        registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());

@@ -21,11 +21,10 @@ public class Armor implements AddonModule {
         io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
         try {
             if (armor == null) return;
-            Item.Settings settings = new Item.Settings().group(armor.information.getItemGroup())
-                    .maxCount(armor.information.max_count).rarity(armor.information.getRarity());
             CustomArmorMaterial material = new CustomArmorMaterial(armor.material);
-            RegistryUtils.registerItem(new ArmorItemImpl(material, armor, settings),
-                    armor.information.name.id);
+            RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
+                    .group(armor.information.getItemGroup()).maxCount(armor.information.max_count)
+                    .rarity(armor.information.getRarity())), armor.information.name.id);
             register(ARMORS, "armor", armor.information.name.id, armor);
         } catch (Exception e) {
             failedRegistering("armor", armor.information.name.id.toString(), e);

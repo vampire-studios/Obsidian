@@ -27,6 +27,11 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlock imple
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
+    @Override
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+        return !block.information.translucent ? 0.2F : 1.0F;
+    }
+
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
@@ -67,7 +72,7 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlock imple
 
     @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.translucent;
+        return !block.information.translucent;
     }
 
     @Override

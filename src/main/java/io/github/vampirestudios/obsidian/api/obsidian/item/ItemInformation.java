@@ -21,6 +21,7 @@ public class ItemInformation {
     public boolean can_place_block = false;
     public Identifier placable_block;
     public boolean wearable = false;
+    public boolean dyeable = false;
 	public boolean customRenderMode = false;
     public RenderModeModel[] renderModeModels;
 

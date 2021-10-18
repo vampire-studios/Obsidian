@@ -1,22 +1,23 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShieldItem;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ShieldItem;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ShieldItemImpl extends net.minecraft.item.ShieldItem {
+public class ShieldItemImpl extends FabricShieldItem {
 
     public ShieldItem shieldItem;
 
-    public ShieldItemImpl(ShieldItem shieldItem, Item.Settings settings) {
-        super(settings);
+    public ShieldItemImpl(ShieldItem shieldItem, Settings settings) {
+        super(settings, shieldItem.cooldownTicks, shieldItem.information.enchantability, Registry.ITEM.get(shieldItem.repairItem));
         this.shieldItem = shieldItem;
     }
 
@@ -28,11 +29,6 @@ public class ShieldItemImpl extends net.minecraft.item.ShieldItem {
     @Override
     public boolean isEnchantable(ItemStack stack) {
         return shieldItem.information.is_enchantable;
-    }
-
-    @Override
-    public int getEnchantability() {
-        return shieldItem.information.enchantability;
     }
 
     @Override

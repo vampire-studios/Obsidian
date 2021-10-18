@@ -21,7 +21,6 @@
 	"fabric.MixinFluidRenderer"
   ],
   "client": [
-	"client.BuiltinModelItemRendererMixin",
 	"client.ItemRendererMixin",
 	"client.MixinArmorFeatureRenderer",
 	"client.MixinItem",
