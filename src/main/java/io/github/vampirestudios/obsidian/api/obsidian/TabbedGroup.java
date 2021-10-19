@@ -39,7 +39,7 @@ public class TabbedGroup {
             public int u, v;
             public int textureWidth, textureHeight;
         }
-        
+
         public com.glisco.owo.itemgroup.Icon getIcon() {
             if (type.equals("texture")) {
                 return new com.glisco.owo.itemgroup.Icon.TextureIcon(properties.texture, properties.u, properties.v, properties.textureWidth, properties.textureHeight);

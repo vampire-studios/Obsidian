@@ -5,6 +5,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ArmorItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomArmorMaterial;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableArmorItemImpl;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.minecraft.item.Item;
@@ -22,9 +23,16 @@ public class Armor implements AddonModule {
         try {
             if (armor == null) return;
             CustomArmorMaterial material = new CustomArmorMaterial(armor.material);
-            RegistryUtils.registerItem(new ArmorItemImpl(material, armor, new Item.Settings()
+            Item item;
+            Item.Settings settings = new Item.Settings()
                     .group(armor.information.getItemGroup()).maxCount(armor.information.max_count)
-                    .rarity(armor.information.getRarity())), armor.information.name.id);
+                    .rarity(armor.information.getRarity());
+            if (armor.information.dyeable) {
+                item = new DyeableArmorItemImpl(material, armor, settings);
+            } else {
+                item = new ArmorItemImpl(material, armor, settings);
+            }
+            RegistryUtils.registerItem(item, armor.information.name.id);
             register(ARMORS, "armor", armor.information.name.id, armor);
         } catch (Exception e) {
             failedRegistering("armor", armor.information.name.id.toString(), e);

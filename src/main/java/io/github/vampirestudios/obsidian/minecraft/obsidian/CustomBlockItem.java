@@ -7,7 +7,7 @@ import net.minecraft.text.Text;
 
 public class CustomBlockItem extends BlockItem {
 
-    private final Block block;
+    public final Block block;
 
     public CustomBlockItem(Block block, net.minecraft.block.Block blockImpl, Settings settings) {
         super(blockImpl, settings);

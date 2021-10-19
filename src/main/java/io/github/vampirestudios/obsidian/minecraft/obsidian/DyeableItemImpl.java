@@ -35,6 +35,12 @@ public class DyeableItemImpl extends Item implements IRenderModeAware, DyeableIt
     }
 
     @Override
+    public int getColor(ItemStack stack) {
+        NbtCompound nbtCompound = stack.getSubNbt("display");
+        return nbtCompound != null && nbtCompound.contains("color", 99) ? nbtCompound.getInt("color") : item.information.defaultColor;
+    }
+
+    @Override
     public BakedModel getModel(ItemStack stack, ModelTransformation.Mode mode, BakedModel original) {
         if (item.information.customRenderMode) {
             for (ItemInformation.RenderModeModel renderModeModel : item.information.renderModeModels) {
@@ -51,7 +57,7 @@ public class DyeableItemImpl extends Item implements IRenderModeAware, DyeableIt
     @Override
     public void setColor(ItemStack stack, int color) {
         DyeableItem.super.setColor(stack, color);
-        if (color == 16777215) {
+        if (color == item.information.defaultColor) {
             stack.addHideFlag(ItemStack.TooltipSection.DYE);
         } else {
             NbtCompound nbtCompound = stack.getOrCreateNbt();
@@ -61,9 +67,10 @@ public class DyeableItemImpl extends Item implements IRenderModeAware, DyeableIt
 
     @Override
     public void appendStacks(ItemGroup group, DefaultedList<ItemStack> stacks) {
+        super.appendStacks(group, stacks);
         if (this.isIn(group)) {
             ItemStack stack = new ItemStack(this);
-            this.setColor(stack, 16777215);
+            this.setColor(stack, item.information.defaultColor);
             stacks.add(stack);
         }
     }

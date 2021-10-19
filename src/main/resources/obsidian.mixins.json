@@ -9,8 +9,7 @@
   "mixins": [
 	"BlockItemInject",
 	"CraftingScreenHandlerMixin",
-//	"FabricItemGroupBuilderMixin",
-//	"GroupTabLoaderAccessor",
+	"FabricItemGroupBuilderMixin",
 	"ItemMixin",
 	"LoomScreenHandlerMixin",
 	"MinecraftServerMixin",

@@ -12,7 +12,6 @@ import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -38,7 +37,7 @@ public class BlockInitThread implements Runnable {
             NameInformation nameInformation = block.information.name;
             Identifier blockId = nameInformation.id;
             Map<String, String> translated = nameInformation.translated;
-            BlockRenderLayerMap.INSTANCE.putBlock(block1, block.information.translucent ? RenderLayer.getTranslucent() : RenderLayer.getCutoutMipped());
+            BlockRenderLayerMap.INSTANCE.putBlock(block1, block.information.getRenderLayer());
             if (translated != null) {
                 translation(translated, blockId, "", "");
             }
@@ -214,25 +213,25 @@ public class BlockInitThread implements Runnable {
             if(block.additional_information != null && block.additional_information.dyable) {
                 net.minecraft.block.Block registeredBlock = Registry.BLOCK.get(nameInformation.id);
                 ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        this.getBlockEntityColor(Objects.requireNonNull(world), pos), registeredBlock);
+                        getBlockEntityColor(block, Objects.requireNonNull(world), pos), registeredBlock);
                 ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubNbt("display").contains("color") ?
                         stack.getOrCreateSubNbt("display").getInt("color") : 16777215, registeredBlock.asItem());
             }
             if(block.block_type != null && block.block_type == Block.BlockType.DYEABLE) {
                 net.minecraft.block.Block registeredBlock = Registry.BLOCK.get(nameInformation.id);
                 ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        this.getBlockEntityColor(Objects.requireNonNull(world), pos), registeredBlock);
+                        getBlockEntityColor(block, Objects.requireNonNull(world), pos), registeredBlock);
                 ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubNbt("display").contains("color") ?
-                        stack.getOrCreateSubNbt("display").getInt("color") : 16777215, registeredBlock.asItem());
+                        stack.getOrCreateSubNbt("display").getInt("color") : block.additional_information.defaultColor, registeredBlock.asItem());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static int getBlockEntityColor(BlockView view, BlockPos pos) {
+    public static int getBlockEntityColor(Block block, BlockView view, BlockPos pos) {
         BlockEntity entity = view.getBlockEntity(pos);
-        return entity != null ? ((DyeableBlockEntity) Objects.requireNonNull(((DyeableBlockEntity) entity).getRenderAttachmentData())).getColor() : 16777215;
+        return entity != null ? ((DyeableBlockEntity) Objects.requireNonNull(((DyeableBlockEntity) entity).getRenderAttachmentData())).getColor() : block.additional_information.defaultColor;
     }
 
     public static void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {

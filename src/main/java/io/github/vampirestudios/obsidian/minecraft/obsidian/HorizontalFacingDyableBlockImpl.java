@@ -64,7 +64,7 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlock imple
             if (hue != 0) {
                 ((DyeableBlockEntity)blockEntity).setColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
             } else {
-                ((DyeableBlockEntity)blockEntity).setColor(16777215);
+                ((DyeableBlockEntity)blockEntity).setColor(block.additional_information.defaultColor);
             }
         }
 

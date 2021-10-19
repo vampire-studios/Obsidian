@@ -42,7 +42,7 @@ public class ExpandedItemGroups implements AddonModule {
             if (itemGroup == null) return;
             ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
             groupTabLoader.acceptParsedFile(null, jsonObject);
-            ModDataLoader.load(/*new ExpandedTabs(itemGroup)*/groupTabLoader);
+            ModDataLoader.load(groupTabLoader);
             ObsidianAddonLoader.register(ObsidianAddonLoader.EXPANDED_ITEM_GROUPS, "tabbed_group", new Identifier(id.modId, "tabbed_" + itemGroup.targetGroup), itemGroup);
         } catch (Exception e) {
             ObsidianAddonLoader.failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
@@ -54,66 +54,69 @@ public class ExpandedItemGroups implements AddonModule {
         return "item_groups/expanded_new";
     }
 
-    public static class ExpandedTabs implements ModDataConsumer {
-        private static TabbedGroup tabbedGroup;
-        private static final Map<String, Pair<List<ItemGroupTab>, List<ItemGroupButton>>> CACHED_BUTTONS = new HashMap<>();
+	public static class ExpandedTabs implements ModDataConsumer {
+    	private static TabbedGroup tabbedGroup;
+		private static final Map<String, Pair<List<ItemGroupTab>, List<ItemGroupButton>>> CACHED_BUTTONS = new HashMap<>();
 
-        public ExpandedTabs(TabbedGroup tabbedGroupIn) {
-            tabbedGroup = tabbedGroupIn;
-        }
+		public ExpandedTabs(TabbedGroup tabbedGroupIn) {
+			tabbedGroup = tabbedGroupIn;
+		}
 
-        public static ItemGroup onGroupCreated(String name, int index, Supplier<ItemStack> icon) {
-            if (!CACHED_BUTTONS.containsKey(name)) return null;
-            final var cache = CACHED_BUTTONS.remove(name);
-            final var wrapperGroup = new WrapperGroup(index, name, cache.getLeft(), cache.getRight(), icon) {
-                @Override
-                protected void setup() {
-                    super.setup();
-                    if (tabbedGroup.staticTitle) this.keepStaticTitle();
-                    this.setStackHeight(tabbedGroup.stackHeight);
-                    this.setCustomTexture(tabbedGroup.customTexture);
-                }
-            };
-            wrapperGroup.initialize();
-            return wrapperGroup;
-        }
-        @Override
-        public String getDataSubdirectory() {
-            return "item_group_tabs";
-        }
+		public static ItemGroup onGroupCreated(String name, int index, Supplier<ItemStack> icon) {
+			if (!CACHED_BUTTONS.containsKey(name)) return null;
+			final var cache = CACHED_BUTTONS.remove(name);
+			final var wrapperGroup = new WrapperGroup(index, name, cache.getLeft(), cache.getRight(), icon) {
+				@Override
+				protected void setup() {
+					super.setup();
+					if (tabbedGroup.staticTitle) this.keepStaticTitle();
+					this.setStackHeight(tabbedGroup.stackHeight);
+					this.setCustomTexture(tabbedGroup.customTexture);
+				}
+			};
+			wrapperGroup.initialize();
+			return wrapperGroup;
+		}
 
-        @Override
-        public void acceptParsedFile(Identifier id, JsonObject json) {
-            List<ItemGroupTab> createdTabs = new ArrayList<>();
-            List<ItemGroupButton> createdButtons = new ArrayList<>();
+		@Override
+		public String getDataSubdirectory() {
+			return "item_group_tabs";
+		}
 
-            if (tabbedGroup.tabs != null) {
-                for (TabbedGroup.Tab tab : tabbedGroup.tabs) {
-                    createdTabs.add(new ItemGroupTab(tab.icon.getIcon(), tab.name, TagFactory.ITEM.create(tab.contentTag), tab.texture));
-                }
-            }
+		@Override
+		public void acceptParsedFile(Identifier id, JsonObject json) {
+			List<ItemGroupTab> createdTabs = new ArrayList<>();
+			List<ItemGroupButton> createdButtons = new ArrayList<>();
 
-            if (tabbedGroup.buttons != null) {
-                for (TabbedGroup.Button button : tabbedGroup.buttons) {
-                    createdButtons.add(new ItemGroupButton(button.icon.getIcon(), button.name,
-                            () -> Util.getOperatingSystem().open(button.link)));
-                }
-            }
-            for (ItemGroup group : ItemGroup.GROUPS) {
-                if (!group.getName().equals(tabbedGroup.targetGroup)) continue;
-                final var wrappedGroup = new WrapperGroup(group.getIndex(), group.getName(), createdTabs, createdButtons, group::createIcon);
-                wrappedGroup.initialize();
+			if (tabbedGroup.tabs != null) {
+				for (TabbedGroup.Tab tab : tabbedGroup.tabs) {
+					createdTabs.add(new ItemGroupTab(tab.icon.getIcon(), tab.name,
+							TagFactory.ITEM.create(tab.contentTag), tab.texture));
+				}
+			}
 
-                for (Item item : Registry.ITEM) {
-                    if (item.getGroup() != group) continue;
-                    ((OwoItemExtensions) item).setItemGroup(wrappedGroup);
-                }
+			if (tabbedGroup.buttons != null) {
+				for (TabbedGroup.Button button : tabbedGroup.buttons) {
+					createdButtons.add(new ItemGroupButton(button.icon.getIcon(), button.name,
+							() -> Util.getOperatingSystem().open(button.link)));
+				}
+			}
 
-                return;
-            }
+			for (ItemGroup group : ItemGroup.GROUPS) {
+				if (!group.getName().equals(tabbedGroup.targetGroup)) continue;
+				final var wrapperGroup = new WrapperGroup(group.getIndex(), group.getName(), createdTabs, createdButtons, group::createIcon);
+				wrapperGroup.initialize();
 
-            CACHED_BUTTONS.put(tabbedGroup.targetGroup, new Pair<>(createdTabs, createdButtons));
-        }
-    }
+				for (Item item : Registry.ITEM) {
+					if (item.getGroup() != group) continue;
+					((OwoItemExtensions) item).setItemGroup(wrapperGroup);
+				}
+
+				return;
+			}
+
+			CACHED_BUTTONS.put(tabbedGroup.targetGroup, new Pair<>(createdTabs, createdButtons));
+		}
+	}
 
 }

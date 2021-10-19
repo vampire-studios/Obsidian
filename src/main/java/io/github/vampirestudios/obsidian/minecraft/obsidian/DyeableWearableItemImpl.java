@@ -25,7 +25,6 @@ public class DyeableWearableItemImpl extends DyeableItemImpl implements Wearable
 			if (!world.isClient()) {
 				user.incrementStat(Stats.USED.getOrCreateStat(this));
 			}
-
 			itemStack.setCount(0);
 			return TypedActionResult.success(itemStack, world.isClient());
 		} else {

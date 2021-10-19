@@ -22,6 +22,8 @@ public class ItemInformation {
     public Identifier placable_block;
     public boolean wearable = false;
     public boolean dyeable = false;
+	public int defaultColor = 10511680/*16777215*/;
+	public String wearableSlot;
 	public boolean customRenderMode = false;
     public RenderModeModel[] renderModeModels;
 

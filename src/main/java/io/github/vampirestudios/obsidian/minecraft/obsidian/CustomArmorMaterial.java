@@ -6,13 +6,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.registry.Registry;
 
-public class CustomArmorMaterial implements ArmorMaterial {
-
-    private final io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial material;
-
-    public CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial material) {
-        this.material = material;
-    }
+public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial material) implements ArmorMaterial {
 
     @Override
     public int getDurability(EquipmentSlot slot) {
