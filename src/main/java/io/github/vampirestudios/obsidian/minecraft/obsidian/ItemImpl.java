@@ -52,16 +52,14 @@ public class ItemImpl extends Item implements IRenderModeAware {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (item.useActions != null && item.useActions.rightClickAction.equals("open_gui")) {
-            user.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inventory, playerx) -> {
-                return switch (item.useActions.guiSize) {
-                    case 1 -> GenericContainerScreenHandler.createGeneric9x1(syncId, playerx.getInventory());
-                    case 2 -> GenericContainerScreenHandler.createGeneric9x2(syncId, playerx.getInventory());
-                    case 3 -> GenericContainerScreenHandler.createGeneric9x3(syncId, playerx.getInventory());
-                    case 4 -> GenericContainerScreenHandler.createGeneric9x4(syncId, playerx.getInventory());
-                    case 5 -> GenericContainerScreenHandler.createGeneric9x5(syncId, playerx.getInventory());
-                    case 6 -> GenericContainerScreenHandler.createGeneric9x6(syncId, playerx.getInventory());
-                    default -> throw new IllegalStateException("Unexpected value: " + item.useActions.guiSize);
-                };
+            user.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inventory, playerx) -> switch (item.useActions.guiSize) {
+                case 1 -> GenericContainerScreenHandler.createGeneric9x1(syncId, playerx.getInventory());
+                case 2 -> GenericContainerScreenHandler.createGeneric9x2(syncId, playerx.getInventory());
+                case 3 -> GenericContainerScreenHandler.createGeneric9x3(syncId, playerx.getInventory());
+                case 4 -> GenericContainerScreenHandler.createGeneric9x4(syncId, playerx.getInventory());
+                case 5 -> GenericContainerScreenHandler.createGeneric9x5(syncId, playerx.getInventory());
+                case 6 -> GenericContainerScreenHandler.createGeneric9x6(syncId, playerx.getInventory());
+                default -> throw new IllegalStateException("Unexpected value: " + item.useActions.guiSize);
             }, new LiteralText(item.useActions.inventoryName)));
         }
 

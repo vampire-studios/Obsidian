@@ -36,7 +36,7 @@ public class Items implements AddonModule {
                 }
                 if (item.information.wearable) {
                     if (item.information.dyeable) {
-                        RegistryUtils.registerItem(new DyeableWearableItemImpl(item, settings), item.information.name.id);
+                        RegistryUtils.registerItem(new WearableAndDyeableItemImpl(item, settings), item.information.name.id);
                     } else {
                         RegistryUtils.registerItem(new WearableItemImpl(item, settings), item.information.name.id);
                     }
