@@ -29,7 +29,7 @@ public class AdditionalBlockInformation {
     public boolean waterloggable = false;
 
     public boolean dyable = false;
-    public int defaultColor = /*10511680*/16777215;
+    public int defaultColor = 16579836;
 
     public boolean sittable = false;
     public boolean strippable = false;
