@@ -1,27 +1,61 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.minecraft.structure.rule.*;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.YOffset;
+import net.minecraft.world.gen.decorator.RangeDecoratorConfig;
+import net.minecraft.world.gen.heightprovider.TrapezoidHeightProvider;
+import net.minecraft.world.gen.heightprovider.UniformHeightProvider;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 public class OreInformation {
 
-    public String test_type;
+    public String test_type = "tag";
     public TargetState target_state;
     public Identifier[] biomes;
-    public String spawnPredicate;
+    public boolean triangleRange = false;
+    public int plateau = 0;
+    public String spawnPredicate = "built_in";
     public String[] biomeCategories;
     public int size = 17;
-    public int repeat_amount = 30;
+    public int chance = 30;
     public OreRangeConfig config;
     public boolean survivesExplosion = true;
+    public CustomYOffset topOffset;
+    public CustomYOffset bottomOffset;
+
+    public RangeDecoratorConfig rangeConfig() {
+        return new RangeDecoratorConfig(
+                triangleRange ? TrapezoidHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset(), plateau)
+                        : UniformHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset())
+        );
+    }
+
+    public RuleTest ruleTest() {
+        RuleTest ruleTest;
+        switch (test_type) {
+            default -> throw new IllegalStateException("Unexpected value: " + test_type);
+            case "tag" -> ruleTest = new TagMatchRuleTest(BlockTags.getTagGroup().getTag(target_state.tag));
+            case "always_true" -> ruleTest = AlwaysTrueRuleTest.INSTANCE;
+            case "block_match" -> ruleTest = new BlockMatchRuleTest(Registry.BLOCK.get(target_state.block));
+            case "block_state_match" -> ruleTest = new BlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties));
+            case "random_block_match" -> ruleTest = new RandomBlockMatchRuleTest(Registry.BLOCK.get(target_state.block), target_state.probability);
+            case "random_block_state_match" -> ruleTest = new RandomBlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
+        }
+        return ruleTest;
+    }
 
     public Predicate<BiomeSelectionContext> biomeSelector() {
         Predicate<BiomeSelectionContext> predicate;
@@ -39,8 +73,7 @@ public class OreInformation {
                         categories[i] = Biome.Category.byName(biomeCategories[i]);
                     }
                     predicate = BiomeSelectors.categories(Utils.stripNulls(categories));
-                }
-                else predicate = BiomeSelectors.categories();
+                } else predicate = BiomeSelectors.categories();
             }
             case "biomes" -> {
                 if (biomes != null) {
@@ -51,11 +84,32 @@ public class OreInformation {
                         if (optional.isPresent()) biomeArray[i] = optional.get();
                     }
                     predicate = BiomeSelectors.includeByKey(Utils.stripNulls(biomeArray));
-                }
-                else predicate = BiomeSelectors.includeByKey();
+                } else predicate = BiomeSelectors.includeByKey();
             }
         }
         return predicate;
+    }
+
+    protected static class CustomYOffset {
+        public String type = "fixed";
+        public int offset = 0;
+
+        public YOffset yOffset() {
+            return switch (type) {
+                case "fixed" -> new YOffset.Fixed(offset);
+                case "above_bottom" -> new YOffset.AboveBottom(offset);
+                case "below_top" -> new YOffset.BelowTop(offset);
+            };
+        }
+    }
+
+    protected static class TargetState {
+
+        public Identifier block;
+        public Identifier tag = new Identifier("base_stone_overworld");
+        public Map<String, String> properties;
+        public float probability;
+
     }
 
 }

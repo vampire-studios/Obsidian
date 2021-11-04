@@ -11,18 +11,14 @@ import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
-import net.minecraft.structure.rule.TagMatchRuleTest;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.YOffset;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
@@ -33,7 +29,6 @@ import java.io.FileReader;
 import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.ORES;
 
 public class Ores implements AddonModule {
 
@@ -52,20 +47,15 @@ public class Ores implements AddonModule {
 			ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
 					Feature.ORE.configure(
 							new OreFeatureConfig(
-									new TagMatchRuleTest(/*BlockTags.getTagGroup().getTagOrEmpty(block.ore_information.target_state.tag)*/BlockTags.BASE_STONE_OVERWORLD),
+									block.ore_information.ruleTest(),
 									blockImpl.getDefaultState(),
-									8
+									block.ore_information.size
 							)
-					).uniformRange(
-						/*YOffset.aboveBottom(block.ore_information.config.above_bottom_offset),
-						YOffset.belowTop(block.ore_information.config.below_top_offset)*/
-						YOffset.fixed(10),
-						YOffset.fixed(50)
-					).spreadHorizontally()/*.applyChance(12)*/);
+					).range(block.ore_information.rangeConfig()).spreadHorizontally().applyChance(block.ore_information.chance));
 
 			Optional<RegistryKey<ConfiguredFeature<?, ?>>> optional = BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature);
 			BiomeModifications.create(Utils.appendToPath(block.information.name.id, "_ore_feature"))
-					.add(ModificationPhase.ADDITIONS, BiomeSelectors.builtIn(),
+					.add(ModificationPhase.ADDITIONS, block.ore_information.biomeSelector(),
 							biomeModificationContext -> biomeModificationContext.getGenerationSettings().addFeature(
 									GenerationStep.Feature.UNDERGROUND_ORES,
 									optional.get()

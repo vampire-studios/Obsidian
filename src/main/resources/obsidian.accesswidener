@@ -22,3 +22,7 @@ accessible method net/minecraft/block/Material$Builder lightPassesThrough ()Lnet
 accessible method net/minecraft/block/Material$Builder burnable ()Lnet/minecraft/block/Material$Builder;
 accessible method net/minecraft/block/Material$Builder destroyedByPiston ()Lnet/minecraft/block/Material$Builder;
 accessible method net/minecraft/block/Material$Builder blocksPistons ()Lnet/minecraft/block/Material$Builder;
+
+accessible class net/minecraft/world/gen/YOffset$Fixed
+accessible class net/minecraft/world/gen/YOffset$AboveBottom
+accessible class net/minecraft/world/gen/YOffset$BelowTop

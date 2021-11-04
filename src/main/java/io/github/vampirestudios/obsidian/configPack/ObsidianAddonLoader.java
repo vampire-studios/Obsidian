@@ -148,7 +148,7 @@ public class ObsidianAddonLoader {
     public static BlockState getState(net.minecraft.block.Block block, Map<String, String> jsonProperties) {
         BlockState blockstate = block.getDefaultState();
         Collection<Property<?>> properties = blockstate.getProperties();
-        for (Property property : properties) {
+        for (Property<?> property : properties) {
             String propertyName = property.getName();
             if (jsonProperties.containsKey(propertyName)) {
                 String valueName = jsonProperties.get(propertyName);
