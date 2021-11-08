@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import net.minecraft.block.Material;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemGroup;
@@ -20,12 +21,12 @@ public class BlockInformation {
     public String material = "minecraft:stone";
     public boolean has_advanced_bounding_box = false;
     public float[] bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public CustomMaterial custom_material;
+    public Identifier custom_material;
     public NameInformation name;
     public Identifier item_group;
     public boolean collidable = true;
     public String sound_group = "minecraft:stone";
-    public CustomSoundGroup custom_sound_group;
+    public Identifier custom_sound_group;
     public float hardness = 3.0F;
     public float resistance = 3.0F;
     public boolean randomTicks = false;
@@ -52,17 +53,20 @@ public class BlockInformation {
     public boolean wearable = false;
     public Identifier wearableModel;
 
+    public CustomBlockState blockstate;
+
     public List<ItemStack.TooltipSection> getRemovedTooltipSections() {
         return List.of();
     }
 
     public BlockSoundGroup getBlockSoundGroup() {
         if (custom_sound_group != null) {
-            SoundEvent breakSound = Registry.SOUND_EVENT.get(custom_sound_group.break_sound);
-            SoundEvent stepSound = Registry.SOUND_EVENT.get(custom_sound_group.step_sound);
-            SoundEvent placeSound = Registry.SOUND_EVENT.get(custom_sound_group.place_sound);
-            SoundEvent hitSound = Registry.SOUND_EVENT.get(custom_sound_group.hit_sound);
-            SoundEvent fallSound = Registry.SOUND_EVENT.get(custom_sound_group.fall_sound);
+            CustomSoundGroup soundGroup = ObsidianAddonLoader.BLOCK_SOUND_GROUPS.get(custom_sound_group);
+            SoundEvent breakSound = Registry.SOUND_EVENT.get(soundGroup.break_sound);
+            SoundEvent stepSound = Registry.SOUND_EVENT.get(soundGroup.step_sound);
+            SoundEvent placeSound = Registry.SOUND_EVENT.get(soundGroup.place_sound);
+            SoundEvent hitSound = Registry.SOUND_EVENT.get(soundGroup.hit_sound);
+            SoundEvent fallSound = Registry.SOUND_EVENT.get(soundGroup.fall_sound);
             return new BlockSoundGroup(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
         } else {
             return switch (sound_group) {
@@ -148,9 +152,10 @@ public class BlockInformation {
 
     public Material getMaterial() {
         if (custom_material != null) {
-            return new Material(custom_material.getMapColor(), custom_material.liquid, custom_material.solid,
-                    custom_material.allows_movement, custom_material.allows_light, custom_material.burnable,
-                    custom_material.replaceable, custom_material.getPistonBehavior());
+            CustomMaterial customMaterial = ObsidianAddonLoader.BLOCK_MATERIALS.get(custom_material);
+            return new Material(customMaterial.getMapColor(), customMaterial.liquid, customMaterial.solid,
+                    customMaterial.allows_movement, customMaterial.allows_light, customMaterial.burnable,
+                    customMaterial.replaceable, customMaterial.getPistonBehavior());
         } else {
             return switch (material) {
                 case "minecraft:structure_void" -> Material.STRUCTURE_VOID;

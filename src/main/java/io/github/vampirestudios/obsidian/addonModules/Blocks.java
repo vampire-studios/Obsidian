@@ -55,7 +55,7 @@ public class Blocks implements AddonModule {
             if (block.information.dynamic_boundaries) blockSettings.dynamicBounds();
 
             Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
-            if (block.food_information != null) settings.food(block.food_information.getBuilder().build());
+            if (block.food_information != null) settings.food(Obsidian.FOOD_COMPONENTS.get(block.food_information.foodComponent));
             if (block.information.fireproof) settings.fireproof();
 
             if (block.additional_information != null) {

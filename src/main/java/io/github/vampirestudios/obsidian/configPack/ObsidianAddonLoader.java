@@ -4,6 +4,8 @@ import com.google.common.base.Joiner;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.*;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.block.CustomMaterial;
+import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -43,6 +45,9 @@ public class ObsidianAddonLoader {
     public static RegistryHelper REGISTRY_HELPER;
     public static Registry<Item> ITEMS = FabricRegistryBuilder.createSimple(Item.class, id("items")).buildAndRegister();
     public static Registry<FoodItem> FOODS = FabricRegistryBuilder.createSimple(FoodItem.class, id("foods")).buildAndRegister();
+    public static Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, id("custom_food_components")).buildAndRegister();
+    public static Registry<CustomMaterial> BLOCK_MATERIALS = FabricRegistryBuilder.createSimple(CustomMaterial.class, id("block_materials")).buildAndRegister();
+    public static Registry<CustomSoundGroup> BLOCK_SOUND_GROUPS = FabricRegistryBuilder.createSimple(CustomSoundGroup.class, id("block_sound_groups")).buildAndRegister();
     public static Registry<MusicDisc> MUSIC_DISCS = FabricRegistryBuilder.createSimple(MusicDisc.class, id("music_discs")).buildAndRegister();
     public static Registry<KeyBinding> KEY_BINDINGS = FabricRegistryBuilder.createSimple(KeyBinding.class, id("key_bindings")).buildAndRegister();
     public static Registry<Particle> PARTICLES = FabricRegistryBuilder.createSimple(Particle.class, id("particles")).buildAndRegister();
@@ -148,7 +153,7 @@ public class ObsidianAddonLoader {
     public static BlockState getState(net.minecraft.block.Block block, Map<String, String> jsonProperties) {
         BlockState blockstate = block.getDefaultState();
         Collection<Property<?>> properties = blockstate.getProperties();
-        for (Property<?> property : properties) {
+        for (Property property : properties) {
             String propertyName = property.getName();
             if (jsonProperties.containsKey(propertyName)) {
                 String valueName = jsonProperties.get(propertyName);
@@ -184,12 +189,16 @@ public class ObsidianAddonLoader {
     }
 
     public static <T> T register(Registry<T> list, String type, Identifier name, T idk) {
-        Obsidian.LOGGER.info("[Obsidian] Registered a {} {}.", type, name);
+        Obsidian.LOGGER.info("[Obsidian] Registered {} {}.", type, name);
         if (list.get(name) != null) return list.get(name);
         else return Registry.register(list, name, idk);
     }
 
     public static void failedRegistering(String type, String name, Exception e) {
+        failedRegistering(type, Identifier.tryParse(name), e);
+    }
+
+    public static void failedRegistering(String type, Identifier name, Exception e) {
         Obsidian.LOGGER.error("[Obsidian] Failed to register {} {}.", type, name);
         e.printStackTrace();
         Obsidian.LOGGER.error(e.getMessage());

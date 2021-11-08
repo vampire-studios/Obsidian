@@ -31,7 +31,6 @@ public class OreInformation {
     public String[] biomeCategories;
     public int size = 17;
     public int chance = 30;
-    public OreRangeConfig config;
     public boolean survivesExplosion = true;
     public CustomYOffset topOffset;
     public CustomYOffset bottomOffset;
@@ -44,17 +43,15 @@ public class OreInformation {
     }
 
     public RuleTest ruleTest() {
-        RuleTest ruleTest;
-        switch (test_type) {
+        return switch (test_type) {
+            case "tag" -> new TagMatchRuleTest(/*BlockTags.getTagGroup().getTag(*//*target_state.tag*//*new Identifier("base_stone_overworld"))*/BlockTags.BASE_STONE_OVERWORLD);
+            case "always_true" -> AlwaysTrueRuleTest.INSTANCE;
+            case "block_match" -> new BlockMatchRuleTest(Registry.BLOCK.get(target_state.block));
+            case "block_state_match" -> new BlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties));
+            case "random_block_match" -> new RandomBlockMatchRuleTest(Registry.BLOCK.get(target_state.block), target_state.probability);
+            case "random_block_state_match" -> new RandomBlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
             default -> throw new IllegalStateException("Unexpected value: " + test_type);
-            case "tag" -> ruleTest = new TagMatchRuleTest(BlockTags.getTagGroup().getTag(target_state.tag));
-            case "always_true" -> ruleTest = AlwaysTrueRuleTest.INSTANCE;
-            case "block_match" -> ruleTest = new BlockMatchRuleTest(Registry.BLOCK.get(target_state.block));
-            case "block_state_match" -> ruleTest = new BlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties));
-            case "random_block_match" -> ruleTest = new RandomBlockMatchRuleTest(Registry.BLOCK.get(target_state.block), target_state.probability);
-            case "random_block_state_match" -> ruleTest = new RandomBlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
-        }
-        return ruleTest;
+        };
     }
 
     public Predicate<BiomeSelectionContext> biomeSelector() {
@@ -99,6 +96,7 @@ public class OreInformation {
                 case "fixed" -> new YOffset.Fixed(offset);
                 case "above_bottom" -> new YOffset.AboveBottom(offset);
                 case "below_top" -> new YOffset.BelowTop(offset);
+                default -> throw new IllegalArgumentException();
             };
         }
     }

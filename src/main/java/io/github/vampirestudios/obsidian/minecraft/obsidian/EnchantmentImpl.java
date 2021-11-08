@@ -3,9 +3,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.AttackDamage;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.ProtectionAmount;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -76,9 +74,11 @@ public class EnchantmentImpl extends Enchantment {
     @Override
     protected boolean canAccept(Enchantment other) {
         if (enchantment.accepted_enchantments != null) {
+            Identifier enchantmentId = Registry.ENCHANTMENT.getId(other);
             for (Identifier identifier : enchantment.accepted_enchantments) {
-                return identifier.equals(Registry.ENCHANTMENT.getId(other));
+                if(identifier.equals(enchantmentId)) return true;
             }
+            return false;
         }
         return true;
     }
@@ -86,21 +86,13 @@ public class EnchantmentImpl extends Enchantment {
     @Override
     public boolean isAcceptableItem(ItemStack stack) {
         if (enchantment.accepted_items != null) {
+            Identifier itemId = Registry.ITEM.getId(stack.getItem());
             for (Identifier identifier : enchantment.accepted_items) {
-                return identifier.equals(Registry.ITEM.getId(stack.getItem()));
+                if(identifier.equals(itemId)) return true;
             }
+            return false;
         }
         return true;
-    }
-
-    @Override
-    public void onTargetDamaged(LivingEntity user, Entity target, int level) {
-        super.onTargetDamaged(user, target, level);
-    }
-
-    @Override
-    public void onUserDamaged(LivingEntity user, Entity attacker, int level) {
-        super.onUserDamaged(user, attacker, level);
     }
 
     @Override

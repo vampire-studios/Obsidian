@@ -16,8 +16,7 @@
 	"MixinPlayerManager",
 	"TridentAttackGoalMixin",
 	"TridentEntityAccessor",
-	"client.ModelLoaderMixin",
-	"fabric.MixinFluidRenderer"
+	"client.ModelLoaderMixin"
   ],
   "client": [
 	"client.ItemRendererMixin",

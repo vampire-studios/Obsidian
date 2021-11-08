@@ -29,7 +29,7 @@ public class Food implements AddonModule {
             if (foodItem == null) return;
             Item.Settings settings = new Item.Settings().group(foodItem.information.getItemGroup())
                     .maxCount(foodItem.information.max_count).rarity(foodItem.information.getRarity());
-            FoodComponent foodComponent = foodItem.food_information.getBuilder().build();
+            FoodComponent foodComponent = Obsidian.FOOD_COMPONENTS.get(foodItem.food_information.foodComponent);
             Registry.register(Registry.ITEM, foodItem.information.name.id, new FoodItemImpl(foodItem, settings
                     .maxDamage(foodItem.information.use_duration)
                     .food(foodComponent)));

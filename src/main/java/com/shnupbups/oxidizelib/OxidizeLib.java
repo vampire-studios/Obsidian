@@ -1,32 +1,32 @@
 package com.shnupbups.oxidizelib;
 
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import com.google.common.base.Suppliers;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.item.HoneycombItem;
 
-public class OxidizeLib {
-	public static final ArrayList<OxidizableFamily> OXIDIZABLE_FAMILIES = new ArrayList<>();
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
-	private static Supplier<BiMap<Block, Block>> OXIDIZATION_LEVEL_INCREASES;
-	private static Supplier<BiMap<Block, Block>> OXIDIZATION_LEVEL_DECREASES;
-	private static Supplier<BiMap<Block, Block>> UNWAXED_TO_WAXED;
-	private static Supplier<BiMap<Block, Block>> WAXED_TO_UNWAXED;
+public class OxidizeLib {
+	protected static final List<OxidizableFamily> OXIDIZABLE_FAMILIES = new ArrayList<>();
+
+	private static Supplier<BiMap<Block, Block>> oxidizationLevelIncreases;
+	private static Supplier<BiMap<Block, Block>> oxidizationLevelDecreases;
+	private static Supplier<BiMap<Block, Block>> unwaxedToWaxed;
+	private static Supplier<BiMap<Block, Block>> waxedToUnwaxed;
 
 	public static void registerOxidizableFamily(OxidizableFamily family) {
 		OXIDIZABLE_FAMILIES.add(family);
 	}
 
 	public static Supplier<BiMap<Block, Block>> getOxidizationLevelIncreases() {
-		if(OXIDIZATION_LEVEL_INCREASES != null) return OXIDIZATION_LEVEL_INCREASES;
+		if(oxidizationLevelIncreases != null) return oxidizationLevelIncreases;
 
 		ImmutableBiMap.Builder<Block, Block> builder = ImmutableBiMap.builder();
 
@@ -36,21 +36,21 @@ public class OxidizeLib {
 			builder.putAll(family.getOxidizationLevelIncreasesMap());
 		}
 
-		OXIDIZATION_LEVEL_INCREASES = Suppliers.memoize(builder::build);
+		oxidizationLevelIncreases = Suppliers.memoize(builder::build);
 
-		return OXIDIZATION_LEVEL_INCREASES;
+		return oxidizationLevelIncreases;
 	}
 
 	public static Supplier<BiMap<Block, Block>> getOxidizationLevelDecreases() {
-		if(OXIDIZATION_LEVEL_DECREASES != null) return OXIDIZATION_LEVEL_DECREASES;
+		if(oxidizationLevelDecreases != null) return oxidizationLevelDecreases;
 
-		OXIDIZATION_LEVEL_DECREASES = Suppliers.memoize(() -> getOxidizationLevelIncreases().get().inverse());
+		oxidizationLevelDecreases = Suppliers.memoize(() -> getOxidizationLevelIncreases().get().inverse());
 
-		return OXIDIZATION_LEVEL_DECREASES;
+		return oxidizationLevelDecreases;
 	}
 
 	public static Supplier<BiMap<Block, Block>> getUnwaxedToWaxed() {
-		if(UNWAXED_TO_WAXED != null) return UNWAXED_TO_WAXED;
+		if(unwaxedToWaxed != null) return unwaxedToWaxed;
 
 		ImmutableBiMap.Builder<Block, Block> builder = ImmutableBiMap.builder();
 
@@ -60,33 +60,25 @@ public class OxidizeLib {
 			builder.putAll(family.getUnwaxedToWaxedMap());
 		}
 
-		UNWAXED_TO_WAXED = Suppliers.memoize(builder::build);
+		unwaxedToWaxed = Suppliers.memoize(builder::build);
 
-		return UNWAXED_TO_WAXED;
+		return unwaxedToWaxed;
 	}
 
 	public static Supplier<BiMap<Block, Block>> getWaxedToUnwaxed() {
-		if(WAXED_TO_UNWAXED != null) return WAXED_TO_UNWAXED;
+		if(waxedToUnwaxed != null) return waxedToUnwaxed;
 
-		WAXED_TO_UNWAXED = Suppliers.memoize(() -> getUnwaxedToWaxed().get().inverse());
+		waxedToUnwaxed = Suppliers.memoize(() -> getUnwaxedToWaxed().get().inverse());
 
-		return WAXED_TO_UNWAXED;
+		return waxedToUnwaxed;
 	}
 
 	public static Optional<Block> getDecreasedOxidizationBlock(Block block) {
 		return Optional.ofNullable(getOxidizationLevelDecreases().get().get(block));
 	}
 
-	public static Optional<BlockState> getDecreasedOxidizationState(BlockState state) {
-		return getDecreasedOxidizationBlock(state.getBlock()).map((block) -> block.getStateWithProperties(state));
-	}
-
 	public static Optional<Block> getIncreasedOxidizationBlock(Block block) {
 		return Optional.ofNullable(getOxidizationLevelIncreases().get().get(block));
-	}
-
-	public static Optional<BlockState> getIncreasedOxidizationState(BlockState state) {
-		return getIncreasedOxidizationBlock(state.getBlock()).map((block) -> block.getStateWithProperties(state));
 	}
 
 	public static Optional<Block> getWaxedBlock(Block block) {
@@ -94,7 +86,7 @@ public class OxidizeLib {
 	}
 
 	public static Optional<BlockState> getWaxedState(BlockState state) {
-		return getWaxedBlock(state.getBlock()).map((block) -> block.getStateWithProperties(state));
+		return getWaxedBlock(state.getBlock()).map(block -> block.getStateWithProperties(state));
 	}
 
 	public static Optional<Block> getUnwaxedBlock(Block block) {
@@ -102,7 +94,7 @@ public class OxidizeLib {
 	}
 
 	public static Optional<BlockState> getUnwaxedState(BlockState state) {
-		return getUnwaxedBlock(state.getBlock()).map((block) -> block.getStateWithProperties(state));
+		return getUnwaxedBlock(state.getBlock()).map(block -> block.getStateWithProperties(state));
 	}
 
 	public static Block getUnaffectedOxidizationBlock(Block block) {
@@ -115,7 +107,4 @@ public class OxidizeLib {
 		return block2;
 	}
 
-	public static BlockState getUnaffectedOxidizationState(BlockState state) {
-		return getUnaffectedOxidizationBlock(state.getBlock()).getStateWithProperties(state);
-	}
 }

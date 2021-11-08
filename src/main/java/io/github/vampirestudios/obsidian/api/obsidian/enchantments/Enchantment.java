@@ -49,11 +49,11 @@ public class Enchantment {
     }
 
     public EquipmentSlot[] getEquipmentSlots() {
-        EquipmentSlot[] slots = new EquipmentSlot[10];
+        EquipmentSlot[] equipmentSlots = new EquipmentSlot[10];
         for (int i = 0; i < this.slots.length; i++) {
-            slots[i] = EquipmentSlot.byName(this.slots[i]);
+            equipmentSlots[i] = EquipmentSlot.byName(this.slots[i]);
         }
-        return slots;
+        return equipmentSlots;
     }
 
 }

@@ -26,3 +26,6 @@ accessible method net/minecraft/block/Material$Builder blocksPistons ()Lnet/mine
 accessible class net/minecraft/world/gen/YOffset$Fixed
 accessible class net/minecraft/world/gen/YOffset$AboveBottom
 accessible class net/minecraft/world/gen/YOffset$BelowTop
+accessible method net/minecraft/world/gen/YOffset$Fixed <init> (I)V
+accessible method net/minecraft/world/gen/YOffset$AboveBottom <init> (I)V
+accessible method net/minecraft/world/gen/YOffset$BelowTop <init> (I)V

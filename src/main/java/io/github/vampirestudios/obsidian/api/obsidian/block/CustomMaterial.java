@@ -2,8 +2,11 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.util.Identifier;
 
 public class CustomMaterial {
+
+    public Identifier id;
 
     public String map_color;
     public boolean allows_movement;

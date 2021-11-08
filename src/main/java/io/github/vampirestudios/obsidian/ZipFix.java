@@ -68,13 +68,13 @@ public class ZipFix {
         String path = args[0];
         String packVersion = args[1];
         fix(path + packVersion, path + packVersion + "_extracted2");
-//		String zipFilePath = path + packVersion;
-//		String destDirectory = path + packVersion + "_extracted2";
-//		UnzipUtility unzipper = new UnzipUtility();
-//		try {
-//			unzipper.unzip(zipFilePath, destDirectory);
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//		}
+		String zipFilePath = path + packVersion;
+		String destDirectory = path + packVersion + "_extracted2";
+		UnzipUtility unzipper = new UnzipUtility();
+		try {
+			unzipper.unzip(zipFilePath, destDirectory);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
     }
 }

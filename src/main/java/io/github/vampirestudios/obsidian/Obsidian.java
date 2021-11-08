@@ -18,6 +18,8 @@ import io.github.vampirestudios.obsidian.api.dataexchange.handler.RequestFiles;
 import io.github.vampirestudios.obsidian.api.dataexchange.handler.SendFiles;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
+import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyType;
+import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyTypes;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.BreakDoorAnnotationComponent;
@@ -39,11 +41,11 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.item.FoodComponent;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.ActionResult;
@@ -67,20 +69,25 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 			.setPrettyPrinting()
 			.setLenient()
 			.create();
-	public static String MOD_ID = "obsidian";
+	public static final String MOD_ID = "obsidian";
 	public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = FabricRegistryBuilder.createSimple(AddonModule.class, id("addon_modules")).buildAndRegister();
+	public static final Registry<PropertyType> PROPERTY_TYPES = FabricRegistryBuilder.createSimple(PropertyType.class, id("property_types")).buildAndRegister();
 	public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = FabricRegistryBuilder.createSimple(ItemGroup.class, new Identifier(MOD_ID, "item_groups")).buildAndRegister();
+	public static final Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, new Identifier(MOD_ID, "food_components")).buildAndRegister();
 	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
 	public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.block.Event>> BEDROCK_BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_event_registry")), Lifecycle.stable());
 	public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.Component>> BEDROCK_BLOCK_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_components_registry")), Lifecycle.stable());
 	public static final Registry<Class<? extends Event>> BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "block_event_registry")), Lifecycle.stable());
-	public static String NAME = "Obsidian";
+	public static final String NAME = "Obsidian";
 	public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
-	public static Obsidian INSTANCE;
-	public static String VERSION = "0.6.1-alpha";
+	public static final Obsidian INSTANCE = new Obsidian();
+	public static final String VERSION = "0.7.0-alpha";
 	public static ObsidianConfig CONFIG;
-	public static EntityType<SeatEntity> SEAT;
+	public static final EntityType<SeatEntity> SEAT = Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, "seat"), FabricEntityTypeBuilder.
+			<SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
+			.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
+			.build());
 
 	public static Identifier id(String path) {
 		return new Identifier(MOD_ID, path);
@@ -91,7 +98,11 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 	}
 
 	public static <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
-		Registry.register(registry, new Identifier(MOD_ID, name), idk);
+		registerInRegistry(registry, new Identifier(MOD_ID, name), idk);
+	}
+
+	public static <T> void registerInRegistry(Registry<T> registry, Identifier name, T idk) {
+		Registry.register(registry, name, idk);
 	}
 
 	public static void registerDataPack(Identifier id, Processor<ArtificeResourcePack.ServerResourcePackBuilder> register) {
@@ -105,17 +116,11 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 
 	@Override
 	public void onInitialize() {
-		INSTANCE = this;
 		LOGGER.info(String.format("You're now running Obsidian v%s for 1.17.1", VERSION));
 		AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 
 		CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
-
-		SEAT = Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, "seat"), FabricEntityTypeBuilder.
-				<SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
-				.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
-				.build());
 
 		//Item Groups
 		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
@@ -134,7 +139,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
 
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "agable", AgeableComponent.class);
+		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "ageable", AgeableComponent.class);
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
@@ -148,7 +153,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "namable", NamableComponent.class);
+		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "nameable", NameableComponent.class);
 
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
 
@@ -192,7 +197,12 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
+		PropertyTypes.init();
+
 		registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "food_components", new FoodComponents());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "block_sound_groups", new BlockSoundGroups());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "block_materials", new BlockMaterials());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
@@ -230,7 +240,6 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 			if (!world.canPlayerModifyAt(player, hit.getBlockPos()))
 				return ActionResult.PASS;
 
-			BlockState s = world.getBlockState(hit.getBlockPos());
 			net.minecraft.block.Block b = world.getBlockState(hit.getBlockPos()).getBlock();
 
 			if ((b instanceof SittableBlock || b instanceof HorizontalFacingSittableBlock || b instanceof SittableAndDyableBlock || b instanceof HorizontalFacingSittableAndDyableBlock) && !SeatEntity.OCCUPIED.containsKey(new Vec3d(hit.getBlockPos().getX(), hit.getBlockPos().getY(), hit.getBlockPos().getZ())) && player.getStackInHand(hand).isEmpty()) {
