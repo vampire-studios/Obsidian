@@ -9,7 +9,7 @@ import com.swordglowsblue.artifice.common.ArtificeRegistry;
 import com.swordglowsblue.artifice.impl.ArtificeImpl;
 import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
 import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
-import io.github.vampirestudios.obsidian.addonModules.*;
+import io.github.vampirestudios.obsidian.addon_modules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
 import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloClient;

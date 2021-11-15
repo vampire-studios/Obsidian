@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.addonModules.ExpandedItemGroups;
+import io.github.vampirestudios.obsidian.addon_modules.ExpandedItemGroups;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;

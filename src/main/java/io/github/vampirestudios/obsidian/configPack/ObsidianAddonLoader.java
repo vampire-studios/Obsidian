@@ -10,6 +10,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
@@ -74,6 +75,7 @@ public class ObsidianAddonLoader {
     public static Registry<ShieldItem> SHIELDS = FabricRegistryBuilder.createSimple(ShieldItem.class, id("shields")).buildAndRegister();
     public static Registry<VillagerProfession> VILLAGER_PROFESSIONS = FabricRegistryBuilder.createSimple(VillagerProfession.class, id("villager_professions")).buildAndRegister();
     public static Registry<VillagerBiomeType> VILLAGER_BIOME_TYPES = FabricRegistryBuilder.createSimple(VillagerBiomeType.class, id("villager_biome_types")).buildAndRegister();
+    public static Registry<Fluid> FLUIDS = FabricRegistryBuilder.createSimple(Fluid.class, id("fluids")).buildAndRegister();
 
     public static void loadDefaultObsidianAddons() {
         if (!OBSIDIAN_ADDON_DIRECTORY.exists())
