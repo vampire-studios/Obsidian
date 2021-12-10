@@ -19,9 +19,9 @@ import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.decorator.HeightRangePlacementModifier;
+import net.minecraft.world.gen.decorator.RarityFilterPlacementModifier;
+import net.minecraft.world.gen.feature.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,9 +51,11 @@ public class Ores implements AddonModule {
 									blockImpl.getDefaultState(),
 									block.ore_information.size
 							)
-					).range(block.ore_information.rangeConfig()).spreadHorizontally().applyChance(block.ore_information.chance));
+					));
 
-			Optional<RegistryKey<ConfiguredFeature<?, ?>>> optional = BuiltinRegistries.CONFIGURED_FEATURE.getKey(feature);
+			PlacedFeature placedFeature = PlacedFeatures.register(Utils.appendToPath(block.information.name.id, "_ore_feature_pf").toString(), feature.withPlacement(HeightRangePlacementModifier.of(block.ore_information.heightRange()), RarityFilterPlacementModifier.of(block.ore_information.chance)));
+
+			Optional<RegistryKey<PlacedFeature>> optional = BuiltinRegistries.PLACED_FEATURE.getKey(placedFeature);
 			BiomeModifications.create(Utils.appendToPath(block.information.name.id, "_ore_feature"))
 					.add(ModificationPhase.ADDITIONS, block.ore_information.biomeSelector(),
 							biomeModificationContext -> biomeModificationContext.getGenerationSettings().addFeature(

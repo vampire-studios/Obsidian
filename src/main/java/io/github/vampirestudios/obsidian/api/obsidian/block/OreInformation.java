@@ -12,7 +12,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.YOffset;
-import net.minecraft.world.gen.decorator.RangeDecoratorConfig;
+import net.minecraft.world.gen.heightprovider.HeightProvider;
 import net.minecraft.world.gen.heightprovider.TrapezoidHeightProvider;
 import net.minecraft.world.gen.heightprovider.UniformHeightProvider;
 
@@ -35,11 +35,9 @@ public class OreInformation {
     public CustomYOffset topOffset;
     public CustomYOffset bottomOffset;
 
-    public RangeDecoratorConfig rangeConfig() {
-        return new RangeDecoratorConfig(
-                triangleRange ? TrapezoidHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset(), plateau)
-                        : UniformHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset())
-        );
+    public HeightProvider heightRange() {
+        return triangleRange ? TrapezoidHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset(), plateau)
+                : UniformHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset());
     }
 
     public RuleTest ruleTest() {

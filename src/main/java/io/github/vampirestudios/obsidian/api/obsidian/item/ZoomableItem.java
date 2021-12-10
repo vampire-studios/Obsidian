@@ -3,8 +3,10 @@ package io.github.vampirestudios.obsidian.api.obsidian.item;
 import io.github.ennuil.libzoomer.api.MouseModifier;
 import io.github.ennuil.libzoomer.api.TransitionMode;
 import io.github.ennuil.libzoomer.api.ZoomOverlay;
-import io.github.ennuil.libzoomer.api.modifiers.*;
-import io.github.ennuil.libzoomer.api.overlays.NoZoomOverlay;
+import io.github.ennuil.libzoomer.api.modifiers.CinematicCameraMouseModifier;
+import io.github.ennuil.libzoomer.api.modifiers.ContainingMouseModifier;
+import io.github.ennuil.libzoomer.api.modifiers.SpyglassMouseModifier;
+import io.github.ennuil.libzoomer.api.modifiers.ZoomDivisorMouseModifier;
 import io.github.ennuil.libzoomer.api.overlays.SpyglassZoomOverlay;
 import io.github.ennuil.libzoomer.api.transitions.InstantTransitionMode;
 import io.github.ennuil.libzoomer.api.transitions.SmoothTransitionMode;
@@ -30,12 +32,12 @@ public class ZoomableItem extends Item {
                 case "containing" -> new ContainingMouseModifier();
                 case "spyglass" -> new SpyglassMouseModifier();
                 case "zoom_divisor" -> new ZoomDivisorMouseModifier();
-                default -> new NoMouseModifier();
+                default -> null;
             };
         }
 
         public ZoomOverlay getZoomOverlay() {
-            return zoomOverlay != null ? new SpyglassZoomOverlay(zoomOverlay) : new NoZoomOverlay();
+            return zoomOverlay != null ? new SpyglassZoomOverlay(zoomOverlay) : null;
         }
     }
 }

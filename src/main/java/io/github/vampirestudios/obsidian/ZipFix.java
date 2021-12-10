@@ -35,30 +35,30 @@ public class ZipFix {
 				}
 			}
 		}
-        /*try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
-			ZipInputStream zis = new ZipInputStream(is);
-			ZipEntry entry = zis.getNextEntry();
-			while (entry != null) {
-				Path root = Paths.get(outFolder);
-				Path path = root.resolve(entry.getName()).normalize();
-				if (!path.startsWith(root)) {
-					throw new IOException("Invalid ZIP");
-				}
-				if (entry.isDirectory()) {
-					Files.createDirectories(path);
-				} else {
-					try (OutputStream os = Files.newOutputStream(path)) {
-						byte[] buffer = new byte[1024];
-						int len;
-						while ((len = zis.read(buffer)) > 0) {
-							os.write(buffer, 0, len);
-						}
-					}
-				}
-				entry = zis.getNextEntry();
-			}
-			zis.closeEntry();
-		}*/
+//        try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
+//			ZipInputStream zis = new ZipInputStream(is);
+//			ZipEntry entry = zis.getNextEntry();
+//			while (entry != null) {
+//				Path root = Paths.get(outFolder);
+//				Path path = root.resolve(entry.getName()).normalize();
+//				if (!path.startsWith(root)) {
+//					throw new IOException("Invalid ZIP");
+//				}
+//				if (entry.isDirectory()) {
+//					Files.createDirectories(path);
+//				} else {
+//					try (OutputStream os = Files.newOutputStream(path)) {
+//						byte[] buffer = new byte[1024];
+//						int len;
+//						while ((len = zis.read(buffer)) > 0) {
+//							os.write(buffer, 0, len);
+//						}
+//					}
+//				}
+//				entry = zis.getNextEntry();
+//			}
+//			zis.closeEntry();
+//		}
     }
 
     /**

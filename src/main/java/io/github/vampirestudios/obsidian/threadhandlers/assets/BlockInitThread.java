@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.client.ArtificeGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableBlockEntity;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.DyableBlockEntity;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
@@ -124,7 +124,7 @@ public class BlockInitThread implements Runnable {
                                 ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
-                            case DOOR:
+                            case WOODEN_DOOR:
                                 TextureAndModelInformation topTextureAndModelInformation = block.display.doorTopModel;
                                 TextureAndModelInformation bottomTextureAndModelInformation = block.display.doorBottomModel;
                                 TextureAndModelInformation topHingeTextureAndModelInformation = block.display.doorTopHingeModel;
@@ -135,6 +135,18 @@ public class BlockInitThread implements Runnable {
                                         topHingeTextureAndModelInformation.parent, topHingeTextureAndModelInformation.textures,
                                         bottomTextureAndModelInformation.parent, bottomTextureAndModelInformation.textures,
                                         bottomHingeTextureAndModelInformation.parent, bottomHingeTextureAndModelInformation.textures);
+                                break;
+                            case METAL_DOOR:
+                                TextureAndModelInformation topTextureAndModelInformation1 = block.display.doorTopModel;
+                                TextureAndModelInformation bottomTextureAndModelInformation1 = block.display.doorBottomModel;
+                                TextureAndModelInformation topHingeTextureAndModelInformation1 = block.display.doorTopHingeModel;
+                                TextureAndModelInformation bottomHingeTextureAndModelInformation1 = block.display.doorBottomHingeModel;
+                                ArtificeGenerationHelper.generateDoorBlockState(clientResourcePackBuilder, blockId);
+                                ArtificeGenerationHelper.generateDoorBlockModels(clientResourcePackBuilder, blockId,
+                                        topTextureAndModelInformation1.parent, topTextureAndModelInformation1.textures,
+                                        bottomTextureAndModelInformation1.parent, bottomTextureAndModelInformation1.textures,
+                                        topHingeTextureAndModelInformation1.parent, topHingeTextureAndModelInformation1.textures,
+                                        bottomHingeTextureAndModelInformation1.parent, bottomHingeTextureAndModelInformation1.textures);
                                 break;
                             case TRAPDOOR:
                                 topTextureAndModelInformation = block.display.trapdoorTopModel;
@@ -232,7 +244,7 @@ public class BlockInitThread implements Runnable {
 
     public static int getBlockEntityColor(Block block, BlockView view, BlockPos pos) {
         BlockEntity entity = view.getBlockEntity(pos);
-        return entity != null ? ((DyeableBlockEntity) Objects.requireNonNull(((DyeableBlockEntity) entity).getRenderAttachmentData())).getColor() : block.additional_information.defaultColor;
+        return entity != null ? ((DyableBlockEntity) entity).getDyeColor() : block.additional_information.defaultColor;
     }
 
     public static void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {

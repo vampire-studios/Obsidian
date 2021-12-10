@@ -21,9 +21,8 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
-import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilder;
+import net.minecraft.world.gen.feature.PlacedFeature;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,21 +51,19 @@ public class DumpRegistriesCommand {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         DynamicRegistryManager manager = commandSource.getSource().getServer().getRegistryManager();
         Registry<Biome> biomeRegistry = manager.get(Registry.BIOME_KEY);
-        Registry<ConfiguredFeature<?, ?>> featuresRegistry = manager.get(Registry.CONFIGURED_FEATURE_KEY);
+        Registry<PlacedFeature> featuresRegistry = manager.get(Registry.PLACED_FEATURE_KEY);
         Registry<ConfiguredStructureFeature<?, ?>> structuresRegistry = manager.get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
         Registry<ConfiguredCarver<?>> carverRegistry = manager.get(Registry.CONFIGURED_CARVER_KEY);
-        Registry<ConfiguredSurfaceBuilder<?>> surfaceBuilderRegistry = manager.get(Registry.CONFIGURED_SURFACE_BUILDER_KEY);
         Registry<StructureProcessorList> structureProcessorRegistry = manager.get(Registry.STRUCTURE_PROCESSOR_LIST_KEY);
 
-        createConfiguredSurfaceBuilderJson(modId, dataPackPath, gson, surfaceBuilderRegistry);
-        createConfiguredFeatureJson(modId, dataPackPath, gson, featuresRegistry);
+        createPlacedFeatureJson(modId, dataPackPath, gson, featuresRegistry);
         createConfiguredCarverJson(modId, dataPackPath, gson, carverRegistry);
         createConfiguredStructureJson(modId, dataPackPath, gson, structuresRegistry);
         createProcessorListJson(modId, dataPackPath, gson, structureProcessorRegistry);
-        createBiomeJsonAndPackMcMeta(modId, commandSource, biomeList, stopSpamFlag, dataPackPath, gson, biomeRegistry, featuresRegistry, structuresRegistry, carverRegistry, surfaceBuilderRegistry);
+        createBiomeJsonAndPackMcMeta(modId, commandSource, biomeList, stopSpamFlag, dataPackPath, gson, biomeRegistry, featuresRegistry, structuresRegistry, carverRegistry);
     }
 
-    private static void createBiomeJsonAndPackMcMeta(String modId, CommandContext<ServerCommandSource> commandSource, List<Biome> biomeList, boolean stopSpamFlag, Path dataPackPath, Gson gson, Registry<Biome> biomeRegistry, Registry<ConfiguredFeature<?, ?>> featuresRegistry, Registry<ConfiguredStructureFeature<?, ?>> structuresRegistry, Registry<ConfiguredCarver<?>> carverRegistry, Registry<ConfiguredSurfaceBuilder<?>> surfaceBuilderRegistry) {
+    private static void createBiomeJsonAndPackMcMeta(String modId, CommandContext<ServerCommandSource> commandSource, List<Biome> biomeList, boolean stopSpamFlag, Path dataPackPath, Gson gson, Registry<Biome> biomeRegistry, Registry<PlacedFeature> featuresRegistry, Registry<ConfiguredStructureFeature<?, ?>> structuresRegistry, Registry<ConfiguredCarver<?>> carverRegistry) {
         for (Map.Entry<RegistryKey<Biome>, Biome> biome : biomeRegistry.getEntries()) {
             String biomeKey = Objects.requireNonNull(biomeRegistry.getKey(biome.getValue())).get().getValue().toString();
             if (biomeKey.contains(modId)) {
@@ -87,16 +84,14 @@ public class DumpRegistriesCommand {
                             if (optional.isPresent()) {
                                 JsonElement root = optional.get();
                                 JsonArray features = new JsonArray();
-                                for (List<Supplier<ConfiguredFeature<?, ?>>> list : biome.getGenerationSettings().getFeatures()) {
+                                for (List<Supplier<PlacedFeature>> list : biome.getGenerationSettings().getFeatures()) {
                                     JsonArray stage = new JsonArray();
-                                    for (Supplier<ConfiguredFeature<?, ?>> feature : list) {
+                                    for (Supplier<PlacedFeature> feature : list) {
                                         featuresRegistry.getKey(feature.get()).ifPresent(featureKey -> stage.add(featureKey.getValue().toString()));
                                     }
                                     features.add(stage);
                                 }
                                 root.getAsJsonObject().add("features", features);
-                                String surfaceBuilder = surfaceBuilderRegistry.getKey(biome.getGenerationSettings().getSurfaceBuilder().get()).get().getValue().toString();
-                                root.getAsJsonObject().addProperty("surface_builder", surfaceBuilder);
 
                                 JsonObject carvers = new JsonObject();
                                 for (GenerationStep.Carver step : GenerationStep.Carver.values()) {
@@ -109,11 +104,6 @@ public class DumpRegistriesCommand {
                                     }
                                 }
                                 root.getAsJsonObject().add("carvers", carvers);
-                                JsonArray starts = new JsonArray();
-                                for (Supplier<ConfiguredStructureFeature<?, ?>> start : biome.getGenerationSettings().getStructureFeatures()) {
-                                    structuresRegistry.getKey(start.get()).ifPresent(structureKey -> starts.add(structureKey.getValue().toString()));
-                                }
-                                root.getAsJsonObject().add("starts", starts);
                                 Files.write(biomeJsonPath, gson.toJson(root).getBytes());
                             }
                         }
@@ -140,44 +130,21 @@ public class DumpRegistriesCommand {
         }
     }
 
-    private static void createConfiguredFeatureJson(String modId, Path dataPackPath, Gson gson, Registry<ConfiguredFeature<?, ?>> featuresRegistry) {
-        for (Map.Entry<RegistryKey<ConfiguredFeature<?, ?>>, ConfiguredFeature<?, ?>> feature : featuresRegistry.getEntries()) {
-            Function<Supplier<ConfiguredFeature<?, ?>>, DataResult<JsonElement>> featureCodec = JsonOps.INSTANCE.withEncoder(ConfiguredFeature.REGISTRY_CODEC);
+    private static void createPlacedFeatureJson(String modId, Path dataPackPath, Gson gson, Registry<PlacedFeature> featuresRegistry) {
+        for (Map.Entry<RegistryKey<PlacedFeature>, PlacedFeature> feature : featuresRegistry.getEntries()) {
+            Function<Supplier<PlacedFeature>, DataResult<JsonElement>> featureCodec = JsonOps.INSTANCE.withEncoder(PlacedFeature.REGISTRY_CODEC);
 
-            ConfiguredFeature<?, ?> configuredFeature = feature.getValue();
+            PlacedFeature configuredFeature = feature.getValue();
             if (feature.getKey().getValue().toString().contains(modId)) {
                 if (configuredFeature != null) {
                     if (Objects.requireNonNull(featuresRegistry.getKey(configuredFeature)).toString().contains(modId)) {
                         Optional<JsonElement> optional = (featureCodec.apply(() -> configuredFeature).result());
                         if (optional.isPresent()) {
                             try {
-                                Path cfPath = configuredFeatureJsonPath(dataPackPath, Objects.requireNonNull(featuresRegistry.getId(configuredFeature)), modId);
+                                Path cfPath = placedFeatureJsonPath(dataPackPath, Objects.requireNonNull(featuresRegistry.getId(configuredFeature)), modId);
                                 Files.createDirectories(cfPath.getParent());
 
                                 Files.write(cfPath, gson.toJson(optional.get()).getBytes());
-                            } catch (IOException e) {
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static void createConfiguredSurfaceBuilderJson(String modId, Path dataPackPath, Gson gson, Registry<ConfiguredSurfaceBuilder<?>> surfaceBuildersRegistry) {
-        for (Map.Entry<RegistryKey<ConfiguredSurfaceBuilder<?>>, ConfiguredSurfaceBuilder<?>> surfaceBuilder : surfaceBuildersRegistry.getEntries()) {
-            Function<Supplier<ConfiguredSurfaceBuilder<?>>, DataResult<JsonElement>> surfaceBuilderCodec = JsonOps.INSTANCE.withEncoder(ConfiguredSurfaceBuilder.REGISTRY_CODEC);
-
-            ConfiguredSurfaceBuilder<?> configuredSurfaceBuilder = surfaceBuilder.getValue();
-            if (surfaceBuilder.getKey().getValue().toString().contains(modId)) {
-                if (configuredSurfaceBuilder != null) {
-                    if (Objects.requireNonNull(surfaceBuildersRegistry.getKey(configuredSurfaceBuilder)).toString().contains(modId)) {
-                        Optional<JsonElement> optional = (surfaceBuilderCodec.apply(() -> configuredSurfaceBuilder).result());
-                        if (optional.isPresent()) {
-                            try {
-                                Path sbPath = configuredSurfaceBuilderJsonPath(dataPackPath, Objects.requireNonNull(surfaceBuildersRegistry.getId(configuredSurfaceBuilder)), modId);
-                                Files.createDirectories(sbPath.getParent());
-                                Files.write(sbPath, gson.toJson(optional.get()).getBytes());
                             } catch (IOException e) {
                             }
                         }
@@ -256,12 +223,8 @@ public class DumpRegistriesCommand {
         }
     }
 
-    private static Path configuredFeatureJsonPath(Path path, Identifier identifier, String modId) {
-        return path.resolve("data/" + modId + "/worldgen/configured_feature/" + identifier.getPath() + ".json");
-    }
-
-    private static Path configuredSurfaceBuilderJsonPath(Path path, Identifier identifier, String modId) {
-        return path.resolve("data/" + modId + "/worldgen/configured_surface_builder/" + identifier.getPath() + ".json");
+    private static Path placedFeatureJsonPath(Path path, Identifier identifier, String modId) {
+        return path.resolve("data/" + modId + "/worldgen/placed_features" + identifier.getPath() + ".json");
     }
 
     private static Path configuredCarverJsonPath(Path path, Identifier identifier, String modId) {
@@ -288,7 +251,7 @@ public class DumpRegistriesCommand {
     private static void createPackMCMeta(Path dataPackPath, String modID) throws IOException {
         String fileString = "{\n" +
                 "\t\"pack\":{\n" +
-                "\t\t\"pack_format\": 6,\n" +
+                "\t\t\"pack_format\": 8,\n" +
                 "\t\t\"description\": \"Custom biome datapack for " + modID + ".\"\n" +
                 "\t}\n" +
                 "}\n";

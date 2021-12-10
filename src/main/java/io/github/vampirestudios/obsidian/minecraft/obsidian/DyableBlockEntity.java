@@ -4,7 +4,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.utils.ColorUtil;
 import io.github.vampirestudios.obsidian.utils.MHelper;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -15,7 +14,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
-public class DyableBlockEntity extends BlockEntity implements BlockEntityClientSerializable {
+public class DyableBlockEntity extends BlockEntity {
 
     public int dyeColor;
 
@@ -28,23 +27,20 @@ public class DyableBlockEntity extends BlockEntity implements BlockEntityClientS
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         this.setDyeColor(nbt.getInt("dyeColor"));
+        if (this.getWorld().isClient)
+            this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(),
+                    net.minecraft.block.Block.NOTIFY_ALL);
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
         nbt.putInt("dyeColor", this.getDyeColor());
-        return nbt;
     }
 
     @Nullable
     @Override
     public BlockEntityUpdateS2CPacket toUpdatePacket() {
-        return new BlockEntityUpdateS2CPacket(this.pos, 127, this.toInitialChunkDataNbt());
-    }
-
-    @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return this.writeNbt(new NbtCompound());
+        return BlockEntityUpdateS2CPacket.create(this, BlockEntity::createNbt);
     }
 
     public int getDyeColor() {
@@ -53,7 +49,6 @@ public class DyableBlockEntity extends BlockEntity implements BlockEntityClientS
 
     public void setColorAndSync(int color) {
         setDyeColor(color);
-        sync();
     }
 
     public void setDyeColor(int dyeColor) {
@@ -68,19 +63,6 @@ public class DyableBlockEntity extends BlockEntity implements BlockEntityClientS
         int g = MHelper.floor(MathHelper.lerp(delta, color1[1], color2[1]));
         int b = MHelper.floor(MathHelper.lerp(delta, color1[2], color2[2]));
         return ColorUtil.color(r, g, b);
-    }
-
-    @Override
-    public void fromClientTag(NbtCompound tag) {
-        dyeColor = tag.getInt("dyeColor");
-        world.updateListeners(pos, getCachedState(), getCachedState(), net.minecraft.block.Block.NOTIFY_ALL);
-    }
-
-    @Override
-    public NbtCompound toClientTag(NbtCompound tag) {
-        System.out.println("Test");
-        tag.putInt("dyeColor", this.dyeColor);
-        return tag;
     }
 
 }

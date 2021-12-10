@@ -74,7 +74,7 @@ public class DyeableBlock extends BlockWithEntity {
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new DyeableBlockEntity(block, pos, state);
+        return new DyableBlockEntity(block, pos, state);
     }
 
     @Override
@@ -87,8 +87,8 @@ public class DyeableBlock extends BlockWithEntity {
         ItemStack stack = super.getPickStack(world, pos, state);
         if (stack.getItem() instanceof CustomDyeableItem item) {
             BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof DyeableBlockEntity dyeableBlockEntity) {
-                item.setColor(stack, dyeableBlockEntity.getColor());
+            if (entity instanceof DyableBlockEntity dyeableBlockEntity) {
+                item.setColor(stack, dyeableBlockEntity.getDyeColor());
             }
         }
         return stack;
@@ -98,12 +98,12 @@ public class DyeableBlock extends BlockWithEntity {
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof DyeableBlockEntity) {
+        if (blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
             int hue = itemStack.getOrCreateSubNbt("display").getInt("color");
             if (hue != 0) {
-                ((DyeableBlockEntity)blockEntity).setColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
+                dyableBlockEntity.setDyeColor(itemStack.getOrCreateSubNbt("display").getInt("color"));
             } else {
-                ((DyeableBlockEntity)blockEntity).setColor(block.additional_information.defaultColor);
+                dyableBlockEntity.setDyeColor(block.additional_information.defaultColor);
             }
         }
 

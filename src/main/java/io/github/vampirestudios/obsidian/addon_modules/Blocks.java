@@ -9,14 +9,16 @@ import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
-import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
-import net.minecraft.block.*;
+import net.minecraft.block.BarrelBlock;
+import net.minecraft.block.ChainBlock;
+import net.minecraft.block.LanternBlock;
+import net.minecraft.block.TallFlowerBlock;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.HoeItem;
@@ -82,7 +84,7 @@ public class Blocks implements AddonModule {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
@@ -91,19 +93,19 @@ public class Blocks implements AddonModule {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableAndDyableBlock(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.dyable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingDyableBlockImpl(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.sittable) {
                             net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableBlock(block, blockSettings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
+                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     block.information.name.id.getPath() + "_be");
                         } else REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
@@ -134,8 +136,11 @@ public class Blocks implements AddonModule {
                     case TRAPDOOR:
                         REGISTRY_HELPER.registerBlock(new TrapdoorBlockImpl(blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
-                    case DOOR:
-                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(blockSettings), block, block.information.name.id.getPath(), settings);
+                    case METAL_DOOR:
+                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.IRON_DOOR, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case WOODEN_DOOR:
+                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.DARK_OAK_DOOR, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case LOG:
                         REGISTRY_HELPER.registerLog(block, block.information.name.id.getPath(), block.information.getMaterial().getColor(),
@@ -186,9 +191,11 @@ public class Blocks implements AddonModule {
                     case PATH:
                         REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, block.information.name.id.getPath(), settings);
                         break;
-                    case BUTTON:
-                        //TODO: Unhardcode wooden
-                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, blockSettings), block, block.information.name.id.getPath(), settings);
+                    case WOODEN_BUTTON:
+                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, net.minecraft.block.Blocks.DARK_OAK_BUTTON, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case STONE_BUTTON:
+                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(false, net.minecraft.block.Blocks.POLISHED_BLACKSTONE_BUTTON, blockSettings), block, block.information.name.id.getPath(), settings);
                         break;
                     case DOUBLE_PLANT:
                         if (block.additional_information != null) {
@@ -218,7 +225,7 @@ public class Blocks implements AddonModule {
                         net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), block.information.name.id.getPath());
                         REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), block.information.name.id.getPath());
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                        (blockPos, blockState) -> new DyeableBlockEntity(block, blockPos, blockState), registeredBlock),
+                                        (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                 block.information.name.id.getPath() + "_be");
                         break;
                     case LOOM:
@@ -261,14 +268,14 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
                                 Utils.appendToPath(identifier, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
                     }
-                    if (block.additional_information.pressurePlate) {
+                    /*if (block.additional_information.pressurePlate) {
                         REGISTRY_HELPER.registerBlock(new PressurePlateBaseBlock(blockSettings, PressurePlateBlock.ActivationRule.EVERYTHING), block,
                                 Utils.appendToPath(identifier, "_pressure_plate").getPath(), ItemGroup.REDSTONE, settings);
                     }
                     if (block.additional_information.button) {
                         REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, blockSettings), block,
                                 Utils.appendToPath(identifier, "_button").getPath(), ItemGroup.REDSTONE, settings);
-                    }
+                    }*/
                 } else {
                     if (block.additional_information.slab) {
                         REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block,

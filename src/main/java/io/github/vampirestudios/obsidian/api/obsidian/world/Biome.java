@@ -1,22 +1,18 @@
 package io.github.vampirestudios.obsidian.api.obsidian.world;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
-import net.minecraft.world.gen.surfacebuilder.TernarySurfaceConfig;
 
 public class Biome {
 
     public Identifier name;
     public String displayName;
-    public NetherBiomeNoise biomeNoiseInformation;
+    public MultiNoise multiNoise;
     public String parent = "";
     public String dimension;
     public String category = "plains";
     public String precipitation = "none";
     public Identifier surfaceBuilder;
     public Identifier surfaceConfig;
-    public float depth;
-    public float scale;
     public float temperature;
     public float downfall;
     public int waterColor;
@@ -25,7 +21,7 @@ public class Biome {
     public int grassColor;
     public int foliageColor;
 
-    public TernarySurfaceConfig getSurfaceConfig() {
+    /*public TernarySurfaceConfig getSurfaceConfig() {
         if (surfaceConfig.equals(new Identifier("gravel_config"))) return SurfaceBuilder.GRAVEL_CONFIG;
         if (surfaceConfig.equals(new Identifier("grass_config"))) return SurfaceBuilder.GRASS_CONFIG;
         if (surfaceConfig.equals(new Identifier("podzol_config"))) return SurfaceBuilder.PODZOL_CONFIG;
@@ -63,6 +59,6 @@ public class Biome {
         if (surfaceBuilder.equals(new Identifier("nope"))) return SurfaceBuilder.NOPE;
 
         return SurfaceBuilder.DEFAULT;
-    }
+    }*/
 
 }

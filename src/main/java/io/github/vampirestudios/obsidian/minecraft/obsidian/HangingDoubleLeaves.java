@@ -1,11 +1,9 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.vampirelib.api.Climbable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.state.StateManager;
@@ -21,7 +19,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class HangingDoubleLeaves extends Block implements Climbable {
+public class HangingDoubleLeaves extends Block {
     public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
     protected static final VoxelShape WISTERIA_VINE_TOP = Block.createCuboidShape(1, 0, 1, 15, 16, 15);
     protected static final VoxelShape WISTERIA_VINE_BOTTOM = Block.createCuboidShape(4, 0, 4, 12, 16, 12);
@@ -107,8 +105,4 @@ public class HangingDoubleLeaves extends Block implements Climbable {
         return null;
     }
 
-    @Override
-    public ClimbBehavior getClimbBehavior(Entity entity, BlockState blockState, BlockPos blockPos) {
-        return ClimbBehavior.Ladder;
-    }
 }

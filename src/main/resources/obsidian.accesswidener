@@ -29,3 +29,5 @@ accessible class net/minecraft/world/gen/YOffset$BelowTop
 accessible method net/minecraft/world/gen/YOffset$Fixed <init> (I)V
 accessible method net/minecraft/world/gen/YOffset$AboveBottom <init> (I)V
 accessible method net/minecraft/world/gen/YOffset$BelowTop <init> (I)V
+
+accessible method net/minecraft/block/entity/BlockEntity writeNbt (Lnet/minecraft/nbt/NbtCompound;)V

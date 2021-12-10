@@ -19,7 +19,7 @@ public class BlockItemInject {
     @Inject(
         cancellable = true,
         method = {"writeTagToBlockEntity(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;)Z"},
-        at = {@At("HEAD")}
+        at = @At("HEAD")
     )
     private static void injected(World world, PlayerEntity player, BlockPos pos, ItemStack stack, CallbackInfoReturnable<Boolean> info) {
         if (stack.getItem() instanceof CustomDyeableItem) {
@@ -33,7 +33,7 @@ public class BlockItemInject {
                             info.setReturnValue(false);
                         }
 
-                        NbtCompound compoundTag2 = blockEntity.writeNbt(new NbtCompound());
+                        NbtCompound compoundTag2 = blockEntity.createNbt();
                         NbtCompound compoundTag3 = compoundTag2.copy();
                         compoundTag2.copyFrom(compoundTag);
                         if (!compoundTag2.contains("color") || compoundTag2.getInt("color") == 0) {
