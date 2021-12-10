@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.FuelSource;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
-import net.fabricmc.fabric.api.tag.TagRegistry;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -33,7 +33,7 @@ public class FuelSources implements AddonModule {
                     FuelRegistry.INSTANCE.remove(Registry.ITEM.get(Identifier.tryParse(fileName)));
                 } else {
                     fileName.replace("_tag.json", "");
-                    FuelRegistry.INSTANCE.remove(TagRegistry.item(Identifier.tryParse(fileName)));
+                    FuelRegistry.INSTANCE.remove(TagFactory.ITEM.create(Identifier.tryParse(fileName)));
                 }
             } else {
                 if (fuelSource.burn_time > 0) {
