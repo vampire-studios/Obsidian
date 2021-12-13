@@ -34,7 +34,7 @@ public class BlockSoundGroups implements AddonModule {
 	}
 
 	private void registerSoundIfNotFound(Identifier sound) {
-		if (Registry.SOUND_EVENT.containsId(sound)) Obsidian.registerInRegistry(Registry.SOUND_EVENT, sound, new SoundEvent(sound));
+		if (!Registry.SOUND_EVENT.containsId(sound)) Obsidian.registerInRegistry(Registry.SOUND_EVENT, sound, new SoundEvent(sound));
 	}
 
 	@Override

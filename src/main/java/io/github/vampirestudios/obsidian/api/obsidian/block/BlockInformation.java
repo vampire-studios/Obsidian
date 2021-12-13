@@ -5,7 +5,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import net.minecraft.block.Material;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.BlockSoundGroup;
@@ -208,7 +207,7 @@ public class BlockInformation {
         }
     }
 
-    public RenderLayer getRenderLayer() {
+    /*public RenderLayer getRenderLayer() {
         return switch(renderLayer) {
             case "SOLID" -> RenderLayer.getSolid();
             case "CUTOUT" -> RenderLayer.getCutout();
@@ -224,7 +223,7 @@ public class BlockInformation {
             case "TRIPWIRE" -> RenderLayer.getTripwire();
             default -> throw new IllegalStateException("Unexpected value: " + renderLayer);
         };
-    }
+    }*/
 
     public ItemGroup getItemGroup() {
         return Obsidian.ITEM_GROUP_REGISTRY.get(item_group);

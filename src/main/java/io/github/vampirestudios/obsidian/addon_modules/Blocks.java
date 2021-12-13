@@ -363,7 +363,7 @@ public class Blocks implements AddonModule {
                 new BlockInitThread(block);
             }
 
-            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(block.information.name.id), block.information.getRenderLayer());
+//            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(block.information.name.id), block.information.getRenderLayer());
 
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
                 List<Identifier> names = new ArrayList<>();
