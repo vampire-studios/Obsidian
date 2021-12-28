@@ -4,6 +4,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
@@ -11,6 +12,7 @@ import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 
 import java.util.List;
@@ -55,5 +57,35 @@ public class HorizontalFacingBlockImpl extends HorizontalFacingBlock {
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        VoxelShape shape = createShape(block.information.bounding_box);
+        VoxelShape northShape = createShape(block.information.north_bounding_box);
+        VoxelShape southShape = createShape(block.information.south_bounding_box);
+        VoxelShape eastShape = createShape(block.information.east_bounding_box);
+        VoxelShape westShape = createShape(block.information.west_bounding_box);
+        Direction direction = state.get(FACING);
+        switch(direction) {
+            case NORTH:
+                if (northShape != null) return northShape;
+                else return shape;
+            case SOUTH:
+                if (southShape != null) return southShape;
+                else return shape;
+            case EAST:
+                if (eastShape != null) return eastShape;
+                else return shape;
+            case WEST:
+                if (westShape != null) return westShape;
+                else return shape;
+            default:
+                return shape;
+        }
+    }
+
+    private VoxelShape createShape(float[] boundingBox) {
+        return Block.createCuboidShape(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
     }
 }

@@ -20,7 +20,7 @@ public class ArtificeGenerationHelper {
     public static void generateBasicBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier modelId) {
         clientResourcePackBuilder.addBlockState(name, blockStateBuilder ->
                 blockStateBuilder.variant("", variant ->
-                        variant.model(Utils.prependToPath(modelId, "block/"))));
+                        variant.model(modelId)));
     }
 
     public static void generateLanternBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
@@ -60,14 +60,14 @@ public class ArtificeGenerationHelper {
     public static void generatePillarBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier modelId) {
         clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
             blockStateBuilder.variant("axis=y", variant ->
-                    variant.model(Utils.prependToPath(modelId, "block/")));
+                    variant.model(modelId));
             blockStateBuilder.variant("axis=x", variant -> {
-                variant.model(Utils.prependToPath(modelId, "block/"));
+                variant.model(modelId);
                 variant.rotationX(90);
                 variant.rotationY(90);
             });
             blockStateBuilder.variant("axis=z", variant -> {
-                variant.model(Utils.prependToPath(modelId, "block/"));
+                variant.model(modelId);
                 variant.rotationX(90);
             });
         });
@@ -86,6 +86,19 @@ public class ArtificeGenerationHelper {
         });
     }
 
+    public static void generateHorizontalFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier modelId) {
+        clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
+            blockStateBuilder.variant("facing=north", variant ->
+                    variant.model(modelId));
+            blockStateBuilder.variant("facing=south", variant ->
+                    variant.model(modelId).rotationY(180));
+            blockStateBuilder.variant("facing=east", variant ->
+                    variant.model(modelId).rotationY(90));
+            blockStateBuilder.variant("facing=west", variant ->
+                    variant.model(modelId).rotationY(270));
+        });
+    }
+
     public static void generateFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name) {
         clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
             blockStateBuilder.variant("facing=north", variant ->
@@ -100,6 +113,23 @@ public class ArtificeGenerationHelper {
                     variant.model(Utils.prependToPath(name, "block/")));
             blockStateBuilder.variant("facing=down", variant ->
                     variant.model(Utils.prependToPath(name, "block/")).rotationX(180));
+        });
+    }
+
+    public static void generateFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier modelId) {
+        clientResourcePackBuilder.addBlockState(name, blockStateBuilder -> {
+            blockStateBuilder.variant("facing=north", variant ->
+                    variant.model(modelId).rotationX(90));
+            blockStateBuilder.variant("facing=south", variant ->
+                    variant.model(modelId).rotationY(180).rotationX(90));
+            blockStateBuilder.variant("facing=east", variant ->
+                    variant.model(modelId).rotationY(90).rotationX(90));
+            blockStateBuilder.variant("facing=west", variant ->
+                    variant.model(modelId).rotationY(270).rotationX(90));
+            blockStateBuilder.variant("facing=up", variant ->
+                    variant.model(modelId));
+            blockStateBuilder.variant("facing=down", variant ->
+                    variant.model(modelId).rotationX(180));
         });
     }
 
@@ -312,11 +342,7 @@ public class ArtificeGenerationHelper {
 
     public static void generateFenceBlockState(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name) {
         pack.addBlockState(name, state -> {
-            state.multipartCase(caze -> {
-                caze.apply(var -> {
-                    var.model(Utils.appendAndPrependToPath(name, "block/", "_post"));
-                });
-            });
+            state.multipartCase(caze -> caze.apply(var -> var.model(Utils.appendAndPrependToPath(name, "block/", "_post"))));
             for (Direction d : Direction.values()) {
                 if (d != Direction.UP && d != Direction.DOWN) {
                     state.multipartCase(caze -> {
@@ -324,11 +350,13 @@ public class ArtificeGenerationHelper {
                         caze.apply(var -> {
                             var.model(Utils.appendAndPrependToPath(name, "block/", "_side"));
                             var.uvlock(true);
-                            switch (d) {
-                                case EAST -> var.rotationY(90);
-                                case WEST -> var.rotationY(270);
-                                case SOUTH -> var.rotationY(180);
-                            }
+                            int rotation = switch (d) {
+                                case EAST -> 90;
+                                case WEST -> 270;
+                                case SOUTH -> 180;
+                                default -> throw new IllegalStateException("Unexpected value: " + d);
+                            };
+                            var.rotationY(rotation);
                         });
                     });
                 }
@@ -336,18 +364,18 @@ public class ArtificeGenerationHelper {
         });
     }
 
-    public static void generateFenceBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Identifier texture) {
+    public static void generateFenceBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name, Map<String, Identifier> textures) {
         pack.addBlockModel(Utils.appendToPath(name, "_inventory"), model -> {
             model.parent(new Identifier("block/fence_inventory"));
-            model.texture("texture", texture);
+            model.texture("texture", textures.containsKey("texture") ? textures.get("texture") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_post"), model -> {
             model.parent(new Identifier("block/fence_post"));
-            model.texture("texture", texture);
+            model.texture("texture", textures.containsKey("texture") ? textures.get("texture") : textures.get("all"));
         });
         pack.addBlockModel(Utils.appendToPath(name, "_side"), model -> {
             model.parent(new Identifier("block/fence_side"));
-            model.texture("texture", texture);
+            model.texture("texture", textures.containsKey("texture") ? textures.get("texture") : textures.get("all"));
         });
     }
 
@@ -358,38 +386,46 @@ public class ArtificeGenerationHelper {
                     state.variant("facing=" + direction.asString() + ",in_wall=false,open=false", var -> {
                         var.model(Utils.prependToPath(name, "block/"));
                         var.uvlock(true);
-                        switch (direction) {
-                            case NORTH -> var.rotationY(180);
-                            case WEST -> var.rotationY(90);
-                            case EAST -> var.rotationY(270);
-                        }
+                        int rotation = switch (direction) {
+                            case NORTH -> 180;
+                            case WEST -> 90;
+                            case EAST -> 270;
+                            default -> throw new IllegalStateException("Unexpected value: " + direction);
+                        };
+                        var.rotationY(rotation);
                     });
                     state.variant("facing=" + direction.asString() + ",in_wall=true,open=false", var -> {
                         var.model(Utils.appendAndPrependToPath(name, "block/", "_wall"));
                         var.uvlock(true);
-                        switch (direction) {
-                            case NORTH -> var.rotationY(180);
-                            case WEST -> var.rotationY(90);
-                            case EAST -> var.rotationY(270);
-                        }
+                        int rotation = switch (direction) {
+                            case NORTH -> 180;
+                            case WEST -> 90;
+                            case EAST -> 270;
+                            default -> throw new IllegalStateException("Unexpected value: " + direction);
+                        };
+                        var.rotationY(rotation);
                     });
                     state.variant("facing=" + direction.asString() + ",in_wall=false,open=true", var -> {
                         var.model(Utils.appendAndPrependToPath(name, "block/", "_open"));
                         var.uvlock(true);
-                        switch (direction) {
-                            case NORTH -> var.rotationY(180);
-                            case WEST -> var.rotationY(90);
-                            case EAST -> var.rotationY(270);
-                        }
+                        int rotation = switch (direction) {
+                            case NORTH -> 180;
+                            case WEST -> 90;
+                            case EAST -> 270;
+                            default -> throw new IllegalStateException("Unexpected value: " + direction);
+                        };
+                        var.rotationY(rotation);
                     });
                     state.variant("facing=" + direction.asString() + ",in_wall=true,open=true", var -> {
                         var.model(Utils.appendAndPrependToPath(name, "block/", "_wall_open"));
                         var.uvlock(true);
-                        switch (direction) {
-                            case NORTH -> var.rotationY(180);
-                            case WEST -> var.rotationY(90);
-                            case EAST -> var.rotationY(270);
-                        }
+                        int rotation = switch (direction) {
+                            case NORTH -> 180;
+                            case WEST -> 90;
+                            case EAST -> 270;
+                            default -> throw new IllegalStateException("Unexpected value: " + direction);
+                        };
+                        var.rotationY(rotation);
                     });
                 }
             }

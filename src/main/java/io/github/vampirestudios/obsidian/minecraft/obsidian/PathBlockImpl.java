@@ -2,15 +2,15 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.DirtPathBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
 import java.util.List;
-import java.util.Map;
 
 public class PathBlockImpl extends DirtPathBlock {
 
@@ -19,6 +19,21 @@ public class PathBlockImpl extends DirtPathBlock {
     public PathBlockImpl(Settings settings, Block block) {
         super(settings);
         this.block = block;
+    }
+
+    @Override
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+        return !block.information.translucent ? 0.2F : 1.0F;
+    }
+
+    @Override
+    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
+        return !block.information.translucent;
+    }
+
+    @Override
+    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+        return block.information.translucent;
     }
 
     @Override

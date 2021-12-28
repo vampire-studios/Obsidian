@@ -32,6 +32,21 @@ public class FenceGateImpl extends FenceGateBlock {
     }
 
     @Override
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+        return !block.information.translucent ? 0.2F : 1.0F;
+    }
+
+    @Override
+    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
+        return !block.information.translucent;
+    }
+
+    @Override
+    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+        return block.information.translucent;
+    }
+
+    @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
         if (block.display != null && block.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.display.lore) {

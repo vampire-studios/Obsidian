@@ -55,33 +55,137 @@ public class BlockInitThread implements Runnable {
                 if (block.display.blockState != null) {
                     if(block.block_type != null) {
                         switch (block.block_type) {
-                            case LOG:
-                                ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                            case HORIZONTAL_FACING_BLOCK:
+                                if (block.display.blockModel != null) ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId,
+                                        block.display.blockModel.parent);
+                                else ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case ROTATABLE_BLOCK:
+                                if (block.display.blockModel != null) ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId,
+                                        block.display.blockModel.parent);
+                                else ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case PILLAR, LOG:
+                                if (block.display.blockModel != null) ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId,
+                                        block.display.blockModel.parent);
+                                else ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case WOODEN_DOOR, METAL_DOOR:
+                                ArtificeGenerationHelper.generateDoorBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case TRAPDOOR:
+                                ArtificeGenerationHelper.generateTrapdoorBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case STAIRS:
+                                ArtificeGenerationHelper.generateStairsBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case SLAB:
+                                ArtificeGenerationHelper.generateSlabBlockState(clientResourcePackBuilder, blockId, blockId);
+                                break;
+                            case WALL:
+                                ArtificeGenerationHelper.generateWallBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case FENCE:
+                                ArtificeGenerationHelper.generateFenceBlockState(clientResourcePackBuilder, blockId);
                                 break;
                             case OXIDIZING_BLOCK:
                                 for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                        ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name.id);
+                                        if (variantBlock.display.blockState.model != null) {
+                                            ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name.id,
+                                                    variantBlock.display.blockModel.parent);
+                                        } else {
+                                            if (variantBlock.display.blockModel != null) ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name.id,
+                                                    variantBlock.display.blockModel.parent);
+                                            else ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, variantBlock.name.id);
+                                        }
                                     }
                                 }
                                 break;
+                            case LANTERN:
+                                ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId);
+                                break;
+                            case BLOCK:
                             default:
-                                ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
+                                if (block.display.blockState.model != null) {
+                                    ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
+                                            block.display.blockState.model);
+                                } else {
+                                    if (block.display.blockModel != null) ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
+                                            block.display.blockModel.parent);
+                                    else ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
+                                }
+                                break;
                         }
+                    } else {
+                        if (block.display.blockModel.parent != null) ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
+                                block.display.blockModel.parent);
+                        else ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
                     }
                 }
                 if (block.display.blockModel != null) {
                     TextureAndModelInformation textureAndModelInformation = block.display.blockModel;
                     if(block.block_type != null) {
-                        if (block.block_type == Block.BlockType.LOG) {
-                            ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
-                        } else if (block.block_type == Block.BlockType.OXIDIZING_BLOCK) {
-                            for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
-                                for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                    textureAndModelInformation = variantBlock.display.blockModel;
-                                    ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                        switch(block.block_type) {
+                            case WOODEN_DOOR:
+                                TextureAndModelInformation topTextureAndModelInformation = block.display.doorTopModel;
+                                TextureAndModelInformation bottomTextureAndModelInformation = block.display.doorBottomModel;
+                                TextureAndModelInformation topHingeTextureAndModelInformation = block.display.doorTopHingeModel;
+                                TextureAndModelInformation bottomHingeTextureAndModelInformation = block.display.doorBottomHingeModel;
+                                ArtificeGenerationHelper.generateDoorBlockModels(clientResourcePackBuilder, blockId,
+                                        topTextureAndModelInformation.parent, topTextureAndModelInformation.textures,
+                                        topHingeTextureAndModelInformation.parent, topHingeTextureAndModelInformation.textures,
+                                        bottomTextureAndModelInformation.parent, bottomTextureAndModelInformation.textures,
+                                        bottomHingeTextureAndModelInformation.parent, bottomHingeTextureAndModelInformation.textures);
+                                break;
+                            case METAL_DOOR:
+                                TextureAndModelInformation topTextureAndModelInformation1 = block.display.doorTopModel;
+                                TextureAndModelInformation bottomTextureAndModelInformation1 = block.display.doorBottomModel;
+                                TextureAndModelInformation topHingeTextureAndModelInformation1 = block.display.doorTopHingeModel;
+                                TextureAndModelInformation bottomHingeTextureAndModelInformation1 = block.display.doorBottomHingeModel;
+                                ArtificeGenerationHelper.generateDoorBlockModels(clientResourcePackBuilder, blockId,
+                                        topTextureAndModelInformation1.parent, topTextureAndModelInformation1.textures,
+                                        bottomTextureAndModelInformation1.parent, bottomTextureAndModelInformation1.textures,
+                                        topHingeTextureAndModelInformation1.parent, topHingeTextureAndModelInformation1.textures,
+                                        bottomHingeTextureAndModelInformation1.parent, bottomHingeTextureAndModelInformation1.textures);
+                                break;
+                            case TRAPDOOR:
+                                topTextureAndModelInformation = block.display.trapdoorTopModel;
+                                TextureAndModelInformation openTextureAndModelInformation = block.display.trapdoorOpenModel;
+                                bottomTextureAndModelInformation = block.display.trapdoorBottomModel;
+                                ArtificeGenerationHelper.generateTrapdoorBlockModels(clientResourcePackBuilder, blockId,
+                                        topTextureAndModelInformation.parent, topTextureAndModelInformation.textures,
+                                        openTextureAndModelInformation.parent, openTextureAndModelInformation.textures,
+                                        bottomTextureAndModelInformation.parent, bottomTextureAndModelInformation.textures);
+                                break;
+                            case STAIRS:
+                                ArtificeGenerationHelper.generateStairsBlockModels(clientResourcePackBuilder, blockId, textureAndModelInformation.textures);
+                                break;
+                            case SLAB:
+                                ArtificeGenerationHelper.generateSlabBlockModels(clientResourcePackBuilder, blockId, textureAndModelInformation.textures);
+                                break;
+                            case WALL:
+                                ArtificeGenerationHelper.generateWallBlockModels(clientResourcePackBuilder, blockId, textureAndModelInformation.textures);
+                                break;
+                            case FENCE:
+                                ArtificeGenerationHelper.generateFenceBlockModels(clientResourcePackBuilder, blockId, textureAndModelInformation.textures);
+                                break;
+                            case OXIDIZING_BLOCK:
+                                for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
+                                    for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
+                                        textureAndModelInformation = variantBlock.display.blockModel;
+                                        ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                    }
                                 }
-                            }
+                                break;
+                            case LANTERN:
+                                TextureAndModelInformation textureAndModelInformation2 = block.display.hangingModel;
+                                ArtificeGenerationHelper.generateLanternBlockModels(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures, textureAndModelInformation2.parent, textureAndModelInformation2.textures);
+                                break;
+                            case BLOCK:
+                            default:
+                                ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                break;
                         }
                     } else {
                         ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
@@ -159,19 +263,19 @@ public class BlockInitThread implements Runnable {
                                         bottomTextureAndModelInformation.parent, bottomTextureAndModelInformation.textures);
                                 break;
                             case STAIRS:
-                                ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                                ArtificeGenerationHelper.generateStairsBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case SLAB:
-                                ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                                ArtificeGenerationHelper.generateSlabBlockState(clientResourcePackBuilder, blockId, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case WALL:
-                                ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                                ArtificeGenerationHelper.generateWallBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case FENCE:
-                                ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
+                                ArtificeGenerationHelper.generateFenceBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case OXIDIZING_BLOCK:

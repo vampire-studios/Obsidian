@@ -27,6 +27,7 @@ public class CustomEntityRenderer extends MobEntityRenderer<EntityImpl, EntityMo
         return false;
     }
 
+    @Override
     protected void scale(EntityImpl entity, MatrixStack matrixStack, float f) {
         float g = 0.9375F;
         matrixStack.scale(g, g, g);

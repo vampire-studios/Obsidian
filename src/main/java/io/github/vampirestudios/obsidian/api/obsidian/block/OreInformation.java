@@ -4,8 +4,10 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.minecraft.block.Block;
 import net.minecraft.structure.rule.*;
 import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -31,7 +33,7 @@ public class OreInformation {
     public String[] biomeCategories;
     public int size = 17;
     public int chance = 30;
-    public boolean survivesExplosion = true;
+    public float discardOnAirChance = 0.0F;
     public CustomYOffset topOffset;
     public CustomYOffset bottomOffset;
 
@@ -40,9 +42,17 @@ public class OreInformation {
                 : UniformHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset());
     }
 
+    public Tag<Block> getBlockTag() {
+        if (target_state.tag != null && target_state.tag.getPath().equals("base_stone_nether")) {
+            return BlockTags.BASE_STONE_NETHER;
+        } else {
+            return BlockTags.BASE_STONE_OVERWORLD;
+        }
+    }
+
     public RuleTest ruleTest() {
         return switch (test_type) {
-            case "tag" -> new TagMatchRuleTest(/*BlockTags.getTagGroup().getTag(*//*target_state.tag*//*new Identifier("base_stone_overworld"))*/BlockTags.BASE_STONE_OVERWORLD);
+            case "tag" -> new TagMatchRuleTest(getBlockTag());
             case "always_true" -> AlwaysTrueRuleTest.INSTANCE;
             case "block_match" -> new BlockMatchRuleTest(Registry.BLOCK.get(target_state.block));
             case "block_state_match" -> new BlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties));
@@ -94,6 +104,8 @@ public class OreInformation {
                 case "fixed" -> new YOffset.Fixed(offset);
                 case "above_bottom" -> new YOffset.AboveBottom(offset);
                 case "below_top" -> new YOffset.BelowTop(offset);
+                case "bottom" -> YOffset.getBottom();
+                case "top" -> YOffset.getTop();
                 default -> throw new IllegalArgumentException();
             };
         }

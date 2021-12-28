@@ -2,28 +2,28 @@ package io.github.vampirestudios.obsidian.addon_modules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
+import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import io.github.vampirestudios.vampirelib.utils.Rands;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
-import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
-import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
-import net.minecraft.block.BarrelBlock;
-import net.minecraft.block.ChainBlock;
-import net.minecraft.block.LanternBlock;
-import net.minecraft.block.TallFlowerBlock;
+import net.fabricmc.fabric.api.tag.TagFactory;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -299,63 +299,57 @@ public class Blocks implements AddonModule {
                     }
                 }
 
-                if (block.additional_information.flattenable) {
-                    if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.additional_information.transformed_block).getDefaultState());
-                    }  else if (block.additional_information.parent_block != null) {
-                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.information.name.id).getDefaultState());
-                    } else if (block.additional_information.transformed_block != null) {
-                        FlattenableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id),
-                                Registry.BLOCK.get(block.additional_information.transformed_block).getDefaultState());
-                    }
-                }
+                if (block.additional_information.isConvertible) {
+                    AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
+                    Block parentBlock = Registry.BLOCK.get(convertible.parent_block);
+                    Block transformedBlock = Registry.BLOCK.get(convertible.transformed_block);
+                    AdditionalBlockInformation.Convertible.ConversionItem conversionItem = convertible.conversionItem;
+                    Item conversionItemItem;
+                    if (conversionItem.item != null) conversionItemItem = Registry.ITEM.get(conversionItem.item);
+                    else conversionItemItem = null;
 
-                if (block.additional_information.strippable) {
-                    if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.additional_information.transformed_block));
-                    }  else if (block.additional_information.parent_block != null) {
-                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block),
-                                Registry.BLOCK.get(block.information.name.id));
-                    } else if (block.additional_information.transformed_block != null) {
-                        StrippableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id),
-                                Registry.BLOCK.get(block.additional_information.transformed_block));
+                    Tag<Item> conversionItemTag = null;
+                    if (conversionItem.tag != null) {
+                        if (ItemTags.getTagGroup().contains(conversionItem.tag)) conversionItemTag = ItemTags.getTagGroup().getTag(conversionItem.tag);
+                        else conversionItemTag = TagFactory.ITEM.create(conversionItem.tag);
                     }
-                }
+                    Rands
 
-                if (block.additional_information.tilable) {
-                    if (block.additional_information.drops_item) {
-                        Item item = Registry.ITEM.get(block.additional_information.dropped_item);
-                        if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                                    .getDefaultState(), item));
-                        }  else if (block.additional_information.parent_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.information.name.id)
-                                                    .getDefaultState(), item));
-                        } else if (block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id), context -> true,
-                                    HoeItem.createTillAndDropAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                                    .getDefaultState(), item));
-                        }
-                    } else {
-                        if (block.additional_information.parent_block != null && block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                            .getDefaultState()));
-                        }  else if (block.additional_information.parent_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.additional_information.parent_block), context -> true,
-                                    HoeItem.createTillAction(Registry.BLOCK.get(block.information.name.id)
-                                            .getDefaultState()));
-                        } else if (block.additional_information.transformed_block != null) {
-                            TillableBlockRegistry.register(Registry.BLOCK.get(block.information.name.id), context -> true,
-                                    HoeItem.createTillAction(Registry.BLOCK.get(block.additional_information.transformed_block)
-                                            .getDefaultState()));
+                    Item reversalItemItem = null;
+                    Tag<Item> reversalItemTag = null;
+                    AdditionalBlockInformation.Convertible.ConversionItem reversalItem = null;
+                    if (convertible.reversible) {
+                        if (convertible.reversalItem != null) reversalItem = convertible.reversalItem;
+
+                        if (reversalItem != null) {
+                            if (reversalItem.item != null) reversalItemItem = Registry.ITEM.get(conversionItem.item);
+                            if (reversalItem.tag != null) {
+                                if (ItemTags.getTagGroup().contains(reversalItem.tag)) reversalItemTag = ItemTags.getTagGroup()
+                                        .getTag(reversalItem.tag);
+                            }
                         }
                     }
+
+                    SoundEvent sound;
+                    if (convertible.sound != null) sound = Registry.SOUND_EVENT.get(convertible.sound);
+                    else sound = null;
+
+                    Item droppedItem;
+                    if (convertible.dropped_item != null) droppedItem = Registry.ITEM.get(convertible.dropped_item);
+                    else droppedItem = null;
+
+                    ConvertibleBlockPair.ConversionItem reversalItem1;
+                    if (reversalItem != null) reversalItem1 = new ConvertibleBlockPair.ConversionItem(reversalItemTag, reversalItemItem);
+                    else reversalItem1 = null;
+
+                    ConvertibleBlockPair.ConversionItem conversionItem1 = new ConvertibleBlockPair.ConversionItem(conversionItemTag, conversionItemItem);
+                    ConvertibleBlockPair convertibleBlockPair;
+                    if (reversalItem1 != null) convertibleBlockPair = new ConvertibleBlockPair(parentBlock, transformedBlock,
+                            conversionItem1, reversalItem1);
+                    else convertibleBlockPair = new ConvertibleBlockPair(parentBlock, transformedBlock, conversionItem1);
+                    if (sound != null) convertibleBlockPair.setSound(sound);
+                    if (droppedItem != null) convertibleBlockPair.setDroppedItem(droppedItem);
+                    ConvertibleBlocksRegistry.registerConvertibleBlockPair(convertibleBlockPair);
                 }
             }
 

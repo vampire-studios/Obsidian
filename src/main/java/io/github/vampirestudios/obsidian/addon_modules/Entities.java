@@ -51,31 +51,32 @@ public class Entities implements AddonModule {
 
             CollisionBoxComponent collisionBoxComponent = null;
             Component c = entity.components.get("minecraft:collision_box");
-            if (c instanceof CollisionBoxComponent) {
-                collisionBoxComponent = (CollisionBoxComponent) c;
+            if (c instanceof CollisionBoxComponent collisionBoxComponent1) {
+                collisionBoxComponent = collisionBoxComponent1;
             }
             HealthComponent healthComponent = null;
             c = entity.components.get("minecraft:health");
-            if (c instanceof HealthComponent) {
-                healthComponent = (HealthComponent) c;
+            if (c instanceof HealthComponent healthComponent1) {
+                healthComponent = healthComponent1;
             }
 
             MovementComponent movementComponent = null;
             c = entity.components.get("minecraft:movement");
-            if (c instanceof MovementComponent) {
-                movementComponent = (MovementComponent) c;
+            if (c instanceof MovementComponent movementComponent1) {
+                movementComponent = movementComponent1;
             }
 
             BreathableComponent breathableComponent = null;
             c = entity.components.get("minecraft:breathable");
-            if (c instanceof BreathableComponent) {
-                breathableComponent = (BreathableComponent) c;
+            if (c instanceof BreathableComponent breathableComponent1) {
+                breathableComponent = breathableComponent1;
             }
 
             assert collisionBoxComponent != null;
             assert movementComponent != null;
             HealthComponent finalHealthComponent = healthComponent;
             BreathableComponent finalBreathableComponent = breathableComponent;
+            assert finalHealthComponent != null;
             EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entity.information.identifier)
                     .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value, finalBreathableComponent))
                     .category(entity.entity_components.getCategory())

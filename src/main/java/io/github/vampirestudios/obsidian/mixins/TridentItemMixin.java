@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class TridentItemMixin {
     // Make the tridentStack for trident entities set to the correct item stack for rendering
     @Inject(method = "onStoppedUsing(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void ob_editTridentEntity(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo info, PlayerEntity playerEntity, int j, TridentEntity tridentEntity) {
+    public void ob_editTridentEntity(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci, PlayerEntity playerEntity, int i, int j, TridentEntity tridentEntity) {
         if (stack.getItem() instanceof TridentInterface) {
             ((TridentEntityAccessor) tridentEntity).setTridentStack(stack);
         }
@@ -29,7 +29,6 @@ public class TridentItemMixin {
     @ModifyArg(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
     private Entity ob_editTridentType(Entity entity) {
         TridentEntity trident = (TridentEntity) entity;
-
         if (!(((TridentEntityAccessor) trident).getTridentStack().getItem() instanceof TridentInterface)) {
             return entity;
         } else {

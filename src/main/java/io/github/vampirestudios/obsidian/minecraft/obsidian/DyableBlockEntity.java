@@ -27,9 +27,9 @@ public class DyableBlockEntity extends BlockEntity {
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         this.setDyeColor(nbt.getInt("dyeColor"));
-        if (this.getWorld().isClient)
-            this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(),
-                    net.minecraft.block.Block.NOTIFY_ALL);
+        assert world != null;
+        if (world.isClient) world.updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(),
+                net.minecraft.block.Block.NOTIFY_ALL);
     }
 
     @Override

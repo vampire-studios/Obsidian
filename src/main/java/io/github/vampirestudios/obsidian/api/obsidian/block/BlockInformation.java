@@ -20,6 +20,12 @@ public class BlockInformation {
     public String material = "minecraft:stone";
     public boolean has_advanced_bounding_box = false;
     public float[] bounding_box = new float[] {0, 0, 0, 16, 16, 16};
+    public float[] north_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
+    public float[] south_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
+    public float[] east_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
+    public float[] west_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
+    public float[] up_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
+    public float[] down_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
     public Identifier custom_material;
     public NameInformation name;
     public Identifier item_group;

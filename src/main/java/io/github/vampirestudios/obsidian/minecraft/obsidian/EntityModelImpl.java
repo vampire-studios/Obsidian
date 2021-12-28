@@ -21,6 +21,6 @@ public class EntityModelImpl<T extends LivingEntity> extends net.minecraft.clien
 
     @Override
     public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-
     }
+
 }

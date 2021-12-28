@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class BlockProperty {
 
+    public Identifier model;
     public Map<String, Blockstate> variants;
 //    public Map<String, Blockstate> properties;
 

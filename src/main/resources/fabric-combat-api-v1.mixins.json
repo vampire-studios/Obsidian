@@ -11,7 +11,7 @@
     "ProjectileUtilMixin"
   ],
   "client": [
-    "client.HeldItemRendererMixin"
+//    "client.HeldItemRendererMixin"
 //    "client.SkeletonEntityModelMixin"
   ],
   "injectors": {

@@ -13,15 +13,13 @@
 	"ItemMixin",
 	"LoomScreenHandlerMixin",
 	"MinecraftServerMixin",
-	"MixinPlayerManager",
 	"TridentAttackGoalMixin",
-	"TridentEntityAccessor",
-	"client.ModelLoaderMixin"
+	"TridentEntityAccessor"
   ],
   "client": [
 	"client.ItemRendererMixin",
+	"client.ModelLoaderMixin",
 	"client.MixinArmorFeatureRenderer",
-	"client.MixinItem",
 	"client.ReloadableResourceManagerImplMixin"
   ]
 }

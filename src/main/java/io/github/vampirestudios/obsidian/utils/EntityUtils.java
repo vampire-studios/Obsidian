@@ -8,7 +8,7 @@ public class EntityUtils {
 
     public static DefaultAttributeContainer.Builder createGenericEntityAttributes(double maxHealth, double movementSpeed) {
         return PathAwareEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.80000000298023224D)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, movementSpeed)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, maxHealth);
     }
 

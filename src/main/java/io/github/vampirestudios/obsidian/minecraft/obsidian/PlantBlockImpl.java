@@ -16,6 +16,21 @@ public class PlantBlockImpl extends PlantBlock {
     }
 
 	@Override
+	public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+		return !block.information.translucent ? 0.2F : 1.0F;
+	}
+
+	@Override
+	public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
+		return !block.information.translucent;
+	}
+
+	@Override
+	public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+		return block.information.translucent;
+	}
+
+	@Override
 	protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
 		/*for(net.minecraft.block.Block block1 : block.getSupportableBlocks()) {
 			return floor.isOf(block1);

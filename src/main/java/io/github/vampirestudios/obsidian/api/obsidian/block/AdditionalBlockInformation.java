@@ -32,12 +32,26 @@ public class AdditionalBlockInformation {
     public int defaultColor = 16579836;
 
     public boolean sittable = false;
-    public boolean strippable = false;
-    public boolean tilable = false;
-    public boolean flattenable = false;
-    public boolean drops_item = false;
-    public Identifier parent_block;
-    public Identifier transformed_block;
-    public Identifier dropped_item;
+    public boolean isConvertible = false;
+    public Convertible convertible;
+
+    public static class Convertible {
+        public boolean drops_item = false;
+        public boolean reversible = false;
+
+        public Identifier parent_block;
+        public Identifier transformed_block;
+        public Identifier dropped_item;
+        public Identifier sound;
+
+        public ConversionItem conversionItem;
+        public ConversionItem reversalItem;
+
+        public static class ConversionItem {
+            public Identifier item;
+            public Identifier tag;
+        }
+
+    }
 
 }
