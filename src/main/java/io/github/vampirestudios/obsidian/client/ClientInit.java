@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
@@ -55,7 +54,6 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        DataExchangeAPI.prepareClientside();
         EntityRendererRegistry.INSTANCE.register(Obsidian.SEAT, SeatEntityRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String name = iAddonPack.getDisplayNameObsidian();

@@ -11,11 +11,6 @@ import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
 import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
 import io.github.vampirestudios.obsidian.addon_modules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
-import io.github.vampirestudios.obsidian.api.dataexchange.DataExchangeAPI;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloClient;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.HelloServer;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.RequestFiles;
-import io.github.vampirestudios.obsidian.api.dataexchange.handler.SendFiles;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
 import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyType;
@@ -59,7 +54,6 @@ import org.apache.logging.log4j.Logger;
 import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinApi {
 
@@ -262,13 +256,6 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 
 			return ActionResult.PASS;
 		});
-
-		DataExchangeAPI.registerDescriptors(List.of(
-				HelloClient.DESCRIPTOR,
-				HelloServer.DESCRIPTOR,
-				RequestFiles.DESCRIPTOR,
-				SendFiles.DESCRIPTOR
-		));
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
-import io.github.vampirestudios.vampirelib.utils.Rands;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.tag.TagFactory;
@@ -313,7 +312,6 @@ public class Blocks implements AddonModule {
                         if (ItemTags.getTagGroup().contains(conversionItem.tag)) conversionItemTag = ItemTags.getTagGroup().getTag(conversionItem.tag);
                         else conversionItemTag = TagFactory.ITEM.create(conversionItem.tag);
                     }
-                    Rands
 
                     Item reversalItemItem = null;
                     Tag<Item> reversalItemTag = null;

@@ -12,7 +12,6 @@
 	"FabricItemGroupBuilderMixin",
 	"ItemMixin",
 	"LoomScreenHandlerMixin",
-	"MinecraftServerMixin",
 	"TridentAttackGoalMixin",
 	"TridentEntityAccessor"
   ],
