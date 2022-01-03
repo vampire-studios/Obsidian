@@ -21,9 +21,7 @@
                 "name": "minecraft:poison",
                 "chance": 1.0,
                 "duration": 10,
-                "amplifier": 1,
-                "effect_type": "harmful",
-                "color": 2039587
+                "amplifier": 1
             }
         ]
     }

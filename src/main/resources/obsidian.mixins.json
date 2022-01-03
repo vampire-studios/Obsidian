@@ -10,15 +10,20 @@
 	"BlockItemInject",
 	"CraftingScreenHandlerMixin",
 	"FabricItemGroupBuilderMixin",
+	"GrassBlockMixin",
 	"ItemMixin",
 	"LoomScreenHandlerMixin",
+	"MyceliumBlockMixin",
+	"SpreadableBlockMixin",
 	"TridentAttackGoalMixin",
 	"TridentEntityAccessor"
   ],
   "client": [
 	"client.ItemRendererMixin",
-	"client.ModelLoaderMixin",
 	"client.MixinArmorFeatureRenderer",
+	"client.ModelLoaderMixin",
+	"client.OptionsScreenMixin",
+	"client.PlayerEntityRendererMixin",
 	"client.ReloadableResourceManagerImplMixin"
   ]
 }

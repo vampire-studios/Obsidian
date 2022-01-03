@@ -67,7 +67,7 @@ public class ZipFix {
     public static void main(String[] args) throws IOException {
         String path = args[0];
         String packVersion = args[1];
-//        fix(path + packVersion, path + packVersion + "_extracted2");
+        fix(path + packVersion, path + packVersion + "_extracted2");
 		String zipFilePath = path + packVersion;
 		String destDirectory = path + packVersion + "_extracted2";
 		UnzipUtility unzipper = new UnzipUtility();

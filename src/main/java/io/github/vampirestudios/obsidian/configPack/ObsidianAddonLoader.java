@@ -66,6 +66,7 @@ public class ObsidianAddonLoader {
     public static Registry<TabbedGroup> EXPANDED_ITEM_GROUPS = FabricRegistryBuilder.createSimple(TabbedGroup.class, id("expanded_item_groups_registry")).buildAndRegister();
     public static Registry<Entity> ENTITIES = FabricRegistryBuilder.createSimple(Entity.class, id("entities")).buildAndRegister();
     public static Registry<EntityModel> ENTITY_MODELS = FabricRegistryBuilder.createSimple(EntityModel.class, id("entity_models")).buildAndRegister();
+    public static Registry<ArmorMaterial> ARMOR_MATERIALS = FabricRegistryBuilder.createSimple(ArmorMaterial.class, id("armor_materials")).buildAndRegister();
     public static Registry<ArmorModel> ARMOR_MODELS = FabricRegistryBuilder.createSimple(ArmorModel.class, id("armor_models")).buildAndRegister();
     public static Registry<ArmorItem> ARMORS = FabricRegistryBuilder.createSimple(ArmorItem.class, id("armors")).buildAndRegister();
     public static Registry<Elytra> ELYTRAS = FabricRegistryBuilder.createSimple(Elytra.class, id("elytras")).buildAndRegister();

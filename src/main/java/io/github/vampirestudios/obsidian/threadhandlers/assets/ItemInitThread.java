@@ -47,6 +47,12 @@ public class ItemInitThread implements Runnable {
                 if (item.display.model.textures != null) item.display.model.textures.forEach(modelBuilder::texture);
             });
         }
+        if (item.display != null && item.display.itemModel != null) {
+            clientResourcePackBuilder.addItemModel(item.information.name.id, modelBuilder -> {
+                modelBuilder.parent(item.display.itemModel.parent);
+                if (item.display.itemModel.textures != null) item.display.itemModel.textures.forEach(modelBuilder::texture);
+            });
+        }
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation lore : item.display.lore) {
                 if (lore.text.textType.equals("translatable")) {

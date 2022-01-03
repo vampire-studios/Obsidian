@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 
 public class ArmorMaterial {
 
-    public String name;
+    public Identifier name;
     public int maxDamageFactor;
     public int protection_amount;
     public int enchantability;

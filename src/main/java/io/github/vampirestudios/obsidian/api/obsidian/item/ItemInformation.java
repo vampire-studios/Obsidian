@@ -16,7 +16,6 @@ public class ItemInformation {
     public boolean has_glint = false;
     public boolean is_enchantable = false;
     public int enchantability = 5;
-    public boolean hand_equipped = false;
     public int use_duration = 5;
     public boolean can_place_block = false;
     public Identifier placable_block;

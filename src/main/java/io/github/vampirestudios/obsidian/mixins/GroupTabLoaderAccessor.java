@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import com.glisco.owo.moddata.ModDataConsumer;
 import com.google.gson.JsonObject;
+import io.wispforest.owo.moddata.ModDataConsumer;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;

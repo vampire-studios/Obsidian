@@ -97,10 +97,10 @@ public class ClientInit implements ClientModInitializer {
                     for (Elytra elytra : ObsidianAddonLoader.ELYTRAS)
                         if (elytra.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ElytraInitThread(clientResourcePackBuilder, elytra).run();
-                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
-                        clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId),
-                                translationBuilder -> translations.forEach(translationBuilder::entry));
-                    }));
+                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
+							clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId),
+									translationBuilder -> translations.forEach(translationBuilder::entry))
+					));
                     if (FabricLoader.getInstance().isDevelopmentEnvironment()) new Thread(() -> {
                         try {
                             if (FabricLoader.getInstance().isDevelopmentEnvironment())

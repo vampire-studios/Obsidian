@@ -33,7 +33,7 @@ public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian
     }
 
     public String getName() {
-        return this.material.name;
+        return this.material.name.getPath();
     }
 
     public float getToughness() {

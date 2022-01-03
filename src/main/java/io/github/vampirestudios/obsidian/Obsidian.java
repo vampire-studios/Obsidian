@@ -13,8 +13,6 @@ import io.github.vampirestudios.obsidian.addon_modules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
-import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyType;
-import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyTypes;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.BreakDoorAnnotationComponent;
@@ -65,23 +63,21 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 			.create();
 	public static final String MOD_ID = "obsidian";
 	public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = FabricRegistryBuilder.createSimple(AddonModule.class, id("addon_modules")).buildAndRegister();
-	public static final Registry<PropertyType> PROPERTY_TYPES = FabricRegistryBuilder.createSimple(PropertyType.class, id("property_types")).buildAndRegister();
 	public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = FabricRegistryBuilder.createSimple(ItemGroup.class, new Identifier(MOD_ID, "item_groups")).buildAndRegister();
 	public static final Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, new Identifier(MOD_ID, "food_components")).buildAndRegister();
 	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
 	public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.block.Event>> BEDROCK_BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_event_registry")), Lifecycle.stable());
-	public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.Component>> BEDROCK_BLOCK_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_components_registry")), Lifecycle.stable());
 	public static final Registry<Class<? extends Event>> BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "block_event_registry")), Lifecycle.stable());
 	public static final String NAME = "Obsidian";
 	public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
 	public static final Obsidian INSTANCE = new Obsidian();
 	public static final String VERSION = "0.7.0-alpha";
-	public static ObsidianConfig CONFIG;
 	public static final EntityType<SeatEntity> SEAT = Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, "seat"), FabricEntityTypeBuilder.
 			<SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
 			.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
 			.build());
+	public static ObsidianConfig CONFIG;
 
 	public static Identifier id(String path) {
 		return new Identifier(MOD_ID, path);
@@ -100,12 +96,14 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 	}
 
 	public static void registerDataPack(Identifier id, Processor<ArtificeResourcePack.ServerResourcePackBuilder> register) {
-		if (!ArtificeRegistry.DATA_PACKS.containsId(id)) ArtificeImpl.registerSafely(ArtificeRegistry.DATA_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
+		if (!ArtificeRegistry.DATA_PACKS.containsId(id))
+			ArtificeImpl.registerSafely(ArtificeRegistry.DATA_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
 	}
 
 	@Environment(EnvType.CLIENT)
 	public static void registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
-		if (!ArtificeRegistry.RESOURCE_PACKS.containsId(id)) ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
+		if (!ArtificeRegistry.RESOURCE_PACKS.containsId(id))
+			ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
 	}
 
 	@Override
@@ -191,10 +189,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
-		PropertyTypes.init();
-
 		registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "food_components", new FoodComponents());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "block_sound_groups", new BlockSoundGroups());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "block_materials", new BlockMaterials());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
@@ -216,13 +211,22 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistry(ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "entity_models", new EntityModels());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "entities", new Entities());
-        registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "food_components", new FoodComponents());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
+
+		//Add new spread behavior, mycelium spreads onto coal blocks by turning them into diamond blocks
+		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.COAL_BLOCK, SpreaderType.MYCELIUM, ((state, level, pos) -> net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState()));
+		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.DIAMOND_BLOCK, SpreaderType.MYCELIUM, ((state, level, pos) -> net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState()));
+
+		//Replace vanilla behavior, grass will spread to dirt by turning it into moss blocks
+		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.DIRT, SpreaderType.GRASS, ((state, level, pos) -> net.minecraft.block.Blocks.MOSS_BLOCK.getDefaultState()));
+		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.MOSS_BLOCK, SpreaderType.GRASS, ((state, level, pos) -> net.minecraft.block.Blocks.MOSS_BLOCK.getDefaultState()));
 
 		ObsidianAddonLoader.loadDefaultObsidianAddons();
 		ObsidianAddonLoader.loadObsidianAddons();
@@ -239,7 +243,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 			if ((b instanceof SittableBlock || b instanceof HorizontalFacingSittableBlock || b instanceof SittableAndDyableBlock || b instanceof HorizontalFacingSittableAndDyableBlock) && !SeatEntity.OCCUPIED.containsKey(new Vec3d(hit.getBlockPos().getX(), hit.getBlockPos().getY(), hit.getBlockPos().getZ())) && player.getStackInHand(hand).isEmpty()) {
 				Vec3d comparePos = new Vec3d(player.getBlockPos().getX() + 0.5D, player.getBlockPos().getY() + 1.25D, player.getBlockPos().getZ() + 0.5D);
 
-				//only allow sitting when rightclicking the top face of a block, and disallow sitting players from sitting again
+				//only allow sitting when right-clicking the top face of a block, and disallow sitting players from sitting again
 				if (SeatEntity.OCCUPIED.containsKey(comparePos))
 					return ActionResult.PASS;
 

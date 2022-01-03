@@ -22,7 +22,6 @@ public class EntityModel {
         public Vec3f pivot = Vec3f.ZERO.copy();
         public Vec3f rotation = Vec3f.ZERO.copy();
         public List<Cube> cubes;
-        public boolean mirrored = false;
 
         public static class Cube {
             public String name = "";
@@ -30,7 +29,6 @@ public class EntityModel {
             public Vec2i uv = Vec2i.ZERO.copy();
             public Vec3f origin = Vec3f.ZERO.copy();
             public Vec3f size = Vec3f.ZERO.copy();
-            public Vec3f pivot = Vec3f.ZERO.copy();
             public Vec3i radiusArray = Vec3i.ZERO;
             public int radius;
         }
@@ -47,7 +45,8 @@ public class EntityModel {
                 Dilation dilation = Dilation.NONE;
                 if(cube.radiusArray != null) dilation.add(cube.radiusArray.getX(), cube.radiusArray.getY(), cube.radiusArray.getZ());
                 else dilation.add(cube.radius);
-                modelPartBuilder.cuboid(cube.origin.getX(), cube.origin.getY(), cube.origin.getZ(), cube.size.getX(), cube.size.getY(), cube.size.getZ(), dilation);
+                modelPartBuilder.cuboid(cube.origin.getX(), cube.origin.getY(), cube.origin.getZ(),
+                        cube.size.getX(), cube.size.getY(), cube.size.getZ(), dilation);
                 modelPartBuilder.mirrored(cube.mirrored);
             }
             if (part.parent != null && !part.parent.isEmpty() && !part.parent.isBlank()) modelPartData.getChild(part.parent)

@@ -12,12 +12,14 @@ import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
+import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.sound.SoundEvent;
@@ -232,6 +234,18 @@ public class Blocks implements AddonModule {
                         break;
                     case CRAFTING_TABLE:
                         REGISTRY_HELPER.registerBlock(new CraftingTableBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
+                    case FURNACE:
+                        Block furnace = REGISTRY_HELPER.registerBlock(new FurnaceBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        ((IBlockEntityType) BlockEntityType.FURNACE).vl_addBlocks(furnace);
+                        break;
+                    case BLAST_FURNACE:
+                        Block blastFurnace = REGISTRY_HELPER.registerBlock(new BlastFurnaceBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        ((IBlockEntityType) BlockEntityType.BLAST_FURNACE).vl_addBlocks(blastFurnace);
+                        break;
+                    case SMOKER:
+                        Block smoker = REGISTRY_HELPER.registerBlock(new SmokerBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        ((IBlockEntityType) BlockEntityType.SMOKER).vl_addBlocks(smoker);
                         break;
                     /*case PANE:
 //                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(block.information.name.id, "_base"));

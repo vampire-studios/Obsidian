@@ -19,8 +19,6 @@ public class LoomScreenHandlerMixin {
      */
     @Overwrite
     public boolean canUse(PlayerEntity player) {
-        return this.context.get((world, pos) -> {
-            return world.getBlockState(pos).getBlock() instanceof LoomBlock;
-        }, true);
+        return this.context.get((world, pos) -> world.getBlockState(pos).getBlock() instanceof LoomBlock, true);
     }
 }

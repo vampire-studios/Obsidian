@@ -1,11 +1,5 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import com.glisco.owo.itemgroup.OwoItemExtensions;
-import com.glisco.owo.itemgroup.gui.ItemGroupButton;
-import com.glisco.owo.itemgroup.gui.ItemGroupTab;
-import com.glisco.owo.itemgroup.json.WrapperGroup;
-import com.glisco.owo.moddata.ModDataConsumer;
-import com.glisco.owo.moddata.ModDataLoader;
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
@@ -13,6 +7,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.TabbedGroup;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.wispforest.owo.itemgroup.OwoItemExtensions;
+import io.wispforest.owo.itemgroup.gui.ItemGroupButton;
+import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
+import io.wispforest.owo.itemgroup.json.WrapperGroup;
+import io.wispforest.owo.moddata.ModDataConsumer;
+import io.wispforest.owo.moddata.ModDataLoader;
 import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;

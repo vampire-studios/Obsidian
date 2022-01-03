@@ -32,11 +32,6 @@ public class LivingEntityMixin {
 		return item instanceof FabricElytraExtensions;
 	}
 
-	@Redirect(method = "getPreferredEquipmentSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
-	private static boolean getPreferredEquipmentSlotA(ItemStack itemStack, Item item) {
-		return item instanceof FabricElytraExtensions;
-	}
-
 	@Redirect(method = "tickFallFlying", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ElytraItem;isUsable(Lnet/minecraft/item/ItemStack;)Z"))
 	private boolean redirectIsUsable(ItemStack stack) {
 		return stack.getItem() instanceof FabricElytraExtensions ? ((FabricElytraExtensions) stack.getItem()).isUsable(stack, (LivingEntity) (Object) this) : ElytraItem.isUsable(stack);

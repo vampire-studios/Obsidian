@@ -55,6 +55,9 @@ public class BlockInitThread implements Runnable {
                 if (block.display.blockState != null) {
                     if(block.block_type != null) {
                         switch (block.block_type) {
+                            case FURNACE, BLAST_FURNACE, SMOKER:
+                                ArtificeGenerationHelper.generateOnOffHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
+                                break;
                             case HORIZONTAL_FACING_BLOCK:
                                 if (block.display.blockModel != null) ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId,
                                         block.display.blockModel.parent);
@@ -127,6 +130,13 @@ public class BlockInitThread implements Runnable {
                     TextureAndModelInformation textureAndModelInformation = block.display.blockModel;
                     if(block.block_type != null) {
                         switch(block.block_type) {
+                            case FURNACE, BLAST_FURNACE, SMOKER:
+                                TextureAndModelInformation onTextureAndModelInformation = block.display.onModel;
+                                TextureAndModelInformation offTextureAndModelInformation = block.display.offModel;
+                                ArtificeGenerationHelper.generateOnOffBlockModels(clientResourcePackBuilder, blockId,
+                                        onTextureAndModelInformation.parent, onTextureAndModelInformation.textures,
+                                        offTextureAndModelInformation.parent, offTextureAndModelInformation.textures);
+                                break;
                             case WOODEN_DOOR:
                                 TextureAndModelInformation topTextureAndModelInformation = block.display.doorTopModel;
                                 TextureAndModelInformation bottomTextureAndModelInformation = block.display.doorBottomModel;
@@ -215,6 +225,14 @@ public class BlockInitThread implements Runnable {
 
                     if(block.block_type != null) {
                         switch(block.block_type) {
+                            case FURNACE, BLAST_FURNACE, SMOKER:
+                                ArtificeGenerationHelper.generateOnOffHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
+                                TextureAndModelInformation onTextureAndModelInformation = block.display.onModel;
+                                TextureAndModelInformation offTextureAndModelInformation = block.display.offModel;
+                                ArtificeGenerationHelper.generateOnOffBlockModels(clientResourcePackBuilder, blockId,
+                                        onTextureAndModelInformation.parent, onTextureAndModelInformation.textures,
+                                        offTextureAndModelInformation.parent, offTextureAndModelInformation.textures);
+                                break;
                             case HORIZONTAL_FACING_BLOCK:
                                 ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
@@ -223,8 +241,7 @@ public class BlockInitThread implements Runnable {
                                 ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
-                            case PILLAR:
-                            case LOG:
+                            case PILLAR, LOG:
                                 ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
@@ -305,7 +322,8 @@ public class BlockInitThread implements Runnable {
                     TextureAndModelInformation textureAndModelInformation = block.display.itemModel;
                     clientResourcePackBuilder.addItemModel(nameInformation.id, modelBuilder -> {
                         modelBuilder.parent(textureAndModelInformation.parent);
-                        textureAndModelInformation.textures.forEach(modelBuilder::texture);
+                        if (textureAndModelInformation.textures != null)
+                            textureAndModelInformation.textures.forEach(modelBuilder::texture);
                     });
                 }
             }

@@ -14,6 +14,8 @@ public class DisplayInformation {
     public TextureAndModelInformation doorBottomHingeModel;
     public TextureAndModelInformation doorTopModel;
     public TextureAndModelInformation doorTopHingeModel;
+    public TextureAndModelInformation onModel;
+    public TextureAndModelInformation offModel;
     public TextureAndModelInformation itemModel;
 //    public Map<String, Property> blockState;
     public BlockProperty blockState;

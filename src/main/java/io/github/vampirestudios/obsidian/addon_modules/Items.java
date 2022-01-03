@@ -8,7 +8,8 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
-import net.minecraft.item.Item;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.registry.Registry;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public class Items implements AddonModule {
         io.github.vampirestudios.obsidian.api.obsidian.item.Item item = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
         try {
             if (item == null) return;
-			Item.Settings settings = new Item.Settings().group(item.information.getItemGroup())
+			FabricItemSettings settings = new FabricItemSettings().group(item.information.getItemGroup())
 					.maxCount(item.information.max_count).rarity(item.information.getRarity());
             if (item.information.can_place_block) {
                 RegistryUtils.registerItem(new BlockItemImpl(item, Registry.BLOCK.get(item.information.placable_block),
@@ -35,6 +36,7 @@ public class Items implements AddonModule {
                     }
                 }
                 if (item.information.wearable) {
+                    settings.equipmentSlot(stack -> EquipmentSlot.byName(item.information.wearableSlot));
                     if (item.information.dyeable) {
                         RegistryUtils.registerItem(new WearableAndDyeableItemImpl(item, settings), item.information.name.id);
                     } else {

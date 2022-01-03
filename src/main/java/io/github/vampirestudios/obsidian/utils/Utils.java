@@ -19,7 +19,7 @@ public class Utils {
                 ObsidianAddonLoader.PACK_VERSION) {
             Obsidian.registerInRegistry(ObsidianAddonLoader.OBSIDIAN_ADDONS, obsidianAddon.getConfigPackInfo().namespace, obsidianAddon);
             Obsidian.LOGGER.info(String.format("[Obsidian] Registering obsidian addon: %s", obsidianAddon.getConfigPackInfo().displayName));
-        } else {
+        } else if(obsidianAddon.getConfigPackInfo().addonVersion != ObsidianAddonLoader.PACK_VERSION) {
             Obsidian.LOGGER.info(String.format("[Obsidian] Found incompatible obsidian addon: %s with a version of %d", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion));
         }
     }

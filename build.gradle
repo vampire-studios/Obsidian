@@ -17,11 +17,12 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.shedaniel.me" }
     maven { url "https://server.bbkr.space/artifactory/libs-release/" }
-    maven { url 'https://repo.repsy.io/mvn/xxx_inaksis_xxx/inaksis' }
+    maven { url "https://repo.repsy.io/mvn/xxx_inaksis_xxx/inaksis" }
     maven { url "https://hephaestus.dev/release" }
     maven { url "https://maven.ryanliptak.com/" }
     maven { url "https://api.modrinth.com/maven" }
     maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://maven.wispforest.io" }
 }
 
 loom {
@@ -61,11 +62,11 @@ dependencies {
     }
     include ("squeek.appleskin:appleskin-fabric:mc1.18-2.2.0")
 
-    modApi "maven.modrinth:mealapi:0.3+1.17"
-    include "maven.modrinth:mealapi:0.3+1.17"
+    modApi "maven.modrinth:mealapi:0.3+1.18"
+    include "maven.modrinth:mealapi:0.3+1.18"
 
-    modImplementation "com.github.glisco03:owo-lib:${project.owo_version}"
-    include "com.github.glisco03:owo-lib:${project.owo_version}"
+    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+    include "io.wispforest:owo-lib:${project.owo_version}"
 
     modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:v1.4.5-1.18"
 }

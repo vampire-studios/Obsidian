@@ -506,4 +506,24 @@ public class ArtificeGenerationHelper {
         });
     }
 
+    public static void generateOnOffHorizontalFacingBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder,
+                                                               Identifier name) {
+        String JSON = JsonTemplates.HORIZONTAL_FACING_ON_OFF_BLOCKSTATE
+                .replace("%MOD_ID%", name.getNamespace())
+                .replace("%BLOCK_ID%", name.getPath());
+        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
+    }
+
+    public static void generateOnOffBlockModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier name,
+                                                   Identifier onParent, Map<String, Identifier> onTextures,
+                                                   Identifier offParent, Map<String, Identifier> offTextures) {
+        pack.addBlockModel(name, model -> {
+            model.parent(offParent);
+            offTextures.forEach(model::texture);
+        });
+        pack.addBlockModel(Utils.appendToPath(name, "_on"), model -> {
+            model.parent(onParent);
+            onTextures.forEach(model::texture);
+        });
+    }
 }

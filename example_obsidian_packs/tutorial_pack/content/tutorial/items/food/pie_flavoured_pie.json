@@ -18,7 +18,7 @@
     "saturation_modifier": "supernatural"
   },
   "display": {
-    "model": {
+    "itemModel": {
       "parent": "item/generated",
       "textures": {
         "layer0": "tutorial:item/pie_flavored_pie"

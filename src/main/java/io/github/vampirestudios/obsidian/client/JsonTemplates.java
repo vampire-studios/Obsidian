@@ -63,6 +63,42 @@ public class JsonTemplates {
                 }
                 """;
 
+    public static final String HORIZONTAL_FACING_ON_OFF_BLOCKSTATE = """
+            {
+              "variants": {
+                "facing=east,lit=false": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "y": 90
+                },
+                "facing=east,lit=true": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_on",
+                  "y": 90
+                },
+                "facing=north,lit=false": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%"
+                },
+                "facing=north,lit=true": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_on"
+                },
+                "facing=south,lit=false": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "y": 180
+                },
+                "facing=south,lit=true": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_on",
+                  "y": 180
+                },
+                "facing=west,lit=false": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "y": 270
+                },
+                "facing=west,lit=true": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_on",
+                  "y": 270
+                }
+              }
+            }""";
+
     public static final String STAIRS_BLOCKSTATE = """
             {
                 "variants": {
