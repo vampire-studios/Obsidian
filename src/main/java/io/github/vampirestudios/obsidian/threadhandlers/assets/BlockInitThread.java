@@ -91,6 +91,13 @@ public class BlockInitThread implements Runnable {
                             case FENCE:
                                 ArtificeGenerationHelper.generateFenceBlockState(clientResourcePackBuilder, blockId);
                                 break;
+                            case PISTON:
+                                ArtificeGenerationHelper.generatePistonBlockState(clientResourcePackBuilder, blockId,
+                                        block.display.blockState.model, block.display.blockState.stickyModel);
+                                ArtificeGenerationHelper.generatePistonModels(clientResourcePackBuilder, blockId,
+                                        block.display.blockModel.parent, block.display.blockModel.textures,
+                                        block.display.stickyPiston.parent, block.display.stickyPiston.textures);
+                                break;
                             case OXIDIZING_BLOCK:
                                 for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
@@ -106,9 +113,14 @@ public class BlockInitThread implements Runnable {
                                 }
                                 break;
                             case LANTERN:
-                                ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId);
+                                if (block.display.blockState.model != null) {
+                                    ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId,
+                                            block.display.blockState.model, block.display.blockState.hangingModel);
+                                } else {
+                                    ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId);
+                                }
                                 break;
-                            case BLOCK:
+                            case LOOM, BLOCK:
                             default:
                                 if (block.display.blockState.model != null) {
                                     ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,

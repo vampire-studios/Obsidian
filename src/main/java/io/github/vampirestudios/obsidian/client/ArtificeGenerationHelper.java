@@ -30,6 +30,14 @@ public class ArtificeGenerationHelper {
                 .variant("hanging=true", variant -> variant.model(Utils.appendAndPrependToPath(name, "block/", "_hanging"))));
     }
 
+    public static void generateLanternBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name,
+                                                 Identifier model, Identifier hangingModel) {
+        clientResourcePackBuilder.addBlockState(name, blockStateBuilder ->
+                blockStateBuilder
+                        .variant("hanging=false", variant -> variant.model(model))
+                        .variant("hanging=true", variant -> variant.model(hangingModel)));
+    }
+
     public static void generateLanternBlockModels(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures, Identifier parentHanging, Map<String, Identifier> texturesHanging) {
         clientResourcePackBuilder.addBlockModel(name, modelBuilder -> {
             modelBuilder.parent(parent);
@@ -524,6 +532,30 @@ public class ArtificeGenerationHelper {
         pack.addBlockModel(Utils.appendToPath(name, "_on"), model -> {
             model.parent(onParent);
             onTextures.forEach(model::texture);
+        });
+    }
+
+    public static void generatePistonBlockState(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, Identifier blockId, Identifier model, Identifier stickyModel) {
+        String JSON = JsonTemplates.PISTON_BLOCKSTATE
+                .replace("%MOD_ID%", blockId.getNamespace())
+                .replace("%BLOCK_ID%", blockId.getPath());
+        String STICKY_JSON = JsonTemplates.PISTON_BLOCKSTATE
+                .replace("%MOD_ID%", blockId.getNamespace())
+                .replace("%BLOCK_ID%", blockId.getPath() + "_sticky");
+        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(blockId, "blockstates/", ".json"), new StringResource(JSON));
+        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(Utils.appendToPath(blockId, "_sticky"), "blockstates/", ".json"), new StringResource(STICKY_JSON));
+    }
+
+    public static void generatePistonModels(ArtificeResourcePack.ClientResourcePackBuilder pack, Identifier blockId,
+                                                Identifier normalModel, Map<String, Identifier> normalTextures,
+                                                Identifier stickyModel, Map<String, Identifier> stickyTextures) {
+        pack.addBlockModel(blockId, model -> {
+            model.parent(normalModel);
+            normalTextures.forEach(model::texture);
+        });
+        pack.addBlockModel(Utils.appendToPath(blockId, "_sticky"), model -> {
+            model.parent(stickyModel);
+            stickyTextures.forEach(model::texture);
         });
     }
 }

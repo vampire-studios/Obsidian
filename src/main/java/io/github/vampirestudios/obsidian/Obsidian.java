@@ -12,6 +12,8 @@ import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
 import io.github.vampirestudios.obsidian.addon_modules.*;
 import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
@@ -24,6 +26,8 @@ import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
+import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
+import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
@@ -33,14 +37,19 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -220,13 +229,67 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistry(ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
 
+		for (Block block : ObsidianAddonLoader.BLOCKS) {
+			if (block.additional_information.isConvertible) {
+				AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
+				net.minecraft.block.Block parentBlock = Registry.BLOCK.get(convertible.parent_block);
+				net.minecraft.block.Block transformedBlock = Registry.BLOCK.get(convertible.transformed_block);
+				AdditionalBlockInformation.Convertible.ConversionItem conversionItem = convertible.conversionItem;
+				Item conversionItemItem;
+				if (conversionItem.item != null) conversionItemItem = Registry.ITEM.get(conversionItem.item);
+				else conversionItemItem = null;
+
+				Tag<Item> conversionItemTag = null;
+				if (conversionItem.tag != null) {
+					if (ItemTags.getTagGroup().contains(conversionItem.tag)) conversionItemTag = ItemTags.getTagGroup().getTag(conversionItem.tag);
+					else conversionItemTag = TagFactory.ITEM.create(conversionItem.tag);
+				}
+
+				Item reversalItemItem = null;
+				Tag<Item> reversalItemTag = null;
+				AdditionalBlockInformation.Convertible.ConversionItem reversalItem = null;
+				if (convertible.reversible) {
+					if (convertible.reversalItem != null) reversalItem = convertible.reversalItem;
+
+					if (reversalItem != null) {
+						if (reversalItem.item != null) reversalItemItem = Registry.ITEM.get(conversionItem.item);
+						if (reversalItem.tag != null) {
+							if (ItemTags.getTagGroup().contains(reversalItem.tag)) reversalItemTag = ItemTags.getTagGroup()
+									.getTag(reversalItem.tag);
+						}
+					}
+				}
+
+				SoundEvent sound;
+				if (convertible.sound != null) sound = Registry.SOUND_EVENT.get(convertible.sound);
+				else sound = null;
+
+				Item droppedItem;
+				if (convertible.dropped_item != null) droppedItem = Registry.ITEM.get(convertible.dropped_item);
+				else droppedItem = null;
+
+				ConvertibleBlockPair.ConversionItem reversalItem1;
+				if (reversalItem != null) reversalItem1 = new ConvertibleBlockPair.ConversionItem(reversalItemTag, reversalItemItem);
+				else reversalItem1 = null;
+
+				ConvertibleBlockPair.ConversionItem conversionItem1 = new ConvertibleBlockPair.ConversionItem(conversionItemTag, conversionItemItem);
+				ConvertibleBlockPair convertibleBlockPair;
+				if (reversalItem1 != null) convertibleBlockPair = new ConvertibleBlockPair(parentBlock, transformedBlock,
+						conversionItem1, reversalItem1);
+				else convertibleBlockPair = new ConvertibleBlockPair(parentBlock, transformedBlock, conversionItem1);
+				if (sound != null) convertibleBlockPair.setSound(sound);
+				if (droppedItem != null) convertibleBlockPair.setDroppedItem(droppedItem);
+				ConvertibleBlocksRegistry.registerConvertibleBlockPair(convertibleBlockPair);
+			}
+		}
+
 		//Add new spread behavior, mycelium spreads onto coal blocks by turning them into diamond blocks
-		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.COAL_BLOCK, SpreaderType.MYCELIUM, ((state, level, pos) -> net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState()));
-		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.DIAMOND_BLOCK, SpreaderType.MYCELIUM, ((state, level, pos) -> net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState()));
+//		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.COAL_BLOCK, SpreaderType.MYCELIUM, ((state, level, pos) -> net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState()));
+//		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.DIAMOND_BLOCK, SpreaderType.MYCELIUM, ((state, level, pos) -> net.minecraft.block.Blocks.DIAMOND_BLOCK.getDefaultState()));
 
 		//Replace vanilla behavior, grass will spread to dirt by turning it into moss blocks
-		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.DIRT, SpreaderType.GRASS, ((state, level, pos) -> net.minecraft.block.Blocks.MOSS_BLOCK.getDefaultState()));
-		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.MOSS_BLOCK, SpreaderType.GRASS, ((state, level, pos) -> net.minecraft.block.Blocks.MOSS_BLOCK.getDefaultState()));
+//		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.DIRT, SpreaderType.GRASS, ((state, level, pos) -> net.minecraft.block.Blocks.MOSS_BLOCK.getDefaultState()));
+//		SpreadBehaviors.addComplexSpreaderBehavior(net.minecraft.block.Blocks.MOSS_BLOCK, SpreaderType.GRASS, ((state, level, pos) -> net.minecraft.block.Blocks.MOSS_BLOCK.getDefaultState()));
 
 		ObsidianAddonLoader.loadDefaultObsidianAddons();
 		ObsidianAddonLoader.loadObsidianAddons();

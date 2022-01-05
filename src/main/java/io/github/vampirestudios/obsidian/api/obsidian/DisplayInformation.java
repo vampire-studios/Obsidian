@@ -17,6 +17,7 @@ public class DisplayInformation {
     public TextureAndModelInformation onModel;
     public TextureAndModelInformation offModel;
     public TextureAndModelInformation itemModel;
+    public TextureAndModelInformation stickyPiston;
 //    public Map<String, Property> blockState;
     public BlockProperty blockState;
     public TooltipInformation[] lore = new TooltipInformation[0];

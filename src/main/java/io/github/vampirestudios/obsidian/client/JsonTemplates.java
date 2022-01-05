@@ -189,4 +189,57 @@ public class JsonTemplates {
              }
             """;
 
+    public static final String PISTON_BLOCKSTATE = """
+            {
+              "variants": {
+                "extended=false,facing=down": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "x": 90
+                },
+                "extended=false,facing=east": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "y": 90
+                },
+                "extended=false,facing=north": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%"
+                },
+                "extended=false,facing=south": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "y": 180
+                },
+                "extended=false,facing=up": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "x": 270
+                },
+                "extended=false,facing=west": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%",
+                  "y": 270
+                },
+                "extended=true,facing=down": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_base",
+                  "x": 90
+                },
+                "extended=true,facing=east": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_base",
+                  "y": 90
+                },
+                "extended=true,facing=north": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_base"
+                },
+                "extended=true,facing=south": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_base",
+                  "y": 180
+                },
+                "extended=true,facing=up": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_base",
+                  "x": 270
+                },
+                "extended=true,facing=west": {
+                  "model": "%MOD_ID%:block/%BLOCK_ID%_base",
+                  "y": 270
+                }
+              }
+            }
+            """;
+    
 }

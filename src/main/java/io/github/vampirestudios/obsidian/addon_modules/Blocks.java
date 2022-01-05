@@ -2,31 +2,23 @@ package io.github.vampirestudios.obsidian.addon_modules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
-import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -244,8 +236,17 @@ public class Blocks implements AddonModule {
                         ((IBlockEntityType) BlockEntityType.BLAST_FURNACE).vl_addBlocks(blastFurnace);
                         break;
                     case SMOKER:
-                        Block smoker = REGISTRY_HELPER.registerBlock(new SmokerBlockImpl(block, blockSettings), block, block.information.name.id.getPath(), settings);
+                        Block smoker = REGISTRY_HELPER.registerBlock(new SmokerBlockImpl(blockSettings), block, block.information.name.id.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.SMOKER).vl_addBlocks(smoker);
+                        break;
+                    case BARREL:
+                        Block barrel = REGISTRY_HELPER.registerBlock(new BarrelBlockImpl(blockSettings), block, block.information.name.id.getPath(), settings);
+                        ((IBlockEntityType) BlockEntityType.BARREL).vl_addBlocks(barrel);
+                        break;
+                    case PISTON:
+                        Block piston = REGISTRY_HELPER.registerBlock(new PistonBlockImpl(false, blockSettings), block, block.information.name.id.getPath(), settings);
+                        Block stickyPiston = REGISTRY_HELPER.registerBlock(new PistonBlockImpl(true, blockSettings), block, block.information.name.id.getPath() + "_sticky", settings);
+                        ((IBlockEntityType) BlockEntityType.PISTON).vl_addBlocks(piston, stickyPiston);
                         break;
                     /*case PANE:
 //                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(block.information.name.id, "_base"));
@@ -310,58 +311,6 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
                                 Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
                     }
-                }
-
-                if (block.additional_information.isConvertible) {
-                    AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
-                    Block parentBlock = Registry.BLOCK.get(convertible.parent_block);
-                    Block transformedBlock = Registry.BLOCK.get(convertible.transformed_block);
-                    AdditionalBlockInformation.Convertible.ConversionItem conversionItem = convertible.conversionItem;
-                    Item conversionItemItem;
-                    if (conversionItem.item != null) conversionItemItem = Registry.ITEM.get(conversionItem.item);
-                    else conversionItemItem = null;
-
-                    Tag<Item> conversionItemTag = null;
-                    if (conversionItem.tag != null) {
-                        if (ItemTags.getTagGroup().contains(conversionItem.tag)) conversionItemTag = ItemTags.getTagGroup().getTag(conversionItem.tag);
-                        else conversionItemTag = TagFactory.ITEM.create(conversionItem.tag);
-                    }
-
-                    Item reversalItemItem = null;
-                    Tag<Item> reversalItemTag = null;
-                    AdditionalBlockInformation.Convertible.ConversionItem reversalItem = null;
-                    if (convertible.reversible) {
-                        if (convertible.reversalItem != null) reversalItem = convertible.reversalItem;
-
-                        if (reversalItem != null) {
-                            if (reversalItem.item != null) reversalItemItem = Registry.ITEM.get(conversionItem.item);
-                            if (reversalItem.tag != null) {
-                                if (ItemTags.getTagGroup().contains(reversalItem.tag)) reversalItemTag = ItemTags.getTagGroup()
-                                        .getTag(reversalItem.tag);
-                            }
-                        }
-                    }
-
-                    SoundEvent sound;
-                    if (convertible.sound != null) sound = Registry.SOUND_EVENT.get(convertible.sound);
-                    else sound = null;
-
-                    Item droppedItem;
-                    if (convertible.dropped_item != null) droppedItem = Registry.ITEM.get(convertible.dropped_item);
-                    else droppedItem = null;
-
-                    ConvertibleBlockPair.ConversionItem reversalItem1;
-                    if (reversalItem != null) reversalItem1 = new ConvertibleBlockPair.ConversionItem(reversalItemTag, reversalItemItem);
-                    else reversalItem1 = null;
-
-                    ConvertibleBlockPair.ConversionItem conversionItem1 = new ConvertibleBlockPair.ConversionItem(conversionItemTag, conversionItemItem);
-                    ConvertibleBlockPair convertibleBlockPair;
-                    if (reversalItem1 != null) convertibleBlockPair = new ConvertibleBlockPair(parentBlock, transformedBlock,
-                            conversionItem1, reversalItem1);
-                    else convertibleBlockPair = new ConvertibleBlockPair(parentBlock, transformedBlock, conversionItem1);
-                    if (sound != null) convertibleBlockPair.setSound(sound);
-                    if (droppedItem != null) convertibleBlockPair.setDroppedItem(droppedItem);
-                    ConvertibleBlocksRegistry.registerConvertibleBlockPair(convertibleBlockPair);
                 }
             }
 
