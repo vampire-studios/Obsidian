@@ -14,7 +14,7 @@ public class CraftingTableBlockImpl extends CraftingTableBlock {
 
     public CraftingTableBlockImpl(Block block, AbstractBlock.Settings settings) {
         super(settings);
-        FILLER = new VanillaTargetedItemGroupFiller(Blocks.CRAFTING_TABLE.asItem());
+        FILLER = new VanillaTargetedItemGroupFiller(Blocks.CRAFTING_TABLE);
     }
 
     @Override

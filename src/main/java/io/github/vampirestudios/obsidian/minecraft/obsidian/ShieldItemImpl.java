@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShieldItem;
@@ -45,3 +46,4 @@ public class ShieldItemImpl extends FabricShieldItem {
         }
     }
 }
+*/

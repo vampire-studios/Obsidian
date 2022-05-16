@@ -12,7 +12,7 @@ public class SmokerBlockImpl extends SmokerBlock {
 
 	public SmokerBlockImpl(Settings settings) {
 		super(settings);
-		FILLER = new VanillaTargetedItemGroupFiller(Blocks.SMOKER.asItem());
+		FILLER = new VanillaTargetedItemGroupFiller(Blocks.SMOKER);
 	}
 
 	@Override

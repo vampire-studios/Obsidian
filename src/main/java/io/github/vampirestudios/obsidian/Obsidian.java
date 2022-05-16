@@ -8,13 +8,10 @@ import com.swordglowsblue.artifice.api.util.Processor;
 import com.swordglowsblue.artifice.common.ArtificeRegistry;
 import com.swordglowsblue.artifice.impl.ArtificeImpl;
 import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
-import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
 import io.github.vampirestudios.obsidian.addon_modules.*;
-import io.github.vampirestudios.obsidian.api.bedrock.block.events.*;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.BreakDoorAnnotationComponent;
@@ -37,7 +34,6 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.EntityDimensions;
@@ -47,22 +43,23 @@ import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.world.dimension.DimensionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
 
-public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinApi {
+public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSkinApi {
 
 	public static final Gson GSON = new GsonBuilder()
 			.registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
@@ -74,9 +71,10 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 	public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = FabricRegistryBuilder.createSimple(AddonModule.class, id("addon_modules")).buildAndRegister();
 	public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = FabricRegistryBuilder.createSimple(ItemGroup.class, new Identifier(MOD_ID, "item_groups")).buildAndRegister();
 	public static final Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, new Identifier(MOD_ID, "food_components")).buildAndRegister();
-	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable());
-	public static final Registry<Class<? extends io.github.vampirestudios.obsidian.api.bedrock.block.Event>> BEDROCK_BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "bedrock_block_event_registry")), Lifecycle.stable());
-	public static final Registry<Class<? extends Event>> BLOCK_EVENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "block_event_registry")), Lifecycle.stable());
+	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable(), null);
+	public static Registry<AnimationDefinition> ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(AnimationDefinition.class, id("animation_definitions")).buildAndRegister();
+	public static Registry<AnimationChannel.Interpolation> ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(AnimationChannel.Interpolation.class, id("animation_channel_interpolations")).buildAndRegister();
+	public static Registry<AnimationChannel.Target> ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(AnimationChannel.Target.class, id("animation_channel_targets")).buildAndRegister();
 	public static final String NAME = "Obsidian";
 	public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
@@ -88,12 +86,14 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 			.build());
 	public static ObsidianConfig CONFIG;
 
+	public static ResourcePackSource RESOURCE_PACK_SOURCE = ResourcePackSource.nameAndSource("pack.source.obsidian");
+
 	public static Identifier id(String path) {
 		return new Identifier(MOD_ID, path);
 	}
 
-	public static <T> void registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
-		Registry.register(registry, name, idk);
+	public static <T> T registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
+		return Registry.register(registry, name, idk);
 	}
 
 	public static <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
@@ -122,6 +122,9 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 
 		CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
+
+		AnimationChannel.Targets.init();
+		AnimationChannel.Interpolations.init();
 
 		//Item Groups
 		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
@@ -165,11 +168,11 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
 
 		//Bedrock Block Events
-		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "add_mob_effect", AddMobEffect.class);
-		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "damage", Damage.class);
-		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "decrement_stack", DecrementStack.class);
-		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "die", Die.class);
-		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_effect", PlayEffect.class);
+//		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "add_mob_effect", AddMobEffect.class);
+//		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "damage", Damage.class);
+//		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "decrement_stack", DecrementStack.class);
+//		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "die", Die.class);
+//		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_effect", PlayEffect.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_sound", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "remove_mob_effect", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "run_command", LookAtPlayerBehaviourComponent.class);
@@ -182,11 +185,11 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
 		//Obsidian Block Events
-		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "add_mob_effect", io.github.vampirestudios.obsidian.api.obsidian.block.events.AddMobEffect.class);
-		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "damage", io.github.vampirestudios.obsidian.api.obsidian.block.events.Damage.class);
-		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "decrement_stack", io.github.vampirestudios.obsidian.api.obsidian.block.events.DecrementStack.class);
-		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "die", io.github.vampirestudios.obsidian.api.obsidian.block.events.Die.class);
-		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "play_effect", io.github.vampirestudios.obsidian.api.obsidian.block.events.PlayEffect.class);
+//		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "add_mob_effect", io.github.vampirestudios.obsidian.api.obsidian.block.events.AddMobEffect.class);
+//		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "damage", io.github.vampirestudios.obsidian.api.obsidian.block.events.Damage.class);
+//		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "decrement_stack", io.github.vampirestudios.obsidian.api.obsidian.block.events.DecrementStack.class);
+//		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "die", io.github.vampirestudios.obsidian.api.obsidian.block.events.Die.class);
+//		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "play_effect", io.github.vampirestudios.obsidian.api.obsidian.block.events.PlayEffect.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_sound", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "remove_mob_effect", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "run_command", LookAtPlayerBehaviourComponent.class);
@@ -205,8 +208,13 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "paintings", new Paintings());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "armor_materials", new ArmorMaterials());
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+			registerInRegistry(ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+			registerInRegistry(ADDON_MODULE_REGISTRY, "emojis", new Emojis());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
@@ -218,8 +226,11 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistry(ADDON_MODULE_REGISTRY, "weapon", new Weapons());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "commands", new Commands());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "entity_models", new EntityModels());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "entities", new Entities());
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+			registerInRegistry(ADDON_MODULE_REGISTRY, "entity_models", new EntityModels());
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+			registerInRegistry(ADDON_MODULE_REGISTRY, "entity_animations", new EntityAnimations());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "food_components", new FoodComponents());
@@ -228,6 +239,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
+//		registerInRegistry(ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
 
 		for (Block block : ObsidianAddonLoader.BLOCKS) {
 			if (block.additional_information.isConvertible) {
@@ -239,24 +251,18 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 				if (conversionItem.item != null) conversionItemItem = Registry.ITEM.get(conversionItem.item);
 				else conversionItemItem = null;
 
-				Tag<Item> conversionItemTag = null;
-				if (conversionItem.tag != null) {
-					if (ItemTags.getTagGroup().contains(conversionItem.tag)) conversionItemTag = ItemTags.getTagGroup().getTag(conversionItem.tag);
-					else conversionItemTag = TagFactory.ITEM.create(conversionItem.tag);
-				}
+				TagKey<Item> conversionItemTag = null;
+				if (conversionItem.tag != null) conversionItemTag = TagKey.of(Registry.ITEM_KEY, conversionItem.tag);
 
 				Item reversalItemItem = null;
-				Tag<Item> reversalItemTag = null;
+				TagKey<Item> reversalItemTag = null;
 				AdditionalBlockInformation.Convertible.ConversionItem reversalItem = null;
 				if (convertible.reversible) {
 					if (convertible.reversalItem != null) reversalItem = convertible.reversalItem;
 
 					if (reversalItem != null) {
 						if (reversalItem.item != null) reversalItemItem = Registry.ITEM.get(conversionItem.item);
-						if (reversalItem.tag != null) {
-							if (ItemTags.getTagGroup().contains(reversalItem.tag)) reversalItemTag = ItemTags.getTagGroup()
-									.getTag(reversalItem.tag);
-						}
+						if (reversalItem.tag != null) reversalItemTag = TagKey.of(Registry.ITEM_KEY, conversionItem.tag);
 					}
 				}
 
@@ -293,6 +299,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 
 		ObsidianAddonLoader.loadDefaultObsidianAddons();
 		ObsidianAddonLoader.loadObsidianAddons();
+		DimensionType
 
 		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
 			if (world.isClient)
@@ -325,7 +332,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 		});
 	}
 
-	@Override
+	/*@Override
 	public void onMealApiInit() {
 //		Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
 //			try {
@@ -334,7 +341,7 @@ public class Obsidian implements ModInitializer, MealAPIInitializer, AppleSkinAp
 //				e.printStackTrace();
 //			}
 //		});
-	}
+	}*/
 
 	@Override
 	public void registerEvents() {

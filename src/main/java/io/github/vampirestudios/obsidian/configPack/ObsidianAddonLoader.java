@@ -8,8 +8,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.CustomMaterial;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
+import io.github.vampirestudios.obsidian.api.obsidian.emoji.Emoji;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.models.AnimationFile;
 import io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
@@ -17,6 +19,9 @@ import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
 import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerBiomeType;
 import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerProfession;
+import io.github.vampirestudios.obsidian.api.obsidian.world.Biome;
+import io.github.vampirestudios.obsidian.api.obsidian.world.Structure;
+import io.github.vampirestudios.obsidian.api.obsidian.world.Tree;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -77,6 +82,13 @@ public class ObsidianAddonLoader {
     public static Registry<VillagerProfession> VILLAGER_PROFESSIONS = FabricRegistryBuilder.createSimple(VillagerProfession.class, id("villager_professions")).buildAndRegister();
     public static Registry<VillagerBiomeType> VILLAGER_BIOME_TYPES = FabricRegistryBuilder.createSimple(VillagerBiomeType.class, id("villager_biome_types")).buildAndRegister();
     public static Registry<Fluid> FLUIDS = FabricRegistryBuilder.createSimple(Fluid.class, id("fluids")).buildAndRegister();
+    public static Registry<Emoji> EMOJIS = FabricRegistryBuilder.createSimple(Emoji.class, id("emojis")).buildAndRegister();
+    public static Registry<AnimationFile> ENTITY_ANIMATIONS = FabricRegistryBuilder.createSimple(AnimationFile.class, id("entity_animations")).buildAndRegister();
+
+    //World Generation
+    public static Registry<Tree> TREES = FabricRegistryBuilder.createSimple(Tree.class, id("trees")).buildAndRegister();
+    public static Registry<Structure> STRUCTURES = FabricRegistryBuilder.createSimple(Structure.class, id("structures")).buildAndRegister();
+    public static Registry<Biome> BIOMES = FabricRegistryBuilder.createSimple(Biome.class, id("biomes")).buildAndRegister();
 
     public static void loadDefaultObsidianAddons() {
         if (!OBSIDIAN_ADDON_DIRECTORY.exists())
@@ -124,14 +136,15 @@ public class ObsidianAddonLoader {
             // Load Packs
             register(file, "addon.info.pack");
         }
+
         String moduleText;
-        if (OBSIDIAN_ADDONS.getEntries().size() > 1) {
+        if (OBSIDIAN_ADDONS.getIds().size() > 1) {
             moduleText = "Loading %d obsidian addons:";
         } else {
             moduleText = "Loading %d obsidian addon:";
         }
 
-        Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.getEntries().size()));
+        Obsidian.LOGGER.info(String.format("[Obsidian] " + moduleText, OBSIDIAN_ADDONS.getIds().size()));
 
         for (IAddonPack pack : OBSIDIAN_ADDONS) {
             ObsidianAddon addon = (ObsidianAddon) pack;
@@ -143,7 +156,7 @@ public class ObsidianAddonLoader {
 
             try {
                 Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(addon, new ModIdAndAddonPath(modId, path), addonModule));
-            } catch (Throwable throwable) {
+            } catch (Exception throwable) {
                 throwable.printStackTrace();
             }
         }

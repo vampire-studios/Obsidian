@@ -33,17 +33,14 @@
     ]
   },
   "mixins": [
-    "fabric-combat-api-v1.mixins.json",
-    "fabric-conditional-resource-api-v1.mixins.json",
     "fabric-item-api-v1-elytra.mixins.json",
-    "fabric-recipe-api-v1.mixins.json",
     "fabric-resource-conditions-v1.mixins.json",
     "obsidian.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.7.4",
+    "fabricloader": ">=0.12.12",
     "fabric": "*",
     "owo": "*",
     "vampirelib": "*"

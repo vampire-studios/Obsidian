@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
+import com.mojang.blaze3d.platform.InputUtil;
 import io.github.vampirestudios.obsidian.utils.ConstantUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 
 public class KeyBinding {

@@ -16,14 +16,11 @@
 
 package net.fabricmc.fabric.impl.mininglevel;
 
-import net.minecraft.resource.ResourceType;
-
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 
 public final class FabricMiningLevelInit implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new MiningLevelCacheInvalidator());
+//		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new MiningLevelCacheInvalidator());
 	}
 }

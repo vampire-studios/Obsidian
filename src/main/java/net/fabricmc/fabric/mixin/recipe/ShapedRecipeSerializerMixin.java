@@ -19,21 +19,19 @@ package net.fabricmc.fabric.mixin.recipe;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2CharMap;
 import it.unimi.dsi.fastutil.objects.Object2CharOpenHashMap;
-import org.spongepowered.asm.mixin.Mixin;
-
-import net.minecraft.data.server.recipe.ShapedRecipeJsonFactory;
+import net.fabricmc.fabric.api.recipe.v1.serializer.FabricRecipeSerializer;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.util.collection.DefaultedList;
-
-import net.fabricmc.fabric.api.recipe.v1.serializer.FabricRecipeSerializer;
+import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ShapedRecipe.Serializer.class)
 public abstract class ShapedRecipeSerializerMixin implements FabricRecipeSerializer<ShapedRecipe> {
 
 	@Override
 	public JsonObject toJson(ShapedRecipe recipe) {
-		ShapedRecipeJsonFactory factory = new ShapedRecipeJsonFactory(recipe.getOutput().getItem(), recipe.getOutput().getCount());
+		ShapedRecipeJsonBuilder factory = new ShapedRecipeJsonBuilder(recipe.getOutput().getItem(), recipe.getOutput().getCount());
 
 		factory.criterion("dummy", null);
 

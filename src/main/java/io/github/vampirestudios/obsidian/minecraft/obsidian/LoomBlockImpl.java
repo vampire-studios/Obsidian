@@ -14,7 +14,7 @@ public class LoomBlockImpl extends LoomBlock {
 
     public LoomBlockImpl(Block block, AbstractBlock.Settings settings) {
         super(settings);
-        FILLER = new VanillaTargetedItemGroupFiller(Blocks.LOOM.asItem());
+        FILLER = new VanillaTargetedItemGroupFiller(Blocks.LOOM);
     }
 
     @Override

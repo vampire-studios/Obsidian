@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import io.github.foundationgames.mealapi.api.v0.MealItemRegistry;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
@@ -45,7 +44,7 @@ public class Food implements AddonModule {
         try {
             if (foodItem == null) return;
             Item item = Registry.ITEM.get(foodItem.information.name.id);
-            MealItemRegistry.instance().register(item, ((player, stack) -> foodItem.food_information.fullness));
+//            MealItemRegistry.instance().register(item, ((player, stack) -> foodItem.food_information.fullness));
         } catch (Exception e) {
             e.printStackTrace();
         }

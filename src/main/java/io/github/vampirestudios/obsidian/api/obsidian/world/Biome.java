@@ -1,10 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.world;
 
+import io.github.vampirestudios.obsidian.api.obsidian.biomeLayouts.MultiNoise;
 import net.minecraft.util.Identifier;
 
 public class Biome {
 
-    public Identifier name;
+    public Identifier id;
     public String displayName;
     public MultiNoise multiNoise;
     public String parent = "";

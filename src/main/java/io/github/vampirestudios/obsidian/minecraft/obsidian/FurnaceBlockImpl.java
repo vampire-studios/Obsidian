@@ -13,7 +13,7 @@ public class FurnaceBlockImpl extends FurnaceBlock {
 
 	public FurnaceBlockImpl(Block block, Settings settings) {
 		super(settings);
-		FILLER = new VanillaTargetedItemGroupFiller(Blocks.FURNACE.asItem());
+		FILLER = new VanillaTargetedItemGroupFiller(Blocks.FURNACE);
 	}
 
 	@Override

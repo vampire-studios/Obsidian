@@ -13,7 +13,7 @@ public class BlastFurnaceBlockImpl extends BlastFurnaceBlock {
 
 	public BlastFurnaceBlockImpl(Block block, Settings settings) {
 		super(settings);
-		FILLER = new VanillaTargetedItemGroupFiller(Blocks.BLAST_FURNACE.asItem());
+		FILLER = new VanillaTargetedItemGroupFiller(Blocks.BLAST_FURNACE);
 	}
 
 	@Override

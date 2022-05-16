@@ -28,8 +28,9 @@ public class Block {
     public DropInformation dropInformation;
     public boolean isMultiBlock = false;
     public MultiBlockInformation multiBlockInformation;
+    public Identifier treeFeature;
 
-    public List<net.minecraft.block.Block> getSupportableBlocks() {
+	public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
         can_plant_on.forEach(identifier -> blocks2.add(Registry.BLOCK.get(identifier)));
         return blocks2;
@@ -87,7 +88,8 @@ public class Block {
         BARREL,
         COMPOSTER,
         RAILS,
-        CARTOGRAPHY_TABLE
+        CARTOGRAPHY_TABLE,
+        CARPET
     }
 
     public static class OxidizableProperties {
@@ -95,10 +97,10 @@ public class Block {
         public List<String> cycle;
 
         public static class OxidationStage {
-            public boolean can_be_waxed;
+            public boolean can_be_waxed = true;
             public List<VariantBlock> blocks;
-            public boolean stairs;
-            public boolean slab;
+            public boolean stairs = true;
+            public boolean slab = true;
 
             public static class VariantBlock {
                 public NameInformation name;

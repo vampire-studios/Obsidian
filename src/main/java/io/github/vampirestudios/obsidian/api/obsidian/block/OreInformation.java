@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.block.Block;
 import net.minecraft.structure.rule.*;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -42,7 +42,7 @@ public class OreInformation {
                 : UniformHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset());
     }
 
-    public Tag<Block> getBlockTag() {
+    public TagKey<Block> getBlockTag() {
         if (target_state.tag != null && target_state.tag.getPath().equals("base_stone_nether")) {
             return BlockTags.BASE_STONE_NETHER;
         } else {

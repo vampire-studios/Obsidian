@@ -28,10 +28,10 @@ public class ItemInformation {
 
     public Rarity getRarity() {
 		return switch (rarity) {
-			default -> Rarity.COMMON;
 			case "uncommon" -> Rarity.UNCOMMON;
 			case "rare" -> Rarity.RARE;
 			case "epic" -> Rarity.EPIC;
+			default -> Rarity.COMMON;
 		};
     }
 

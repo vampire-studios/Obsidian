@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.bedrock;
 
-import net.minecraft.resource.DirectoryResourcePack;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ZipResourcePack;
+import net.minecraft.resource.pack.DirectoryResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ZipResourcePack;
 import net.minecraft.util.Identifier;
 
 import java.io.File;

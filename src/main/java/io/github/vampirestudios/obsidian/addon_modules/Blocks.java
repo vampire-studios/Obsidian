@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.addon_modules;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.block.SaplingBaseBlock;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
@@ -9,6 +10,7 @@ import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
+import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -165,7 +167,7 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, block.information.name.id.getPath(), settings);
                         break;
                     case SAPLING:
-//						REGISTRY_HELPER.registerBlock(new SaplingBaseBlock(block, blockSettings), block.information.name.id.getPath());
+						REGISTRY_HELPER.registerBlock(new SaplingBaseBlock(block), block, block.information.name.id.getPath(), settings);
                         break;
                     case TORCH:
                         //TODO: Add particle lookup registry/method
@@ -248,6 +250,9 @@ public class Blocks implements AddonModule {
                         Block stickyPiston = REGISTRY_HELPER.registerBlock(new PistonBlockImpl(true, blockSettings), block, block.information.name.id.getPath() + "_sticky", settings);
                         ((IBlockEntityType) BlockEntityType.PISTON).vl_addBlocks(piston, stickyPiston);
                         break;
+                    case CARPET:
+                        REGISTRY_HELPER.registerBlock(new CarpetBlock(blockSettings), block, block.information.name.id.getPath(), settings);
+                        break;
                     /*case PANE:
 //                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(block.information.name.id, "_base"));
 
@@ -282,14 +287,22 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
                                 Utils.appendToPath(identifier, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
                     }
-                    /*if (block.additional_information.pressurePlate) {
-                        REGISTRY_HELPER.registerBlock(new PressurePlateBaseBlock(blockSettings, PressurePlateBlock.ActivationRule.EVERYTHING), block,
+                    if (block.additional_information.pressurePlate) {
+                        REGISTRY_HELPER.registerBlock(new PressurePlateBaseBlock(net.minecraft.block.Blocks.DARK_OAK_PRESSURE_PLATE, blockSettings, PressurePlateBlock.ActivationRule.EVERYTHING), block,
                                 Utils.appendToPath(identifier, "_pressure_plate").getPath(), ItemGroup.REDSTONE, settings);
                     }
                     if (block.additional_information.button) {
-                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, blockSettings), block,
+                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, net.minecraft.block.Blocks.DARK_OAK_BUTTON, blockSettings), block,
                                 Utils.appendToPath(identifier, "_button").getPath(), ItemGroup.REDSTONE, settings);
-                    }*/
+                    }
+                    if (block.additional_information.door) {
+                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.DARK_OAK_DOOR, blockSettings), block,
+                                Utils.appendToPath(identifier, "_door").getPath(), ItemGroup.REDSTONE, settings);
+                    }
+                    if (block.additional_information.trapdoor) {
+                        REGISTRY_HELPER.registerBlock(new TrapdoorBlockImpl(blockSettings), block,
+                                Utils.appendToPath(identifier, "_trapdoor").getPath(), ItemGroup.REDSTONE, settings);
+                    }
                 } else {
                     if (block.additional_information.slab) {
                         REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block,
@@ -310,6 +323,22 @@ public class Blocks implements AddonModule {
                     if (block.additional_information.walls) {
                         REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
                                 Utils.appendToPath(block.information.name.id, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+                    }
+                    if (block.additional_information.pressurePlate) {
+                        REGISTRY_HELPER.registerBlock(new PressurePlateBaseBlock(net.minecraft.block.Blocks.DARK_OAK_PRESSURE_PLATE, blockSettings, PressurePlateBlock.ActivationRule.EVERYTHING), block,
+                                Utils.appendToPath(block.information.name.id, "_pressure_plate").getPath(), ItemGroup.REDSTONE, settings);
+                    }
+                    if (block.additional_information.button) {
+                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, net.minecraft.block.Blocks.DARK_OAK_BUTTON, blockSettings), block,
+                                Utils.appendToPath(block.information.name.id, "_button").getPath(), ItemGroup.REDSTONE, settings);
+                    }
+                    if (block.additional_information.door) {
+                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.DARK_OAK_DOOR, blockSettings), block,
+                                Utils.appendToPath(block.information.name.id, "_door").getPath(), ItemGroup.REDSTONE, settings);
+                    }
+                    if (block.additional_information.trapdoor) {
+                        REGISTRY_HELPER.registerBlock(new TrapdoorBlockImpl(blockSettings), block,
+                                Utils.appendToPath(block.information.name.id, "_trapdoor").getPath(), ItemGroup.REDSTONE, settings);
                     }
                 }
             }

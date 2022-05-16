@@ -3,9 +3,9 @@ package io.github.vampirestudios.obsidian.client.resource;
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.bedrock.IBedrockAddon;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
-import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 
 import java.io.FileNotFoundException;

@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import io.github.ennuil.libzoomer.api.ZoomInstance;
-import io.github.ennuil.libzoomer.api.ZoomRegistry;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ZoomableItem;
@@ -24,11 +23,11 @@ public class ZoomableItems implements AddonModule {
         ZoomableItem zoomableItem = Obsidian.GSON.fromJson(new FileReader(file), ZoomableItem.class);
         try {
             if (zoomableItem == null) return;
-            ZoomInstance zoomInstance = ZoomRegistry.registerInstance(new ZoomInstance(
+            ZoomInstance zoomInstance = new ZoomInstance(
                     zoomableItem.information.name.id, zoomableItem.zoomInformation.zoom_length,
                     zoomableItem.zoomInformation.getTransitionMode(), zoomableItem.zoomInformation.getMouseModifier(),
                     zoomableItem.zoomInformation.getZoomOverlay()
-            ));
+            );
             Item item = RegistryUtils.registerItem(new SpyglassItemImpl(zoomableItem, new Item.Settings().group(zoomableItem.information.getItemGroup())
                     .maxCount(1)), zoomableItem.information.name.id);
             ClientTickEvents.END_CLIENT_TICK.register(client -> {

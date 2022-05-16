@@ -13,10 +13,10 @@ import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
 import io.wispforest.owo.itemgroup.json.WrapperGroup;
 import io.wispforest.owo.moddata.ModDataConsumer;
 import io.wispforest.owo.moddata.ModDataLoader;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.Util;
@@ -91,7 +91,7 @@ public class ExpandedItemGroups implements AddonModule {
 			if (tabbedGroup.tabs != null) {
 				for (TabbedGroup.Tab tab : tabbedGroup.tabs) {
 					createdTabs.add(new ItemGroupTab(tab.icon.getIcon(), tab.name,
-							TagFactory.ITEM.create(tab.contentTag), tab.texture));
+							TagKey.of(Registry.ITEM_KEY, tab.contentTag), tab.texture));
 				}
 			}
 

@@ -7,23 +7,45 @@
 	"defaultRequire": 1
   },
   "mixins": [
+	"AbstractSkeletonEntityMixin",
 	"BlockItemInject",
+	"BlockMixin",
+	"BlockSettingsMixin",
+	"BowAttackGoalMixin",
+	"BowAttackMixin",
+	"BowItemMixin",
 	"CraftingScreenHandlerMixin",
+	"CrossbowItemMixin",
+	"EntityUseBowMixin",
+	"EntityUseCrossbowMixin",
 	"FabricItemGroupBuilderMixin",
 	"GrassBlockMixin",
+	"IdListMixin",
 	"ItemMixin",
 	"LoomScreenHandlerMixin",
 	"MyceliumBlockMixin",
+	"ProjectileUtilMixin",
+	"ReferenceRegistryEntryMixin",
+	"SimpleRegistryMixin",
 	"SpreadableBlockMixin",
 	"TridentAttackGoalMixin",
 	"TridentEntityAccessor"
   ],
   "client": [
+	"client.HeldItemRendererMixin",
 	"client.ItemRendererMixin",
 	"client.MixinArmorFeatureRenderer",
 	"client.ModelLoaderMixin",
+	"client.ModelPartMixin",
 	"client.OptionsScreenMixin",
 	"client.PlayerEntityRendererMixin",
-	"client.ReloadableResourceManagerImplMixin"
+	"client.ReloadableResourceManagerImplMixin",
+	"client.SinglePartEntityModelMixin",
+	"client.SkeletonEntityModelMixin",
+	"client.emoji.CommandSuggestorAccessor",
+	"client.emoji.CommandSuggestorMixin",
+	"client.emoji.SelectionManagerMixin",
+	"client.emoji.SuggestionWindowMixin",
+	"client.emoji.TextFieldWidgetMixin"
   ]
 }

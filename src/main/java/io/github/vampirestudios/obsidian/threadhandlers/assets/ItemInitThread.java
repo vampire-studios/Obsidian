@@ -55,7 +55,7 @@ public class ItemInitThread implements Runnable {
         }
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation lore : item.display.lore) {
-                if (lore.text.textType.equals("translatable")) {
+                if (lore.text.textType != null && lore.text.textType.equals("translatable")) {
                     lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
                             item.information.name.id.getNamespace(), languageId, lore.text.text, name
                     ));

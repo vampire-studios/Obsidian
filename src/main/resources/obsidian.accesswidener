@@ -3,13 +3,8 @@ accessible method net/minecraft/text/TextColor <init> (I)V
 accessible method net/minecraft/enchantment/Enchantment <init> (Lnet/minecraft/enchantment/Enchantment$Rarity;Lnet/minecraft/enchantment/EnchantmentTarget;[Lnet/minecraft/entity/EquipmentSlot;)V
 
 extendable class net/minecraft/world/biome/Biome
-accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/Biome$Category;FFLnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;)V
+accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/Biome$Category;Lnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;)V
 accessible class net/minecraft/world/biome/Biome$Weather
-accessible class net/minecraft/world/biome/layer/BiomeLayers$Category
-accessible method net/minecraft/world/biome/Biome$Weather <init> (Lnet/minecraft/world/biome/Biome$Precipitation;FLnet/minecraft/world/biome/Biome$TemperatureModifier;F)V
-
-accessible method net/minecraft/resource/ResourceType <init> (Ljava/lang/String;)V
-extendable method net/minecraft/resource/ResourceType <init> (Ljava/lang/String;)V
 
 accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
 accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;
@@ -31,3 +26,4 @@ accessible method net/minecraft/world/gen/YOffset$AboveBottom <init> (I)V
 accessible method net/minecraft/world/gen/YOffset$BelowTop <init> (I)V
 
 accessible method net/minecraft/block/entity/BlockEntity writeNbt (Lnet/minecraft/nbt/NbtCompound;)V
+extendable class net/minecraft/client/model/ModelPart

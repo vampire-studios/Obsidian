@@ -32,7 +32,7 @@ public abstract class ItemRendererMixin {
     @Final
     private BuiltinModelItemRenderer builtinModelItemRenderer;
 
-    @Redirect(method = "getModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z", ordinal = 0))
+    @Redirect(method = "getHeldItemModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z", ordinal = 0))
     public boolean ob_getHeldItemModel(ItemStack itemStack, Item item) {
         return itemStack.getItem() instanceof TridentInterface;
     }

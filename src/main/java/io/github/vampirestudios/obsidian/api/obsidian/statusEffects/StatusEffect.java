@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.statusEffects;
 
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -13,11 +13,11 @@ public class StatusEffect {
     public String color;
     public List<EffectAttributes> attributes;
 
-    public StatusEffectCategory getStatusEffectType() {
+    public StatusEffectType getStatusEffectType() {
         return switch (status_effect_type) {
-            case "beneficial" -> StatusEffectCategory.BENEFICIAL;
-            case "harmful" -> StatusEffectCategory.HARMFUL;
-            case "neutral" -> StatusEffectCategory.NEUTRAL;
+            case "beneficial" -> StatusEffectType.BENEFICIAL;
+            case "harmful" -> StatusEffectType.HARMFUL;
+            case "neutral" -> StatusEffectType.NEUTRAL;
             default -> null;
         };
     }

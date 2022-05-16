@@ -17,34 +17,44 @@ public class SpecialText {
     @SerializedName("type")
     public String textType;
     public Map<String, String> translated = new HashMap<>();
-    public String color;
+    public String color = "";
     public String[] formatting = new String[0];
 
     public Text getName(Identifier id, String type) {
-        String color1 = color.replace("#", "").replace("0x", "");
+        String color1 = !this.color.isEmpty() && !this.color.isBlank() ? color.replace("#", "").replace("0x", "") : "ffffff";
         if (!text.isEmpty()) {
             if ("literal".equals(textType)) {
                 LiteralText literalText = new LiteralText(text);
                 for (String formatting1 : formatting) {
                     literalText = (LiteralText) literalText.formatted(Formatting.byName(formatting1));
                 }
-                literalText = (LiteralText) literalText.setStyle(literalText.getStyle().withColor(TextColor.parse(color1)));
+                if (!this.color.isEmpty() && !this.color.isBlank()) {
+                    literalText = (LiteralText) literalText.setStyle(literalText.getStyle().withColor(TextColor.parse(color1)));
+                }
                 return literalText;
             } else {
                 TranslatableText translatableText = new TranslatableText(text);
                 for (String formatting1 : formatting) {
                     translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
                 }
-                translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parse(color1)));
+                if (!this.color.isEmpty() && !this.color.isBlank()) {
+                    translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parse(color1)));
+                }
                 return translatableText;
             }
         } else {
-            TranslatableText translatableText = new TranslatableText(String.format(type + ".%s.%s", id.getNamespace(), id.getPath()));
-            for (String formatting1 : formatting) {
-                translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
+            if (id != null) {
+                TranslatableText translatableText = new TranslatableText(String.format(type + ".%s.%s", id.getNamespace(), id.getPath()));
+                for (String formatting1 : formatting) {
+                    translatableText = (TranslatableText) translatableText.formatted(Formatting.byName(formatting1));
+                }
+                if (!this.color.isEmpty() && !this.color.isBlank()) {
+                    translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parse(color1)));
+                }
+                return translatableText;
+            } else {
+                return new LiteralText("");
             }
-            translatableText = (TranslatableText) translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parse(color1)));
-            return translatableText;
         }
     }
 

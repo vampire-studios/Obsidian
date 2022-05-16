@@ -11,6 +11,7 @@ import java.util.List;
 public class EntityModel {
 
     public Identifier name;
+    public Identifier animation;
     public Bone[] bones;
     public int textureWidth;
     public int textureHeight;

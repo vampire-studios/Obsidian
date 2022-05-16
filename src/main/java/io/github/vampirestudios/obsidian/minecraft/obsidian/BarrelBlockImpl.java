@@ -13,7 +13,7 @@ public class BarrelBlockImpl extends BarrelBlock {
 
 	public BarrelBlockImpl(FabricBlockSettings blockSettings) {
 		super(blockSettings);
-		FILLER = new VanillaTargetedItemGroupFiller(Blocks.BARREL.asItem());
+		FILLER = new VanillaTargetedItemGroupFiller(Blocks.BARREL);
 	}
 
 	@Override

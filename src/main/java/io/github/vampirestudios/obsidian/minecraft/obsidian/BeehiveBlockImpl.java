@@ -13,7 +13,7 @@ public class BeehiveBlockImpl extends BeehiveBlock {
 
     public BeehiveBlockImpl(Settings settings) {
         super(settings);
-        FILLER = new VanillaTargetedItemGroupFiller(Blocks.BEEHIVE.asItem());
+        FILLER = new VanillaTargetedItemGroupFiller(Blocks.BEEHIVE);
         this.setDefaultState(this.stateManager.getDefaultState().with(HONEY_LEVEL, 0).with(FACING, Direction.NORTH));
     }
 

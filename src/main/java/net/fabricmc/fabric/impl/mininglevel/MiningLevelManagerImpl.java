@@ -22,8 +22,7 @@ import net.fabricmc.yarn.constants.MiningLevels;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagGroup;
-import net.minecraft.util.Identifier;
+import net.minecraft.tag.TagKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,16 +41,15 @@ public final class MiningLevelManagerImpl {
 
 	public static int getRequiredMiningLevel(BlockState state) {
 		return CACHE.get().computeIntIfAbsent(state, s -> {
-			TagGroup<Block> blockTags = BlockTags.getTagGroup();
 			int miningLevel = MiningLevels.HAND;
 
 			// Handle #fabric:needs_tool_level_N
-			for (Identifier tagId : blockTags.getTagsFor(state.getBlock())) {
-				if (!tagId.getNamespace().equals(TOOL_TAG_NAMESPACE)) {
+			for (TagKey<Block> tagId : state.streamTags().toList()) {
+				if (!tagId.id().getNamespace().equals(TOOL_TAG_NAMESPACE)) {
 					continue;
 				}
 
-				Matcher matcher = TOOL_TAG_PATTERN.matcher(tagId.getPath());
+				Matcher matcher = TOOL_TAG_PATTERN.matcher(tagId.id().getPath());
 
 				if (matcher.matches()) {
 					try {

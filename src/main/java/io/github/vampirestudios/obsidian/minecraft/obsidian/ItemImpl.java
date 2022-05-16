@@ -35,8 +35,40 @@ public class ItemImpl extends Item implements IRenderModeAware {
         if (item.information.customRenderMode) {
             for (ItemInformation.RenderModeModel renderModeModel : item.information.renderModeModels) {
                 for (String renderMode : renderModeModel.modes) {
-                    if (mode.equals(ModelTransformation.Mode.valueOf(renderMode))) {
-                        return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
+                    switch (renderMode) {
+                        case "HAND" -> {
+                            if (mode.equals(ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND) ||
+                                    mode.equals(ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND) ||
+                                    mode.equals(ModelTransformation.Mode.THIRD_PERSON_LEFT_HAND) ||
+                                    mode.equals(ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND)) {
+                                return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
+                            } else {
+                                return original;
+                            }
+                        }
+                        case "FIRST_PERSON_HAND" -> {
+                            if (mode.equals(ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND) ||
+                                    mode.equals(ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND)) {
+                                return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
+                            } else {
+                                return original;
+                            }
+                        }
+                        case "THIRD_PERSON_HAND" -> {
+                            if (mode.equals(ModelTransformation.Mode.THIRD_PERSON_LEFT_HAND) ||
+                                    mode.equals(ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND)) {
+                                return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
+                            } else {
+                                return original;
+                            }
+                        }
+                        default -> {
+                            if (mode.equals(ModelTransformation.Mode.valueOf(renderMode))) {
+                                return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
+                            } else {
+                                return original;
+                            }
+                        }
                     }
                 }
             }

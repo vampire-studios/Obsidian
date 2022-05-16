@@ -12,25 +12,28 @@ import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
+import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.decorator.BiomePlacementModifier;
 import net.minecraft.world.gen.decorator.HeightRangePlacementModifier;
+import net.minecraft.world.gen.decorator.InSquarePlacementModifier;
 import net.minecraft.world.gen.decorator.RarityFilterPlacementModifier;
-import net.minecraft.world.gen.decorator.SquarePlacementModifier;
-import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.feature.util.ConfiguredFeatureUtil;
+import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -51,29 +54,25 @@ public class Ores implements AddonModule {
 			REGISTRY_HELPER.registerItem(new CustomBlockItem(block, blockImpl, new Item.Settings().group(block.information.getItemGroup())), block.information.name.id.getPath());
 
 			if (block.ore_information != null) {
-				ConfiguredFeature<?, ?> feature = Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Utils.appendToPath(block.information.name.id, "_ore_feature"),
-						Feature.ORE.configure(
-								new OreFeatureConfig(
-										block.ore_information.ruleTest(),
-										blockImpl.getDefaultState(),
-										block.ore_information.size
-								)
-						));
+				RegistryKey<PlacedFeature> key = RegistryKey.of(Registry.PLACED_FEATURE_KEY, Utils.appendToPath(block.information.name.id, "_ore_feature"));
+				Holder<ConfiguredFeature<OreFeatureConfig, ?>> feature = ConfiguredFeatureUtil.register(key.getValue().toString(),
+						Feature.ORE,
+						new OreFeatureConfig(
+								block.ore_information.ruleTest(),
+								blockImpl.getDefaultState(),
+								block.ore_information.size
+						)
+				);
+				PlacedFeatureUtil.register(key.getValue().toString(),
+						feature,
+						InSquarePlacementModifier.getInstance(),
+						HeightRangePlacementModifier.create(block.ore_information.heightRange()),
+						RarityFilterPlacementModifier.create(block.ore_information.chance),
+						BiomePlacementModifier.getInstance()
+				);
 
-				PlacedFeature placedFeature = PlacedFeatures.register(Utils.appendToPath(block.information.name.id, "_ore_feature_pf").toString(), feature.withPlacement(
-						SquarePlacementModifier.of(),
-						HeightRangePlacementModifier.of(block.ore_information.heightRange()),
-						RarityFilterPlacementModifier.of(block.ore_information.chance),
-						BiomePlacementModifier.of()
-				));
-
-				Optional<RegistryKey<PlacedFeature>> optional = BuiltinRegistries.PLACED_FEATURE.getKey(placedFeature);
-				BiomeModifications.create(Utils.appendToPath(block.information.name.id, "_ore_feature"))
-						.add(ModificationPhase.ADDITIONS, block.ore_information.biomeSelector(),
-								biomeModificationContext -> biomeModificationContext.getGenerationSettings().addFeature(
-										GenerationStep.Feature.UNDERGROUND_ORES,
-										optional.get()
-								));
+				BiomeModifications.addFeature(block.ore_information.biomeSelector(), GenerationStep.Feature.UNDERGROUND_ORES,
+						key);
 			}
 
 			Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {

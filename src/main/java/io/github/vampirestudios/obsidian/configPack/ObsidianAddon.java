@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import net.minecraft.resource.DirectoryResourcePack;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ZipResourcePack;
+import net.minecraft.resource.pack.DirectoryResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ZipResourcePack;
 
 import java.io.File;
 
@@ -11,7 +11,6 @@ public class ObsidianAddon implements IAddonPack {
 
     private final ObsidianAddonInfo obsidianAddonInfo;
     private final File file;
-    private boolean hasLoaded;
 
     public ObsidianAddon(ObsidianAddonInfo obsidianAddonInfo) {
         this(obsidianAddonInfo, null);
@@ -22,6 +21,7 @@ public class ObsidianAddon implements IAddonPack {
         this.file = file;
     }
 
+    @Override
     public File getFile() {
         return file;
     }
