@@ -1,8 +1,8 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'fabric-loom' version '0.12.+'
     id 'maven-publish'
-    id "io.github.juuxel.loom-quiltflower" version "1.6.0"
-    id 'org.quiltmc.quilt-mappings-on-loom' version '4.0.0'
+    id "io.github.juuxel.loom-quiltflower" version "1.7.+"
+    id 'org.quiltmc.quilt-mappings-on-loom' version '4.+'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -27,17 +27,23 @@ repositories {
     maven { url "https://maven.minecraftforge.net/" }
     maven { url "https://maven.terraformersmc.com/" }
     maven { url "https://repo.codemc.org/repository/maven-public" }
-    maven { url "https://mvn.lumine.io/repository/maven-public/" }
+    maven { url = "https://maven.quiltmc.org/repository/release" }
+    maven { url = "https://maven.quiltmc.org/repository/snapshot" }
 }
 
 loom {
     accessWidenerPath = file("src/main/resources/obsidian.accesswidener")
 }
 
+quiltflower {
+    addToRuntimeClasspath.set(true)
+    fromUrl("https://maven.quiltmc.org/repository/snapshot/org/quiltmc/quiltflower/1.9.0-SNAPSHOT/quiltflower-1.9.0-20220429.122922-1.jar")
+}
+
 dependencies {
     minecraft libs.minecraft
     mappings loom.layered {
-        addLayer quiltMappings.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:v2")
+        it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:v2")) // https://maven.quiltmc.org/#browse/browse:release
     }
     modImplementation libs.fabric.loader
 
@@ -83,14 +89,6 @@ dependencies {
     include (libs.libzoomer) {
         exclude group: "net.fabricmc.fabric-api"
     }
-
-    modImplementation "com.dfsek:paralithic:0.6.0"
-//    modImplementation "com.dfsek:substrate:0.5.1"
-
-    implementation "com.github.Ocelot5836:molang-compiler:7e33b9d"
-    implementation "com.ticxo.modelengine:Model-Engine:parent"
-    implementation "com.ticxo.modelengine:api:R2.4.1"
-
 }
 
 processResources {

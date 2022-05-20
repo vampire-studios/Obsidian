@@ -54,10 +54,10 @@ public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
 		if (state.get(STAGE) == 0) {
 			world.setBlockState(pos, state.cycle(STAGE), 4);
 		} else {
-			if (block.treeFeature != null) {
+			if (block.placable_feature != null) {
 				world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-				if (world.getRegistryManager().get(Registry.CONFIGURED_FEATURE_KEY).containsId(block.treeFeature)) {
-					ConfiguredFeature<?, ?> feature = world.getRegistryManager().get(Registry.CONFIGURED_FEATURE_KEY).get(block.treeFeature);
+				if (world.getRegistryManager().get(Registry.CONFIGURED_FEATURE_KEY).containsId(block.placable_feature)) {
+					ConfiguredFeature<?, ?> feature = world.getRegistryManager().get(Registry.CONFIGURED_FEATURE_KEY).get(block.placable_feature);
 					assert feature != null;
 					feature.generate(world, world.getChunkManager().getChunkGenerator(), world.getRandom(), pos);
 				}

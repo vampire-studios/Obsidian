@@ -24,7 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.*;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -258,8 +258,8 @@ public final class VanillaRecipeBuilders {
 		 * @return this builder
 		 * @see #ingredient(char, Ingredient)
 		 */
-		public ShapedRecipeBuilder ingredient(char key, Tag<Item> tag) {
-			return this.ingredient(key, Ingredient.fromTag(tag));
+		public ShapedRecipeBuilder ingredient(char key, TagKey<Item> tag) {
+			return this.ingredient(key, Ingredient.ofTag(tag));
 		}
 
 		/**
@@ -336,8 +336,8 @@ public final class VanillaRecipeBuilders {
 		 * @return this builder
 		 * @see #ingredient(Ingredient)
 		 */
-		public ShapelessRecipeBuilder ingredient(Tag<Item> tag) {
-			return this.ingredient(Ingredient.fromTag(tag));
+		public ShapelessRecipeBuilder ingredient(TagKey<Item> tag) {
+			return this.ingredient(Ingredient.ofTag(tag));
 		}
 
 		/**

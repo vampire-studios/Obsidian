@@ -18,7 +18,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.OpenDoorAnnotationComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
-import io.github.vampirestudios.obsidian.commands.DumpRegistriesCommand;
 import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
@@ -30,7 +29,6 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -52,7 +50,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
-import net.minecraft.world.dimension.DimensionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import squeek.appleskin.api.AppleSkinApi;
@@ -120,8 +117,6 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 		LOGGER.info(String.format("You're now running Obsidian v%s for 1.17.1", VERSION));
 		AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
-
-		CommandRegistrationCallback.EVENT.register((commandDispatcher, b) -> DumpRegistriesCommand.register(commandDispatcher));
 
 		AnimationChannel.Targets.init();
 		AnimationChannel.Interpolations.init();
@@ -299,7 +294,6 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 
 		ObsidianAddonLoader.loadDefaultObsidianAddons();
 		ObsidianAddonLoader.loadObsidianAddons();
-		DimensionType
 
 		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
 			if (world.isClient)

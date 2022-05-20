@@ -23,7 +23,7 @@ public class SimpleTridentItemEntity extends TridentEntity {
     }
 
     public SimpleTridentItemEntity(TridentEntity trident) {
-        this(trident.getEntityWorld(), (LivingEntity) trident.getOwner(), ((TridentEntityAccessor) trident).getTridentStack());
+        this(trident.getWorld(), (LivingEntity) trident.getOwner(), ((TridentEntityAccessor) trident).getTridentStack());
         this.setVelocity(trident.getVelocity());
         this.setUuid(trident.getUuid());
         this.pickupType = trident.pickupType;

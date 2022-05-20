@@ -20,9 +20,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import net.fabricmc.fabric.api.conditionalresource.v1.ResourceConditions;
-import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,8 +95,9 @@ public class WrappedResourcePack implements ResourcePack {
 		return parent.getNamespaces(type);
 	}
 
+	@Nullable
 	@Override
-	public <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
 		return parent.parseMetadata(metaReader);
 	}
 

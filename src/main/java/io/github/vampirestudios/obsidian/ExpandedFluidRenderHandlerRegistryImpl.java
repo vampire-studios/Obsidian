@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian;
 import io.github.vampirestudios.obsidian.api.fabric.ExpandedFluidRenderHandler;
 import io.github.vampirestudios.obsidian.api.fabric.ExpandedFluidRenderHandlerRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.TransparentBlock;
 import net.minecraft.client.MinecraftClient;
@@ -103,8 +104,8 @@ public class ExpandedFluidRenderHandlerRegistryImpl implements ExpandedFluidRend
 		}
 	}
 
-	public boolean renderFluid(BlockPos pos, BlockRenderView world, VertexConsumer vertexConsumer, FluidState state) {
-		return fluidRenderer.render(world, pos, vertexConsumer, state);
+	public boolean renderFluid(BlockPos pos, BlockRenderView world, VertexConsumer vertexConsumer, BlockState state, FluidState fluidState) {
+		return fluidRenderer.render(world, pos, vertexConsumer, state, fluidState);
 	}
 
 }

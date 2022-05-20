@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2CharMap;
 import it.unimi.dsi.fastutil.objects.Object2CharOpenHashMap;
 import net.fabricmc.fabric.api.recipe.v1.serializer.FabricRecipeSerializer;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonFactory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.util.collection.DefaultedList;
@@ -31,7 +31,7 @@ public abstract class ShapedRecipeSerializerMixin implements FabricRecipeSeriali
 
 	@Override
 	public JsonObject toJson(ShapedRecipe recipe) {
-		ShapedRecipeJsonBuilder factory = new ShapedRecipeJsonBuilder(recipe.getOutput().getItem(), recipe.getOutput().getCount());
+		ShapedRecipeJsonFactory factory = new ShapedRecipeJsonFactory(recipe.getOutput().getItem(), recipe.getOutput().getCount());
 
 		factory.criterion("dummy", null);
 

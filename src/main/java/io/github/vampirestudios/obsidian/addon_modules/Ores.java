@@ -83,43 +83,45 @@ public class Ores implements AddonModule {
 						pool.bonusRolls(0);
 						pool.entry(entry -> {
 							entry.type(new Identifier("alternatives"));
-							for (DropInformation.Drop drop : block.dropInformation.drops) {
-								if (drop.dropsIfSilkTouch) {
-									entry.child(entry1 -> {
-										entry1.type(new Identifier("item"));
-										entry1.name(drop.name);
-										entry1.condition(new Identifier("minecraft:match_tool"), jsonObjectBuilder -> {
-											JsonObject predicate = new JsonObject();
+							if (block.drop_information != null && block.drop_information.drops != null) {
+								for (DropInformation.Drop drop : block.drop_information.drops) {
+									if (drop.dropsIfSilkTouch) {
+										entry.child(entry1 -> {
+											entry1.type(new Identifier("item"));
+											entry1.name(drop.name);
+											entry1.condition(new Identifier("minecraft:match_tool"), jsonObjectBuilder -> {
+												JsonObject predicate = new JsonObject();
 
-											JsonArray enchantments = new JsonArray();
+												JsonArray enchantments = new JsonArray();
 
-											JsonObject predicate1 = new JsonObject();
-											predicate1.addProperty("enchantment", "minecraft:silk_touch");
+												JsonObject predicate1 = new JsonObject();
+												predicate1.addProperty("enchantment", "minecraft:silk_touch");
 
-											JsonObject levels = new JsonObject();
-											levels.addProperty("min", 1);
-											predicate1.add("levels", levels);
-											enchantments.add(predicate1);
+												JsonObject levels = new JsonObject();
+												levels.addProperty("min", 1);
+												predicate1.add("levels", levels);
+												enchantments.add(predicate1);
 
-											predicate.add("enchantments", enchantments);
+												predicate.add("enchantments", enchantments);
 
-											jsonObjectBuilder.add("predicate", predicate);
+												jsonObjectBuilder.add("predicate", predicate);
+											});
 										});
-									});
-								} else {
-									entry.child(entry1 -> {
-										entry1.type(new Identifier("item"));
-										entry1.name(drop.name);
-										entry1.function(new Identifier("minecraft:apply_bonus"), function -> {
-											function.add("enchantment", "minecraft:fortune");
-											function.add("formula", "minecraft:ore_drops");
+									} else {
+										entry.child(entry1 -> {
+											entry1.type(new Identifier("item"));
+											entry1.name(drop.name);
+											entry1.function(new Identifier("minecraft:apply_bonus"), function -> {
+												function.add("enchantment", "minecraft:fortune");
+												function.add("formula", "minecraft:ore_drops");
+											});
+											entry1.function(new Identifier("minecraft:explosion_decay"), function -> {});
 										});
-										entry1.function(new Identifier("minecraft:explosion_decay"), function -> {});
-									});
+									}
 								}
 							}
 						});
-						if (block.dropInformation.survivesExplosion)
+						if (block.drop_information != null && block.drop_information.survivesExplosion)
 							pool.condition(new Identifier("survives_explosion"), json -> {});
 					});
 				});

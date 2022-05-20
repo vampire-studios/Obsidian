@@ -27,9 +27,9 @@ public class BlockSoundGroups implements AddonModule {
 			registerSoundIfNotFound(customSoundGroup.place_sound);
 			registerSoundIfNotFound(customSoundGroup.hit_sound);
 			registerSoundIfNotFound(customSoundGroup.fall_sound);
-			register(BLOCK_SOUND_GROUPS, "food_component", customSoundGroup.id, customSoundGroup);
+			register(BLOCK_SOUND_GROUPS, "sound_groups", customSoundGroup.id, customSoundGroup);
 		} catch (Exception e) {
-			failedRegistering("food_component", customSoundGroup.id.toString(), e);
+			failedRegistering("sound_groups", customSoundGroup.id.toString(), e);
 		}
 	}
 
