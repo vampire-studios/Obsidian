@@ -32,7 +32,7 @@ public class CustomDyeableItem extends CustomBlockItem implements DyeableItem {
     @Override
     public void appendStacks(ItemGroup group, DefaultedList<ItemStack> stacks) {
         super.appendStacks(group, stacks);
-        if (this.isIn(group)) {
+        if (this.isInGroup(group)) {
             ItemStack stack = new ItemStack(this);
             this.setColor(stack, block.additional_information.defaultColor);
             stacks.add(stack);

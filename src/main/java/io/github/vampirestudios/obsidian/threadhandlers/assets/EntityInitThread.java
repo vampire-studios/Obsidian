@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.client.CustomEntityRenderer;

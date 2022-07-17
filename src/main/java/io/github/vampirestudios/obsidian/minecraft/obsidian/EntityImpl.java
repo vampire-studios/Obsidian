@@ -8,6 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviou
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.RandomLookAroundBehaviourComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.TemptBehaviourComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
+import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -21,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ public class EntityImpl extends PathAwareEntity {
     private final float health;
     private final Map<String, Component> components;
     private final BreathableComponent breathableComponent;
+    public final Map<AnimationState, Identifier> animationStates = new HashMap<>();
 
     public EntityImpl(EntityType<EntityImpl> type, World world, Entity entity, float health, BreathableComponent breathableComponent) {
         super(type, world);
@@ -36,6 +39,7 @@ public class EntityImpl extends PathAwareEntity {
         this.health = health;
         this.components = entity.components;
         this.breathableComponent = breathableComponent;
+        this.entity.animations.forEach(identifier -> animationStates.put(new AnimationState(), identifier));
     }
 
     @Override

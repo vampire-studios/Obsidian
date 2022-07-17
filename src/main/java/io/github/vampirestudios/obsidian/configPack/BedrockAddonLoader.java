@@ -188,8 +188,8 @@ public class BedrockAddonLoader {
     }
 
     private static void loadAddonModule(ModIdAndAddonPath id, AddonModule addonModule) {
-        if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
+        if (Paths.get(id.path(), addonModule.getType()).toFile().exists()) {
+            for (File file : Objects.requireNonNull(Paths.get(id.path(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {
                     try {
                         addonModule.init(null, file, id);

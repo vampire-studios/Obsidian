@@ -17,10 +17,9 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 public class TallCropBlock extends PlantBlock implements Fertilizable {
 
@@ -63,7 +62,7 @@ public class TallCropBlock extends PlantBlock implements Fertilizable {
         return state.get(this.getAgeProperty()) >= this.getMaxAge();
     }
 
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
         super.scheduledTick(state, world, pos, random);
         if (world.getBaseLightLevel(pos, 0) >= 9) {
             int age = state.get(AGE);
@@ -133,11 +132,11 @@ public class TallCropBlock extends PlantBlock implements Fertilizable {
     }
 
     @Override
-    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
+    public boolean canGrow(World world, RandomGenerator random, BlockPos pos, BlockState state) {
         return true;
     }
 
-    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
+    public void grow(ServerWorld world, RandomGenerator random, BlockPos pos, BlockState state) {
         this.applyGrowth(world, pos, state);
     }
 

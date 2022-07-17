@@ -1,6 +1,8 @@
 package io.github.vampirestudios.obsidian;
 
 import io.github.vampirestudios.obsidian.utils.MHelper;
+import net.minecraft.client.render.animation.AnimationKeyframe;
+import net.minecraft.client.render.animation.PartAnimation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3f;
 import org.apache.commons.lang3.tuple.Triple;
@@ -9,15 +11,15 @@ import java.util.function.Function;
 
 public class AnimationEasing {
 
-	public static AnimationChannel.Interpolation interpolation(EasingCategories easingCategory, Type type) {
+	public static PartAnimation.Interpolator interpolation(EasingCategories easingCategory, Type type) {
 		EasingTypes easing = easingCategory.getEasingType(type);
 		return Obsidian.registerInRegistryVanilla(Obsidian.ANIMATION_CHANNEL_INTERPOLATIONS, easing.getName(),
 				(vector3f, f, keyframes, i, j, g) -> easing(vector3f, easing.apply(f), keyframes, i, j, g));
 	}
 
-	public static Vec3f easing(Vec3f vec3f, float f, Keyframe[] keyframes, int i, int j, float g) {
-		Vec3f vector3f2 = keyframes[i].target();
-		Vec3f vector3f3 = keyframes[j].target();
+	public static Vec3f easing(Vec3f vec3f, float f, AnimationKeyframe[] keyframes, int i, int j, float g) {
+		Vec3f vector3f2 = keyframes[i].transformation();
+		Vec3f vector3f3 = keyframes[j].transformation();
 		vec3f.set(
 				MathHelper.lerp(f, vector3f2.getX(), vector3f3.getX()) * g,
 				MathHelper.lerp(f, vector3f2.getY(), vector3f3.getY()) * g,

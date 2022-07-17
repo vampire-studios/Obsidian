@@ -15,7 +15,7 @@ public class MusicDiscItemImpl extends MusicDiscItem {
     private final MusicDisc musicDisc;
 
     public MusicDiscItemImpl(MusicDisc musicDisc, Settings settings) {
-        super(musicDisc.comparator_output, Registry.SOUND_EVENT.get(musicDisc.music), settings);
+        super(musicDisc.comparator_output, Registry.SOUND_EVENT.get(musicDisc.music), settings, musicDisc.length);
         this.musicDisc = musicDisc;
     }
 

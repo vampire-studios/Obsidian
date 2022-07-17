@@ -50,7 +50,7 @@ public class WrappedResourcePack implements ResourcePack {
 	public void fabric_indexFabricMeta(ResourceType type, String namespace) {
 		hidden = new HashSet<>();
 
-		for (Identifier fabricMeta : parent.findResources(type, namespace, ".", 2147483647, s -> s.endsWith(CONDITIONS_EXTENSION))) {
+		for (Identifier fabricMeta : parent.findResources(type, namespace, ".", s -> s.getPath().endsWith(CONDITIONS_EXTENSION))) {
 			try (InputStream stream = parent.open(type, fabricMeta)) {
 				JsonElement element = Streams.parse(new JsonReader(new InputStreamReader(stream)));
 
@@ -79,8 +79,8 @@ public class WrappedResourcePack implements ResourcePack {
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
-		Collection<Identifier> resources = parent.findResources(type, namespace, prefix, maxDepth, pathFilter);
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
+		Collection<Identifier> resources = parent.findResources(type, namespace, prefix, pathFilter);
 		resources.removeIf(this::isHidden);
 		return resources;
 	}

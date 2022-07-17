@@ -31,7 +31,7 @@ public class Information {
         if(model.isPresent()) {
             EntityModelLayerRegistry.registerModelLayer(EntityModelLayers.registerMain("obsidian:" + entityModelPath.toString()),
                     () -> model.get().getTexturedModelData());
-            entityModel = new EntityModelImpl<>(model.get());
+            entityModel = new EntityModelImpl(model.get());
         } else {
             entityModel = getEntityModel(context);
         }
@@ -44,12 +44,9 @@ public class Information {
             case "minecraft:pig" -> new PigEntityModel<>(context.getPart(EntityModelLayers.PIG));
             case "minecraft:villager" -> new VillagerResemblingModel<>(context.getPart(EntityModelLayers.VILLAGER));
             case "minecraft:chicken" -> new ChickenEntityModel<>(context.getPart(EntityModelLayers.CHICKEN));
-            case "minecraft:bear" -> new PolarBearEntityModel(context.getPart(EntityModelLayers.POLAR_BEAR));
             case "minecraft:squid" -> new SquidEntityModel<>(context.getPart(EntityModelLayers.SQUID));
-            case "minecraft:zombie" -> new ZombieEntityModel(context.getPart(EntityModelLayers.ZOMBIE));
+            case "minecraft:biped" -> new BipedEntityModel<>(context.getPart(EntityModelLayers.ZOMBIE));
             case "minecraft:skeleton" -> new SkeletonEntityModel(context.getPart(EntityModelLayers.SKELETON));
-            case "minecraft:fox" -> new FoxEntityModel(context.getPart(EntityModelLayers.FOX));
-            case "minecraft:horse" -> new HorseEntityModel(context.getPart(EntityModelLayers.HORSE));
             default -> new CowEntityModel<>(context.getPart(EntityModelLayers.COW));
         };
     }

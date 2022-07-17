@@ -9,7 +9,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
@@ -38,7 +38,7 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        EntityRendererRegistry.INSTANCE.register(Obsidian.SEAT, SeatEntityRenderer::new);
+        EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String name = iAddonPack.getDisplayNameObsidian();
             Obsidian.registerAssetPack(new Identifier(iAddonPack.getConfigPackInfo().namespace, iAddonPack.getConfigPackInfo().namespace), clientResourcePackBuilder -> {

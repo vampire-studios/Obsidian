@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.fabric;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.vampirestudios.obsidian.ExpandedFluidRenderHandlerRegistryImpl;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.fluid.FluidState;
@@ -55,10 +55,9 @@ public interface ExpandedFluidRenderHandler {
 	 * @param world The world the fluid is in
 	 * @param vertexConsumer The vertex consumer to tessellate the fluid in.
 	 * @param state The fluid state being rendered.
-	 * @return Whether anything is tessellated.
 	 */
-	default boolean renderFluid(BlockPos pos, BlockRenderView world, VertexConsumer vertexConsumer, BlockState blockState, FluidState state) {
-		return ExpandedFluidRenderHandlerRegistryImpl.INSTANCE.renderFluid(pos, world, vertexConsumer, blockState, state);
+	default void renderFluid(BlockPos pos, BlockRenderView world, VertexConsumer vertexConsumer, BlockState blockState, FluidState state) {
+		ExpandedFluidRenderHandlerRegistryImpl.INSTANCE.renderFluid(pos, world, vertexConsumer, blockState, state);
 	}
 
 	/**

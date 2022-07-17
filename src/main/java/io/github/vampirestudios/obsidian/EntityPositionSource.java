@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.PositionSourceType;
@@ -33,12 +33,12 @@ public class EntityPositionSource implements PositionSource {
 	}
 
 	@Override
-	public Optional<BlockPos> getPos(World level) {
+	public Optional<Vec3d> getPos(World level) {
 		if (this.sourceEntity.isEmpty()) {
 			this.sourceEntity = Optional.ofNullable(level.getEntityById(this.sourceEntityId));
 		}
 
-		return this.sourceEntity.map(entity -> new BlockPos(entity.getPos().add(0.0, this.yOffset, 0.0)));
+		return this.sourceEntity.map(entity -> entity.getPos().add(0.0, this.yOffset, 0.0));
 	}
 
 	@Override

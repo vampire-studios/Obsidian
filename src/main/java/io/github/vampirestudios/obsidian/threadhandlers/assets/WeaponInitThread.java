@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import io.github.vampirestudios.obsidian.client.ClientInit;

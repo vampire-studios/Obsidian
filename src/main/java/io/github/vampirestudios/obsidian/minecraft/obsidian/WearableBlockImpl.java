@@ -18,6 +18,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
@@ -26,7 +27,6 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 
 public class WearableBlockImpl extends Block implements Wearable {
 
@@ -83,7 +83,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
         if (block.functions.scheduled_tick.predicate.matches()) {
             Optional<CommandFunction> function = world.getServer().getCommandFunctionManager().getFunction(block.functions.scheduled_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -91,7 +91,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
         if (block.functions.random_tick.predicate.matches()) {
             Optional<CommandFunction> function = world.getServer().getCommandFunctionManager().getFunction(block.functions.random_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -99,7 +99,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, RandomGenerator random) {
         if (!world.isClient && block.functions.random_display_tick.predicate.matches()) {
             Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.random_display_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));

@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.vampirestudios.obsidian.api.fabric.ExpandedFluidRenderHandler;
 import io.github.vampirestudios.obsidian.api.fabric.ExpandedFluidRenderHandlerRegistry;
 import net.minecraft.block.Block;
@@ -8,7 +9,6 @@ import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.TransparentBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.block.FluidRenderer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
@@ -104,8 +104,8 @@ public class ExpandedFluidRenderHandlerRegistryImpl implements ExpandedFluidRend
 		}
 	}
 
-	public boolean renderFluid(BlockPos pos, BlockRenderView world, VertexConsumer vertexConsumer, BlockState state, FluidState fluidState) {
-		return fluidRenderer.render(world, pos, vertexConsumer, state, fluidState);
+	public void renderFluid(BlockPos pos, BlockRenderView world, VertexConsumer vertexConsumer, BlockState state, FluidState fluidState) {
+		fluidRenderer.render(world, pos, vertexConsumer, state, fluidState);
 	}
 
 }

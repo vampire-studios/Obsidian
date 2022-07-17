@@ -3,13 +3,14 @@ package io.github.vampirestudios.obsidian;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.serialization.Lifecycle;
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import com.swordglowsblue.artifice.api.util.Processor;
-import com.swordglowsblue.artifice.common.ArtificeRegistry;
-import com.swordglowsblue.artifice.impl.ArtificeImpl;
-import com.swordglowsblue.artifice.impl.DynamicResourcePackFactory;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.util.Processor;
+import io.github.vampirestudios.artifice.common.ArtificeRegistry;
+import io.github.vampirestudios.artifice.impl.ArtificeImpl;
+import io.github.vampirestudios.artifice.impl.DynamicResourcePackFactory;
 import io.github.vampirestudios.obsidian.addon_modules.*;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.DynamicShape;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
@@ -33,6 +34,9 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.SharedConstants;
+import net.minecraft.client.render.animation.Animation;
+import net.minecraft.client.render.animation.PartAnimation;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -43,6 +47,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.state.property.Property;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -56,7 +61,7 @@ import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
 
-public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSkinApi {
+public class Obsidian implements ModInitializer, AppleSkinApi {
 
 	public static final Gson GSON = new GsonBuilder()
 			.registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
@@ -64,20 +69,19 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 			.setPrettyPrinting()
 			.setLenient()
 			.create();
-	public static final String MOD_ID = "obsidian";
-	public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = FabricRegistryBuilder.createSimple(AddonModule.class, id("addon_modules")).buildAndRegister();
-	public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = FabricRegistryBuilder.createSimple(ItemGroup.class, new Identifier(MOD_ID, "item_groups")).buildAndRegister();
-	public static final Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, new Identifier(MOD_ID, "food_components")).buildAndRegister();
-	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(MOD_ID, "entity_components")), Lifecycle.stable(), null);
-	public static Registry<AnimationDefinition> ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(AnimationDefinition.class, id("animation_definitions")).buildAndRegister();
-	public static Registry<AnimationChannel.Interpolation> ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(AnimationChannel.Interpolation.class, id("animation_channel_interpolations")).buildAndRegister();
-	public static Registry<AnimationChannel.Target> ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(AnimationChannel.Target.class, id("animation_channel_targets")).buildAndRegister();
-	public static final String NAME = "Obsidian";
-	public static final Logger LOGGER = LogManager.getLogger("[" + NAME + "]");
-	public static final Logger BEDROCK_LOGGER = LogManager.getLogger("[" + NAME + ": Bedrock]");
-	public static final Obsidian INSTANCE = new Obsidian();
-	public static final String VERSION = "0.7.0-alpha";
-	public static final EntityType<SeatEntity> SEAT = Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, "seat"), FabricEntityTypeBuilder.
+	public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = FabricRegistryBuilder.createSimple(AddonModule.class, Const.id("addon_modules")).buildAndRegister();
+	public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = FabricRegistryBuilder.createSimple(ItemGroup.class, Const.id("item_groups")).buildAndRegister();
+	public static final Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, Const.id("food_components")).buildAndRegister();
+	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(Const.id("entity_components")), Lifecycle.stable(), null);
+	public static final Registry<Property> PROPERTIES = FabricRegistryBuilder.createSimple(Property.class, Const.id("properties")).buildAndRegister();
+	public static final Registry<DynamicShape> DYNAMIC_SHAPES = FabricRegistryBuilder.createSimple(DynamicShape.class, Const.id("dynamic_shapes")).buildAndRegister();
+	public static Registry<Animation> ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(Animation.class, Const.id("animation_definitions")).buildAndRegister();
+	public static Registry<PartAnimation.Interpolator> ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(PartAnimation.Interpolator.class, Const.id("animation_channel_interpolations")).buildAndRegister();
+	public static Registry<PartAnimation.AnimationTargets> ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(PartAnimation.AnimationTargets.class, Const.id("animation_channel_targets")).buildAndRegister();
+	public static final Logger LOGGER = LogManager.getLogger(Const.MOD_NAME);
+	public static final Logger BEDROCK_LOGGER = LogManager.getLogger(Const.MOD_NAME + " | Bedrock");
+	public static final Obsidian INSTANCE = new Obsidian();  // TODO: Remove or stuff
+	public static final EntityType<SeatEntity> SEAT = Registry.register(Registry.ENTITY_TYPE, Const.id("seat"), FabricEntityTypeBuilder.
 			<SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
 			.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
 			.build());
@@ -86,7 +90,7 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 	public static ResourcePackSource RESOURCE_PACK_SOURCE = ResourcePackSource.nameAndSource("pack.source.obsidian");
 
 	public static Identifier id(String path) {
-		return new Identifier(MOD_ID, path);
+		return Const.id(path);
 	}
 
 	public static <T> T registerInRegistryVanilla(Registry<T> registry, String name, T idk) {
@@ -94,7 +98,7 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 	}
 
 	public static <T> void registerInRegistry(Registry<T> registry, String name, T idk) {
-		registerInRegistry(registry, new Identifier(MOD_ID, name), idk);
+		registerInRegistry(registry, Const.id(name), idk);
 	}
 
 	public static <T> void registerInRegistry(Registry<T> registry, Identifier name, T idk) {
@@ -102,24 +106,21 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 	}
 
 	public static void registerDataPack(Identifier id, Processor<ArtificeResourcePack.ServerResourcePackBuilder> register) {
-		if (!ArtificeRegistry.DATA_PACKS.containsId(id))
-			ArtificeImpl.registerSafely(ArtificeRegistry.DATA_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
+		if (!ArtificeRegistry.DATA.containsId(id))
+			ArtificeImpl.registerSafely(ArtificeRegistry.DATA, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
 	}
 
 	@Environment(EnvType.CLIENT)
 	public static void registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
-		if (!ArtificeRegistry.RESOURCE_PACKS.containsId(id))
-			ArtificeImpl.registerSafely(ArtificeRegistry.RESOURCE_PACKS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
+		if (!ArtificeRegistry.ASSETS.containsId(id))
+			ArtificeImpl.registerSafely(ArtificeRegistry.ASSETS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
 	}
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info(String.format("You're now running Obsidian v%s for 1.17.1", VERSION));
+		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getGameVersion().getName()));
 		AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
-
-		AnimationChannel.Targets.init();
-		AnimationChannel.Interpolations.init();
 
 		//Item Groups
 		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
@@ -196,7 +197,8 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
-		registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new ItemGroups());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
+		registerInRegistry(ADDON_MODULE_REGISTRY, "creative_tab", new CreativeTabs());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "block_sound_groups", new BlockSoundGroups());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "block_materials", new BlockMaterials());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
@@ -222,10 +224,6 @@ public class Obsidian implements ModInitializer/*, MealAPIInitializer*/, AppleSk
 		registerInRegistry(ADDON_MODULE_REGISTRY, "commands", new Commands());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "entities", new Entities());
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(ADDON_MODULE_REGISTRY, "entity_models", new EntityModels());
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(ADDON_MODULE_REGISTRY, "entity_animations", new EntityAnimations());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "food_components", new FoodComponents());

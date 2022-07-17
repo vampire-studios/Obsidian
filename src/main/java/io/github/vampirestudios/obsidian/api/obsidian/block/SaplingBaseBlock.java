@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import io.github.vampirestudios.vampirelib.api.VanillaTargetedItemGroupFiller;
+import io.github.vampirestudios.vampirelib.api.itemGroupSorting.VanillaTargetedItemGroupFiller;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.*;
 import net.minecraft.item.ItemGroup;
@@ -12,13 +12,12 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-
-import java.util.Random;
 
 public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
 	public static final IntProperty STAGE = Properties.STAGE;
@@ -44,7 +43,7 @@ public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
     }
 
 	@Override
-	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
 		if (world.getLightLevel(pos.up()) >= 9 && random.nextInt(7) == 0) {
 			this.generateNew(world, pos, state);
 		}
@@ -71,12 +70,12 @@ public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
 	}
 
 	@Override
-	public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
+	public boolean canGrow(World world, RandomGenerator random, BlockPos pos, BlockState state) {
 		return world.random.nextFloat() < 0.45;
 	}
 
 	@Override
-	public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
+	public void grow(ServerWorld world, RandomGenerator random, BlockPos pos, BlockState state) {
 		this.generateNew(world, pos, state);
 	}
 

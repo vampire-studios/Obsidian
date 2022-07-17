@@ -272,12 +272,12 @@ public class Blocks implements AddonModule {
                                 Utils.appendToPath(identifier, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
                     }
                     if (block.additional_information.stairs) {
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.getModId(), identifier.getPath() + "_stairs").getPath(),
+                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(), identifier.getPath() + "_stairs").getPath(),
                                 ItemGroup.BUILDING_BLOCKS);
                     }
                     if (block.additional_information.fence) {
                         REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block,
-                                new Identifier(id.getModId(), identifier.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
+                                new Identifier(id.modId(), identifier.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
                     }
                     if (block.additional_information.fenceGate) {
                         REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block,
@@ -309,12 +309,12 @@ public class Blocks implements AddonModule {
                                 Utils.appendToPath(block.information.name.id, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
                     }
                     if (block.additional_information.stairs) {
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.getModId(), block.information.name.id.getPath() + "_stairs").getPath(),
+                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(), block.information.name.id.getPath() + "_stairs").getPath(),
                                 ItemGroup.BUILDING_BLOCKS);
                     }
                     if (block.additional_information.fence) {
                         REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block,
-                                new Identifier(id.getModId(), block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
+                                new Identifier(id.modId(), block.information.name.id.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
                     }
                     if (block.additional_information.fenceGate) {
                         REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block,

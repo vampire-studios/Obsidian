@@ -43,7 +43,7 @@ public class ExpandedItemGroups implements AddonModule {
             ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
             groupTabLoader.acceptParsedFile(null, jsonObject);
             ModDataLoader.load(groupTabLoader);
-            ObsidianAddonLoader.register(ObsidianAddonLoader.EXPANDED_ITEM_GROUPS, "tabbed_group", new Identifier(id.modId, "tabbed_" + itemGroup.targetGroup), itemGroup);
+            ObsidianAddonLoader.register(ObsidianAddonLoader.EXPANDED_ITEM_GROUPS, "tabbed_group", new Identifier(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
         } catch (Exception e) {
             ObsidianAddonLoader.failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
         }
@@ -51,7 +51,7 @@ public class ExpandedItemGroups implements AddonModule {
 
     @Override
     public String getType() {
-        return "item_groups/expanded_new";
+        return "item_groups/expanded";
     }
 
 	public static class ExpandedTabs implements ModDataConsumer {

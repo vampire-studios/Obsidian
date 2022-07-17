@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.client;
 
-import com.swordglowsblue.artifice.api.ArtificeResourcePack;
-import com.swordglowsblue.artifice.api.resource.StringResource;
+import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.resource.StringResource;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.util.Identifier;

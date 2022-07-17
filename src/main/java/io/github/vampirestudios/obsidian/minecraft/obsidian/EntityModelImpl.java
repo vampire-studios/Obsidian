@@ -1,27 +1,20 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.AnimationState;
-import io.github.vampirestudios.obsidian.KeyframeAnimations;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.EntityModel;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.SinglePartEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec3f;
 
-public class EntityModelImpl<T extends LivingEntity> extends SinglePartEntityModel<T> {
+public class EntityModelImpl extends SinglePartEntityModel<EntityImpl> {
 
     public ModelPart part;
     public EntityModel entityModel;
-    public AnimationState testing = new AnimationState();
 
     public EntityModelImpl(EntityModel entityModelIn) {
         this.entityModel = entityModelIn;
         part = entityModelIn.getTexturedModelData().createModel();
-        testing.start();
     }
 
     @Override
@@ -35,10 +28,10 @@ public class EntityModelImpl<T extends LivingEntity> extends SinglePartEntityMod
     }
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        testing.ifStarted(
-                animationStatex -> KeyframeAnimations.animate(this, Obsidian.ANIMATION_DEFINITIONS.get(entityModel.animation), Util.getMeasuringTimeMs() - animationStatex.startTime(), 1.0F, new Vec3f())
-        );
+    public void setAngles(EntityImpl entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+        entity.animationStates.forEach((animationState, identifier) -> this.method_43781(
+                animationState, Obsidian.ANIMATION_DEFINITIONS.get(identifier), animationProgress
+        ));
     }
 
 }

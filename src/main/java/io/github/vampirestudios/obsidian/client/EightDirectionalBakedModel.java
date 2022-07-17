@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.BlockRenderView;
 
 import java.util.*;
@@ -58,7 +59,7 @@ public class EightDirectionalBakedModel implements FabricBakedModel, BakedModel,
     ////////////////
 
     @Override
-    public List<BakedQuad> getQuads(BlockState state, Direction face, Random random) { return null; }
+    public List<BakedQuad> getQuads(BlockState state, Direction face, RandomGenerator random) { return null; }
 
     @Override
     public boolean useAmbientOcclusion() {
@@ -101,12 +102,12 @@ public class EightDirectionalBakedModel implements FabricBakedModel, BakedModel,
     }
 
     @Override
-    public void emitBlockQuads(BlockRenderView blockRenderView, BlockState blockState, BlockPos blockPos, Supplier<Random> supplier, RenderContext renderContext) {
+    public void emitBlockQuads(BlockRenderView blockRenderView, BlockState blockState, BlockPos blockPos, Supplier<RandomGenerator> supplier, RenderContext renderContext) {
         renderContext.fallbackConsumer().accept(this.model);
     }
 
     @Override
-    public void emitItemQuads(ItemStack itemStack, Supplier<Random> supplier, RenderContext renderContext) {
+    public void emitItemQuads(ItemStack itemStack, Supplier<RandomGenerator> supplier, RenderContext renderContext) {
 
     }
 

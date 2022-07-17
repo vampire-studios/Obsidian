@@ -3,11 +3,11 @@ accessible method net/minecraft/text/TextColor <init> (I)V
 accessible method net/minecraft/enchantment/Enchantment <init> (Lnet/minecraft/enchantment/Enchantment$Rarity;Lnet/minecraft/enchantment/EnchantmentTarget;[Lnet/minecraft/entity/EquipmentSlot;)V
 
 extendable class net/minecraft/world/biome/Biome
-accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/Biome$Category;Lnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;)V
+accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;)V
 accessible class net/minecraft/world/biome/Biome$Weather
 
 accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
-accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;
+accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Lnet/minecraft/util/registry/BuiltinRegistries$C_ywvznkgs;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;
 
 accessible class net/minecraft/entity/mob/DrownedEntity$TridentAttackGoal
 

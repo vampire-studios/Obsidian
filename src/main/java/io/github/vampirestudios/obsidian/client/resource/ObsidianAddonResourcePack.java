@@ -41,8 +41,8 @@ public class ObsidianAddonResourcePack implements ResourcePack {
     }
 
     @Override
-    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
-        return new HashSet<>(virtualPack.findResources(type, namespace, prefix, maxDepth, pathFilter));
+    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
+        return new HashSet<>(virtualPack.findResources(type, namespace, prefix, pathFilter));
     }
 
     @Override
@@ -62,6 +62,7 @@ public class ObsidianAddonResourcePack implements ResourcePack {
             object.addProperty("description", "Default pack for config packs.");
             object.addProperty("pack_format", 8);
         }
+        object.add("block", new JsonObject());
         return metadataReader.fromJson(object);
     }
 

@@ -8,12 +8,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class SpreadBehaviors {
-
-	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Table<Block, SpreaderType, ISpreadingBehavior> SPREADERS = HashBasedTable.create();
 
 	static {
@@ -25,7 +21,7 @@ public class SpreadBehaviors {
 	 */
 	private static void addSpreaderBehavior(Block block, SpreaderType type, ISpreadingBehavior behavior) {
 		if (SPREADERS.contains(block, type))
-			LOGGER.info("Replacing spreading behavior for block '{}' and spreader type '{}'", block, type.getName());
+			Obsidian.LOGGER.info("Replacing spreading behavior for block '{}' and spreader type '{}'", block, type.getName());
 		SPREADERS.put(block, type, behavior);
 	}
 
@@ -58,31 +54,47 @@ public class SpreadBehaviors {
 	}
 
 	private static void setupVanillaBehavior() {
-		addSpreaderBehavior(Blocks.DIRT, SpreaderType.GRASS, ((state, level, pos) ->
-				Blocks.GRASS_BLOCK.getDefaultState()
-						.with(Properties.SNOWY, level.getBlockState(pos.up()).isOf(Blocks.SNOW))));
-
-		addSpreaderBehavior(Blocks.GRASS_BLOCK, SpreaderType.REVERT, ((state, level, pos) ->
-				Blocks.DIRT.getDefaultState()));
-
-		addSpreaderBehavior(Blocks.DIRT, SpreaderType.MYCELIUM, ((state, level, pos) ->
-				Blocks.MYCELIUM.getDefaultState()
-						.with(Properties.SNOWY, level.getBlockState(pos.up()).isOf(Blocks.SNOW))));
-
-		addSpreaderBehavior(Blocks.MYCELIUM, SpreaderType.REVERT, ((state, level, pos) ->
-				Blocks.DIRT.getDefaultState()));
-
-		addSpreaderBehavior(Blocks.NETHERRACK, SpreaderType.CRIMSON, ((state, level, pos) ->
-				Blocks.CRIMSON_NYLIUM.getDefaultState()));
-
-		addSpreaderBehavior(Blocks.CRIMSON_NYLIUM, SpreaderType.REVERT, ((state, level, pos) ->
-				Blocks.NETHERRACK.getDefaultState()));
-
-		addSpreaderBehavior(Blocks.NETHERRACK, SpreaderType.WARPED, ((state, level, pos) ->
-				Blocks.WARPED_NYLIUM.getDefaultState()));
-
-		addSpreaderBehavior(Blocks.WARPED_NYLIUM, SpreaderType.REVERT, ((state, level, pos) ->
-				Blocks.NETHERRACK.getDefaultState()));
+		addSpreaderBehavior(
+				Blocks.DIRT,
+				SpreaderType.GRASS,
+				(state, level, pos) -> Blocks.GRASS_BLOCK.getDefaultState().with(Properties.SNOWY, level.getBlockState(pos.up()).isOf(Blocks.SNOW))
+		);
+		addSpreaderBehavior(
+				Blocks.GRASS_BLOCK,
+				SpreaderType.REVERT,
+				(state, level, pos) -> Blocks.DIRT.getDefaultState()
+		);
+		addSpreaderBehavior(
+				Blocks.DIRT,
+				SpreaderType.MYCELIUM,
+				(state, level, pos) -> Blocks.MYCELIUM.getDefaultState()
+						.with( Properties.SNOWY, level.getBlockState( pos.up() ).isOf(Blocks.SNOW) )
+		);
+		addSpreaderBehavior(
+				Blocks.MYCELIUM,
+				SpreaderType.REVERT,
+				(state, level, pos) -> Blocks.DIRT.getDefaultState()
+		);
+		addSpreaderBehavior(
+				Blocks.NETHERRACK,
+				SpreaderType.CRIMSON,
+				(state, level, pos) -> Blocks.CRIMSON_NYLIUM.getDefaultState()
+		);
+		addSpreaderBehavior(
+				Blocks.CRIMSON_NYLIUM,
+				SpreaderType.REVERT,
+				(state, level, pos) -> Blocks.NETHERRACK.getDefaultState()
+		);
+		addSpreaderBehavior(
+				Blocks.NETHERRACK,
+				SpreaderType.WARPED,
+				(state, level, pos) -> Blocks.WARPED_NYLIUM.getDefaultState()
+		);
+		addSpreaderBehavior(
+				Blocks.WARPED_NYLIUM,
+				SpreaderType.REVERT,
+				(state, level, pos) -> Blocks.NETHERRACK.getDefaultState()
+		);
 	}
 
 	public static class SimpleSpreaderBehavior implements ISpreadingBehavior {

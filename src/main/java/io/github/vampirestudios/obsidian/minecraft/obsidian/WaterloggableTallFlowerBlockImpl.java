@@ -15,11 +15,10 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements Fertilizable, Waterloggable {
     public static IntProperty AGE;
@@ -64,11 +63,11 @@ public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements 
         return true;
     }
 
-    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
+    public boolean canGrow(World world, RandomGenerator random, BlockPos pos, BlockState state) {
         return true;
     }
 
-    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
+    public void grow(ServerWorld world, RandomGenerator random, BlockPos pos, BlockState state) {
         dropStack(world, pos, new ItemStack(this));
     }
 
@@ -109,7 +108,7 @@ public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements 
         }
     }
 
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
         if (world.getBaseLightLevel(pos, 0) >= 9) {
             int i = this.getAge(state);
             if (i < this.getMaxAge()) {

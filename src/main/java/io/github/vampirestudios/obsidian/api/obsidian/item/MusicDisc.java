@@ -6,5 +6,6 @@ public class MusicDisc extends Item {
 
     public Identifier music;
     public int comparator_output;
+    public int length;
 
 }

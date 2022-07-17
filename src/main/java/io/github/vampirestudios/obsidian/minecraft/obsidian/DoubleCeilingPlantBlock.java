@@ -28,7 +28,7 @@ public class DoubleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
 
     public DoubleCeilingPlantBlock(Settings settings) {
-        super(settings);
+        super(settings.offsetType(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(HALF, DoubleBlockHalf.UPPER));
     }
 
@@ -101,11 +101,6 @@ public class DoubleCeilingPlantBlock extends PlantBlock {
                 world.syncWorldEvent(player, 2001, blockPos, Block.getRawIdFromState(blockState));
             }
         }
-    }
-
-    @Override
-    public OffsetType getOffsetType() {
-        return OffsetType.XZ;
     }
 
     @SuppressWarnings("deprecation")

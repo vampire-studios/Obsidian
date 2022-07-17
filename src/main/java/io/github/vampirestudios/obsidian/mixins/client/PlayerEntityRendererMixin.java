@@ -28,8 +28,8 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void onConstructor(CallbackInfo info) {
-        this.addFeature(new BackToolFeatureRenderer(this));
+    public void onConstructor(EntityRendererFactory.Context context, boolean bl, CallbackInfo ci) {
+        this.addFeature(new BackToolFeatureRenderer(this, context.getHeldItemRenderer()));
     }
 
     @Inject(method = "getArmPose", at = @At("HEAD"), cancellable = true)

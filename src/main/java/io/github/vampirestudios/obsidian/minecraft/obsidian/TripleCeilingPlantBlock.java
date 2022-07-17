@@ -26,7 +26,7 @@ public class TripleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<TripleBlockPart> PART = CProperties.TRIPLE_BLOCK_PART;
 
     public TripleCeilingPlantBlock(Settings settings) {
-        super(settings);
+        super(settings.offsetType(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, TripleBlockPart.UPPER));
     }
 
@@ -100,11 +100,6 @@ public class TripleCeilingPlantBlock extends PlantBlock {
                 world.syncWorldEvent(player, 2001, blockPos, Block.getRawIdFromState(blockState));
             }
         }
-    }
-
-    @Override
-    public OffsetType getOffsetType() {
-        return OffsetType.XZ;
     }
 
     @SuppressWarnings("deprecation")

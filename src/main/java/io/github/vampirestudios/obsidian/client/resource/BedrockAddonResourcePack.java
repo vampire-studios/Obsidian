@@ -47,10 +47,10 @@ public class BedrockAddonResourcePack implements ResourcePack {
     }
 
     @Override
-    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
+    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
         Set<Identifier> resources = new HashSet<>();
         for (ResourcePack virtualPack : virtualPacks) {
-            resources.addAll(virtualPack.findResources(type, namespace, prefix, maxDepth, pathFilter));
+            resources.addAll(virtualPack.findResources(type, namespace, prefix, pathFilter));
         }
         return resources;
     }

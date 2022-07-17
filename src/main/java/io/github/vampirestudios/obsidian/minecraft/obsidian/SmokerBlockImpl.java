@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.vampirelib.api.VanillaTargetedItemGroupFiller;
+import io.github.vampirestudios.vampirelib.api.itemGroupSorting.VanillaTargetedItemGroupFiller;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SmokerBlock;
 import net.minecraft.item.ItemGroup;

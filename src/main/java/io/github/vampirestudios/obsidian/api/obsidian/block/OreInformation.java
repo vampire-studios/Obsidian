@@ -2,8 +2,6 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.block.Block;
 import net.minecraft.structure.rule.*;
 import net.minecraft.tag.BlockTags;
@@ -17,9 +15,10 @@ import net.minecraft.world.gen.YOffset;
 import net.minecraft.world.gen.heightprovider.HeightProvider;
 import net.minecraft.world.gen.heightprovider.TrapezoidHeightProvider;
 import net.minecraft.world.gen.heightprovider.UniformHeightProvider;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class OreInformation {
@@ -30,7 +29,7 @@ public class OreInformation {
     public boolean triangleRange = false;
     public int plateau = 0;
     public String spawnPredicate = "built_in";
-    public String[] biomeCategories;
+    public List<RegistryKey<Biome>> biomeCategories;
     public int size = 17;
     public int chance = 30;
     public float discardOnAirChance = 0.0F;
@@ -63,7 +62,7 @@ public class OreInformation {
     }
 
     public Predicate<BiomeSelectionContext> biomeSelector() {
-        Predicate<BiomeSelectionContext> predicate;
+        Predicate<BiomeSelectionContext> predicate = null;
         switch (spawnPredicate) {
             default -> predicate = BiomeSelectors.all();
             case "built_in" -> predicate = BiomeSelectors.builtIn();
@@ -71,14 +70,15 @@ public class OreInformation {
             case "overworld" -> predicate = BiomeSelectors.foundInOverworld();
             case "the_nether" -> predicate = BiomeSelectors.foundInTheNether();
             case "the_end" -> predicate = BiomeSelectors.foundInTheEnd();
-            case "categories" -> {
+            case "include_by_key" -> {
                 if (biomeCategories != null) {
-                    Biome.Category[] categories = new Biome.Category[biomeCategories.length];
-                    for (int i = 0; i < biomeCategories.length; i++) {
-                        categories[i] = Biome.Category.byName(biomeCategories[i]);
-                    }
-                    predicate = BiomeSelectors.categories(Utils.stripNulls(categories));
-                } else predicate = BiomeSelectors.categories();
+                    predicate = BiomeSelectors.includeByKey(biomeCategories);
+                } else predicate = BiomeSelectors.includeByKey();
+            }
+            case "exclude_by_key" -> {
+                if (biomeCategories != null) {
+                    predicate = BiomeSelectors.excludeByKey(biomeCategories);
+                } else predicate = BiomeSelectors.excludeByKey();
             }
             case "biomes" -> {
                 if (biomes != null) {

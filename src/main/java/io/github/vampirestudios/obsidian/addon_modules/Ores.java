@@ -11,7 +11,6 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
 import net.minecraft.util.Holder;
@@ -29,6 +28,7 @@ import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.util.ConfiguredFeatureUtil;
 import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
 
 import java.io.File;
 import java.io.FileNotFoundException;

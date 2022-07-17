@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.mixins.client;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.vampirestudios.obsidian.api.IRenderModeAware;
 import io.github.vampirestudios.obsidian.api.fabric.TridentInterface;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.client.render.item.ItemModels;

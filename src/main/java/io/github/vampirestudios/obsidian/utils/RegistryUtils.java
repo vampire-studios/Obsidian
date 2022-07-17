@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.utils;
 
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.Const;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -23,7 +23,7 @@ public class RegistryUtils {
     }
 
     public static Block register(String name, Block block) {
-        register(block, new Identifier(Obsidian.MOD_ID, name), ItemGroup.DECORATIONS);
+        register(block, Const.id(name), ItemGroup.DECORATIONS);
         return block;
     }
 
@@ -41,7 +41,7 @@ public class RegistryUtils {
     }
 
     public static Block registerBlockWithoutItem(String name, Block block) {
-        Registry.register(Registry.BLOCK, new Identifier(Obsidian.MOD_ID, name), block);
+        Registry.register(Registry.BLOCK, Const.id(name), block);
         return block;
     }
 
@@ -54,7 +54,7 @@ public class RegistryUtils {
     }
 
     public static Item registerItem(String name, Item item) {
-        return Registry.register(Registry.ITEM, new Identifier(Obsidian.MOD_ID, name), item);
+        return Registry.register(Registry.ITEM, Const.id(name), item);
     }
 
     public static Block registerBlockWithWallBlock(Block block, Block wallBlock, Identifier name) {
@@ -82,13 +82,13 @@ public class RegistryUtils {
 
     public static Block registerNetherStem(String name, MapColor MapColor) {
         return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> MapColor)
-                .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), new Identifier(Obsidian.MOD_ID, name));
+                .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), Const.id(name));
     }
 
     public static Block registerLog(String name, MapColor MapColor, MapColor MapColor2) {
         return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) ->
                 blockState.get(PillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
-                .strength(2.0F).sounds(BlockSoundGroup.WOOD)), new Identifier(Obsidian.MOD_ID, name));
+                .strength(2.0F).sounds(BlockSoundGroup.WOOD)), Const.id(name));
     }
 
 }

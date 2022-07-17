@@ -11,7 +11,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.emoji.Emoji;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.models.AnimationFile;
 import io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
@@ -68,6 +67,7 @@ public class ObsidianAddonLoader {
     public static Registry<StatusEffect> STATUS_EFFECTS = FabricRegistryBuilder.createSimple(StatusEffect.class, id("status_effects")).buildAndRegister();
     public static Registry<Enchantment> ENCHANTMENTS = FabricRegistryBuilder.createSimple(Enchantment.class, id("enchantments")).buildAndRegister();
     public static Registry<ItemGroup> ITEM_GROUPS = FabricRegistryBuilder.createSimple(ItemGroup.class, id("item_groups_registry")).buildAndRegister();
+    public static Registry<CreativeTab> CREATIVE_TABS = FabricRegistryBuilder.createSimple(CreativeTab.class, id("creative_tabs")).buildAndRegister();
     public static Registry<TabbedGroup> EXPANDED_ITEM_GROUPS = FabricRegistryBuilder.createSimple(TabbedGroup.class, id("expanded_item_groups_registry")).buildAndRegister();
     public static Registry<Entity> ENTITIES = FabricRegistryBuilder.createSimple(Entity.class, id("entities")).buildAndRegister();
     public static Registry<EntityModel> ENTITY_MODELS = FabricRegistryBuilder.createSimple(EntityModel.class, id("entity_models")).buildAndRegister();
@@ -83,7 +83,6 @@ public class ObsidianAddonLoader {
     public static Registry<VillagerBiomeType> VILLAGER_BIOME_TYPES = FabricRegistryBuilder.createSimple(VillagerBiomeType.class, id("villager_biome_types")).buildAndRegister();
     public static Registry<Fluid> FLUIDS = FabricRegistryBuilder.createSimple(Fluid.class, id("fluids")).buildAndRegister();
     public static Registry<Emoji> EMOJIS = FabricRegistryBuilder.createSimple(Emoji.class, id("emojis")).buildAndRegister();
-    public static Registry<AnimationFile> ENTITY_ANIMATIONS = FabricRegistryBuilder.createSimple(AnimationFile.class, id("entity_animations")).buildAndRegister();
 
     //World Generation
     public static Registry<Tree> TREES = FabricRegistryBuilder.createSimple(Tree.class, id("trees")).buildAndRegister();
@@ -191,8 +190,8 @@ public class ObsidianAddonLoader {
     }
 
     private static void loadAddonModule(ObsidianAddon addon, ModIdAndAddonPath id, AddonModule addonModule) {
-        if (Paths.get(id.getPath(), addonModule.getType()).toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(id.getPath(), addonModule.getType()).toFile().listFiles())) {
+        if (Paths.get(id.path(), addonModule.getType()).toFile().exists()) {
+            for (File file : Objects.requireNonNull(Paths.get(id.path(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {
                     try {
                         addonModule.init(addon, file, id);

@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import com.google.gson.annotations.SerializedName;
+import io.wispforest.owo.itemgroup.Icon;
 import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -15,19 +16,19 @@ public class TabbedGroup {
     public boolean staticTitle = true;
 
     public static class Button {
-        public Icon icon;
+        public TabIcon icon;
         public String link;
         public String name;
     }
 
     public static class Tab {
-        public Icon icon;
+        public TabIcon icon;
         public String name;
         public Identifier contentTag;
         public Identifier texture = ItemGroupTab.DEFAULT_TEXTURE;
     }
 
-    public static class Icon {
+    public static class TabIcon {
         public String type;
         public IconProperties properties;
         
@@ -39,12 +40,12 @@ public class TabbedGroup {
             public boolean loop;
         }
 
-        public io.wispforest.owo.itemgroup.Icon getIcon() {
+        public Icon getIcon() {
             return switch (type) {
-                case "texture" -> io.wispforest.owo.itemgroup.Icon.of(properties.texture, properties.u, properties.v, properties.textureWidth, properties.textureHeight);
-                case "animated" -> io.wispforest.owo.itemgroup.Icon.of(properties.texture, properties.textureSize, properties.frameDelay, properties.loop);
-                case "item_like" -> io.wispforest.owo.itemgroup.Icon.of(Registry.ITEM.get(properties.item));
-                case "stack", default -> io.wispforest.owo.itemgroup.Icon.of(new ItemStack(Registry.ITEM.get(properties.item)));
+                case "texture" -> Icon.of(properties.texture, properties.u, properties.v, properties.textureWidth, properties.textureHeight);
+                case "animated" -> Icon.of(properties.texture, properties.textureSize, properties.frameDelay, properties.loop);
+                case "item_like" -> Icon.of(Registry.ITEM.get(properties.item));
+                case "stack", default -> Icon.of(new ItemStack(Registry.ITEM.get(properties.item)));
             };
         }
     }

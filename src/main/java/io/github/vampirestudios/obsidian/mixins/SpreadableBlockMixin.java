@@ -9,12 +9,11 @@ import net.minecraft.block.SnowyBlock;
 import net.minecraft.block.SpreadableBlock;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.util.Random;
 
 @Mixin(SpreadableBlock.class)
 public abstract class SpreadableBlockMixin extends SnowyBlock implements IForgeSpreadingBlock {
@@ -38,7 +37,7 @@ public abstract class SpreadableBlockMixin extends SnowyBlock implements IForgeS
 	 */
 	@Overwrite
 	@Override
-	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
 		if (!canSurvive(state, world, pos)) {
 			if (!world.isRegionLoaded(pos.add(-1, -1, -1), pos.add(1, 1, 1))) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
 			if (SpreadBehaviors.canSpread(state, SpreaderType.REVERT)) //Forge: switch to use SpreadBehaviors API, so this class can be used more easily

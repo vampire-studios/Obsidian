@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
+import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -28,6 +29,10 @@ public class Block {
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
     public Identifier placable_feature;
+    private List<Property<?>> properties;
+    private Map<String, Property<?>> propertiesByName;
+    private Map<String, String> propertyDefaultValues;
+    private Map<Property<?>, Comparable<?>> propertyDefaultValuesMap;
 
 	public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();

@@ -9,10 +9,11 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +21,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -34,19 +38,19 @@ public class Commands implements AddonModule {
                   "op_level": 2,
                   "arguments": {
                     "target_pos" : {
-                      "argumentType": "block_pos",
+                      "argument_type": "block_pos",
                       "executes": [
                         "tp @s {target_pos}"
                       ]
                     },
                     "user": {
-                      "argumentType": "player",
+                      "argument_type": "player",
                       "executes": [
                         "tp @s {user}"
                       ],
                       "arguments": {
                         "target": {
-                          "argumentType": "player",
+                          "argument_type": "player",
                           "executes": [
                             "tp {user} {target}"
                           ]
@@ -66,7 +70,7 @@ public class Commands implements AddonModule {
         try {
             if (command == null || json.isEmpty()) return;
             String finalJson = json;
-            CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> parseNodes(dispatcher, finalJson));
+            CommandRegistrationCallback.EVENT.register((dispatcher, context, environment) -> parseNodes(dispatcher, context, environment, finalJson));
             register(COMMANDS, "command", command.name, command);
         } catch (Exception e) {
             failedRegistering("command", command.name.toString(), e);
@@ -82,35 +86,43 @@ public class Commands implements AddonModule {
         return "commands";
     }
 
-    void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, String json) {
+    void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, String json) {
         Command.CommandNode node = Obsidian.GSON.fromJson(json, Command.CommandNode.class);
-        LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name.getPath());
-        parse(root, node, new String[]{ });
-        dispatcher.register(root);
+        if (node.dedicatedOnly) {
+            if (environment.dedicated) {
+                LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name.getPath());
+                parse(root, buildContext, environment, node, new String[]{ });
+                dispatcher.register(root);
+            }
+        } else {
+            LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name.getPath());
+            parse(root, buildContext, environment, node, new String[]{ });
+            dispatcher.register(root);
+        }
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, Command.LiteralNode node, String name, String[] args) {
+    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, Command.LiteralNode node, String name, String[] args) {
         LiteralArgumentBuilder<ServerCommandSource> _this = CommandManager.literal(name);
-        parse(_this, node, args);
+        parse(_this, buildContext, environment, node, args);
         parent.then(_this);
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, Command.ArgumentNode node, String name, String[] args) {
-        RequiredArgumentBuilder<ServerCommandSource, ?> _this = CommandManager.argument(name, node.getArgumentType());
-        parse(_this, node, args);
+    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, Command.ArgumentNode node, String name, String[] args) {
+        RequiredArgumentBuilder<ServerCommandSource, ?> _this = CommandManager.argument(name, node.getArgumentType(buildContext));
+        parse(_this, buildContext, environment, node, args);
         parent.then(_this);
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, Command.Node node, String[] args) {
+    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, Command.Node node, String[] args) {
         if (node.arguments != null) {
             node.arguments.forEach((_name, _node) -> {
                 ArrayList<String> list = new ArrayList<>(Arrays.asList(args));
                 list.add(_name);
-                parse(parent, _node, _name, list.toArray(new String[0]));
+                parse(parent, buildContext, environment, _node, _name, list.toArray(new String[0]));
             });
         }
         if (node.literals != null) {
-            node.literals.forEach((_name, _node) -> parse(parent, _node, _name, args));
+            node.literals.forEach((_name, _node) -> parse(parent, buildContext, environment, _node, _name, args));
         }
         if (node.op_level != null) {
             parent.requires((ctx) -> ctx.hasPermissionLevel(node.op_level));
@@ -126,7 +138,7 @@ public class Commands implements AddonModule {
 
                 for (String command : node.executes) {
                     String formatted = sub.replace(command);
-                    ServerCommandSource source = ctx.getSource().withLevel(4);
+                    ServerCommandSource source = ctx.getSource().withLevel(node.op_level);
                     source.getServer().getCommandManager()
                             .getDispatcher().execute(formatted, source);
                 }

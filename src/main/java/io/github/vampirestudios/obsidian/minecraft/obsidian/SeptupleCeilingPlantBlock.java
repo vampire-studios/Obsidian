@@ -28,7 +28,7 @@ public class SeptupleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<SeptupleBlockPart> PART = CProperties.SEPTUPLE_BLOCK_PART;
 
     public SeptupleCeilingPlantBlock(Settings settings) {
-        super(settings);
+        super(settings.offsetType(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, SeptupleBlockPart.TOP));
     }
 
@@ -175,11 +175,6 @@ public class SeptupleCeilingPlantBlock extends PlantBlock {
             world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 35);
             world.syncWorldEvent(player, 2001, blockPos, Block.getRawIdFromState(state));
         });
-    }
-
-    @Override
-    public OffsetType getOffsetType() {
-        return OffsetType.XZ;
     }
 
     @SuppressWarnings("deprecation")

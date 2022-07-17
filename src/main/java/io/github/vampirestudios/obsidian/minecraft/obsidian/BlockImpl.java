@@ -27,8 +27,8 @@ public class BlockImpl extends Block {
     }
 
     @Override
-    public void onStacksDropped(BlockState state, ServerWorld world, BlockPos pos, ItemStack stack) {
-        super.onStacksDropped(state, world, pos, stack);
+    public void onStacksDropped(BlockState state, ServerWorld world, BlockPos pos, ItemStack stack, boolean dropExperience) {
+        super.onStacksDropped(state, world, pos, stack, dropExperience);
         if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, stack) == 0) {
             if (block.drop_information != null) this.dropExperience(world, pos, block.drop_information.xpDropAmount);
         }

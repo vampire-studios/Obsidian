@@ -37,7 +37,7 @@ public class ArmorItemImpl extends ArmorItem {
 
     @Override
     public Text getName() {
-        return item.information.name.getName("item");
+        return item.information.name.getTranslation("item");
     }
 
     @Override

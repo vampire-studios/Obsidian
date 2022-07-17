@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class ItemGroups implements AddonModule {
+public class LegacyItemGroups implements AddonModule {
 
     @Override
     public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {

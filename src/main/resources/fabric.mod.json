@@ -44,5 +44,15 @@
     "fabric": "*",
     "owo": "*",
     "vampirelib": "*"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_898": [
+        "io/github/vampirestudios/obsidian/animation/HasAnimationManager"
+      ],
+      "net/minecraft/class_5617\u0024class_5618": [
+        "io/github/vampirestudios/obsidian/animation/HasAnimationManager"
+      ]
+    }
   }
 }

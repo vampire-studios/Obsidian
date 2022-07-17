@@ -90,13 +90,12 @@ public abstract class SimpleRegistryMixin<T> extends Registry<T> implements Exte
 	@Override
 	public void obsidian$unfreeze() {
 		frozen = false;
-
 		if (customHolderProvider != null)
 			this.intrusiveHolderCache = new IdentityHashMap<>();
 	}
 
 	@Inject(method = "freeze", at = @At("HEAD"), cancellable = true)
 	private void disableThatThing(CallbackInfoReturnable<Registry<T>> cir) {
-		cir.setReturnValue((Registry<T>) (Object)this);
+		cir.setReturnValue(this);
 	}
 }
