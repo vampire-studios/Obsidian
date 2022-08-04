@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
@@ -15,6 +16,8 @@ public class Block {
     public BlockType block_type = BlockType.BLOCK;
     public BlockInformation information;
     public DisplayInformation display;
+    @SerializedName("drop_information")
+    public DropInformation dropInformation;
     public AdditionalBlockInformation additional_information;
     public Functions functions;
     public OreInformation ore_information;
@@ -25,7 +28,6 @@ public class Block {
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
     public Map<String, Event> events;
-    public DropInformation drop_information;
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
     public Identifier placable_feature;

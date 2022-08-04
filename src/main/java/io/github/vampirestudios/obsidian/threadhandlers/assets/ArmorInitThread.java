@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.ArmorRenderer;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
@@ -33,11 +34,12 @@ public class ArmorInitThread implements Runnable {
                     name
             ));
 
-        if (armor.display != null && armor.display.model != null)
-            clientResourcePackBuilder.addItemModel(armor.information.name.id, modelBuilder -> {
-                modelBuilder.parent(armor.display.model.parent);
-                armor.display.model.textures.forEach(modelBuilder::texture);
-            });
+        if (armor.display != null && armor.display.model != null) {
+            ModelBuilder modelBuilder = new ModelBuilder()
+                    .parent(armor.display.model.parent);
+            armor.display.model.textures.forEach(modelBuilder::texture);
+            clientResourcePackBuilder.addItemModel(armor.information.name.id, modelBuilder);
+        }
 
         if (armor.display != null && armor.display.lore.length != 0) {
             for (TooltipInformation lore : armor.display.lore) {

@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
 import io.github.vampirestudios.obsidian.client.ClientInit;
@@ -42,16 +43,16 @@ public class ItemInitThread implements Runnable {
             });
         }*/
         if (item.display != null && item.display.model != null) {
-            clientResourcePackBuilder.addItemModel(item.information.name.id, modelBuilder -> {
-                modelBuilder.parent(item.display.model.parent);
-                if (item.display.model.textures != null) item.display.model.textures.forEach(modelBuilder::texture);
-            });
+            ModelBuilder modelBuilder = new ModelBuilder()
+                    .parent(item.display.model.parent);
+            item.display.model.textures.forEach(modelBuilder::texture);
+            clientResourcePackBuilder.addItemModel(item.information.name.id, modelBuilder);
         }
         if (item.display != null && item.display.itemModel != null) {
-            clientResourcePackBuilder.addItemModel(item.information.name.id, modelBuilder -> {
-                modelBuilder.parent(item.display.itemModel.parent);
-                if (item.display.itemModel.textures != null) item.display.itemModel.textures.forEach(modelBuilder::texture);
-            });
+            ModelBuilder modelBuilder = new ModelBuilder()
+                    .parent(item.display.itemModel.parent);
+            item.display.itemModel.textures.forEach(modelBuilder::texture);
+            clientResourcePackBuilder.addItemModel(item.information.name.id, modelBuilder);
         }
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation lore : item.display.lore) {

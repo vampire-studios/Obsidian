@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.item.extension.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+	"ProjectileUtilMixin",
+	"bow.AbstractSkeletonEntityMixin",
+	"bow.BowAttackGoalMixin",
+	"bow.BowAttackMixin",
+	"bow.BowItemMixin",
+	"bow.EntityUseBowMixin",
+	"crossbow.CrossbowItemAccessor",
+	"crossbow.CrossbowItemMixin",
+	"crossbow.EntityUseCrossbowMixin",
+	"trident.TridentEntityAccessor",
+	"trident.TridentEntityMixin"
+  ],
+  "client": [
+	"bow.client.SkeletonEntityModelMixin",
+	"client.HeldItemRendererMixin",
+	"crossbow.client.PlayerEntityRendererMixin",
+	"trident.client.ClientPlayNetworkHandlerMixin",
+	"trident.client.TridentEntityRendererMixin"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}

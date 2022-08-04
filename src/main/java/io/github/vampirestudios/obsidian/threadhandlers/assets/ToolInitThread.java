@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem;
 import io.github.vampirestudios.obsidian.client.ClientInit;
@@ -24,10 +25,9 @@ public class ToolInitThread implements Runnable {
             ));
         }
         if (tool.display != null && tool.display.model != null) {
-            clientResourcePackBuilder.addItemModel(tool.information.name.id, modelBuilder -> {
-                modelBuilder.parent(tool.display.model.parent);
-                tool.display.model.textures.forEach(modelBuilder::texture);
-            });
+            ModelBuilder modelBuilder = new ModelBuilder().parent(tool.display.model.parent);
+            tool.display.model.textures.forEach(modelBuilder::texture);
+            clientResourcePackBuilder.addItemModel(tool.information.name.id, modelBuilder);
         }
         if (tool.display != null && tool.display.lore.length != 0) {
             for (TooltipInformation lore : tool.display.lore) {

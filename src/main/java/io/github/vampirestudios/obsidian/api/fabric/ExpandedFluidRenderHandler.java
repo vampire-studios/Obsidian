@@ -71,7 +71,6 @@ public interface ExpandedFluidRenderHandler {
 	 *
 	 * @param textureAtlas The blocks texture atlas, provided for convenience.
 	 */
-	default void reloadTextures(SpriteAtlasTexture textureAtlas) {
-	}
+	default void reloadTextures(SpriteAtlasTexture textureAtlas) {}
 
 }

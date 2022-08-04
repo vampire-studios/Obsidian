@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.client;
 
+import io.github.vampirestudios.artifice.api.builder.assets.TranslationBuilder;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
@@ -81,10 +82,11 @@ public class ClientInit implements ClientModInitializer {
                     for (Elytra elytra : ObsidianAddonLoader.ELYTRAS)
                         if (elytra.information.name.id.getNamespace().equals(iAddonPack.getConfigPackInfo().namespace))
                             new ElytraInitThread(clientResourcePackBuilder, elytra).run();
-                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) ->
-							clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId),
-									translationBuilder -> translations.forEach(translationBuilder::entry))
-					));
+                    translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
+                        TranslationBuilder translationBuilder = new TranslationBuilder();
+                        translations.forEach(translationBuilder::entry);
+                        clientResourcePackBuilder.addTranslations(new Identifier(modId, languageId), translationBuilder);
+                    }));
                     if (FabricLoader.getInstance().isDevelopmentEnvironment()) new Thread(() -> {
                         try {
                             if (FabricLoader.getInstance().isDevelopmentEnvironment())

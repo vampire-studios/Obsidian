@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.TextureAndModelInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
@@ -332,11 +333,10 @@ public class BlockInitThread implements Runnable {
                 }
                 if (block.display.itemModel != null) {
                     TextureAndModelInformation textureAndModelInformation = block.display.itemModel;
-                    clientResourcePackBuilder.addItemModel(nameInformation.id, modelBuilder -> {
-                        modelBuilder.parent(textureAndModelInformation.parent);
-                        if (textureAndModelInformation.textures != null)
-                            textureAndModelInformation.textures.forEach(modelBuilder::texture);
-                    });
+                    ModelBuilder modelBuilder = new ModelBuilder().parent(textureAndModelInformation.parent);
+                    if (textureAndModelInformation.textures != null)
+                        textureAndModelInformation.textures.forEach(modelBuilder::texture);
+                    clientResourcePackBuilder.addItemModel(nameInformation.id, modelBuilder);
                 }
             }
             if (block.additional_information != null && translated != null) {

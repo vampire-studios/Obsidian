@@ -19,14 +19,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRendererFactory.Context.class)
 public class EntityRendererFactoryContextMixin implements HasAnimationManager {
 	@Unique
-	private AnimationManager animationManager;
+	private AnimationManager quilt$animationManager;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void createAnimationManager(EntityRenderDispatcher entityRenderDispatcher, ItemRenderer itemRenderer, BlockRenderManager blockRenderManager, HeldItemRenderer heldItemRenderer, ResourceManager resourceManager, EntityModelLoader entityModelLoader, TextRenderer textRenderer, CallbackInfo ci) {
-		this.animationManager = entityRenderDispatcher.getAnimationManager();
+		this.quilt$animationManager = entityRenderDispatcher.getAnimationManager();
 	}
 	@Override
 	public AnimationManager getAnimationManager() {
-		return animationManager;
+		return quilt$animationManager;
 	}
 }

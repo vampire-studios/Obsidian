@@ -33,8 +33,7 @@ public class ExpandedFluidRenderHandlerRegistryImpl implements ExpandedFluidRend
 
 	private FluidRenderer fluidRenderer;
 
-	private ExpandedFluidRenderHandlerRegistryImpl() {
-	}
+	private ExpandedFluidRenderHandlerRegistryImpl() {}
 
 	@Override
 	public ExpandedFluidRenderHandler get(Fluid fluid) {

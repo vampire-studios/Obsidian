@@ -1,9 +1,9 @@
 [versions]
-    minecraft = '1.19.1-pre4'
-    quilt-mappings = '1.19.1-pre4+build.2' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
-    quilt-loader = '0.17.1-beta.6' # Latest version is available at https://fabricmc.net/versions.html
+    minecraft = '1.19.1'
+    quilt-mappings = '1.19.1+build.4' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
+    quilt-loader = '0.17.2-beta.2' # Latest version is available at https://fabricmc.net/versions.html
 
-    quilted_fabric_api = '3.0.0-alpha.4+0.57.2-1.19.1-SNAPSHOT'
+    quilted_fabric_api = '4.0.0-beta.4+0.58.5-1.19.1'
 
     vampirelib = '5.3.0+build.1-1.19'
     clothconfig = '7.0.72'

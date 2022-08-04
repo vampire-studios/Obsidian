@@ -1,10 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.api.obsidian.block.DropInformation;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
@@ -14,7 +11,6 @@ import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
 import net.minecraft.util.Holder;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
@@ -33,7 +29,6 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -75,7 +70,7 @@ public class Ores implements AddonModule {
 						key);
 			}
 
-			Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {
+			/*Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {
 				serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
 					lootTableBuilder.type(new Identifier("block"));
 					lootTableBuilder.pool(pool -> {
@@ -130,7 +125,7 @@ public class Ores implements AddonModule {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			});
+			});*/
 
 			if (!addon.getConfigPackInfo().hasData) {
 				new BlockInitThread(block);

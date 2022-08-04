@@ -105,8 +105,7 @@ public final class JsonResourceConditions {
 		}
 	}
 
-	private JsonResourceConditions() {
-	}
+	private JsonResourceConditions() {}
 
 	static {
 		// Load Fabric-provided conditions.

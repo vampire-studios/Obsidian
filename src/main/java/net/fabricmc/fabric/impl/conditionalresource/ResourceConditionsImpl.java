@@ -28,8 +28,7 @@ import net.fabricmc.fabric.api.conditionalresource.v1.ResourceConditions;
 
 @ApiStatus.Internal
 public final class ResourceConditionsImpl {
-	private ResourceConditionsImpl() {
-	}
+	private ResourceConditionsImpl() {}
 
 	public static boolean evaluate(Identifier fabricMetaId, JsonElement element) {
 		if (!element.isJsonObject()) throw new IllegalArgumentException("Condition element is not an object!");

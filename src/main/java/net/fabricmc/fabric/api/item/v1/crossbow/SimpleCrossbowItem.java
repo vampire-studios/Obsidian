@@ -40,12 +40,11 @@ public class SimpleCrossbowItem extends CrossbowItem implements FabricCrossbowEx
 	}
 
 	@Override
-	public void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
+	public void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectileEntity) {
 		if (crossbowStack.getItem() == this) {
-			onProjectileShot(crossbowStack, projectileStack, user, persistentProjectileEntity);
+			onProjectileShot(crossbowStack, projectileStack, user, projectileEntity);
 		}
 	}
 
-	public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, PersistentProjectileEntity persistentProjectileEntity) {
-	}
+	public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, PersistentProjectileEntity persistentProjectileEntity) {}
 }

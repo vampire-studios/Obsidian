@@ -39,9 +39,9 @@ public interface FabricCrossbowExtensions extends ShotProjectileEvents.ModifyPro
 	 * @param crossbowStack              the ItemStack for the crossbow
 	 * @param projectileStack            the stack for the projectile
 	 * @param entity                     the entity shooting the crossbow
-	 * @param persistentProjectileEntity the projectile entity to be shot
+	 * @param projectileEntity the projectile entity to be shot
 	 */
-	void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity persistentProjectileEntity);
+	void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity projectileEntity);
 
 	/**
 	 * Allows modifying the speed of the crossbow projectile. <br>

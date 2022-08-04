@@ -24,8 +24,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public final class ShotProjectileEvents {
-	private ShotProjectileEvents() {
-	}
+	private ShotProjectileEvents() {}
 
 	/**
 	 * This event modifies the projectile entity shot from a crossbow.

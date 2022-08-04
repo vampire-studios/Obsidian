@@ -33,7 +33,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.render.animation.Animation;
 import net.minecraft.client.render.animation.PartAnimation;
@@ -57,6 +56,7 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
@@ -206,16 +206,16 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "paintings", new Paintings());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "armor_materials", new ArmorMaterials());
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
 			registerInRegistry(ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
 			registerInRegistry(ADDON_MODULE_REGISTRY, "emojis", new Emojis());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
 			registerInRegistry(ADDON_MODULE_REGISTRY, "particle", new Particles());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "sound_events", new SoundEvents());
 		registerInRegistry(ADDON_MODULE_REGISTRY, "music_discs", new MusicDiscs());

@@ -10,9 +10,10 @@ public class BlockMixin {
 
 	/**
 	 * @author OliviaTheVampire
+	 * @reason For more information about block
 	 */
 	@Overwrite
 	public String toString() {
-		return  this.getClass().toString() + "{" + Registry.BLOCK.getId((Block)(Object)this) + "}";
+		return this.getClass().toString() + "{" + Registry.BLOCK.getId((Block)(Object)this) + "}";
 	}
 }

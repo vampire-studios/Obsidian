@@ -22,8 +22,14 @@
     "main": [
       "io.github.vampirestudios.obsidian.Obsidian"
     ],
+    "init": [
+      "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitializer"
+    ],
     "client": [
       "io.github.vampirestudios.obsidian.client.ClientInit"
+    ],
+    "init_client": [
+      "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesClientInitializer"
     ],
     "mealapi": [
       "io.github.vampirestudios.obsidian.Obsidian"
@@ -35,7 +41,12 @@
   "mixins": [
     "fabric-item-api-v1-elytra.mixins.json",
     "fabric-resource-conditions-v1.mixins.json",
-    "obsidian.mixins.json"
+    "obsidian.mixins.json",
+    "quilt_item_extensions.mixins.json",
+    "qsl_content_other_enchantment.mixins.json",
+    "quilt_fluid_extensions.mixins.json",
+    "quilt_key_binds.mixins.json",
+    "quilt_block_content_registry.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 
@@ -52,6 +63,11 @@
       ],
       "net/minecraft/class_5617\u0024class_5618": [
         "io/github/vampirestudios/obsidian/animation/HasAnimationManager"
+      ],
+      "net/minecraft/class_304": [
+        "org/quiltmc/qsl/key/binds/api/ChordedKeyBind",
+        "org/quiltmc/qsl/key/binds/api/QuiltKeyBind",
+        "org/quiltmc/qsl/key/binds/api/ToggleableKeyBind"
       ]
     }
   }

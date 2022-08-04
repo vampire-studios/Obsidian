@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.minecraft.block.Block;
@@ -32,6 +33,7 @@ public class OreInformation {
     public List<RegistryKey<Biome>> biomeCategories;
     public int size = 17;
     public int chance = 30;
+    @SerializedName("discard_on_air_chance")
     public float discardOnAirChance = 0.0F;
     public CustomYOffset topOffset;
     public CustomYOffset bottomOffset;
@@ -62,7 +64,7 @@ public class OreInformation {
     }
 
     public Predicate<BiomeSelectionContext> biomeSelector() {
-        Predicate<BiomeSelectionContext> predicate = null;
+        Predicate<BiomeSelectionContext> predicate;
         switch (spawnPredicate) {
             default -> predicate = BiomeSelectors.all();
             case "built_in" -> predicate = BiomeSelectors.builtIn();
@@ -112,12 +114,10 @@ public class OreInformation {
     }
 
     protected static class TargetState {
-
         public Identifier block;
         public Identifier tag = new Identifier("base_stone_overworld");
         public Map<String, String> properties;
         public float probability;
-
     }
 
 }

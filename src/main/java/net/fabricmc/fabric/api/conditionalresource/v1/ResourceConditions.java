@@ -32,8 +32,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.*;
 
 public final class ResourceConditions {
-	private ResourceConditions() {
-	}
+	private ResourceConditions() {}
 
 	/**
 	 * The registry for {@link ResourceCondition}s.

@@ -1,17 +1,6 @@
 package io.github.vampirestudios.obsidian.threadhandlers.data;
 
-import com.google.gson.JsonObject;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.utils.Utils;
-import net.fabricmc.fabric.api.recipe.v1.RecipeManagerHelper;
-import net.fabricmc.fabric.api.recipe.v1.VanillaRecipeBuilders;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-
-import java.io.IOException;
 
 public class BlockInitThread implements Runnable {
 
@@ -23,13 +12,13 @@ public class BlockInitThread implements Runnable {
 
     @Override
     public void run() {
-        Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {
-            serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
-                lootTableBuilder.type(new Identifier("block"));
-                lootTableBuilder.pool(pool -> {
-                    pool.rolls(1);
-                    pool.entry(entry -> {
-                        entry.type(new Identifier("item"));
+        /*Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {
+            serverResourcePackBuilder.addLootTable(block.information.name.id, new LootTableBuilder()
+                    .type(new Identifier("block"))
+                    .pool(new LootTableBuilder.Pool()
+                            .rolls(1)
+                            .entry(new LootTableBuilder.Pool.Entry()
+                                    .type(new Identifier("item"));
                         entry.name(block.information.name.id);
                     });
                     pool.condition(new Identifier("survives_explosion"), jsonObjectBuilder -> {
@@ -164,6 +153,6 @@ public class BlockInitThread implements Runnable {
                     });
                 });
             }
-        }
+        }*/
     }
 }

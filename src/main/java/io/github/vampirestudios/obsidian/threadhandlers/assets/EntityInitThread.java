@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.client.CustomEntityRenderer;
@@ -35,9 +36,9 @@ public class EntityInitThread implements Runnable {
 				"item." + identifier.getNamespace() + "." + identifier.getPath() + "_spawn_egg",
 				entity.information.name + " Spawn Egg"
 		);
+		ModelBuilder modelBuilder = new ModelBuilder().parent(new Identifier("item/template_spawn_egg"));
 		clientResourcePackBuilder.addItemModel(new Identifier(entity.information.identifier.getNamespace(),
-				entity.information.identifier.getPath() + "_spawn_egg"), modelBuilder ->
-				modelBuilder.parent(new Identifier("item/template_spawn_egg")));
+				entity.information.identifier.getPath() + "_spawn_egg"), modelBuilder);
 	}
 
 }

@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Elytra;
 import io.github.vampirestudios.obsidian.client.ClientInit;
@@ -27,10 +28,10 @@ public class ElytraInitThread implements Runnable {
             ));
         }
         if (elytra.display != null && elytra.display.model != null) {
-            clientResourcePackBuilder.addItemModel(elytra.information.name.id, modelBuilder -> {
-                modelBuilder.parent(elytra.display.model.parent);
-                elytra.display.model.textures.forEach(modelBuilder::texture);
-            });
+            ModelBuilder modelBuilder = new ModelBuilder()
+                    .parent(elytra.display.model.parent);
+            elytra.display.model.textures.forEach(modelBuilder::texture);
+            clientResourcePackBuilder.addItemModel(elytra.information.name.id, modelBuilder);
         }
         if (elytra.display != null && elytra.display.lore.length != 0) {
             for (TooltipInformation lore : elytra.display.lore) {

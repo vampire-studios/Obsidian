@@ -15,8 +15,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.IOException;
-
 @Mixin(ModelLoader.class)
 public class ModelLoaderMixin {
     @Inject(method="<init>", at=@At(value="INVOKE_STRING", target="Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args="ldc=textures"))
@@ -27,7 +25,7 @@ public class ModelLoaderMixin {
     }
     
     @Inject(method="loadModel", at=@At("HEAD"), cancellable=true)
-    public void ob_injectLoadModel(Identifier id, CallbackInfo info) throws Exception {
+    public void ob_injectLoadModel(Identifier id, CallbackInfo info) {
         if(id instanceof ModelIdentifier modelIdentifier) {
             if (ClientInit.customModels.contains(modelIdentifier)) {
                 JsonUnbakedModel jsonUnbakedModel = this.loadModelFromJson(modelIdentifier);
@@ -41,7 +39,7 @@ public class ModelLoaderMixin {
     private void addModel(ModelIdentifier modelId) { }
     
     @Shadow
-    private JsonUnbakedModel loadModelFromJson(Identifier id) throws IOException { return null; }
+    private JsonUnbakedModel loadModelFromJson(Identifier id) { return null; }
     
     @Shadow
     private void putModel(Identifier id, UnbakedModel unbakedModel) { }

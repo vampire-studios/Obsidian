@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
+import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
 import io.github.vampirestudios.obsidian.client.ClientInit;
@@ -24,10 +25,10 @@ public class FoodInitThread implements Runnable {
             ));
         }
         if (foodItem.display != null && foodItem.display.model != null) {
-            clientResourcePackBuilder.addItemModel(foodItem.information.name.id, modelBuilder -> {
-                modelBuilder.parent(foodItem.display.model.parent);
-                foodItem.display.model.textures.forEach(modelBuilder::texture);
-            });
+            ModelBuilder modelBuilder = new ModelBuilder()
+                    .parent(foodItem.display.model.parent);
+            foodItem.display.model.textures.forEach(modelBuilder::texture);
+            clientResourcePackBuilder.addItemModel(foodItem.information.name.id, modelBuilder);
         }
         if (foodItem.display != null && foodItem.display.lore.length != 0) {
             for (TooltipInformation lore : foodItem.display.lore) {

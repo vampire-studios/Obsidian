@@ -21,16 +21,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin implements HasAnimationManager {
 	@Unique
-	private AnimationManager animationManager;
+	private AnimationManager quilt$animationManager;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void createAnimationManager(MinecraftClient minecraftClient, TextureManager textureManager, ItemRenderer itemRenderer, BlockRenderManager blockRenderManager, TextRenderer textRenderer, GameOptions gameOptions, EntityModelLoader entityModelLoader, CallbackInfo ci) {
-		this.animationManager = new AnimationManager();
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(this.animationManager);
+		this.quilt$animationManager = new AnimationManager();
+		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(this.quilt$animationManager);
 	}
 
 	@Override
 	public AnimationManager getAnimationManager() {
-		return animationManager;
+		return quilt$animationManager;
 	}
 }

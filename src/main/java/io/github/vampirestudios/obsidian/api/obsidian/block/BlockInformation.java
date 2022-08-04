@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
@@ -30,8 +31,10 @@ public class BlockInformation {
     public NameInformation name;
     public Identifier item_group;
     public boolean collidable = true;
-    public String sound_group = "minecraft:stone";
-    public Identifier custom_sound_group;
+    @SerializedName("sound_group")
+    public String legacySoundGroup = "minecraft:stone";
+    @SerializedName("sound_group")
+    public Identifier soundGroup;
     public float hardness = 3.0F;
     public float resistance = 3.0F;
     public boolean randomTicks = false;
@@ -65,8 +68,8 @@ public class BlockInformation {
     }
 
     public BlockSoundGroup getBlockSoundGroup() {
-        if (custom_sound_group != null) {
-            CustomSoundGroup soundGroup = ObsidianAddonLoader.BLOCK_SOUND_GROUPS.get(custom_sound_group);
+        if (soundGroup != null) {
+            CustomSoundGroup soundGroup = ObsidianAddonLoader.BLOCK_SOUND_GROUPS.get(this.soundGroup);
             SoundEvent breakSound = Registry.SOUND_EVENT.get(soundGroup.break_sound);
             SoundEvent stepSound = Registry.SOUND_EVENT.get(soundGroup.step_sound);
             SoundEvent placeSound = Registry.SOUND_EVENT.get(soundGroup.place_sound);
@@ -74,7 +77,7 @@ public class BlockInformation {
             SoundEvent fallSound = Registry.SOUND_EVENT.get(soundGroup.fall_sound);
             return new BlockSoundGroup(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
         } else {
-            return switch (sound_group) {
+            return switch (legacySoundGroup) {
                 case "minecraft:wood" -> BlockSoundGroup.WOOD;
                 case "minecraft:gravel" -> BlockSoundGroup.GRAVEL;
                 case "minecraft:grass" -> BlockSoundGroup.GRASS;
