@@ -19,16 +19,12 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "io.github.vampirestudios.obsidian.Obsidian"
-    ],
     "init": [
+      "io.github.vampirestudios.obsidian.Obsidian",
       "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitializer"
     ],
-    "client": [
-      "io.github.vampirestudios.obsidian.client.ClientInit"
-    ],
     "init_client": [
+      "io.github.vampirestudios.obsidian.client.ClientInit",
       "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesClientInitializer"
     ],
     "mealapi": [

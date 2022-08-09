@@ -1,26 +1,28 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.FuelSource;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class FuelSources implements AddonModule {
 
     @Override
-    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         FuelSource fuelSource = Obsidian.GSON.fromJson(new FileReader(file), FuelSource.class);
         JsonObject fuelSourceJsonObject = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
         try {
@@ -50,7 +52,7 @@ public class FuelSources implements AddonModule {
                     }
                 }
             }
-            register(FUEL_SOURCES, "fuel_source", new Identifier(id.modId(), file.getName().replace(".json", "")), fuelSource);
+            register(ContentRegistries.FUEL_SOURCES, "fuel_source", new Identifier(id.modId(), file.getName().replace(".json", "")), fuelSource);
         } catch (Exception e) {
             failedRegistering("fuel_source", file.getName(), e);
         }

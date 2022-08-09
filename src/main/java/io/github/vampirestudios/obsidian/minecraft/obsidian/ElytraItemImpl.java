@@ -17,12 +17,12 @@ public class ElytraItemImpl extends ElytraItem implements FabricElytraExtensions
 
     @Override
     public boolean hasGlint(ItemStack stack) {
-        return item.information.has_glint;
+        return item.information.hasEnchantmentGlint;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return item.information.is_enchantable;
+        return item.information.isEnchantable;
     }
 
     @Override

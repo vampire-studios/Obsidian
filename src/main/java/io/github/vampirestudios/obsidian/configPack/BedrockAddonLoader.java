@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.configPack;
 
+import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.vampirestudios.obsidian.Obsidian;
@@ -16,15 +17,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,21 +156,21 @@ public class BedrockAddonLoader {
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
-//                    Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
-//                    Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, path), addonModule));
-//                    parseItemGroup(path);
-//                    parseBlock(path);
-//                    parseBasicItems(path);
-//                    parseArmor(path);
-//                    parseTools(path);
-//                    parseWeapons(path);
-//                    parseFood(path);
-//                    parsePotions(path);
-//                    parseCommands(path);
-//                    parseEnchantments(path);
-//                    parseStatusEffects(path);
-//                    parseEntities(path);
-//                    parseCurrencies(path);
+//                    Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, addonPath), addonModule));
+//                    Obsidian.ADDON_MODULE_VERSION_INDEPENDENT_REGISTRY.forEach(addonModule -> loadAddonModule(new ModIdAndAddonPath(modId, addonPath), addonModule));
+//                    parseItemGroup(addonPath);
+//                    parseBlock(addonPath);
+//                    parseBasicItems(addonPath);
+//                    parseArmor(addonPath);
+//                    parseTools(addonPath);
+//                    parseWeapons(addonPath);
+//                    parseFood(addonPath);
+//                    parsePotions(addonPath);
+//                    parseCommands(addonPath);
+//                    parseEnchantments(addonPath);
+//                    parseStatusEffects(addonPath);
+//                    parseEntities(addonPath);
+//                    parseCurrencies(addonPath);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
@@ -187,13 +185,13 @@ public class BedrockAddonLoader {
         BEDROCK_ADDON_DIRECTORY.mkdirs();
     }
 
-    private static void loadAddonModule(ModIdAndAddonPath id, AddonModule addonModule) {
-        if (Paths.get(id.path(), addonModule.getType()).toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(id.path(), addonModule.getType()).toFile().listFiles())) {
+    private static void loadAddonModule(BasicAddonInfo id, AddonModule addonModule) {
+        if (Paths.get(id.addonPath(), addonModule.getType()).toFile().exists()) {
+            for (File file : Objects.requireNonNull(Paths.get(id.addonPath(), addonModule.getType()).toFile().listFiles())) {
                 if (file.isFile()) {
                     try {
                         addonModule.init(null, file, id);
-                    } catch (FileNotFoundException e) {
+                    } catch (IOException | SyntaxError e) {
                         e.printStackTrace();
                     }
                 }

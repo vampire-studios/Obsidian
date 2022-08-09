@@ -2,6 +2,8 @@ package io.github.vampirestudios.obsidian.client.resource;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
@@ -14,14 +16,28 @@ public class ObsidianAddonResourcePackProvider implements ResourcePackProvider {
 
     public ObsidianAddonResourcePackProvider(IAddonPack addonPack) {
         this.addonPack = addonPack;
-        this.virtualPack = new SPResourcePack(addonPack.getConfigPackInfo().folderName, ResourceType.CLIENT_RESOURCES,
+        String folderName;
+        if (addonPack.getConfigPackInfo() instanceof LegacyObsidianAddonInfo legacyObsidianAddonInfo) {
+            folderName = legacyObsidianAddonInfo.folderName;
+        } else {
+            ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addonPack.getConfigPackInfo();
+            folderName = addonInfo.addon.folderName;
+        }
+        this.virtualPack = new SPResourcePack(folderName, ResourceType.CLIENT_RESOURCES,
                 addonPack.getFile().toPath());
     }
 
     @Override
     public void register(Consumer<ResourcePackProfile> profileAdder, ResourcePackProfile.Factory factory) {
+        String id;
+        if (addonPack.getConfigPackInfo() instanceof LegacyObsidianAddonInfo legacyObsidianAddonInfo) {
+            id = legacyObsidianAddonInfo.namespace;
+        } else {
+            ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addonPack.getConfigPackInfo();
+            id = addonInfo.addon.id;
+        }
         ResourcePackProfile profile = ResourcePackProfile.of(
-                addonPack.getConfigPackInfo().namespace,
+                id,
                 true,
                 () -> virtualPack,
                 factory,

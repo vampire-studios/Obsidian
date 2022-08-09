@@ -42,7 +42,7 @@ public abstract class HeldItemRendererMixin {
 	@Redirect(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z", ordinal = 1))
 	private boolean renderFirstPersonItem(ItemStack heldItem, Item item) {
 		if (heldItem.getItem() instanceof CrossbowExtensions) {
-			return true; // Return true to invoke crossbow rendering path
+			return true; // Return true to invoke crossbow rendering addonPath
 		}
 
 		return heldItem.isOf(item);

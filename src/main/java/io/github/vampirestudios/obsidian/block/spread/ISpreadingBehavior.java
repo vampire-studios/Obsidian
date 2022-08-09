@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian;
+package io.github.vampirestudios.obsidian.block.spread;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

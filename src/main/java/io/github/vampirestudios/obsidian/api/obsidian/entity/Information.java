@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.entity;
 
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityModelImpl;
 import net.fabricmc.api.EnvType;
@@ -27,7 +27,7 @@ public class Information {
 
     public EntityModel<EntityImpl> getNewEntityModel(EntityRendererFactory.Context context) {
         EntityModel<EntityImpl> entityModel;
-        Optional<io.github.vampirestudios.obsidian.api.obsidian.EntityModel> model = ObsidianAddonLoader.ENTITY_MODELS.getOrEmpty(entityModelPath);
+        Optional<io.github.vampirestudios.obsidian.api.obsidian.EntityModel> model = ContentRegistries.ENTITY_MODELS.getOrEmpty(entityModelPath);
         if(model.isPresent()) {
             EntityModelLayerRegistry.registerModelLayer(EntityModelLayers.registerMain("obsidian:" + entityModelPath.toString()),
                     () -> model.get().getTexturedModelData());

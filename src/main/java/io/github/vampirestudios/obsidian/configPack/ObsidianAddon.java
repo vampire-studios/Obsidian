@@ -32,8 +32,8 @@ public class ObsidianAddon implements IAddonPack {
     }
 
     @Override
-    public String getDisplayNameObsidian() {
-        return obsidianAddonInfo.displayName;
+    public String getObsidianDisplayName() {
+        return obsidianAddonInfo.addon.name;
     }
 
     @Override

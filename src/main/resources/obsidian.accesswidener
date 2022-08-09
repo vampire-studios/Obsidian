@@ -7,7 +7,7 @@ accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/b
 accessible class net/minecraft/world/biome/Biome$Weather
 
 accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
-accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/MutableRegistry;Lnet/minecraft/util/registry/BuiltinRegistries$C_ywvznkgs;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/MutableRegistry;
+accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/BuiltinRegistries$RegistryBootstrap;)Lnet/minecraft/util/registry/Registry;
 
 accessible class net/minecraft/entity/mob/DrownedEntity$TridentAttackGoal
 

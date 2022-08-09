@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.IForgeSpreadingBlock;
-import io.github.vampirestudios.obsidian.SpreadBehaviors;
-import io.github.vampirestudios.obsidian.SpreaderType;
+import io.github.vampirestudios.obsidian.block.spread.IForgeSpreadingBlock;
+import io.github.vampirestudios.obsidian.block.spread.SpreadBehaviors;
+import io.github.vampirestudios.obsidian.block.spread.SpreaderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SnowyBlock;
@@ -34,6 +34,7 @@ public abstract class SpreadableBlockMixin extends SnowyBlock implements IForgeS
 
 	/**
 	 * @author OliviaTheVampire
+	 * @reason cause
 	 */
 	@Overwrite
 	@Override

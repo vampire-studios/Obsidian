@@ -1,15 +1,16 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class EntityEvents implements AddonModule {
 	@Override
-	public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
 
 	}
 

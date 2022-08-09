@@ -7,7 +7,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Range;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 
 public class Fluid {
 
@@ -43,6 +43,7 @@ public class Fluid {
 	public boolean tickRateChangesWhenWarm;
 	public boolean randomTicking;
 	public float blastResistance;
+	public boolean boatFloats;
 
 	public Identifier splashSound;
 	public Identifier highSpeedSplashSound;
@@ -53,7 +54,7 @@ public class Fluid {
 
 	public Identifier fishingLootTable;
 
-	public Fluid(ParentFluid parent, NameInformation name, int fluidColor, int fluidFogColor, boolean allowSprintSwimming, boolean canExtinguish, boolean canIgnite, @Range(from = 1, to = 15) int maxFluidLevel, float pushStrength, float pushStrengthUltrawarm, boolean pushStrengthChangesWhenWarm, float fallDamageReduction, FallDamageReduction fallDamageReductionType, boolean fishingBobberFloats, boolean canFish, float horizontalViscosity, float verticalViscosity, float density, float temperature, boolean canBeInfinite, int flowSpeed, int flowSpeedUltrawarm, boolean flowSpeedChangesWhenWarm, int levelDecreasePerBlock, int levelDecreasePerBlockUltrawarm, boolean levelDecreasePerBlockChangesWhenWarm, int tickRate, int tickRateUltrawarm, boolean tickRateChangesWhenWarm, boolean randomTicking, float blastResistance, Identifier splashSound, Identifier highSpeedSplashSound, Identifier particleType, Identifier splashParticle, Identifier bubbleParticle, Identifier fishingLootTable) {
+	public Fluid(ParentFluid parent, NameInformation name, int fluidColor, int fluidFogColor, boolean allowSprintSwimming, boolean canExtinguish, boolean canIgnite, @Range(from = 1, to = 15) int maxFluidLevel, float pushStrength, float pushStrengthUltrawarm, boolean pushStrengthChangesWhenWarm, float fallDamageReduction, FallDamageReduction fallDamageReductionType, boolean fishingBobberFloats, boolean canFish, float horizontalViscosity, float verticalViscosity, float density, float temperature, boolean canBeInfinite, int flowSpeed, int flowSpeedUltrawarm, boolean flowSpeedChangesWhenWarm, int levelDecreasePerBlock, int levelDecreasePerBlockUltrawarm, boolean levelDecreasePerBlockChangesWhenWarm, int tickRate, int tickRateUltrawarm, boolean tickRateChangesWhenWarm, boolean randomTicking, float blastResistance, boolean boatFloats, Identifier splashSound, Identifier highSpeedSplashSound, Identifier particleType, Identifier splashParticle, Identifier bubbleParticle, Identifier fishingLootTable) {
 		this.parent = parent;
 		this.name = name;
 		this.fluidColor = Integer.toString(fluidColor);
@@ -85,6 +86,7 @@ public class Fluid {
 		this.tickRateChangesWhenWarm = tickRateChangesWhenWarm;
 		this.randomTicking = randomTicking;
 		this.blastResistance = blastResistance;
+		this.boatFloats = boatFloats;
 		this.splashSound = splashSound;
 		this.highSpeedSplashSound = highSpeedSplashSound;
 		this.particleType = particleType;
@@ -97,23 +99,23 @@ public class Fluid {
 		return new Fluid(
 				ParentFluid.WATER,
 				name,
-				FlowableFluidExtensions.WATER_FOG_COLOR,
-				FlowableFluidExtensions.WATER_FOG_COLOR,
+				QuiltFlowableFluidExtensions.WATER_FOG_COLOR,
+				QuiltFlowableFluidExtensions.WATER_FOG_COLOR,
 				true,
 				true,
 				false,
 				8,
-				FlowableFluidExtensions.WATER_PUSH_STRENGTH,
+				QuiltFlowableFluidExtensions.WATER_PUSH_STRENGTH,
 				0F,
 				false,
-				FlowableFluidExtensions.FULL_FALL_DAMAGE_REDUCTION,
+				QuiltFlowableFluidExtensions.FULL_FALL_DAMAGE_REDUCTION,
 				FallDamageReduction.FULL,
 				true,
 				true,
-				FlowableFluidExtensions.WATER_VISCOSITY,
-				FlowableFluidExtensions.WATER_VISCOSITY,
-				FlowableFluidExtensions.WATER_DENSITY,
-				FlowableFluidExtensions.WATER_TEMPERATURE,
+				QuiltFlowableFluidExtensions.WATER_VISCOSITY,
+				QuiltFlowableFluidExtensions.WATER_VISCOSITY,
+				QuiltFlowableFluidExtensions.WATER_DENSITY,
+				QuiltFlowableFluidExtensions.WATER_TEMPERATURE,
 				true,
 				4,
 				0,
@@ -126,6 +128,7 @@ public class Fluid {
 				false,
 				false,
 				100.0F,
+				true,
 				Registry.SOUND_EVENT.getId(SoundEvents.ENTITY_PLAYER_SPLASH),
 				Registry.SOUND_EVENT.getId(SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED),
 				Registry.PARTICLE_TYPE.getId(ParticleTypes.DRIPPING_WATER),
@@ -139,23 +142,23 @@ public class Fluid {
 		return new Fluid(
 				ParentFluid.LAVA,
 				name,
-				FlowableFluidExtensions.LAVA_FOG_COLOR,
-				FlowableFluidExtensions.LAVA_FOG_COLOR,
+				QuiltFlowableFluidExtensions.LAVA_FOG_COLOR,
+				QuiltFlowableFluidExtensions.LAVA_FOG_COLOR,
 				false,
 				false,
 				true,
 				8,
-				FlowableFluidExtensions.LAVA_PUSH_STRENGTH_OVERWORLD,
-				FlowableFluidExtensions.LAVA_PUSH_STRENGTH_ULTRAWARM,
+				QuiltFlowableFluidExtensions.LAVA_PUSH_STRENGTH_OVERWORLD,
+				QuiltFlowableFluidExtensions.LAVA_PUSH_STRENGTH_ULTRAWARM,
 				true,
-				FlowableFluidExtensions.HALF_FALL_DAMAGE_REDUCTION,
+				QuiltFlowableFluidExtensions.HALF_FALL_DAMAGE_REDUCTION,
 				FallDamageReduction.HALF,
 				false,
 				false,
-				FlowableFluidExtensions.LAVA_VISCOSITY,
-				FlowableFluidExtensions.WATER_VISCOSITY,
-				FlowableFluidExtensions.LAVA_DENSITY,
-				FlowableFluidExtensions.LAVA_TEMPERATURE,
+				QuiltFlowableFluidExtensions.LAVA_VISCOSITY,
+				QuiltFlowableFluidExtensions.WATER_VISCOSITY,
+				QuiltFlowableFluidExtensions.LAVA_DENSITY,
+				QuiltFlowableFluidExtensions.LAVA_TEMPERATURE,
 				true,
 				2,
 				4,
@@ -168,6 +171,7 @@ public class Fluid {
 				true,
 				true,
 				100.0F,
+				false,
 				null,
 				null,
 				Registry.PARTICLE_TYPE.getId(ParticleTypes.DRIPPING_LAVA),

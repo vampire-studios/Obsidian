@@ -27,9 +27,6 @@ public class EntityRegistryBuilder<E extends Entity> {
     private boolean summonable;
     private EntityDimensions dimensions;
 
-    public EntityRegistryBuilder() {
-    }
-
     public static <E extends Entity> EntityRegistryBuilder<E> createBuilder(Identifier nameIn) {
         name = nameIn;
         return new EntityRegistryBuilder<>();

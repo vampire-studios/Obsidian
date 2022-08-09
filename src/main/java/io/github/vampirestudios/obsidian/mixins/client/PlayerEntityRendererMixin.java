@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.mixins.client;
 
-import io.github.vampirestudios.obsidian.client.BackToolFeatureRenderer;
+import io.github.vampirestudios.obsidian.client.renderer.BackToolFeatureRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.network.AbstractClientPlayerEntity;

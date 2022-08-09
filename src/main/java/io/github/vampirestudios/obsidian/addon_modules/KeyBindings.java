@@ -1,27 +1,29 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.KeyBinding;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.KeybindingImpl;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class KeyBindings implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         KeyBinding keyBinding = Obsidian.GSON.fromJson(new FileReader(file), KeyBinding.class);
         try {
             if (keyBinding == null) return;
             KeyBindingRegistryImpl.registerKeyBinding(new KeybindingImpl(keyBinding));
-            register(KEY_BINDINGS, "key_binding", keyBinding.id, keyBinding);
+            register(ContentRegistries.KEY_BINDINGS, "key_binding", keyBinding.id, keyBinding);
         } catch (Exception e) {
             failedRegistering("key_binding", keyBinding.id.toString(), e);
         }

@@ -1,12 +1,14 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
@@ -27,15 +29,15 @@ import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class Ores implements AddonModule {
 
 	@Override
-	public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
 		io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 		try {
 			if (block == null) return;
@@ -131,7 +133,7 @@ public class Ores implements AddonModule {
 				new BlockInitThread(block);
 			}
 
-			register(ORES, "ore", block.information.name.id, block);
+			register(ContentRegistries.ORES, "ore", block.information.name.id, block);
 		} catch (Exception e) {
 			failedRegistering("ore", block.information.name.id.toString(), e);
 		}

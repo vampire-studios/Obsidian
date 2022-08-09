@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.client;
+package io.github.vampirestudios.obsidian.client.renderer;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
 import net.minecraft.client.render.Frustum;

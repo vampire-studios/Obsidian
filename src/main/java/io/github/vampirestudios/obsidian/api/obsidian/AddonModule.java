@@ -1,14 +1,15 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import blue.endless.jankson.api.SyntaxError;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public interface AddonModule {
 
-    void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException;
+    void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError;
 
     default void initMealApi() throws FileNotFoundException {
 

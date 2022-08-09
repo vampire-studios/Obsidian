@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import com.google.gson.annotations.SerializedName;
-import io.github.vampirestudios.obsidian.Obsidian;
+import blue.endless.jankson.annotation.SerializedName;
 import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import net.minecraft.block.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -32,8 +32,10 @@ public class BlockInformation {
     public Identifier item_group;
     public boolean collidable = true;
     @SerializedName("sound_group")
+    @com.google.gson.annotations.SerializedName("sound_group")
     public String legacySoundGroup = "minecraft:stone";
-    @SerializedName("sound_group")
+    @SerializedName("new_sound_group")
+    @com.google.gson.annotations.SerializedName("new_sound_group")
     public Identifier soundGroup;
     public float hardness = 3.0F;
     public float resistance = 3.0F;
@@ -69,7 +71,7 @@ public class BlockInformation {
 
     public BlockSoundGroup getBlockSoundGroup() {
         if (soundGroup != null) {
-            CustomSoundGroup soundGroup = ObsidianAddonLoader.BLOCK_SOUND_GROUPS.get(this.soundGroup);
+            CustomSoundGroup soundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(this.soundGroup);
             SoundEvent breakSound = Registry.SOUND_EVENT.get(soundGroup.break_sound);
             SoundEvent stepSound = Registry.SOUND_EVENT.get(soundGroup.step_sound);
             SoundEvent placeSound = Registry.SOUND_EVENT.get(soundGroup.place_sound);
@@ -160,7 +162,7 @@ public class BlockInformation {
 
     public Material getMaterial() {
         if (custom_material != null) {
-            CustomMaterial customMaterial = ObsidianAddonLoader.BLOCK_MATERIALS.get(custom_material);
+            CustomMaterial customMaterial = ContentRegistries.BLOCK_MATERIALS.get(custom_material);
             return new Material(customMaterial.getMapColor(), customMaterial.liquid, customMaterial.solid,
                     customMaterial.allows_movement, customMaterial.allows_light, customMaterial.burnable,
                     customMaterial.replaceable, customMaterial.getPistonBehavior());
@@ -235,7 +237,7 @@ public class BlockInformation {
     }*/
 
     public ItemGroup getItemGroup() {
-        return Obsidian.ITEM_GROUP_REGISTRY.get(item_group);
+        return Registries.ITEM_GROUP_REGISTRY.get(item_group);
     }
 
 }

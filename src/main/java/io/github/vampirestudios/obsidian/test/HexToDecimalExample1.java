@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian;
+package io.github.vampirestudios.obsidian.test;
 
 public class HexToDecimalExample1 {
 	public static void main(String[] args) {

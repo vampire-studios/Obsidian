@@ -1,7 +1,10 @@
 package io.github.vampirestudios.obsidian.client.resource;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
@@ -62,13 +65,22 @@ public class ObsidianAddonResourcePack implements ResourcePack {
             object.addProperty("description", "Default pack for config packs.");
             object.addProperty("pack_format", 8);
         }
-        object.add("block", new JsonObject());
+        if (metadataReader.getKey().equals("filter")) {
+            object.add("block", new JsonArray());
+        }
         return metadataReader.fromJson(object);
     }
 
     @Override
     public String getName() {
-        return "obsidian/" + addonPack.getConfigPackInfo().folderName;
+        String folderName;
+        if (addonPack.getConfigPackInfo() instanceof LegacyObsidianAddonInfo legacyObsidianAddonInfo) {
+            folderName = legacyObsidianAddonInfo.folderName;
+        } else {
+            ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addonPack.getConfigPackInfo();
+            folderName = addonInfo.addon.folderName;
+        }
+        return "obsidian/" + folderName;
     }
 
     @Override

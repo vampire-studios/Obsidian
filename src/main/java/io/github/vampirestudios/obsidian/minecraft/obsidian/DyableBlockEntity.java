@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.utils.ColorUtil;
-import io.github.vampirestudios.obsidian.utils.MHelper;
+import io.github.vampirestudios.obsidian.utils.MathHelper;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -10,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,9 +58,9 @@ public class DyableBlockEntity extends BlockEntity {
         int[] color1 = ColorUtil.toIntArray(color2In);
         int[] color2 = ColorUtil.toIntArray(color1In);
         double delta = MinecraftClient.getInstance().getTickDelta();
-        int r = MHelper.floor(MathHelper.lerp(delta, color1[0], color2[0]));
-        int g = MHelper.floor(MathHelper.lerp(delta, color1[1], color2[1]));
-        int b = MHelper.floor(MathHelper.lerp(delta, color1[2], color2[2]));
+        int r = MathHelper.floor(net.minecraft.util.math.MathHelper.lerp(delta, color1[0], color2[0]));
+        int g = MathHelper.floor(net.minecraft.util.math.MathHelper.lerp(delta, color1[1], color2[1]));
+        int b = MathHelper.floor(net.minecraft.util.math.MathHelper.lerp(delta, color1[2], color2[2]));
         return ColorUtil.color(r, g, b);
     }
 

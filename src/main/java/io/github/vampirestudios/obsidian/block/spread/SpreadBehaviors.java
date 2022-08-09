@@ -1,7 +1,8 @@
-package io.github.vampirestudios.obsidian;
+package io.github.vampirestudios.obsidian.block.spread;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import io.github.vampirestudios.obsidian.Obsidian;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

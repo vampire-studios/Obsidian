@@ -5,7 +5,7 @@ import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Elytra;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.client.CustomElytraFeatureRenderer;
+import io.github.vampirestudios.obsidian.client.renderer.CustomElytraFeatureRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 
 public class ElytraInitThread implements Runnable {

@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.mixins.client;
 
-import io.github.vampirestudios.obsidian.client.resource.BedrockAddonResourcePack;
 import io.github.vampirestudios.obsidian.client.resource.ObsidianAddonResourcePack;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import net.minecraft.resource.MultiPackResourceManager;
@@ -19,8 +18,9 @@ public abstract class ReloadableResourceManagerImplMixin {
         List<ResourcePack> packsNew = new java.util.ArrayList<>(packs);
         System.out.println("Count before: " + packsNew.size());
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(addonPack ->
-                packsNew.add(new ObsidianAddonResourcePack(addonPack)));
-        packsNew.add(new BedrockAddonResourcePack());
+                packsNew.add(new ObsidianAddonResourcePack(addonPack))
+        );
+//        packsNew.add(new BedrockAddonResourcePack());
         System.out.println("Count after: " + packsNew.size());
         return packsNew;
     }

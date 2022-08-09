@@ -4,7 +4,7 @@ import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.client.CustomEntityRenderer;
+import io.github.vampirestudios.obsidian.client.renderer.CustomEntityRenderer;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.entity.EntityType;

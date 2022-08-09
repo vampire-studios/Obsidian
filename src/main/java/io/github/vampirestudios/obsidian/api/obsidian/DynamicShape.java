@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
@@ -45,7 +45,7 @@ public class DynamicShape {
 	public static DynamicShape parseShape(JsonElement element, @Nullable Property<Direction> facingProperty, Map<String, Property<?>> propertiesByName) {
 		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
 			String name = element.getAsString();
-			DynamicShape shape = Obsidian.DYNAMIC_SHAPES.get(new Identifier(name));
+			DynamicShape shape = Registries.DYNAMIC_SHAPES.get(new Identifier(name));
 			if (shape == null)
 				throw new IllegalStateException("No shape known with name " + name);
 			return shape;

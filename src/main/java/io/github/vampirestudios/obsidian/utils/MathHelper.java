@@ -5,7 +5,7 @@ import net.minecraft.util.math.Vec3i;
 
 import java.util.Random;
 
-public class MHelper {
+public class MathHelper {
 	private static final Vec3i[] RANDOM_OFFSETS = new Vec3i[3 * 3 * 3 - 1];
 	private static final float RAD_TO_DEG = 57.295779513082320876798154814105F;
 	public static final float PHI = (float) (Math.PI * (3 - Math.sqrt(5)));

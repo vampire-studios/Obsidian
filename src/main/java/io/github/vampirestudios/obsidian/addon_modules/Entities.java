@@ -1,21 +1,24 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.BreathableComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.MovementComponent;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
 import io.github.vampirestudios.obsidian.utils.EntityUtils;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -23,8 +26,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +35,7 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*
 
 public class Entities implements AddonModule {
     @Override
-    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         JsonObject entityJson = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
         Entity entity = Obsidian.GSON.fromJson(entityJson, Entity.class);
         try {
@@ -43,7 +46,7 @@ public class Entities implements AddonModule {
             JsonObject components = JsonHelper.getObject(entityJson, "components");
             for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
                 Identifier identifier = new Identifier(entry.getKey());
-                Class<? extends Component> componentClass = Obsidian.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() ->
+                Class<? extends Component> componentClass = Registries.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() ->
                         new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
 
                 entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));
@@ -86,7 +89,7 @@ public class Entities implements AddonModule {
                     .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                     .build();
             FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(finalHealthComponent.max, movementComponent.value));
-            register(ENTITIES, "entity", entity.information.identifier, entity);
+            register(ContentRegistries.ENTITIES, "entity", entity.information.identifier, entity);
         } catch (Exception e) {
             failedRegistering("entity", entity.information.identifier.toString(), e);
         }

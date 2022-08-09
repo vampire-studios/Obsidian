@@ -19,6 +19,7 @@ package org.quiltmc.qsl.fluid.mixin;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.LavaFluid;
@@ -31,12 +32,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(LavaFluid.class)
-public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFluidExtensions {
+public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowableFluidExtensions {
 
 	@Override
 	public float getDefaultTemperature(World world, BlockPos blockPos) {
@@ -106,7 +107,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFl
 	}
 
 	@Override
-	public float modifyHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
+	public float modifyEntityHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
 		return horizontalViscosity;
 	}
 
@@ -160,6 +161,21 @@ public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFl
 	@Override
 	public FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
+	}
+
+	@Override
+	public boolean canBoatSwimOn() {
+		return false;
+	}
+
+	@Override
+	public boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
+		return false;
+	}
+
+	@Override
+	public boolean canFish(FluidState state, FishingBobberEntity affected) {
+		return false;
 	}
 
 	@Override

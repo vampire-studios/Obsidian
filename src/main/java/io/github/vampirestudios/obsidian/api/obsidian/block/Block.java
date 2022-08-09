@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import com.google.gson.annotations.SerializedName;
+import blue.endless.jankson.annotation.SerializedName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
@@ -17,6 +18,7 @@ public class Block {
     public BlockInformation information;
     public DisplayInformation display;
     @SerializedName("drop_information")
+    @com.google.gson.annotations.SerializedName("drop_information")
     public DropInformation dropInformation;
     public AdditionalBlockInformation additional_information;
     public Functions functions;
@@ -31,10 +33,10 @@ public class Block {
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
     public Identifier placable_feature;
-    private List<Property<?>> properties;
-    private Map<String, Property<?>> propertiesByName;
-    private Map<String, String> propertyDefaultValues;
-    private Map<Property<?>, Comparable<?>> propertyDefaultValuesMap;
+    @JsonIgnore private List<Property<?>> properties;
+    @JsonIgnore private Map<String, Property<?>> propertiesByName;
+    @JsonIgnore private Map<String, String> propertyDefaultValues;
+    @JsonIgnore private Map<Property<?>, Comparable<?>> propertyDefaultValuesMap;
 
 	public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();

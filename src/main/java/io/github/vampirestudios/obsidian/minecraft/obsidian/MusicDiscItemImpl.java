@@ -21,12 +21,12 @@ public class MusicDiscItemImpl extends MusicDiscItem {
 
     @Override
     public boolean hasGlint(ItemStack stack) {
-        return musicDisc.information.has_glint;
+        return musicDisc.information.hasEnchantmentGlint;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return musicDisc.information.is_enchantable;
+        return musicDisc.information.isEnchantable;
     }
 
     @Override

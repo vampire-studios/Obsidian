@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.client;
+package io.github.vampirestudios.obsidian.client.renderer;
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;

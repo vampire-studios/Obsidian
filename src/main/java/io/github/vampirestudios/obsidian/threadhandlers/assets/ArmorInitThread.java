@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
-import io.github.vampirestudios.obsidian.ArmorRenderer;
+import io.github.vampirestudios.obsidian.client.renderer.ArmorRenderer;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import io.github.vampirestudios.obsidian.client.ClientInit;

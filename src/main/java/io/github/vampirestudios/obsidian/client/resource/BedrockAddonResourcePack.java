@@ -80,6 +80,7 @@ public class BedrockAddonResourcePack implements ResourcePack {
             object.addProperty("description", "Default pack for bedrock addons.");
             object.addProperty("pack_format", 7);
         }
+        object.add("filter", new JsonObject());
         return metadataReader.fromJson(object);
     }
 

@@ -1,20 +1,21 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.biomeLayouts.BiomeLayout;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 
 public class BiomeLayouts implements AddonModule {
 	@Override
-	public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
 		BiomeLayout biomeLayout = Obsidian.GSON.fromJson(new FileReader(file), BiomeLayout.class);
 		try {
 			if (biomeLayout == null) return;
@@ -81,7 +82,7 @@ public class BiomeLayouts implements AddonModule {
 					}
 				}
 			});*/
-//			register(BIOME_LAYOUTS, "biome_layout", biomeLayout.regionName, biomeLayout);
+//			register(ApiElements.BIOME_LAYOUTS, "biome_layout", biomeLayout.regionName, biomeLayout);
 		} catch (Exception e) {
 			failedRegistering("biome_layout", biomeLayout.regionName, e);
 		}

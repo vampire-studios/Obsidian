@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian;
+package io.github.vampirestudios.obsidian.block.spread;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.EntityModel;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.SinglePartEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -30,7 +30,7 @@ public class EntityModelImpl extends SinglePartEntityModel<EntityImpl> {
     @Override
     public void setAngles(EntityImpl entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         entity.animationStates.forEach((animationState, identifier) -> this.method_43781(
-                animationState, Obsidian.ANIMATION_DEFINITIONS.get(identifier), animationProgress
+                animationState, Registries.ANIMATION_DEFINITIONS.get(identifier), animationProgress
         ));
     }
 

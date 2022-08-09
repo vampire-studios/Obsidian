@@ -1,7 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import io.github.vampirestudios.obsidian.Obsidian;
+import blue.endless.jankson.annotation.SerializedName;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -9,34 +10,26 @@ import net.minecraft.util.Rarity;
 
 public class ItemInformation {
 
-    public String rarity = "common";
-    public Identifier item_group;
-    public Integer max_count = 64;
-    public NameInformation name;
-    public boolean has_glint = false;
-    public boolean is_enchantable = false;
+	public NameInformation name;
+
+    public Rarity rarity = Rarity.COMMON;
+    @SerializedName("creative_tab") public Identifier creativeTab;
+    @SerializedName("max_stack_size") public Integer maxStackSize = 64;
+    @SerializedName("has_enchantment_glint") public boolean hasEnchantmentGlint = false;
+    @SerializedName("is_enchantable") public boolean isEnchantable = false;
     public int enchantability = 5;
-    public int use_duration = 5;
-    public boolean can_place_block = false;
-    public Identifier placable_block;
+    @SerializedName("max_uses") public int useDuration = 5;
+    @SerializedName("can_place_block") public boolean canPlaceBlock = false;
+    @SerializedName("placable_block") public Identifier placableBlock;
     public boolean wearable = false;
     public boolean dyeable = false;
-	public int defaultColor = 16579836;
+	@SerializedName("default_color") public int defaultColor = 16579836;
 	public String wearableSlot;
-	public boolean customRenderMode = false;
-    public RenderModeModel[] renderModeModels;
-
-    public Rarity getRarity() {
-		return switch (rarity) {
-			case "uncommon" -> Rarity.UNCOMMON;
-			case "rare" -> Rarity.RARE;
-			case "epic" -> Rarity.EPIC;
-			default -> Rarity.COMMON;
-		};
-    }
+	@SerializedName("custom_render_mode") public boolean customRenderMode = false;
+    @SerializedName("render_mode_models") public RenderModeModel[] renderModeModels;
 
     public ItemGroup getItemGroup() {
-        return Obsidian.ITEM_GROUP_REGISTRY.get(item_group);
+        return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
     }
 
     public static class RenderModeModel {

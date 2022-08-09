@@ -16,8 +16,8 @@
 
 package io.github.vampirestudios.obsidian.mixins;
 
-import io.github.vampirestudios.obsidian.IForgeSpreadingBlock;
-import io.github.vampirestudios.obsidian.SpreaderType;
+import io.github.vampirestudios.obsidian.block.spread.IForgeSpreadingBlock;
+import io.github.vampirestudios.obsidian.block.spread.SpreaderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.GrassBlock;
 import org.spongepowered.asm.mixin.Mixin;

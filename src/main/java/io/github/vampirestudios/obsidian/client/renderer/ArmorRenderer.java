@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.vampirestudios.obsidian;
+package io.github.vampirestudios.obsidian.client.renderer;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;

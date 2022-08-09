@@ -16,7 +16,7 @@
 
 package io.github.vampirestudios.obsidian.mixins.client;
 
-import io.github.vampirestudios.obsidian.ArmorRenderer;
+import io.github.vampirestudios.obsidian.client.renderer.ArmorRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;

@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian;
 
-import io.github.vampirestudios.obsidian.utils.MHelper;
+import io.github.vampirestudios.obsidian.registry.Registries;
+import io.github.vampirestudios.obsidian.utils.MathHelper;
 import net.minecraft.client.render.animation.AnimationKeyframe;
 import net.minecraft.client.render.animation.PartAnimation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3f;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -13,7 +13,7 @@ public class AnimationEasing {
 
 	public static PartAnimation.Interpolator interpolation(EasingCategories easingCategory, Type type) {
 		EasingTypes easing = easingCategory.getEasingType(type);
-		return Obsidian.registerInRegistryVanilla(Obsidian.ANIMATION_CHANNEL_INTERPOLATIONS, easing.getName(),
+		return Obsidian.registerInRegistryVanilla(Registries.ANIMATION_CHANNEL_INTERPOLATIONS, easing.getName(),
 				(vector3f, f, keyframes, i, j, g) -> easing(vector3f, easing.apply(f), keyframes, i, j, g));
 	}
 
@@ -21,27 +21,27 @@ public class AnimationEasing {
 		Vec3f vector3f2 = keyframes[i].transformation();
 		Vec3f vector3f3 = keyframes[j].transformation();
 		vec3f.set(
-				MathHelper.lerp(f, vector3f2.getX(), vector3f3.getX()) * g,
-				MathHelper.lerp(f, vector3f2.getY(), vector3f3.getY()) * g,
-				MathHelper.lerp(f, vector3f2.getZ(), vector3f3.getZ()) * g
+				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.getX(), vector3f3.getX()) * g,
+				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.getY(), vector3f3.getY()) * g,
+				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.getZ(), vector3f3.getZ()) * g
 		);
 		return vec3f;
 	}
 
 	public static float easeInSine(float f) {
-		return 1F - MathHelper.cos((f * MathHelper.PI) / 2F);
+		return 1F - net.minecraft.util.math.MathHelper.cos((f * net.minecraft.util.math.MathHelper.PI) / 2F);
 	}
 
 	public static float easeOutSine(float f) {
-		return MathHelper.sin((f * MathHelper.PI) / 2F);
+		return net.minecraft.util.math.MathHelper.sin((f * net.minecraft.util.math.MathHelper.PI) / 2F);
 	}
 
 	public static float easeInOutSine(float f) {
-		return -(MathHelper.cos(f * MathHelper.PI) - 1F) / 2F;
+		return -(net.minecraft.util.math.MathHelper.cos(f * net.minecraft.util.math.MathHelper.PI) - 1F) / 2F;
 	}
 
 	public static float easeInQuad(float f) {
-		return MHelper.pow(f, 2);
+		return MathHelper.pow(f, 2);
 	}
 
 	public static float easeOutQuad(float f) {
@@ -49,107 +49,107 @@ public class AnimationEasing {
 	}
 
 	public static float easeInOutQuad(float f) {
-		return f < 0.5 ? 2 * f * f : 1 - MHelper.pow(-2 * f + 2, 2) / 2;
+		return f < 0.5 ? 2 * f * f : 1 - MathHelper.pow(-2 * f + 2, 2) / 2;
 	}
 
 	public static float easeInCubic(float f) {
-		return MHelper.pow(f, 3);
+		return MathHelper.pow(f, 3);
 	}
 
 	public static float easeOutCubic(float f) {
-		return 1F - MHelper.pow(1F - f, 3F);
+		return 1F - MathHelper.pow(1F - f, 3F);
 	}
 
 	public static float easeInOutCubic(float f) {
-		return f < 0.5 ? 4 * f * f * f : 1 - MHelper.pow(-2 * f + 2, 3) / 2;
+		return f < 0.5 ? 4 * f * f * f : 1 - MathHelper.pow(-2 * f + 2, 3) / 2;
 	}
 
 	public static float easeInQuart(float f) {
-		return MHelper.pow(f, 4);
+		return MathHelper.pow(f, 4);
 	}
 
 	public static float easeOutQuart(float f) {
-		return 1F - MHelper.pow(1F - f, 4);
+		return 1F - MathHelper.pow(1F - f, 4);
 	}
 
 	public static float easeInOutQuart(float f) {
-		return f < 0.5 ? 8 * f * f * f * f : 1 - MHelper.pow(-2 * f + 2, 4) / 2;
+		return f < 0.5 ? 8 * f * f * f * f : 1 - MathHelper.pow(-2 * f + 2, 4) / 2;
 	}
 
 	public static float easeInQuint(float f) {
-		return MHelper.pow(f, 5);
+		return MathHelper.pow(f, 5);
 	}
 
 	public static float easeOutQuint(float f) {
-		return 1F - MHelper.pow(1F - f, 5);
+		return 1F - MathHelper.pow(1F - f, 5);
 	}
 
 	public static float easeInOutQuint(float f) {
-		return f < 0.5 ? 16 * f * f * f * f * f : 1 - MHelper.pow(-2 * f + 2, 5) / 2;
+		return f < 0.5 ? 16 * f * f * f * f * f : 1 - MathHelper.pow(-2 * f + 2, 5) / 2;
 	}
 
 	public static float easeInExpo(float f) {
-		return f == 0 ? 0 : MHelper.pow(2, 10 * f - 10);
+		return f == 0 ? 0 : MathHelper.pow(2, 10 * f - 10);
 	}
 
 	public static float easeOutExpo(float f) {
-		return f == 0 ? 0 : MHelper.pow(2, 10 * f - 10);
+		return f == 0 ? 0 : MathHelper.pow(2, 10 * f - 10);
 	}
 
 	public static float easeInOutExpo(float f) {
-		return f == 0 ? 0 : f == 1 ? 1 : f < 0.5 ? MHelper.pow(2, 20 * f - 10) / 2
-				: (2 - MHelper.pow(2, -20 * f + 10)) / 2;
+		return f == 0 ? 0 : f == 1 ? 1 : f < 0.5 ? MathHelper.pow(2, 20 * f - 10) / 2
+				: (2 - MathHelper.pow(2, -20 * f + 10)) / 2;
 	}
 
 	public static float easeInCirc(float f) {
-		return 1 - MathHelper.sqrt(1F - MHelper.pow(f, 2));
+		return 1 - net.minecraft.util.math.MathHelper.sqrt(1F - MathHelper.pow(f, 2));
 	}
 
 	public static float easeOutCirc(float f) {
-		return MathHelper.sqrt(1 - MHelper.pow(f - 1, 2));
+		return net.minecraft.util.math.MathHelper.sqrt(1 - MathHelper.pow(f - 1, 2));
 	}
 
 	public static float easeInOutCirc(float f) {
-		return f < 0.5 ? (1 - MathHelper.sqrt(1 - MHelper.pow(2 * f, 2))) / 2
-				: (MathHelper.sqrt(1 - MHelper.pow(-2 * f + 2, 2)) + 1) / 2;
+		return f < 0.5 ? (1 - net.minecraft.util.math.MathHelper.sqrt(1 - MathHelper.pow(2 * f, 2))) / 2
+				: (net.minecraft.util.math.MathHelper.sqrt(1 - MathHelper.pow(-2 * f + 2, 2)) + 1) / 2;
 	}
 
 	public static float easeInBack(float f) {
 		float c1 = 1.70158F;
 		float c3 = c1 + 1F;
-		return c3 * MHelper.pow(f, 3) - c1 * MHelper.pow(f, 2);
+		return c3 * MathHelper.pow(f, 3) - c1 * MathHelper.pow(f, 2);
 	}
 
 	public static float easeOutBack(float f) {
 		float c1 = 1.70158F;
 		float c3 = c1 + 1F;
-		return 1F + c3 * MHelper.pow(f - 1F, 3) + c1 * MHelper.pow(f - 1, 2);
+		return 1F + c3 * MathHelper.pow(f - 1F, 3) + c1 * MathHelper.pow(f - 1, 2);
 	}
 
 	public static float easeInOutBack(float f) {
 		float c1 = 1.70158F;
 		float c2 = c1 + 1F;
-		return f < 0.5 ? (MHelper.pow(2 * f, 2) * ((c2 + 1) * 2 * f - c2)) / 2
-				: (MHelper.pow(2 * f - 2, 2) * ((c2 + 1) * (f * 2 - 2) + c2) + 2) / 2;
+		return f < 0.5 ? (MathHelper.pow(2 * f, 2) * ((c2 + 1) * 2 * f - c2)) / 2
+				: (MathHelper.pow(2 * f - 2, 2) * ((c2 + 1) * (f * 2 - 2) + c2) + 2) / 2;
 	}
 
 	public static float easeInElastic(float f) {
-		float c4 = (2F * MathHelper.PI) / 3;
-		return f == 0 ? 0 : f == 1 ? 1 : -MHelper.pow(2F, 10F * f - 10F) *
-				MathHelper.sin((f * 10F - 10.75F) * c4);
+		float c4 = (2F * net.minecraft.util.math.MathHelper.PI) / 3;
+		return f == 0 ? 0 : f == 1 ? 1 : -MathHelper.pow(2F, 10F * f - 10F) *
+				net.minecraft.util.math.MathHelper.sin((f * 10F - 10.75F) * c4);
 	}
 
 	public static float easeOutElastic(float f) {
-		float c4 = (2F * MathHelper.PI) / 3;
-		return f == 0 ? 0 : f == 1 ? 1 : MHelper.pow(2F, -10F * f) *
-				MathHelper.sin((f * 10F - 0.75F) * c4) + 1;
+		float c4 = (2F * net.minecraft.util.math.MathHelper.PI) / 3;
+		return f == 0 ? 0 : f == 1 ? 1 : MathHelper.pow(2F, -10F * f) *
+				net.minecraft.util.math.MathHelper.sin((f * 10F - 0.75F) * c4) + 1;
 	}
 
 	public static float easeInOutElastic(float f) {
-		float c5 = (2F * MathHelper.PI) / 4.5F;
+		float c5 = (2F * net.minecraft.util.math.MathHelper.PI) / 4.5F;
 		return f == 0 ? 0 : f == 1 ? 1 : f < 0.5F ?
-				-(MHelper.pow(2F, 20F * f - 10F) * MathHelper.sin((f * 10F - 11.125F) * c5)) / 2
-				: (MHelper.pow(2, -20F * f + 10) * MathHelper.sin((20F * f - 11.125F) * c5)) / 2 + 1;
+				-(MathHelper.pow(2F, 20F * f - 10F) * net.minecraft.util.math.MathHelper.sin((f * 10F - 11.125F) * c5)) / 2
+				: (MathHelper.pow(2, -20F * f + 10) * net.minecraft.util.math.MathHelper.sin((20F * f - 11.125F) * c5)) / 2 + 1;
 	}
 
 	public static float easeInBounce(float f) {

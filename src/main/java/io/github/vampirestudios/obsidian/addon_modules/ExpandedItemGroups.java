@@ -1,12 +1,13 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.TabbedGroup;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.wispforest.owo.itemgroup.OwoItemExtensions;
 import io.wispforest.owo.itemgroup.gui.ItemGroupButton;
 import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
@@ -23,18 +24,21 @@ import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
+
 public class ExpandedItemGroups implements AddonModule {
 
     @Override
-    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         TabbedGroup itemGroup = Obsidian.GSON.fromJson(new FileReader(file), TabbedGroup.class);
         JsonObject jsonObject = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
 
@@ -43,9 +47,9 @@ public class ExpandedItemGroups implements AddonModule {
             ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
             groupTabLoader.acceptParsedFile(null, jsonObject);
             ModDataLoader.load(groupTabLoader);
-            ObsidianAddonLoader.register(ObsidianAddonLoader.EXPANDED_ITEM_GROUPS, "tabbed_group", new Identifier(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
+            register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", new Identifier(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
         } catch (Exception e) {
-            ObsidianAddonLoader.failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
+            failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
         }
     }
 

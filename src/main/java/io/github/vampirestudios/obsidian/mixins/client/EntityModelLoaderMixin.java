@@ -23,6 +23,7 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
 import net.minecraft.resource.ResourceType;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,7 +39,9 @@ public class EntityModelLoaderMixin {
     @Inject(method = "<init>", at = @At("TAIL"))
     private void createAnimationManager(CallbackInfo ci) {
         this.quilt$dynamicEntityModelLoader = new DynamicEntityModelLoader();
-        ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(this.quilt$dynamicEntityModelLoader);
+        ResourceLoader resourceLoader = ResourceLoader.get(ResourceType.CLIENT_RESOURCES);
+        resourceLoader.registerReloader(this.quilt$dynamicEntityModelLoader);
+        resourceLoader.addReloaderOrdering(this.quilt$dynamicEntityModelLoader.getQuiltId(), ResourceReloaderKeys.Client.ENTITY_MODELS);
     }
 
     @Inject(method = "getModelPart", at = @At("HEAD"), cancellable = true)

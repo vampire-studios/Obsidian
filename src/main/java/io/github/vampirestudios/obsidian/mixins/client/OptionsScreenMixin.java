@@ -34,7 +34,7 @@ public class OptionsScreenMixin extends Screen {
 
     private void idk(ResourcePackManager resourcePackManager) {
         for (File file : Objects.requireNonNull(ObsidianAddonLoader.OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
-            ObsidianAddonLoader.register(file, "addon.info.pack");
+            ObsidianAddonLoader.register(file, "addon.info.pack", "addon.info.json5");
         }
     }
 

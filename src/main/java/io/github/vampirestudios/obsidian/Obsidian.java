@@ -1,19 +1,16 @@
 package io.github.vampirestudios.obsidian;
 
+import blue.endless.jankson.Jankson;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.serialization.Lifecycle;
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
 import io.github.vampirestudios.artifice.api.util.Processor;
 import io.github.vampirestudios.artifice.common.ArtificeRegistry;
 import io.github.vampirestudios.artifice.impl.ArtificeImpl;
 import io.github.vampirestudios.artifice.impl.DynamicResourcePackFactory;
 import io.github.vampirestudios.obsidian.addon_modules.*;
-import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.api.obsidian.DynamicShape;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.BreakDoorAnnotationComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.OpenDoorAnnotationComponent;
@@ -22,6 +19,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement
 import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
@@ -29,34 +28,28 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.render.animation.Animation;
-import net.minecraft.client.render.animation.PartAnimation;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.state.property.Property;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
@@ -69,15 +62,10 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 			.setPrettyPrinting()
 			.setLenient()
 			.create();
-	public static final Registry<AddonModule> ADDON_MODULE_REGISTRY = FabricRegistryBuilder.createSimple(AddonModule.class, Const.id("addon_modules")).buildAndRegister();
-	public static final Registry<ItemGroup> ITEM_GROUP_REGISTRY = FabricRegistryBuilder.createSimple(ItemGroup.class, Const.id("item_groups")).buildAndRegister();
-	public static final Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, Const.id("food_components")).buildAndRegister();
-	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry(Const.id("entity_components")), Lifecycle.stable(), null);
-	public static final Registry<Property> PROPERTIES = FabricRegistryBuilder.createSimple(Property.class, Const.id("properties")).buildAndRegister();
-	public static final Registry<DynamicShape> DYNAMIC_SHAPES = FabricRegistryBuilder.createSimple(DynamicShape.class, Const.id("dynamic_shapes")).buildAndRegister();
-	public static Registry<Animation> ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(Animation.class, Const.id("animation_definitions")).buildAndRegister();
-	public static Registry<PartAnimation.Interpolator> ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(PartAnimation.Interpolator.class, Const.id("animation_channel_interpolations")).buildAndRegister();
-	public static Registry<PartAnimation.AnimationTargets> ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(PartAnimation.AnimationTargets.class, Const.id("animation_channel_targets")).buildAndRegister();
+	public static final Jankson JANKSON = Jankson.builder()
+			/*.registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
+			.registerTypeAdapter(ModelIdentifier.class, (SimpleStringDeserializer<?>) ModelIdentifier::new)*/
+			.build();
 	public static final Logger LOGGER = LogManager.getLogger(Const.MOD_NAME);
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger(Const.MOD_NAME + " | Bedrock");
 	public static final Obsidian INSTANCE = new Obsidian();  // TODO: Remove or stuff
@@ -117,51 +105,51 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 	}
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getGameVersion().getName()));
 		AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 
 		//Item Groups
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "transportation", ItemGroup.TRANSPORTATION);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "misc", ItemGroup.MISC);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "food", ItemGroup.FOOD);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "tools", ItemGroup.TOOLS);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "combat", ItemGroup.COMBAT);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "brewing", ItemGroup.BREWING);
-		registerInRegistryVanilla(ITEM_GROUP_REGISTRY, "search", ItemGroup.SEARCH);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "decorations", ItemGroup.DECORATIONS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "redstone", ItemGroup.REDSTONE);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "transportation", ItemGroup.TRANSPORTATION);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "misc", ItemGroup.MISC);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "food", ItemGroup.FOOD);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "tools", ItemGroup.TOOLS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "combat", ItemGroup.COMBAT);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "brewing", ItemGroup.BREWING);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "search", ItemGroup.SEARCH);
 
 		//Entity Components
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
 
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "ageable", AgeableComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "barter", BarterComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "block_sensor", BlockSensorComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "boostable", BoostableComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "boss", BossComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "break_blocks", BreakBlocksComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "breathable", BreathableComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "celebrate", CelebrateBehaviourComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "nameable", NameableComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "ageable", AgeableComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "barter", BarterComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "block_sensor", BlockSensorComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "boostable", BoostableComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "boss", BossComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "break_blocks", BreakBlocksComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "breathable", BreathableComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "celebrate", CelebrateBehaviourComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "nameable", NameableComponent.class);
 
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
 
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
-		registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
+		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
 
 		//Bedrock Block Events
 //		registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "add_mob_effect", AddMobEffect.class);
@@ -197,44 +185,45 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
 //        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
-		registerInRegistry(ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "creative_tab", new CreativeTabs());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "block_sound_groups", new BlockSoundGroups());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "block_materials", new BlockMaterials());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "blocks", new Blocks());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "ores", new Ores());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "paintings", new Paintings());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "armor_materials", new ArmorMaterials());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "creative_tab", new CreativeTabs());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_sound_groups", new BlockSoundGroups());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_materials", new BlockMaterials());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "blocks", new Blocks());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ores", new Ores());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "paintings", new Paintings());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "armor_materials", new ArmorMaterials());
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "armor", new Armor());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "elytra", new Elytras());
+			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "armor", new Armor());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "elytra", new Elytras());
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(ADDON_MODULE_REGISTRY, "emojis", new Emojis());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "item", new Items());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "tool", new Tools());
+			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "emojis", new Emojis());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item", new Items());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "tool", new Tools());
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(ADDON_MODULE_REGISTRY, "particle", new Particles());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "sound_events", new SoundEvents());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "music_discs", new MusicDiscs());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "weapon", new Weapons());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "commands", new Commands());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "entities", new Entities());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "shields", new Shields());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "food_components", new FoodComponents());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "food", new Food());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
-		registerInRegistry(ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
-//		registerInRegistry(ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
+			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "particle", new Particles());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "sound_events", new SoundEvents());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "music_discs", new MusicDiscs());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "weapon", new Weapons());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "commands", new Commands());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "entities", new Entities());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "shields", new Shields());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "food_components", new FoodComponents());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "food", new Food());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
+//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "condensed_item_entries", new CondensedItemEntries());
+//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
 
-		for (Block block : ObsidianAddonLoader.BLOCKS) {
+		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information.isConvertible) {
 				AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
 				net.minecraft.block.Block parentBlock = Registry.BLOCK.get(convertible.parent_block);
@@ -337,7 +326,7 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 
 	@Override
 	public void registerEvents() {
-		Obsidian.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
+		Registries.ADDON_MODULE_REGISTRY.forEach(addonModule -> {
 			try {
 				addonModule.initAppleSkin();
 			} catch (FileNotFoundException e) {

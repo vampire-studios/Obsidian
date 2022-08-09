@@ -4,6 +4,7 @@ import io.github.vampirestudios.obsidian.utils.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BucketItem;
@@ -128,12 +129,12 @@ public abstract class FluidImpl extends QuiltFluid {
 	}
 
 	@Override
-	public boolean bobberFloats(FluidState state, Entity affected) {
+	public boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
 		return this.fluid.fishingBobberFloats;
 	}
 
 	@Override
-	public boolean canFish(FluidState state, Entity affected) {
+	public boolean canFish(FluidState state, FishingBobberEntity affected) {
 		return this.fluid.canFish;
 	}
 
@@ -189,6 +190,11 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Override
 	public Identifier getFishingLootTable() {
 		return this.fluid.fishingLootTable;
+	}
+
+	@Override
+	public boolean canBoatSwimOn() {
+		return super.canBoatSwimOn();
 	}
 
 	@Nullable

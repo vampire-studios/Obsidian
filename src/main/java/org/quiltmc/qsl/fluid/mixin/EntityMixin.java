@@ -26,7 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,9 +49,9 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	@Shadow
 	@Final
 	protected RandomGenerator random;
-	protected boolean inCustomFluid;
-	protected boolean submergedInCustomFluid;
-	protected Fluid submergedCustomFluid;
+	protected boolean quilt$inCustomFluid;
+	protected boolean quilt$submergedInCustomFluid;
+	protected Fluid quilt$submergedCustomFluid;
 	@Shadow
 	private BlockPos blockPos;
 
@@ -106,24 +106,24 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 
 	@Override
 	public boolean quilt$isInCustomFluid() {
-		return this.inCustomFluid;
+		return this.quilt$inCustomFluid;
 	}
 
 	@Override
 	public boolean quilt$isSubmergedInCustomFluid() {
-		return this.submergedInCustomFluid && this.quilt$isInCustomFluid();
+		return this.quilt$submergedInCustomFluid && this.quilt$isInCustomFluid();
 	}
 
 	void checkCustomFluidState() {
 		FluidState fluidState = this.world.getFluidState(this.getBlockPos());
-		if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid &&
+		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid &&
 				!(getVehicle() instanceof BoatEntity)) {
 			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY,fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
-			if (!inCustomFluid && !firstUpdate) {
+			if (!quilt$inCustomFluid && !firstUpdate) {
 				customSplashEffects();
 			}
 			fallDistance = fluid.getFallDamageReduction(((Entity) (Object) this));
-			inCustomFluid = true;
+			quilt$inCustomFluid = true;
 
 			if (fluid.canExtinguish(fluidState, (Entity) (Object) this)) {
 				extinguish();
@@ -133,15 +133,15 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 			}
 			return;
 		}
-		this.inCustomFluid = false;
+		this.quilt$inCustomFluid = false;
 	}
 
 	public boolean quilt$isSubmergedInCustomFluid(Fluid fluid) {
-		return this.submergedCustomFluid == fluid;
+		return this.quilt$submergedCustomFluid == fluid;
 	}
 
 	private void updateSubmergedInCustomFluidState() {
-		this.submergedCustomFluid = null;
+		this.quilt$submergedCustomFluid = null;
 		double d = this.getEyeY() - 0.1111111119389534D;
 		Entity entity = this.getVehicle();
 		if (entity instanceof BoatEntity boatEntity) {
@@ -156,7 +156,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 
 		double e = (float) blockPos.getY() + fluidState.getHeight(this.world, blockPos);
 		if (e > d) {
-			this.submergedCustomFluid = fluidState.getFluid();
+			this.quilt$submergedCustomFluid = fluidState.getFluid();
 		}
 
 	}
@@ -166,14 +166,14 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 		boolean canSwimIn = false;
 		if (this.quilt$isInCustomFluid()) {
 			FluidState fluidState = this.world.getFluidState(this.getBlockPos());
-			if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
+			if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
 				canSwimIn = fluid.allowSprintSwimming(fluidState, (Entity) (Object) this);
 			}
 			if (this.isSwimming()) {
 				this.setSwimming(this.isSprinting() && canSwimIn && this.quilt$isInCustomFluid() && !this.hasVehicle());
 			} else {
 				this.setSwimming(this.isSprinting() && this.quilt$isSubmergedInCustomFluid() && canSwimIn && !this.hasVehicle() &&
-						this.world.getFluidState(this.blockPos).getFluid() instanceof FlowableFluidExtensions);
+						this.world.getFluidState(this.blockPos).getFluid() instanceof QuiltFlowableFluidExtensions);
 			}
 
 		}
@@ -181,7 +181,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 
 	private void customSplashEffects() {
 		FluidState fluidState = this.world.getFluidState(this.blockPos);
-		if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
+		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
 			//Execute the onSplash event
 			fluid.onSplash(this.world, new Vec3d(this.getX(), this.getY(), this.getZ()), (Entity) (Object) this, this.random);
 		}

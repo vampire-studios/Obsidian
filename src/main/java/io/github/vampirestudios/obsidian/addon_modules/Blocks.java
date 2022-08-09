@@ -1,18 +1,26 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.JsonObject;
+import blue.endless.jankson.api.SyntaxError;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.toml.TomlFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.SaplingBaseBlock;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddon;
+import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
+import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
-import io.github.vampirestudios.obsidian.utils.ModIdAndAddonPath;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
@@ -21,10 +29,13 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+import org.hjson.JsonValue;
+import org.hjson.Stringify;
+import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +44,34 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*
 public class Blocks implements AddonModule {
 
     @Override
-    public void init(ObsidianAddon addon, File file, ModIdAndAddonPath id) throws FileNotFoundException {
-        io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
+        io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
+        if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
+            block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+        } else {
+            ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addon.getConfigPackInfo();
+            if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
+                block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
+                JsonObject jsonObject = Obsidian.JANKSON.load(file);
+                block = Obsidian.JANKSON.fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
+                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+                mapper.findAndRegisterModules();
+                block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.TOML) {
+                ObjectMapper mapper = new ObjectMapper(new TomlFactory());
+                mapper.findAndRegisterModules();
+                block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.HJSON) {
+                block = Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else {
+                block = null;
+            }
+        }
         try {
             if (block == null) return;
-            FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial())
+            QuiltBlockSettings blockSettings = QuiltBlockSettings.of(block.information.getMaterial())
                     .hardness(block.information.hardness).resistance(block.information.resistance)
                     .sounds(block.information.getBlockSoundGroup())
                     .slipperiness(block.information.slipperiness)
@@ -52,7 +86,7 @@ public class Blocks implements AddonModule {
             if (block.information.dynamic_boundaries) blockSettings.dynamicBounds();
 
             Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
-            if (block.food_information != null) settings.food(Obsidian.FOOD_COMPONENTS.get(block.food_information.foodComponent));
+            if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
             if (block.information.fireproof) settings.fireproof();
 
             if (block.additional_information != null) {
@@ -355,10 +389,10 @@ public class Blocks implements AddonModule {
                     if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
                 }));
                 names.forEach(identifier -> {
-                    if (BLOCKS.get(identifier) != null) register(BLOCKS, "block", identifier, block);
+                    if (ContentRegistries.BLOCKS.get(identifier) != null) register(ContentRegistries.BLOCKS, "block", identifier, block);
                 });
             } else {
-                register(BLOCKS, "block", block.information.name.id, block);
+                register(ContentRegistries.BLOCKS, "block", block.information.name.id, block);
             }
         } catch (Exception e) {
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
@@ -375,7 +409,7 @@ public class Blocks implements AddonModule {
 
     @Override
     public String getType() {
-        return "blocks";
+        return "block";
     }
 
 }

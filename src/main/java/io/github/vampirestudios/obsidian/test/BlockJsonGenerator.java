@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian;
+package io.github.vampirestudios.obsidian.test;
 
 import org.apache.commons.lang3.text.WordUtils;
 

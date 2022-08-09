@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
+import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
 import net.minecraft.resource.pack.ResourcePack;
 
 import java.io.File;
@@ -9,9 +9,9 @@ public interface IAddonPack {
 
     File getFile();
 
-    ObsidianAddonInfo getConfigPackInfo();
+    BaseAddonInfo getConfigPackInfo();
 
-    String getDisplayNameObsidian();
+    String getObsidianDisplayName();
 
     ResourcePack getVirtualResourcePack();
 

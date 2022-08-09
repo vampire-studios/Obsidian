@@ -28,7 +28,8 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
-import org.quiltmc.qsl.fluid.api.FishingBobberEntityExtensions;
+import org.quiltmc.qsl.fluid.impl.FishingBobberEntityExtensions;
+import org.quiltmc.qsl.fluid.impl.QuiltFluid;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -40,30 +41,32 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public abstract class FishingBobberEntityMixin implements CustomFluidInteracting, FishingBobberEntityExtensions {
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z", ordinal = 0))
-	public boolean quilt$tick(FluidState instance, TagKey<Fluid> tag) {
-		return instance.isIn(this.quilt$canFishingBobberSwimOn());
+	public boolean tick(FluidState instance, TagKey<Fluid> tag) {
+		QuiltFluid fluid = (QuiltFluid) instance.getFluid();
+		return instance.isIn(this.quilt$canFishingBobberSwimOn()) && fluid.bobberFloats(instance,(FishingBobberEntity) (Object)this);
 	}
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z", ordinal = 1))
-	public boolean quilt$tick2(FluidState instance, TagKey<Fluid> tag) {
+	public boolean tick2(FluidState instance, TagKey<Fluid> tag) {
 		return instance.isIn(this.quilt$canFishingBobberSwimOn());
 	}
 
-	@Inject(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;up()Lnet/minecraft/util/math/BlockPos;"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void quilt$canFish(BlockPos pos, CallbackInfo ci, ServerWorld serverWorld, int i) {
-		Fluid fluid = serverWorld.getBlockState(pos).getFluidState().getFluid();
-		if (!fluid.isIn(this.quilt$canFishingBobberCatchIn())) {
+	@Inject(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;up()Lnet/minecraft/util/math/BlockPos;"), locals = LocalCapture.CAPTURE_FAILHARD)
+	public void canFish(BlockPos pos, CallbackInfo ci, ServerWorld serverWorld, int i) {
+		FluidState state = serverWorld.getBlockState(pos).getFluidState();
+		QuiltFluid fluid = (QuiltFluid) state.getFluid();
+		if (!state.isIn(this.quilt$canFishingBobberCatchIn()) || !fluid.canFish(state, (FishingBobberEntity) (Object)this)) {
 			ci.cancel();
 		}
 	}
 
 	@Redirect(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"))
-	public boolean quilt$spawnParticles(BlockState instance, Block block) {
+	public boolean spawnParticles(BlockState instance, Block block) {
 		return instance.getFluidState().isIn(quilt$canFishingBobberCatchIn());
 	}
 
 	@Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootManager;getTable(Lnet/minecraft/util/Identifier;)Lnet/minecraft/loot/LootTable;"))
-	public LootTable quilt$changeLootTable(LootManager instance, Identifier id) {
+	public LootTable changeLootTable(LootManager instance, Identifier id) {
 		return ((FishingBobberEntity) (Object) this).world.getServer().getLootManager().getTable(this.quilt$getFishingLootTable());
 	}
 }
