@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import blue.endless.jankson.annotation.SerializedName;
+import com.electronwill.nightconfig.core.conversion.Path;
 import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
@@ -33,9 +34,11 @@ public class BlockInformation {
     public boolean collidable = true;
     @SerializedName("sound_group")
     @com.google.gson.annotations.SerializedName("sound_group")
+    @Path("sound_group")
     public String legacySoundGroup = "minecraft:stone";
     @SerializedName("new_sound_group")
     @com.google.gson.annotations.SerializedName("new_sound_group")
+    @Path("new_sound_group")
     public Identifier soundGroup;
     public float hardness = 3.0F;
     public float resistance = 3.0F;

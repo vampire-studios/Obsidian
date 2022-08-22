@@ -12,5 +12,7 @@ public class HexToDecimalExample1 {
 		System.out.printf("Floral - Java Int: %d, Hex Color: %s%n", 16714495, Integer.toHexString(16714495));
 		System.out.printf("Galaxy - Java Int: %d, Hex Color: %s%n", 16713215, Integer.toHexString(16713215));
 		System.out.printf("Matrix - Java Int: %d, Hex Color: %s%n", 16715263, Integer.toHexString(16715263));
+
+		System.out.printf("Java Int: %d, Hex Color: %s%n", 0xc53f08, Integer.toHexString(0xc53f08));
 	}
 }

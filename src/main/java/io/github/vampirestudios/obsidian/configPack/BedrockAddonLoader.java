@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.configPack;
 
+import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -191,7 +192,7 @@ public class BedrockAddonLoader {
                 if (file.isFile()) {
                     try {
                         addonModule.init(null, file, id);
-                    } catch (IOException | SyntaxError e) {
+                    } catch (IOException | SyntaxError | DeserializationException e) {
                         e.printStackTrace();
                     }
                 }

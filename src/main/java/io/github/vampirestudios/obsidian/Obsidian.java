@@ -63,8 +63,13 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 			.setLenient()
 			.create();
 	public static final Jankson JANKSON = Jankson.builder()
-			/*.registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
-			.registerTypeAdapter(ModelIdentifier.class, (SimpleStringDeserializer<?>) ModelIdentifier::new)*/
+			.registerDeserializer(String.class, Identifier.class, (s, m) -> Identifier.tryParse(s))
+			.registerDeserializer(String.class, ModelIdentifier.class, (s, m) -> {
+				String[] strings = s.split("#");
+				Identifier identifier = Identifier.tryParse(strings[0]);
+				assert identifier != null;
+				return new ModelIdentifier(identifier, strings[1]);
+			})
 			.build();
 	public static final Logger LOGGER = LogManager.getLogger(Const.MOD_NAME);
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger(Const.MOD_NAME + " | Bedrock");

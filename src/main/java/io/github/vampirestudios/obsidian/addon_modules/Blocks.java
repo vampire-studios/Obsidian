@@ -2,9 +2,9 @@ package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
+import com.electronwill.nightconfig.core.file.FileConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -56,9 +56,19 @@ public class Blocks implements AddonModule {
                 JsonObject jsonObject = Obsidian.JANKSON.load(file);
                 block = Obsidian.JANKSON.fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
-                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-                mapper.findAndRegisterModules();
-                block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+//                LoadSettings settings = LoadSettings.builder().build();
+//                Load load = new Load(settings);
+//                Map<String, String> map = (Map<String, String>) load.loadFromReader(new FileReader(file));
+//                System.out.println(map);
+
+//                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+//                mapper.findAndRegisterModules();
+//                block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+                block = null;
+                try (FileConfig config = FileConfig.of(file)) {
+                    config.load();
+                    System.out.println(config.valueMap());
+                }
             } else if (addonInfo.format == ObsidianAddonInfo.Format.TOML) {
                 ObjectMapper mapper = new ObjectMapper(new TomlFactory());
                 mapper.findAndRegisterModules();

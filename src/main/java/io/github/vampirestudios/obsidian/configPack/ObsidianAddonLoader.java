@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.configPack;
 
+import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.SyntaxError;
 import com.google.common.base.Joiner;
 import io.github.vampirestudios.obsidian.Obsidian;
@@ -150,7 +151,7 @@ public class ObsidianAddonLoader {
                 if (file.isFile()) {
                     try {
                         addonModule.init(addon, file, id);
-                    } catch (SyntaxError | IOException e) {
+                    } catch (SyntaxError | IOException | DeserializationException e) {
                         e.printStackTrace();
                     }
                 }

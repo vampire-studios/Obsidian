@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.ArmorModel;
@@ -12,11 +11,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class ArmorModels implements AddonModule {
     @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
         ArmorModel entityModel = Obsidian.GSON.fromJson(new FileReader(file), ArmorModel.class);
         try {
             if (entityModel == null) return;

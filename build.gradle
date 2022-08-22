@@ -127,11 +127,12 @@ dependencies {
 	}
 
 	implementation group: 'com.amihaiemil.web', name: 'eo-yaml', version: '6.0.1'
+	implementation 'com.electronwill.night-config:core:3.6.5'
 	implementation 'com.electronwill.night-config:toml:3.6.5'
 	implementation 'com.electronwill.night-config:yaml:3.6.5'
 	implementation 'com.electronwill.night-config:hocon:3.6.5'
 
-	implementation 'org.yaml:snakeyaml:1.30'
+	implementation 'org.snakeyaml:snakeyaml-engine:2.3'
 	implementation 'org.hjson:hjson:3.0.0'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3'

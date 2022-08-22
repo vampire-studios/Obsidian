@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.JsonObject;
+import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
@@ -29,7 +30,7 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 public class LegacyItemGroups implements AddonModule {
 
     @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError, DeserializationException {
         io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup;
         if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
             itemGroup = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
@@ -75,7 +76,7 @@ public class LegacyItemGroups implements AddonModule {
             Registry.register(Registries.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup1);
             register(ContentRegistries.ITEM_GROUPS, "item_group", itemGroup.name.id, itemGroup);
         } catch (Exception e) {
-            failedRegistering("item_group", itemGroup.name.id.toString(), e);
+            failedRegistering("item_group", id.addonPath(), e);
         }
     }
 
