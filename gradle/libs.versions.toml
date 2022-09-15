@@ -1,13 +1,13 @@
 [versions]
-    minecraft = '1.19.1'
-    quilt-mappings = '1.19.1+build.4' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
-    quilt-loader = '0.17.2-beta.2' # Latest version is available at https://fabricmc.net/versions.html
+    minecraft = '1.19.2'
+    quilt-mappings = '1.19.2+build.14' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
+    quilt-loader = '0.17.5-beta.2' # Latest version is available at https://fabricmc.net/versions.html
 
-    quilted_fabric_api = '4.0.0-beta.6+0.58.5-1.19.1'
+    quilted_fabric_api = '4.0.0-beta.12+0.61.0-1.19.2'
 
     vampirelib = '5.5.0+build.1-1.19.1'
     clothconfig = '7.0.72'
-    owo-lib = '0.7.3+1.19'
+    owo-lib = '0.8.2+1.19'
     appleskin = 'mc1.19-2.4.0'
     libzoomer = '6c0c9d119d'
     cct = '2.0.0+1.19-ArchHotfix'

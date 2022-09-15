@@ -41,8 +41,7 @@
     "quilt_item_extensions.mixins.json",
     "qsl_content_other_enchantment.mixins.json",
     "quilt_fluid_extensions.mixins.json",
-    "quilt_key_binds.mixins.json",
-    "quilt_block_content_registry.mixins.json"
+    "quilt_key_binds.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 

@@ -13,7 +13,6 @@
 	"CraftingScreenHandlerMixin",
 	"FabricItemGroupBuilderMixin",
 	"IdListMixin",
-	"ItemMixin",
 	"LoomScreenHandlerMixin",
 	"ModelCuboidDataAccessor",
 	"ModelPartDataAccessor",

@@ -24,13 +24,20 @@ import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.hud.Hud;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.option.KeyBind;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -41,18 +48,21 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.tag.TagKey;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
+import java.util.function.Supplier;
 
 public class Obsidian implements ModInitializer, AppleSkinApi {
 
@@ -81,6 +91,7 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 	public static ObsidianConfig CONFIG;
 
 	public static ResourcePackSource RESOURCE_PACK_SOURCE = ResourcePackSource.nameAndSource("pack.source.obsidian");
+	public static KeyBind binding = new KeyBind("key.uwu.hud_test", GLFW.GLFW_KEY_J, "misc");
 
 	public static Identifier id(String path) {
 		return Const.id(path);
@@ -114,6 +125,7 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getGameVersion().getName()));
 		AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
+		KeyBindingHelper.registerKeyBinding(binding);
 
 		//Item Groups
 		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", ItemGroup.BUILDING_BLOCKS);
@@ -179,16 +191,17 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 //		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "decrement_stack", io.github.vampirestudios.obsidian.api.obsidian.block.events.DecrementStack.class);
 //		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "die", io.github.vampirestudios.obsidian.api.obsidian.block.events.Die.class);
 //		registerInRegistryVanilla(BLOCK_EVENT_REGISTRY, "play_effect", io.github.vampirestudios.obsidian.api.obsidian.block.events.PlayEffect.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_sound", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "remove_mob_effect", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "run_command", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_at_pos", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_property", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "spawn_loot", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "swing", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
-//        registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
+
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "play_sound", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "remove_mob_effect", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "run_command", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_at_pos", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "set_block_property", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "spawn_loot", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "swing", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "teleport", LookAtPlayerBehaviourComponent.class);
+//      	registerInRegistryVanilla(BEDROCK_BLOCK_EVENT_REGISTRY, "transform_item", LookAtPlayerBehaviourComponent.class);
 
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "creative_tab", new CreativeTabs());
@@ -227,6 +240,47 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "condensed_item_entries", new CondensedItemEntries());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
+			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "gui", new Guis());
+
+		final var hudComponentId = new Identifier("uwu", "test_element");
+		final Supplier<Component> hudComponent = () ->
+				Containers.verticalFlow(Sizing.content(), Sizing.content())
+						.child(Components.item(net.minecraft.item.Items.DIAMOND.getDefaultStack()).margins(Insets.of(3)))
+						.child(Components.label(Text.literal("epic stuff in hud")))
+						.child(Components.entity(Sizing.fixed(50), EntityType.ALLAY, null))
+						.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+						.padding(Insets.of(5))
+						.surface(Surface.DARK_PANEL)
+						.margins(Insets.of(5))
+						.positioning(Positioning.relative(100, 65));
+
+		final var hudComponentId2 = new Identifier("uwu", "test_element2");
+		final Supplier<Component> hudComponent2 = () ->
+				Containers.verticalFlow(Sizing.content(), Sizing.content())
+						.child(Components.item(net.minecraft.item.Items.DIAMOND.getDefaultStack()).margins(Insets.of(3)))
+						.child(Components.label(Text.literal("epic stuff in hud")))
+						.child(Components.entity(Sizing.fixed(50), EntityType.ALLAY, null))
+						.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+						.padding(Insets.of(5))
+						.surface(Surface.DARK_PANEL)
+						.margins(Insets.of(5))
+						.positioning(Positioning.relative(100, 25));
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			while (binding.wasPressed()) {
+				if (Hud.hasComponent(hudComponentId)) {
+					Hud.remove(hudComponentId);
+				} else {
+					Hud.add(hudComponentId, hudComponent);
+				}
+				if (Hud.hasComponent(hudComponentId2)) {
+					Hud.remove(hudComponentId2);
+				} else {
+					Hud.add(hudComponentId2, hudComponent2);
+				}
+			}
+		});
 
 		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information.isConvertible) {

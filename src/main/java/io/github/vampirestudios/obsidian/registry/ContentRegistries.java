@@ -14,6 +14,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
 import io.github.vampirestudios.obsidian.api.obsidian.potion.Potion;
 import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect;
+import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
+import io.github.vampirestudios.obsidian.api.obsidian.ui.HUD;
 import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerBiomeType;
 import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerProfession;
 import io.github.vampirestudios.obsidian.api.obsidian.world.Biome;
@@ -61,6 +63,8 @@ public class ContentRegistries {
 	public static Registry<VillagerBiomeType> VILLAGER_BIOME_TYPES = FabricRegistryBuilder.createSimple(VillagerBiomeType.class, id("villager_biome_types")).buildAndRegister();
 	public static Registry<Fluid> FLUIDS = FabricRegistryBuilder.createSimple(Fluid.class, id("fluids")).buildAndRegister();
 	public static Registry<Emoji> EMOJIS = FabricRegistryBuilder.createSimple(Emoji.class, id("emojis")).buildAndRegister();
+	public static Registry<GUI> GUIS = FabricRegistryBuilder.createSimple(GUI.class, id("guis")).buildAndRegister();
+	public static Registry<HUD> HUDS = FabricRegistryBuilder.createSimple(HUD.class, id("huds")).buildAndRegister();
 
 	//World Generation
 	public static Registry<Tree> TREES = FabricRegistryBuilder.createSimple(Tree.class, id("trees")).buildAndRegister();

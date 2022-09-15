@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 
-public class GUI extends UI {
+public class HUD extends UI {
     public NameInformation nameInformation;
     public Widget[] widgets;
 

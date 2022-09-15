@@ -8,12 +8,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.TabbedGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.wispforest.owo.itemgroup.OwoItemExtensions;
 import io.wispforest.owo.itemgroup.gui.ItemGroupButton;
 import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
 import io.wispforest.owo.itemgroup.json.WrapperGroup;
 import io.wispforest.owo.moddata.ModDataConsumer;
 import io.wispforest.owo.moddata.ModDataLoader;
+import io.wispforest.owo.util.pond.OwoItemExtensions;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -74,7 +74,7 @@ public class ExpandedItemGroups implements AddonModule {
 				protected void setup() {
 					super.setup();
 					if (tabbedGroup.staticTitle) this.keepStaticTitle();
-					this.setStackHeight(tabbedGroup.stackHeight);
+					this.setTabStackHeight(tabbedGroup.stackHeight);
 					this.setCustomTexture(tabbedGroup.customTexture);
 				}
 			};
@@ -113,7 +113,7 @@ public class ExpandedItemGroups implements AddonModule {
 
 				for (Item item : Registry.ITEM) {
 					if (item.getGroup() != group) continue;
-					((OwoItemExtensions) item).setItemGroup(wrapperGroup);
+					((OwoItemExtensions) item).owo$setItemGroup(wrapperGroup);
 				}
 
 				return;

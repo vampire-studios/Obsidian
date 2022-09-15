@@ -5,11 +5,11 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.BowItemImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.CrossbowItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
-import net.fabricmc.fabric.api.item.v1.bow.FabricBowItem;
-import net.fabricmc.fabric.api.item.v1.crossbow.SimpleCrossbowItem;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.Item;
@@ -20,7 +20,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class RangedWeapons implements AddonModule {
     @Override
@@ -32,7 +33,7 @@ public class RangedWeapons implements AddonModule {
                     .maxCount(rangedWeapon.information.maxStackSize).rarity(rangedWeapon.information.rarity);
             switch (rangedWeapon.weapon_type) {
                 case "bow" -> {
-                    Item item = RegistryUtils.registerItem(new FabricBowItem(rangedWeapon, settings), rangedWeapon.information.name.id);
+                    Item item = RegistryUtils.registerItem(new BowItemImpl(rangedWeapon, settings), rangedWeapon.information.name.id);
                     ModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
                         if (entity == null) return 0.0F;
                         else return entity.getActiveItem() != stack ? 0.0F : (stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / 20.0F;
@@ -41,7 +42,7 @@ public class RangedWeapons implements AddonModule {
                             entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
                 }
                 case "crossbow" ->  {
-                    Item item = RegistryUtils.registerItem(new SimpleCrossbowItem(rangedWeapon, settings), rangedWeapon.information.name.id);
+                    Item item = RegistryUtils.registerItem(new CrossbowItemImpl(rangedWeapon, settings), rangedWeapon.information.name.id);
                     ModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
                         if (entity == null) {
                             return 0.0F;
