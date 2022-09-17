@@ -5,8 +5,11 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.HUD;
+import io.github.vampirestudios.obsidian.api.obsidian.ui.LayoutType;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.GridLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.hud.Hud;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
@@ -27,9 +30,21 @@ public class Huds implements AddonModule {
             if (hud == null) return;
 
             Component component = hud.getLayout();
-            hud.components.forEach(component1 -> {
-
-            });
+            if (hud.type == LayoutType.FLOW_PANEL) {
+                FlowLayout layout = (FlowLayout) component;
+                hud.components.forEach(component1 -> layout.child(component1.getComponent()));
+                layout.alignment(hud.horizontalAlignment, hud.verticalAlignment);
+            } else if (hud.type == LayoutType.GRID) {
+                GridLayout layout = (GridLayout) component;
+                hud.components.forEach(component1 -> layout.child(
+                        component1.getComponent(),
+                        component1.row, component1.column
+                ));
+                layout.alignment(hud.horizontalAlignment, hud.verticalAlignment);
+                layout.padding(hud.padding.getInsets());
+                layout.margins(hud.margin.getInsets());
+                layout.surface(hud.surface.getSurface());
+            }
 
             final Supplier<Component> hudComponent = () -> component;
             ClientTickEvents.END.register(client -> {

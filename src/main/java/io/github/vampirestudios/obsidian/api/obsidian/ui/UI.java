@@ -1,96 +1,114 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import blue.endless.jankson.annotation.SerializedName;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.VerticalAlignment;
+import io.wispforest.owo.ui.util.Drawer;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UI {
 	public LayoutType type;
+	public LayoutOrientation orientation;
+
 	public Identifier id;
-	@SerializedName("horizontal_sizing") public Sizing horizontalSizing;
-	@SerializedName("vertical_sizing") public Sizing verticalSizing;
+
+	@SerializedName("horizontal_sizing") public Object horizontalSizing;
+	@SerializedName("vertical_sizing") public Object verticalSizing;
+
+	@SerializedName("horizontal_alignment") public HorizontalAlignment horizontalAlignment;
+	@SerializedName("vertical_alignment") public VerticalAlignment verticalAlignment;
+
 	public int rows;
 	public int columns;
+
+	public Inset margin;
+	public Inset padding;
+
+	public Surface surface;
+
 	public List<Component> components = new ArrayList<>();
 
-	public io.wispforest.owo.ui.core.Component getLayout() {
-		return switch (type) {
-			case GRID -> Containers.grid(horizontalSizing.getSizing(), verticalSizing.getSizing(), rows, columns);
-			case VERTICAL_FLOW -> Containers.verticalFlow(horizontalSizing.getSizing(), verticalSizing.getSizing());
-			case HORIZONTAL_FLOW -> Containers.horizontalFlow(horizontalSizing.getSizing(), verticalSizing.getSizing());
-		};
-	}
-
-	public static class Sizing {
-		public SizingType type;
-		public int value;
-		public int padding;
-		public int percent;
-
-		public io.wispforest.owo.ui.core.Sizing getSizing() {
-			return switch (type) {
-				case FIXED -> io.wispforest.owo.ui.core.Sizing.fixed(value);
-				case CONTENT -> io.wispforest.owo.ui.core.Sizing.content();
-				case CONTENT_WITH_PADDING -> io.wispforest.owo.ui.core.Sizing.content(padding);
-				case FILL -> io.wispforest.owo.ui.core.Sizing.fill(percent);
-			};
+	public Sizing getHorizontalSizing() {
+		if (!(horizontalSizing instanceof Sizing sizing)) {
+			return new Sizing().setType(SizingType.CONTENT);
+		} else {
+			return sizing;
 		}
 	}
 
-	public static class Component {
-		@SerializedName("horizontal_sizing") public Sizing horizontalSizing;
-		@SerializedName("vertical_sizing") public Sizing verticalSizing;
-		public Sizing sizing;
-		public ComponentType type;
+	public Sizing getVerticalSizing() {
+		if (!(verticalSizing instanceof Sizing sizing)) {
+			return new Sizing().setType(SizingType.CONTENT);
+		} else {
+			return sizing;
+		}
+	}
+
+	public io.wispforest.owo.ui.core.Component getLayout() {
+		return switch (type) {
+			case GRID -> Containers.grid(getHorizontalSizing().getSizing(), getVerticalSizing().getSizing(), rows, columns);
+			case FLOW_PANEL -> switch (orientation) {
+					case VERTICAL -> Containers.verticalFlow(getHorizontalSizing().getSizing(), getVerticalSizing().getSizing());
+					case HORIZONTAL -> Containers.horizontalFlow(getHorizontalSizing().getSizing(), getVerticalSizing().getSizing());
+			};
+		};
+	}
+
+	public static class Surface {
+		public SurfaceType type;
+
 		public Identifier texture;
-		public Identifier textureAtlas;
-		public Text text;
-		public int width;
-		public int height;
-		public int u;
-		public int v;
 		public int textureWidth;
 		public int textureHeight;
-		public int regionWidth;
-		public int regionHeight;
-		public ButtonWidget.PressAction onPress;
-		public String textBoxText;
-		public NbtCompound nbt;
-		public Identifier entityType;
-		public Identifier item;
-		public int count = 1;
-		public double minSliderValue, maxSliderValue;
 
-		public io.wispforest.owo.ui.core.Component getComponent() {
+		public String flatColor;
+
+		public String outlineColor;
+
+		public String topLeftColor;
+		public String topRightColor;
+		public String bottomRightColor;
+		public String bottomLeftColor;
+
+		public io.wispforest.owo.ui.core.Surface getSurface() {
 			return switch (type) {
-				case TEXTURED_BUTTON -> Components.texturedButton(texture, text, width, height, u, v, onPress);
-				case TEXTURED_BUTTON_CUSTOM_TEXTURE_SIZE -> Components.texturedButton(texture, text, width, height, u, v, textureWidth, textureHeight, onPress);
-				case BUTTON -> Components.button(text, onPress);
-				case BUTTON_CUSTOM_SIZE -> Components.button(text, width, height, onPress);
-				case TEXT_BOX -> Components.textBox(horizontalSizing.getSizing());
-				case TEXT_BOX_WITH_TEXT -> Components.textBox(horizontalSizing.getSizing(), textBoxText);
-				case ENTITY -> Components.entity(sizing.getSizing(), Registry.ENTITY_TYPE.get(entityType), nbt);
-				case ITEM -> Components.item(new ItemStack(Registry.ITEM.get(item), count));
-				case LABEL -> Components.label(text);
-				case CHECKBOX -> Components.checkbox(text);
-				case SLIDER -> Components.slider(horizontalSizing.getSizing());
-				case DISCRETE_SLIDER -> Components.discreteSlider(horizontalSizing.getSizing(), minSliderValue, maxSliderValue);
-				case SPRITE -> Components.sprite(new SpriteIdentifier(textureAtlas, texture));
-				case TEXTURE -> Components.texture(texture, u, v, regionWidth, regionHeight);
-				case TEXTURE_CUSTOM_SIZE -> Components.texture(texture, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
-				case BOX -> Components.box(horizontalSizing.getSizing(), verticalSizing.getSizing());
-				case DROPDOWN -> Components.dropdown(horizontalSizing.getSizing());
+				case PANEL -> io.wispforest.owo.ui.core.Surface.PANEL;
+				case DARK_PANEL -> io.wispforest.owo.ui.core.Surface.DARK_PANEL;
+				case VANILLA_TRANSLUCENT -> io.wispforest.owo.ui.core.Surface.VANILLA_TRANSLUCENT;
+				case OPTIONS_BACKGROUND -> io.wispforest.owo.ui.core.Surface.OPTIONS_BACKGROUND;
+				case BLANK -> io.wispforest.owo.ui.core.Surface.BLANK;
+				case FLAT -> io.wispforest.owo.ui.core.Surface.flat(parseColor(flatColor));
+				case OUTLINE -> io.wispforest.owo.ui.core.Surface.outline(parseColor(outlineColor));
+				case TILED -> io.wispforest.owo.ui.core.Surface.tiled(texture, textureWidth, textureHeight);
+				case GRADIENT -> (matrices, component) -> Drawer.drawGradientRect(matrices,
+						component.x(), component.y(), component.width(), component.height(),
+						parseColor(topLeftColor), parseColor(topRightColor),
+						parseColor(bottomRightColor), parseColor(bottomLeftColor)
+				);
 			};
+		}
+
+		public int parseColor(String color) {
+			String color1 = !color.isEmpty() && !color.isBlank()
+					? flatColor.replace("#", "").replace("0x", "")
+					: "ffffff";
+			return Integer.parseInt(color1, 16);
+		}
+
+		public enum SurfaceType {
+			PANEL,
+			DARK_PANEL,
+			VANILLA_TRANSLUCENT,
+			OPTIONS_BACKGROUND,
+			BLANK,
+			FLAT,
+			OUTLINE,
+			TILED,
+			GRADIENT
 		}
 	}
 }

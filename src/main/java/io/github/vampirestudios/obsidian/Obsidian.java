@@ -24,15 +24,10 @@ import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
-import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.Containers;
-import io.wispforest.owo.ui.core.*;
-import io.wispforest.owo.ui.hud.Hud;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -48,7 +43,6 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -62,7 +56,6 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import squeek.appleskin.api.AppleSkinApi;
 
 import java.io.FileNotFoundException;
-import java.util.function.Supplier;
 
 public class Obsidian implements ModInitializer, AppleSkinApi {
 
@@ -241,46 +234,9 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "condensed_item_entries", new CondensedItemEntries());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "gui", new Guis());
-
-		final var hudComponentId = new Identifier("uwu", "test_element");
-		final Supplier<Component> hudComponent = () ->
-				Containers.verticalFlow(Sizing.content(), Sizing.content())
-						.child(Components.item(net.minecraft.item.Items.DIAMOND.getDefaultStack()).margins(Insets.of(3)))
-						.child(Components.label(Text.literal("epic stuff in hud")))
-						.child(Components.entity(Sizing.fixed(50), EntityType.ALLAY, null))
-						.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
-						.padding(Insets.of(5))
-						.surface(Surface.DARK_PANEL)
-						.margins(Insets.of(5))
-						.positioning(Positioning.relative(100, 65));
-
-		final var hudComponentId2 = new Identifier("uwu", "test_element2");
-		final Supplier<Component> hudComponent2 = () ->
-				Containers.verticalFlow(Sizing.content(), Sizing.content())
-						.child(Components.item(net.minecraft.item.Items.DIAMOND.getDefaultStack()).margins(Insets.of(3)))
-						.child(Components.label(Text.literal("epic stuff in hud")))
-						.child(Components.entity(Sizing.fixed(50), EntityType.ALLAY, null))
-						.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
-						.padding(Insets.of(5))
-						.surface(Surface.DARK_PANEL)
-						.margins(Insets.of(5))
-						.positioning(Positioning.relative(100, 25));
-
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while (binding.wasPressed()) {
-				if (Hud.hasComponent(hudComponentId)) {
-					Hud.remove(hudComponentId);
-				} else {
-					Hud.add(hudComponentId, hudComponent);
-				}
-				if (Hud.hasComponent(hudComponentId2)) {
-					Hud.remove(hudComponentId2);
-				} else {
-					Hud.add(hudComponentId2, hudComponent2);
-				}
-			}
-		});
+			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "guis", new Guis());
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT)
+			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "huds", new Huds());
 
 		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information.isConvertible) {
