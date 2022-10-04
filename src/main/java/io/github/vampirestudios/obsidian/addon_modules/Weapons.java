@@ -11,10 +11,12 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.MeleeWeaponImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.minecraft.item.Item;
+import net.minecraft.util.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -26,12 +28,17 @@ public class Weapons implements AddonModule {
             if (weapon == null) return;
             Item.Settings settings = new Item.Settings().group(weapon.information.getItemGroup())
                     .maxCount(weapon.information.maxStackSize).rarity(weapon.information.rarity);
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    weapon.information.name.id,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (weapon.information.name.id == null) weapon.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
             CustomToolMaterial material = new CustomToolMaterial(weapon.material);
             RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings),
-                    weapon.information.name.id);
-            register(ContentRegistries.WEAPONS, "weapon", weapon.information.name.id, weapon);
+                    identifier);
+            register(ContentRegistries.WEAPONS, "weapon", identifier, weapon);
         } catch (Exception e) {
-            failedRegistering("weapon", weapon.information.name.id.toString(), e);
+            failedRegistering("weapon", file.getName(), e);
         }
     }
 

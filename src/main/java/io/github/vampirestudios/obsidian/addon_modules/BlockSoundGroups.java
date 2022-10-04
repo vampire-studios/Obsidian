@@ -14,6 +14,7 @@ import net.minecraft.util.registry.Registry;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -24,14 +25,21 @@ public class BlockSoundGroups implements AddonModule {
 		CustomSoundGroup customSoundGroup = Obsidian.GSON.fromJson(new FileReader(file), CustomSoundGroup.class);
 		try {
 			if (customSoundGroup == null) return;
+
+			Identifier identifier = Objects.requireNonNullElseGet(
+					customSoundGroup.id,
+					() -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+			);
+			if (customSoundGroup.id == null) customSoundGroup.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
 			registerSoundIfNotFound(customSoundGroup.break_sound);
 			registerSoundIfNotFound(customSoundGroup.step_sound);
 			registerSoundIfNotFound(customSoundGroup.place_sound);
 			registerSoundIfNotFound(customSoundGroup.hit_sound);
 			registerSoundIfNotFound(customSoundGroup.fall_sound);
-			register(ContentRegistries.BLOCK_SOUND_GROUPS, "sound_groups", customSoundGroup.id, customSoundGroup);
+			register(ContentRegistries.BLOCK_SOUND_GROUPS, "sound_groups", identifier, customSoundGroup);
 		} catch (Exception e) {
-			failedRegistering("sound_groups", customSoundGroup.id.toString(), e);
+			failedRegistering("sound_groups", file.getName(), e);
 		}
 	}
 

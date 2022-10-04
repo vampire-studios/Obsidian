@@ -1,14 +1,10 @@
 {
   "name": {
-    "id": "tutorial:aggressive_reaction",
     "translated": {
       "en_us": "Aggressive Reaction"
     }
   },
-  "slots": [
-    "mainhand",
-    "offhand"
-  ],
+  "slots": ["mainhand", "offhand"],
   "target": "WEAPON",
   "rarity": "VERY_RARE"
 }

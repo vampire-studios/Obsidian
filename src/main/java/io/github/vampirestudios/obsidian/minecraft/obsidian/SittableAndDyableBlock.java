@@ -21,17 +21,17 @@ public class SittableAndDyableBlock extends DyeableBlock {
 
     @Override
     public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.translucent ? 0.2F : 1.0F;
+        return !block.information.properties.translucent ? 0.2F : 1.0F;
     }
 
     @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.translucent;
+        return !block.information.properties.translucent;
     }
 
     @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.translucent;
+        return block.information.properties.translucent;
     }
 
     @Override

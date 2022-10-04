@@ -8,11 +8,13 @@ import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.StatusEffectImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -23,11 +25,16 @@ public class StatusEffects implements AddonModule {
         try {
             if (statusEffect == null) return;
             String color1 = statusEffect.color.replace("#", "").replace("0x", "");
-            Registry.register(Registry.STATUS_EFFECT, statusEffect.name.id, new StatusEffectImpl(statusEffect,
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    statusEffect.name.id,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (statusEffect.name.id == null) statusEffect.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            Registry.register(Registry.STATUS_EFFECT, identifier, new StatusEffectImpl(statusEffect,
                     Integer.parseInt(color1, 16)));
-            register(ContentRegistries.STATUS_EFFECTS, "status_effect", statusEffect.name.id, statusEffect);
+            register(ContentRegistries.STATUS_EFFECTS, "status_effect", identifier, statusEffect);
         } catch (Exception e) {
-            failedRegistering("status_effect", statusEffect.name.id.toString(), e);
+            failedRegistering("status_effect", file.getName(), e);
         }
     }
 

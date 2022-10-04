@@ -19,13 +19,11 @@
 
   "environment": "*",
   "entrypoints": {
-    "init": [
-      "io.github.vampirestudios.obsidian.Obsidian",
-      "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitializer"
+    "main": [
+      "io.github.vampirestudios.obsidian.Obsidian"
     ],
-    "init_client": [
-      "io.github.vampirestudios.obsidian.client.ClientInit",
-      "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesClientInitializer"
+    "client": [
+      "io.github.vampirestudios.obsidian.client.ClientInit"
     ],
     "mealapi": [
       "io.github.vampirestudios.obsidian.Obsidian"
@@ -63,6 +61,21 @@
         "org/quiltmc/qsl/key/binds/api/ChordedKeyBind",
         "org/quiltmc/qsl/key/binds/api/QuiltKeyBind",
         "org/quiltmc/qsl/key/binds/api/ToggleableKeyBind"
+      ],
+      "net/minecraft/class_1887": [
+        "io/github/vampirestudios/obsidian/api/IForgeEnchantment"
+      ],
+      "net/minecraft/class_1890": [
+        "io/github/vampirestudios/obsidian/api/IForgeEnchantmentHelper"
+      ],
+      "net/minecraft/class_1792": [
+        "io/github/vampirestudios/obsidian/api/IForgeItem"
+      ],
+      "net/minecraft/class_1799": [
+        "io/github/vampirestudios/obsidian/api/IForgeItemStack"
+      ],
+      "net/minecraft/class_1761": [
+        "io/github/vampirestudios/obsidian/api/IForgeItemGroup"
       ]
     }
   }

@@ -1,16 +1,12 @@
 package io.github.vampirestudios.obsidian.api.bedrock;
 
-import net.minecraft.resource.pack.ResourcePack;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import net.minecraft.util.Identifier;
 
-public interface IBedrockAddon {
+public interface IBedrockAddon extends IAddonPack {
 
     ManifestFile getManifestFile();
 
     Identifier getIdentifier();
-
-    String getDisplayName();
-
-    ResourcePack getVirtualResourcePack();
 
 }

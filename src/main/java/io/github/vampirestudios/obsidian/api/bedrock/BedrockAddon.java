@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.bedrock;
 
+import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
 import net.minecraft.resource.pack.DirectoryResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ZipResourcePack;
@@ -31,7 +32,17 @@ public class BedrockAddon implements IBedrockAddon {
     }
 
     @Override
-    public String getDisplayName() {
+    public File getFile() {
+        return file;
+    }
+
+    @Override
+    public BaseAddonInfo getConfigPackInfo() {
+        return null;
+    }
+
+    @Override
+    public String getObsidianDisplayName() {
         return manifestFile.header.name;
     }
 

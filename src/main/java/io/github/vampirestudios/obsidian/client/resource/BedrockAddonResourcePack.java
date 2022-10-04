@@ -21,7 +21,7 @@ public class BedrockAddonResourcePack implements ResourcePack {
     protected ResourcePack[] virtualPacks;
 
     public BedrockAddonResourcePack() {
-        virtualPacks = BedrockAddonLoader.BEDROCK_ADDONS.stream().map(IBedrockAddon::getVirtualResourcePack).filter(Objects::nonNull).toArray(ResourcePack[]::new);
+        virtualPacks = BedrockAddonLoader.BEDROCK_ADDONS.keySet().stream().map(IBedrockAddon::getVirtualResourcePack).filter(Objects::nonNull).toArray(ResourcePack[]::new);
     }
 
     @Override

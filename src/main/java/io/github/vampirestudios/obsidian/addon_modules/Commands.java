@@ -14,6 +14,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 
@@ -22,10 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -71,10 +69,17 @@ public class Commands implements AddonModule {
         try {
             if (command == null || json.isEmpty()) return;
             String finalJson = json;
+
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    command.name,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (command.name == null) command.name = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
             CommandRegistrationCallback.EVENT.register((dispatcher, context, environment) -> parseNodes(dispatcher, context, environment, finalJson));
-            register(ContentRegistries.COMMANDS, "command", command.name, command);
+            register(ContentRegistries.COMMANDS, "command", identifier, command);
         } catch (Exception e) {
-            failedRegistering("command", command.name.toString(), e);
+            failedRegistering("command", file.getName(), e);
         }
     }
 

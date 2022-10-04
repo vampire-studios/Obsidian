@@ -8,6 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerBiomeType
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.object.builder.v1.villager.VillagerTypeHelper;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.village.VillagerType;
@@ -16,6 +17,7 @@ import net.minecraft.world.biome.Biome;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -25,14 +27,19 @@ public class VillagerBiomeTypes implements AddonModule {
         VillagerBiomeType villagerBiomeType = Obsidian.GSON.fromJson(new FileReader(file), VillagerBiomeType.class);
         try {
             if (villagerBiomeType == null) return;
-            VillagerType villagerType = VillagerTypeHelper.register(villagerBiomeType.name.id);
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    villagerBiomeType.name.id,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (villagerBiomeType.name.id == null) villagerBiomeType.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            VillagerType villagerType = VillagerTypeHelper.register(identifier);
             villagerBiomeType.getBiomes().forEach(biome -> {
                 RegistryKey<Biome> registryKey = BuiltinRegistries.BIOME.getKey(biome).get();
                 VillagerTypeHelper.addVillagerTypeToBiome(registryKey, villagerType);
             });
-            register(ContentRegistries.VILLAGER_BIOME_TYPES, "villager_biome_type", villagerBiomeType.name.id, villagerBiomeType);
+            register(ContentRegistries.VILLAGER_BIOME_TYPES, "villager_biome_type", identifier, villagerBiomeType);
         } catch (Exception e) {
-            failedRegistering("villager_biome_type", villagerBiomeType.name.id.toString(), e);
+            failedRegistering("villager_biome_type", file.getName(), e);
         }
     }
 

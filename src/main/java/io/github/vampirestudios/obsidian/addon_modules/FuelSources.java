@@ -17,7 +17,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class FuelSources implements AddonModule {
 

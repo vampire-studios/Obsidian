@@ -10,7 +10,7 @@
         },
         "item_group": "minecraft:tools",
         "rarity": "rare",
-        "max_count": 1
+        "max_stack_size": 1
     },
     "attackDamage": 1,
     "attackSpeed": -2.8,

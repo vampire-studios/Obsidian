@@ -59,7 +59,7 @@ public record RegistryHelper(String modId) {
 
 	public void registerLeavesBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Settings settings) {
 		Block block = registerBlockWithoutItem(new LeavesBlock(AbstractBlock.Settings.of(Material.LEAVES).strength(0.2F)
-				.ticksRandomly().sounds(block2.information.getBlockSoundGroup()).nonOpaque()
+				.ticksRandomly().sounds(block2.information.properties.getBlockSoundGroup()).nonOpaque()
 				.allowsSpawning((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
 				.suffocates((state, world, pos) -> false)
 				.blockVision((state, world, pos) -> false)), name);

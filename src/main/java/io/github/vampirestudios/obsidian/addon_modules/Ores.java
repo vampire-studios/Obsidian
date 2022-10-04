@@ -4,15 +4,15 @@ import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomBlockItem;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
 import net.minecraft.util.Holder;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
@@ -26,6 +26,7 @@ import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.util.ConfiguredFeatureUtil;
 import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
+import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
 
 import java.io.File;
@@ -41,17 +42,48 @@ public class Ores implements AddonModule {
 		io.github.vampirestudios.obsidian.api.obsidian.block.Block block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 		try {
 			if (block == null) return;
-			FabricBlockSettings blockSettings = FabricBlockSettings.of(block.information.getMaterial())
-					.drops(block.information.name.id)
-					.sounds(block.information.getBlockSoundGroup())
-					.strength(block.information.hardness, block.information.resistance)
-					.slipperiness(block.information.slipperiness).emissiveLighting((state, world, pos) -> block.information.is_emissive)
-					.nonOpaque();
-			net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlockWithoutItem(new BlockImpl(block, blockSettings), block.information.name.id.getPath());
-			REGISTRY_HELPER.registerItem(new CustomBlockItem(block, blockImpl, new Item.Settings().group(block.information.getItemGroup())), block.information.name.id.getPath());
+
+			Identifier blockId;
+			if (block.description != null) {
+				blockId = block.description.identifier;
+			} else {
+				if (block.information.name.id != null) {
+					blockId = block.information.name.id;
+				} else {
+					blockId = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+					block.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+				}
+			}
+
+			QuiltBlockSettings blockSettings;
+
+			if (block.information.parentBlock != null) {
+				blockSettings = QuiltBlockSettings.copyOf(Registry.BLOCK.get(block.information.parentBlock));
+			} else {
+				blockSettings = QuiltBlockSettings.of(block.information.properties.getMaterial());
+			}
+
+			blockSettings.hardness(block.information.properties.hardness).resistance(block.information.properties.resistance)
+					.sounds(block.information.properties.getBlockSoundGroup())
+					.slipperiness(block.information.properties.slipperiness)
+					.emissiveLighting((state, world, pos) -> block.information.properties.is_emissive)
+					.luminance(block.information.properties.luminance)
+					.velocityMultiplier(block.information.properties.velocity_modifier)
+					.jumpVelocityMultiplier(block.information.properties.jump_velocity_modifier);
+			if (block.information.properties.randomTicks) blockSettings.ticksRandomly();
+			if (block.information.properties.instant_break) blockSettings.breakInstantly();
+			if (!block.information.properties.collidable) blockSettings.noCollision();
+			if (block.information.properties.translucent) blockSettings.nonOpaque();
+			if (block.information.properties.dynamic_boundaries) blockSettings.dynamicBounds();
+
+			Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
+			if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
+			if (block.information.properties.fireproof) settings.fireproof();
+
+			net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
 
 			if (block.ore_information != null) {
-				RegistryKey<PlacedFeature> key = RegistryKey.of(Registry.PLACED_FEATURE_KEY, Utils.appendToPath(block.information.name.id, "_ore_feature"));
+				RegistryKey<PlacedFeature> key = RegistryKey.of(Registry.PLACED_FEATURE_KEY, Utils.appendToPath(blockId, "_ore_feature"));
 				Holder<ConfiguredFeature<OreFeatureConfig, ?>> feature = ConfiguredFeatureUtil.register(key.getValue().toString(),
 						Feature.ORE,
 						new OreFeatureConfig(
@@ -72,8 +104,8 @@ public class Ores implements AddonModule {
 						key);
 			}
 
-			/*Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {
-				serverResourcePackBuilder.addLootTable(block.information.name.id, lootTableBuilder -> {
+			/*Obsidian.registerDataPack(Utils.appendToPath(blockId, "_data"), serverResourcePackBuilder -> {
+				serverResourcePackBuilder.addLootTable(blockId, lootTableBuilder -> {
 					lootTableBuilder.type(new Identifier("block"));
 					lootTableBuilder.pool(pool -> {
 						pool.rolls(1);
@@ -133,9 +165,9 @@ public class Ores implements AddonModule {
 				new BlockInitThread(block);
 			}
 
-			register(ContentRegistries.ORES, "ore", block.information.name.id, block);
+			register(ContentRegistries.ORES, "ore", blockId, block);
 		} catch (Exception e) {
-			failedRegistering("ore", block.information.name.id.toString(), e);
+			failedRegistering("ore", file.getName(), e);
 		}
 	}
 

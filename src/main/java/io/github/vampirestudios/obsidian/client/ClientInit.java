@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.artifice.api.builder.assets.TranslationBuilder;
+import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
@@ -8,18 +9,18 @@ import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.client.renderer.SeatEntityRenderer;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,9 @@ public class ClientInit implements ClientModInitializer {
     }
 
     @Override
-    public void onInitializeClient(ModContainer mod) {
+    public void onInitializeClient() {
+        Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getGameVersion().getName()));
+
         EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
         for (var addonPack : ObsidianAddonLoader.OBSIDIAN_ADDONS) {
             var name = addonPack.getObsidianDisplayName();
@@ -75,8 +78,9 @@ public class ClientInit implements ClientModInitializer {
                 ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) iAddonPack.getConfigPackInfo();
                 id = addonInfo.addon.id;
             }
-            Obsidian.registerAssetPack(new Identifier(id, id), clientResourcePackBuilder -> {
+            Obsidian.registerAssetPack(new Identifier(id, "resource_pack"), clientResourcePackBuilder -> {
                 if (!iAddonPack.getConfigPackInfo().hasAssets) {
+                    System.out.println("Testing");
                     clientResourcePackBuilder.setDisplayName(Text.literal(name));
                     clientResourcePackBuilder.shouldOverwrite();
 				    for (Entity entity : ContentRegistries.ENTITIES)

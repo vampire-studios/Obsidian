@@ -7,10 +7,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.util.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -21,9 +23,14 @@ public class ArmorMaterials implements AddonModule {
 		ArmorMaterial armorMaterial = Obsidian.GSON.fromJson(new FileReader(file), ArmorMaterial.class);
 		try {
 			if (armorMaterial == null) return;
-			register(ContentRegistries.ARMOR_MATERIALS, "armor_material", armorMaterial.name, armorMaterial);
+			Identifier identifier = Objects.requireNonNullElseGet(
+					armorMaterial.name,
+					() -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+			);
+			if (armorMaterial.name == null) armorMaterial.name = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+			register(ContentRegistries.ARMOR_MATERIALS, "armor_material", identifier, armorMaterial);
 		} catch (Exception e) {
-			failedRegistering("armor_material", armorMaterial.name, e);
+			failedRegistering("armor_material", file.getName(), e);
 		}
 	}
 

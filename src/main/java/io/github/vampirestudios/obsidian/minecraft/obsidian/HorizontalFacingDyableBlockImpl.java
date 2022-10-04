@@ -64,8 +64,8 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl i
 
     @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
-        if (block.display != null && block.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : block.display.lore) {
+        if (block.rendering != null && block.lore.length != 0) {
+            for (TooltipInformation tooltipInformation : block.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

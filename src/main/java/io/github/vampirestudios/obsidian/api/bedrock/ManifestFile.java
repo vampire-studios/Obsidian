@@ -10,25 +10,21 @@ public class ManifestFile extends BaseInformation {
     public Metadata metadata;
 
     public static class Header {
-
-        public int[] base_game_version;
+        public int[] base_game_version = new int[3];
         public String description;
         public boolean lock_template_options;
-        public int[] min_engine_version;
+        public int[] min_engine_version = new int[3];
         public String name;
         public Identifier identifier;
         public String uuid;
-        public int[] version;
-
+        public int[] version = new int[3];
     }
 
     public static class Modules {
-
         public String type;
-        public String description;
         public String uuid;
+        public String description;
         public int[] version;
-
     }
 
     public static class Dependencies {

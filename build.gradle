@@ -127,18 +127,18 @@ dependencies {
 	}
 
 	implementation group: 'com.amihaiemil.web', name: 'eo-yaml', version: '6.0.1'
-	implementation 'com.electronwill.night-config:core:3.6.5'
-	implementation 'com.electronwill.night-config:toml:3.6.5'
-	implementation 'com.electronwill.night-config:yaml:3.6.5'
-	implementation 'com.electronwill.night-config:hocon:3.6.5'
+	implementation 'com.electronwill.night-config:core:3.6.6'
+	implementation 'com.electronwill.night-config:toml:3.6.6'
+	implementation 'com.electronwill.night-config:yaml:3.6.6'
+	implementation 'com.electronwill.night-config:hocon:3.6.6'
 
-	implementation 'org.snakeyaml:snakeyaml-engine:2.3'
+	implementation 'org.snakeyaml:snakeyaml-engine:2.4'
 	implementation 'org.hjson:hjson:3.0.0'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.13.3'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.13.3'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.4'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.13.4'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.13.4'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
 }
 
 processResources {

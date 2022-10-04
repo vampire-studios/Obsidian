@@ -33,3 +33,14 @@ accessible field net/minecraft/item/AxeItem STRIPPED_BLOCKS Ljava/util/Map;
 
 accessible field net/minecraft/block/FireBlock burnChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
 accessible field net/minecraft/block/FireBlock spreadChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
+
+accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
+extendable class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
+
+accessible field net/minecraft/client/gui/widget/option/KeyBindListWidget$KeyBindEntry bindButton Lnet/minecraft/client/gui/widget/ButtonWidget;
+mutable field net/minecraft/client/gui/widget/option/KeyBindListWidget$KeyBindEntry bindButton Lnet/minecraft/client/gui/widget/ButtonWidget;
+
+accessible field net/minecraft/client/gui/widget/option/KeyBindListWidget parent Lnet/minecraft/client/gui/screen/option/KeyBindsScreen;
+mutable field net/minecraft/client/gui/widget/option/KeyBindListWidget parent Lnet/minecraft/client/gui/screen/option/KeyBindsScreen;
+
+accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen TEXTURE Lnet/minecraft/util/Identifier;

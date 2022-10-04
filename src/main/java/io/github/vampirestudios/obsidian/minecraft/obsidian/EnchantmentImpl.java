@@ -19,7 +19,7 @@ public class EnchantmentImpl extends Enchantment {
 
     @Override
     public int getMinLevel() {
-        return enchantment.minimum_level;
+        return enchantment.minimumLevel;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class EnchantmentImpl extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return enchantment.maximum_level;
+        return enchantment.maximumLevel;
     }
 
     @Override
@@ -39,8 +39,8 @@ public class EnchantmentImpl extends Enchantment {
 
     @Override
     public int getProtectionAmount(int level, DamageSource source) {
-        if (enchantment.protection_amounts != null) {
-            for (ProtectionAmount protectionAmount : enchantment.protection_amounts) {
+        if (enchantment.protectionAmounts != null) {
+            for (ProtectionAmount protectionAmount : enchantment.protectionAmounts) {
                 if (protectionAmount.level == level && protectionAmount.getDamageSource() == source) {
                     return protectionAmount.protection_amount;
                 }
@@ -51,8 +51,8 @@ public class EnchantmentImpl extends Enchantment {
 
     @Override
     public float getAttackDamage(int level, EntityGroup group) {
-        if (enchantment.attack_damages != null) {
-            for (AttackDamage attackDamage : enchantment.attack_damages) {
+        if (enchantment.attackDamages != null) {
+            for (AttackDamage attackDamage : enchantment.attackDamages) {
                 if (attackDamage.level == level && attackDamage.getEntityGroup() == group) {
                     return attackDamage.attack_damage;
                 }
@@ -68,40 +68,49 @@ public class EnchantmentImpl extends Enchantment {
 
     @Override
     public boolean isCursed() {
-        return enchantment.cursed;
+        return enchantment.curse;
+    }
+
+    @Override
+    public boolean isAllowedOnBooks() {
+        return enchantment.allowOnBooks;
+    }
+
+    @Override
+    public boolean isAvailableForEnchantedBookOffer() {
+        return enchantment.tradeable;
+    }
+
+    @Override
+    public boolean isAvailableForRandomSelection() {
+        return enchantment.discoverable;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack) {
+        return super.canApplyAtEnchantingTable(stack);
     }
 
     @Override
     protected boolean canAccept(Enchantment other) {
-        if (enchantment.accepted_enchantments != null) {
+        if (enchantment.blacklistedEnchantments != null) {
             Identifier enchantmentId = Registry.ENCHANTMENT.getId(other);
-            for (Identifier identifier : enchantment.accepted_enchantments) {
-                if(identifier.equals(enchantmentId)) return true;
+            for (Identifier identifier : enchantment.blacklistedEnchantments) {
+                if(identifier.equals(enchantmentId)) return false;
             }
-            return false;
         }
         return true;
     }
 
     @Override
     public boolean isAcceptableItem(ItemStack stack) {
-        if (enchantment.accepted_items != null) {
+        if (enchantment.acceptedItems != null) {
             Identifier itemId = Registry.ITEM.getId(stack.getItem());
-            for (Identifier identifier : enchantment.accepted_items) {
+            for (Identifier identifier : enchantment.acceptedItems) {
                 if(identifier.equals(itemId)) return true;
             }
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean isAvailableForEnchantedBookOffer() {
-        return enchantment.available_for_enchanted_book_offer;
-    }
-
-    @Override
-    public boolean isAvailableForRandomSelection() {
-        return enchantment.available_for_random_selection;
     }
 }

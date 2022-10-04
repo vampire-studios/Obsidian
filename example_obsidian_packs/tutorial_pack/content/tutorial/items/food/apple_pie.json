@@ -11,7 +11,7 @@
     },
     "item_group": "minecraft:food",
     "rarity": "common",
-    "max_count": 16,
+    "max_stack_size": 16,
     "use_duration": 32
   },
   "food_information": {

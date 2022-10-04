@@ -8,11 +8,13 @@ import io.github.vampirestudios.obsidian.api.obsidian.Painting;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -22,10 +24,17 @@ public class Paintings implements AddonModule {
         Painting painting = Obsidian.GSON.fromJson(new FileReader(file), Painting.class);
         try {
             if (painting == null) return;
-            Registry.register(Registry.PAINTING_VARIANT, painting.name, new PaintingVariant(painting.width, painting.height));
-            register(ContentRegistries.PAINTINGS, "painting", painting.name, painting);
+
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    painting.name,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (painting.name == null) painting.name = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
+            Registry.register(Registry.PAINTING_VARIANT, identifier, new PaintingVariant(painting.width, painting.height));
+            register(ContentRegistries.PAINTINGS, "painting", identifier, painting);
         } catch (Exception e) {
-            failedRegistering("painting", painting.name.toString(), e);
+            failedRegistering("painting", file.getName(), e);
         }
     }
 

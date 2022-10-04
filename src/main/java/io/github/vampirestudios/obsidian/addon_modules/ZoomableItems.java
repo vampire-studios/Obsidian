@@ -11,11 +11,13 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.SpyglassItemImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.minecraft.item.Item;
+import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -26,22 +28,29 @@ public class ZoomableItems implements AddonModule {
         ZoomableItem zoomableItem = Obsidian.GSON.fromJson(new FileReader(file), ZoomableItem.class);
         try {
             if (zoomableItem == null) return;
+
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    zoomableItem.information.name.id,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (zoomableItem.information.name.id == null) zoomableItem.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
             ZoomInstance zoomInstance = new ZoomInstance(
-                    zoomableItem.information.name.id, zoomableItem.zoomInformation.zoom_length,
+                    identifier, zoomableItem.zoomInformation.zoom_length,
                     zoomableItem.zoomInformation.getTransitionMode(), zoomableItem.zoomInformation.getMouseModifier(),
                     zoomableItem.zoomInformation.getZoomOverlay()
             );
             Item item = RegistryUtils.registerItem(new SpyglassItemImpl(zoomableItem, new Item.Settings().group(zoomableItem.information.getItemGroup())
-                    .maxCount(1)), zoomableItem.information.name.id);
+                    .maxCount(1)), identifier);
             ClientTickEvents.END.register(client -> {
                 // This is how you get a spyglass-like zoom working
                 if (client.player == null) return;
                 zoomInstance.setZoom(client.options.getPerspective().isFirstPerson() && (client.player.isUsingItem() &&
                         client.player.getActiveItem().isOf(item)));
             });
-            register(ContentRegistries.ZOOMABLE_ITEMS, "zoomable_item", zoomableItem.information.name.id, zoomableItem);
+            register(ContentRegistries.ZOOMABLE_ITEMS, "zoomable_item", identifier, zoomableItem);
         } catch (Exception e) {
-            failedRegistering("zoomable_item", zoomableItem.information.name.id.toString(), e);
+            failedRegistering("zoomable_item", file.getName(), e);
         }
     }
 

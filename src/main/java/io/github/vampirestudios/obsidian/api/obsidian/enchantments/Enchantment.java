@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.enchantments;
 
+import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
@@ -9,38 +10,42 @@ public class Enchantment {
 
     public NameInformation name;
     public String[] slots;
-    public Identifier[] accepted_items;
-    public Identifier[] accepted_enchantments;
-    public String target;
-    public String rarity;
-    public int minimum_level = 1;
-    public int maximum_level = 2;
-    public int minimum_power;
-    public int maximum_power;
-    public ProtectionAmount[] protection_amounts;
-    public AttackDamage[] attack_damages;
+    @SerializedName("accepted_items") public Identifier[] acceptedItems;
+    @SerializedName("blacklisted_enchantments") public Identifier[] blacklistedEnchantments;
+    public String target = "breakable";
+    public String rarity = "common";
+    @SerializedName("minimum_level") public int minimumLevel = 1;
+    @SerializedName("maximum_level") public int maximumLevel = 1;
+    @SerializedName("base_cost") public int baseCost = 1;
+    @SerializedName("per_level_cost") public int perLevelCost = 10;
+    @SerializedName("random_cost") public int randomCost = 5;
+    @SerializedName("minimum_power") public int minimumPower;
+    @SerializedName("maximum_power") public int maximumPower;
+    @SerializedName("protection_amounts") public ProtectionAmount[] protectionAmounts;
+    @SerializedName("attack_damages") public AttackDamage[] attackDamages;
     public boolean treasure = false;
-    public boolean cursed = false;
-    public boolean available_for_enchanted_book_offer = true;
-    public boolean available_for_random_selection = true;
+    public boolean curse = false;
+    public boolean tradeable = true;
+    public boolean discoverable = true;
+    @SerializedName("allow_on_books") public boolean allowOnBooks = true;
 
     public net.minecraft.enchantment.Enchantment.Rarity getRarity() {
         return net.minecraft.enchantment.Enchantment.Rarity.valueOf(rarity);
     }
 
     public int getMinimumPower(int level) {
-        if (minimum_power != 0) {
-            return minimum_power;
+        if (minimumPower != 0) {
+            return minimumPower;
         } else {
-            return 1 + level * 10;
+            return baseCost + level * perLevelCost;
         }
     }
 
     public int getMaximumPower(int level) {
-        if (maximum_power != 0) {
-            return maximum_power;
+        if (maximumPower != 0) {
+            return maximumPower;
         } else {
-            return this.getMinimumPower(level) + 5;
+            return getMinimumPower(level) + randomCost;
         }
     }
 

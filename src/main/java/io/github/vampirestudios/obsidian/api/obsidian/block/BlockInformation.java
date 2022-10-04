@@ -1,8 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import blue.endless.jankson.annotation.SerializedName;
-import com.electronwill.nightconfig.core.conversion.Path;
-import io.github.vampirestudios.obsidian.api.obsidian.BlockProperty;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
@@ -14,12 +12,14 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BlockInformation {
 
-    public String material = "minecraft:stone";
+    public Identifier parentBlock;
+
     public boolean has_advanced_bounding_box = false;
     public float[] bounding_box = new float[] {0, 0, 0, 16, 16, 16};
     public float[] north_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
@@ -28,197 +28,31 @@ public class BlockInformation {
     public float[] west_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
     public float[] up_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
     public float[] down_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public Identifier custom_material;
+
     public NameInformation name;
-    public Identifier item_group;
-    public boolean collidable = true;
-    @SerializedName("sound_group")
-    @com.google.gson.annotations.SerializedName("sound_group")
-    @Path("sound_group")
-    public String legacySoundGroup = "minecraft:stone";
-    @SerializedName("new_sound_group")
-    @com.google.gson.annotations.SerializedName("new_sound_group")
-    @Path("new_sound_group")
-    public Identifier soundGroup;
-    public float hardness = 3.0F;
-    public float resistance = 3.0F;
-    public boolean randomTicks = false;
-    public boolean instant_break = false;
-    public float slipperiness = 0.6F;
-    public Identifier drop = new Identifier("minecraft:stone");
-    public float velocity_modifier = 1.0F;
-    public float jump_velocity_modifier = 1.0F;
-    public boolean has_glint = false;
-    public boolean is_enchantable = false;
-    public int enchantability = 5;
-    public int luminance = 0;
-    public boolean is_emissive = false;
-    public boolean fireproof = false;
-    public boolean translucent = false;
-    public boolean dynamic_boundaries = false;
+
+    @SerializedName("item_group")
+    @com.google.gson.annotations.SerializedName("item_group")
+    public Identifier creativeTab;
+
     public int cake_slices = 1;
+
     public boolean has_item = true;
-    public Map<String, BlockProperty> properties;
+
     public String renderLayer = "SOLID";
+
     public List<String> removedTooltipSections;
+
     public boolean requires_mod_loaded = false;
     public String required_mod_id;
+
     public boolean wearable = false;
     public Identifier wearableModel;
 
-    public CustomBlockState blockstate;
+    public BlockProperties properties;
 
     public List<ItemStack.TooltipSection> getRemovedTooltipSections() {
         return List.of();
-    }
-
-    public BlockSoundGroup getBlockSoundGroup() {
-        if (soundGroup != null) {
-            CustomSoundGroup soundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(this.soundGroup);
-            SoundEvent breakSound = Registry.SOUND_EVENT.get(soundGroup.break_sound);
-            SoundEvent stepSound = Registry.SOUND_EVENT.get(soundGroup.step_sound);
-            SoundEvent placeSound = Registry.SOUND_EVENT.get(soundGroup.place_sound);
-            SoundEvent hitSound = Registry.SOUND_EVENT.get(soundGroup.hit_sound);
-            SoundEvent fallSound = Registry.SOUND_EVENT.get(soundGroup.fall_sound);
-            return new BlockSoundGroup(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
-        } else {
-            return switch (legacySoundGroup) {
-                case "minecraft:wood" -> BlockSoundGroup.WOOD;
-                case "minecraft:gravel" -> BlockSoundGroup.GRAVEL;
-                case "minecraft:grass" -> BlockSoundGroup.GRASS;
-                case "minecraft:lily_pad" -> BlockSoundGroup.LILY_PAD;
-                case "minecraft:metal" -> BlockSoundGroup.METAL;
-                case "minecraft:glass" -> BlockSoundGroup.GLASS;
-                case "minecraft:wool" -> BlockSoundGroup.WOOL;
-                case "minecraft:sand" -> BlockSoundGroup.SAND;
-                case "minecraft:snow" -> BlockSoundGroup.SNOW;
-                case "minecraft:powder_snow" -> BlockSoundGroup.POWDER_SNOW;
-                case "minecraft:ladder" -> BlockSoundGroup.LADDER;
-                case "minecraft:anvil" -> BlockSoundGroup.ANVIL;
-                case "minecraft:slime" -> BlockSoundGroup.SLIME;
-                case "minecraft:honey" -> BlockSoundGroup.HONEY;
-                case "minecraft:wet_grass" -> BlockSoundGroup.WET_GRASS;
-                case "minecraft:coral" -> BlockSoundGroup.CORAL;
-                case "minecraft:bamboo" -> BlockSoundGroup.BAMBOO;
-                case "minecraft:bamboo_sapling" -> BlockSoundGroup.BAMBOO_SAPLING;
-                case "minecraft:scaffolding" -> BlockSoundGroup.SCAFFOLDING;
-                case "minecraft:sweet_berry_bush" -> BlockSoundGroup.SWEET_BERRY_BUSH;
-                case "minecraft:crop" -> BlockSoundGroup.CROP;
-                case "minecraft:stem" -> BlockSoundGroup.STEM;
-                case "minecraft:vine" -> BlockSoundGroup.VINE;
-                case "minecraft:nether_wart" -> BlockSoundGroup.NETHER_WART;
-                case "minecraft:lantern" -> BlockSoundGroup.LANTERN;
-                case "minecraft:nether_stem" -> BlockSoundGroup.NETHER_STEM;
-                case "minecraft:nylium" -> BlockSoundGroup.NYLIUM;
-                case "minecraft:fungus" -> BlockSoundGroup.FUNGUS;
-                case "minecraft:roots" -> BlockSoundGroup.ROOTS;
-                case "minecraft:shroomlight" -> BlockSoundGroup.SHROOMLIGHT;
-                case "minecraft:weeping_vines" -> BlockSoundGroup.WEEPING_VINES;
-                case "minecraft:weeping_vines_low_pitch" -> BlockSoundGroup.WEEPING_VINES_LOW_PITCH;
-                case "minecraft:soul_sand" -> BlockSoundGroup.SOUL_SAND;
-                case "minecraft:soul_soil" -> BlockSoundGroup.SOUL_SOIL;
-                case "minecraft:basalt" -> BlockSoundGroup.BASALT;
-                case "minecraft:wart_block" -> BlockSoundGroup.WART_BLOCK;
-                case "minecraft:netherrack" -> BlockSoundGroup.NETHERRACK;
-                case "minecraft:nether_bricks" -> BlockSoundGroup.NETHER_BRICKS;
-                case "minecraft:nether_sprouts" -> BlockSoundGroup.NETHER_SPROUTS;
-                case "minecraft:nether_ore" -> BlockSoundGroup.NETHER_ORE;
-                case "minecraft:bone" -> BlockSoundGroup.BONE;
-                case "minecraft:netherite" -> BlockSoundGroup.NETHERITE;
-                case "minecraft:ancient_debris" -> BlockSoundGroup.ANCIENT_DEBRIS;
-                case "minecraft:lodestone" -> BlockSoundGroup.LODESTONE;
-                case "minecraft:chain" -> BlockSoundGroup.CHAIN;
-                case "minecraft:nether_gold_ore" -> BlockSoundGroup.NETHER_GOLD_ORE;
-                case "minecraft:gilded_blackstone" -> BlockSoundGroup.GILDED_BLACKSTONE;
-                case "minecraft:candle" -> BlockSoundGroup.CANDLE;
-                case "minecraft:amethyst_block" -> BlockSoundGroup.AMETHYST_BLOCK;
-                case "minecraft:amethyst_cluster" -> BlockSoundGroup.AMETHYST_CLUSTER;
-                case "minecraft:small_amethyst_bud" -> BlockSoundGroup.SMALL_AMETHYST_BUD;
-                case "minecraft:medium_amethyst_bud" -> BlockSoundGroup.MEDIUM_AMETHYST_BUD;
-                case "minecraft:large_amethyst_bud" -> BlockSoundGroup.LARGE_AMETHYST_BUD;
-                case "minecraft:tuff" -> BlockSoundGroup.TUFF;
-                case "minecraft:calcite" -> BlockSoundGroup.CALCITE;
-                case "minecraft:dripstone_block" -> BlockSoundGroup.DRIPSTONE_BLOCK;
-                case "minecraft:pointed_dripstone" -> BlockSoundGroup.POINTED_DRIPSTONE;
-                case "minecraft:copper" -> BlockSoundGroup.COPPER;
-                case "minecraft:cave_vines" -> BlockSoundGroup.CAVE_VINES;
-                case "minecraft:spore_blossom" -> BlockSoundGroup.SPORE_BLOSSOM;
-                case "minecraft:azalea" -> BlockSoundGroup.AZALEA;
-                case "minecraft:flowering_azalea" -> BlockSoundGroup.FLOWERING_AZALEA;
-                case "minecraft:moss_carpet" -> BlockSoundGroup.MOSS_CARPET;
-                case "minecraft:moss_block" -> BlockSoundGroup.MOSS_BLOCK;
-                case "minecraft:big_dripleaf" -> BlockSoundGroup.BIG_DRIPLEAF;
-                case "minecraft:small_dripleaf" -> BlockSoundGroup.SMALL_DRIPLEAF;
-                case "minecraft:rooted_dirt" -> BlockSoundGroup.ROOTED_DIRT;
-                case "minecraft:hanging_roots" -> BlockSoundGroup.HANGING_ROOTS;
-                case "minecraft:azalea_leaves" -> BlockSoundGroup.AZALEA_LEAVES;
-                case "minecraft:sculk_sensor" -> BlockSoundGroup.SCULK_SENSOR;
-                case "minecraft:glow_lichen" -> BlockSoundGroup.GLOW_LICHEN;
-                case "minecraft:deepslate" -> BlockSoundGroup.DEEPSLATE;
-                case "minecraft:deepslate_bricks" -> BlockSoundGroup.DEEPSLATE_BRICKS;
-                case "minecraft:deepslate_tiles" -> BlockSoundGroup.DEEPSLATE_TILES;
-                case "minecraft:polished_deepslate" -> BlockSoundGroup.POLISHED_DEEPSLATE;
-                default -> BlockSoundGroup.STONE;
-            };
-        }
-    }
-
-    public Material getMaterial() {
-        if (custom_material != null) {
-            CustomMaterial customMaterial = ContentRegistries.BLOCK_MATERIALS.get(custom_material);
-            return new Material(customMaterial.getMapColor(), customMaterial.liquid, customMaterial.solid,
-                    customMaterial.allows_movement, customMaterial.allows_light, customMaterial.burnable,
-                    customMaterial.replaceable, customMaterial.getPistonBehavior());
-        } else {
-            return switch (material) {
-                case "minecraft:structure_void" -> Material.STRUCTURE_VOID;
-                case "minecraft:portal" -> Material.PORTAL;
-                case "minecraft:carpet" -> Material.CARPET;
-                case "minecraft:plant" -> Material.PLANT;
-                case "minecraft:underwater_plant" -> Material.UNDERWATER_PLANT;
-                case "minecraft:replaceable_plant" -> Material.REPLACEABLE_PLANT;
-                case "minecraft:nether_shoots" -> Material.NETHER_SHOOTS;
-                case "minecraft:replaceable_underwater_plant" -> Material.REPLACEABLE_UNDERWATER_PLANT;
-                case "minecraft:water" -> Material.WATER;
-                case "minecraft:bubble_column" -> Material.BUBBLE_COLUMN;
-                case "minecraft:lava" -> Material.LAVA;
-                case "minecraft:snow_layer" -> Material.SNOW_LAYER;
-                case "minecraft:fire" -> Material.FIRE;
-                case "minecraft:decoration" -> Material.DECORATION;
-                case "minecraft:cobweb" -> Material.COBWEB;
-                case "minecraft:redstone_lamp" -> Material.REDSTONE_LAMP;
-                case "minecraft:organic_product" -> Material.ORGANIC_PRODUCT;
-                case "minecraft:soil" -> Material.SOIL;
-                case "minecraft:solid_organic" -> Material.SOLID_ORGANIC;
-                case "minecraft:dense_ice" -> Material.DENSE_ICE;
-                case "minecraft:aggregate" -> Material.AGGREGATE;
-                case "minecraft:sponge" -> Material.SPONGE;
-                case "minecraft:shulker_box" -> Material.SHULKER_BOX;
-                case "minecraft:wood" -> Material.WOOD;
-                case "minecraft:nether_wood" -> Material.NETHER_WOOD;
-                case "minecraft:bamboo_sapling" -> Material.BAMBOO_SAPLING;
-                case "minecraft:bamboo" -> Material.BAMBOO;
-                case "minecraft:wool" -> Material.WOOL;
-                case "minecraft:tnt" -> Material.TNT;
-                case "minecraft:leaves" -> Material.LEAVES;
-                case "minecraft:glass" -> Material.GLASS;
-                case "minecraft:ice" -> Material.ICE;
-                case "minecraft:cactus" -> Material.CACTUS;
-                case "minecraft:stone" -> Material.STONE;
-                case "minecraft:metal" -> Material.METAL;
-                case "minecraft:snow_block" -> Material.SNOW_BLOCK;
-                case "minecraft:repair_station" -> Material.REPAIR_STATION;
-                case "minecraft:barrier" -> Material.BARRIER;
-                case "minecraft:piston" -> Material.PISTON;
-                case "minecraft:moss_block" -> Material.MOSS_BLOCK;
-                case "minecraft:gourd" -> Material.GOURD;
-                case "minecraft:egg" -> Material.EGG;
-                case "minecraft:cake" -> Material.CAKE;
-                case "minecraft:amethyst" -> Material.AMETHYST;
-                case "minecraft:powdered_snow" -> Material.POWDER_SNOW;
-                default -> Material.AIR;
-            };
-        }
     }
 
     /*public RenderLayer getRenderLayer() {
@@ -240,7 +74,213 @@ public class BlockInformation {
     }*/
 
     public ItemGroup getItemGroup() {
-        return Registries.ITEM_GROUP_REGISTRY.get(item_group);
+        return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
+    }
+
+    public static class BlockProperties {
+        private static final Map<Identifier, Material> vanillaMaterials = new HashMap<>();
+        private static final Map<Identifier, BlockSoundGroup> vanillaSoundGroups = new HashMap<>();
+
+        static {
+            vanillaMaterials.put(new Identifier("structure_void"), Material.STRUCTURE_VOID);
+            vanillaMaterials.put(new Identifier("portal"), Material.PORTAL);
+            vanillaMaterials.put(new Identifier("carpet"), Material.CARPET);
+            vanillaMaterials.put(new Identifier("plant"), Material.PLANT);
+            vanillaMaterials.put(new Identifier("underwater_plant"), Material.UNDERWATER_PLANT);
+            vanillaMaterials.put(new Identifier("replaceable_plant"), Material.REPLACEABLE_PLANT);
+            vanillaMaterials.put(new Identifier("nether_shoots"), Material.NETHER_SHOOTS);
+            vanillaMaterials.put(new Identifier("replaceable_underwater_plant"), Material.REPLACEABLE_UNDERWATER_PLANT);
+            vanillaMaterials.put(new Identifier("water"), Material.WATER);
+            vanillaMaterials.put(new Identifier("bubble_column"), Material.BUBBLE_COLUMN);
+            vanillaMaterials.put(new Identifier("lava"), Material.LAVA);
+            vanillaMaterials.put(new Identifier("snow_layer"), Material.SNOW_LAYER);
+            vanillaMaterials.put(new Identifier("fire"), Material.FIRE);
+            vanillaMaterials.put(new Identifier("decoration"), Material.DECORATION);
+            vanillaMaterials.put(new Identifier("cobweb"), Material.COBWEB);
+            vanillaMaterials.put(new Identifier("redstone_lamp"), Material.REDSTONE_LAMP);
+            vanillaMaterials.put(new Identifier("organic_product"), Material.ORGANIC_PRODUCT);
+            vanillaMaterials.put(new Identifier("soil"), Material.SOIL);
+            vanillaMaterials.put(new Identifier("solid_organic"), Material.SOLID_ORGANIC);
+            vanillaMaterials.put(new Identifier("dense_ice"), Material.DENSE_ICE);
+            vanillaMaterials.put(new Identifier("aggregate"), Material.AGGREGATE);
+            vanillaMaterials.put(new Identifier("sponge"), Material.SPONGE);
+            vanillaMaterials.put(new Identifier("shulker_box"), Material.SHULKER_BOX);
+            vanillaMaterials.put(new Identifier("wood"), Material.WOOD);
+            vanillaMaterials.put(new Identifier("nether_wood"), Material.NETHER_WOOD);
+            vanillaMaterials.put(new Identifier("bamboo_sapling"), Material.BAMBOO_SAPLING);
+            vanillaMaterials.put(new Identifier("bamboo"), Material.BAMBOO);
+            vanillaMaterials.put(new Identifier("wool"), Material.WOOL);
+            vanillaMaterials.put(new Identifier("tnt"), Material.TNT);
+            vanillaMaterials.put(new Identifier("leaves"), Material.LEAVES);
+            vanillaMaterials.put(new Identifier("glass"), Material.GLASS);
+            vanillaMaterials.put(new Identifier("ice"), Material.ICE);
+            vanillaMaterials.put(new Identifier("cactus"), Material.CACTUS);
+            vanillaMaterials.put(new Identifier("stone"), Material.STONE);
+            vanillaMaterials.put(new Identifier("metal"), Material.METAL);
+            vanillaMaterials.put(new Identifier("snow_block"), Material.SNOW_BLOCK);
+            vanillaMaterials.put(new Identifier("repair_station"), Material.REPAIR_STATION);
+            vanillaMaterials.put(new Identifier("barrier"), Material.BARRIER);
+            vanillaMaterials.put(new Identifier("piston"), Material.PISTON);
+            vanillaMaterials.put(new Identifier("moss_block"), Material.MOSS_BLOCK);
+            vanillaMaterials.put(new Identifier("gourd"), Material.GOURD);
+            vanillaMaterials.put(new Identifier("egg"), Material.EGG);
+            vanillaMaterials.put(new Identifier("cake"), Material.CAKE);
+            vanillaMaterials.put(new Identifier("amethyst"), Material.AMETHYST);
+            vanillaMaterials.put(new Identifier("powder_snow"), Material.POWDER_SNOW);
+            vanillaMaterials.put(new Identifier("air"), Material.AIR);
+            vanillaMaterials.put(new Identifier("sculk"), Material.SCULK);
+            vanillaMaterials.put(new Identifier("frog_spawn"), Material.FROG_SPAWN);
+            vanillaMaterials.put(new Identifier("froglight"), Material.FROGLIGHT);
+
+            vanillaSoundGroups.put(new Identifier("wood"), BlockSoundGroup.WOOD);
+            vanillaSoundGroups.put(new Identifier("gravel"), BlockSoundGroup.GRAVEL);
+            vanillaSoundGroups.put(new Identifier("grass"), BlockSoundGroup.GRASS);
+            vanillaSoundGroups.put(new Identifier("lily_pad"), BlockSoundGroup.LILY_PAD);
+            vanillaSoundGroups.put(new Identifier("metal"), BlockSoundGroup.METAL);
+            vanillaSoundGroups.put(new Identifier("glass"), BlockSoundGroup.GLASS);
+            vanillaSoundGroups.put(new Identifier("wool"), BlockSoundGroup.WOOL);
+            vanillaSoundGroups.put(new Identifier("sand"), BlockSoundGroup.SAND);
+            vanillaSoundGroups.put(new Identifier("snow"), BlockSoundGroup.SNOW);
+            vanillaSoundGroups.put(new Identifier("powder_snow"), BlockSoundGroup.POWDER_SNOW);
+            vanillaSoundGroups.put(new Identifier("ladder"), BlockSoundGroup.LADDER);
+            vanillaSoundGroups.put(new Identifier("anvil"), BlockSoundGroup.ANVIL);
+            vanillaSoundGroups.put(new Identifier("snow"), BlockSoundGroup.SNOW);
+            vanillaSoundGroups.put(new Identifier("slime"), BlockSoundGroup.SLIME);
+            vanillaSoundGroups.put(new Identifier("honey"), BlockSoundGroup.HONEY);
+            vanillaSoundGroups.put(new Identifier("wet_grass"), BlockSoundGroup.WET_GRASS);
+            vanillaSoundGroups.put(new Identifier("coral"), BlockSoundGroup.CORAL);
+            vanillaSoundGroups.put(new Identifier("bamboo"), BlockSoundGroup.BAMBOO);
+            vanillaSoundGroups.put(new Identifier("bamboo_sapling"), BlockSoundGroup.BAMBOO_SAPLING);
+            vanillaSoundGroups.put(new Identifier("scaffolding"), BlockSoundGroup.SCAFFOLDING);
+            vanillaSoundGroups.put(new Identifier("sweet_berry_bush"), BlockSoundGroup.SWEET_BERRY_BUSH);
+            vanillaSoundGroups.put(new Identifier("crop"), BlockSoundGroup.CROP);
+            vanillaSoundGroups.put(new Identifier("stem"), BlockSoundGroup.STEM);
+            vanillaSoundGroups.put(new Identifier("vine"), BlockSoundGroup.VINE);
+            vanillaSoundGroups.put(new Identifier("nether_wart"), BlockSoundGroup.NETHER_WART);
+            vanillaSoundGroups.put(new Identifier("lantern"), BlockSoundGroup.LANTERN);
+            vanillaSoundGroups.put(new Identifier("nether_stem"), BlockSoundGroup.NETHER_STEM);
+            vanillaSoundGroups.put(new Identifier("nylium"), BlockSoundGroup.NYLIUM);
+            vanillaSoundGroups.put(new Identifier("fungus"), BlockSoundGroup.FUNGUS);
+            vanillaSoundGroups.put(new Identifier("roots"), BlockSoundGroup.ROOTS);
+            vanillaSoundGroups.put(new Identifier("shroomlight"), BlockSoundGroup.SHROOMLIGHT);
+            vanillaSoundGroups.put(new Identifier("weeping_vines"), BlockSoundGroup.WEEPING_VINES);
+            vanillaSoundGroups.put(new Identifier("weeping_vines_low_pitch"), BlockSoundGroup.WEEPING_VINES_LOW_PITCH);
+            vanillaSoundGroups.put(new Identifier("soul_sand"), BlockSoundGroup.SOUL_SAND);
+            vanillaSoundGroups.put(new Identifier("soul_soil"), BlockSoundGroup.SOUL_SOIL);
+            vanillaSoundGroups.put(new Identifier("basalt"), BlockSoundGroup.BASALT);
+            vanillaSoundGroups.put(new Identifier("wart_block"), BlockSoundGroup.WART_BLOCK);
+            vanillaSoundGroups.put(new Identifier("netherrack"), BlockSoundGroup.NETHERRACK);
+            vanillaSoundGroups.put(new Identifier("nether_bricks"), BlockSoundGroup.NETHER_BRICKS);
+            vanillaSoundGroups.put(new Identifier("nether_sprouts"), BlockSoundGroup.NETHER_SPROUTS);
+            vanillaSoundGroups.put(new Identifier("nether_ore"), BlockSoundGroup.NETHER_ORE);
+            vanillaSoundGroups.put(new Identifier("bone"), BlockSoundGroup.BONE);
+            vanillaSoundGroups.put(new Identifier("netherite"), BlockSoundGroup.NETHERITE);
+            vanillaSoundGroups.put(new Identifier("ancient_debris"), BlockSoundGroup.ANCIENT_DEBRIS);
+            vanillaSoundGroups.put(new Identifier("lodestone"), BlockSoundGroup.LODESTONE);
+            vanillaSoundGroups.put(new Identifier("chain"), BlockSoundGroup.CHAIN);
+            vanillaSoundGroups.put(new Identifier("nether_gold_ore"), BlockSoundGroup.NETHER_GOLD_ORE);
+            vanillaSoundGroups.put(new Identifier("gilded_blackstone"), BlockSoundGroup.GILDED_BLACKSTONE);
+            vanillaSoundGroups.put(new Identifier("candle"), BlockSoundGroup.CANDLE);
+            vanillaSoundGroups.put(new Identifier("amethyst_block"), BlockSoundGroup.AMETHYST_BLOCK);
+            vanillaSoundGroups.put(new Identifier("amethyst_cluster"), BlockSoundGroup.AMETHYST_CLUSTER);
+            vanillaSoundGroups.put(new Identifier("small_amethyst_bud"), BlockSoundGroup.SMALL_AMETHYST_BUD);
+            vanillaSoundGroups.put(new Identifier("medium_amethyst_bud"), BlockSoundGroup.MEDIUM_AMETHYST_BUD);
+            vanillaSoundGroups.put(new Identifier("large_amethyst_bud"), BlockSoundGroup.LARGE_AMETHYST_BUD);
+            vanillaSoundGroups.put(new Identifier("tuff"), BlockSoundGroup.TUFF);
+            vanillaSoundGroups.put(new Identifier("calcite"), BlockSoundGroup.CALCITE);
+            vanillaSoundGroups.put(new Identifier("dripstone_block"), BlockSoundGroup.DRIPSTONE_BLOCK);
+            vanillaSoundGroups.put(new Identifier("pointed_dripstone"), BlockSoundGroup.POINTED_DRIPSTONE);
+            vanillaSoundGroups.put(new Identifier("copper"), BlockSoundGroup.COPPER);
+            vanillaSoundGroups.put(new Identifier("cave_vines"), BlockSoundGroup.CAVE_VINES);
+            vanillaSoundGroups.put(new Identifier("spore_blossom"), BlockSoundGroup.SPORE_BLOSSOM);
+            vanillaSoundGroups.put(new Identifier("azalea"), BlockSoundGroup.AZALEA);
+            vanillaSoundGroups.put(new Identifier("flowering_azalea"), BlockSoundGroup.FLOWERING_AZALEA);
+            vanillaSoundGroups.put(new Identifier("moss_carpet"), BlockSoundGroup.MOSS_CARPET);
+            vanillaSoundGroups.put(new Identifier("moss_block"), BlockSoundGroup.MOSS_BLOCK);
+            vanillaSoundGroups.put(new Identifier("big_dripleaf"), BlockSoundGroup.BIG_DRIPLEAF);
+            vanillaSoundGroups.put(new Identifier("small_dripleaf"), BlockSoundGroup.SMALL_DRIPLEAF);
+            vanillaSoundGroups.put(new Identifier("rooted_dirt"), BlockSoundGroup.ROOTED_DIRT);
+            vanillaSoundGroups.put(new Identifier("hanging_roots"), BlockSoundGroup.HANGING_ROOTS);
+            vanillaSoundGroups.put(new Identifier("azalea_leaves"), BlockSoundGroup.AZALEA_LEAVES);
+            vanillaSoundGroups.put(new Identifier("sculk_sensor"), BlockSoundGroup.SCULK_SENSOR);
+            vanillaSoundGroups.put(new Identifier("sculk_catalyst"), BlockSoundGroup.SCULK_CATALYST);
+            vanillaSoundGroups.put(new Identifier("sculk"), BlockSoundGroup.SCULK);
+            vanillaSoundGroups.put(new Identifier("sculk_vein"), BlockSoundGroup.SCULK_VEIN);
+            vanillaSoundGroups.put(new Identifier("sculk_shrieker"), BlockSoundGroup.SCULK_SHRIEKER);
+            vanillaSoundGroups.put(new Identifier("glow_lichen"), BlockSoundGroup.GLOW_LICHEN);
+            vanillaSoundGroups.put(new Identifier("deepslate"), BlockSoundGroup.DEEPSLATE);
+            vanillaSoundGroups.put(new Identifier("deepslate_bricks"), BlockSoundGroup.DEEPSLATE_BRICKS);
+            vanillaSoundGroups.put(new Identifier("deepslate_tiles"), BlockSoundGroup.DEEPSLATE_TILES);
+            vanillaSoundGroups.put(new Identifier("polished_deepslate"), BlockSoundGroup.POLISHED_DEEPSLATE);
+            vanillaSoundGroups.put(new Identifier("froglight"), BlockSoundGroup.FROGLIGHT);
+            vanillaSoundGroups.put(new Identifier("frogspawn"), BlockSoundGroup.FROGSPAWN);
+            vanillaSoundGroups.put(new Identifier("mangrove_roots"), BlockSoundGroup.MANGROVE_ROOTS);
+            vanillaSoundGroups.put(new Identifier("muddy_mangrove_roots"), BlockSoundGroup.MUDDY_MANGROVE_ROOTS);
+            vanillaSoundGroups.put(new Identifier("mud"), BlockSoundGroup.MUD);
+            vanillaSoundGroups.put(new Identifier("mud_bricks"), BlockSoundGroup.MUD_BRICKS);
+            vanillaSoundGroups.put(new Identifier("packed_mud"), BlockSoundGroup.PACKED_MUD);
+            vanillaSoundGroups.put(new Identifier("stone"), BlockSoundGroup.STONE);
+        }
+
+        @SerializedName("material") public Identifier vanillaMaterial = new Identifier("air");
+        public Identifier customMaterial;
+
+        @SerializedName("sound_group")
+        @com.google.gson.annotations.SerializedName("sound_group")
+        public Identifier vanillaSoundGroup = new Identifier("stone");
+
+        @SerializedName("new_sound_group")
+        @com.google.gson.annotations.SerializedName("new_sound_group")
+        public Identifier customSoundGroup;
+
+        public boolean collidable = true;
+        public float hardness = 3.0F;
+        public float resistance = 3.0F;
+        public boolean randomTicks = false;
+        public boolean instant_break = false;
+        public float slipperiness = 0.6F;
+        public Identifier drop = new Identifier("stone");
+        public float velocity_modifier = 1.0F;
+        public float jump_velocity_modifier = 1.0F;
+        public boolean has_glint = false;
+        public boolean is_enchantable = false;
+        public int enchantability = 5;
+        public int luminance = 0;
+        public boolean is_emissive = false;
+        public boolean fireproof = false;
+        public boolean translucent = false;
+        public boolean dynamic_boundaries = false;
+        @SerializedName("max_stack_size") public int maxStackSize = 64;
+        @SerializedName("max_durability") public int maxDurability = 0;
+        public String rarity = "common";
+        public String equipmentSlot = "";
+
+        public BlockSoundGroup getBlockSoundGroup() {
+            if (customSoundGroup != null) {
+                CustomSoundGroup soundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(this.customSoundGroup);
+                assert soundGroup != null;
+                SoundEvent breakSound = Registry.SOUND_EVENT.get(soundGroup.break_sound);
+                SoundEvent stepSound = Registry.SOUND_EVENT.get(soundGroup.step_sound);
+                SoundEvent placeSound = Registry.SOUND_EVENT.get(soundGroup.place_sound);
+                SoundEvent hitSound = Registry.SOUND_EVENT.get(soundGroup.hit_sound);
+                SoundEvent fallSound = Registry.SOUND_EVENT.get(soundGroup.fall_sound);
+                return new BlockSoundGroup(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
+            } else {
+                return vanillaSoundGroups.get(vanillaSoundGroup);
+            }
+        }
+
+        public Material getMaterial() {
+            if (customMaterial != null) {
+                CustomMaterial customMaterial = ContentRegistries.BLOCK_MATERIALS.get(this.customMaterial);
+                assert customMaterial != null;
+                return new Material(customMaterial.getMapColor(), customMaterial.liquid, customMaterial.solid,
+                        customMaterial.allows_movement, customMaterial.allows_light, customMaterial.burnable,
+                        customMaterial.replaceable, customMaterial.getPistonBehavior());
+            } else {
+                return vanillaMaterials.get(vanillaMaterial);
+            }
+        }
     }
 
 }

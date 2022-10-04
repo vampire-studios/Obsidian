@@ -9,10 +9,12 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.minecraft.item.Item;
+import net.minecraft.util.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -25,19 +27,24 @@ public class Tools implements AddonModule {
             CustomToolMaterial material = new CustomToolMaterial(tool.material);
             Item.Settings settings = new Item.Settings().group(tool.information.getItemGroup())
                     .maxCount(tool.information.maxStackSize).rarity(tool.information.rarity);
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    tool.information.name.id,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (tool.information.name.id == null) tool.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
             switch (tool.toolType) {
                 case "pickaxe" -> RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
+                        identifier);
                 case "shovel" -> RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
+                        identifier);
                 case "hoe" -> RegistryUtils.registerItem(new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
+                        identifier);
                 case "axe" -> RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        tool.information.name.id);
+                        identifier);
             }
-            register(ContentRegistries.TOOLS, "tool", tool.information.name.id, tool);
+            register(ContentRegistries.TOOLS, "tool", identifier, tool);
         } catch (Exception e) {
-            failedRegistering("tool", tool.information.name.id.toString(), e);
+            failedRegistering("tool", file.getName(), e);
         }
     }
 

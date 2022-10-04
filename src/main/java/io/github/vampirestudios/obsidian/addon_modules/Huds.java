@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
+import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -12,6 +13,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.GridLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.hud.Hud;
+import net.minecraft.util.JsonHelper;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 import java.io.File;
@@ -26,24 +28,25 @@ public class Huds implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         HUD hud = Obsidian.GSON.fromJson(new FileReader(file), HUD.class);
+        JsonObject jsonObject = JsonHelper.deserialize(new FileReader(file));
         try {
             if (hud == null) return;
 
-            Component component = hud.getLayout();
-            if (hud.type == LayoutType.FLOW_PANEL) {
+            Component component = hud.getLayout(jsonObject);
+            if (hud.getLayoutType() == LayoutType.FLOW_PANEL) {
                 FlowLayout layout = (FlowLayout) component;
-                hud.components.forEach(component1 -> layout.child(component1.getComponent()));
+                hud.components.forEach(component1 -> layout.child(component1.getComponent(jsonObject)));
                 layout.alignment(hud.horizontalAlignment, hud.verticalAlignment);
-            } else if (hud.type == LayoutType.GRID) {
+            } else if (hud.getLayoutType() == LayoutType.GRID) {
                 GridLayout layout = (GridLayout) component;
                 hud.components.forEach(component1 -> layout.child(
-                        component1.getComponent(),
+                        component1.getComponent(jsonObject),
                         component1.row, component1.column
                 ));
                 layout.alignment(hud.horizontalAlignment, hud.verticalAlignment);
                 layout.padding(hud.padding.getInsets());
                 layout.margins(hud.margin.getInsets());
-                layout.surface(hud.surface.getSurface());
+                layout.surface(hud.surface(jsonObject).getSurface());
             }
 
             final Supplier<Component> hudComponent = () -> component;
@@ -56,6 +59,7 @@ public class Huds implements AddonModule {
                     }
                 }
             });
+
             register(ContentRegistries.HUDS, "hud", hud.id, hud);
         } catch (Exception e) {
             failedRegistering("hud", hud.id.toString(), e);

@@ -13,9 +13,11 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableArmorItemImpl
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
 import net.minecraft.item.Item;
+import net.minecraft.util.Identifier;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -27,6 +29,13 @@ public class Armor implements AddonModule {
 
         try {
             if (armor == null) return;
+
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    armor.information.name.id,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (armor.information.name.id == null) armor.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
             ArmorMaterial material;
             if (armor.armorMaterial != null && ContentRegistries.ARMOR_MATERIALS.containsId(armor.armorMaterial)) {
                 material = ContentRegistries.ARMOR_MATERIALS.get(armor.armorMaterial);
@@ -41,11 +50,11 @@ public class Armor implements AddonModule {
                     .rarity(armor.information.rarity);
             if (armor.information.dyeable) item = new DyeableArmorItemImpl(customArmorMaterial, armor, settings);
             else item = new ArmorItemImpl(customArmorMaterial, armor, settings);
-            RegistryUtils.registerItem(item, armor.information.name.id);
+            RegistryUtils.registerItem(item, identifier);
 
-            register(ContentRegistries.ARMORS, "armor", armor.information.name.id, armor);
+            register(ContentRegistries.ARMORS, "armor", identifier, armor);
         } catch (Exception e) {
-            failedRegistering("armor", armor.information.name.id.toString(), e);
+            failedRegistering("armor", file.getName(), e);
         }
     }
 

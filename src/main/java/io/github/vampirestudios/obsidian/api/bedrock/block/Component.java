@@ -35,18 +35,12 @@ public class Component {
     public boolean breakonpush;
 
     public static class Flammable {
-
-        @SerializedName("minecraft:flame_odds")
         public int flame_odds;
-
-        @SerializedName("minecraft:burn_odds")
         public int burn_odds;
     }
 
     public static class EntityCollision {
-
         public float[] origin = new float[]{-8.0F, 0.0F, -8.0F};
         public float[] size = new float[]{16.0F, 16.0F, 16.0F};
-
     }
 }

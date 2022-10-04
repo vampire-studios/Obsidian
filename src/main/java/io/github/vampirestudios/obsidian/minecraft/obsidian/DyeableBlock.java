@@ -40,17 +40,17 @@ public class DyeableBlock extends BlockWithEntity {
 
     @Override
     public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.translucent ? 0.2F : 1.0F;
+        return !block.information.properties.translucent ? 0.2F : 1.0F;
     }
 
     @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.translucent;
+        return !block.information.properties.translucent;
     }
 
     @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.translucent;
+        return block.information.properties.translucent;
     }
 
     @Override
@@ -104,8 +104,8 @@ public class DyeableBlock extends BlockWithEntity {
 
     @Override
     public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
-        if (block.display != null && block.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : block.display.lore) {
+        if (block.rendering != null && block.lore.length != 0) {
+            for (TooltipInformation tooltipInformation : block.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

@@ -43,9 +43,9 @@ public class BlockInitThread implements Runnable {
             if (translated != null) {
                 translation(translated, blockId, "", "");
             }
-            if (block.display != null) {
-                if (block.display.lore.length != 0) {
-                    for (TooltipInformation lore : block.display.lore) {
+            if (block.lore != null) {
+                if (block.lore.length != 0) {
+                    for (TooltipInformation lore : block.lore) {
                         if (lore.text.textType.equals("translatable")) {
                             lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
                             		blockId.getNamespace(), languageId, lore.text.text, name
@@ -53,25 +53,25 @@ public class BlockInitThread implements Runnable {
                         }
                     }
                 }
-                if (block.display.blockState != null) {
+                if (block.rendering.blockState != null) {
                     if(block.block_type != null) {
                         switch (block.block_type) {
                             case FURNACE, BLAST_FURNACE, SMOKER:
                                 ArtificeGenerationHelper.generateOnOffHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
                                 break;
-                            case HORIZONTAL_FACING_BLOCK:
-                                if (block.display.blockModel != null) ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId,
-                                        block.display.blockModel.parent);
+                            case HORIZONTAL_DIRECTIONAL:
+                                if (block.rendering.blockModel != null) ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId,
+                                        block.rendering.blockModel.parent);
                                 else ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
                                 break;
-                            case ROTATABLE_BLOCK:
-                                if (block.display.blockModel != null) ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId,
-                                        block.display.blockModel.parent);
+                            case DIRECTIONAL:
+                                if (block.rendering.blockModel != null) ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId,
+                                        block.rendering.blockModel.parent);
                                 else ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId);
                                 break;
-                            case PILLAR, LOG:
-                                if (block.display.blockModel != null) ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId,
-                                        block.display.blockModel.parent);
+                            case ROTATED_PILLAR, LOG:
+                                if (block.rendering.blockModel != null) ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId,
+                                        block.rendering.blockModel.parent);
                                 else ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 break;
                             case WOODEN_DOOR, METAL_DOOR:
@@ -94,10 +94,10 @@ public class BlockInitThread implements Runnable {
                                 break;
                             case PISTON:
                                 ArtificeGenerationHelper.generatePistonBlockState(clientResourcePackBuilder, blockId,
-                                        block.display.blockState.model, block.display.blockState.stickyModel);
+                                        block.rendering.blockState.model, block.rendering.blockState.stickyModel);
                                 ArtificeGenerationHelper.generatePistonModels(clientResourcePackBuilder, blockId,
-                                        block.display.blockModel.parent, block.display.blockModel.textures,
-                                        block.display.stickyPiston.parent, block.display.stickyPiston.textures);
+                                        block.rendering.blockModel.parent, block.rendering.blockModel.textures,
+                                        block.rendering.stickyPiston.parent, block.rendering.stickyPiston.textures);
                                 break;
                             case OXIDIZING_BLOCK:
                                 for(io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
@@ -114,47 +114,47 @@ public class BlockInitThread implements Runnable {
                                 }
                                 break;
                             case LANTERN:
-                                if (block.display.blockState.model != null) {
+                                if (block.rendering.blockState.model != null) {
                                     ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId,
-                                            block.display.blockState.model, block.display.blockState.hangingModel);
+                                            block.rendering.blockState.model, block.rendering.blockState.hangingModel);
                                 } else {
                                     ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId);
                                 }
                                 break;
                             case LOOM, BLOCK:
                             default:
-                                if (block.display.blockState.model != null) {
+                                if (block.rendering.blockState.model != null) {
                                     ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
-                                            block.display.blockState.model);
+                                            block.rendering.blockState.model);
                                 } else {
-                                    if (block.display.blockModel != null) ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
-                                            block.display.blockModel.parent);
+                                    if (block.rendering.blockModel != null) ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
+                                            block.rendering.blockModel.parent);
                                     else ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
                                 }
                                 break;
                         }
                     } else {
-                        if (block.display.blockModel.parent != null) ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
-                                block.display.blockModel.parent);
+                        if (block.rendering.blockModel.parent != null) ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId,
+                                block.rendering.blockModel.parent);
                         else ArtificeGenerationHelper.generateBasicBlockState(clientResourcePackBuilder, blockId);
                     }
                 }
-                if (block.display.blockModel != null) {
-                    TextureAndModelInformation textureAndModelInformation = block.display.blockModel;
+                if (block.rendering.blockModel != null) {
+                    TextureAndModelInformation textureAndModelInformation = block.rendering.blockModel;
                     if(block.block_type != null) {
                         switch(block.block_type) {
                             case FURNACE, BLAST_FURNACE, SMOKER:
-                                TextureAndModelInformation onTextureAndModelInformation = block.display.onModel;
-                                TextureAndModelInformation offTextureAndModelInformation = block.display.offModel;
+                                TextureAndModelInformation onTextureAndModelInformation = block.rendering.onModel;
+                                TextureAndModelInformation offTextureAndModelInformation = block.rendering.offModel;
                                 ArtificeGenerationHelper.generateOnOffBlockModels(clientResourcePackBuilder, blockId,
                                         onTextureAndModelInformation.parent, onTextureAndModelInformation.textures,
                                         offTextureAndModelInformation.parent, offTextureAndModelInformation.textures);
                                 break;
                             case WOODEN_DOOR:
-                                TextureAndModelInformation topTextureAndModelInformation = block.display.doorTopModel;
-                                TextureAndModelInformation bottomTextureAndModelInformation = block.display.doorBottomModel;
-                                TextureAndModelInformation topHingeTextureAndModelInformation = block.display.doorTopHingeModel;
-                                TextureAndModelInformation bottomHingeTextureAndModelInformation = block.display.doorBottomHingeModel;
+                                TextureAndModelInformation topTextureAndModelInformation = block.rendering.doorTopModel;
+                                TextureAndModelInformation bottomTextureAndModelInformation = block.rendering.doorBottomModel;
+                                TextureAndModelInformation topHingeTextureAndModelInformation = block.rendering.doorTopHingeModel;
+                                TextureAndModelInformation bottomHingeTextureAndModelInformation = block.rendering.doorBottomHingeModel;
                                 ArtificeGenerationHelper.generateDoorBlockModels(clientResourcePackBuilder, blockId,
                                         topTextureAndModelInformation.parent, topTextureAndModelInformation.textures,
                                         topHingeTextureAndModelInformation.parent, topHingeTextureAndModelInformation.textures,
@@ -162,10 +162,10 @@ public class BlockInitThread implements Runnable {
                                         bottomHingeTextureAndModelInformation.parent, bottomHingeTextureAndModelInformation.textures);
                                 break;
                             case METAL_DOOR:
-                                TextureAndModelInformation topTextureAndModelInformation1 = block.display.doorTopModel;
-                                TextureAndModelInformation bottomTextureAndModelInformation1 = block.display.doorBottomModel;
-                                TextureAndModelInformation topHingeTextureAndModelInformation1 = block.display.doorTopHingeModel;
-                                TextureAndModelInformation bottomHingeTextureAndModelInformation1 = block.display.doorBottomHingeModel;
+                                TextureAndModelInformation topTextureAndModelInformation1 = block.rendering.doorTopModel;
+                                TextureAndModelInformation bottomTextureAndModelInformation1 = block.rendering.doorBottomModel;
+                                TextureAndModelInformation topHingeTextureAndModelInformation1 = block.rendering.doorTopHingeModel;
+                                TextureAndModelInformation bottomHingeTextureAndModelInformation1 = block.rendering.doorBottomHingeModel;
                                 ArtificeGenerationHelper.generateDoorBlockModels(clientResourcePackBuilder, blockId,
                                         topTextureAndModelInformation1.parent, topTextureAndModelInformation1.textures,
                                         bottomTextureAndModelInformation1.parent, bottomTextureAndModelInformation1.textures,
@@ -173,9 +173,9 @@ public class BlockInitThread implements Runnable {
                                         bottomHingeTextureAndModelInformation1.parent, bottomHingeTextureAndModelInformation1.textures);
                                 break;
                             case TRAPDOOR:
-                                topTextureAndModelInformation = block.display.trapdoorTopModel;
-                                TextureAndModelInformation openTextureAndModelInformation = block.display.trapdoorOpenModel;
-                                bottomTextureAndModelInformation = block.display.trapdoorBottomModel;
+                                topTextureAndModelInformation = block.rendering.trapdoorTopModel;
+                                TextureAndModelInformation openTextureAndModelInformation = block.rendering.trapdoorOpenModel;
+                                bottomTextureAndModelInformation = block.rendering.trapdoorBottomModel;
                                 ArtificeGenerationHelper.generateTrapdoorBlockModels(clientResourcePackBuilder, blockId,
                                         topTextureAndModelInformation.parent, topTextureAndModelInformation.textures,
                                         openTextureAndModelInformation.parent, openTextureAndModelInformation.textures,
@@ -202,7 +202,7 @@ public class BlockInitThread implements Runnable {
                                 }
                                 break;
                             case LANTERN:
-                                TextureAndModelInformation textureAndModelInformation2 = block.display.hangingModel;
+                                TextureAndModelInformation textureAndModelInformation2 = block.rendering.hangingModel;
                                 ArtificeGenerationHelper.generateLanternBlockModels(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures, textureAndModelInformation2.parent, textureAndModelInformation2.textures);
                                 break;
                             case BLOCK:
@@ -214,8 +214,8 @@ public class BlockInitThread implements Runnable {
                         ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                     }
                 }
-                if (block.display.model != null) {
-                    TextureAndModelInformation textureAndModelInformation = block.display.model;
+                if (block.rendering.model != null) {
+                    TextureAndModelInformation textureAndModelInformation = block.rendering.model;
                     if (block.additional_information != null) {
                         if (block.additional_information.slab) {
                             ArtificeGenerationHelper.generateSlabBlockState(clientResourcePackBuilder, Utils.appendToPath(blockId, "_slab"), blockId);
@@ -240,29 +240,29 @@ public class BlockInitThread implements Runnable {
                         switch(block.block_type) {
                             case FURNACE, BLAST_FURNACE, SMOKER:
                                 ArtificeGenerationHelper.generateOnOffHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
-                                TextureAndModelInformation onTextureAndModelInformation = block.display.onModel;
-                                TextureAndModelInformation offTextureAndModelInformation = block.display.offModel;
+                                TextureAndModelInformation onTextureAndModelInformation = block.rendering.onModel;
+                                TextureAndModelInformation offTextureAndModelInformation = block.rendering.offModel;
                                 ArtificeGenerationHelper.generateOnOffBlockModels(clientResourcePackBuilder, blockId,
                                         onTextureAndModelInformation.parent, onTextureAndModelInformation.textures,
                                         offTextureAndModelInformation.parent, offTextureAndModelInformation.textures);
                                 break;
-                            case HORIZONTAL_FACING_BLOCK:
+                            case HORIZONTAL_DIRECTIONAL:
                                 ArtificeGenerationHelper.generateHorizontalFacingBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
-                            case ROTATABLE_BLOCK:
+                            case DIRECTIONAL:
                                 ArtificeGenerationHelper.generateFacingBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
-                            case PILLAR, LOG:
+                            case ROTATED_PILLAR, LOG:
                                 ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case WOODEN_DOOR:
-                                TextureAndModelInformation topTextureAndModelInformation = block.display.doorTopModel;
-                                TextureAndModelInformation bottomTextureAndModelInformation = block.display.doorBottomModel;
-                                TextureAndModelInformation topHingeTextureAndModelInformation = block.display.doorTopHingeModel;
-                                TextureAndModelInformation bottomHingeTextureAndModelInformation = block.display.doorBottomHingeModel;
+                                TextureAndModelInformation topTextureAndModelInformation = block.rendering.doorTopModel;
+                                TextureAndModelInformation bottomTextureAndModelInformation = block.rendering.doorBottomModel;
+                                TextureAndModelInformation topHingeTextureAndModelInformation = block.rendering.doorTopHingeModel;
+                                TextureAndModelInformation bottomHingeTextureAndModelInformation = block.rendering.doorBottomHingeModel;
                                 ArtificeGenerationHelper.generateDoorBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateDoorBlockModels(clientResourcePackBuilder, blockId,
                                         topTextureAndModelInformation.parent, topTextureAndModelInformation.textures,
@@ -271,10 +271,10 @@ public class BlockInitThread implements Runnable {
                                         bottomHingeTextureAndModelInformation.parent, bottomHingeTextureAndModelInformation.textures);
                                 break;
                             case METAL_DOOR:
-                                TextureAndModelInformation topTextureAndModelInformation1 = block.display.doorTopModel;
-                                TextureAndModelInformation bottomTextureAndModelInformation1 = block.display.doorBottomModel;
-                                TextureAndModelInformation topHingeTextureAndModelInformation1 = block.display.doorTopHingeModel;
-                                TextureAndModelInformation bottomHingeTextureAndModelInformation1 = block.display.doorBottomHingeModel;
+                                TextureAndModelInformation topTextureAndModelInformation1 = block.rendering.doorTopModel;
+                                TextureAndModelInformation bottomTextureAndModelInformation1 = block.rendering.doorBottomModel;
+                                TextureAndModelInformation topHingeTextureAndModelInformation1 = block.rendering.doorTopHingeModel;
+                                TextureAndModelInformation bottomHingeTextureAndModelInformation1 = block.rendering.doorBottomHingeModel;
                                 ArtificeGenerationHelper.generateDoorBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateDoorBlockModels(clientResourcePackBuilder, blockId,
                                         topTextureAndModelInformation1.parent, topTextureAndModelInformation1.textures,
@@ -283,9 +283,9 @@ public class BlockInitThread implements Runnable {
                                         bottomHingeTextureAndModelInformation1.parent, bottomHingeTextureAndModelInformation1.textures);
                                 break;
                             case TRAPDOOR:
-                                topTextureAndModelInformation = block.display.trapdoorTopModel;
-                                TextureAndModelInformation openTextureAndModelInformation = block.display.trapdoorOpenModel;
-                                bottomTextureAndModelInformation = block.display.trapdoorBottomModel;
+                                topTextureAndModelInformation = block.rendering.trapdoorTopModel;
+                                TextureAndModelInformation openTextureAndModelInformation = block.rendering.trapdoorOpenModel;
+                                bottomTextureAndModelInformation = block.rendering.trapdoorBottomModel;
                                 ArtificeGenerationHelper.generateTrapdoorBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateTrapdoorBlockModels(clientResourcePackBuilder, blockId,
                                         topTextureAndModelInformation.parent, topTextureAndModelInformation.textures,
@@ -318,7 +318,7 @@ public class BlockInitThread implements Runnable {
                                 }
                                 break;
                             case LANTERN:
-                                TextureAndModelInformation textureAndModelInformation2 = block.display.hangingModel;
+                                TextureAndModelInformation textureAndModelInformation2 = block.rendering.hangingModel;
                                 ArtificeGenerationHelper.generateLanternBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateLanternBlockModels(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures, textureAndModelInformation2.parent, textureAndModelInformation2.textures);
                                 break;
@@ -331,8 +331,8 @@ public class BlockInitThread implements Runnable {
                     }
                     ArtificeGenerationHelper.generateBlockItemModel(clientResourcePackBuilder, blockId);
                 }
-                if (block.display.itemModel != null) {
-                    TextureAndModelInformation textureAndModelInformation = block.display.itemModel;
+                if (block.rendering.itemModel != null) {
+                    TextureAndModelInformation textureAndModelInformation = block.rendering.itemModel;
                     ModelBuilder modelBuilder = new ModelBuilder().parent(textureAndModelInformation.parent);
                     if (textureAndModelInformation.textures != null)
                         textureAndModelInformation.textures.forEach(modelBuilder::texture);

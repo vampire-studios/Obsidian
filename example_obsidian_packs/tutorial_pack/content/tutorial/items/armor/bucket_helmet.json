@@ -9,7 +9,7 @@
             "color": "#d9aa51"
         },
         "item_group": "minecraft:combat",
-        "max_count": 1
+        "max_stack_size": 1
     },
     "armorSlot": "head",
     "armorMaterial": "tutorial:bucket",

@@ -10,7 +10,7 @@ public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian
 
     @Override
     public int getDurability(EquipmentSlot slot) {
-        return this.material.maxDamageFactor;
+        return this.material.getDurability(slot);
     }
 
     @Override
@@ -18,13 +18,14 @@ public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian
         return this.material.protection_amount;
     }
 
+    @Override
     public int getEnchantability() {
         return this.material.enchantability;
     }
 
     @Override
     public SoundEvent getEquipSound() {
-        return Registry.SOUND_EVENT.get(this.material.sound_event);
+        return Registry.SOUND_EVENT.get(this.material.equipSound);
     }
 
     @Override
@@ -32,14 +33,17 @@ public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian
         return Ingredient.ofItems(Registry.ITEM.get(this.material.repair_item));
     }
 
+    @Override
     public String getName() {
         return this.material.name.getPath();
     }
 
+    @Override
     public float getToughness() {
         return this.material.toughness;
     }
 
+    @Override
     public float getKnockbackResistance() {
         return this.material.knockback_resistance;
     }

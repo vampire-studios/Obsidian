@@ -23,9 +23,9 @@ public class Utils {
                 Obsidian.registerInRegistry(ObsidianAddonLoader.OBSIDIAN_ADDONS, obsidianAddon.getConfigPackInfo().namespace, obsidianAddon);
                 Obsidian.LOGGER.info("Registering obsidian addon: {}", obsidianAddon.getConfigPackInfo().displayName);
             } else if(obsidianAddon.getConfigPackInfo().addonVersion != ObsidianAddonLoader.SCHEMA_VERSION) {
-                Obsidian.LOGGER.info("Found incompatible obsidian addon: {} with a version of {}", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion);
+                Obsidian.LOGGER.info("Found incompatible obsidian addon: {} with a version of {}", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().version);
             } else {
-                Obsidian.LOGGER.error("Found obsidian addon with invalid info file: {} with a version of {}", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().addonVersion);
+                Obsidian.LOGGER.error("Found obsidian addon with invalid info file: {} with a version of {}", obsidianAddon.getConfigPackInfo().displayName, obsidianAddon.getConfigPackInfo().version);
             }
         }
         if (newInfoFile.exists()) {

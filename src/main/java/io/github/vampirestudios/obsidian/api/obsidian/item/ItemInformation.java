@@ -9,7 +9,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ItemInformation {
-
 	public NameInformation name;
 
     public Rarity rarity = Rarity.COMMON;
@@ -28,9 +27,9 @@ public class ItemInformation {
 	@SerializedName("custom_render_mode") public boolean customRenderMode = false;
     @SerializedName("render_mode_models") public RenderModeModel[] renderModeModels;
 
-    public ItemGroup getItemGroup() {
-        return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
-    }
+	public ItemGroup getItemGroup() {
+		return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
+	}
 
     public static class RenderModeModel {
     	public ModelIdentifier model;

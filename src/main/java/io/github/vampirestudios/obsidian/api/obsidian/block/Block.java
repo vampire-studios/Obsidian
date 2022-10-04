@@ -2,20 +2,25 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import blue.endless.jankson.annotation.SerializedName;
 import com.electronwill.nightconfig.core.conversion.Path;
+import io.github.vampirestudios.obsidian.api.bedrock.Description;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Block {
+
+    public Description description;
     public BlockType block_type = BlockType.BLOCK;
     public BlockInformation information;
-    public DisplayInformation display;
+    public DisplayInformation rendering;
     @SerializedName("drop_information")
     @com.google.gson.annotations.SerializedName("drop_information")
     @Path("drop_information")
@@ -33,6 +38,10 @@ public class Block {
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
     public Identifier placable_feature;
+    public Properties properties;
+
+    public TooltipInformation[] lore = new TooltipInformation[0];
+
 
 	public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
@@ -42,8 +51,8 @@ public class Block {
 
     public enum BlockType {
         BLOCK,
-        HORIZONTAL_FACING_BLOCK,
-        ROTATABLE_BLOCK,
+        HORIZONTAL_DIRECTIONAL,
+        DIRECTIONAL,
         CAMPFIRE,
         STAIRS,
         SLAB,
@@ -60,7 +69,7 @@ public class Block {
         WOOD,
         OXIDIZING_BLOCK,
         PLANT,
-        PILLAR,
+        ROTATED_PILLAR,
         HORIZONTAL_FACING_PLANT,
         SAPLING,
         TORCH,
@@ -122,5 +131,16 @@ public class Block {
     public static class MultiBlockInformation {
         public int width;
         public int height;
+    }
+
+    public static class Properties {
+        public String facing;
+        public Map<String, PropertiesInfo> properties = new HashMap<>();
+
+        public static class PropertiesInfo {
+            public String type;
+            public String[] values;
+            public int min = 0, max = 1;
+        }
     }
 }

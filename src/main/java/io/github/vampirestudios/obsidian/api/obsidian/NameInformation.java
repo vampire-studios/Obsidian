@@ -11,7 +11,7 @@ public class NameInformation extends SpecialText {
     public Identifier id;
 
     public Text getName(String type) {
-        return this.getName();
+        return this.getTranslation(type);
     }
 
     public Text getTranslation(String type) {

@@ -19,7 +19,6 @@ public class DisplayInformation {
     public TextureAndModelInformation itemModel;
     public TextureAndModelInformation stickyPiston;
     public BlockProperty blockState;
-    public TooltipInformation[] lore = new TooltipInformation[0];
 
     public static class Property {
         public Identifier model;

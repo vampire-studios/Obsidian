@@ -23,17 +23,17 @@ public class CustomBlockItem extends BlockItem {
 
     @Override
     public boolean hasGlint(ItemStack stack) {
-        return block.information.has_glint;
+        return block.information.properties.has_glint;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return block.information.is_enchantable;
+        return block.information.properties.is_enchantable;
     }
 
     @Override
     public int getEnchantability() {
-        return block.information.enchantability;
+        return block.information.properties.enchantability;
     }
 
     @Override

@@ -13,6 +13,7 @@ import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -34,7 +36,6 @@ public class LegacyItemGroups implements AddonModule {
         io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup;
         if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
             itemGroup = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
-
         } else {
             ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addon.getConfigPackInfo();
             if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
@@ -56,7 +57,14 @@ public class LegacyItemGroups implements AddonModule {
         }
         try {
             if (itemGroup == null) return;
-            ItemGroup itemGroup1 = QuiltItemGroup.createWithIcon(itemGroup.name.id,
+
+            Identifier identifier = Objects.requireNonNullElseGet(
+                    itemGroup.name.id,
+                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+            );
+            if (itemGroup.name.id == null) itemGroup.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
+            ItemGroup itemGroup1 = QuiltItemGroup.createWithIcon(identifier,
                     () -> new ItemStack(Registry.ITEM.get(itemGroup.icon)));
 
             /*if (itemGroup.tags != null) {
@@ -73,10 +81,10 @@ public class LegacyItemGroups implements AddonModule {
                 }
             }*/
 
-            Registry.register(Registries.ITEM_GROUP_REGISTRY, itemGroup.name.id, itemGroup1);
-            register(ContentRegistries.ITEM_GROUPS, "item_group", itemGroup.name.id, itemGroup);
+            Registry.register(Registries.ITEM_GROUP_REGISTRY, identifier, itemGroup1);
+            register(ContentRegistries.ITEM_GROUPS, "item_group", identifier, itemGroup);
         } catch (Exception e) {
-            failedRegistering("item_group", id.addonPath(), e);
+            failedRegistering("item_group", file.getName(), e);
         }
     }
 

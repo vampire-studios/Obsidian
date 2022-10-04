@@ -10,13 +10,14 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ArmorItemImpl extends ArmorItem {
 
     public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
 
     public ArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Settings settings) {
-        super(material, EquipmentSlot.byName(item.armorSlot), settings);
+        super(material, EquipmentSlot.byName(item.armorSlot.toUpperCase(Locale.ROOT)), settings);
         this.item = item;
     }
 
