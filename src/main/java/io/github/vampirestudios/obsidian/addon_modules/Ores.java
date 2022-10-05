@@ -76,9 +76,9 @@ public class Ores implements AddonModule {
 			if (block.information.blockProperties.translucent) blockSettings.nonOpaque();
 			if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicBounds();
 
-			Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
+			Item.Settings settings = new Item.Settings().group(block.information.itemProperties.getItemGroup());
 			if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
-			if (block.information.blockProperties.fireproof) settings.fireproof();
+			if (block.information.itemProperties.fireproof) settings.fireproof();
 
 			net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
 

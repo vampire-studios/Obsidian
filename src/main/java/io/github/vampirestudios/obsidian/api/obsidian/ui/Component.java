@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -72,7 +73,7 @@ public class Component {
 			case TEXTURED_BUTTON -> Components.texturedButton(texture, getText(jsonObject), width, height, u, v, (buttonWidget) -> {});
 			case TEXTURED_BUTTON_CUSTOM_TEXTURE_SIZE -> Components.texturedButton(texture, getText(jsonObject), width, height, u, v, textureWidth, textureHeight,
 					(buttonWidget) -> {});
-			case BUTTON -> Components.button(getText(jsonObject), (buttonWidget) -> {});
+			case BUTTON -> Components.button(getText(jsonObject), (ButtonComponent component) -> {});
 			case BUTTON_CUSTOM_SIZE -> Components.button(getText(jsonObject), width, height, (buttonWidget) -> {});
 			case TEXT_BOX -> Components.textBox(sizing.get());
 			case TEXT_BOX_WITH_TEXT -> Components.textBox(sizing.get(), textBoxText);
