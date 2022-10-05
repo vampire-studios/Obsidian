@@ -44,7 +44,7 @@ public class BlockJsonGenerator {
                   "information": {
                     "name": {
                       "id": "origin_realms:$$",
-                      "translated": {
+                      "translations": {
                         "en_us": "$big$"
                       }
                     },

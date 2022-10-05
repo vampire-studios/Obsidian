@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BlockInformation {
-
     public Identifier parentBlock;
 
+    public BoundingBox boundingBox;
     public boolean has_advanced_bounding_box = false;
     public float[] bounding_box = new float[] {0, 0, 0, 16, 16, 16};
     public float[] north_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
@@ -30,10 +30,6 @@ public class BlockInformation {
     public float[] down_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
 
     public NameInformation name;
-
-    @SerializedName("item_group")
-    @com.google.gson.annotations.SerializedName("item_group")
-    public Identifier creativeTab;
 
     public int cake_slices = 1;
 
@@ -49,7 +45,8 @@ public class BlockInformation {
     public boolean wearable = false;
     public Identifier wearableModel;
 
-    public BlockProperties properties;
+    @SerializedName("block_properties") public BlockProperties blockProperties;
+    @SerializedName("item_properties") public ItemProperties itemProperties;
 
     public List<ItemStack.TooltipSection> getRemovedTooltipSections() {
         return List.of();
@@ -72,10 +69,6 @@ public class BlockInformation {
             default -> throw new IllegalStateException("Unexpected value: " + renderLayer);
         };
     }*/
-
-    public ItemGroup getItemGroup() {
-        return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
-    }
 
     public static class BlockProperties {
         private static final Map<Identifier, Material> vanillaMaterials = new HashMap<>();
@@ -242,18 +235,10 @@ public class BlockInformation {
         public Identifier drop = new Identifier("stone");
         public float velocity_modifier = 1.0F;
         public float jump_velocity_modifier = 1.0F;
-        public boolean has_glint = false;
-        public boolean is_enchantable = false;
-        public int enchantability = 5;
         public int luminance = 0;
         public boolean is_emissive = false;
-        public boolean fireproof = false;
         public boolean translucent = false;
         public boolean dynamic_boundaries = false;
-        @SerializedName("max_stack_size") public int maxStackSize = 64;
-        @SerializedName("max_durability") public int maxDurability = 0;
-        public String rarity = "common";
-        public String equipmentSlot = "";
 
         public BlockSoundGroup getBlockSoundGroup() {
             if (customSoundGroup != null) {
@@ -275,12 +260,42 @@ public class BlockInformation {
                 CustomMaterial customMaterial = ContentRegistries.BLOCK_MATERIALS.get(this.customMaterial);
                 assert customMaterial != null;
                 return new Material(customMaterial.getMapColor(), customMaterial.liquid, customMaterial.solid,
-                        customMaterial.allows_movement, customMaterial.allows_light, customMaterial.burnable,
+                        customMaterial.blocks_movement, customMaterial.blocks_light, customMaterial.burnable,
                         customMaterial.replaceable, customMaterial.getPistonBehavior());
             } else {
                 return vanillaMaterials.get(vanillaMaterial);
             }
         }
+    }
+
+    public static class ItemProperties {
+        @SerializedName("item_group")
+        @com.google.gson.annotations.SerializedName("item_group")
+        public Identifier creativeTab;
+
+        public boolean fireproof = false;
+        public boolean has_glint = false;
+        public boolean is_enchantable = false;
+        public int enchantability = 5;
+        @SerializedName("max_stack_size") public int maxStackSize = 64;
+        @SerializedName("max_durability") public int maxDurability = 0;
+        public String rarity = "common";
+        public String equipmentSlot = "";
+
+        public ItemGroup getItemGroup() {
+            return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
+        }
+    }
+
+    public static class BoundingBox {
+        public boolean advanced = false;
+        public float[] full_shape = new float[] {0, 0, 0, 16, 16, 16};
+        public float[] north_shape = new float[] {0, 0, 0, 16, 16, 16};
+        public float[] south_shape = new float[] {0, 0, 0, 16, 16, 16};
+        public float[] east_shape = new float[] {0, 0, 0, 16, 16, 16};
+        public float[] west_shape = new float[] {0, 0, 0, 16, 16, 16};
+        public float[] up_shape = new float[] {0, 0, 0, 16, 16, 16};
+        public float[] down_shape = new float[] {0, 0, 0, 16, 16, 16};
     }
 
 }

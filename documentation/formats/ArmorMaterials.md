@@ -2,7 +2,7 @@
 
 Armor Materials define the tier and material properties of armor items.
 
-Named item armor materials go in the `armor_material` directory in the thing pack.
+Named item armor materials go in the `armor_material` directory in the content pack part of the addon.
 
 E.g.
 ```

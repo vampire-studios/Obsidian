@@ -18,8 +18,8 @@ public class WeaponInitThread implements Runnable {
 
     @Override
     public void run() {
-        if (weapon.information.name.translated != null) {
-            weapon.information.name.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+        if (weapon.information.name.translations != null) {
+            weapon.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     weapon.information.name.id.getNamespace(), languageId,
                     "item." + weapon.information.name.id.getNamespace() + "." + weapon.information.name.id.getPath(), name
             ));
@@ -32,7 +32,7 @@ public class WeaponInitThread implements Runnable {
         if (weapon.display != null && weapon.display.lore.length != 0) {
             for (TooltipInformation lore : weapon.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                    lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             weapon.information.name.id.getNamespace(), languageId, lore.text.text, name
                     ));
                 }

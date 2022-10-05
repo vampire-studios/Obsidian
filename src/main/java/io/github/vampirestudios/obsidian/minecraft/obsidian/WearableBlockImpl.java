@@ -39,17 +39,17 @@ public class WearableBlockImpl extends Block implements Wearable {
 
     @Override
     public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.properties.translucent ? 0.2F : 1.0F;
+        return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
     }
 
     @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.properties.translucent;
+        return !block.information.blockProperties.translucent;
     }
 
     @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.properties.translucent;
+        return block.information.blockProperties.translucent;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class WearableBlockImpl extends Block implements Wearable {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        float[] boundingBox = block.information.bounding_box;
+        float[] boundingBox = block.information.boundingBox.full_shape;
         return createCuboidShape(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
     }
 }

@@ -1,0 +1,24 @@
+{
+    "information": {
+        "name": {
+            "translations": {
+                "en_us": "Carrot Sword",
+                "nb_no": "Gullerotsverd"
+            },
+            "color": "#ffa73f"
+        },
+        "item_group": "minecraft:combat",
+        "rarity": "common",
+        "max_stack_size": 1
+    },
+    "attack_damage": 3,
+    "attack_speed": -2.4,
+    "material": {
+        "durability": 2031,
+        "mining_speed_multiplier": 9.0,
+        "attack_damage": 4.0,
+        "mining_level": 4,
+        "enchantability": 15,
+        "repairItem": "minecraft:carrot"
+    }
+}

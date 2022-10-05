@@ -29,17 +29,17 @@ public class HorizontalFacingBlockImpl extends HorizontalFacingBlock {
 
     @Override
     public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.properties.translucent ? 0.2F : 1.0F;
+        return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
     }
 
     @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.properties.translucent;
+        return !block.information.blockProperties.translucent;
     }
 
     @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.properties.translucent;
+        return block.information.blockProperties.translucent;
     }
 
     @Override
@@ -61,11 +61,11 @@ public class HorizontalFacingBlockImpl extends HorizontalFacingBlock {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        VoxelShape shape = createShape(block.information.bounding_box);
-        VoxelShape northShape = createShape(block.information.north_bounding_box);
-        VoxelShape southShape = createShape(block.information.south_bounding_box);
-        VoxelShape eastShape = createShape(block.information.east_bounding_box);
-        VoxelShape westShape = createShape(block.information.west_bounding_box);
+        VoxelShape shape = createShape(block.information.boundingBox.full_shape);
+        VoxelShape northShape = createShape(block.information.boundingBox.north_shape);
+        VoxelShape southShape = createShape(block.information.boundingBox.south_shape);
+        VoxelShape eastShape = createShape(block.information.boundingBox.east_shape);
+        VoxelShape westShape = createShape(block.information.boundingBox.west_shape);
         Direction direction = state.get(FACING);
         switch(direction) {
             case NORTH:

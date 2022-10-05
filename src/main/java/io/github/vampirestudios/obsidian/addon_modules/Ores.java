@@ -60,25 +60,25 @@ public class Ores implements AddonModule {
 			if (block.information.parentBlock != null) {
 				blockSettings = QuiltBlockSettings.copyOf(Registry.BLOCK.get(block.information.parentBlock));
 			} else {
-				blockSettings = QuiltBlockSettings.of(block.information.properties.getMaterial());
+				blockSettings = QuiltBlockSettings.of(block.information.blockProperties.getMaterial());
 			}
 
-			blockSettings.hardness(block.information.properties.hardness).resistance(block.information.properties.resistance)
-					.sounds(block.information.properties.getBlockSoundGroup())
-					.slipperiness(block.information.properties.slipperiness)
-					.emissiveLighting((state, world, pos) -> block.information.properties.is_emissive)
-					.luminance(block.information.properties.luminance)
-					.velocityMultiplier(block.information.properties.velocity_modifier)
-					.jumpVelocityMultiplier(block.information.properties.jump_velocity_modifier);
-			if (block.information.properties.randomTicks) blockSettings.ticksRandomly();
-			if (block.information.properties.instant_break) blockSettings.breakInstantly();
-			if (!block.information.properties.collidable) blockSettings.noCollision();
-			if (block.information.properties.translucent) blockSettings.nonOpaque();
-			if (block.information.properties.dynamic_boundaries) blockSettings.dynamicBounds();
+			blockSettings.hardness(block.information.blockProperties.hardness).resistance(block.information.blockProperties.resistance)
+					.sounds(block.information.blockProperties.getBlockSoundGroup())
+					.slipperiness(block.information.blockProperties.slipperiness)
+					.emissiveLighting((state, world, pos) -> block.information.blockProperties.is_emissive)
+					.luminance(block.information.blockProperties.luminance)
+					.velocityMultiplier(block.information.blockProperties.velocity_modifier)
+					.jumpVelocityMultiplier(block.information.blockProperties.jump_velocity_modifier);
+			if (block.information.blockProperties.randomTicks) blockSettings.ticksRandomly();
+			if (block.information.blockProperties.instant_break) blockSettings.breakInstantly();
+			if (!block.information.blockProperties.collidable) blockSettings.noCollision();
+			if (block.information.blockProperties.translucent) blockSettings.nonOpaque();
+			if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicBounds();
 
 			Item.Settings settings = new Item.Settings().group(block.information.getItemGroup());
 			if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
-			if (block.information.properties.fireproof) settings.fireproof();
+			if (block.information.blockProperties.fireproof) settings.fireproof();
 
 			net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
 

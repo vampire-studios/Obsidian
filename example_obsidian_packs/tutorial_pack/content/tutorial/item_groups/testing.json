@@ -1,7 +1,6 @@
 {
   "name": {
-    "id": "tutorial:testing",
-    "translated": {
+    "translations": {
       "en_us": "Testing"
     }
   },

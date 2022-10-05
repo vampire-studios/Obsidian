@@ -27,8 +27,8 @@ public class ArmorInitThread implements Runnable {
 
     @Override
     public void run() {
-        if (armor.information.name.translated != null)
-            armor.information.name.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+        if (armor.information.name.translations != null)
+            armor.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     armor.information.name.id.getNamespace(), languageId,
                     "item." + armor.information.name.id.getNamespace() + "." + armor.information.name.id.getPath(),
                     name
@@ -44,7 +44,7 @@ public class ArmorInitThread implements Runnable {
         if (armor.display != null && armor.display.lore.length != 0) {
             for (TooltipInformation lore : armor.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                    lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             armor.information.name.id.getNamespace(), languageId,
                             lore.text.text, name
                     ));

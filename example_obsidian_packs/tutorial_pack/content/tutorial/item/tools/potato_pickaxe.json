@@ -1,0 +1,25 @@
+{
+    "information": {
+        "name": {
+            "translations": {
+                "en_us": "Potato Pickaxe",
+                "nb_no": "Potethakke"
+            },
+            "color": "#d9aa51"
+        },
+        "item_group": "minecraft:tools",
+        "rarity": "rare",
+        "max_stack_size": 1
+    },
+    "attack_damage": 1,
+    "attack_speed": -2.8,
+    "tool_type": "pickaxe",
+    "material": {
+        "durability": 2031,
+        "mining_speed_multiplier": 9.0,
+        "attack_damage": 4.0,
+        "mining_level": 4,
+        "enchantability": 15,
+        "repairItem": "minecraft:potato"
+    }
+}

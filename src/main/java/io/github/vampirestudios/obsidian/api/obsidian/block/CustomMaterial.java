@@ -4,15 +4,17 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.Identifier;
 
+import java.util.Locale;
+
 public class CustomMaterial {
 
     public Identifier id;
 
     public String map_color;
-    public boolean allows_movement;
+    public boolean blocks_movement;
     public boolean burnable;
     public boolean liquid;
-    public boolean allows_light;
+    public boolean blocks_light;
     public boolean replaceable;
     public boolean solid;
     public String piston_behavior;
@@ -86,7 +88,7 @@ public class CustomMaterial {
     }
 
     public PistonBehavior getPistonBehavior() {
-        return switch(piston_behavior) {
+        return switch(piston_behavior.toUpperCase(Locale.ROOT)) {
             case "NORMAL" -> PistonBehavior.NORMAL;
             case "DESTROY" -> PistonBehavior.DESTROY;
             case "BLOCK" -> PistonBehavior.BLOCK;

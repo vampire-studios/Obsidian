@@ -25,11 +25,13 @@ public class FoodComponents implements AddonModule {
 		FoodComponent foodComponent = Obsidian.GSON.fromJson(new FileReader(file), FoodComponent.class);
 		try {
 			if (foodComponent == null) return;
+
 			Identifier identifier = Objects.requireNonNullElseGet(
 					foodComponent.id,
 					() -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
 			);
 			if (foodComponent.id == null) foodComponent.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
 			net.minecraft.item.FoodComponent foodComponent1 = foodComponent.getBuilder().build();
 			Registry.register(Registries.FOOD_COMPONENTS, identifier, foodComponent1);
 			register(ContentRegistries.FOOD_COMPONENTS, "food_component", identifier, foodComponent);

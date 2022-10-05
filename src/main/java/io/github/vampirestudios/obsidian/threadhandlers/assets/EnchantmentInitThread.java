@@ -13,8 +13,8 @@ public class EnchantmentInitThread implements Runnable {
 
     @Override
     public void run() {
-        if (enchantment.name.translated != null) {
-            enchantment.name.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+        if (enchantment.name.translations != null) {
+            enchantment.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     enchantment.name.id.getNamespace(), languageId,
                     "enchantment." + enchantment.name.id.getNamespace() + "." + enchantment.name.id.getPath(), name
             ));

@@ -1,0 +1,12 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Golden Shield"
+      }
+    },
+    "item_group": "minecraft:combat"
+  },
+  "shield_base": "tutorial:entities/shield/golden_shield_base",
+  "shield_base_no_pattern": "tutorial:entities/shield/golden_shield_base_nopattern"
+}

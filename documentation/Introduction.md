@@ -10,7 +10,7 @@ An addon supports a set of file types for defining different things.
     * [Item Tiers](./formats/ItemTiers.md)
     * [Armor Materials](./formats/ArmorMaterials.md)
     * [Food Definitions](./formats/Food.md)
-    * [Creative Mode Tabs](./formats/CreativeModeTabs.md)
+    * [Item Groups](./formats/ItemGroups.md)
 * [Blocks](./formats/Blocks.md)
     * [Block Materials](./formats/BlockMaterials.md)
     * [Voxel Shape models](./formats/VoxelShapes.md)

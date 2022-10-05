@@ -18,7 +18,7 @@ public class SpecialText {
     public String text;
     @SerializedName("type")
     public String textType;
-    public Map<String, String> translated = new HashMap<>();
+    public Map<String, String> translations = new HashMap<>();
     public String color = "";
     public String[] formatting = new String[0];
 
@@ -40,14 +40,14 @@ public class SpecialText {
             }
             specialText.formatting = strArr;
         }
-        if(JsonHelper.hasJsonObject(jsonObject, "translated")) {
-            JsonObject translatedObject = JsonHelper.getObject(jsonObject, "translated");
+        if(JsonHelper.hasJsonObject(jsonObject, "translations")) {
+            JsonObject translatedObject = JsonHelper.getObject(jsonObject, "translations");
             for(Map.Entry<String, JsonElement> entry: translatedObject.entrySet()) {
                 String lang = entry.getKey();
                 JsonElement value = entry.getValue();
                 if(JsonHelper.isString(value)) {
                     String translation = value.getAsString();
-                    specialText.translated.put(lang, translation);
+                    specialText.translations.put(lang, translation);
                 }
             }
         }

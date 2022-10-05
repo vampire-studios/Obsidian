@@ -1,0 +1,24 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Test Block"
+      }
+    },
+    "block_properties": {
+      "material": "minecraft:wood",
+      "sound_group": "minecraft:wood"
+    },
+    "item_properties": {
+      "item_group": "minecraft:building_blocks"
+    }
+  },
+  "rendering": {
+    "model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/dirt"
+      }
+    }
+  }
+}

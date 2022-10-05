@@ -1,5 +1,4 @@
 {
-  "id": "tutorial:sand_particle",
   "texture": "generic_0",
   "sheet_type": "PARTICLE_SHEET_OPAQUE",
   "always_spawn": false,

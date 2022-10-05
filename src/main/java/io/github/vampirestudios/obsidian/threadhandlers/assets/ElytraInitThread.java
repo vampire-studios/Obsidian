@@ -20,8 +20,8 @@ public class ElytraInitThread implements Runnable {
 
     @Override
     public void run() {
-        if (elytra.information.name.translated != null) {
-            elytra.information.name.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+        if (elytra.information.name.translations != null) {
+            elytra.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     elytra.information.name.id.getNamespace(), languageId,
                     "item." + elytra.information.name.id.getNamespace(),
                     elytra.information.name.id.getPath()
@@ -36,7 +36,7 @@ public class ElytraInitThread implements Runnable {
         if (elytra.display != null && elytra.display.lore.length != 0) {
             for (TooltipInformation lore : elytra.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                    lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             elytra.information.name.id.getNamespace(), languageId,
                             lore.text.text, name
                     ));

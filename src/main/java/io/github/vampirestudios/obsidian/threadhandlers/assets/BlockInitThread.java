@@ -38,7 +38,7 @@ public class BlockInitThread implements Runnable {
             net.minecraft.block.Block block1 = Registry.BLOCK.get(block.information.name.id);
             NameInformation nameInformation = block.information.name;
             Identifier blockId = nameInformation.id;
-            Map<String, String> translated = nameInformation.translated;
+            Map<String, String> translated = nameInformation.translations;
             BlockRenderLayerMap.INSTANCE.putBlock(block1, RenderLayer.getCutout());
             if (translated != null) {
                 translation(translated, blockId, "", "");
@@ -47,7 +47,7 @@ public class BlockInitThread implements Runnable {
                 if (block.lore.length != 0) {
                     for (TooltipInformation lore : block.lore) {
                         if (lore.text.textType.equals("translatable")) {
-                            lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                            lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             		blockId.getNamespace(), languageId, lore.text.text, name
                             ));
                         }

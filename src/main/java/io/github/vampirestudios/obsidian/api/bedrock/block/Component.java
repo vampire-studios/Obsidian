@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.bedrock.block;
 
 import com.google.gson.annotations.SerializedName;
+import org.jetbrains.annotations.Range;
 
 public class Component {
 
@@ -22,8 +23,9 @@ public class Component {
     @SerializedName("minecraft:entity_collision")
     public EntityCollision entity_collision;
 
-    @SerializedName("minecraft:block_light_emission")
-    public float block_light_emission;
+    @SerializedName("minecraft:light_emission")
+    @Range(from = 0, to = 15)
+    public int light_emission;
 
     @SerializedName("minecraft:friction")
     public float friction;
@@ -35,8 +37,8 @@ public class Component {
     public boolean breakonpush;
 
     public static class Flammable {
-        public int flame_odds;
-        public int burn_odds;
+        public int catch_chance_modifier;
+        public int destroy_chance_modifier;
     }
 
     public static class EntityCollision {

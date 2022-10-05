@@ -17,8 +17,8 @@ public class ShieldInitThread implements Runnable {
 
     @Override
     public void run() {
-        if (shield.information.name.translated != null) {
-            shield.information.name.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+        if (shield.information.name.translations != null) {
+            shield.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     shield.information.name.id.getNamespace(), languageId,
                     "item." + shield.information.name.id.getNamespace() + "." + shield.information.name.id.getPath(), name
             ));
@@ -26,7 +26,7 @@ public class ShieldInitThread implements Runnable {
         if (shield.display != null && shield.display.lore.length != 0) {
             for (TooltipInformation lore : shield.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                    lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             shield.information.name.id.getNamespace(), languageId, lore.text.text, name
                     ));
                 }

@@ -1,0 +1,41 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Test Item"
+      }
+    },
+    "item_group": "minecraft:misc"
+  },
+  "rendering": {
+    "item_model": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "block/diamond_block"
+      }
+    }
+  },
+  "lore": [
+    {
+      "text": {
+        "type": "literal",
+        "text": "Testing",
+        "color": "#ffffff",
+        "formatting": []
+      }
+    },
+    {
+      "text": {
+        "type": "translatable",
+        "text": "tutorial.test_item.desc",
+        "translations": {
+          "en_us": "This is a translated line"
+        },
+        "color": "#000000",
+        "formatting": [
+          "BOLD"
+        ]
+      }
+    }
+  ]
+}

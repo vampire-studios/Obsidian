@@ -1,0 +1,33 @@
+{
+  "parent": "NONE",
+  "name": {
+    "translations": {
+      "en_us": "Acid"
+	}
+  },
+  "fluidColor": "0x24ff00",
+  "fluidFogColor": "0x169400",
+  "allowSprintSwimming": false,
+  "canExtinguish": false,
+  "canIgnite": true,
+  "maxFluidLevel": 8,
+  "pushStrength": 0.014,
+  "pushStrengthChangesWhenWarm": false,
+  "fallDamageReductionType": "HALF",
+  "fishingBobberFloats": false,
+  "canFish": false,
+  "horizontalViscosity": 0.5,
+  "verticalViscosity": 0.8,
+  "density": 4000,
+  "temperature": 900,
+  "canBeInfinite": false,
+  "flowSpeed": 2,
+  "flowSpeedChangesWhenWarm": false,
+  "levelDecreasePerBlock": 2,
+  "levelDecreasePerBlockChangesWhenWarm": false,
+  "tickRate": 30,
+  "tickRateChangesWhenWarm": false,
+  "randomTicking": false,
+  "blastResistance": 100.0,
+  "particleType": "minecraft:dripping_lava"
+}

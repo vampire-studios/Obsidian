@@ -18,8 +18,8 @@ public class ToolInitThread implements Runnable {
 
     @Override
     public void run() {
-        if (tool.information.name.translated != null) {
-            tool.information.name.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+        if (tool.information.name.translations != null) {
+            tool.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     tool.information.name.id.getNamespace(), languageId,
                     "item." + tool.information.name.id.getNamespace() + "." + tool.information.name.id.getPath(), name
             ));
@@ -32,7 +32,7 @@ public class ToolInitThread implements Runnable {
         if (tool.display != null && tool.display.lore.length != 0) {
             for (TooltipInformation lore : tool.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                    lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             tool.information.name.id.getNamespace(), languageId, lore.text.text, name
                     ));
                 }

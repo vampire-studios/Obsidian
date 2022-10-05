@@ -30,12 +30,12 @@ public class EightDirectionBlockImpl extends Block {
 
     @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.properties.translucent;
+        return block.information.blockProperties.translucent;
     }
 
     @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.properties.translucent;
+        return block.information.blockProperties.translucent;
     }
 
     @Override

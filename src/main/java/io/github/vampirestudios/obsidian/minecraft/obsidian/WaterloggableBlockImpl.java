@@ -47,17 +47,17 @@ public class WaterloggableBlockImpl extends Block implements Waterloggable {
 
     @Override
     public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.properties.translucent ? 0.2F : 1.0F;
+        return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
     }
 
     @Override
     public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
-        return !block.information.properties.translucent;
+        return !block.information.blockProperties.translucent;
     }
 
     @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
-        return block.information.properties.translucent;
+        return block.information.blockProperties.translucent;
     }
 
     @Override

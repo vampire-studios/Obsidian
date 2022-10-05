@@ -1,0 +1,28 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Test Block"
+      }
+    },
+    "block_properties": {
+      "material": "minecraft:stone",
+      "sound_group": "minecraft:stone",
+      "fireproof": true,
+      "is_light_block": true,
+      "luminance": 15
+    },
+    "item_properties": {
+      "has_glint": true,
+      "item_group": "minecraft:building_blocks"
+    }
+  },
+  "rendering": {
+    "model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/dirt"
+      }
+    }
+  }
+}

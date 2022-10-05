@@ -1,0 +1,37 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Pie Flavoured Pie"
+      },
+      "color": "#ca165f",
+      "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
+    },
+    "item_group": "minecraft:food",
+    "rarity": "common",
+    "max_stack_size": 64,
+    "use_duration": 64
+  },
+  "food_information": {
+    "hunger": 69,
+    "saturation_modifier": "supernatural"
+  },
+  "rendering": {
+    "item_model": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "tutorial:item/pie_flavored_pie"
+      }
+    }
+  },
+  "lore": [
+    {
+      "text": {
+        "type": "literal",
+        "text": "This is a pie with a pie popping up",
+        "color": "#ffffff",
+        "formatting": []
+      }
+    }
+  ]
+}

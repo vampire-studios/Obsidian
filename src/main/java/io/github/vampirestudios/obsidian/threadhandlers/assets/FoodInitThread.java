@@ -18,8 +18,8 @@ public class FoodInitThread implements Runnable {
 
     @Override
     public void run() {
-        if (foodItem.information.name.translated != null) {
-            foodItem.information.name.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+        if (foodItem.information.name.translations != null) {
+            foodItem.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     foodItem.information.name.id.getNamespace(), languageId,
                     String.format("item.%s.%s", foodItem.information.name.id.getNamespace(), foodItem.information.name.id.getPath()), name
             ));
@@ -33,7 +33,7 @@ public class FoodInitThread implements Runnable {
         if (foodItem.display != null && foodItem.display.lore.length != 0) {
             for (TooltipInformation lore : foodItem.display.lore) {
                 if (lore.text.textType.equals("translatable")) {
-                    lore.text.translated.forEach((languageId, name) -> ClientInit.addTranslation(
+                    lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             foodItem.information.name.id.getNamespace(), languageId, lore.text.text, name
                     ));
                 }

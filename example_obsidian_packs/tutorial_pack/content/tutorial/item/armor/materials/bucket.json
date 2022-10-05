@@ -1,0 +1,10 @@
+{
+  "durability": 3000,
+  "protection_amount": 20,
+  "enchantability": 10,
+  "sound_event": "minecraft:item.armor.equip_diamond",
+  "toughness": 10.0,
+  "knockback_resistance": 30.0,
+  "repair_material": "minecraft:bucket",
+  "texture": "tutorial:textures/models/armor/bucket.png"
+}

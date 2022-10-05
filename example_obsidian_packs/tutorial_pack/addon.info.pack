@@ -1,9 +1,73 @@
 {
-    "displayName": "Tutorial Addon",
-    "folderName": "tutorial_pack",
-    "version": "0.1.0",
-    "description": "This is a tutorial",
-    "namespace": "tutorial",
-    "authors": ["Vampire Studios"],
-    "addonVersion": 2
+    // The version of the file schema
+    version: 4,
+    /*
+	* The file format the addon will be using
+	* Valid formats is:
+	* 	- JSON/JSON5
+    *	- TOML
+	* 	- YAML
+	* 	- HJSON
+	*/
+    format: "JSON",
+    addon: {
+        id: "tutorial",
+        // The version of the addon
+        version: "0.1.0",
+        // The name of the addon
+        name: "Tutorial Addon",
+        /*
+		* The name of the addon folder, if not added,
+		* searches after a folder with the same name as the id
+		*/
+        folder_name: "Tutorial Pack",
+        // The description of the addon, gives a short description of what this addon does
+        description: "This is a tutorial pack",
+        // The author(s) of the addon, can be multiple ones
+        authors: [
+            "Vampire Studios"
+        ]
+    },
+    //Shows which dependencies the addon requires to run
+    requires: {
+        // The name of the dependency for this
+        obsidian: {
+            // The type of dependency, can be either MOD or ADDON, ADDON is by default
+            type: "MOD",
+            /*
+			* The version of the dependency this requires.
+			* Valid formats is:
+			* 	- *			(means any)
+			*	- <=0.1.0	(means newer or equals to v0.1.0)
+			* 	- >=0.1.0	(means older or equals)
+			* 	- 0.1.0		(means the specific version)
+			* 	- 0.1.x		(means any version between 0.1 and 0.2)
+			*/
+            version: "*"
+        },
+        test_addon: {
+            version: "*"
+        }
+    },
+    //Shows which mods/addons the addon breaks with
+    breaks: {
+        test1_addon: {
+            version: "*"
+        }
+    },
+    /*
+	* Shows which mods/addons you optionally can include to either get a better experience,
+	* or for this addon to add more content
+	*/
+    optional: {
+        flamingo_addon: {
+            version: "*"
+        },
+        desert_addon: {
+            version: "*"
+        },
+        test2_addon: {
+            version: "*"
+        }
+    }
 }

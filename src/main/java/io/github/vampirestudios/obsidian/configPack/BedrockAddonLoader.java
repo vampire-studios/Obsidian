@@ -23,6 +23,7 @@ import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.quiltmc.loader.api.QuiltLoader;
 
 import java.io.File;
@@ -72,7 +73,7 @@ public class BedrockAddonLoader {
                     ManifestFile packInfo = GSON.fromJson(new FileReader(manifestFile), ManifestFile.class);
                     BedrockAddon configPack = new BedrockAddon(packInfo, file);
                     if (!BEDROCK_ADDONS.containsKey(configPack)) {
-                        TEMP_BEDROCK_ADDONS.put(configPack.getManifestFile().header.uuid, configPack);
+                        /*TEMP_BEDROCK_ADDONS.put(configPack.getManifestFile().header.uuid, configPack);
                         boolean dependenciesLoaded = false;
                         Map<String, int[]> dependenciesInfo = new HashMap<>();
                         for (ManifestFile.Dependencies dependency : configPack.getManifestFile().dependencies) {
@@ -92,7 +93,8 @@ public class BedrockAddonLoader {
                                 if (TEMP_BEDROCK_ADDONS.containsKey(uuid)) BEDROCK_ADDONS.put(TEMP_BEDROCK_ADDONS.get(uuid), uuid);
                             }
                         }
-                        dependenciesUUIDList.forEach(TEMP_BEDROCK_ADDONS::remove);
+                        dependenciesUUIDList.forEach(TEMP_BEDROCK_ADDONS::remove);*/
+                        BEDROCK_ADDONS.put(configPack, configPack.getManifestFile().header.uuid);
                     }
                     Obsidian.BEDROCK_LOGGER.info(String.format("[Obsidian] Registering bedrock addon: %s (Type: %s)", configPack.getManifestFile().header.name, configPack.getManifestFile().modules[0].type));
                 }
@@ -106,7 +108,7 @@ public class BedrockAddonLoader {
                     ManifestFile manifestFile = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(manifestFileEntry)), ManifestFile.class);
                     BedrockAddon bedrockAddon = new BedrockAddon(manifestFile, file);
                     if (!BEDROCK_ADDONS.containsKey(bedrockAddon)) {
-                        boolean dependenciesLoaded = false;
+                        /*boolean dependenciesLoaded = false;
                         Map<String, int[]> dependenciesInfo = new HashMap<>();
                         for (ManifestFile.Dependencies dependency : bedrockAddon.getManifestFile().dependencies) {
                             dependenciesInfo.put(dependency.uuid, dependency.version);
@@ -115,7 +117,8 @@ public class BedrockAddonLoader {
                         dependenciesInfo.forEach((s, ints) -> dependenciesExistsList.add(BEDROCK_ADDONS.containsValue(s)));
                         if (!dependenciesExistsList.contains(false)) dependenciesLoaded = true;
 
-                        if (dependenciesLoaded) BEDROCK_ADDONS.put(bedrockAddon, bedrockAddon.getManifestFile().header.uuid);
+                        if (dependenciesLoaded) */
+                        BEDROCK_ADDONS.put(bedrockAddon, bedrockAddon.getManifestFile().header.uuid);
                     }
                     Obsidian.BEDROCK_LOGGER.info(String.format("[Obsidian] Registering bedrock addon: %s (Type: %s)", bedrockAddon.getManifestFile().header.name, bedrockAddon.getManifestFile().modules[0].type));
                 }
@@ -190,14 +193,19 @@ public class BedrockAddonLoader {
         }
     }
 
-    private static <T> void register(List<T> list, String type, String name, T idk) {
-        list.add(idk);
-        Obsidian.BEDROCK_LOGGER.info("[Obsidian] Registered a {} {}.", type, name);
+    public static <T> T register(Registry<T> list, String type, Identifier name, T idk) {
+        Obsidian.BEDROCK_LOGGER.info("Registered {} {}.", type, name);
+        if (list.get(name) != null) return list.get(name);
+        else return Registry.register(list, name, idk);
     }
 
-    private static void failedRegistering(String type, String name, Exception e) {
-        e.printStackTrace();
-        Obsidian.BEDROCK_LOGGER.error("[Obsidian] Failed to register {} {}.", type, name);
+    public static void failedRegistering(String type, String name, Exception e) {
+        failedRegistering(type, Identifier.tryParse(name), e);
+    }
+
+    public static void failedRegistering(String type, Identifier name, Exception e) {
+        Obsidian.BEDROCK_LOGGER.error("Failed to register {} {}.", type, name);
+        Obsidian.BEDROCK_LOGGER.error(e.getMessage(), e);
     }
 
 }

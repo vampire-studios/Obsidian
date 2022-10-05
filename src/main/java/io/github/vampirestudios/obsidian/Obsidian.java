@@ -385,6 +385,8 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		ObsidianAddonLoader.loadDefaultObsidianAddons();
 		ObsidianAddonLoader.loadObsidianAddons();
 
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "bedrock_blocks", new io.github.vampirestudios.obsidian.addon_modules.bedrock.Blocks());
+
 		BedrockAddonLoader.loadDefaultBedrockAddons();
 		BedrockAddonLoader.loadBedrockAddons();
 

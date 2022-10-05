@@ -1,6 +1,4 @@
 {
-    "name": "cookies",
-    "description": "Allow to give a number of cookies at yourself",
     "op_level": 2,
     "arguments": {
         "amount" : {

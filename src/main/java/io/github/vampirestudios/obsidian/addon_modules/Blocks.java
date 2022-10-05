@@ -105,30 +105,30 @@ public class Blocks implements AddonModule {
             if (block.information.parentBlock != null) {
                 blockSettings = QuiltBlockSettings.copyOf(Registry.BLOCK.get(block.information.parentBlock));
             } else {
-                blockSettings = QuiltBlockSettings.of(block.information.properties.getMaterial());
+                blockSettings = QuiltBlockSettings.of(block.information.blockProperties.getMaterial());
             }
 
-            blockSettings.hardness(block.information.properties.hardness).resistance(block.information.properties.resistance)
-                    .sounds(block.information.properties.getBlockSoundGroup())
-                    .slipperiness(block.information.properties.slipperiness)
-                    .emissiveLighting((state, world, pos) -> block.information.properties.is_emissive)
-                    .luminance(block.information.properties.luminance)
-                    .velocityMultiplier(block.information.properties.velocity_modifier)
-                    .jumpVelocityMultiplier(block.information.properties.jump_velocity_modifier);
-            if (block.information.properties.randomTicks) blockSettings.ticksRandomly();
-            if (block.information.properties.instant_break) blockSettings.breakInstantly();
-            if (!block.information.properties.collidable) blockSettings.noCollision();
-            if (block.information.properties.translucent) blockSettings.nonOpaque();
-            if (block.information.properties.dynamic_boundaries) blockSettings.dynamicBounds();
+            blockSettings.hardness(block.information.blockProperties.hardness).resistance(block.information.blockProperties.resistance)
+                    .sounds(block.information.blockProperties.getBlockSoundGroup())
+                    .slipperiness(block.information.blockProperties.slipperiness)
+                    .emissiveLighting((state, world, pos) -> block.information.blockProperties.is_emissive)
+                    .luminance(block.information.blockProperties.luminance)
+                    .velocityMultiplier(block.information.blockProperties.velocity_modifier)
+                    .jumpVelocityMultiplier(block.information.blockProperties.jump_velocity_modifier);
+            if (block.information.blockProperties.randomTicks) blockSettings.ticksRandomly();
+            if (block.information.blockProperties.instant_break) blockSettings.breakInstantly();
+            if (!block.information.blockProperties.collidable) blockSettings.noCollision();
+            if (block.information.blockProperties.translucent) blockSettings.nonOpaque();
+            if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicBounds();
 
-            QuiltItemSettings settings = new QuiltItemSettings().group(block.information.getItemGroup());
-            settings.maxCount(block.information.properties.maxStackSize);
-            settings.rarity(Rarity.valueOf(block.information.properties.rarity.toUpperCase(Locale.ROOT)));
-            if (block.information.properties.maxDurability != 0) settings.maxDamage(block.information.properties.maxDurability);
-            if (!block.information.properties.equipmentSlot.isEmpty() && !block.information.properties.equipmentSlot.isBlank())
-                settings.equipmentSlot(EquipmentSlot.byName(block.information.properties.equipmentSlot));
+            QuiltItemSettings settings = new QuiltItemSettings().group(block.information.itemProperties.getItemGroup());
+            settings.maxCount(block.information.itemProperties.maxStackSize);
+            settings.rarity(Rarity.valueOf(block.information.itemProperties.rarity.toUpperCase(Locale.ROOT)));
+            if (block.information.itemProperties.maxDurability != 0) settings.maxDamage(block.information.itemProperties.maxDurability);
+            if (!block.information.itemProperties.equipmentSlot.isEmpty() && !block.information.itemProperties.equipmentSlot.isBlank())
+                settings.equipmentSlot(EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
             if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
-            if (block.information.properties.fireproof) settings.fireproof();
+            if (block.information.itemProperties.fireproof) settings.fireproof();
 
             if (block.additional_information != null) {
                 if (block.additional_information.path) {
@@ -213,11 +213,11 @@ public class Blocks implements AddonModule {
                         REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.DARK_OAK_DOOR, blockSettings), block, blockId.getPath(), settings);
                         break;
                     case LOG:
-                        REGISTRY_HELPER.registerLog(block, blockId.getPath(), block.information.properties.getMaterial().getColor(),
-                                block.information.properties.getMaterial().getColor(), settings);
+                        REGISTRY_HELPER.registerLog(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(),
+                                block.information.blockProperties.getMaterial().getColor(), settings);
                         break;
                     case STEM:
-                        REGISTRY_HELPER.registerNetherStemBlock(block, blockId.getPath(), block.information.properties.getMaterial().getColor(), settings);
+                        REGISTRY_HELPER.registerNetherStemBlock(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(), settings);
                         break;
                     case OXIDIZING_BLOCK:
                         List<Identifier> names = new ArrayList<>();

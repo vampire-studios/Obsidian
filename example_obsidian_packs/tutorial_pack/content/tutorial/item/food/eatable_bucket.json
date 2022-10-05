@@ -1,0 +1,19 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Eatable Bucket"
+      },
+      "color": "#ca165f",
+      "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
+    },
+    "item_group": "minecraft:food",
+    "rarity": "common",
+    "max_stack_size": 1,
+    "use_duration": 32
+  },
+  "food_information": {
+    "hunger": 20,
+    "saturation_modifier": "good"
+  }
+}

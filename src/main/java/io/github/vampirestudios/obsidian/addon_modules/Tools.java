@@ -32,7 +32,7 @@ public class Tools implements AddonModule {
                     () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (tool.information.name.id == null) tool.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
-            switch (tool.toolType) {
+            switch (tool.tool_type) {
                 case "pickaxe" -> RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
                         identifier);
                 case "shovel" -> RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
