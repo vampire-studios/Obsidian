@@ -17,17 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BlockInformation {
-    public Identifier parentBlock;
+    @SerializedName("parent_block") public Identifier parentBlock;
 
-    public BoundingBox boundingBox;
-    public boolean has_advanced_bounding_box = false;
-    public float[] bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public float[] north_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public float[] south_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public float[] east_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public float[] west_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public float[] up_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
-    public float[] down_bounding_box = new float[] {0, 0, 0, 16, 16, 16};
+    @SerializedName("bounding_box") public BoundingBox boundingBox;
 
     public NameInformation name;
 
@@ -35,12 +27,7 @@ public class BlockInformation {
 
     public boolean has_item = true;
 
-    public String renderLayer = "SOLID";
-
     public List<String> removedTooltipSections;
-
-    public boolean requires_mod_loaded = false;
-    public String required_mod_id;
 
     public boolean wearable = false;
     public Identifier wearableModel;
