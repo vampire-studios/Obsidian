@@ -21,13 +21,13 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,7 +53,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	public abstract boolean isClimbing();
 
 	@Shadow
-	public abstract Vec3d method_26317(double d, boolean bl, Vec3d vec3d);
+	public abstract Vec3d applyFluidMovingSpeed(double d, boolean bl, Vec3d vec3d);
 
 	@Shadow
 	public abstract void updateLimbs(LivingEntity entity, boolean flutter);
@@ -99,7 +99,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 			}
 
 			this.setVelocity(vec3d.multiply(horizVisc, vertVisc, horizVisc));
-			Vec3d vec3d2 = this.method_26317(fallSpeed, falling, this.getVelocity());
+			Vec3d vec3d2 = this.applyFluidMovingSpeed(fallSpeed, falling, this.getVelocity());
 			this.setVelocity(vec3d2);
 			if (this.horizontalCollision && this.doesNotCollide(vec3d2.x, vec3d2.y + 0.6 - this.getY() + y, vec3d2.z)) {
 				this.setVelocity(vec3d2.x, 0.3, vec3d2.z);
@@ -118,10 +118,10 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	}
 
 	@Redirect(method = "tickMovement",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getFluidHeight(Lnet/minecraft/tag/TagKey;)D", ordinal = 1))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getFluidHeight(Lnet/minecraft/registry/tag/TagKey;)D", ordinal = 1))
 	private double redirectGetFluidHeight(LivingEntity instance, TagKey<Fluid> tag) {
 		if (quilt$isInCustomFluid()) {
-			return getFluidHeight(TagKey.of(Registry.FLUID_KEY,this.world.getFluidState(instance.getBlockPos()).getFluid().getBuiltInRegistryHolder().getRegistryKey().getRegistry()));
+			return getFluidHeight(TagKey.of(RegistryKeys.FLUID,this.world.getFluidState(instance.getBlockPos()).getFluid().getRegistryEntry().registryKey().getRegistry()));
 		}
 		return getFluidHeight(FluidTags.WATER);
 	}
@@ -138,7 +138,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 		return isTouchingWater();
 	}
 
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;swimUpward(Lnet/minecraft/tag/TagKey;)V"))
+	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;swimUpward(Lnet/minecraft/registry/tag/TagKey;)V"))
 	private void redirectSwimUpward(LivingEntity instance, TagKey<Fluid> fluid) {
 		//Remove need for TagKey here
 		this.setVelocity(this.getVelocity().add(0.0, 0.04F, 0.0));

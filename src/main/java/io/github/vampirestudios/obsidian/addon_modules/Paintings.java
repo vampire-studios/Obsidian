@@ -8,8 +8,9 @@ import io.github.vampirestudios.obsidian.api.obsidian.Painting;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
@@ -31,7 +32,7 @@ public class Paintings implements AddonModule {
             );
             if (painting.name == null) painting.name = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
 
-            Registry.register(Registry.PAINTING_VARIANT, identifier, new PaintingVariant(painting.width, painting.height));
+            Registry.register(Registries.PAINTING_VARIANT, identifier, new PaintingVariant(painting.width, painting.height));
             register(ContentRegistries.PAINTINGS, "painting", identifier, painting);
         } catch (Exception e) {
             failedRegistering("painting", file.getName(), e);

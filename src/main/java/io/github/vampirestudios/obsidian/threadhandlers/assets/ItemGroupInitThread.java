@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
@@ -21,3 +22,4 @@ public class ItemGroupInitThread implements Runnable {
         ));
     }
 }
+*/

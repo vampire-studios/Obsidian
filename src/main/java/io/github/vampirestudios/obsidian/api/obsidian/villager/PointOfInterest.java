@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.villager;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class PointOfInterest {
 
     public Set<BlockState> getBlocks() {
         List<BlockState> blocks2 = new ArrayList<>();
-        blocks.forEach(identifier -> blocks2.add(Registry.BLOCK.get(identifier).getDefaultState()));
+        blocks.forEach(identifier -> blocks2.add(Registries.BLOCK.get(identifier).getDefaultState()));
         return Set.copyOf(blocks2);
     }
 

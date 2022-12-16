@@ -22,7 +22,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -44,29 +44,29 @@ public abstract class BoatEntityMixin extends Entity implements CustomFluidInter
 		super(entityType, world);
 	}
 
-	@Redirect(method = "getWaterLevelAbove", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
+	@Redirect(method = "getWaterHeightBelow", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"))
 	public boolean getFluidLevelAbove(FluidState instance, TagKey<Fluid> tag) {
 		if(!(instance.getFluid() instanceof QuiltFlowableFluidExtensions)) return true;
 		QuiltFluid fluid = (QuiltFluid) instance.getFluid();
 		return fluid.canBoatSwimOn();
 	}
 
-	@Redirect(method = "checkBoatInWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
+	@Redirect(method = "checkBoatInWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"))
 	public boolean checkBoatInFluid(FluidState instance, TagKey<Fluid> tag) {
 		return instance.getFluid() instanceof QuiltFlowableFluidExtensions;
 	}
 
-	@Inject(method = "getUnderWaterLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	@Inject(method = "getUnderWaterLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void getUnderwaterLocation(CallbackInfoReturnable<BoatEntity.Location> cir, Box box, double d, int i, int j, int k, int l, int m, int n, boolean bl, BlockPos.Mutable mutable, int o, int p, int q, FluidState fluidState) {
 		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions && d < (mutable.getY() + fluidState.getHeight(this.world, mutable))) {
-			if (!fluidState.isSource()) {
+			if (!fluidState.isStill()) {
 				cir.setReturnValue(BoatEntity.Location.UNDER_FLOWING_WATER);
 				cir.cancel();
 			}
 		}
 	}
 
-	@Inject(method = "fall", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
+	@Inject(method = "fall", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"))
 	public void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition, CallbackInfo ci) {
 		if (!(this.world.getFluidState(this.getBlockPos().down()).getFluid() instanceof QuiltFlowableFluidExtensions) && heightDifference < 0.0) {
 			this.fallDistance -= (float) heightDifference;

@@ -1,5 +1,6 @@
 plugins {
-	alias(libs.plugins.quilt.loom)
+	id 'fabric-loom' version '1.0-SNAPSHOT'
+	id 'io.github.juuxel.loom-quiltflower' version '1.7.1'
 	id 'maven-publish'
 }
 
@@ -35,7 +36,7 @@ loom {
 
 quiltflower {
 	addToRuntimeClasspath.set(true)
-	fromUrl("https://maven.quiltmc.org/repository/snapshot/org/quiltmc/quiltflower/1.9.0-SNAPSHOT/quiltflower-1.9.0-20220429.122922-1.jar")
+//	fromUrl("https://maven.quiltmc.org/repository/snapshot/org/quiltmc/quiltflower/1.9.0-SNAPSHOT/quiltflower-1.9.0-20220429.122922-1.jar")
 }
 
 dependencies {
@@ -45,25 +46,26 @@ dependencies {
 	def noQuiltMC = { exclude group: 'org.quiltmc' }
 
 	minecraft libs.minecraft
-	mappings loom.layered {
-		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:v2")) // https://maven.quiltmc.org/#browse/browse:release
-	}
+	mappings libs.yarn.mappings
+//	mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
 
-	modImplementation libs.quilt.loader
+	modImplementation libs.fabric.loader
 
-	modImplementation (libs.bundles.qsl) {
+	modImplementation (libs.bundles.fabric) {
 		force = true
 	}
 
-	modApi (libs.clothconfig) {
+	modImplementation (libs.clothconfig) {
 		noFapi
 		noFLoader
 		noCottonMC
+		noQuiltMC
 	}
 	include (libs.clothconfig) {
 		noFapi
 		noFLoader
 		noCottonMC
+		noQuiltMC
 	}
 
 	modImplementation (libs.vampirelib) {
@@ -84,12 +86,14 @@ dependencies {
 		noFapi
 		noFLoader
 		noCottonMC
+		noQuiltMC
 	}
 	include (libs.appleskin) {
 		transitive false
 		noFapi
 		noFLoader
 		noCottonMC
+		noQuiltMC
 	}
 
 	modImplementation (libs.owo.lib) {
@@ -105,25 +109,24 @@ dependencies {
 		noQuiltMC
 	}
 
-	modImplementation (libs.libzoomer) {
+	/*modImplementation (libs.libzoomer) {
 		noFapi
 		noFLoader
 		noCottonMC
+		noQuiltMC
 	}
 	include (libs.libzoomer) {
 		noFapi
 		noFLoader
 		noCottonMC
-	}
+		noQuiltMC
+	}*/
 
 	modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
 		noFapi
 		noFLoader
 		noCottonMC
-	}
-
-	modApi ("dev.architectury:architectury-fabric:6.0.37") {
-		force = true
+		noQuiltMC
 	}
 
 	implementation group: 'com.amihaiemil.web', name: 'eo-yaml', version: '6.0.1'
@@ -134,11 +137,11 @@ dependencies {
 
 	implementation 'org.snakeyaml:snakeyaml-engine:2.4'
 	implementation 'org.hjson:hjson:3.0.0'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.4'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.13.4'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.13.4'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.0'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.14.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.14.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
 }
 
 processResources {
@@ -152,11 +155,11 @@ processResources {
 java {
 	withSourcesJar()
 	withJavadocJar()
-	toolchain.languageVersion = JavaLanguageVersion.of(17)
+	toolchain.languageVersion = JavaLanguageVersion.of(19)
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 19
 	it.options.encoding = 'UTF-8'
 }
 

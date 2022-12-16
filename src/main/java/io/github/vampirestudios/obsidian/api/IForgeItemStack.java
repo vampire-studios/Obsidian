@@ -8,12 +8,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
-@InjectedInterface(ItemStack.class)
 public interface IForgeItemStack {
 	// Helpers for accessing Item data
 	private ItemStack self() {
@@ -45,7 +43,6 @@ public interface IForgeItemStack {
 	 *
 	 * @param enchantment the enchantment being checked for
 	 * @return Level of the enchantment, or 0 if not present
-	 * @see #getAllEnchantments()
 	 * @see EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)
 	 */
 	default int getEnchantmentLevel(Enchantment enchantment) {

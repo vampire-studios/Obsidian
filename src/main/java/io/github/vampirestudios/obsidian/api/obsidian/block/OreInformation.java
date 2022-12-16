@@ -2,24 +2,23 @@ package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
-import io.github.vampirestudios.obsidian.utils.Utils;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.block.Block;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.structure.rule.*;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.YOffset;
 import net.minecraft.world.gen.heightprovider.HeightProvider;
 import net.minecraft.world.gen.heightprovider.TrapezoidHeightProvider;
 import net.minecraft.world.gen.heightprovider.UniformHeightProvider;
-import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
-import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class OreInformation {
@@ -55,10 +54,10 @@ public class OreInformation {
         return switch (test_type) {
             case "tag" -> new TagMatchRuleTest(getBlockTag());
             case "always_true" -> AlwaysTrueRuleTest.INSTANCE;
-            case "block_match" -> new BlockMatchRuleTest(Registry.BLOCK.get(target_state.block));
-            case "block_state_match" -> new BlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties));
-            case "random_block_match" -> new RandomBlockMatchRuleTest(Registry.BLOCK.get(target_state.block), target_state.probability);
-            case "random_block_state_match" -> new RandomBlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registry.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
+            case "block_match" -> new BlockMatchRuleTest(Registries.BLOCK.get(target_state.block));
+            case "block_state_match" -> new BlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registries.BLOCK.get(target_state.block), target_state.properties));
+            case "random_block_match" -> new RandomBlockMatchRuleTest(Registries.BLOCK.get(target_state.block), target_state.probability);
+            case "random_block_state_match" -> new RandomBlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registries.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
             default -> throw new IllegalStateException("Unexpected value: " + test_type);
         };
     }
@@ -67,7 +66,6 @@ public class OreInformation {
         Predicate<BiomeSelectionContext> predicate;
         switch (spawnPredicate) {
             default -> predicate = BiomeSelectors.all();
-            case "built_in" -> predicate = BiomeSelectors.builtIn();
             case "vanilla" -> predicate = BiomeSelectors.vanilla();
             case "overworld" -> predicate = BiomeSelectors.foundInOverworld();
             case "the_nether" -> predicate = BiomeSelectors.foundInTheNether();
@@ -82,17 +80,17 @@ public class OreInformation {
                     predicate = BiomeSelectors.excludeByKey(biomeCategories);
                 } else predicate = BiomeSelectors.excludeByKey();
             }
-            case "biomes" -> {
+            /*case "biomes" -> {
                 if (biomes != null) {
                     RegistryKey<Biome>[] biomeArray = new RegistryKey[biomes.length];
                     for (int i = 0; i < biomes.length; i++) {
-                        Biome actualBiome = BuiltinRegistries.BIOME.get(biomes[i]);
+                        Biome actualBiome = Registries.BIOME.get(biomes[i]);
                         Optional<RegistryKey<Biome>> optional = BuiltinRegistries.BIOME.getKey(actualBiome);
                         if (optional.isPresent()) biomeArray[i] = optional.get();
                     }
                     predicate = BiomeSelectors.includeByKey(Utils.stripNulls(biomeArray));
                 } else predicate = BiomeSelectors.includeByKey();
-            }
+            }*/
         }
         return predicate;
     }

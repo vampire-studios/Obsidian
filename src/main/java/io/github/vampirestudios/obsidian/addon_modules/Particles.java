@@ -13,8 +13,9 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,7 +36,7 @@ public class Particles implements AddonModule {
                     () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (particle.id == null) particle.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
-            DefaultParticleType particleType = Registry.register(Registry.PARTICLE_TYPE, identifier,
+            DefaultParticleType particleType = Registry.register(Registries.PARTICLE_TYPE, identifier,
                     FabricParticleTypes.simple(false));
             ParticleFactoryRegistry.getInstance().register(particleType, provider -> new ParticleImpl.Factory(particle, provider));
             register(ContentRegistries.PARTICLES, "particle", identifier, particle);

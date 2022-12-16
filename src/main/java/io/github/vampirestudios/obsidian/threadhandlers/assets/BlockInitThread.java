@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
@@ -74,7 +75,7 @@ public class BlockInitThread implements Runnable {
                                         block.rendering.blockModel.parent);
                                 else ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 break;
-                            case WOODEN_DOOR, METAL_DOOR:
+                            case OVERWORLD_WOOD_DOOR, METAL_DOOR:
                                 ArtificeGenerationHelper.generateDoorBlockState(clientResourcePackBuilder, blockId);
                                 break;
                             case TRAPDOOR:
@@ -150,7 +151,7 @@ public class BlockInitThread implements Runnable {
                                         onTextureAndModelInformation.parent, onTextureAndModelInformation.textures,
                                         offTextureAndModelInformation.parent, offTextureAndModelInformation.textures);
                                 break;
-                            case WOODEN_DOOR:
+                            case OVERWORLD_WOOD_DOOR:
                                 TextureAndModelInformation topTextureAndModelInformation = block.rendering.doorTopModel;
                                 TextureAndModelInformation bottomTextureAndModelInformation = block.rendering.doorBottomModel;
                                 TextureAndModelInformation topHingeTextureAndModelInformation = block.rendering.doorTopHingeModel;
@@ -258,7 +259,7 @@ public class BlockInitThread implements Runnable {
                                 ArtificeGenerationHelper.generatePillarBlockState(clientResourcePackBuilder, blockId);
                                 ArtificeGenerationHelper.generateBlockModel(clientResourcePackBuilder, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
-                            case WOODEN_DOOR:
+                            case OVERWORLD_WOOD_DOOR:
                                 TextureAndModelInformation topTextureAndModelInformation = block.rendering.doorTopModel;
                                 TextureAndModelInformation bottomTextureAndModelInformation = block.rendering.doorBottomModel;
                                 TextureAndModelInformation topHingeTextureAndModelInformation = block.rendering.doorTopHingeModel;
@@ -389,3 +390,4 @@ public class BlockInitThread implements Runnable {
     }
 
 }
+*/

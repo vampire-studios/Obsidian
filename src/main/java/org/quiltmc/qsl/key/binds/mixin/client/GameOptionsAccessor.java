@@ -16,22 +16,21 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBind;
 
 @Environment(EnvType.CLIENT)
 @Mixin(GameOptions.class)
 public interface GameOptionsAccessor {
 	@Accessor
-	KeyBind[] getAllKeys();
+	KeyBinding[] getAllKeys();
 
 	@Mutable
 	@Accessor
-	void setAllKeys(KeyBind[] allKeys);
+	void setAllKeys(KeyBinding[] allKeys);
 }

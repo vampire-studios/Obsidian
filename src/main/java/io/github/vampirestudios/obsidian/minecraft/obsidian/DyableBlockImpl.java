@@ -13,6 +13,7 @@ import net.minecraft.item.DyeItem;
 import net.minecraft.item.DyeableItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.function.CommandFunction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -21,8 +22,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.random.RandomGenerator;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -75,7 +75,7 @@ public class DyableBlockImpl extends BlockWithEntity {
         }
 
         if (!world.isClient) {
-            Item item = Registry.ITEM.get(block.functions.use.item);
+            Item item = Registries.ITEM.get(block.functions.use.item);
             if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING) && player.isSneaking() && block.functions.use.predicate.matches()) {
                 Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.use.function_file);
                 function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -98,7 +98,7 @@ public class DyableBlockImpl extends BlockWithEntity {
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (block.functions.scheduled_tick.predicate.matches()) {
             Optional<CommandFunction> function = world.getServer().getCommandFunctionManager().getFunction(block.functions.scheduled_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -106,7 +106,7 @@ public class DyableBlockImpl extends BlockWithEntity {
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (block.functions.random_tick.predicate.matches()) {
             Optional<CommandFunction> function = world.getServer().getCommandFunctionManager().getFunction(block.functions.random_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -114,7 +114,7 @@ public class DyableBlockImpl extends BlockWithEntity {
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, RandomGenerator random) {
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (!world.isClient && block.functions.random_display_tick.predicate.matches()) {
             Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.random_display_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));

@@ -7,8 +7,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class Block {
 
 	public List<net.minecraft.block.Block> getSupportableBlocks() {
         List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
-        can_plant_on.forEach(identifier -> blocks2.add(Registry.BLOCK.get(identifier)));
+        can_plant_on.forEach(identifier -> blocks2.add(Registries.BLOCK.get(identifier)));
         return blocks2;
     }
 
@@ -58,12 +58,18 @@ public class Block {
         SLAB,
         WALL,
         FENCE,
-        FENCE_GATE,
+        OVERWORLD_FENCE_GATE,
+        NETHER_FENCE_GATE,
+        BAMBOO_FENCE_GATE,
         CAKE,
         BED,
-        TRAPDOOR,
+        OVERWORLD_TRAPDOOR,
+        NETHER_TRAPDOOR,
+        BAMBOO_TRAPDOOR,
         METAL_DOOR,
-        WOODEN_DOOR,
+        OVERWORLD_DOOR,
+        NETHER_DOOR,
+        BAMBOO_DOOR,
         LOG,
         STEM,
         WOOD,
@@ -77,7 +83,9 @@ public class Block {
         LEAVES,
         LADDER,
         PATH,
-        WOODEN_BUTTON,
+        OVERWORLD_WOOD_BUTTON,
+        NETHER_WOOD_BUTTON,
+        BAMBOO_BUTTON,
         STONE_BUTTON,
         DOUBLE_PLANT,
         HORIZONTAL_FACING_DOUBLE_PLANT,

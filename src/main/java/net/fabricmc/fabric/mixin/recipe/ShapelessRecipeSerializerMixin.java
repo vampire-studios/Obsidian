@@ -18,7 +18,7 @@ package net.fabricmc.fabric.mixin.recipe;
 
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.recipe.v1.serializer.FabricRecipeSerializer;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonFactory;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.recipe.ShapelessRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class ShapelessRecipeSerializerMixin implements FabricRecipeSerializer<ShapelessRecipe> {
 	@Override
 	public JsonObject toJson(ShapelessRecipe recipe) {
-		return new ShapelessRecipeJsonFactory.ShapelessRecipeJsonProvider(recipe.getId(), recipe.getOutput().getItem(), recipe.getOutput().getCount(),
-				recipe.getGroup(), recipe.getIngredients(), null, null).toJson();
+		return new ShapelessRecipeJsonBuilder.ShapelessRecipeJsonProvider(recipe.getId(), recipe.getOutput().getItem(), recipe.getOutput().getCount(),
+				recipe.getGroup(), recipe.getCategory(), recipe.getIngredients(), null, null).toJson();
 	}
 }

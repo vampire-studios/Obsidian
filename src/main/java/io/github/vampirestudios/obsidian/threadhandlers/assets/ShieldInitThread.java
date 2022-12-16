@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.threadhandlers.assets;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
@@ -34,3 +35,4 @@ public class ShieldInitThread implements Runnable {
         }
     }
 }
+*/

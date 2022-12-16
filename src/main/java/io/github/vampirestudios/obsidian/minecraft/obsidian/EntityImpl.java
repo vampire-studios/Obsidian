@@ -15,9 +15,9 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 
@@ -95,7 +95,7 @@ public class EntityImpl extends PathAwareEntity {
         }
         assert temptBehaviourComponent != null;
         List<ItemStack> temptItems = new ArrayList<>();
-        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(Registry.ITEM.get(Identifier.tryParse(item)))));
+        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(Registries.ITEM.get(Identifier.tryParse(item)))));
         this.goalSelector.add(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.ofStacks(temptItems.stream()), temptBehaviourComponent.can_be_scared));
 
         RandomLookAroundBehaviourComponent randomLookAroundBehaviourComponent = null;

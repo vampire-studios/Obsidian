@@ -19,10 +19,9 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.option.ControlsListWidget;
+import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.screen.option.KeyBindsScreen;
-import net.minecraft.client.gui.widget.option.KeyBindListWidget;
-import net.minecraft.client.gui.widget.option.KeyBindListWidget.KeyBindEntry;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -36,10 +35,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeyBindsScreen.class)
+@Mixin(ControlsOptionsScreen.class)
 public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	@Shadow
-	private KeyBindListWidget keyBindList;
+	private ControlsListWidget keyBindList;
 
 	private KeyBindsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
 		super(screen, gameOptions, text);
@@ -49,8 +48,8 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderConflictTooltips(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		// TODO - Somehow extend the hover area to include the label too
-		KeyBindListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
-		if (entry != null && entry instanceof KeyBindEntry keyBindEntry) {
+		ControlsListWidget.Entry entry = ((EntryListWidgetAccessor<ControlsListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
+		if (entry != null && entry instanceof ControlsListWidget.KeyBindingEntry keyBindEntry) {
 			List<Text> tooltipLines = ((KeyBindTooltipHolder) keyBindEntry).getKeyBindTooltips();
 
 			if (tooltipLines != null) {

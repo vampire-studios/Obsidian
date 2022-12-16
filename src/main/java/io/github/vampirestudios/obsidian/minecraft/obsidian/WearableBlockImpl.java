@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Wearable;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.function.CommandFunction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -18,8 +19,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.random.RandomGenerator;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -60,7 +60,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     @Override
     public ActionResult onUse(BlockState blockState_1, World world, BlockPos blockPos_1, PlayerEntity playerEntity_1, Hand hand_1, BlockHitResult blockHitResult_1) {
         if (!world.isClient) {
-            Item item = Registry.ITEM.get(block.functions.use.item);
+            Item item = Registries.ITEM.get(block.functions.use.item);
             if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING) && playerEntity_1.isSneaking() && block.functions.use.predicate.matches()) {
                 Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.use.function_file);
                 function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -83,7 +83,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (block.functions.scheduled_tick.predicate.matches()) {
             Optional<CommandFunction> function = world.getServer().getCommandFunctionManager().getFunction(block.functions.scheduled_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -91,7 +91,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (block.functions.random_tick.predicate.matches()) {
             Optional<CommandFunction> function = world.getServer().getCommandFunctionManager().getFunction(block.functions.random_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));
@@ -99,7 +99,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, RandomGenerator random) {
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (!world.isClient && block.functions.random_display_tick.predicate.matches()) {
             Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getCommandFunctionManager().getFunction(block.functions.random_display_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getCommandFunctionManager().execute(commandFunction, world.getServer().getCommandSource()));

@@ -23,8 +23,8 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
@@ -40,18 +40,18 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(FishingBobberEntity.class)
 public abstract class FishingBobberEntityMixin implements CustomFluidInteracting, FishingBobberEntityExtensions {
 
-	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z", ordinal = 0))
+	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 0))
 	public boolean tick(FluidState instance, TagKey<Fluid> tag) {
 		QuiltFluid fluid = (QuiltFluid) instance.getFluid();
 		return instance.isIn(this.quilt$canFishingBobberSwimOn()) && fluid.bobberFloats(instance,(FishingBobberEntity) (Object)this);
 	}
 
-	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z", ordinal = 1))
+	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 1))
 	public boolean tick2(FluidState instance, TagKey<Fluid> tag) {
 		return instance.isIn(this.quilt$canFishingBobberSwimOn());
 	}
 
-	@Inject(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;up()Lnet/minecraft/util/math/BlockPos;"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;up()Lnet/minecraft/util/math/BlockPos;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	public void canFish(BlockPos pos, CallbackInfo ci, ServerWorld serverWorld, int i) {
 		FluidState state = serverWorld.getBlockState(pos).getFluidState();
 		QuiltFluid fluid = (QuiltFluid) state.getFluid();

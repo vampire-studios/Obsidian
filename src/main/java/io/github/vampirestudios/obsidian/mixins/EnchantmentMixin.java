@@ -16,7 +16,6 @@ public class EnchantmentMixin implements IForgeEnchantment {
 
 	/**
 	 * @author Olivia
-	 * @reason Checks if it can be applied in enchantment table
 	 */
 	@Overwrite
 	public boolean isAcceptableItem(ItemStack stack) {

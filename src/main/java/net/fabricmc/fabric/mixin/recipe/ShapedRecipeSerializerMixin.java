@@ -20,18 +20,28 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2CharMap;
 import it.unimi.dsi.fastutil.objects.Object2CharOpenHashMap;
 import net.fabricmc.fabric.api.recipe.v1.serializer.FabricRecipeSerializer;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonFactory;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ShapedRecipe.Serializer.class)
 public abstract class ShapedRecipeSerializerMixin implements FabricRecipeSerializer<ShapedRecipe> {
+	protected static RecipeCategory getCategory(CraftingRecipeCategory recipeCategory) {
+		return switch(recipeCategory) {
+			case BUILDING -> RecipeCategory.BUILDING_BLOCKS;
+			case EQUIPMENT -> RecipeCategory.TOOLS;
+			case REDSTONE -> RecipeCategory.REDSTONE;
+			default -> RecipeCategory.MISC;
+		};
+	}
 
 	@Override
 	public JsonObject toJson(ShapedRecipe recipe) {
-		ShapedRecipeJsonFactory factory = new ShapedRecipeJsonFactory(recipe.getOutput().getItem(), recipe.getOutput().getCount());
+		ShapedRecipeJsonBuilder factory = new ShapedRecipeJsonBuilder(getCategory(recipe.getCategory()), recipe.getOutput().getItem(), recipe.getOutput().getCount());
 
 		factory.criterion("dummy", null);
 

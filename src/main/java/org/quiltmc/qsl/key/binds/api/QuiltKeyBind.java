@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.key.binds.api;
 
-import com.mojang.blaze3d.platform.InputUtil;
+import net.minecraft.client.util.InputUtil;
 
 public interface QuiltKeyBind {
 	/**

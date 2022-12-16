@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BlockItemInject {
     @Inject(
         cancellable = true,
-        method = {"writeTagToBlockEntity"},
+        method = "writeNbtToBlockEntity",
         at = @At("HEAD")
     )
     private static void injected(World world, PlayerEntity player, BlockPos pos, ItemStack stack, CallbackInfoReturnable<Boolean> info) {
@@ -33,7 +33,7 @@ public class BlockItemInject {
                             info.setReturnValue(false);
                         }
 
-                        NbtCompound compoundTag2 = blockEntity.toNbt();
+                        NbtCompound compoundTag2 = blockEntity.createNbt();
                         NbtCompound compoundTag3 = compoundTag2.copy();
                         compoundTag2.copyFrom(compoundTag);
                         if (!compoundTag2.contains("color") || compoundTag2.getInt("color") == 0) {

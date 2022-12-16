@@ -5,18 +5,15 @@ import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
+import net.minecraft.resource.InputSupplier;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
+import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class ObsidianAddonResourcePack implements ResourcePack {
     private final ResourcePack virtualPack;
@@ -28,29 +25,24 @@ public class ObsidianAddonResourcePack implements ResourcePack {
     }
 
     @Override
-    public InputStream openRoot(String var1) throws IOException {
+    public InputSupplier<InputStream> openRoot(String... var1) {
         try {
             return virtualPack.openRoot(var1);
         } catch (Throwable ignored) {}
-        throw new FileNotFoundException();
+        return null;
     }
 
     @Override
-    public InputStream open(ResourceType var1, Identifier var2) throws IOException {
+    public InputSupplier<InputStream> open(ResourceType var1, Identifier var2) {
         try {
             return virtualPack.open(var1, var2);
         } catch (Throwable ignored) {}
-        throw new FileNotFoundException();
+        return null;
     }
 
     @Override
-    public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
-        return new HashSet<>(virtualPack.findResources(type, namespace, prefix, pathFilter));
-    }
-
-    @Override
-    public boolean contains(ResourceType var1, Identifier var2) {
-        return virtualPack.contains(var1, var2);
+    public void findResources(ResourceType resourceType, String string, String string2, ResultConsumer resultConsumer) {
+        virtualPack.findResources(resourceType, string, string2, resultConsumer);
     }
 
     @Override

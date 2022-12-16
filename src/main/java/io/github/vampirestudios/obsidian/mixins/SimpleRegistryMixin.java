@@ -9,11 +9,11 @@ import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,37 +26,31 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Mixin(SimpleRegistry.class)
-public abstract class SimpleRegistryMixin<T> extends Registry<T> implements ExtendedRegistry<T> {
+public abstract class SimpleRegistryMixin<T> implements ExtendedRegistry<T>, Registry<T> {
 	@Shadow
 	private boolean frozen;
-	@Shadow @Final
-	@Nullable
-	private Function<T, Holder.Reference<T>> customHolderProvider;
-	@Shadow @Nullable private Map<T, Holder.Reference<T>> intrusiveHolderCache;
+	@Shadow @Nullable private Map<T, RegistryEntry.Reference<T>> intrusiveValueToEntry;
 
-	protected SimpleRegistryMixin(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle) {
-		super(key, lifecycle);
-	}
-
-	@Shadow public abstract Optional<Holder<T>> getHolder(RegistryKey<T> key);
+	@Shadow public abstract Optional<RegistryEntry.Reference<T>> getEntry(RegistryKey<T> key);
 
 	@Shadow @Final private Object2IntMap<T> entryToRawId;
-	@Shadow @Final private ObjectList<Holder.Reference<T>> rawIdToEntry;
-	@Shadow @Final private Map<Identifier, Holder.Reference<T>> byId;
-	@Shadow @Final private Map<RegistryKey<T>, Holder.Reference<T>> byKey;
-	@Shadow @Final private Map<T, Holder.Reference<T>> byValue;
+	@Shadow @Final private ObjectList<RegistryEntry.Reference<T>> rawIdToEntry;
+	@Shadow @Final private Map<Identifier, RegistryEntry.Reference<T>> idToEntry;
+	@Shadow @Final private Map<RegistryKey<T>, RegistryEntry.Reference<T>> keyToEntry;
+	@Shadow @Final private Map<T, RegistryEntry.Reference<T>> valueToEntry;
 	@Shadow @Final private Map<T, Lifecycle> entryToLifecycle;
-	@Shadow @Nullable private List<Holder.Reference<T>> holdersInOrder;
+	@Shadow @Nullable private List<RegistryEntry.Reference<T>> cachedEntries;
+
+	@Shadow public abstract Optional<RegistryEntry.Reference<T>> getEntry(int i);
 
 	@SuppressWarnings("unchecked") private final Event<RegistryEntryDeletedCallback<T>> obsidian$entryDeletedEvent = EventFactory.createArrayBacked(RegistryEntryDeletedCallback.class, callbacks -> (rawId, entry) -> {
 		for (var callback : callbacks) {
 			callback.onEntryDeleted(rawId, entry);
 		}
 
-		if (entry.value() instanceof RegistryEntryDeletedCallback<?> callback)
+		if (entry.comp_349() instanceof RegistryEntryDeletedCallback<?> callback)
 			((RegistryEntryDeletedCallback<T>)callback).onEntryDeleted(rawId, entry);
 	});
 
@@ -71,18 +65,18 @@ public abstract class SimpleRegistryMixin<T> extends Registry<T> implements Exte
 			throw new IllegalStateException("Registry is frozen (trying to remove key " + key + ")");
 		}
 
-		Holder.Reference<T> entry = (Holder.Reference<T>) getHolder(key).orElseThrow();
-		int rawId = entryToRawId.getInt(entry.value());
-		RegistryEntryRemovedCallback.event(this).invoker().onEntryRemoved(rawId, entry.getRegistryKey().getValue(), entry.value());
+		RegistryEntry.Reference<T> entry = getEntry(key).orElseThrow();
+		int rawId = entryToRawId.getInt(entry.comp_349());
+		RegistryEntryRemovedCallback.event(this).invoker().onEntryRemoved(rawId, entry.registryKey().getValue(), entry.comp_349());
 		obsidian$entryDeletedEvent.invoker().onEntryDeleted(rawId, entry);
 
 		rawIdToEntry.set(rawId, null);
 		entryToRawId.removeInt(entry);
-		byId.remove(key.getValue());
-		byKey.remove(key);
-		byValue.remove(entry.value());
-		entryToLifecycle.remove(entry.value());
-		holdersInOrder = null;
+		idToEntry.remove(key.getValue());
+		keyToEntry.remove(key);
+		valueToEntry.remove(entry.comp_349());
+		entryToLifecycle.remove(entry.comp_349());
+		cachedEntries = null;
 
 		((ExtendedRegistryEntryReference) entry).obsidian$poison();
 	}
@@ -90,8 +84,8 @@ public abstract class SimpleRegistryMixin<T> extends Registry<T> implements Exte
 	@Override
 	public void obsidian$unfreeze() {
 		frozen = false;
-		if (customHolderProvider != null)
-			this.intrusiveHolderCache = new IdentityHashMap<>();
+//		if (customHolderProvider != null)
+		this.intrusiveValueToEntry = new IdentityHashMap<>();
 	}
 
 	@Inject(method = "freeze", at = @At("HEAD"), cancellable = true)

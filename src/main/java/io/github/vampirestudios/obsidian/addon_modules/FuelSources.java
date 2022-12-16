@@ -9,9 +9,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
@@ -33,21 +34,21 @@ public class FuelSources implements AddonModule {
                 if (fileName.contains("remove_")) fileName.replace("remove_", "");
                 if (fileName.contains("item")) {
                     fileName.replace("_item.json", "");
-                    FuelRegistry.INSTANCE.remove(Registry.ITEM.get(Identifier.tryParse(fileName)));
+                    FuelRegistry.INSTANCE.remove(Registries.ITEM.get(Identifier.tryParse(fileName)));
                 } else {
                     fileName.replace("_tag.json", "");
-                    FuelRegistry.INSTANCE.remove(TagKey.of(Registry.ITEM_KEY, Identifier.tryParse(fileName)));
+                    FuelRegistry.INSTANCE.remove(TagKey.of(RegistryKeys.ITEM, Identifier.tryParse(fileName)));
                 }
             } else {
                 if (fuelSource.burn_time > 0) {
                     if (fuelSource.item != null) {
-                        FuelRegistry.INSTANCE.add(Registry.ITEM.get(fuelSource.item), fuelSource.burn_time);
+                        FuelRegistry.INSTANCE.add(Registries.ITEM.get(fuelSource.item), fuelSource.burn_time);
                     } else {
                         FuelRegistry.INSTANCE.add(fuelSource.getTag(), fuelSource.burn_time);
                     }
                 } else {
                     if (fuelSource.item != null) {
-                        FuelRegistry.INSTANCE.remove(Registry.ITEM.get(fuelSource.item));
+                        FuelRegistry.INSTANCE.remove(Registries.ITEM.get(fuelSource.item));
                     } else {
                         FuelRegistry.INSTANCE.remove(fuelSource.getTag());
                     }

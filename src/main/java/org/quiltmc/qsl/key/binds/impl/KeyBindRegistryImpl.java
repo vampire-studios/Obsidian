@@ -19,7 +19,7 @@ package org.quiltmc.qsl.key.binds.impl;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.option.KeyBind;
+import net.minecraft.client.option.KeyBinding;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +31,12 @@ import java.util.List;
 public class KeyBindRegistryImpl {
 	public static final Logger LOGGER = LoggerFactory.getLogger("KeyBindRegistry");
 
-	private static final List<KeyBind> ALL_KEY_BINDS = new ReferenceArrayList<>();
-	private static final List<KeyBind> ENABLED_KEYS = new ReferenceArrayList<>();
+	private static final List<KeyBinding> ALL_KEY_BINDS = new ReferenceArrayList<>();
+	private static final List<KeyBinding> ENABLED_KEYS = new ReferenceArrayList<>();
 	private static KeyBindManager keyBindManager = null;
 
-	public static KeyBind getKeyBind(String translationKey) {
-		for (KeyBind key : ALL_KEY_BINDS) {
+	public static KeyBinding getKeyBind(String translationKey) {
+		for (KeyBinding key : ALL_KEY_BINDS) {
 			if (key.getTranslationKey().equals(translationKey)) {
 				return key;
 			}
@@ -45,16 +45,16 @@ public class KeyBindRegistryImpl {
 		return null;
 	}
 
-	public static List<KeyBind> getAllKeyBinds() {
+	public static List<KeyBinding> getAllKeyBinds() {
 		return ALL_KEY_BINDS;
 	}
 
-	public static void registerKeyBind(KeyBind key) {
+	public static void registerKeyBind(KeyBinding key) {
 		ALL_KEY_BINDS.add(key);
 		ENABLED_KEYS.add(key);
 	}
 
-	public static void updateKeyBindState(KeyBind key) {
+	public static void updateKeyBindState(KeyBinding key) {
 		if (key.isEnabled()) {
 			ENABLED_KEYS.add(key);
 		} else {
@@ -68,8 +68,8 @@ public class KeyBindRegistryImpl {
 		//QuiltKeyBindsConfigManager.CONFIG.save();
 	}
 
-	public static KeyBind[] getKeyBinds() {
-		return ENABLED_KEYS.toArray(new KeyBind[ENABLED_KEYS.size()]);
+	public static KeyBinding[] getKeyBinds() {
+		return ENABLED_KEYS.toArray(new KeyBinding[0]);
 	}
 
 	public static void setKeyBindManager(KeyBindManager manager) {

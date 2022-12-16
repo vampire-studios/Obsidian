@@ -1,8 +1,10 @@
+/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.addon_modules.ExpandedItemGroups;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.impl.itemgroup.FabricItemGroupBuilderImpl;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Supplier;
 
-@Mixin(value = FabricItemGroupBuilder.class)
+@Mixin(value = FabricItemGroupBuilderImpl.class)
 public class FabricItemGroupBuilderMixin {
 
     @Shadow
@@ -24,8 +26,8 @@ public class FabricItemGroupBuilderMixin {
 
     @Inject(method = "build()Lnet/minecraft/item/ItemGroup;", at = @At("RETURN"), cancellable = true)
     private void afterConstructor(CallbackInfoReturnable<ItemGroup> cir) {
-        final var createdGroup = ExpandedItemGroups.ExpandedTabs.onGroupCreated(String.format("%s.%s", identifier.getNamespace(), identifier.getPath()), ItemGroup.GROUPS.length - 1, stackSupplier);
+        final var createdGroup = ExpandedItemGroups.ExpandedTabs.onGroupCreated(String.format("%s.%s", identifier.getNamespace(), identifier.getPath()), ItemGroups.getGroups().size() - 1, stackSupplier);
         if (createdGroup != null) cir.setReturnValue(createdGroup);
     }
 
-}
+}*/

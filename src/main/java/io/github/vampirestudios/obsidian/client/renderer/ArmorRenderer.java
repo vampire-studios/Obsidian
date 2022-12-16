@@ -16,12 +16,12 @@
 
 package io.github.vampirestudios.obsidian.client.renderer;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -31,8 +31,8 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public interface ArmorRenderer {
 			Objects.requireNonNull(item, "armor item is null");
 			Objects.requireNonNull(renderer, "renderer is null");
 			if (RENDERERS.putIfAbsent(item, renderer) != null) {
-				throw new IllegalArgumentException("Custom armor renderer already exists for " + Registry.ITEM.getId(item));
+				throw new IllegalArgumentException("Custom armor renderer already exists for " + Registries.ITEM.getId(item));
 			}
 		}
 	}

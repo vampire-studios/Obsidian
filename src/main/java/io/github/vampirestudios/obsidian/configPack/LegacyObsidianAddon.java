@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import net.minecraft.resource.pack.DirectoryResourcePack;
-import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.ZipResourcePack;
+import net.minecraft.resource.DirectoryResourcePack;
+import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ZipResourcePack;
 
 import java.io.File;
 
@@ -35,8 +35,8 @@ public class LegacyObsidianAddon implements IAddonPack {
     @Override
     public ResourcePack getVirtualResourcePack() {
         if (file == null) return null;
-        if (file.isDirectory()) return new DirectoryResourcePack(file);
-        return new ZipResourcePack(file);
+        if (file.isDirectory()) return new DirectoryResourcePack(obsidianAddonInfo.folderName, file.toPath(), false);
+        return new ZipResourcePack(obsidianAddonInfo.folderName, file, false);
     }
 
 }

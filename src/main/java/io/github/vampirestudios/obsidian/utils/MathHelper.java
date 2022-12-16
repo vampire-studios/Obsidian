@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.utils;
 
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.Random;
@@ -168,41 +167,7 @@ public class MathHelper {
 	public static final float degreesToRadians(float value) {
 		return value / RAD_TO_DEG;
 	}
-	
-	public static Vec3f cross(Vec3f vec1, Vec3f vec2)
-	{
-		float cx = vec1.getY() * vec2.getZ() - vec1.getZ() * vec2.getY();
-		float cy = vec1.getZ() * vec2.getX() - vec1.getX() * vec2.getZ();
-		float cz = vec1.getX() * vec2.getY() - vec1.getY() * vec2.getX();
-		return new Vec3f(cx, cy, cz);
-	}
-	
-	public static Vec3f normalize(Vec3f vec) {
-		float length = lengthSqr(vec.getX(), vec.getY(), vec.getZ());
-		if (length > 0) {
-			length = (float) Math.sqrt(length);
-			float x = vec.getX() / length;
-			float y = vec.getY() / length;
-			float z = vec.getZ() / length;
-			vec.set(x, y, z);
-		}
-		return vec;
-	}
-	
-	public static float angle(Vec3f vec1, Vec3f vec2) {
-		float dot = vec1.getX() * vec2.getX() + vec1.getY() * vec2.getY() + vec1.getZ() * vec2.getZ();
-		float length1 = lengthSqr(vec1.getX(), vec1.getY(), vec1.getZ());
-		float length2 = lengthSqr(vec2.getX(), vec2.getY(), vec2.getZ());
-		return (float) Math.acos(dot / Math.sqrt(length1 * length2));
-	}
-	
-	public static Vec3f randomHorizontal(Random random) {
-		float angleY = randRange(0, PI2, random);
-		float vx = (float) Math.sin(angleY);
-		float vz = (float) Math.cos(angleY);
-		return new Vec3f(vx, 0, vz);
-	}
-	
+
 	public static Vec3i[] getOffsets(Random random) {
 		shuffle(RANDOM_OFFSETS, random);
 		return RANDOM_OFFSETS;

@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.key.binds.impl.chords;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
+import net.minecraft.client.util.InputUtil;
 
 import java.util.SortedMap;
 

@@ -4,30 +4,21 @@ import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.item.Item;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.decorator.BiomePlacementModifier;
-import net.minecraft.world.gen.decorator.HeightRangePlacementModifier;
-import net.minecraft.world.gen.decorator.InSquarePlacementModifier;
-import net.minecraft.world.gen.decorator.RarityFilterPlacementModifier;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.PlacedFeature;
-import net.minecraft.world.gen.feature.util.ConfiguredFeatureUtil;
-import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
-import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
-import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
 
 import java.io.File;
 import java.io.FileReader;
@@ -55,12 +46,12 @@ public class Ores implements AddonModule {
 				}
 			}
 
-			QuiltBlockSettings blockSettings;
+			FabricBlockSettings blockSettings;
 
 			if (block.information.parentBlock != null) {
-				blockSettings = QuiltBlockSettings.copyOf(Registry.BLOCK.get(block.information.parentBlock));
+				blockSettings = FabricBlockSettings.copyOf(net.minecraft.registry.Registries.BLOCK.get(block.information.parentBlock));
 			} else {
-				blockSettings = QuiltBlockSettings.of(block.information.blockProperties.getMaterial());
+				blockSettings = FabricBlockSettings.of(block.information.blockProperties.getMaterial());
 			}
 
 			blockSettings.hardness(block.information.blockProperties.hardness).resistance(block.information.blockProperties.resistance)
@@ -76,90 +67,19 @@ public class Ores implements AddonModule {
 			if (block.information.blockProperties.translucent) blockSettings.nonOpaque();
 			if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicBounds();
 
-			Item.Settings settings = new Item.Settings().group(block.information.itemProperties.getItemGroup());
+			Item.Settings settings = new Item.Settings();
 			if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
 			if (block.information.itemProperties.fireproof) settings.fireproof();
 
-			net.minecraft.block.Block blockImpl = REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+			RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();
+
+			expanded.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
 
 			if (block.ore_information != null) {
-				RegistryKey<PlacedFeature> key = RegistryKey.of(Registry.PLACED_FEATURE_KEY, Utils.appendToPath(blockId, "_ore_feature"));
-				Holder<ConfiguredFeature<OreFeatureConfig, ?>> feature = ConfiguredFeatureUtil.register(key.getValue().toString(),
-						Feature.ORE,
-						new OreFeatureConfig(
-								block.ore_information.ruleTest(),
-								blockImpl.getDefaultState(),
-								block.ore_information.size
-						)
-				);
-				PlacedFeatureUtil.register(key.getValue().toString(),
-						feature,
-						InSquarePlacementModifier.getInstance(),
-						HeightRangePlacementModifier.create(block.ore_information.heightRange()),
-						RarityFilterPlacementModifier.create(block.ore_information.chance),
-						BiomePlacementModifier.getInstance()
-				);
-
+				RegistryKey<PlacedFeature> key = RegistryKey.of(RegistryKeys.PLACED_FEATURE, Utils.appendToPath(blockId, "_ore_feature"));
 				BiomeModifications.addFeature(block.ore_information.biomeSelector(), GenerationStep.Feature.UNDERGROUND_ORES,
 						key);
 			}
-
-			/*Obsidian.registerDataPack(Utils.appendToPath(blockId, "_data"), serverResourcePackBuilder -> {
-				serverResourcePackBuilder.addLootTable(blockId, lootTableBuilder -> {
-					lootTableBuilder.type(new Identifier("block"));
-					lootTableBuilder.pool(pool -> {
-						pool.rolls(1);
-						pool.bonusRolls(0);
-						pool.entry(entry -> {
-							entry.type(new Identifier("alternatives"));
-							if (block.drop_information != null && block.drop_information.drops != null) {
-								for (DropInformation.Drop drop : block.drop_information.drops) {
-									if (drop.dropsIfSilkTouch) {
-										entry.child(entry1 -> {
-											entry1.type(new Identifier("item"));
-											entry1.name(drop.name);
-											entry1.condition(new Identifier("minecraft:match_tool"), jsonObjectBuilder -> {
-												JsonObject predicate = new JsonObject();
-
-												JsonArray enchantments = new JsonArray();
-
-												JsonObject predicate1 = new JsonObject();
-												predicate1.addProperty("enchantment", "minecraft:silk_touch");
-
-												JsonObject levels = new JsonObject();
-												levels.addProperty("min", 1);
-												predicate1.add("levels", levels);
-												enchantments.add(predicate1);
-
-												predicate.add("enchantments", enchantments);
-
-												jsonObjectBuilder.add("predicate", predicate);
-											});
-										});
-									} else {
-										entry.child(entry1 -> {
-											entry1.type(new Identifier("item"));
-											entry1.name(drop.name);
-											entry1.function(new Identifier("minecraft:apply_bonus"), function -> {
-												function.add("enchantment", "minecraft:fortune");
-												function.add("formula", "minecraft:ore_drops");
-											});
-											entry1.function(new Identifier("minecraft:explosion_decay"), function -> {});
-										});
-									}
-								}
-							}
-						});
-						if (block.drop_information != null && block.drop_information.survivesExplosion)
-							pool.condition(new Identifier("survives_explosion"), json -> {});
-					});
-				});
-				try {
-					serverResourcePackBuilder.dumpResources("testing", "data");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});*/
 
 			if (!addon.getConfigPackInfo().hasData) {
 				new BlockInitThread(block);

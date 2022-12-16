@@ -20,7 +20,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBind;
+import net.minecraft.client.option.KeyBinding;
 import org.quiltmc.qsl.key.binds.impl.InternalQuiltKeyBind;
 import org.quiltmc.qsl.key.binds.impl.KeyBindManager;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
@@ -40,7 +40,7 @@ public abstract class GameOptionsMixin {
 	@Shadow
 	@Mutable
 	@Final
-	public KeyBind[] allKeys;
+	public KeyBinding[] allKeys;
 
 	@Shadow
 	@Final
@@ -56,7 +56,7 @@ public abstract class GameOptionsMixin {
 	private void modifyAllKeys(MinecraftClient client, File file, CallbackInfo ci) {
 		if (this.optionsFile.equals(new File(file, "options.txt"))) {
 			// Mark the Vanilla key binds as Vanilla
-			for (KeyBind key : this.allKeys) {
+			for (KeyBinding key : this.allKeys) {
 				((InternalQuiltKeyBind) key).markAsVanilla();
 			}
 

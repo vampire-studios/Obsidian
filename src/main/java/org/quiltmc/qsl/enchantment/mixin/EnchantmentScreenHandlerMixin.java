@@ -36,17 +36,17 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler {
 	// Empty constructor... ignore
 	protected EnchantmentScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId) { super(type, syncId); }
 
-	@Inject(method = "Lnet/minecraft/screen/EnchantmentScreenHandler;<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At("TAIL"))
+	@Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At("TAIL"))
 	public void capturePlayer(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, CallbackInfo callback) {
 		this.player = playerInventory.player;
 	}
 
-	@Inject(method = "m_mpsetdhw", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;setSeed(J)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/random/Random;setSeed(J)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onContentChanged(ItemStack stack, World world, BlockPos pos, CallbackInfo ci, int i) {
 		this.bookcases = i;
 	}
 
-	@Inject(method = "generateEnchantments", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;generateEnchantments(Lnet/minecraft/util/random/RandomGenerator;Lnet/minecraft/item/ItemStack;IZ)Ljava/util/List;"))
+	@Inject(method = "generateEnchantments", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;generateEnchantments(Lnet/minecraft/util/math/random/Random;Lnet/minecraft/item/ItemStack;IZ)Ljava/util/List;"))
 	private void setEnchantmentContext(ItemStack stack, int slot, int level, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
 		this.context.run((world, pos) -> {
 			EnchantmentGodClass.context.set(new EnchantmentContext(0, 0, this.bookcases, stack, world, this.player, pos, world.getBlockState(pos), world.getBlockEntity(pos)));

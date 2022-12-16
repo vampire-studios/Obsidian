@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin {
-	@Shadow private static int selectedTab;
+	@Shadow private static ItemGroup selectedTab;
 
 	@ModifyConstant(method = "drawForeground", constant = @Constant(intValue = 4210752))
 	public int readNbt(int old) {
-		ItemGroup itemGroup = ItemGroup.GROUPS[selectedTab];
+		ItemGroup itemGroup = selectedTab;
 		return itemGroup.getLabelColor();
 	}
 }

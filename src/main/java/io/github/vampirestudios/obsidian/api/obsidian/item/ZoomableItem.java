@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import io.github.ennuil.libzoomer.api.MouseModifier;
@@ -40,4 +41,4 @@ public class ZoomableItem extends Item {
             return zoomOverlay != null ? new SpyglassZoomOverlay(zoomOverlay) : null;
         }
     }
-}
+}*/

@@ -5,9 +5,12 @@ import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.mojang.datafixers.util.Pair;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
+import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.SaplingBaseBlock;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
@@ -17,31 +20,27 @@ import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import io.github.vampirestudios.vampirelib.blocks.ButtonBaseBlock;
-import io.github.vampirestudios.vampirelib.blocks.DoorBaseBlock;
-import io.github.vampirestudios.vampirelib.blocks.PressurePlateBaseBlock;
 import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.util.registry.Registry;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -100,12 +99,12 @@ public class Blocks implements AddonModule {
                 }
             }
 
-            QuiltBlockSettings blockSettings;
+            FabricBlockSettings blockSettings;
 
             if (block.information.parentBlock != null) {
-                blockSettings = QuiltBlockSettings.copyOf(Registry.BLOCK.get(block.information.parentBlock));
+                blockSettings = FabricBlockSettings.copyOf(net.minecraft.registry.Registries.BLOCK.get(block.information.parentBlock));
             } else {
-                blockSettings = QuiltBlockSettings.of(block.information.blockProperties.getMaterial());
+                blockSettings = FabricBlockSettings.of(block.information.blockProperties.getMaterial());
             }
 
             blockSettings.hardness(block.information.blockProperties.hardness).resistance(block.information.blockProperties.resistance)
@@ -121,213 +120,197 @@ public class Blocks implements AddonModule {
             if (block.information.blockProperties.translucent) blockSettings.nonOpaque();
             if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicBounds();
 
-            QuiltItemSettings settings = new QuiltItemSettings().group(block.information.itemProperties.getItemGroup());
+            FabricItemSettings settings = new FabricItemSettings()/*.group(block.information.itemProperties.getItemGroup())*/;
             settings.maxCount(block.information.itemProperties.maxStackSize);
             settings.rarity(Rarity.valueOf(block.information.itemProperties.rarity.toUpperCase(Locale.ROOT)));
             if (block.information.itemProperties.maxDurability != 0) settings.maxDamage(block.information.itemProperties.maxDurability);
             if (!block.information.itemProperties.equipmentSlot.isEmpty() && !block.information.itemProperties.equipmentSlot.isBlank())
-                settings.equipmentSlot(EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
+                settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
             if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
             if (block.information.itemProperties.fireproof) settings.fireproof();
 
+            RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();
+
             if (block.additional_information != null) {
                 if (block.additional_information.path) {
-                    REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, blockId.getPath(), settings);
+                    expanded.registerBlock(new PathBlockImpl(blockSettings, block), block, blockId.getPath(), settings);
                 } else if (block.additional_information.lantern) {
-                    REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
+                    expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
                 } else if (block.additional_information.barrel) {
-                    REGISTRY_HELPER.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
+                    expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
                 } else if (block.additional_information.leaves) {
-                    REGISTRY_HELPER.registerBlock(new LeavesBaseBlock(), block, blockId.getPath(), settings);
+                    expanded.registerBlock(new LeavesBaseBlock(), block, blockId.getPath(), settings);
                 } else if (block.additional_information.chains) {
-                    REGISTRY_HELPER.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
+                    expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
                 } else if (block.additional_information.cake_like) {
-                    REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
+                    expanded.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
                 }
             }
 
             if (block.block_type != null) {
                 switch (block.block_type) {
-                    case BLOCK:
-                    case WOOD:
+                    case BLOCK, WOOD -> {
                         if (block.additional_information != null && block.additional_information.dyable) {
-                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), blockId.getPath());
-                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
+                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(block, blockSettings));
+                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
                                             (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     blockId.getPath() + "_be");
-                        } else REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case HORIZONTAL_DIRECTIONAL:
+                        } else
+                            expanded.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    }
+                    case HORIZONTAL_DIRECTIONAL -> {
                         if (block.additional_information != null && block.additional_information.dyable && block.additional_information.sittable) {
-                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableAndDyableBlock(block, blockSettings), blockId.getPath());
-                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
+                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new HorizontalFacingSittableAndDyableBlock(block, blockSettings));
+                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
                                             (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     blockId.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.dyable) {
-                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingDyableBlockImpl(block, blockSettings), blockId.getPath());
-                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
+                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new HorizontalFacingDyableBlockImpl(block, blockSettings));
+                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
                                             (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     blockId.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.sittable) {
-                            net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new HorizontalFacingSittableBlock(block, blockSettings), blockId.getPath());
-                            REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
+                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new HorizontalFacingSittableBlock(block, blockSettings));
+                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
                                             (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     blockId.getPath() + "_be");
-                        } else REGISTRY_HELPER.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case DIRECTIONAL:
-                        REGISTRY_HELPER.registerBlock(new FacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case BED:
-                        REGISTRY_HELPER.registerBlock(new BedBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case CAMPFIRE:
-                        REGISTRY_HELPER.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, blockId.getPath(), settings);
-                        break;
-                    case STAIRS:
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case SLAB:
-                        REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case FENCE:
-                        REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case FENCE_GATE:
-                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case CAKE:
-                        REGISTRY_HELPER.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
-                        break;
-                    case TRAPDOOR:
-                        REGISTRY_HELPER.registerBlock(new TrapdoorBlockImpl(blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case METAL_DOOR:
-                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.IRON_DOOR, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case WOODEN_DOOR:
-                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.DARK_OAK_DOOR, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case LOG:
-                        REGISTRY_HELPER.registerLog(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(),
-                                block.information.blockProperties.getMaterial().getColor(), settings);
-                        break;
-                    case STEM:
-                        REGISTRY_HELPER.registerNetherStemBlock(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(), settings);
-                        break;
-                    case OXIDIZING_BLOCK:
+                        } else
+                            expanded.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    }
+                    case DIRECTIONAL ->
+                            expanded.registerBlock(new FacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case BED ->
+                            expanded.registerBlock(new BedBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case CAMPFIRE ->
+                            expanded.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, blockId.getPath(), settings);
+                    case STAIRS ->
+                            expanded.registerBlock(new StairsImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case SLAB ->
+                            expanded.registerBlock(new SlabImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case FENCE ->
+                            expanded.registerBlock(new FenceImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case OVERWORLD_FENCE_GATE ->
+                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundEvents.BLOCK_FENCE_GATE_OPEN), block, blockId.getPath(), settings);
+                    case NETHER_FENCE_GATE ->
+                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_OPEN), block, blockId.getPath(), settings);
+                    case BAMBOO_FENCE_GATE ->
+                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_OPEN), block, blockId.getPath(), settings);
+                    case CAKE ->
+                            expanded.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
+                    case OVERWORLD_TRAPDOOR ->
+                            expanded.registerBlock(new TrapdoorBlock(blockSettings, SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN), block, blockId.getPath(), settings);
+                    case NETHER_TRAPDOOR ->
+                            expanded.registerBlock(new TrapdoorBlock(blockSettings, SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_OPEN), block, blockId.getPath(), settings);
+                    case BAMBOO_TRAPDOOR ->
+                            expanded.registerBlock(new TrapdoorBlock(blockSettings, SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_OPEN), block, blockId.getPath(), settings);
+                    case METAL_DOOR ->
+                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_IRON_DOOR_CLOSE, SoundEvents.BLOCK_IRON_DOOR_OPEN), block, blockId.getPath(), settings);
+                    case OVERWORLD_DOOR ->
+                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_WOODEN_DOOR_CLOSE, SoundEvents.BLOCK_WOODEN_DOOR_OPEN), block, blockId.getPath(), settings);
+                    case NETHER_DOOR ->
+                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_NETHER_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_DOOR_OPEN), block, blockId.getPath(), settings);
+                    case BAMBOO_DOOR ->
+                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_OPEN), block, blockId.getPath(), settings);
+                    case LOG ->
+                            expanded.registerLog(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(),
+                                    block.information.blockProperties.getMaterial().getColor(), settings);
+                    case STEM ->
+                            expanded.registerNetherStemBlock(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(), settings);
+                    case OXIDIZING_BLOCK -> {
                         List<Identifier> names = new ArrayList<>();
                         block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
                             if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
                         }));
-                        names.forEach(identifier -> REGISTRY_HELPER.registerBlock(new BlockImpl(block, blockSettings), block, identifier.getPath(), settings));
-                        break;
-                    case PLANT:
+                        names.forEach(identifier -> expanded.registerBlock(new BlockImpl(block, blockSettings), block, identifier.getPath(), settings));
+                    }
+                    case PLANT -> {
                         if (block.additional_information != null) {
                             if (block.additional_information.waterloggable) {
-                                REGISTRY_HELPER.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
+                                expanded.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
                             }
                         } else {
-                            REGISTRY_HELPER.registerBlock(new PlantBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new PlantBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                         }
-                        break;
-                    case ROTATED_PILLAR:
-                        REGISTRY_HELPER.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case HORIZONTAL_FACING_PLANT:
-                        REGISTRY_HELPER.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
-                        break;
-                    case SAPLING:
-						REGISTRY_HELPER.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
-                        break;
-                    case TORCH:
+                    }
+                    case ROTATED_PILLAR ->
+                            expanded.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case HORIZONTAL_FACING_PLANT ->
+                            expanded.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
+                    case SAPLING ->
+                            expanded.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
+                    case TORCH ->
                         //TODO: Add particle lookup registry/method
-                        REGISTRY_HELPER.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
-                        break;
-                    case BEEHIVE:
-                        net.minecraft.block.Block beeHive = REGISTRY_HELPER.registerBlock(new BeehiveBlockImpl(blockSettings), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
+                    case BEEHIVE -> {
+                        Block beeHive = expanded.registerBlock(new BeehiveBlock(blockSettings), block, blockId.getPath(), settings);
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beeHive), blockId.getPath() + "_beehive_be");
-                        break;
-                    case LEAVES:
-                        REGISTRY_HELPER.registerLeavesBlock(block, blockId.getPath(), settings);
-                        break;
-                    case LADDER:
-                        REGISTRY_HELPER.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), settings);
-                        break;
-                    case PATH:
-                        REGISTRY_HELPER.registerBlock(new PathBlockImpl(blockSettings, block), block, blockId.getPath(), settings);
-                        break;
-                    case WOODEN_BUTTON:
-                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, net.minecraft.block.Blocks.DARK_OAK_BUTTON, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case STONE_BUTTON:
-                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(false, net.minecraft.block.Blocks.POLISHED_BLACKSTONE_BUTTON, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case DOUBLE_PLANT:
+                    }
+                    case LEAVES -> expanded.registerLeavesBlock(block, blockId.getPath(), settings);
+                    case LADDER ->
+                            expanded.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), settings);
+                    case PATH ->
+                            expanded.registerBlock(new PathBlockImpl(blockSettings, block), block, blockId.getPath(), settings);
+                    case OVERWORLD_WOOD_BUTTON ->
+                            expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                    case NETHER_WOOD_BUTTON ->
+                            expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                    case BAMBOO_BUTTON ->
+                            expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                    case STONE_BUTTON ->
+                            expanded.registerBlock(new ButtonBlock(blockSettings, 20, true, SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                    case DOUBLE_PLANT -> {
                         if (block.additional_information != null) {
                             if (block.additional_information.waterloggable) {
-                                REGISTRY_HELPER.registerTallBlock(new WaterloggableTallFlowerBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
+                                expanded.registerDoubleBlock(new WaterloggableTallFlowerBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
                             }
                         } else {
-                            REGISTRY_HELPER.registerTallBlock(new TallFlowerBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                            expanded.registerDoubleBlock(new TallFlowerBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                         }
-                        break;
-                    case HORIZONTAL_FACING_DOUBLE_PLANT:
-                        REGISTRY_HELPER.registerTallBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
-                        break;
-                    case HANGING_DOUBLE_LEAVES:
-                        REGISTRY_HELPER.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
-                        break;
-                    case LANTERN:
-                        REGISTRY_HELPER.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case CHAIN:
-                        REGISTRY_HELPER.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case PANE:
-                        REGISTRY_HELPER.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case DYEABLE:
-                        net.minecraft.block.Block registeredBlock = REGISTRY_HELPER.registerBlockWithoutItem(new DyeableBlock(block, blockSettings), blockId.getPath());
-                        REGISTRY_HELPER.registerItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
+                    }
+                    case HORIZONTAL_FACING_DOUBLE_PLANT ->
+                            expanded.registerDoubleBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
+                    case HANGING_DOUBLE_LEAVES ->
+                            expanded.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
+                    case LANTERN ->
+                            expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CHAIN ->
+                            expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
+                    case PANE ->
+                            expanded.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case DYEABLE -> {
+                        Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(block, blockSettings));
+                        expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
                                         (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                 blockId.getPath() + "_be");
-                        break;
-                    case LOOM:
-                        REGISTRY_HELPER.registerBlock(new LoomBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case CRAFTING_TABLE:
-                        REGISTRY_HELPER.registerBlock(new CraftingTableBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case FURNACE:
-                        Block furnace = REGISTRY_HELPER.registerBlock(new FurnaceBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    }
+                    case LOOM ->
+                            expanded.registerBlock(new LoomBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CRAFTING_TABLE ->
+                            expanded.registerBlock(new CraftingTableBlock(blockSettings), block, blockId.getPath(), settings);
+                    case FURNACE -> {
+                        Block furnace = expanded.registerBlock(new FurnaceBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.FURNACE).vlAddBlocks(furnace);
-                        break;
-                    case BLAST_FURNACE:
-                        Block blastFurnace = REGISTRY_HELPER.registerBlock(new BlastFurnaceBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    }
+                    case BLAST_FURNACE -> {
+                        Block blastFurnace = expanded.registerBlock(new BlastFurnaceBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.BLAST_FURNACE).vlAddBlocks(blastFurnace);
-                        break;
-                    case SMOKER:
-                        Block smoker = REGISTRY_HELPER.registerBlock(new SmokerBlockImpl(blockSettings), block, blockId.getPath(), settings);
+                    }
+                    case SMOKER -> {
+                        Block smoker = expanded.registerBlock(new SmokerBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.SMOKER).vlAddBlocks(smoker);
-                        break;
-                    case BARREL:
-                        Block barrel = REGISTRY_HELPER.registerBlock(new BarrelBlockImpl(blockSettings), block, blockId.getPath(), settings);
+                    }
+                    case BARREL -> {
+                        Block barrel = expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.BARREL).vlAddBlocks(barrel);
-                        break;
-                    case PISTON:
-                        Block piston = REGISTRY_HELPER.registerBlock(new PistonBlockImpl(false, blockSettings), block, blockId.getPath(), settings);
-                        Block stickyPiston = REGISTRY_HELPER.registerBlock(new PistonBlockImpl(true, blockSettings), block, blockId.getPath() + "_sticky", settings);
-                        ((IBlockEntityType) BlockEntityType.PISTON).vlAddBlocks(piston, stickyPiston);
-                        break;
-                    case CARPET:
-                        REGISTRY_HELPER.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
-                        break;
+                    }
+                    case CARPET ->
+                            expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
+
                     /*case PANE:
 //                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(blockId, "_base"));
 
@@ -340,80 +323,111 @@ public class Blocks implements AddonModule {
             }
 
             if (block.additional_information != null) {
-                if (!block.additional_information.extraBlocksName.isEmpty()) {
-                    Identifier identifier = new Identifier(blockId.getNamespace(), block.additional_information.extraBlocksName);
-                    if (block.additional_information.slab) {
-                        REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block,
-                                Utils.appendToPath(identifier, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
+                AdditionalBlockInformation additionalInformation = block.additional_information;
+                if (!additionalInformation.extraBlocksName.isEmpty()) {
+                    Identifier identifier = new Identifier(blockId.getNamespace(), additionalInformation.extraBlocksName);
+                    if (additionalInformation.slab) {
+                        expanded.registerBlock(new SlabImpl(block, blockSettings), block,
+                                Utils.appendToPath(identifier, "_slab").getPath(), ItemGroups.BUILDING_BLOCKS, settings);
                     }
-                    if (block.additional_information.stairs) {
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(), identifier.getPath() + "_stairs").getPath(),
-                                ItemGroup.BUILDING_BLOCKS);
+                    if (additionalInformation.stairs) {
+                        expanded.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(), identifier.getPath() + "_stairs").getPath(),
+                                ItemGroups.BUILDING_BLOCKS);
                     }
-                    if (block.additional_information.fence) {
-                        REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block,
-                                new Identifier(id.modId(), identifier.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
+                    if (additionalInformation.fence) {
+                        expanded.registerBlock(new FenceImpl(block, blockSettings), block,
+                                new Identifier(id.modId(), identifier.getPath() + "_fence").getPath(), ItemGroups.BUILDING_BLOCKS, settings);
                     }
-                    if (block.additional_information.fenceGate) {
-                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block,
-                                Utils.appendToPath(identifier, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.fenceGate) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.FENCE_GATE);
+                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(identifier, "_fence_gate").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.walls) {
-                        REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
-                                Utils.appendToPath(identifier, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+                    if (additionalInformation.walls) {
+                        expanded.registerBlock(new WallImpl(block, blockSettings), block,
+                                Utils.appendToPath(identifier, "_wall").getPath(), ItemGroups.BUILDING_BLOCKS, settings);
                     }
-                    if (block.additional_information.pressurePlate) {
-                        REGISTRY_HELPER.registerBlock(new PressurePlateBaseBlock(net.minecraft.block.Blocks.DARK_OAK_PRESSURE_PLATE, blockSettings, PressurePlateBlock.ActivationRule.EVERYTHING), block,
-                                Utils.appendToPath(identifier, "_pressure_plate").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.pressurePlate) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
+                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(identifier, "_pressure_plate").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.button) {
-                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, net.minecraft.block.Blocks.DARK_OAK_BUTTON, blockSettings), block,
-                                Utils.appendToPath(identifier, "_button").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.button) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
+                        expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(identifier, "_button").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.door) {
-                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.DARK_OAK_DOOR, blockSettings), block,
-                                Utils.appendToPath(identifier, "_door").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.door) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
+                        expanded.registerBlock(new DoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(identifier, "_door").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.trapdoor) {
-                        REGISTRY_HELPER.registerBlock(new TrapdoorBlockImpl(blockSettings), block,
-                                Utils.appendToPath(identifier, "_trapdoor").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.trapdoor) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
+                        expanded.registerBlock(new TrapdoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(identifier, "_trapdoor").getPath(), ItemGroups.REDSTONE, settings);
                     }
                 } else {
-                    if (block.additional_information.slab) {
-                        REGISTRY_HELPER.registerBlock(new SlabImpl(block, blockSettings), block,
-                                Utils.appendToPath(blockId, "_slab").getPath(), ItemGroup.BUILDING_BLOCKS, settings);
+                    if (additionalInformation.slab) {
+                        expanded.registerBlock(new SlabImpl(block, blockSettings), block,
+                                Utils.appendToPath(blockId, "_slab").getPath(), ItemGroups.BUILDING_BLOCKS, settings);
                     }
-                    if (block.additional_information.stairs) {
-                        REGISTRY_HELPER.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(), blockId.getPath() + "_stairs").getPath(),
-                                ItemGroup.BUILDING_BLOCKS);
+                    if (additionalInformation.stairs) {
+                        expanded.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(), blockId.getPath() + "_stairs").getPath(),
+                                ItemGroups.BUILDING_BLOCKS);
                     }
-                    if (block.additional_information.fence) {
-                        REGISTRY_HELPER.registerBlock(new FenceImpl(block, blockSettings), block,
-                                new Identifier(id.modId(), blockId.getPath() + "_fence").getPath(), ItemGroup.DECORATIONS, settings);
+                    if (additionalInformation.fence) {
+                        expanded.registerBlock(new FenceImpl(block, blockSettings), block,
+                                new Identifier(id.modId(), blockId.getPath() + "_fence").getPath(), ItemGroups.BUILDING_BLOCKS, settings);
                     }
-                    if (block.additional_information.fenceGate) {
-                        REGISTRY_HELPER.registerBlock(new FenceGateImpl(block, blockSettings), block,
-                                Utils.appendToPath(blockId, "_fence_gate").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.fenceGate) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.FENCE_GATE);
+                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(blockId, "_fence_gate").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.walls) {
-                        REGISTRY_HELPER.registerBlock(new WallImpl(block, blockSettings), block,
-                                Utils.appendToPath(blockId, "_wall").getPath(), ItemGroup.DECORATIONS, settings);
+                    if (additionalInformation.walls) {
+                        expanded.registerBlock(new WallImpl(block, blockSettings), block,
+                                Utils.appendToPath(blockId, "_wall").getPath(), ItemGroups.BUILDING_BLOCKS, settings);
                     }
-                    if (block.additional_information.pressurePlate) {
-                        REGISTRY_HELPER.registerBlock(new PressurePlateBaseBlock(net.minecraft.block.Blocks.DARK_OAK_PRESSURE_PLATE, blockSettings, PressurePlateBlock.ActivationRule.EVERYTHING), block,
-                                Utils.appendToPath(blockId, "_pressure_plate").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.pressurePlate) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
+                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(blockId, "_pressure_plate").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.button) {
-                        REGISTRY_HELPER.registerBlock(new ButtonBaseBlock(true, net.minecraft.block.Blocks.DARK_OAK_BUTTON, blockSettings), block,
-                                Utils.appendToPath(blockId, "_button").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.button) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
+                        expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(blockId, "_button").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.door) {
-                        REGISTRY_HELPER.registerBlock(new DoorBaseBlock(net.minecraft.block.Blocks.DARK_OAK_DOOR, blockSettings), block,
-                                Utils.appendToPath(blockId, "_door").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.door) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.DOOR);
+                        expanded.registerBlock(new DoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(blockId, "_door").getPath(), ItemGroups.REDSTONE, settings);
                     }
-                    if (block.additional_information.trapdoor) {
-                        REGISTRY_HELPER.registerBlock(new TrapdoorBlockImpl(blockSettings), block,
-                                Utils.appendToPath(blockId, "_trapdoor").getPath(), ItemGroup.REDSTONE, settings);
+                    if (additionalInformation.trapdoor) {
+                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
+                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
+                        expanded.registerBlock(new TrapdoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                                Utils.appendToPath(blockId, "_trapdoor").getPath(), ItemGroups.REDSTONE, settings);
                     }
                 }
             }
@@ -451,6 +465,77 @@ public class Blocks implements AddonModule {
     @Override
     public String getType() {
         return "block";
+    }
+    
+    private Pair<SoundEvent, SoundEvent> getWoodTypeSpecificSounds(SoundType soundType, BlockType blockType) {
+        if (soundType == SoundType.OVERWORLD) {
+            if (blockType == BlockType.BUTTON) {
+                return Pair.of(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON);
+            }
+            if (blockType == BlockType.DOOR) {
+                return Pair.of(SoundEvents.BLOCK_WOODEN_DOOR_CLOSE, SoundEvents.BLOCK_WOODEN_DOOR_OPEN);
+            }
+            if (blockType == BlockType.TRAPDOOR) {
+                return Pair.of(SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN);
+            }
+            if (blockType == BlockType.PRESSURE_PLATE) {
+                return Pair.of(SoundEvents.BLOCK_WOODEN_PRESSURE_PLATE_CLICK_OFF, SoundEvents.BLOCK_WOODEN_PRESSURE_PLATE_CLICK_ON);
+            }
+            if (blockType == BlockType.FENCE_GATE) {
+                return Pair.of(SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundEvents.BLOCK_FENCE_GATE_OPEN);
+            }
+            return Pair.of(null, null);
+        } else if (soundType == SoundType.NETHER) {
+            if (blockType == BlockType.BUTTON) {
+                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_ON);
+            }
+            if (blockType == BlockType.DOOR) {
+                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_DOOR_OPEN);
+            }
+            if (blockType == BlockType.TRAPDOOR) {
+                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_OPEN);
+            }
+            if (blockType == BlockType.PRESSURE_PLATE) {
+                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_PRESSURE_PLATE_CLICK_OFF, SoundEvents.BLOCK_NETHER_WOOD_PRESSURE_PLATE_CLICK_ON);
+            }
+            if (blockType == BlockType.FENCE_GATE) {
+                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_OPEN);
+            }
+            return Pair.of(null, null);
+        } else if (soundType == SoundType.BAMBOO) {
+            if (blockType == BlockType.BUTTON) {
+                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_ON);
+            }
+            if (blockType == BlockType.DOOR) {
+                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_OPEN);
+            }
+            if (blockType == BlockType.TRAPDOOR) {
+                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_OPEN);
+            }
+            if (blockType == BlockType.PRESSURE_PLATE) {
+                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_PRESSURE_PLATE_CLICK_OFF, SoundEvents.BLOCK_BAMBOO_WOOD_PRESSURE_PLATE_CLICK_ON);
+            }
+            if (blockType == BlockType.FENCE_GATE) {
+                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_OPEN);
+            }
+            return Pair.of(null, null);
+        } else {
+            return Pair.of(null, null);
+        }
+    }
+    
+    private enum SoundType {
+        OVERWORLD,
+        NETHER,
+        BAMBOO
+    }
+    
+    private enum BlockType {
+        DOOR,
+        TRAPDOOR,
+        PRESSURE_PLATE,
+        BUTTON,
+        FENCE_GATE
     }
 
 }

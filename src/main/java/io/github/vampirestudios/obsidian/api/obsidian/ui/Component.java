@@ -9,10 +9,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Locale;
 
@@ -70,15 +70,28 @@ public class Component {
 		Sizing verticalSizing = sizing(jsonObject, "vertical_sizing");
 		Sizing sizing = sizing(jsonObject, "sizing");
 		return switch (getType()) {
-			case TEXTURED_BUTTON -> Components.texturedButton(texture, getText(jsonObject), width, height, u, v, (buttonWidget) -> {});
-			case TEXTURED_BUTTON_CUSTOM_TEXTURE_SIZE -> Components.texturedButton(texture, getText(jsonObject), width, height, u, v, textureWidth, textureHeight,
-					(buttonWidget) -> {});
+			case TEXTURED_BUTTON -> {
+				ButtonComponent buttonComponent = Components.button(getText(jsonObject), buttonWidget -> {});
+				buttonComponent.sizing(io.wispforest.owo.ui.core.Sizing.fixed(width), io.wispforest.owo.ui.core.Sizing.fixed(height));
+				buttonComponent.renderer(ButtonComponent.Renderer.texture(texture, u, v, width, height));
+				yield buttonComponent;
+			}
+			case TEXTURED_BUTTON_CUSTOM_TEXTURE_SIZE -> {
+				ButtonComponent buttonComponent = Components.button(getText(jsonObject), buttonWidget -> {});
+				buttonComponent.sizing(io.wispforest.owo.ui.core.Sizing.fixed(width), io.wispforest.owo.ui.core.Sizing.fixed(height));
+				buttonComponent.renderer(ButtonComponent.Renderer.texture(texture, u, v, textureWidth, textureHeight));
+				yield buttonComponent;
+			}
 			case BUTTON -> Components.button(getText(jsonObject), (ButtonComponent component) -> {});
-			case BUTTON_CUSTOM_SIZE -> Components.button(getText(jsonObject), width, height, (buttonWidget) -> {});
+			case BUTTON_CUSTOM_SIZE -> {
+				ButtonComponent button = Components.button(getText(jsonObject), (buttonWidget) -> {});
+				button.sizing(io.wispforest.owo.ui.core.Sizing.fixed(width), io.wispforest.owo.ui.core.Sizing.fixed(height));
+				yield button;
+			}
 			case TEXT_BOX -> Components.textBox(sizing.get());
 			case TEXT_BOX_WITH_TEXT -> Components.textBox(sizing.get(), textBoxText);
-			case ENTITY -> Components.entity(sizing.get(), Registry.ENTITY_TYPE.get(entityType), nbt);
-			case ITEM -> Components.item(new ItemStack(Registry.ITEM.get(item), count));
+			case ENTITY -> Components.entity(sizing.get(), Registries.ENTITY_TYPE.get(entityType), nbt);
+			case ITEM -> Components.item(new ItemStack(Registries.ITEM.get(item), count));
 			case LABEL -> Components.label(getText(jsonObject));
 			case CHECKBOX -> Components.checkbox(getText(jsonObject));
 			case SLIDER -> Components.slider(sizing.get());

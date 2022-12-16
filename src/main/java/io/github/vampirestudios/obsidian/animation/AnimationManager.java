@@ -5,13 +5,13 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.client.render.animation.Animation;
+import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
+import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
-import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public class AnimationManager implements SimpleResourceReloader<AnimationManager.AnimationLoader> {
+public class AnimationManager implements SimpleResourceReloadListener<AnimationManager.AnimationLoader> {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Obsidian Animation Manager");
 	private Map<Identifier, Animation> animations;
 
@@ -43,7 +43,7 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 	}
 
 	@Override
-	public Identifier getQuiltId() {
+	public Identifier getFabricId() {
 		return new Identifier("obsidian", "animation_reloader");
 	}
 
@@ -70,7 +70,7 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 		private void addAnimation(Identifier id, Resource resource) {
 			BufferedReader reader;
 			try {
-				reader = resource.openBufferedReader();
+				reader = resource.getReader();
 			} catch (IOException e) {
 				LOGGER.error(String.format("Unable to open BufferedReader for id %s", id), e);
 				return;

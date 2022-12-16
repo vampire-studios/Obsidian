@@ -5,8 +5,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.MusicDisc;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class MusicDiscItemImpl extends MusicDiscItem {
     private final MusicDisc musicDisc;
 
     public MusicDiscItemImpl(MusicDisc musicDisc, Settings settings) {
-        super(musicDisc.comparator_output, Registry.SOUND_EVENT.get(musicDisc.music), settings, musicDisc.length);
+        super(musicDisc.comparator_output, Registries.SOUND_EVENT.get(musicDisc.music), settings, musicDisc.length);
         this.musicDisc = musicDisc;
     }
 

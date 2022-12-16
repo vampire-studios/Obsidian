@@ -16,9 +16,21 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
-import java.util.List;
-
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.option.ControlsListWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.objectweb.asm.Opcodes;
+import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
+import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
+import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,35 +40,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
-import com.mojang.blaze3d.platform.InputUtil;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.option.KeyBindListWidget;
-import net.minecraft.client.gui.widget.option.KeyBindListWidget.KeyBindEntry;
-import net.minecraft.client.option.KeyBind;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
-import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
-import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
-import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
+import java.util.List;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeyBindEntry.class)
-public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implements KeyBindTooltipHolder {
+@Mixin(ControlsListWidget.KeyBindingEntry.class)
+public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry implements KeyBindTooltipHolder {
 	@Shadow
 	@Final
-	private KeyBind key;
+	private KeyBinding binding;
 
 	@Shadow
 	@Final
-	private ButtonWidget bindButton;
+	private ButtonWidget editButton;
 
 	@Unique
 	private List<Text> quilt$conflictTooltips = new ObjectArrayList<>();
@@ -72,10 +68,10 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 
 	@Shadow(aliases = "field_2742", remap = false)
 	@Final
-	KeyBindListWidget field_2742;
+	ControlsListWidget field_2742;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind key, Text text, CallbackInfo ci) {
+	private void initPreviousBoundKey(ControlsListWidget list, KeyBinding key, Text text, CallbackInfo ci) {
 		quilt$previousProtoChord = null;
 		quilt$changedProtoChord = null;
 		quilt$addKeyNameToTooltip = false;
@@ -85,13 +81,13 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			method = "render",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/option/KeyBind;isUnbound()Z"
+				target = "Lnet/minecraft/client/option/KeyBinding;isUnbound()Z"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
-		InputUtil.Key boundKey = this.key.getBoundKey();
-		KeyChord boundChord = this.key.getBoundChord();
+		InputUtil.Key boundKey = this.binding.getBoundKey();
+		KeyChord boundChord = this.binding.getBoundChord();
 		List<InputUtil.Key> boundProtoChord;
 
 		if (boundChord == null) {
@@ -110,9 +106,9 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 
 			quilt$addKeyNameToTooltip = true;
 
-			if (!this.key.isUnbound()) {
-				for (KeyBind otherKey : KeyBindRegistryImpl.getKeyBinds()) {
-					if (otherKey != this.key && this.key.keyEquals(otherKey)) {
+			if (!this.binding.isUnbound()) {
+				for (KeyBinding otherKey : KeyBindRegistryImpl.getKeyBinds()) {
+					if (otherKey != this.binding && this.binding.equals(otherKey)) {
 						if (this.quilt$conflictTooltips.isEmpty()) {
 							this.quilt$conflictTooltips.add(Text.translatable("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
 						}
@@ -136,47 +132,47 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void shortenText(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
+	private void shortenText(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
 		// TODO - Get client from the parent screen instead
 		MinecraftClient client = MinecraftClient.getInstance();
-		Text text = this.bindButton.getMessage();
-		int targetWidth = bl || bl2 ? 50 - 10 : 75 - 10;
+		Text text = this.editButton.getMessage();
+		int targetWidth = /*bl || bl2 ? 50 - 10 : */75 - 10;
 		if (client.textRenderer.getWidth(text) > targetWidth) {
-			String protoText = text.getString();
-			if (this.key.getBoundChord() != null) {
-				protoText = "";
-				KeyChord chord = this.key.getBoundChord();
+			StringBuilder protoText = new StringBuilder(text.getString());
+			if (this.binding.getBoundChord() != null) {
+				protoText = new StringBuilder();
+				KeyChord chord = this.binding.getBoundChord();
 
 				for (InputUtil.Key key : chord.keys.keySet()) {
-					if (!protoText.isEmpty()) {
-						protoText += " + ";
+					if (protoText.length() > 0) {
+						protoText.append(" + ");
 					}
 
-					String keyString = key.getDisplayText().getString();
+					StringBuilder keyString = new StringBuilder(key.getLocalizedText().getString());
 
 					if (keyString.length() > 3) {
-						String[] keySegments = keyString.split(" ");
-						keyString = "";
+						String[] keySegments = keyString.toString().split(" ");
+						keyString = new StringBuilder();
 						for (String keySegment : keySegments) {
-							keyString += keySegment.substring(0, 1);
+							keyString.append(keySegment.charAt(0));
 						}
 					}
 
-					protoText += keyString;
+					protoText.append(keyString);
 				}
 			}
 
-			if (client.textRenderer.getWidth(protoText) > targetWidth) {
+			if (client.textRenderer.getWidth(protoText.toString()) > targetWidth) {
 				if (quilt$addKeyNameToTooltip) {
-					this.quilt$conflictTooltips.add(0, this.key.getKeyName());
+					this.quilt$conflictTooltips.add(0, this.binding.getBoundKeyLocalizedText());
 					quilt$addKeyNameToTooltip = false;
 				}
 
-				protoText = client.textRenderer.trimToWidth(protoText, targetWidth);
-				protoText += "...";
+				protoText = new StringBuilder(client.textRenderer.trimToWidth(protoText.toString(), targetWidth));
+				protoText.append("...");
 			}
 
-			this.bindButton.setMessage(Text.literal(protoText));
+			this.editButton.setMessage(Text.literal(protoText.toString()));
 		}
 	}
 

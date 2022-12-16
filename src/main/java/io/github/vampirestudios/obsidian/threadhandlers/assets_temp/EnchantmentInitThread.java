@@ -1,4 +1,4 @@
-package io.github.vampirestudios.obsidian.threadhandlers.assets;
+package io.github.vampirestudios.obsidian.threadhandlers.assets_temp;
 
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.client.ClientInit;

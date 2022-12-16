@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
-import com.mojang.blaze3d.platform.InputUtil;
+import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -24,9 +24,9 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class InputUtilKeyMixin implements Comparable<InputUtil.Key> {
 	@Override
 	public int compareTo(InputUtil.Key key) {
-		return Integer.compare(this.getKeyCode(), key.getKeyCode());
+		return Integer.compare(this.getCode(), key.getCode());
 	}
 
 	@Shadow
-	public abstract int getKeyCode();
+	public abstract int getCode();
 }

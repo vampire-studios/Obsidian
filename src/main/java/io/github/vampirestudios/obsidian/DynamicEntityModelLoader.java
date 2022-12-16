@@ -22,6 +22,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.github.vampirestudios.obsidian.animation.Codecs;
+import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.resource.Resource;
@@ -29,7 +30,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
-import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicEntityModelLoader.ModelLoader> {
+public class DynamicEntityModelLoader implements SimpleResourceReloadListener<DynamicEntityModelLoader.ModelLoader> {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Entity Model Manager");
 	private Map<EntityModelLayer, TexturedModelData> modelData;
 
@@ -63,7 +63,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 	}
 
 	@Override
-	public Identifier getQuiltId() {
+	public Identifier getFabricId() {
 		return new Identifier("quilt_entity_models", "entity_model_reloader");
 	}
 
@@ -92,7 +92,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 		private void addModel(Identifier id, Resource resource) {
 			BufferedReader reader;
 			try {
-				reader = resource.openBufferedReader();
+				reader = resource.getReader();
 			} catch (IOException e) {
 				LOGGER.error(String.format("Unable to open BufferedReader for id %s", id), e);
 				return;

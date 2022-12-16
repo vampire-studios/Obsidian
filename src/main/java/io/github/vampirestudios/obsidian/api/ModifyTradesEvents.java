@@ -7,13 +7,16 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Supplier;
 
 /**
@@ -296,7 +299,7 @@ public final class ModifyTradesEvents {
                              int itemCount, int maxUses, int xpGain, float priceMultiplier,
                              boolean sellToVillager) implements TradeOffers.Factory {
         @Override
-        public TradeOffer create(Entity entity, RandomGenerator random) {
+        public TradeOffer create(Entity entity, Random random) {
             ItemStack emeralds = new ItemStack(Items.EMERALD, this.emeralds);
             ItemStack item = new ItemStack(this.item.get(), this.itemCount);
 

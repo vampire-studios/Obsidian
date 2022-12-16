@@ -11,12 +11,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.command.CommandBuildContext;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 
 import java.io.File;
 import java.io.FileReader;
@@ -25,7 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class Commands implements AddonModule {
     @Override
@@ -92,7 +93,7 @@ public class Commands implements AddonModule {
         return "commands";
     }
 
-    void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, String json) {
+    void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, String json) {
         Command.CommandNode node = Obsidian.GSON.fromJson(json, Command.CommandNode.class);
         if (node.dedicatedOnly) {
             if (environment.dedicated) {
@@ -107,19 +108,19 @@ public class Commands implements AddonModule {
         }
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, Command.LiteralNode node, String name, String[] args) {
+    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, Command.LiteralNode node, String name, String[] args) {
         LiteralArgumentBuilder<ServerCommandSource> _this = CommandManager.literal(name);
         parse(_this, buildContext, environment, node, args);
         parent.then(_this);
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, Command.ArgumentNode node, String name, String[] args) {
+    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, Command.ArgumentNode node, String name, String[] args) {
         RequiredArgumentBuilder<ServerCommandSource, ?> _this = CommandManager.argument(name, node.getArgumentType(buildContext));
         parse(_this, buildContext, environment, node, args);
         parent.then(_this);
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment, Command.Node node, String[] args) {
+    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, Command.Node node, String[] args) {
         if (node.arguments != null) {
             node.arguments.forEach((_name, _node) -> {
                 ArrayList<String> list = new ArrayList<>(Arrays.asList(args));

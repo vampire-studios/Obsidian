@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 public class CustomToolMaterial implements ToolMaterial {
 
@@ -39,7 +39,7 @@ public class CustomToolMaterial implements ToolMaterial {
 
     @Override
     public Ingredient getRepairIngredient() {
-        return Ingredient.ofItems(Registry.ITEM.get(toolMaterial.repairItem));
+        return Ingredient.ofItems(Registries.ITEM.get(toolMaterial.repairItem));
     }
 
 }

@@ -3,8 +3,8 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.registry.Registry;
 
 public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial material) implements ArmorMaterial {
 
@@ -25,12 +25,12 @@ public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian
 
     @Override
     public SoundEvent getEquipSound() {
-        return Registry.SOUND_EVENT.get(this.material.equipSound);
+        return Registries.SOUND_EVENT.get(this.material.equipSound);
     }
 
     @Override
     public Ingredient getRepairIngredient() {
-        return Ingredient.ofItems(Registry.ITEM.get(this.material.repair_item));
+        return Ingredient.ofItems(Registries.ITEM.get(this.material.repair_item));
     }
 
     @Override

@@ -6,9 +6,6 @@ extendable class net/minecraft/world/biome/Biome
 accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;)V
 accessible class net/minecraft/world/biome/Biome$Weather
 
-accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
-accessible method net/minecraft/util/registry/BuiltinRegistries addRegistry (Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/BuiltinRegistries$RegistryBootstrap;)Lnet/minecraft/util/registry/Registry;
-
 accessible class net/minecraft/entity/mob/DrownedEntity$TridentAttackGoal
 
 accessible method net/minecraft/client/render/entity/model/EntityModelLayers registerMain (Ljava/lang/String;)Lnet/minecraft/client/render/entity/model/EntityModelLayer;
@@ -37,10 +34,8 @@ accessible field net/minecraft/block/FireBlock spreadChances Lit/unimi/dsi/fastu
 accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
 extendable class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
 
-accessible field net/minecraft/client/gui/widget/option/KeyBindListWidget$KeyBindEntry bindButton Lnet/minecraft/client/gui/widget/ButtonWidget;
-mutable field net/minecraft/client/gui/widget/option/KeyBindListWidget$KeyBindEntry bindButton Lnet/minecraft/client/gui/widget/ButtonWidget;
-
-accessible field net/minecraft/client/gui/widget/option/KeyBindListWidget parent Lnet/minecraft/client/gui/screen/option/KeyBindsScreen;
-mutable field net/minecraft/client/gui/widget/option/KeyBindListWidget parent Lnet/minecraft/client/gui/screen/option/KeyBindsScreen;
-
 accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen TEXTURE Lnet/minecraft/util/Identifier;
+
+accessible class net/minecraft/data/server/recipe/CookingRecipeJsonBuilder$CookingRecipeJsonProvider
+
+accessible method net/minecraft/data/server/recipe/RecipeJsonBuilder getCraftingCategory (Lnet/minecraft/recipe/book/RecipeCategory;)Lnet/minecraft/recipe/book/CraftingRecipeCategory;

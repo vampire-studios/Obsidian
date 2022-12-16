@@ -6,12 +6,12 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ArmorItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomArmorMaterial;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableArmorItemImpl;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
@@ -46,11 +46,12 @@ public class Armor implements AddonModule {
 
             Item item;
             Item.Settings settings = new Item.Settings()
-                    .group(armor.information.getItemGroup()).maxCount(armor.information.maxStackSize)
+                    .maxCount(armor.information.maxStackSize)
                     .rarity(armor.information.rarity);
             if (armor.information.dyeable) item = new DyeableArmorItemImpl(customArmorMaterial, armor, settings);
             else item = new ArmorItemImpl(customArmorMaterial, armor, settings);
-            RegistryUtils.registerItem(item, identifier);
+            REGISTRY_HELPER.items().registerItem(identifier.getPath(), item);
+            ItemGroupEvents.modifyEntriesEvent(armor.information.getItemGroup()).register(entries -> entries.add(item));
 
             register(ContentRegistries.ARMORS, "armor", identifier, armor);
         } catch (Exception e) {

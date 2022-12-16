@@ -1,24 +1,25 @@
 [versions]
-    minecraft = '1.19.2'
-    quilt-mappings = '1.19.2+build.14' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
-    quilt-loader = '0.17.5-beta.2' # Latest version is available at https://fabricmc.net/versions.html
+    minecraft = '1.19.3'
+    quilt-mappings = '1.19.3+build.1' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
+    yarn_mappings = '1.19.3+build.1'
+    fabric-loader = '0.14.11' # Latest version is available at https://fabricmc.net/versions.html
 
-    quilted_fabric_api = '4.0.0-beta.12+0.61.0-1.19.2'
+    fabric_api = '0.69.0+1.19.3'
 
-    vampirelib = "5.6.0+build.1-1.19.2-beta"
-    clothconfig = '7.0.72'
-    owo-lib = '0.8.3+1.19'
+    vampirelib = "6.0.0+build.2-1.19.3-beta"
+    clothconfig = '9.0.93'
+    owo-lib = '0.9.2+1.19.3'
     appleskin = 'mc1.19-2.4.0'
     libzoomer = '6c0c9d119d'
-    cct = '2.0.0+1.19-ArchHotfix'
+    cct = '2.0.2+1.19'
 
 [libraries]
     minecraft = { module = 'com.mojang:minecraft', version.ref = 'minecraft' }
-    quilt-mappings = { module = 'org.quiltmc:quilt-mappings', version.ref = 'quilt-mappings' }
-    quilt-loader = { module = 'org.quiltmc:quilt-loader', version.ref = 'quilt-loader' }
+    yarn-mappings = { module = 'net.fabricmc:yarn', version.ref = 'yarn-mappings' }
+    fabric-loader = { module = 'net.fabricmc:fabric-loader', version.ref = 'fabric-loader' }
 
-    quilted_fabric_api = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilted_fabric_api" }
-    quilted_fabric_api_deprecated = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api-deprecated", version.ref = "quilted_fabric_api" }
+    fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+    fabric_api_deprecated = { module = "net.fabricmc.fabric-api:fabric-api-deprecated", version.ref = "fabric_api" }
 
     vampirelib = { module = 'io.github.vampirestudios:VampireLib-Fabric', version.ref = 'vampirelib' }
     clothconfig = { module = 'me.shedaniel.cloth:cloth-config-fabric', version.ref = 'clothconfig' }
@@ -27,8 +28,5 @@
     owo-sentinel = { module = 'io.wispforest:owo-sentinel', version.ref = 'owo-lib' }
     libzoomer = { module = 'com.github.EnnuiL:LibZoomer', version.ref = 'libzoomer' }
 
-[plugins]
-    quilt_loom = { id = "org.quiltmc.loom", version = "0.12.+" }
-
 [bundles]
-    qsl = ["quilted_fabric_api", "quilted_fabric_api_deprecated"]
+    fabric = ["fabric_api", "fabric_api_deprecated"]

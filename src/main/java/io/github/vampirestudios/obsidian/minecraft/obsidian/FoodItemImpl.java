@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.stat.Stats;
@@ -15,7 +16,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -39,13 +39,13 @@ public class FoodItemImpl extends Item {
 
         if (stack.isEmpty()) {
             if (item.food_information.returnItem != null) {
-                return new ItemStack(Registry.ITEM.get(item.food_information.returnItem));
+                return new ItemStack(Registries.ITEM.get(item.food_information.returnItem));
             } else {
                 return ItemStack.EMPTY;
             }
         } else {
             if (user instanceof PlayerEntity playerEntity && !((PlayerEntity)user).getAbilities().creativeMode) {
-                ItemStack itemStack = new ItemStack(Registry.ITEM.get(item.food_information.returnItem));
+                ItemStack itemStack = new ItemStack(Registries.ITEM.get(item.food_information.returnItem));
                 if (!playerEntity.getInventory().insertStack(itemStack)) {
                     playerEntity.dropItem(itemStack, false);
                 }
@@ -67,12 +67,12 @@ public class FoodItemImpl extends Item {
 
     @Override
     public SoundEvent getDrinkSound() {
-        return Registry.SOUND_EVENT.get(item.food_information.drinkSound);
+        return Registries.SOUND_EVENT.get(item.food_information.drinkSound);
     }
 
     @Override
     public SoundEvent getEatSound() {
-        return Registry.SOUND_EVENT.get(item.food_information.eatSound);
+        return Registries.SOUND_EVENT.get(item.food_information.eatSound);
     }
 
     @Override

@@ -16,17 +16,13 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.config;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.RunArgs;
+import net.minecraft.client.option.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.RunArgs;
-import net.minecraft.client.option.KeyBind;
-
-import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfig;
-import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -36,8 +32,8 @@ public abstract class MinecraftClientMixin {
 			method = "<init>"
 	)
 	private void handleQuiltKeyBindsConfig(RunArgs runArgs, CallbackInfo ci) {
-		new QuiltKeyBindsConfig();
-		QuiltKeyBindsConfigManager.updateConfig(true);
-		KeyBind.updateBoundKeys();
+//		new QuiltKeyBindsConfig();
+//		QuiltKeyBindsConfigManager.updateConfig(true);
+		KeyBinding.updateKeysByCode();
 	}
 }

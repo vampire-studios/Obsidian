@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.HashMap;
 import java.util.List;
@@ -109,7 +108,7 @@ public class BlockInformation {
             vanillaMaterials.put(new Identifier("powder_snow"), Material.POWDER_SNOW);
             vanillaMaterials.put(new Identifier("air"), Material.AIR);
             vanillaMaterials.put(new Identifier("sculk"), Material.SCULK);
-            vanillaMaterials.put(new Identifier("frog_spawn"), Material.FROG_SPAWN);
+            vanillaMaterials.put(new Identifier("frog_spawn"), Material.FROGSPAWN);
             vanillaMaterials.put(new Identifier("froglight"), Material.FROGLIGHT);
 
             vanillaSoundGroups.put(new Identifier("wood"), BlockSoundGroup.WOOD);
@@ -231,11 +230,11 @@ public class BlockInformation {
             if (customSoundGroup != null) {
                 CustomSoundGroup soundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(this.customSoundGroup);
                 assert soundGroup != null;
-                SoundEvent breakSound = Registry.SOUND_EVENT.get(soundGroup.break_sound);
-                SoundEvent stepSound = Registry.SOUND_EVENT.get(soundGroup.step_sound);
-                SoundEvent placeSound = Registry.SOUND_EVENT.get(soundGroup.place_sound);
-                SoundEvent hitSound = Registry.SOUND_EVENT.get(soundGroup.hit_sound);
-                SoundEvent fallSound = Registry.SOUND_EVENT.get(soundGroup.fall_sound);
+                SoundEvent breakSound = net.minecraft.registry.Registries.SOUND_EVENT.get(soundGroup.break_sound);
+                SoundEvent stepSound = net.minecraft.registry.Registries.SOUND_EVENT.get(soundGroup.step_sound);
+                SoundEvent placeSound = net.minecraft.registry.Registries.SOUND_EVENT.get(soundGroup.place_sound);
+                SoundEvent hitSound = net.minecraft.registry.Registries.SOUND_EVENT.get(soundGroup.hit_sound);
+                SoundEvent fallSound = net.minecraft.registry.Registries.SOUND_EVENT.get(soundGroup.fall_sound);
                 return new BlockSoundGroup(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
             } else {
                 return vanillaSoundGroups.get(vanillaSoundGroup);

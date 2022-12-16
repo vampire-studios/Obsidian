@@ -7,16 +7,17 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class BlockSoundGroups implements AddonModule {
 
@@ -44,7 +45,7 @@ public class BlockSoundGroups implements AddonModule {
 	}
 
 	private void registerSoundIfNotFound(Identifier sound) {
-		if (!Registry.SOUND_EVENT.containsId(sound)) Obsidian.registerInRegistry(Registry.SOUND_EVENT, sound, new SoundEvent(sound));
+		if (!Registries.SOUND_EVENT.containsId(sound)) Obsidian.registerInRegistry(Registries.SOUND_EVENT, sound, SoundEvent.of(sound));
 	}
 
 	@Override

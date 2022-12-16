@@ -1,28 +1,27 @@
 package io.github.vampirestudios.obsidian.client;
 
-import io.github.vampirestudios.artifice.api.builder.assets.TranslationBuilder;
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
-import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
-import io.github.vampirestudios.obsidian.api.obsidian.item.*;
+import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
+import io.github.vampirestudios.obsidian.api.obsidian.item.Elytra;
+import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
 import io.github.vampirestudios.obsidian.client.renderer.SeatEntityRenderer;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.threadhandlers.assets.*;
+import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.ArmorInitThread;
+import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.ElytraInitThread;
+import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.EnchantmentInitThread;
+import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.ItemInitThread;
+import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import org.quiltmc.loader.api.QuiltLoader;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,14 +58,14 @@ public class ClientInit implements ClientModInitializer {
                 ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addonPack.getConfigPackInfo();
                 namespace = addonInfo.addon.id;
             }
-            Obsidian.registerAssetPack(
+            /*Obsidian.registerAssetPack(
                     new Identifier(namespace, namespace),
                     builder -> {
                         if (addonPack.getConfigPackInfo().hasAssets) return;
                         builder.setDisplayName(Text.literal(name));
                         builder.shouldOverwrite();
                     }
-            );
+            );*/
 
         }
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
@@ -78,7 +77,28 @@ public class ClientInit implements ClientModInitializer {
                 ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) iAddonPack.getConfigPackInfo();
                 id = addonInfo.addon.id;
             }
-            Obsidian.registerAssetPack(new Identifier(id, "resource_pack"), clientResourcePackBuilder -> {
+            if (!iAddonPack.getConfigPackInfo().hasAssets) {
+                System.out.println("Testing");
+                for (Block block : ContentRegistries.BLOCKS)
+                    if (block.information.name.id.getNamespace().equals(id))
+                        new BlockInitThread(block).run();
+                for (Block block : ContentRegistries.ORES)
+                    if (block.information.name.id.getNamespace().equals(id))
+                        new BlockInitThread(block).run();
+                for (Item item : ContentRegistries.ITEMS)
+                    if (item.information.name.id.getNamespace().equals(id))
+                        new ItemInitThread(item).run();
+                for (ArmorItem armor : ContentRegistries.ARMORS)
+                    if (armor.information.name.id.getNamespace().equals(id))
+                        new ArmorInitThread(armor).run();
+                for (Enchantment enchantment : ContentRegistries.ENCHANTMENTS)
+                    if (enchantment.name.id.getNamespace().equals(id))
+                        new EnchantmentInitThread(enchantment).run();
+                for (Elytra elytra : ContentRegistries.ELYTRAS)
+                    if (elytra.information.name.id.getNamespace().equals(id))
+                        new ElytraInitThread(elytra).run();
+            }
+            /*Obsidian.registerAssetPack(new Identifier(id, "resource_pack"), clientResourcePackBuilder -> {
                 if (!iAddonPack.getConfigPackInfo().hasAssets) {
                     System.out.println("Testing");
                     clientResourcePackBuilder.setDisplayName(Text.literal(name));
@@ -132,7 +152,7 @@ public class ClientInit implements ClientModInitializer {
                         }
                     }).start();
                 }
-            });
+            });*/
         });
     }
 

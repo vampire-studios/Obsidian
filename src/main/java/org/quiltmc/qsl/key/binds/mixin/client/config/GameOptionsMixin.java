@@ -16,18 +16,14 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.config;
 
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.mojang.blaze3d.platform.InputUtil;
-
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBind;
-
-import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
 
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
@@ -38,16 +34,16 @@ public abstract class GameOptionsMixin {
 			),
 			method = "setKeyCode"
 	)
-	private void writeToKeyBindConfig(KeyBind key, InputUtil.Key code, CallbackInfo ci) {
-		QuiltKeyBindsConfigManager.updateConfig(false);
+	private void writeToKeyBindConfig(KeyBinding key, InputUtil.Key code, CallbackInfo ci) {
+//		QuiltKeyBindsConfigManager.updateConfig(false);
 	}
 
 	@Redirect(
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/option/KeyBind;setBoundKey(Lcom/mojang/blaze3d/platform/InputUtil$Key;)V"
+				target = "Lnet/minecraft/client/option/KeyBinding;setBoundKey(Lnet/minecraft/client/util/InputUtil$Key;)V"
 			),
 			method = "accept"
 	)
-	private void useOurConfigInstead(KeyBind keyBind, InputUtil.Key key) { }
+	private void useOurConfigInstead(KeyBinding keyBind, InputUtil.Key key) { }
 }

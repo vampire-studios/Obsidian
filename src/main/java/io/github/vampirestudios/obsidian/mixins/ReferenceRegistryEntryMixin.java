@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.api.ExtendedRegistryEntryReference;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.entry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(Holder.Reference.class)
+@Mixin(RegistryEntry.Reference.class)
 public class ReferenceRegistryEntryMixin implements ExtendedRegistryEntryReference {
     private boolean obsidian$poisoned = false;
 

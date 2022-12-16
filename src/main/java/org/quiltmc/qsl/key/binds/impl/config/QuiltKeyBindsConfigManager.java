@@ -12,16 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package org.quiltmc.qsl.key.binds.impl.config;
 
-import com.mojang.blaze3d.platform.InputUtil;
-import net.minecraft.client.option.KeyBind;
-import org.quiltmc.config.api.values.TrackedValue;
-import org.quiltmc.config.api.values.ValueList;
-import org.quiltmc.config.api.values.ValueMap;
-import org.quiltmc.loader.api.config.QuiltConfig;
+import net.minecraft.client.option.KeyBinding;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
@@ -92,7 +88,7 @@ public class QuiltKeyBindsConfigManager {
 
 		removalList.forEach(key -> KEY_BINDS.value().remove(key));
 
-		for (KeyBind keyBind : filteredList) {
+		for (KeyBinding keyBind : filteredList) {
 			if (keyBind.isEnabled()) {
 				ValueList<String> list;
 				if (keyBind.getBoundChord() == null) {
@@ -111,4 +107,4 @@ public class QuiltKeyBindsConfigManager {
 			}
 		}
 	}
-}
+}*/

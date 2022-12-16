@@ -11,19 +11,25 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.quiltmc.qsl.item.group.api.QuiltItemGroup;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
@@ -64,22 +70,69 @@ public class LegacyItemGroups implements AddonModule {
             );
             if (itemGroup.name.id == null) itemGroup.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
 
-            ItemGroup itemGroup1 = QuiltItemGroup.createWithIcon(identifier,
-                    () -> new ItemStack(Registry.ITEM.get(itemGroup.icon)));
-
-            /*if (itemGroup.tags != null) {
-                for (Identifier tag : itemGroup.tags) {
-                    itemGroup1.appendItems(itemStacks -> {
-                        if (ItemTags.getTagGroup().contains(tag)) {
-                            Objects.requireNonNull(ItemTags.getTagGroup().getTag(tag)).values()
-                                    .forEach(item -> itemStacks.add(new ItemStack(item)));
-                        } else if (BlockTags.getTagGroup().contains(tag)) {
-                            Objects.requireNonNull(BlockTags.getTagGroup().getTag(tag)).values()
-                                    .forEach(block -> itemStacks.add(new ItemStack(block)));
+            ItemGroup itemGroup1 = FabricItemGroup.builder(identifier)
+                    .icon(() -> new ItemStack(net.minecraft.registry.Registries.ITEM.get(itemGroup.icon)))
+                    .entries((featureSet, entries, bl) -> {
+                        if (itemGroup.tags != null) {
+                            for (Map.Entry<String, Identifier> tag : itemGroup.tags.entrySet()) {
+                                if (tag.getKey().equals("block")) {
+                                    TagKey<Block> blockTagKey = TagKey.of(RegistryKeys.BLOCK, tag.getValue());
+                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(blockTagKey.id()));
+                                }
+                                if (tag.getKey().equals("item")) {
+                                    TagKey<Item> blockTagKey = TagKey.of(RegistryKeys.ITEM, tag.getValue());
+                                    entries.add(net.minecraft.registry.Registries.ITEM.get(blockTagKey.id()));
+                                }
+                            }
                         }
-                    });
-                }
-            }*/
+                        if (itemGroup.items != null) {
+                            for (Identifier item : itemGroup.items) {
+                                entries.add(net.minecraft.registry.Registries.ITEM.get(item));
+                            }
+                        }
+                        if (itemGroup.blocks != null) {
+                            for (Identifier block : itemGroup.blocks) {
+                                entries.add(net.minecraft.registry.Registries.BLOCK.get(block));
+                            }
+                        }
+                        if (itemGroup.opItems != null && bl) {
+                            for (Identifier item : itemGroup.opItems) {
+                                entries.add(net.minecraft.registry.Registries.ITEM.get(item));
+                            }
+                        }
+                        if (itemGroup.opBlocks != null && bl) {
+                            for (Identifier block : itemGroup.opBlocks) {
+                                entries.add(net.minecraft.registry.Registries.BLOCK.get(block));
+                            }
+                        }
+                        if (itemGroup.featureSetItems != null) {
+                            for (Map.Entry<String, Identifier> entry : itemGroup.featureSetItems.entrySet()) {
+                                if (entry.getKey().equals("vanilla") && featureSet.contains(FeatureFlags.VANILLA)) {
+                                    entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
+                                }
+                                if (entry.getKey().equals("bundle") && featureSet.contains(FeatureFlags.BUNDLE)) {
+                                    entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
+                                }
+                                if (entry.getKey().equals("update_1_20") && featureSet.contains(FeatureFlags.UPDATE_1_20)) {
+                                    entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
+                                }
+                            }
+                        }
+                        if (itemGroup.featureSetBlocks != null) {
+                            for (Map.Entry<String, Identifier> entry : itemGroup.featureSetBlocks.entrySet()) {
+                                if (entry.getKey().equals("vanilla") && featureSet.contains(FeatureFlags.VANILLA)) {
+                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
+                                }
+                                if (entry.getKey().equals("bundle") && featureSet.contains(FeatureFlags.BUNDLE)) {
+                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
+                                }
+                                if (entry.getKey().equals("update_1_20") && featureSet.contains(FeatureFlags.UPDATE_1_20)) {
+                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
+                                }
+                            }
+                        }
+                    })
+                    .build();
 
             Registry.register(Registries.ITEM_GROUP_REGISTRY, identifier, itemGroup1);
             register(ContentRegistries.ITEM_GROUPS, "item_group", identifier, itemGroup);

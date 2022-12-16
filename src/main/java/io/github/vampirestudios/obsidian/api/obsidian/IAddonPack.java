@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
-import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.ResourcePack;
 
 import java.io.File;
 

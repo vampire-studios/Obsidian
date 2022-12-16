@@ -1,28 +1,24 @@
-package io.github.vampirestudios.obsidian.threadhandlers.assets;
+package io.github.vampirestudios.obsidian.threadhandlers.assets_temp;
 
-import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
-import io.github.vampirestudios.artifice.api.builder.assets.ModelBuilder;
-import io.github.vampirestudios.obsidian.client.renderer.ArmorRenderer;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import io.github.vampirestudios.obsidian.client.ClientInit;
+import io.github.vampirestudios.obsidian.client.renderer.ArmorRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class ArmorInitThread implements Runnable {
     private final ArmorItem armor;
-    private final ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder;
     private BipedEntityModel<LivingEntity> armorModel;
 
-    public ArmorInitThread(ArtificeResourcePack.ClientResourcePackBuilder clientResourcePackBuilder, ArmorItem armor_in) {
+    public ArmorInitThread(ArmorItem armor_in) {
         armor = armor_in;
-        this.clientResourcePackBuilder = clientResourcePackBuilder;
     }
 
     @Override
@@ -34,12 +30,12 @@ public class ArmorInitThread implements Runnable {
                     name
             ));
 
-        if (armor.display != null && armor.display.model != null) {
+        /*if (armor.display != null && armor.display.model != null) {
             ModelBuilder modelBuilder = new ModelBuilder()
                     .parent(armor.display.model.parent);
             armor.display.model.textures.forEach(modelBuilder::texture);
             clientResourcePackBuilder.addItemModel(armor.information.name.id, modelBuilder);
-        }
+        }*/
 
         if (armor.display != null && armor.display.lore.length != 0) {
             for (TooltipInformation lore : armor.display.lore) {
@@ -51,7 +47,7 @@ public class ArmorInitThread implements Runnable {
                 }
             }
         }
-        if (ArmorRenderer.getRenderer(Registry.ITEM.get(armor.information.name.id)) == null) {
+        if (ArmorRenderer.getRenderer(Registries.ITEM.get(armor.information.name.id)) == null) {
             ArmorRenderer.register((matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
                 boolean slim = false;
                 if (entity instanceof AbstractClientPlayerEntity player) {
@@ -60,7 +56,7 @@ public class ArmorInitThread implements Runnable {
                 if (armorModel == null) {
                     armorModel = new BipedEntityModel<>(MinecraftClient.getInstance().getEntityModelLoader().getModelPart(slim ? EntityModelLayers.PLAYER_SLIM_OUTER_ARMOR : EntityModelLayers.PLAYER_OUTER_ARMOR));
                 }
-                contextModel.setAttributes(armorModel);
+//                contextModel.setAttributes(armorModel);
                 armorModel.setVisible(false);
                 switch (slot) {
                     case HEAD -> {
@@ -86,19 +82,17 @@ public class ArmorInitThread implements Runnable {
                 if (slot == EquipmentSlot.LEGS) texture = armor.material.texture2;
                 else texture = armor.material.texture1;
                 ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, armorModel, texture);
-            }, Registry.ITEM.get(armor.information.name.id));
+            }, Registries.ITEM.get(armor.information.name.id));
         }
-        /*ArmorRenderer.register(new ArmorRenderer() {
-            @Override
-            public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
-                Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
-                if(model.isPresent()) {
-                    BipedEntityModel<LivingEntity> entityModel = new ArmorModelImpl<>(model.get());
-                    contextModel.setAttributes(entityModel);
-                    ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, entityModel, armor.material.texture);
-                }
-            }
-        }, Registry.ITEM.get(armor.information.name.id));*/
+//        ArmorRenderer.register((matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
+//            Optional<ArmorModel> model = ContentRegistries.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
+//            if (model.isPresent()) {
+//                BipedEntityModel<LivingEntity> entityModel = new ArmorModelImpl<>(model.get());
+//                contextModel.setAttributes(entityModel);
+//                ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, entityModel, armor.material.texture1);
+//            }
+//        }, Registries.ITEM.get(armor.information.name.id));
+
 //        ArmorRenderingRegistry.registerModel((entity, stack, slot, defaultModel) -> {
 //            BipedEntityModel<LivingEntity> entityModel;
 //            Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);

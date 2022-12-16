@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import net.minecraft.item.Item;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class FuelSource {
 
@@ -21,7 +21,7 @@ public class FuelSource {
     }
 
     public TagKey<Item> getTag() {
-        return TagKey.of(Registry.ITEM_KEY, tag);
+        return TagKey.of(RegistryKeys.ITEM, tag);
     }
 
     public enum Operation {

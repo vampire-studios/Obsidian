@@ -25,26 +25,23 @@ import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.loot.LootTables;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 import javax.annotation.Nullable;
 
-@InjectedInterface(FlowableFluid.class)
 public interface QuiltFlowableFluidExtensions {
 
 	float WATER_VISCOSITY = 0.8f;
@@ -72,7 +69,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * The color of this fluid.
 	 */
 	default int getColor(FluidState state, World world, BlockPos pos) {
-		return world.getBiome(pos).value().getWaterColor();
+		return world.getBiome(pos).comp_349().getWaterColor();
 	}
 
 	/**
@@ -107,7 +104,7 @@ public interface QuiltFlowableFluidExtensions {
 	 */
 	default float getPushStrength(FluidState state, Entity affected) {
 		if(state.isIn(FluidTags.LAVA)) {
-			return affected.world.getDimension().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+			return affected.world.getDimension().ultrawarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 		}
 		return WATER_PUSH_STRENGTH;
 	}
@@ -149,7 +146,7 @@ public interface QuiltFlowableFluidExtensions {
 		return !canExtinguish(state, affected);
 	}
 
-	default int getNextAirSubmerged(int air, LivingEntity entity, RandomGenerator random) {
+	default int getNextAirSubmerged(int air, LivingEntity entity, Random random) {
 		int i = EnchantmentHelper.getRespiration(entity);
 		return i > 0 && random.nextInt(i + 1) > 0 ? air : air - 1;
 	}
@@ -231,7 +228,7 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	@Nullable
-	default SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, Random random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH;
 	}
 
@@ -240,22 +237,22 @@ public interface QuiltFlowableFluidExtensions {
 	 *	Logic found in FlowableFluidExtensions.onSplash
 	 */
 	@Nullable
-	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, Random random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED;
 	}
 
 	@Nullable
-	default ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
-		return ParticleTypes.WATER_SPLASH;
+	default ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, Random random) {
+		return ParticleTypes.SPLASH;
 	}
 
 	@Nullable
-	default ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, Random random) {
 		return ParticleTypes.BUBBLE;
 	}
 
 	@Nullable
-	default GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, Random random) {
 		return GameEvent.SPLASH;
 	}
 
@@ -269,7 +266,7 @@ public interface QuiltFlowableFluidExtensions {
 
 	// Overriding of any methods below this comment is generally unnecessary,
 	// and only made available to cover as many cases as possible.
-	default void spawnSplashParticles(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default void spawnSplashParticles(Entity splashing, Vec3d splashPos, Random random) {
 		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width * 20.0f; ++i) {
 			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
@@ -289,7 +286,7 @@ public interface QuiltFlowableFluidExtensions {
 		}
 	}
 
-	default void spawnBubbleParticles(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default void spawnBubbleParticles(Entity splashing, Vec3d splashPos, Random random) {
 		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width * 20.0f; ++i) {
 			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
@@ -310,7 +307,7 @@ public interface QuiltFlowableFluidExtensions {
 		}
 	}
 
-	default void onSplash(World world, Vec3d pos, Entity splashing, RandomGenerator random) {
+	default void onSplash(World world, Vec3d pos, Entity splashing, Random random) {
 		Entity passenger = splashing.hasPassengers() && splashing.getPrimaryPassenger() != null ? splashing.getPrimaryPassenger() : splashing;
 		float volumeMultiplier = passenger == splashing ? 0.2f : 0.9f;
 		Vec3d velocity = passenger.getVelocity();
@@ -360,7 +357,7 @@ public interface QuiltFlowableFluidExtensions {
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
 	}
 
-	default void doDrownEffects(FluidState state, LivingEntity drowning, RandomGenerator random) {
+	default void doDrownEffects(FluidState state, LivingEntity drowning, Random random) {
 		boolean isPlayer = drowning instanceof PlayerEntity;
 		boolean invincible = isPlayer && ((PlayerEntity) drowning).getAbilities().invulnerable;
 		if (!drowning.canBreatheInWater() && !StatusEffectUtil.hasWaterBreathing(drowning) && !invincible) {

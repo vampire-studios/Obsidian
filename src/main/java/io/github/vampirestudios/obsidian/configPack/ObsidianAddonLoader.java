@@ -6,17 +6,19 @@ import com.google.common.base.Joiner;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
+import net.minecraft.registry.Registry;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.loader.api.QuiltLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +31,7 @@ import static io.github.vampirestudios.obsidian.Obsidian.id;
 
 public class ObsidianAddonLoader {
 
-    public static final File OBSIDIAN_ADDON_DIRECTORY = QuiltLoader.getGameDir().resolve(Obsidian.CONFIG.addonsFolder).toFile();
+    public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve(Obsidian.CONFIG.addonsFolder).toFile();
     public static final Registry<IAddonPack> OBSIDIAN_ADDONS = FabricRegistryBuilder.createSimple(IAddonPack.class, id("obsidian_addons")).buildAndRegister();
     public static final int SCHEMA_VERSION = 4;
     public static RegistryHelper REGISTRY_HELPER;
@@ -40,7 +42,9 @@ public class ObsidianAddonLoader {
     }
 
     public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, net.minecraft.item.ItemGroup tab) {
-        return register(name, block, new net.minecraft.item.Item.Settings().group(tab));
+        Block block1 = register(name, block, new net.minecraft.item.Item.Settings());
+        ItemGroupEvents.modifyEntriesEvent(tab).register(entries -> entries.add(block1));
+        return block1;
     }
 
     public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, net.minecraft.item.Item.Settings properties) {
@@ -48,8 +52,8 @@ public class ObsidianAddonLoader {
     }
 
     public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, BlockItem item) {
-        Registry.register(Registry.BLOCK, name, block);
-        Registry.register(Registry.ITEM, name, item);
+        Registry.register(net.minecraft.registry.Registries.BLOCK, name, block);
+        Registry.register(net.minecraft.registry.Registries.ITEM, name, item);
         return block;
     }
 
@@ -65,9 +69,12 @@ public class ObsidianAddonLoader {
         } else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".zip")) {
             try (ZipFile zipFile = new ZipFile(file)) {
                 ZipEntry packInfoEntry = zipFile.getEntry(legacyFile);
-                if (packInfoEntry != null) {
-//                    Utils.registerAddon(new InputStreamReader(zipFile.getInputStream(packInfoEntry)));
-                }
+                ZipEntry packInfoEntry1 = zipFile.getEntry(newFile);
+                /*if (packInfoEntry != null) {
+                    Utils.registerAddon(new InputStreamReader(zipFile.getInputStream(packInfoEntry)));
+                } else if (packInfoEntry1 != null) {
+                    Utils.registerAddon(null, new InputStreamReader(zipFile.getInputStream(packInfoEntry1)));
+                }*/
             } catch (Exception e) {
                 Obsidian.LOGGER.error("Failed to load obsidian addon from zip!", e);
             }

@@ -4,10 +4,10 @@ import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
@@ -25,23 +25,23 @@ public class Tools implements AddonModule {
         try {
             if (tool == null) return;
             CustomToolMaterial material = new CustomToolMaterial(tool.material);
-            Item.Settings settings = new Item.Settings().group(tool.information.getItemGroup())
-                    .maxCount(tool.information.maxStackSize).rarity(tool.information.rarity);
+            Item.Settings settings = new Item.Settings().maxCount(tool.information.maxStackSize)
+                    .rarity(tool.information.rarity);
             Identifier identifier = Objects.requireNonNullElseGet(
                     tool.information.name.id,
                     () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (tool.information.name.id == null) tool.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+
+            Item item = null;
             switch (tool.tool_type) {
-                case "pickaxe" -> RegistryUtils.registerItem(new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        identifier);
-                case "shovel" -> RegistryUtils.registerItem(new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        identifier);
-                case "hoe" -> RegistryUtils.registerItem(new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        identifier);
-                case "axe" -> RegistryUtils.registerItem(new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings),
-                        identifier);
+                case "pickaxe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new PickaxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings));
+                case "shovel" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new ShovelItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings));
+                case "hoe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new HoeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings));
+                case "axe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings));
             }
+            Item finalItem = item;
+            ItemGroupEvents.modifyEntriesEvent(tool.information.getItemGroup()).register(entries -> entries.add(finalItem));
             register(ContentRegistries.TOOLS, "tool", identifier, tool);
         } catch (Exception e) {
             failedRegistering("tool", file.getName(), e);

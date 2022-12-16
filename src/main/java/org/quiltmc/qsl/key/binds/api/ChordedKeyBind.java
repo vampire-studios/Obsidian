@@ -18,17 +18,11 @@ package org.quiltmc.qsl.key.binds.api;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import com.mojang.blaze3d.platform.InputUtil;
-
-import net.minecraft.client.option.KeyBind;
-
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
-// TODO - Add Javadocs
 @Environment(EnvType.CLIENT)
-@InjectedInterface(KeyBind.class)
 public interface ChordedKeyBind {
 	default KeyChord getBoundChord() {
 		throw new UnsupportedOperationException();
@@ -37,7 +31,7 @@ public interface ChordedKeyBind {
 	default void setBoundChord(KeyChord chord) { }
 
 	// TODO - This is a temporary measure until CHASM comes. Replace it with a proper constructor or builder
-	default KeyBind withChord(InputUtil.Key... keys) {
+	default KeyBinding withChord(InputUtil.Key... keys) {
 		throw new UnsupportedOperationException();
 	}
 }

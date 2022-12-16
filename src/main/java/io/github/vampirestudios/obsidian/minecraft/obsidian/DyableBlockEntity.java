@@ -9,8 +9,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 public class DyableBlockEntity extends BlockEntity {
@@ -18,7 +18,7 @@ public class DyableBlockEntity extends BlockEntity {
     public int dyeColor;
 
     public DyableBlockEntity(Block block, BlockPos pos, BlockState state) {
-        super(Registry.BLOCK_ENTITY_TYPE.get(Utils.appendToPath(block.information.name.id, "_be")), pos, state);
+        super(Registries.BLOCK_ENTITY_TYPE.get(Utils.appendToPath(block.information.name.id, "_be")), pos, state);
         this.dyeColor = 0xFFFFFFFF;
     }
 
@@ -39,7 +39,7 @@ public class DyableBlockEntity extends BlockEntity {
     @Nullable
     @Override
     public BlockEntityUpdateS2CPacket toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.of(this, BlockEntity::toIdentifiedLocatedNbt);
+        return BlockEntityUpdateS2CPacket.create(this, BlockEntity::createNbt);
     }
 
     public int getDyeColor() {

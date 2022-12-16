@@ -16,14 +16,12 @@
 
 package org.quiltmc.qsl.key.binds.api;
 
-import java.util.List;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import net.minecraft.client.option.KeyBind;
-
+import net.minecraft.client.option.KeyBinding;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
+
+import java.util.List;
 
 // TODO - This isn't a registry anymore; What the heck should it be named?
 /**
@@ -41,7 +39,7 @@ public class KeyBindRegistry {
 	 * @param translationKey the key bind's translation key
 	 * @return the key bind if found, {@code null} otherwise
 	 */
-	public static KeyBind getKeyBind(String translationKey) {
+	public static KeyBinding getKeyBind(String translationKey) {
 		return KeyBindRegistryImpl.getKeyBind(translationKey);
 	}
 
@@ -50,7 +48,7 @@ public class KeyBindRegistry {
 	 *
 	 * @return a list containing key binds
 	 */
-	public static List<KeyBind> getAllKeyBinds() {
+	public static List<KeyBinding> getAllKeyBinds() {
 		return KeyBindRegistryImpl.getAllKeyBinds();
 	}
 }

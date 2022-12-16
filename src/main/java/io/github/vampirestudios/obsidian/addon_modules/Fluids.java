@@ -29,7 +29,7 @@ public class Fluids implements AddonModule {
 
             new FluidImpl(fluid) {
                 @Override
-                public boolean isSource(FluidState state) {
+                public boolean isStill(FluidState state) {
                     return false;
                 }
 

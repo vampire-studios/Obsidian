@@ -16,10 +16,6 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
-import net.minecraft.entity.Entity;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
-@InjectedInterface(Entity.class)
 public interface CustomFluidInteracting {
 	boolean quilt$isInCustomFluid();
 

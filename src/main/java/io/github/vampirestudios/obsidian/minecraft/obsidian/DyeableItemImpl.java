@@ -1,10 +1,8 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.minecraft.item.DyeableItem;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.collection.DefaultedList;
 
 public class DyeableItemImpl extends ItemImpl implements DyeableItem {
 
@@ -29,16 +27,6 @@ public class DyeableItemImpl extends ItemImpl implements DyeableItem {
         } else {
             NbtCompound nbtCompound = stack.getOrCreateNbt();
             nbtCompound.putInt("HideFlags", nbtCompound.getInt("HideFlags") |~ ItemStack.TooltipSection.DYE.getFlag());
-        }
-    }
-
-    @Override
-    public void appendStacks(ItemGroup group, DefaultedList<ItemStack> stacks) {
-        super.appendStacks(group, stacks);
-        if (this.isInGroup(group)) {
-            ItemStack stack = new ItemStack(this);
-            this.setColor(stack, item.information.defaultColor);
-            stacks.add(stack);
         }
     }
 

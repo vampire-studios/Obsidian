@@ -6,12 +6,12 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.vampirestudios.obsidian.mixins.*;
 import net.minecraft.client.model.*;
-import net.minecraft.client.render.animation.Animation;
-import net.minecraft.client.render.animation.AnimationKeyframe;
-import net.minecraft.client.render.animation.PartAnimation;
+import net.minecraft.client.render.entity.animation.Animation;
+import net.minecraft.client.render.entity.animation.Keyframe;
+import net.minecraft.client.render.entity.animation.Transformation;
 import net.minecraft.client.util.math.Vector2f;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec3f;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,39 +19,39 @@ import java.util.Optional;
 
 public class Codecs {
     public static final class Animations {
-        public static final Codec<AnimationKeyframe> KEYFRAME = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.floatRange(0, Float.MAX_VALUE).fieldOf("timestamp").forGetter(AnimationKeyframe::timestamp),
-                Vec3f.CODEC.fieldOf("transformation").forGetter(AnimationKeyframe::transformation),
+        public static final Codec<Keyframe> KEYFRAME = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.floatRange(0, Float.MAX_VALUE).fieldOf("timestamp").forGetter(Keyframe::comp_600),
+                net.minecraft.util.dynamic.Codecs.VECTOR_3F.fieldOf("transformation").forGetter(Keyframe::comp_601),
                 Codec.STRING.flatXmap(
                         s -> AnimationUtils.getInterpolatorFromName(s).map(DataResult::success).orElseGet(() -> DataResult.error("Unknown interpolator: " + s)),
                         i -> AnimationUtils.getNameForInterpolator(i).map(DataResult::success).orElse(DataResult.error("Unknown interpolator"))
-                ).fieldOf("interpolator").forGetter(AnimationKeyframe::interpolator)
-        ).apply(instance, AnimationKeyframe::new));
+                ).fieldOf("interpolator").forGetter(Keyframe::comp_602)
+        ).apply(instance, Keyframe::new));
 
-        public static final Codec<PartAnimation> PART_ANIMATION = RecordCodecBuilder.create(instance -> instance.group(
+        public static final Codec<Transformation> PART_ANIMATION = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.flatXmap(s -> switch (s) {
-                    case "TRANSLATE" -> DataResult.success(PartAnimation.AnimationTargets.TRANSLATE);
-                    case "ROTATE" -> DataResult.success(PartAnimation.AnimationTargets.ROTATE);
-                    case "SCALE" -> DataResult.success(PartAnimation.AnimationTargets.SCALE);
+                    case "TRANSLATE" -> DataResult.success(Transformation.Targets.TRANSLATE);
+                    case "ROTATE" -> DataResult.success(Transformation.Targets.ROTATE);
+                    case "SCALE" -> DataResult.success(Transformation.Targets.SCALE);
                     default -> DataResult.error("Unknown transformation: " + s);
                 }, transformation -> {
-                    if (transformation == PartAnimation.AnimationTargets.TRANSLATE) {
+                    if (transformation == Transformation.Targets.TRANSLATE) {
                         return DataResult.success("TRANSLATE");
-                    } else if (transformation == PartAnimation.AnimationTargets.ROTATE) {
+                    } else if (transformation == Transformation.Targets.ROTATE) {
                         return DataResult.success("ROTATE");
-                    } else if (transformation == PartAnimation.AnimationTargets.SCALE) {
+                    } else if (transformation == Transformation.Targets.SCALE) {
                         return DataResult.success("SCALE");
                     } else {
                         return DataResult.error("Unknown transformation");
                     }
-                }).fieldOf("transformation").forGetter(PartAnimation::transformation),
-                Codec.list(KEYFRAME).xmap(list -> list.toArray(AnimationKeyframe[]::new), Arrays::asList).fieldOf("keyframes").forGetter(PartAnimation::keyframes)
-        ).apply(instance, PartAnimation::new));
+                }).fieldOf("transformation").forGetter(Transformation::comp_595),
+                Codec.list(KEYFRAME).xmap(list -> list.toArray(Keyframe[]::new), Arrays::asList).fieldOf("keyframes").forGetter(Transformation::comp_596)
+        ).apply(instance, Transformation::new));
 
         public static final Codec<Animation> ANIMATION = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.floatRange(0, Float.MAX_VALUE).fieldOf("length").forGetter(Animation::length),
-                Codec.BOOL.fieldOf("looping").forGetter(Animation::looping),
-                Codec.unboundedMap(Codec.STRING, Codec.list(PART_ANIMATION)).fieldOf("animations").forGetter(Animation::animations)
+                Codec.floatRange(0, Float.MAX_VALUE).fieldOf("length").forGetter(Animation::comp_597),
+                Codec.BOOL.fieldOf("looping").forGetter(Animation::comp_598),
+                Codec.unboundedMap(Codec.STRING, Codec.list(PART_ANIMATION)).fieldOf("animations").forGetter(Animation::comp_599)
         ).apply(instance, Animation::new));
     }
 
@@ -65,26 +65,27 @@ public class Codecs {
 
         public static final Codec<ModelTransform> MODEL_TRANSFORM = RecordCodecBuilder.create((instance) ->
                 instance.group(
-                        Vec3f.CODEC.optionalFieldOf("origin", Vec3f.ZERO).forGetter(obj -> new Vec3f(obj.pivotX, obj.pivotY, obj.pivotZ)),
-                        Vec3f.CODEC.optionalFieldOf("rotation", Vec3f.ZERO).forGetter(obj -> new Vec3f(obj.pitch, obj.yaw, obj.roll))
-                ).apply(instance, (origin, rot) -> ModelTransform.of(origin.getX(), origin.getY(), origin.getZ(), rot.getX(), rot.getY(), rot.getZ()))
+                        net.minecraft.util.dynamic.Codecs.VECTOR_3F.optionalFieldOf("origin", new Vector3f(0, 0, 0)).forGetter(obj -> new Vector3f(obj.pivotX, obj.pivotY, obj.pivotZ)),
+                        net.minecraft.util.dynamic.Codecs.VECTOR_3F.optionalFieldOf("rotation", new Vector3f(0, 0, 0)).forGetter(obj -> new Vector3f(obj.pitch, obj.yaw, obj.roll))
+                ).apply(instance, (origin, rot) -> ModelTransform.of(origin.x(), origin.y(), origin.z(), rot.x(), rot.y(), rot.z()))
         );
 
-        public static final Codec<Dilation> DILATION = Vec3f.CODEC.xmap(
-                vec -> new Dilation(vec.getX(), vec.getY(), vec.getZ()),
-                dil -> new Vec3f(
+        public static final Codec<Dilation> DILATION = net.minecraft.util.dynamic.Codecs.VECTOR_3F.xmap(
+                vec -> new Dilation(vec.x(), vec.y(), vec.z()),
+                dil -> new Vector3f(
                         ((DilationAccessor) dil).getRadiusX(),
                         ((DilationAccessor) dil).getRadiusY(),
-                        ((DilationAccessor) dil).getRadiusZ())
+                        ((DilationAccessor) dil).getRadiusZ()
+                )
         );
 
         public static final Codec<Vector2f> VECTOR2F = Codec.FLOAT.listOf().comapFlatMap((vec) ->
-                        Util.fixedSizeList(vec, 2).map((arr) -> new Vector2f(arr.get(0), arr.get(1))),
+                        Util.toArray(vec, 2).map((arr) -> new Vector2f(arr.get(0), arr.get(1))),
                 (vec) -> ImmutableList.of(vec.getX(), vec.getY())
         );
 
-        private static ModelCuboidData createCuboidData(Optional<String> name, Vec3f offset, Vec3f dimensions, Dilation dilation, boolean mirror, Vector2f uv, Vector2f uvSize) {
-            return ModelCuboidDataAccessor.create(name.orElse(null), uv.getX(), uv.getY(), offset.getX(), offset.getY(), offset.getZ(), dimensions.getX(), dimensions.getY(), dimensions.getZ(), dilation, mirror, uvSize.getX(), uvSize.getY());
+        private static ModelCuboidData createCuboidData(Optional<String> name, Vector3f offset, Vector3f dimensions, Dilation dilation, boolean mirror, Vector2f uv, Vector2f uvSize) {
+            return ModelCuboidDataAccessor.create(name.orElse(null), uv.getX(), uv.getY(), offset.x(), offset.y(), offset.z(), dimensions.x(), dimensions.y(), dimensions.z(), dilation, mirror, uvSize.getX(), uvSize.getY());
         }
 
         private static final Vector2f DEFAULT_UV_SCALE = new Vector2f(1.0f, 1.0f);
@@ -92,8 +93,8 @@ public class Codecs {
         public static final Codec<ModelCuboidData> MODEL_CUBOID_DATA = RecordCodecBuilder.create((instance) ->
                 instance.group(
                         Codec.STRING.optionalFieldOf("name").forGetter(obj -> Optional.ofNullable(((ModelCuboidDataAccessor) (Object) obj).getName())),
-                        Vec3f.CODEC.fieldOf("offset").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getOffset()),
-                        Vec3f.CODEC.fieldOf("dimensions").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getDimensions()),
+                        net.minecraft.util.dynamic.Codecs.VECTOR_3F.fieldOf("offset").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getOffset()),
+                        net.minecraft.util.dynamic.Codecs.VECTOR_3F.fieldOf("dimensions").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getDimensions()),
                         DILATION.optionalFieldOf("dilation", Dilation.NONE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getExtraSize()),
                         Codec.BOOL.optionalFieldOf("mirror", false).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).isMirror()),
                         VECTOR2F.fieldOf("uv").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getTextureUV()),

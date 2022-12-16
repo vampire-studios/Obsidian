@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
@@ -10,9 +11,9 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.SpyglassItemImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 import java.io.File;
 import java.io.FileReader;
@@ -42,7 +43,7 @@ public class ZoomableItems implements AddonModule {
             );
             Item item = RegistryUtils.registerItem(new SpyglassItemImpl(zoomableItem, new Item.Settings().group(zoomableItem.information.getItemGroup())
                     .maxCount(1)), identifier);
-            ClientTickEvents.END.register(client -> {
+            ClientTickEvents.END_CLIENT_TICK.register(client -> {
                 // This is how you get a spyglass-like zoom working
                 if (client.player == null) return;
                 zoomInstance.setZoom(client.options.getPerspective().isFirstPerson() && (client.player.isUsingItem() &&
@@ -59,3 +60,4 @@ public class ZoomableItems implements AddonModule {
         return "items/zoomable_items";
     }
 }
+*/

@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import io.wispforest.owo.itemgroup.Icon;
 import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class TabbedGroup {
     @SerializedName("target_group") public String targetGroup;
@@ -44,8 +44,9 @@ public class TabbedGroup {
             return switch (type) {
                 case "texture" -> Icon.of(properties.texture, properties.u, properties.v, properties.textureWidth, properties.textureHeight);
                 case "animated" -> Icon.of(properties.texture, properties.textureSize, properties.frameDelay, properties.loop);
-                case "item_like" -> Icon.of(Registry.ITEM.get(properties.item));
-                case "stack", default -> Icon.of(new ItemStack(Registry.ITEM.get(properties.item)));
+                case "item_like" -> Icon.of(Registries.ITEM.get(properties.item));
+                case "stack" -> Icon.of(new ItemStack(Registries.ITEM.get(properties.item)));
+                default -> throw new IllegalStateException("Unexpected value: " + type);
             };
         }
     }

@@ -3,8 +3,8 @@ package io.github.vampirestudios.obsidian.mixins;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelCuboidData;
 import net.minecraft.client.util.math.Vector2f;
-import net.minecraft.util.math.Vec3f;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -20,10 +20,10 @@ public interface ModelCuboidDataAccessor {
 	String getName();
 
 	@Accessor
-	Vec3f getOffset();
+	Vector3f getOffset();
 
 	@Accessor
-	Vec3f getDimensions();
+	Vector3f getDimensions();
 
 	@Accessor
 	Dilation getExtraSize();

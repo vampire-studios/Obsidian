@@ -2,12 +2,8 @@ package io.github.vampirestudios.obsidian.api;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityGroup;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
-@InjectedInterface(Enchantment.class)
 public interface IForgeEnchantment {
     private Enchantment self()
     {
@@ -41,19 +37,4 @@ public interface IForgeEnchantment {
         return stack.canApplyAtEnchantingTable(self());
     }
 
-    /**
-     * Determines what creative tabs this enchantment's variant of an enchanted book or similar item should appear in.
-     * @param book The item being added to the creative tab
-     * @param tab The creative tab that items are being added to
-     * @return whether the given Item's variant for this enchantment should appear in the respective creative tab
-     */
-    default boolean allowedInCreativeTab(Item book, ItemGroup tab) {
-        if (!self().isAllowedOnBooks()) {
-            return false;
-        } else if (tab == ItemGroup.SEARCH) {
-            return self().type != null;
-        } else {
-            return tab.containsEnchantments(self().type);
-        }
-    }
 }

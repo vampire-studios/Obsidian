@@ -20,11 +20,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.random.RandomGenerator;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
@@ -48,7 +48,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	protected boolean firstUpdate;
 	@Shadow
 	@Final
-	protected RandomGenerator random;
+	protected Random random;
 	protected boolean quilt$inCustomFluid;
 	protected boolean quilt$submergedInCustomFluid;
 	protected Fluid quilt$submergedCustomFluid;
@@ -118,7 +118,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 		FluidState fluidState = this.world.getFluidState(this.getBlockPos());
 		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid &&
 				!(getVehicle() instanceof BoatEntity)) {
-			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY,fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
+			updateMovementInFluid(TagKey.of(RegistryKeys.FLUID, fluidState.getRegistryEntry().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
 			if (!quilt$inCustomFluid && !firstUpdate) {
 				customSplashEffects();
 			}

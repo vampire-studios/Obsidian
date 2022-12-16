@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.utils;
 
+import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -8,10 +9,10 @@ import net.minecraft.entity.EntityType.EntityFactory;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item.Settings;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class EntityRegistryBuilder<E extends Entity> {
     private static Identifier name;
@@ -89,14 +90,14 @@ public class EntityRegistryBuilder<E extends Entity> {
         }
 
         EntityType<E> entityType;
-        if (Registry.ENTITY_TYPE.containsId(name)) {
-            entityType = (EntityType<E>) Registry.ENTITY_TYPE.get(name);
+        if (Registries.ENTITY_TYPE.containsId(name)) {
+            entityType = (EntityType<E>) Registries.ENTITY_TYPE.get(name);
         } else {
-            entityType = Registry.register(Registry.ENTITY_TYPE, name, entityBuilder.build());
+            entityType = Registry.register(Registries.ENTITY_TYPE, name, entityBuilder.build());
         }
 
         if (this.hasEgg) {
-            RegistryUtils.registerItem(new SpawnEggItem((EntityType<? extends MobEntity>) entityType, this.primaryColor, this.secondaryColor, (new Settings()).group(ItemGroup.MISC)), new Identifier(name.getNamespace(), String.format("%s_spawn_egg", name.getPath())));
+            RegistryHelper.createRegistryHelper(name.getNamespace()).items().registerItem(String.format("%s_spawn_egg", name.getPath()), new SpawnEggItem((EntityType<? extends MobEntity>) entityType, this.primaryColor, this.secondaryColor, new Settings()));
         }
 
         return entityType;

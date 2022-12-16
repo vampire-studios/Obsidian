@@ -5,10 +5,10 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Elytra;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ElytraItemImpl;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
@@ -30,8 +30,8 @@ public class Elytras implements AddonModule {
                     () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (item.information.name.id == null) item.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
-            RegistryUtils.registerItem(new ElytraItemImpl(item, new Item.Settings().group(item.information.getItemGroup())
-                    .maxCount(1)), identifier);
+            Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new ElytraItemImpl(item, new Item.Settings().maxCount(1)));
+            ItemGroupEvents.modifyEntriesEvent(item.information.getItemGroup()).register(entries -> entries.add(registeredItem));
             register(ContentRegistries.ELYTRAS, "elytra", identifier, item);
         } catch (Exception e) {
             failedRegistering("elytra", file.getName(), e);

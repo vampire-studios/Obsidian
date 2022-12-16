@@ -24,7 +24,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.*;
-import net.minecraft.tag.TagKey;
+import net.minecraft.recipe.book.CookingRecipeCategory;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -126,11 +128,11 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the smelting recipe
 	 */
-	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, CookingRecipeCategory cookingRecipeCategory, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new SmeltingRecipe(id, group, input, output, experience, cookTime);
+		return new SmeltingRecipe(id, group, cookingRecipeCategory, input, output, experience, cookTime);
 	}
 
 	/**
@@ -144,11 +146,11 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the blasting recipe
 	 */
-	public static BlastingRecipe blastingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static BlastingRecipe blastingRecipe(Identifier id, String group, CookingRecipeCategory cookingRecipeCategory, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new BlastingRecipe(id, group, input, output, experience, cookTime);
+		return new BlastingRecipe(id, group, cookingRecipeCategory, input, output, experience, cookTime);
 	}
 
 	/**
@@ -162,11 +164,11 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the smoking recipe
 	 */
-	public static SmokingRecipe smokingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static SmokingRecipe smokingRecipe(Identifier id, String group, CookingRecipeCategory cookingRecipeCategory, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new SmokingRecipe(id, group, input, output, experience, cookTime);
+		return new SmokingRecipe(id, group, cookingRecipeCategory, input, output, experience, cookTime);
 	}
 
 	/**
@@ -180,12 +182,12 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the campfire cooking recipe
 	 */
-	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, Ingredient input,
-															ItemStack output, float experience, int cookTime) {
+	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, CookingRecipeCategory cookingRecipeCategory,
+															  Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new CampfireCookingRecipe(id, group, input, output, experience, cookTime);
+		return new CampfireCookingRecipe(id, group, cookingRecipeCategory, input, output, experience, cookTime);
 	}
 
 	/**
@@ -197,6 +199,7 @@ public final class VanillaRecipeBuilders {
 		private final int height;
 		private final Char2ObjectMap<Ingredient> ingredients = new Char2ObjectOpenHashMap<>();
 		private ItemStack output;
+		private CraftingRecipeCategory category;
 
 		/**
 		 * Creates a new shaped recipe builder.
@@ -259,7 +262,7 @@ public final class VanillaRecipeBuilders {
 		 * @see #ingredient(char, Ingredient)
 		 */
 		public ShapedRecipeBuilder ingredient(char key, TagKey<Item> tag) {
-			return this.ingredient(key, Ingredient.ofTag(tag));
+			return this.ingredient(key, Ingredient.fromTag(tag));
 		}
 
 		/**
@@ -285,6 +288,11 @@ public final class VanillaRecipeBuilders {
 			return this;
 		}
 
+		public ShapedRecipeBuilder category(CraftingRecipeCategory category) {
+			this.category = category;
+			return this;
+		}
+
 		/**
 		 * Builds the shaped crafting recipe.
 		 *
@@ -295,13 +303,14 @@ public final class VanillaRecipeBuilders {
 		public ShapedRecipe build(Identifier id, String group) {
 			Objects.requireNonNull(this.output, "The output stack cannot be null.");
 			DefaultedList<Ingredient> ingredients = getIngredients(this.pattern, this.ingredients, this.width, this.height);
-			return new ShapedRecipe(id, group, this.width, this.height, ingredients, this.output);
+			return new ShapedRecipe(id, group, category, this.width, this.height, ingredients, this.output);
 		}
 	}
 
 	public static final class ShapelessRecipeBuilder {
 		private final Set<Ingredient> ingredients = new HashSet<>();
 		private ItemStack output;
+		private CraftingRecipeCategory category;
 
 		public ShapelessRecipeBuilder(ItemStack output) {
 			this.output = output;
@@ -337,7 +346,7 @@ public final class VanillaRecipeBuilders {
 		 * @see #ingredient(Ingredient)
 		 */
 		public ShapelessRecipeBuilder ingredient(TagKey<Item> tag) {
-			return this.ingredient(Ingredient.ofTag(tag));
+			return this.ingredient(Ingredient.fromTag(tag));
 		}
 
 		/**
@@ -362,6 +371,11 @@ public final class VanillaRecipeBuilders {
 			return this;
 		}
 
+		public ShapelessRecipeBuilder category(CraftingRecipeCategory category) {
+			this.category = category;
+			return this;
+		}
+
 		/**
 		 * Builds the shapeless crafting recipe.
 		 *
@@ -382,7 +396,7 @@ public final class VanillaRecipeBuilders {
 				i++;
 			}
 
-			return new ShapelessRecipe(id, group, this.output, ingredients);
+			return new ShapelessRecipe(id, group, category, this.output, ingredients);
 		}
 	}
 }

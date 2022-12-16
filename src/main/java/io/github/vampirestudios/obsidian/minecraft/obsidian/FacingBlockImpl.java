@@ -76,27 +76,34 @@ public class FacingBlockImpl extends FacingBlock {
         VoxelShape upShape = createShape( block.information.boundingBox.up_shape);
         VoxelShape downShape = createShape(block.information.boundingBox.down_shape);
         Direction direction = state.get(FACING);
-        switch(direction) {
-            case NORTH:
+        switch (direction) {
+            case NORTH -> {
                 if (northShape != null) return northShape;
                 else return shape;
-            case SOUTH:
+            }
+            case SOUTH -> {
                 if (southShape != null) return southShape;
                 else return shape;
-            case EAST:
+            }
+            case EAST -> {
                 if (eastShape != null) return eastShape;
                 else return shape;
-            case WEST:
+            }
+            case WEST -> {
                 if (westShape != null) return westShape;
                 else return shape;
-            case DOWN:
+            }
+            case DOWN -> {
                 if (downShape != null) return downShape;
                 else return shape;
-            case UP:
+            }
+            case UP -> {
                 if (upShape != null) return upShape;
                 else return shape;
-            default:
+            }
+            default -> {
                 return shape;
+            }
         }
     }
 

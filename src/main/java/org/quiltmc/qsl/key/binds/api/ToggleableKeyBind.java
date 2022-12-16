@@ -19,13 +19,7 @@ package org.quiltmc.qsl.key.binds.api;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.option.KeyBind;
-
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
-// TODO - Add Javadocs; You can nab the ones from KeyBindRegistry
 @Environment(EnvType.CLIENT)
-@InjectedInterface(KeyBind.class)
 public interface ToggleableKeyBind {
 	/**
 	 * Gets whenever the key bind is enabled or not.

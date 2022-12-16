@@ -5,11 +5,11 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomToolMaterial;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.MeleeWeaponImpl;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.github.vampirestudios.obsidian.utils.RegistryUtils;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
@@ -26,16 +26,16 @@ public class Weapons implements AddonModule {
         WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
         try {
             if (weapon == null) return;
-            Item.Settings settings = new Item.Settings().group(weapon.information.getItemGroup())
-                    .maxCount(weapon.information.maxStackSize).rarity(weapon.information.rarity);
+            Item.Settings settings = new Item.Settings().maxCount(weapon.information.maxStackSize)
+                    .rarity(weapon.information.rarity);
             Identifier identifier = Objects.requireNonNullElseGet(
                     weapon.information.name.id,
                     () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (weapon.information.name.id == null) weapon.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
             CustomToolMaterial material = new CustomToolMaterial(weapon.material);
-            RegistryUtils.registerItem(new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings),
-                    identifier);
+            Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings));
+            ItemGroupEvents.modifyEntriesEvent(weapon.information.getItemGroup()).register(entries -> entries.add(registeredItem));
             register(ContentRegistries.WEAPONS, "weapon", identifier, weapon);
         } catch (Exception e) {
             failedRegistering("weapon", file.getName(), e);

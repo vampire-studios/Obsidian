@@ -2,28 +2,28 @@ package io.github.vampirestudios.obsidian;
 
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.MathHelper;
-import net.minecraft.client.render.animation.AnimationKeyframe;
-import net.minecraft.client.render.animation.PartAnimation;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.client.render.entity.animation.Keyframe;
+import net.minecraft.client.render.entity.animation.Transformation;
 import org.apache.commons.lang3.tuple.Triple;
+import org.joml.Vector3f;
 
 import java.util.function.Function;
 
 public class AnimationEasing {
 
-	public static PartAnimation.Interpolator interpolation(EasingCategories easingCategory, Type type) {
+	public static Transformation.Interpolation interpolation(EasingCategories easingCategory, Type type) {
 		EasingTypes easing = easingCategory.getEasingType(type);
 		return Obsidian.registerInRegistryVanilla(Registries.ANIMATION_CHANNEL_INTERPOLATIONS, easing.getName(),
 				(vector3f, f, keyframes, i, j, g) -> easing(vector3f, easing.apply(f), keyframes, i, j, g));
 	}
 
-	public static Vec3f easing(Vec3f vec3f, float f, AnimationKeyframe[] keyframes, int i, int j, float g) {
-		Vec3f vector3f2 = keyframes[i].transformation();
-		Vec3f vector3f3 = keyframes[j].transformation();
+	public static Vector3f easing(Vector3f vec3f, float f, Keyframe[] keyframes, int i, int j, float g) {
+		Vector3f vector3f2 = keyframes[i].comp_601();
+		Vector3f vector3f3 = keyframes[j].comp_601();
 		vec3f.set(
-				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.getX(), vector3f3.getX()) * g,
-				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.getY(), vector3f3.getY()) * g,
-				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.getZ(), vector3f3.getZ()) * g
+				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.x(), vector3f3.x()) * g,
+				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.y(), vector3f3.y()) * g,
+				net.minecraft.util.math.MathHelper.lerp(f, vector3f2.z(), vector3f3.z()) * g
 		);
 		return vec3f;
 	}

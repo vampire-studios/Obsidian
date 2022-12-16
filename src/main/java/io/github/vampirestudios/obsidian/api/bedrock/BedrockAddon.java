@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.api.bedrock;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
-import net.minecraft.resource.pack.DirectoryResourcePack;
-import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.ZipResourcePack;
+import net.minecraft.resource.DirectoryResourcePack;
+import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ZipResourcePack;
 import net.minecraft.util.Identifier;
 
 import java.io.File;
@@ -49,8 +49,8 @@ public class BedrockAddon implements IBedrockAddon {
     @Override
     public ResourcePack getVirtualResourcePack() {
         if (file == null) return null;
-        if (file.isDirectory()) return new DirectoryResourcePack(file);
-        return new ZipResourcePack(file);
+        if (file.isDirectory()) return new DirectoryResourcePack(manifestFile.header.name, file.toPath(), false);
+        return new ZipResourcePack(manifestFile.header.name, file, false);
     }
 
 }

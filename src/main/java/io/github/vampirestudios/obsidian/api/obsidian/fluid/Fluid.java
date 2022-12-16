@@ -3,9 +3,9 @@ package io.github.vampirestudios.obsidian.api.obsidian.fluid;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.loot.LootTables;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Range;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 
@@ -129,11 +129,11 @@ public class Fluid {
 				false,
 				100.0F,
 				true,
-				Registry.SOUND_EVENT.getId(SoundEvents.ENTITY_PLAYER_SPLASH),
-				Registry.SOUND_EVENT.getId(SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED),
-				Registry.PARTICLE_TYPE.getId(ParticleTypes.DRIPPING_WATER),
-				Registry.PARTICLE_TYPE.getId(ParticleTypes.WATER_SPLASH),
-				Registry.PARTICLE_TYPE.getId(ParticleTypes.BUBBLE),
+				Registries.SOUND_EVENT.getId(SoundEvents.ENTITY_PLAYER_SPLASH),
+				Registries.SOUND_EVENT.getId(SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED),
+				Registries.PARTICLE_TYPE.getId(ParticleTypes.DRIPPING_WATER),
+				Registries.PARTICLE_TYPE.getId(ParticleTypes.SPLASH),
+				Registries.PARTICLE_TYPE.getId(ParticleTypes.BUBBLE),
 				LootTables.FISHING_GAMEPLAY
 		);
 	}
@@ -174,7 +174,7 @@ public class Fluid {
 				false,
 				null,
 				null,
-				Registry.PARTICLE_TYPE.getId(ParticleTypes.DRIPPING_LAVA),
+				Registries.PARTICLE_TYPE.getId(ParticleTypes.DRIPPING_LAVA),
 				null,
 				null,
 				LootTables.EMPTY

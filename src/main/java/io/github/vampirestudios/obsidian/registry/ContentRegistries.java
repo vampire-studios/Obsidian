@@ -22,7 +22,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.world.Biome;
 import io.github.vampirestudios.obsidian.api.obsidian.world.Structure;
 import io.github.vampirestudios.obsidian.api.obsidian.world.Tree;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 
 import static io.github.vampirestudios.obsidian.Obsidian.id;
 
@@ -55,7 +55,7 @@ public class ContentRegistries {
 	public static Registry<ArmorModel> ARMOR_MODELS = FabricRegistryBuilder.createSimple(ArmorModel.class, id("armor_models")).buildAndRegister();
 	public static Registry<ArmorItem> ARMORS = FabricRegistryBuilder.createSimple(ArmorItem.class, id("armors")).buildAndRegister();
 	public static Registry<Elytra> ELYTRAS = FabricRegistryBuilder.createSimple(Elytra.class, id("elytras")).buildAndRegister();
-	public static Registry<ZoomableItem> ZOOMABLE_ITEMS = FabricRegistryBuilder.createSimple(ZoomableItem.class, id("zoomable_items")).buildAndRegister();
+//	public static Registry<ZoomableItem> ZOOMABLE_ITEMS = FabricRegistryBuilder.createSimple(ZoomableItem.class, id("zoomable_items")).buildAndRegister();
 	public static Registry<CauldronType> CAULDRON_TYPES = FabricRegistryBuilder.createSimple(CauldronType.class, id("cauldron_types")).buildAndRegister();
 	public static Registry<Painting> PAINTINGS = FabricRegistryBuilder.createSimple(Painting.class, id("paintings")).buildAndRegister();
 	public static Registry<ShieldItem> SHIELDS = FabricRegistryBuilder.createSimple(ShieldItem.class, id("shields")).buildAndRegister();

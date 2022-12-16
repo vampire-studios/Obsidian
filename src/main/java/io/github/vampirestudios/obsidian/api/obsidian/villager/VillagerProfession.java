@@ -2,8 +2,8 @@ package io.github.vampirestudios.obsidian.api.obsidian.villager;
 
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class VillagerProfession {
 
     public List<Item> getHarvestableItems() {
         List<Item> items = new ArrayList<>();
-        harvestable_items.forEach(identifier -> items.add(Registry.ITEM.get(identifier)));
+        harvestable_items.forEach(identifier -> items.add(Registries.ITEM.get(identifier)));
         return items;
     }
 

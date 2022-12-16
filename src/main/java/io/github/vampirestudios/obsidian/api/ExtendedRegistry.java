@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api;
 
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 
 public interface ExtendedRegistry<T> {
     Event<RegistryEntryDeletedCallback<T>> obsidian$getEntryDeletedEvent();

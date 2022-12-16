@@ -16,22 +16,20 @@
 
 package org.quiltmc.qsl.key.binds.impl;
 
-import org.jetbrains.annotations.ApiStatus;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
 import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBind;
-
+import net.minecraft.client.option.KeyBinding;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.key.binds.mixin.client.GameOptionsAccessor;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
 public class KeyBindManager {
 	private final GameOptions options;
-	private final KeyBind[] allKeys;
+	private final KeyBinding[] allKeys;
 
-	public KeyBindManager(GameOptions options, KeyBind[] allKeys) {
+	public KeyBindManager(GameOptions options, KeyBinding[] allKeys) {
 		this.options = options;
 		this.allKeys = allKeys;
 	}
@@ -40,7 +38,7 @@ public class KeyBindManager {
 		((GameOptionsAccessor) this.options).setAllKeys(KeyBindRegistryImpl.getKeyBinds());
 	}
 
-	public KeyBind[] getAllKeys() {
+	public KeyBinding[] getAllKeys() {
 		return this.allKeys;
 	}
 }

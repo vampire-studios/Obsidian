@@ -8,29 +8,11 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.TabbedGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.wispforest.owo.itemgroup.gui.ItemGroupButton;
-import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
-import io.wispforest.owo.itemgroup.json.WrapperGroup;
-import io.wispforest.owo.moddata.ModDataConsumer;
-import io.wispforest.owo.moddata.ModDataLoader;
-import io.wispforest.owo.util.pond.OwoItemExtensions;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -44,9 +26,10 @@ public class ExpandedItemGroups implements AddonModule {
 
         try {
             if (itemGroup == null) return;
-            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
-            groupTabLoader.acceptParsedFile(null, jsonObject);
-            ModDataLoader.load(groupTabLoader);
+
+//            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
+//            groupTabLoader.acceptParsedFile(null, jsonObject);
+//            ModDataLoader.load(groupTabLoader);
             register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", new Identifier(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
         } catch (Exception e) {
             failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
@@ -58,7 +41,7 @@ public class ExpandedItemGroups implements AddonModule {
         return "item_groups/expanded";
     }
 
-	public static class ExpandedTabs implements ModDataConsumer {
+	/*public static class ExpandedTabs implements ModDataConsumer {
     	private static TabbedGroup tabbedGroup;
 		private static final Map<String, Pair<List<ItemGroupTab>, List<ItemGroupButton>>> CACHED_BUTTONS = new HashMap<>();
 
@@ -121,6 +104,6 @@ public class ExpandedItemGroups implements AddonModule {
 
 			CACHED_BUTTONS.put(tabbedGroup.targetGroup, new Pair<>(createdTabs, createdButtons));
 		}
-	}
+	}*/
 
 }

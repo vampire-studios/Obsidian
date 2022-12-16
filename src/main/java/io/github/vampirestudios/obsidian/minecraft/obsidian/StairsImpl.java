@@ -6,9 +6,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.BlockView;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class StairsImpl extends StairsBlock {
     public Block block;
 
     public StairsImpl(Block block, Settings settings) {
-        super(Registry.BLOCK.get(block.information.name.id).getDefaultState(), settings);
+        super(Registries.BLOCK.get(block.information.name.id).getDefaultState(), settings);
         this.block = block;
     }
 

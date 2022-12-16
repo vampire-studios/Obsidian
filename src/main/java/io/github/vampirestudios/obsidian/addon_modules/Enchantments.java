@@ -8,8 +8,9 @@ import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EnchantmentImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 
 import java.io.File;
 import java.io.FileReader;
@@ -29,7 +30,7 @@ public class Enchantments implements AddonModule {
                     () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (enchantment.name.id == null) enchantment.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
-            Registry.register(Registry.ENCHANTMENT, identifier, new EnchantmentImpl(enchantment));
+            Registry.register(Registries.ENCHANTMENT, identifier, new EnchantmentImpl(enchantment));
             register(ContentRegistries.ENCHANTMENTS, "enchantment", identifier, enchantment);
         } catch (Exception e) {
             failedRegistering("enchantment", file.getName(), e);

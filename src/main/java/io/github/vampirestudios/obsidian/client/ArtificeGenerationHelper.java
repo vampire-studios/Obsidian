@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.artifice.api.ArtificeResourcePack;
@@ -491,4 +492,4 @@ public class ArtificeGenerationHelper {
         stickyTextures.forEach(modelBuilder::texture);
         pack.addBlockModel(Utils.appendToPath(blockId, "_sticky"), modelBuilder);
     }
-}
+}*/

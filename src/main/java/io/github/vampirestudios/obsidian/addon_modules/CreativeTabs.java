@@ -10,18 +10,18 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.CreativeTab;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
-import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.item.group.api.QuiltItemGroup;
 
 import java.io.File;
 import java.io.FileReader;
@@ -45,18 +45,18 @@ public class CreativeTabs implements AddonModule {
 
             if (result.result().isPresent()) {
                 CreativeTab creativeTab = result.result().get().getFirst();
-                ItemGroup itemGroup1 = QuiltItemGroup.builder(identifier)
+                ItemGroup itemGroup1 = FabricItemGroup.builder(identifier)
                         .icon(() -> new ItemStack(creativeTab.icon))
-                        .appendItems(itemStacks -> {
-                            for (Holder<Item> item : creativeTab.items) {
-                                if (item.isBound()) {
-                                    itemStacks.add(new ItemStack(item.value()));
+                        .entries((featureSet, entries, operator) -> {
+                            for (RegistryEntry<Item> item : creativeTab.items) {
+                                if (item.hasKeyAndValue()) {
+                                    entries.add(new ItemStack(item.comp_349()));
                                 }
                             }
                         })
-                        .displayText(Text.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
+                        .displayName(Text.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
                         .build();
-                creativeTab.texture.ifPresent(value -> itemGroup1.setTexture(value.toString()));
+                creativeTab.texture.ifPresent(itemGroup1::setBackgroundImage);
                 Registry.register(Registries.ITEM_GROUP_REGISTRY, new Identifier(id.modId(), id.addonPath()), itemGroup1);
                 ObsidianAddonLoader.register(ContentRegistries.CREATIVE_TABS, "creative_tab", identifier, creativeTab);
             }

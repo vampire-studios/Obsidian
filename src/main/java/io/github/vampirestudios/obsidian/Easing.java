@@ -14,14 +14,13 @@ package io.github.vampirestudios.obsidian;
  *
  *    //backOut tween, the overshoot is 1.85f
  *    Easing.Back e3 = new Easing.BackOut(1.85f);
- * </pre></p>
+ * </pre>
  * <a href="http://www.robertpenner.com/easing/">Robert Penner's Easing Functions</a>
  *
  * @author Robert Penner (functions)
  * @author davedes (java port)
  */
 public interface Easing {
-
 	/**
 	 * Simple linear tweening - no easing.
 	 */

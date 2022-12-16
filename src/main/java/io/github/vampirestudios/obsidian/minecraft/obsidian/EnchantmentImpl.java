@@ -6,8 +6,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class EnchantmentImpl extends Enchantment {
     private final io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment enchantment;
@@ -41,7 +41,7 @@ public class EnchantmentImpl extends Enchantment {
     public int getProtectionAmount(int level, DamageSource source) {
         if (enchantment.protectionAmounts != null) {
             for (ProtectionAmount protectionAmount : enchantment.protectionAmounts) {
-                if (protectionAmount.level == level && protectionAmount.getDamageSource() == source) {
+                if (protectionAmount.level == level && protectionAmount.getDamageSource(source.getSource()) == source) {
                     return protectionAmount.protection_amount;
                 }
             }
@@ -94,7 +94,7 @@ public class EnchantmentImpl extends Enchantment {
     @Override
     protected boolean canAccept(Enchantment other) {
         if (enchantment.blacklistedEnchantments != null) {
-            Identifier enchantmentId = Registry.ENCHANTMENT.getId(other);
+            Identifier enchantmentId = Registries.ENCHANTMENT.getId(other);
             for (Identifier identifier : enchantment.blacklistedEnchantments) {
                 if(identifier.equals(enchantmentId)) return false;
             }
@@ -105,7 +105,7 @@ public class EnchantmentImpl extends Enchantment {
     @Override
     public boolean isAcceptableItem(ItemStack stack) {
         if (enchantment.acceptedItems != null) {
-            Identifier itemId = Registry.ITEM.getId(stack.getItem());
+            Identifier itemId = Registries.ITEM.getId(stack.getItem());
             for (Identifier identifier : enchantment.acceptedItems) {
                 if(identifier.equals(itemId)) return true;
             }

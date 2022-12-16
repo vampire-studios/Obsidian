@@ -13,8 +13,8 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.GridLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.hud.Hud;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.util.JsonHelper;
-import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 import java.io.File;
 import java.io.FileReader;
@@ -50,7 +50,7 @@ public class Huds implements AddonModule {
             }
 
             final Supplier<Component> hudComponent = () -> component;
-            ClientTickEvents.END.register(client -> {
+            ClientTickEvents.END_CLIENT_TICK.register(client -> {
                 while (Obsidian.binding.wasPressed()) {
                     if (Hud.hasComponent(hud.id)) {
                         Hud.remove(hud.id);

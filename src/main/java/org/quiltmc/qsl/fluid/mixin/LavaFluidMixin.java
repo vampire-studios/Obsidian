@@ -29,7 +29,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
@@ -61,7 +61,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 
 	@Override
 	public float getPushStrength(FluidState state, Entity effected) {
-		return effected.world.getDimension().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+		return effected.world.getDimension().ultrawarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	}
 
 	@Override
-	public void doDrownEffects(FluidState state, LivingEntity drowning, RandomGenerator random) {}
+	public void doDrownEffects(FluidState state, LivingEntity drowning, Random random) {}
 
 	@Override
 	public int getFogColor(FluidState state, Entity affected) {
@@ -125,38 +125,38 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	}
 
 	@Override
-	public SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, Random random) {
 		return null;
 	}
 
 	@Override
-	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, Random random) {
 		return null;
 	}
 
 	@Override
-	public ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, Random random) {
 		return null;
 	}
 
 	@Override
-	public ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, Random random) {
 		return null;
 	}
 
 	@Override
-	public GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, Random random) {
 		return null;
 	}
 
 	@Override
-	public void spawnSplashParticles(Entity splashing, Vec3d splashPos, RandomGenerator random) {}
+	public void spawnSplashParticles(Entity splashing, Vec3d splashPos, Random random) {}
 
 	@Override
-	public void spawnBubbleParticles(Entity splashing, Vec3d splashPos, RandomGenerator random) {}
+	public void spawnBubbleParticles(Entity splashing, Vec3d splashPos, Random random) {}
 
 	@Override
-	public void onSplash(World world, Vec3d pos, Entity splashing, RandomGenerator random) {}
+	public void onSplash(World world, Vec3d pos, Entity splashing, Random random) {}
 
 	@Override
 	public FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {

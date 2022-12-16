@@ -4,8 +4,9 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.collection.Weight;
-import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 import org.quiltmc.qsl.enchantment.impl.EnchantmentContext;
 import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
@@ -19,10 +20,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Iterator;
 import java.util.List;
 
-@Mixin(value = EnchantmentHelper.class, priority = 1000)
+@Mixin(value = EnchantmentHelper.class)
 public class EnchantmentHelperMixin {
 	// This mixin prevents the whole "I can't get your mixin target" thingy
-	@Redirect(method = "Lnet/minecraft/enchantment/EnchantmentHelper;getPossibleEntries(ILnet/minecraft/item/ItemStack;Z)Ljava/util/List;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/Registry;iterator()Ljava/util/Iterator;"))
+	@Redirect(method = "getPossibleEntries(ILnet/minecraft/item/ItemStack;Z)Ljava/util/List;", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/Registry;iterator()Ljava/util/Iterator;"))
 	private static Iterator<Enchantment> removeCustomEnchants(Registry<Enchantment> registry) {
 		return registry.stream().filter((enchantment) -> !(enchantment instanceof QuiltEnchantment)).iterator();
 	}
@@ -30,7 +31,7 @@ public class EnchantmentHelperMixin {
 	@Inject(method = "getPossibleEntries", at = @At("RETURN"), cancellable = true)
 	private static void handleCustomEnchants(int power, ItemStack stack, boolean treasureAllowed, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
 		List<EnchantmentLevelEntry> extraEntries = callback.getReturnValue();
-		Registry.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment).forEach((enchantment) -> {
+		Registries.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment).forEach((enchantment) -> {
 			for (int level = enchantment.getMinLevel(); level <= enchantment.getMaxLevel(); level++) {
 				EnchantmentContext context = EnchantmentGodClass.context.get().withLevel(level).withPower(power);
 				int probability = ((QuiltEnchantment) enchantment).weightFromEnchantmentContext(context);

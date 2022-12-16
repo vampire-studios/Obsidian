@@ -6,12 +6,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.PiglinBrain;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterials;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
-@InjectedInterface(Item.class)
 public interface IForgeItem {
 	private Item self() {
 		return (Item) this;
@@ -56,17 +57,6 @@ public interface IForgeItem {
 	 */
 	default float getXpRepairRatio(ItemStack stack) {
 		return 2f;
-	}
-
-	/**
-	 * Gets a list of tabs that items belonging to this class can display on,
-	 * combined properly with getSubItems allows for a single item to span many
-	 * sub-items across many tabs.
-	 *
-	 * @return A list of all tabs that this item could possibly be one.
-	 */
-	default java.util.Collection<ItemGroup> getCreativeTabs() {
-		return java.util.Collections.singletonList(self().getGroup());
 	}
 
 	/**

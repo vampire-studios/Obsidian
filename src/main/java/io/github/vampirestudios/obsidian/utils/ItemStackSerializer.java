@@ -5,8 +5,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.lang.reflect.Type;
 
@@ -42,8 +42,8 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
                 }
             }
 
-            if (name != null && Registry.ITEM.get(new Identifier(name)) != null) {
-                ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier(name)), stackSize);
+            if (name != null && Registries.ITEM.get(new Identifier(name)) != null) {
+                ItemStack itemStack = new ItemStack(Registries.ITEM.get(new Identifier(name)), stackSize);
                 itemStack.setNbt(tagCompound);
                 return itemStack;
             }
@@ -58,8 +58,8 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
         if (src != null && src.getItem() != null) {
             JsonObject jsonObject = new JsonObject();
 
-            if (Registry.ITEM.getId(src.getItem()) != null) {
-                jsonObject.addProperty(NAME, Registry.ITEM.getId(src.getItem()).toString());
+            if (Registries.ITEM.getId(src.getItem()) != null) {
+                jsonObject.addProperty(NAME, Registries.ITEM.getId(src.getItem()).toString());
             } else {
                 return JsonNull.INSTANCE;
             }

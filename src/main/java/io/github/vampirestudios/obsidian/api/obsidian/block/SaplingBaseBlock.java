@@ -1,35 +1,30 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import io.github.vampirestudios.vampirelib.api.itemGroupSorting.VanillaTargetedItemGroupFiller;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.*;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.random.RandomGenerator;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 
 public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
 	public static final IntProperty STAGE = Properties.STAGE;
 	protected static final VoxelShape SHAPE = net.minecraft.block.Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 12.0, 14.0);
-    private final VanillaTargetedItemGroupFiller FILLER;
 	private final Block block;
 
     public SaplingBaseBlock(Block block) {
         super(AbstractBlock.Settings.of(Material.PLANT).noCollision().ticksRandomly().breakInstantly().sounds(BlockSoundGroup.GRASS));
 		this.block = block;
 		this.setDefaultState(this.stateManager.getDefaultState().with(STAGE, 0));
-        FILLER = new VanillaTargetedItemGroupFiller(Blocks.DARK_OAK_SAPLING);
     }
 
 	@Override
@@ -37,13 +32,8 @@ public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
 		return SHAPE;
 	}
 
-    @Override
-    public void appendStacks(ItemGroup group, DefaultedList<ItemStack> list) {
-        FILLER.fillItem(this.asItem(), group, list);
-    }
-
 	@Override
-	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
+	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
 		if (world.getLightLevel(pos.up()) >= 9 && random.nextInt(7) == 0) {
 			this.generateNew(world, pos, state);
 		}
@@ -55,8 +45,8 @@ public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
 		} else {
 			if (block.placable_feature != null) {
 				world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-				if (world.getRegistryManager().get(Registry.CONFIGURED_FEATURE_KEY).containsId(block.placable_feature)) {
-					ConfiguredFeature<?, ?> feature = world.getRegistryManager().get(Registry.CONFIGURED_FEATURE_KEY).get(block.placable_feature);
+				if (world.getRegistryManager().get(RegistryKeys.CONFIGURED_FEATURE).containsId(block.placable_feature)) {
+					ConfiguredFeature<?, ?> feature = world.getRegistryManager().get(RegistryKeys.CONFIGURED_FEATURE).get(block.placable_feature);
 					assert feature != null;
 					feature.generate(world, world.getChunkManager().getChunkGenerator(), world.getRandom(), pos);
 				}
@@ -65,17 +55,18 @@ public class SaplingBaseBlock extends PlantBlock implements Fertilizable {
 	}
 
 	@Override
-	public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
+	public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
 		return true;
 	}
 
+
 	@Override
-	public boolean canGrow(World world, RandomGenerator random, BlockPos pos, BlockState state) {
+	public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
 		return world.random.nextFloat() < 0.45;
 	}
 
 	@Override
-	public void grow(ServerWorld world, RandomGenerator random, BlockPos pos, BlockState state) {
+	public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
 		this.generateNew(world, pos, state);
 	}
 

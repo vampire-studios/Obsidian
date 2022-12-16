@@ -11,7 +11,6 @@ import io.github.vampirestudios.obsidian.api.bedrock.ManifestFile;
 import io.github.vampirestudios.obsidian.api.bedrock.block.BaseBlock;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
@@ -22,9 +21,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
+import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.loader.api.QuiltLoader;
 
 import java.io.File;
 import java.io.FileReader;
@@ -43,7 +43,7 @@ public class BedrockAddonLoader {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
             .setPrettyPrinting().create();
-    public static final File BEDROCK_ADDON_DIRECTORY = new File(QuiltLoader.getGameDir().toFile(), "bedrock_addons");
+    public static final File BEDROCK_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDir().toFile(), "bedrock_addons");
     public static final Map<IBedrockAddon, String> BEDROCK_ADDONS = new HashMap<>();
     public static final Map<String, IBedrockAddon> TEMP_BEDROCK_ADDONS = new HashMap<>();
     public static final List<Potion> POTIONS = new ArrayList<>();

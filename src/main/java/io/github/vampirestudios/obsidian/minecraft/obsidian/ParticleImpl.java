@@ -12,9 +12,9 @@ public class ParticleImpl extends SpriteBillboardParticle {
         super(world, x, y - 0.125D, z, velocityX, velocityY, velocityZ);
         this.particle = particle;
         this.collidesWithWorld = particle.collides_with_world;
-        this.colorRed = particle.red_color;
-        this.colorGreen = particle.green_color;
-        this.colorBlue = particle.blue_color;
+        this.red = particle.red_color;
+        this.green = particle.green_color;
+        this.blue = particle.blue_color;
         this.maxAge = particle.max_age;
         this.scale *= /*this.random.nextFloat() * 0.4F + 0.7F*/particle.size;
         this.setBoundingBoxSpacing(0.01F, 0.01F);

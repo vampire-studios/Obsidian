@@ -4,6 +4,10 @@ import net.minecraft.util.Identifier;
 
 public class AdditionalBlockInformation {
 
+    public boolean overworldLike = true;
+    public boolean netherLike = false;
+    public boolean bambooLike = false;
+
     public String extraBlocksName = "";
 
     public boolean slab = false;

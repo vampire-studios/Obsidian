@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class FoodComponent {
 
@@ -27,8 +27,8 @@ public class FoodComponent {
 		if (snack) builder.snack();
 		if (effects != null) {
 			for (FoodPotionEffect potionEffect : effects) {
-				if (Registry.STATUS_EFFECT.containsId(potionEffect.effect)) {
-					builder.statusEffect(new StatusEffectInstance(Registry.STATUS_EFFECT.get(potionEffect.effect), potionEffect.duration * 20, potionEffect.amplifier, potionEffect.ambient, potionEffect.showParticles, potionEffect.showIcon), potionEffect.chance);
+				if (Registries.STATUS_EFFECT.containsId(potionEffect.effect)) {
+					builder.statusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.get(potionEffect.effect), potionEffect.duration * 20, potionEffect.amplifier, potionEffect.ambient, potionEffect.showParticles, potionEffect.showIcon), potionEffect.chance);
 				}
 			}
 		}

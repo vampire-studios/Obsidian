@@ -11,11 +11,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-
-import java.util.Random;
+import net.minecraft.world.WorldView;
 
 public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable {
     public static IntProperty AGE;
@@ -53,15 +52,15 @@ public class TallFlowerBlockImpl extends TallPlantBlock implements Fertilizable 
         return false;
     }
 
-    public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
         return true;
     }
 
-    public boolean canGrow(World world, RandomGenerator random, BlockPos pos, BlockState state) {
+    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
         return true;
     }
 
-    public void grow(ServerWorld world, RandomGenerator random, BlockPos pos, BlockState state) {
+    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
         dropStack(world, pos, new ItemStack(this));
     }
 

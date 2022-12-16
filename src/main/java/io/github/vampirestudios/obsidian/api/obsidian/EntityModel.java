@@ -3,8 +3,8 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 import io.github.vampirestudios.obsidian.utils.Vec2i;
 import net.minecraft.client.model.*;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vec3i;
+import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -20,16 +20,16 @@ public class EntityModel {
 
         public String name = "";
         public String parent = "";
-        public Vec3f pivot = Vec3f.ZERO.copy();
-        public Vec3f rotation = Vec3f.ZERO.copy();
+        public Vector3f pivot = new Vector3f(0, 0, 0);
+        public Vector3f rotation = new Vector3f(0, 0, 0);
         public List<Cube> cubes;
 
         public static class Cube {
             public String name = "";
             public boolean mirrored = false;
             public Vec2i uv = Vec2i.ZERO.copy();
-            public Vec3f origin = Vec3f.ZERO.copy();
-            public Vec3f size = Vec3f.ZERO.copy();
+            public Vector3f origin = new Vector3f(0, 0, 0);
+            public Vector3f size = new Vector3f(0, 0, 0);
             public Vec3i radiusArray = Vec3i.ZERO;
             public int radius;
         }
@@ -46,21 +46,21 @@ public class EntityModel {
                 Dilation dilation = Dilation.NONE;
                 if(cube.radiusArray != null) dilation.add(cube.radiusArray.getX(), cube.radiusArray.getY(), cube.radiusArray.getZ());
                 else dilation.add(cube.radius);
-                modelPartBuilder.cuboid(cube.origin.getX(), cube.origin.getY(), cube.origin.getZ(),
-                        cube.size.getX(), cube.size.getY(), cube.size.getZ(), dilation);
+                modelPartBuilder.cuboid(cube.origin.x(), cube.origin.y(), cube.origin.z(),
+                        cube.size.x(), cube.size.y(), cube.size.z(), dilation);
                 modelPartBuilder.mirrored(cube.mirrored);
             }
             if (part.parent != null && !part.parent.isEmpty() && !part.parent.isBlank()) modelPartData.getChild(part.parent)
                     .addChild(part.name, modelPartBuilder,
                             ModelTransform.of(
-                                    part.pivot.getX(), part.pivot.getY(), part.pivot.getZ(),
-                                    part.rotation.getX(), part.rotation.getY(), part.rotation.getZ()
+                                    part.pivot.x(), part.pivot.y(), part.pivot.z(),
+                                    part.rotation.x(), part.rotation.y(), part.rotation.z()
                             )
                     );
             else modelPartData.addChild(part.name, modelPartBuilder,
                     ModelTransform.of(
-                            part.pivot.getX(), part.pivot.getY(), part.pivot.getZ(),
-                            part.rotation.getX(), part.rotation.getY(), part.rotation.getZ()
+                            part.pivot.x(), part.pivot.y(), part.pivot.z(),
+                            part.rotation.x(), part.rotation.y(), part.rotation.z()
                     )
             );
         }
