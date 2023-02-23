@@ -1,17 +1,17 @@
 [versions]
     minecraft = '1.19.3'
-    quilt-mappings = '1.19.3+build.1' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
-    yarn_mappings = '1.19.3+build.1'
-    fabric-loader = '0.14.11' # Latest version is available at https://fabricmc.net/versions.html
+    quilt-mappings = '1.19.3+build.18' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
+    yarn_mappings = '1.19.3+build.5'
+    fabric-loader = '0.14.13' # Latest version is available at https://fabricmc.net/versions.html
 
-    fabric_api = '0.69.0+1.19.3'
+    fabric_api = '0.73.2+1.19.3'
 
-    vampirelib = "6.0.0+build.2-1.19.3-beta"
+    vampirelib = "6.1.1+build.2-1.19.3"
     clothconfig = '9.0.93'
-    owo-lib = '0.9.2+1.19.3'
+    owo-lib = '0.10.2+1.19.3'
     appleskin = 'mc1.19-2.4.0'
     libzoomer = '6c0c9d119d'
-    cct = '2.0.2+1.19'
+    cct = '3.0.0+1.19.3'
 
 [libraries]
     minecraft = { module = 'com.mojang:minecraft', version.ref = 'minecraft' }

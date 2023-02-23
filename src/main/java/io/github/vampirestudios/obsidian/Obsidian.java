@@ -27,6 +27,8 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -206,7 +208,7 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 		KeyBindingHelper.registerKeyBinding(binding);
 
-		GlobalFixer.init();
+//		GlobalFixer.init();
 
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
 			if (destination.getDimensionKey().equals(DimensionTypes.THE_END)) {
@@ -217,6 +219,14 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 				}
 			}
 		});
+
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
+			ClientCommandManager.literal("open_gui")
+				.executes(context -> {
+					context.getSource().getClient().setScreen(new ImguiScreen());
+					return 0;
+				})
+		));
 
 		//Item Groups
 		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", ItemGroups.BUILDING_BLOCKS);

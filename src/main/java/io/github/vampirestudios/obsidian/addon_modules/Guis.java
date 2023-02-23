@@ -22,7 +22,6 @@ public class Guis implements AddonModule {
         try {
             if (gui == null) return;
 
-
             register(ContentRegistries.GUIS, "gui", gui.id, gui);
         } catch (Exception e) {
             failedRegistering("gui", gui.id.toString(), e);

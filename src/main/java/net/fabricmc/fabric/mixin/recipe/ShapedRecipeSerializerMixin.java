@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ShapedRecipe.Serializer.class)
 public abstract class ShapedRecipeSerializerMixin implements FabricRecipeSerializer<ShapedRecipe> {
-	protected static RecipeCategory getCategory(CraftingRecipeCategory recipeCategory) {
+	private static RecipeCategory getCategory(CraftingRecipeCategory recipeCategory) {
 		return switch(recipeCategory) {
 			case BUILDING -> RecipeCategory.BUILDING_BLOCKS;
 			case EQUIPMENT -> RecipeCategory.TOOLS;

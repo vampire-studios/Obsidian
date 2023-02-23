@@ -1,6 +1,6 @@
 plugins {
-	id 'fabric-loom' version '1.0-SNAPSHOT'
-	id 'io.github.juuxel.loom-quiltflower' version '1.7.1'
+	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'io.github.juuxel.loom-quiltflower' version '1.8.+'
 	id 'maven-publish'
 }
 
@@ -28,6 +28,8 @@ repositories {
 	maven { url = "https://mvn.devos.one/releases/" }
 	maven { url = "https://mvn.devos.one/snapshots/" }
 	maven { url = 'https://jitpack.io' }
+	maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+	maven { url "https://raw.githubusercontent.com/kotlin-graphics/mary/master" }
 }
 
 loom {
@@ -36,7 +38,6 @@ loom {
 
 quiltflower {
 	addToRuntimeClasspath.set(true)
-//	fromUrl("https://maven.quiltmc.org/repository/snapshot/org/quiltmc/quiltflower/1.9.0-SNAPSHOT/quiltflower-1.9.0-20220429.122922-1.jar")
 }
 
 dependencies {
@@ -142,6 +143,12 @@ dependencies {
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.14.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.14.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
+
+
+	implementation "io.github.spair:imgui-java-binding:$imguiVersion"
+	implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
+
+	implementation "io.github.spair:imgui-java-natives-windows:$imguiVersion"
 }
 
 processResources {
@@ -155,11 +162,11 @@ processResources {
 java {
 	withSourcesJar()
 	withJavadocJar()
-	toolchain.languageVersion = JavaLanguageVersion.of(19)
+	toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 19
+	it.options.release = 17
 	it.options.encoding = 'UTF-8'
 }
 
