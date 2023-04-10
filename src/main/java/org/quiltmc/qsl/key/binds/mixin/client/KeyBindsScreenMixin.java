@@ -20,25 +20,22 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
+import net.minecraft.client.gui.screen.option.KeybindsScreen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
 @Environment(EnvType.CLIENT)
-@Mixin(ControlsOptionsScreen.class)
+@Mixin(KeybindsScreen.class)
 public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	@Shadow
-	private ControlsListWidget keyBindList;
+	private ControlsListWidget controlsList;
 
 	private KeyBindsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
 		super(screen, gameOptions, text);
@@ -48,14 +45,14 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderConflictTooltips(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		// TODO - Somehow extend the hover area to include the label too
-		ControlsListWidget.Entry entry = ((EntryListWidgetAccessor<ControlsListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
-		if (entry != null && entry instanceof ControlsListWidget.KeyBindingEntry keyBindEntry) {
-			List<Text> tooltipLines = ((KeyBindTooltipHolder) keyBindEntry).getKeyBindTooltips();
-
-			if (tooltipLines != null) {
-				// TODO - With key names, it's getting too big! Add a maximum width
-				this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);
-			}
-		}
+//		ControlsListWidget.Entry entry = ((EntryListWidgetAccessor<ControlsListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
+//		if (entry != null && entry instanceof ControlsListWidget.KeyBindingEntry keyBindEntry) {
+//			List<Text> tooltipLines = ((KeyBindTooltipHolder) keyBindEntry).getKeyBindTooltips();
+//
+//			if (tooltipLines != null) {
+//				// TODO - With key names, it's getting too big! Add a maximum width
+//				this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);
+//			}
+//		}
 	}
 }

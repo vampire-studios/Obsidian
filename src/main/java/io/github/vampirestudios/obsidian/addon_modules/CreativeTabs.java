@@ -47,7 +47,7 @@ public class CreativeTabs implements AddonModule {
                 CreativeTab creativeTab = result.result().get().getFirst();
                 ItemGroup itemGroup1 = FabricItemGroup.builder(identifier)
                         .icon(() -> new ItemStack(creativeTab.icon))
-                        .entries((featureSet, entries, operator) -> {
+                        .entries((featureSet, entries) -> {
                             for (RegistryEntry<Item> item : creativeTab.items) {
                                 if (item.hasKeyAndValue()) {
                                     entries.add(new ItemStack(item.comp_349()));

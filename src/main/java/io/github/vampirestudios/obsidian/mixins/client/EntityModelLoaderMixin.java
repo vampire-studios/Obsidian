@@ -17,12 +17,9 @@
 package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.DynamicEntityModelLoader;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
-import net.minecraft.resource.ResourceType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,15 +34,15 @@ public class EntityModelLoaderMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void createAnimationManager(CallbackInfo ci) {
-        this.quilt$dynamicEntityModelLoader = new DynamicEntityModelLoader();
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this.quilt$dynamicEntityModelLoader);
+//        this.quilt$dynamicEntityModelLoader = new DynamicEntityModelLoader();
+//        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this.quilt$dynamicEntityModelLoader);
     }
 
     @Inject(method = "getModelPart", at = @At("HEAD"), cancellable = true)
     public void returnDynamicModel(EntityModelLayer layer, CallbackInfoReturnable<ModelPart> cir) {
-        TexturedModelData modelData = quilt$dynamicEntityModelLoader.getModelData(layer);
-        if (modelData != null) {
-            cir.setReturnValue(modelData.createModel());
-        }
+//        TexturedModelData modelData = quilt$dynamicEntityModelLoader.getModelData(layer);
+//        if (modelData != null) {
+//            cir.setReturnValue(modelData.createModel());
+//        }
     }
 }

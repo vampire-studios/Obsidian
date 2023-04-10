@@ -47,7 +47,7 @@ public class ContentRegistries {
 	public static Registry<Enchantment> ENCHANTMENTS = FabricRegistryBuilder.createSimple(Enchantment.class, id("enchantments")).buildAndRegister();
 	public static Registry<ItemGroup> ITEM_GROUPS = FabricRegistryBuilder.createSimple(ItemGroup.class, id("item_groups_registry")).buildAndRegister();
 	public static Registry<CreativeTab> CREATIVE_TABS = FabricRegistryBuilder.createSimple(CreativeTab.class, id("creative_tabs")).buildAndRegister();
-	public static Registry<TabbedGroup> EXPANDED_ITEM_GROUPS = FabricRegistryBuilder.createSimple(TabbedGroup.class, id("expanded_item_groups_registry")).buildAndRegister();
+//	public static Registry<TabbedGroup> EXPANDED_ITEM_GROUPS = FabricRegistryBuilder.createSimple(TabbedGroup.class, id("expanded_item_groups_registry")).buildAndRegister();
 	public static Registry<CondensedEntry> CONDENSED_ITEM_ENTRIES = FabricRegistryBuilder.createSimple(CondensedEntry.class, id("condensed_item_entries")).buildAndRegister();
 	public static Registry<Entity> ENTITIES = FabricRegistryBuilder.createSimple(Entity.class, id("entities")).buildAndRegister();
 	public static Registry<EntityModel> ENTITY_MODELS = FabricRegistryBuilder.createSimple(EntityModel.class, id("entity_models")).buildAndRegister();

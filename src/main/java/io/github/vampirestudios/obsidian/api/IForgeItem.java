@@ -94,7 +94,7 @@ public interface IForgeItem {
 	 * @return true if the enchantment can be applied to this item
 	 */
 	default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-		return enchantment.type.isAcceptableItem(stack.getItem());
+		return enchantment.target.isAcceptableItem(stack.getItem());
 	}
 
 	/**

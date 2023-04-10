@@ -22,6 +22,8 @@ public class Registries {
 	public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY;
 	public static final Registry<Property> PROPERTIES;
 	public static final Registry<DynamicShape> DYNAMIC_SHAPES;
+//	public static final Registry<Transformation.Target> BLOCK_PROPERTIES;
+//	public static final Registry<Transformation.Target> BLOCK_GROUPS;
 	public static Registry<Animation> ANIMATION_DEFINITIONS;
 	public static Registry<Transformation.Interpolation> ANIMATION_CHANNEL_INTERPOLATIONS;
 	public static Registry<Transformation.Target> ANIMATION_CHANNEL_TARGETS;
@@ -33,6 +35,7 @@ public class Registries {
 		ENTITY_COMPONENT_REGISTRY = new SimpleRegistry<>(RegistryKey.ofRegistry( Const.id("entity_components")), Lifecycle.stable(), false);
 		PROPERTIES = FabricRegistryBuilder.createSimple(Property.class, Const.id("properties")).buildAndRegister();
 		DYNAMIC_SHAPES = FabricRegistryBuilder.createSimple(DynamicShape.class, Const.id("dynamic_shapes")).buildAndRegister();
+//		BLOCK_PROPERTIES = FabricRegistryBuilder.createSimple(DynamicShape.class, Const.id("dynamic_shapes")).buildAndRegister();
 		ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(Animation.class, Const.id("animation_definitions")).buildAndRegister();
 		ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(Transformation.Interpolation.class, Const.id("animation_channel_interpolations")).buildAndRegister();
 		ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(Transformation.Target.class, Const.id("animation_channel_targets")).buildAndRegister();

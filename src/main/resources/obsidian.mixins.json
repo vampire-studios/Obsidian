@@ -32,7 +32,7 @@
     "client.EntityModelLoaderMixin",
     "client.EntityRenderDispatcherMixin",
     "client.EntityRendererFactoryContextMixin",
-    "client.ItemRendererMixin",
+//    "client.ItemRendererMixin",
     "client.MixinArmorFeatureRenderer",
     "client.ModelLoaderMixin",
     "client.PlayerEntityRendererMixin",

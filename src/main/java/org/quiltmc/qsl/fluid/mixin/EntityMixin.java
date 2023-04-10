@@ -150,7 +150,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 			}
 		}
 
-		BlockPos blockPos = new BlockPos(this.getX(), d, this.getZ());
+		BlockPos blockPos = BlockPos.ofFloored(this.getX(), d, this.getZ());
 		FluidState fluidState = this.world.getFluidState(blockPos);
 
 

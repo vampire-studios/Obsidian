@@ -2,7 +2,6 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
@@ -17,7 +16,7 @@ public class ArmorItemImpl extends ArmorItem {
     public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
 
     public ArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Settings settings) {
-        super(material, EquipmentSlot.byName(item.armorSlot.toUpperCase(Locale.ROOT)), settings);
+        super(material, ArmorItem.Type.valueOf(item.armorType.toUpperCase(Locale.ROOT)), settings);
         this.item = item;
     }
 

@@ -5,7 +5,6 @@ import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.mojang.datafixers.util.Pair;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -30,8 +29,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemGroups;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import org.hjson.JsonValue;
@@ -40,7 +37,9 @@ import org.hjson.Stringify;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -123,10 +122,12 @@ public class Blocks implements AddonModule {
             FabricItemSettings settings = new FabricItemSettings()/*.group(block.information.itemProperties.getItemGroup())*/;
             settings.maxCount(block.information.itemProperties.maxStackSize);
             settings.rarity(Rarity.valueOf(block.information.itemProperties.rarity.toUpperCase(Locale.ROOT)));
-            if (block.information.itemProperties.maxDurability != 0) settings.maxDamage(block.information.itemProperties.maxDurability);
+            if (block.information.itemProperties.maxDurability != 0)
+                settings.maxDamage(block.information.itemProperties.maxDurability);
             if (!block.information.itemProperties.equipmentSlot.isEmpty() && !block.information.itemProperties.equipmentSlot.isBlank())
                 settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
-            if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
+            if (block.food_information != null)
+                settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
             if (block.information.itemProperties.fireproof) settings.fireproof();
 
             RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();
@@ -139,7 +140,7 @@ public class Blocks implements AddonModule {
                 } else if (block.additional_information.barrel) {
                     expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
                 } else if (block.additional_information.leaves) {
-                    expanded.registerBlock(new LeavesBaseBlock(), block, blockId.getPath(), settings);
+                    expanded.registerLeavesBlock(block, blockId.getPath(), settings);
                 } else if (block.additional_information.chains) {
                     expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
                 } else if (block.additional_information.cake_like) {
@@ -194,32 +195,30 @@ public class Blocks implements AddonModule {
                     case FENCE ->
                             expanded.registerBlock(new FenceImpl(block, blockSettings), block, blockId.getPath(), settings);
                     case OVERWORLD_FENCE_GATE ->
-                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundEvents.BLOCK_FENCE_GATE_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, WoodType.ACACIA), block, blockId.getPath(), settings);
                     case NETHER_FENCE_GATE ->
-                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, WoodType.CRIMSON), block, blockId.getPath(), settings);
                     case BAMBOO_FENCE_GATE ->
-                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_OPEN), block, blockId.getPath(), settings);
-                    case CAKE ->
-                            expanded.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, WoodType.BAMBOO), block, blockId.getPath(), settings);
+                    case CAKE -> expanded.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
                     case OVERWORLD_TRAPDOOR ->
-                            expanded.registerBlock(new TrapdoorBlock(blockSettings, SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new TrapdoorBlock(blockSettings, WoodType.ACACIA.comp_1300()), block, blockId.getPath(), settings);
                     case NETHER_TRAPDOOR ->
-                            expanded.registerBlock(new TrapdoorBlock(blockSettings, SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new TrapdoorBlock(blockSettings, WoodType.CRIMSON.comp_1300()), block, blockId.getPath(), settings);
                     case BAMBOO_TRAPDOOR ->
-                            expanded.registerBlock(new TrapdoorBlock(blockSettings, SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new TrapdoorBlock(blockSettings, WoodType.BAMBOO.comp_1300()), block, blockId.getPath(), settings);
                     case METAL_DOOR ->
-                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_IRON_DOOR_CLOSE, SoundEvents.BLOCK_IRON_DOOR_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new DoorBlock(blockSettings, BlockSetType.IRON), block, blockId.getPath(), settings);
                     case OVERWORLD_DOOR ->
-                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_WOODEN_DOOR_CLOSE, SoundEvents.BLOCK_WOODEN_DOOR_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new DoorBlock(blockSettings, WoodType.ACACIA.comp_1300()), block, blockId.getPath(), settings);
                     case NETHER_DOOR ->
-                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_NETHER_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_DOOR_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new DoorBlock(blockSettings, WoodType.CRIMSON.comp_1300()), block, blockId.getPath(), settings);
                     case BAMBOO_DOOR ->
-                            expanded.registerBlock(new DoorBlock(blockSettings, SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_OPEN), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new DoorBlock(blockSettings, WoodType.BAMBOO.comp_1300()), block, blockId.getPath(), settings);
                     case LOG ->
                             expanded.registerLog(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(),
                                     block.information.blockProperties.getMaterial().getColor(), settings);
-                    case STEM ->
-                            expanded.registerNetherStemBlock(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(), settings);
+                    case STEM -> expanded.registerNetherStemBlock(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(), settings);
                     case OXIDIZING_BLOCK -> {
                         List<Identifier> names = new ArrayList<>();
                         block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
@@ -236,32 +235,29 @@ public class Blocks implements AddonModule {
                             expanded.registerBlock(new PlantBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                         }
                     }
-                    case ROTATED_PILLAR ->
-                            expanded.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case ROTATED_PILLAR -> expanded.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     case HORIZONTAL_FACING_PLANT ->
-                            expanded.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
-                    case SAPLING ->
-                            expanded.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
+                        expanded.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
+                    case SAPLING -> expanded.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
                     case TORCH ->
                         //TODO: Add particle lookup registry/method
-                            expanded.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
+                        expanded.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
                     case BEEHIVE -> {
                         Block beeHive = expanded.registerBlock(new BeehiveBlock(blockSettings), block, blockId.getPath(), settings);
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beeHive), blockId.getPath() + "_beehive_be");
                     }
                     case LEAVES -> expanded.registerLeavesBlock(block, blockId.getPath(), settings);
-                    case LADDER ->
-                            expanded.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), settings);
+                    case LADDER -> expanded.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), settings);
                     case PATH ->
                             expanded.registerBlock(new PathBlockImpl(blockSettings, block), block, blockId.getPath(), settings);
                     case OVERWORLD_WOOD_BUTTON ->
-                            expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new ButtonBlock(blockSettings, WoodType.ACACIA.comp_1300(), 30, true), block, blockId.getPath(), settings);
                     case NETHER_WOOD_BUTTON ->
-                            expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new ButtonBlock(blockSettings, WoodType.CRIMSON.comp_1300(), 30, true), block, blockId.getPath(), settings);
                     case BAMBOO_BUTTON ->
-                            expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new ButtonBlock(blockSettings, WoodType.BAMBOO.comp_1300(), 30, true), block, blockId.getPath(), settings);
                     case STONE_BUTTON ->
-                            expanded.registerBlock(new ButtonBlock(blockSettings, 20, true, SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new ButtonBlock(blockSettings, BlockSetType.STONE, 20, true), block, blockId.getPath(), settings);
                     case DOUBLE_PLANT -> {
                         if (block.additional_information != null) {
                             if (block.additional_information.waterloggable) {
@@ -275,12 +271,9 @@ public class Blocks implements AddonModule {
                             expanded.registerDoubleBlock(new TallFlowerBlock(blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
                     case HANGING_DOUBLE_LEAVES ->
                             expanded.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().breakInstantly()), block, blockId.getPath(), settings);
-                    case LANTERN ->
-                            expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
-                    case CHAIN ->
-                            expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
-                    case PANE ->
-                            expanded.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case LANTERN -> expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CHAIN -> expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
+                    case PANE -> expanded.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     case DYEABLE -> {
                         Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(block, blockSettings));
                         expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
@@ -288,10 +281,8 @@ public class Blocks implements AddonModule {
                                         (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                 blockId.getPath() + "_be");
                     }
-                    case LOOM ->
-                            expanded.registerBlock(new LoomBlock(blockSettings), block, blockId.getPath(), settings);
-                    case CRAFTING_TABLE ->
-                            expanded.registerBlock(new CraftingTableBlock(blockSettings), block, blockId.getPath(), settings);
+                    case LOOM -> expanded.registerBlock(new LoomBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CRAFTING_TABLE -> expanded.registerBlock(new CraftingTableBlock(blockSettings), block, blockId.getPath(), settings);
                     case FURNACE -> {
                         Block furnace = expanded.registerBlock(new FurnaceBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.FURNACE).vlAddBlocks(furnace);
@@ -308,8 +299,7 @@ public class Blocks implements AddonModule {
                         Block barrel = expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.BARREL).vlAddBlocks(barrel);
                     }
-                    case CARPET ->
-                            expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CARPET -> expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
 
                     /*case PANE:
 //                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(blockId, "_base"));
@@ -331,8 +321,8 @@ public class Blocks implements AddonModule {
                                 Utils.appendToPath(identifier, "_slab").getPath(), ItemGroups.BUILDING_BLOCKS, settings);
                     }
                     if (additionalInformation.stairs) {
-                        expanded.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(), identifier.getPath() + "_stairs").getPath(),
-                                ItemGroups.BUILDING_BLOCKS);
+                        expanded.registerBlock(new StairsImpl(block, blockSettings), block, new Identifier(id.modId(),
+                                        identifier.getPath() + "_stairs").getPath(), ItemGroups.BUILDING_BLOCKS);
                     }
                     if (additionalInformation.fence) {
                         expanded.registerBlock(new FenceImpl(block, blockSettings), block,
@@ -341,9 +331,8 @@ public class Blocks implements AddonModule {
                     if (additionalInformation.fenceGate) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.FENCE_GATE);
-                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
-                                Utils.appendToPath(identifier, "_fence_gate").getPath(), ItemGroups.REDSTONE, settings);
+                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),
+                                block, Utils.appendToPath(identifier, "_fence_gate").getPath(), ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.walls) {
                         expanded.registerBlock(new WallImpl(block, blockSettings), block,
@@ -352,30 +341,28 @@ public class Blocks implements AddonModule {
                     if (additionalInformation.pressurePlate) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
-                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING, blockSettings,
+                                getWoodTypeSpecificSounds(soundType).comp_1300()), block,
                                 Utils.appendToPath(identifier, "_pressure_plate").getPath(), ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.button) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
-                        expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, sounds.getFirst(), sounds.getSecond()), block,
-                                Utils.appendToPath(identifier, "_button").getPath(), ItemGroups.REDSTONE, settings);
+                        expanded.registerBlock(new ButtonBlock(blockSettings, getWoodTypeSpecificSounds(soundType).comp_1300(),
+                                30, true), block, Utils.appendToPath(identifier, "_button").getPath(),
+                                ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.door) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
-                        expanded.registerBlock(new DoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                        expanded.registerBlock(new DoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).comp_1300()), block,
                                 Utils.appendToPath(identifier, "_door").getPath(), ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.trapdoor) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
-                        expanded.registerBlock(new TrapdoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
-                                Utils.appendToPath(identifier, "_trapdoor").getPath(), ItemGroups.REDSTONE, settings);
+                        expanded.registerBlock(new TrapdoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).comp_1300()),
+                                block, Utils.appendToPath(identifier, "_trapdoor").getPath(), ItemGroups.REDSTONE, settings);
                     }
                 } else {
                     if (additionalInformation.slab) {
@@ -393,9 +380,8 @@ public class Blocks implements AddonModule {
                     if (additionalInformation.fenceGate) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.FENCE_GATE);
-                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
-                                Utils.appendToPath(blockId, "_fence_gate").getPath(), ItemGroups.REDSTONE, settings);
+                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),
+                                block, Utils.appendToPath(blockId, "_fence_gate").getPath(), ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.walls) {
                         expanded.registerBlock(new WallImpl(block, blockSettings), block,
@@ -404,29 +390,26 @@ public class Blocks implements AddonModule {
                     if (additionalInformation.pressurePlate) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
-                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING, blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING, blockSettings,
+                                getWoodTypeSpecificSounds(soundType).comp_1300()), block,
                                 Utils.appendToPath(blockId, "_pressure_plate").getPath(), ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.button) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
-                        expanded.registerBlock(new ButtonBlock(blockSettings, 30, true, sounds.getFirst(), sounds.getSecond()), block,
-                                Utils.appendToPath(blockId, "_button").getPath(), ItemGroups.REDSTONE, settings);
+                        expanded.registerBlock(new ButtonBlock(blockSettings, getWoodTypeSpecificSounds(soundType).comp_1300(),
+                                30, true), block, Utils.appendToPath(blockId, "_button").getPath(), ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.door) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.DOOR);
-                        expanded.registerBlock(new DoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                        expanded.registerBlock(new DoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).comp_1300()), block,
                                 Utils.appendToPath(blockId, "_door").getPath(), ItemGroups.REDSTONE, settings);
                     }
                     if (additionalInformation.trapdoor) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        Pair<SoundEvent, SoundEvent> sounds = getWoodTypeSpecificSounds(soundType, BlockType.TRAPDOOR);
-                        expanded.registerBlock(new TrapdoorBlock(blockSettings, sounds.getFirst(), sounds.getSecond()), block,
+                        expanded.registerBlock(new TrapdoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).comp_1300()), block,
                                 Utils.appendToPath(blockId, "_trapdoor").getPath(), ItemGroups.REDSTONE, settings);
                     }
                 }
@@ -444,7 +427,8 @@ public class Blocks implements AddonModule {
                     if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
                 }));
                 names.forEach(identifier -> {
-                    if (ContentRegistries.BLOCKS.get(identifier) != null) register(ContentRegistries.BLOCKS, "block", identifier, block);
+                    if (ContentRegistries.BLOCKS.get(identifier) != null)
+                        register(ContentRegistries.BLOCKS, "block", identifier, block);
                 });
             } else {
                 register(ContentRegistries.BLOCKS, "block", blockId, block);
@@ -466,76 +450,26 @@ public class Blocks implements AddonModule {
     public String getType() {
         return "block";
     }
-    
-    private Pair<SoundEvent, SoundEvent> getWoodTypeSpecificSounds(SoundType soundType, BlockType blockType) {
+
+    private WoodType getWoodTypeSpecificSounds(SoundType soundType) {
         if (soundType == SoundType.OVERWORLD) {
-            if (blockType == BlockType.BUTTON) {
-                return Pair.of(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_ON);
-            }
-            if (blockType == BlockType.DOOR) {
-                return Pair.of(SoundEvents.BLOCK_WOODEN_DOOR_CLOSE, SoundEvents.BLOCK_WOODEN_DOOR_OPEN);
-            }
-            if (blockType == BlockType.TRAPDOOR) {
-                return Pair.of(SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN);
-            }
-            if (blockType == BlockType.PRESSURE_PLATE) {
-                return Pair.of(SoundEvents.BLOCK_WOODEN_PRESSURE_PLATE_CLICK_OFF, SoundEvents.BLOCK_WOODEN_PRESSURE_PLATE_CLICK_ON);
-            }
-            if (blockType == BlockType.FENCE_GATE) {
-                return Pair.of(SoundEvents.BLOCK_FENCE_GATE_CLOSE, SoundEvents.BLOCK_FENCE_GATE_OPEN);
-            }
-            return Pair.of(null, null);
+            return WoodType.ACACIA;
         } else if (soundType == SoundType.NETHER) {
-            if (blockType == BlockType.BUTTON) {
-                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_NETHER_WOOD_BUTTON_CLICK_ON);
-            }
-            if (blockType == BlockType.DOOR) {
-                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_DOOR_OPEN);
-            }
-            if (blockType == BlockType.TRAPDOOR) {
-                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_TRAPDOOR_OPEN);
-            }
-            if (blockType == BlockType.PRESSURE_PLATE) {
-                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_PRESSURE_PLATE_CLICK_OFF, SoundEvents.BLOCK_NETHER_WOOD_PRESSURE_PLATE_CLICK_ON);
-            }
-            if (blockType == BlockType.FENCE_GATE) {
-                return Pair.of(SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_NETHER_WOOD_FENCE_GATE_OPEN);
-            }
-            return Pair.of(null, null);
+            return WoodType.CRIMSON;
         } else if (soundType == SoundType.BAMBOO) {
-            if (blockType == BlockType.BUTTON) {
-                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_OFF, SoundEvents.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_ON);
-            }
-            if (blockType == BlockType.DOOR) {
-                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_DOOR_OPEN);
-            }
-            if (blockType == BlockType.TRAPDOOR) {
-                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_TRAPDOOR_OPEN);
-            }
-            if (blockType == BlockType.PRESSURE_PLATE) {
-                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_PRESSURE_PLATE_CLICK_OFF, SoundEvents.BLOCK_BAMBOO_WOOD_PRESSURE_PLATE_CLICK_ON);
-            }
-            if (blockType == BlockType.FENCE_GATE) {
-                return Pair.of(SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_CLOSE, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_OPEN);
-            }
-            return Pair.of(null, null);
+            return WoodType.BAMBOO;
+        } else if (soundType == SoundType.CHERRY) {
+            return WoodType.CHERRY;
         } else {
-            return Pair.of(null, null);
+            return null;
         }
     }
-    
+
     private enum SoundType {
         OVERWORLD,
         NETHER,
-        BAMBOO
-    }
-    
-    private enum BlockType {
-        DOOR,
-        TRAPDOOR,
-        PRESSURE_PLATE,
-        BUTTON,
-        FENCE_GATE
+        BAMBOO,
+        CHERRY
     }
 
 }

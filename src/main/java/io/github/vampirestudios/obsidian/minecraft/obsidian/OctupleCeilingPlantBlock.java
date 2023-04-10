@@ -28,7 +28,7 @@ public class OctupleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<OctupleBlockPart> PART = CProperties.OCTUPLE_BLOCK_PART;
 
     public OctupleCeilingPlantBlock(Settings settings) {
-        super(settings.offsetType(OffsetType.XZ));
+        super(settings.offset(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, OctupleBlockPart.TOP));
     }
 

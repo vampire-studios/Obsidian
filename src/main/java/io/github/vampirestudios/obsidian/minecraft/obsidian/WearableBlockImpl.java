@@ -9,7 +9,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Wearable;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.function.CommandFunction;
 import net.minecraft.server.world.ServerWorld;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class WearableBlockImpl extends Block implements Wearable {
+public class WearableBlockImpl extends Block {
 
     public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
@@ -48,7 +47,7 @@ public class WearableBlockImpl extends Block implements Wearable {
     }
 
     @Override
-    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+    public boolean isTransparent(BlockState blockState, BlockView blockView, BlockPos blockPos) {
         return block.information.blockProperties.translucent;
     }
 

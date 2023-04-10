@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/*
 package org.quiltmc.qsl.key.binds.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,4 +29,4 @@ import net.minecraft.client.gui.widget.EntryListWidget;
 public interface EntryListWidgetAccessor<E extends EntryListWidget.Entry<E>> {
 	@Invoker
 	E invokeGetHoveredEntry();
-}
+}*/

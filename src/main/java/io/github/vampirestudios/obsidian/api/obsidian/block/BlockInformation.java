@@ -61,60 +61,24 @@ public class BlockInformation {
         private static final Map<Identifier, BlockSoundGroup> vanillaSoundGroups = new HashMap<>();
 
         static {
-            vanillaMaterials.put(new Identifier("structure_void"), Material.STRUCTURE_VOID);
-            vanillaMaterials.put(new Identifier("portal"), Material.PORTAL);
-            vanillaMaterials.put(new Identifier("carpet"), Material.CARPET);
             vanillaMaterials.put(new Identifier("plant"), Material.PLANT);
-            vanillaMaterials.put(new Identifier("underwater_plant"), Material.UNDERWATER_PLANT);
-            vanillaMaterials.put(new Identifier("replaceable_plant"), Material.REPLACEABLE_PLANT);
-            vanillaMaterials.put(new Identifier("nether_shoots"), Material.NETHER_SHOOTS);
-            vanillaMaterials.put(new Identifier("replaceable_underwater_plant"), Material.REPLACEABLE_UNDERWATER_PLANT);
-            vanillaMaterials.put(new Identifier("water"), Material.WATER);
-            vanillaMaterials.put(new Identifier("bubble_column"), Material.BUBBLE_COLUMN);
-            vanillaMaterials.put(new Identifier("lava"), Material.LAVA);
-            vanillaMaterials.put(new Identifier("snow_layer"), Material.SNOW_LAYER);
-            vanillaMaterials.put(new Identifier("fire"), Material.FIRE);
-            vanillaMaterials.put(new Identifier("decoration"), Material.DECORATION);
-            vanillaMaterials.put(new Identifier("cobweb"), Material.COBWEB);
-            vanillaMaterials.put(new Identifier("redstone_lamp"), Material.REDSTONE_LAMP);
-            vanillaMaterials.put(new Identifier("organic_product"), Material.ORGANIC_PRODUCT);
-            vanillaMaterials.put(new Identifier("soil"), Material.SOIL);
-            vanillaMaterials.put(new Identifier("solid_organic"), Material.SOLID_ORGANIC);
-            vanillaMaterials.put(new Identifier("dense_ice"), Material.DENSE_ICE);
             vanillaMaterials.put(new Identifier("aggregate"), Material.AGGREGATE);
-            vanillaMaterials.put(new Identifier("sponge"), Material.SPONGE);
-            vanillaMaterials.put(new Identifier("shulker_box"), Material.SHULKER_BOX);
             vanillaMaterials.put(new Identifier("wood"), Material.WOOD);
-            vanillaMaterials.put(new Identifier("nether_wood"), Material.NETHER_WOOD);
-            vanillaMaterials.put(new Identifier("bamboo_sapling"), Material.BAMBOO_SAPLING);
-            vanillaMaterials.put(new Identifier("bamboo"), Material.BAMBOO);
-            vanillaMaterials.put(new Identifier("wool"), Material.WOOL);
-            vanillaMaterials.put(new Identifier("tnt"), Material.TNT);
-            vanillaMaterials.put(new Identifier("leaves"), Material.LEAVES);
-            vanillaMaterials.put(new Identifier("glass"), Material.GLASS);
-            vanillaMaterials.put(new Identifier("ice"), Material.ICE);
-            vanillaMaterials.put(new Identifier("cactus"), Material.CACTUS);
             vanillaMaterials.put(new Identifier("stone"), Material.STONE);
-            vanillaMaterials.put(new Identifier("metal"), Material.METAL);
-            vanillaMaterials.put(new Identifier("snow_block"), Material.SNOW_BLOCK);
-            vanillaMaterials.put(new Identifier("repair_station"), Material.REPAIR_STATION);
-            vanillaMaterials.put(new Identifier("barrier"), Material.BARRIER);
-            vanillaMaterials.put(new Identifier("piston"), Material.PISTON);
-            vanillaMaterials.put(new Identifier("moss_block"), Material.MOSS_BLOCK);
-            vanillaMaterials.put(new Identifier("gourd"), Material.GOURD);
-            vanillaMaterials.put(new Identifier("egg"), Material.EGG);
-            vanillaMaterials.put(new Identifier("cake"), Material.CAKE);
-            vanillaMaterials.put(new Identifier("amethyst"), Material.AMETHYST);
-            vanillaMaterials.put(new Identifier("powder_snow"), Material.POWDER_SNOW);
-            vanillaMaterials.put(new Identifier("air"), Material.AIR);
-            vanillaMaterials.put(new Identifier("sculk"), Material.SCULK);
-            vanillaMaterials.put(new Identifier("frog_spawn"), Material.FROGSPAWN);
-            vanillaMaterials.put(new Identifier("froglight"), Material.FROGLIGHT);
+            vanillaMaterials.put(new Identifier("glass"), Material.GLASS);
+            vanillaMaterials.put(new Identifier("allows_movement_light_passes_through_not_solid_replaceable"), Material.ALLOWS_MOVEMENT_LIGHT_PASSES_THROUGH_NOT_SOLID_REPLACEABLE);
+            vanillaMaterials.put(new Identifier("allows_movement_light_passes_through_not_solid"), Material.ALLOWS_MOVEMENT_LIGHT_PASSES_THROUGH_NOT_SOLID);
+            vanillaMaterials.put(new Identifier("allows_movement"), Material.ALLOWS_MOVEMENT);
+            vanillaMaterials.put(new Identifier("light_passes_through"), Material.LIGHT_PASSES_THROUGH);
+            vanillaMaterials.put(new Identifier("cobweb"), Material.COBWEB);
+            vanillaMaterials.put(new Identifier("not_solid_allows_movement"), Material.NOT_SOLID_ALLOWS_MOVEMENT);
+            vanillaMaterials.put(new Identifier("generic"), Material.GENERIC);
 
             vanillaSoundGroups.put(new Identifier("wood"), BlockSoundGroup.WOOD);
             vanillaSoundGroups.put(new Identifier("gravel"), BlockSoundGroup.GRAVEL);
             vanillaSoundGroups.put(new Identifier("grass"), BlockSoundGroup.GRASS);
             vanillaSoundGroups.put(new Identifier("lily_pad"), BlockSoundGroup.LILY_PAD);
+            vanillaSoundGroups.put(new Identifier("stone"), BlockSoundGroup.STONE);
             vanillaSoundGroups.put(new Identifier("metal"), BlockSoundGroup.METAL);
             vanillaSoundGroups.put(new Identifier("glass"), BlockSoundGroup.GLASS);
             vanillaSoundGroups.put(new Identifier("wool"), BlockSoundGroup.WOOL);
@@ -123,7 +87,6 @@ public class BlockInformation {
             vanillaSoundGroups.put(new Identifier("powder_snow"), BlockSoundGroup.POWDER_SNOW);
             vanillaSoundGroups.put(new Identifier("ladder"), BlockSoundGroup.LADDER);
             vanillaSoundGroups.put(new Identifier("anvil"), BlockSoundGroup.ANVIL);
-            vanillaSoundGroups.put(new Identifier("snow"), BlockSoundGroup.SNOW);
             vanillaSoundGroups.put(new Identifier("slime"), BlockSoundGroup.SLIME);
             vanillaSoundGroups.put(new Identifier("honey"), BlockSoundGroup.HONEY);
             vanillaSoundGroups.put(new Identifier("wet_grass"), BlockSoundGroup.WET_GRASS);
@@ -175,6 +138,7 @@ public class BlockInformation {
             vanillaSoundGroups.put(new Identifier("azalea"), BlockSoundGroup.AZALEA);
             vanillaSoundGroups.put(new Identifier("flowering_azalea"), BlockSoundGroup.FLOWERING_AZALEA);
             vanillaSoundGroups.put(new Identifier("moss_carpet"), BlockSoundGroup.MOSS_CARPET);
+            vanillaSoundGroups.put(new Identifier("pink_petals"), BlockSoundGroup.PINK_PETALS);
             vanillaSoundGroups.put(new Identifier("moss_block"), BlockSoundGroup.MOSS_BLOCK);
             vanillaSoundGroups.put(new Identifier("big_dripleaf"), BlockSoundGroup.BIG_DRIPLEAF);
             vanillaSoundGroups.put(new Identifier("small_dripleaf"), BlockSoundGroup.SMALL_DRIPLEAF);
@@ -198,7 +162,20 @@ public class BlockInformation {
             vanillaSoundGroups.put(new Identifier("mud"), BlockSoundGroup.MUD);
             vanillaSoundGroups.put(new Identifier("mud_bricks"), BlockSoundGroup.MUD_BRICKS);
             vanillaSoundGroups.put(new Identifier("packed_mud"), BlockSoundGroup.PACKED_MUD);
-            vanillaSoundGroups.put(new Identifier("stone"), BlockSoundGroup.STONE);
+            vanillaSoundGroups.put(new Identifier("hanging_sign"), BlockSoundGroup.HANGING_SIGN);
+            vanillaSoundGroups.put(new Identifier("nether_wood_hanging_sign"), BlockSoundGroup.NETHER_WOOD_HANGING_SIGN);
+            vanillaSoundGroups.put(new Identifier("bamboo_wood_hanging_sign"), BlockSoundGroup.BAMBOO_WOOD_HANGING_SIGN);
+            vanillaSoundGroups.put(new Identifier("bamboo_wood"), BlockSoundGroup.BAMBOO_WOOD);
+            vanillaSoundGroups.put(new Identifier("nether_wood"), BlockSoundGroup.NETHER_WOOD);
+            vanillaSoundGroups.put(new Identifier("cherry_wood"), BlockSoundGroup.CHERRY_WOOD);
+            vanillaSoundGroups.put(new Identifier("cherry_sapling"), BlockSoundGroup.CHERRY_SAPLING);
+            vanillaSoundGroups.put(new Identifier("cherry_leaves"), BlockSoundGroup.CHERRY_LEAVES);
+            vanillaSoundGroups.put(new Identifier("cherry_wood_hanging_sign"), BlockSoundGroup.CHERRY_WOOD_HANGING_SIGN);
+            vanillaSoundGroups.put(new Identifier("chiseled_bookshelf"), BlockSoundGroup.CHISELED_BOOKSHELF);
+            vanillaSoundGroups.put(new Identifier("suspicious_sand"), BlockSoundGroup.SUSPICIOUS_SAND);
+            vanillaSoundGroups.put(new Identifier("suspicious_gravel"), BlockSoundGroup.SUSPICIOUS_GRAVEL);
+            vanillaSoundGroups.put(new Identifier("decorated_pot"), BlockSoundGroup.DECORATED_POT);
+            vanillaSoundGroups.put(new Identifier("decorated_pot_shatter"), BlockSoundGroup.DECORATED_POT_SHATTER);
         }
 
         @SerializedName("material") public Identifier vanillaMaterial = new Identifier("air");
@@ -245,9 +222,10 @@ public class BlockInformation {
             if (customMaterial != null) {
                 CustomMaterial customMaterial = ContentRegistries.BLOCK_MATERIALS.get(this.customMaterial);
                 assert customMaterial != null;
-                return new Material(customMaterial.getMapColor(), customMaterial.liquid, customMaterial.solid,
-                        customMaterial.blocks_movement, customMaterial.blocks_light, customMaterial.burnable,
-                        customMaterial.replaceable, customMaterial.getPistonBehavior());
+                return new Material(customMaterial.getMapColor(), customMaterial.solid,
+                        customMaterial.blocks_movement, customMaterial.blocks_light,
+                        customMaterial.replaceable
+                );
             } else {
                 return vanillaMaterials.get(vanillaMaterial);
             }

@@ -12,10 +12,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Enchantment.class)
 public class EnchantmentMixin implements IForgeEnchantment {
 
-	@Shadow @Final public EnchantmentTarget type;
+	@Shadow @Final public EnchantmentTarget target;
 
 	/**
 	 * @author Olivia
+	 * @reason idk
 	 */
 	@Overwrite
 	public boolean isAcceptableItem(ItemStack stack) {

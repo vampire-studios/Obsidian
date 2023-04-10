@@ -4,6 +4,7 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.*;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.*;
 import net.minecraft.item.Item.Settings;
@@ -58,11 +59,19 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 	}
 
 	public void registerLeavesBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Settings settings) {
-		Block block = registerBlockWithoutItem(name, new LeavesBlock(AbstractBlock.Settings.of(Material.LEAVES).strength(0.2F)
-				.ticksRandomly().sounds(block2.information.blockProperties.getBlockSoundGroup()).nonOpaque()
-				.allowsSpawning((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
-				.suffocates((state, world, pos) -> false)
-				.blockVision((state, world, pos) -> false)));
+		Block leavesBlock = new LeavesBlock(
+				AbstractBlock.Settings.of(Material.LIGHT_PASSES_THROUGH, MapColor.DARK_GREEN)
+						.strength(0.2F)
+						.ticksRandomly()
+						.sounds(block2.information.blockProperties.getBlockSoundGroup())
+						.nonOpaque()
+						.allowsSpawning((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
+						.suffocates((state, world, pos) -> false)
+						.blockVision((state, world, pos) -> false)
+						.burnable()
+						.pistonBehavior(PistonBehavior.DESTROY)
+		);
+		Block block = registerBlockWithoutItem(name, leavesBlock);
 		if (block2.information.has_item) registerItem(new CustomBlockItem(block2, block, settings), name);
 	}
 
@@ -73,7 +82,7 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 	}
 
 	public void registerNetherStemBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor mapColor, Settings settings) {
-		this.registerBlock(new PillarBlockImpl(block, AbstractBlock.Settings.of(Material.NETHER_WOOD, (state) -> mapColor).strength(2.0F).sounds(BlockSoundGroup.NETHER_STEM)),
+		this.registerBlock(new PillarBlockImpl(block, AbstractBlock.Settings.of(Material.WOOD, blockState -> mapColor).strength(2.0F).sounds(BlockSoundGroup.NETHER_STEM)),
 				block, name, settings);
 	}
 

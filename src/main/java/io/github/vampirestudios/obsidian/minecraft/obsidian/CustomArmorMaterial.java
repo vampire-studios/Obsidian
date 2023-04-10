@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
@@ -9,12 +9,12 @@ import net.minecraft.sound.SoundEvent;
 public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial material) implements ArmorMaterial {
 
     @Override
-    public int getDurability(EquipmentSlot slot) {
-        return this.material.getDurability(slot);
+    public int getDurability(ArmorItem.Type slot) {
+        return this.material.getDurability(slot.getEquipmentSlot());
     }
 
     @Override
-    public int getProtectionAmount(EquipmentSlot slot) {
+    public int getProtection(ArmorItem.Type slot) {
         return this.material.protection_amount;
     }
 

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
@@ -41,7 +42,8 @@ public class ExpandedItemGroups implements AddonModule {
         return "item_groups/expanded";
     }
 
-	/*public static class ExpandedTabs implements ModDataConsumer {
+	*/
+/*public static class ExpandedTabs implements ModDataConsumer {
     	private static TabbedGroup tabbedGroup;
 		private static final Map<String, Pair<List<ItemGroupTab>, List<ItemGroupButton>>> CACHED_BUTTONS = new HashMap<>();
 
@@ -104,6 +106,7 @@ public class ExpandedItemGroups implements AddonModule {
 
 			CACHED_BUTTONS.put(tabbedGroup.targetGroup, new Pair<>(createdTabs, createdButtons));
 		}
-	}*/
+	}*//*
 
-}
+
+}*/

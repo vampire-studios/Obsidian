@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import com.google.gson.annotations.SerializedName;
@@ -50,4 +51,4 @@ public class TabbedGroup {
             };
         }
     }
-}
+}*/

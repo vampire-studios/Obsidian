@@ -33,7 +33,7 @@ public class CodecExtras {
 		double[] aint = stream.limit(size + 1).toArray();
 		if (aint.length != size) {
 			String s = "Input is not a list of " + size + " ints";
-			return aint.length >= size ? DataResult.error(s, Arrays.copyOf(aint, size)) : DataResult.error(s);
+			return aint.length >= size ? DataResult.error(() -> s, Arrays.copyOf(aint, size)) : DataResult.error(() -> s);
 		} else return DataResult.success(aint);
 	}
 
@@ -51,11 +51,11 @@ public class CodecExtras {
 		return keyCodec.flatXmap(
 				key -> {
 					V value = lookup.apply(key);
-					return value != null ? DataResult.success(value) : DataResult.error("The map does not contain any value with the given key");
+					return value != null ? DataResult.success(value) : DataResult.error(() -> "The map does not contain any value with the given key");
 				},
 				value -> {
 					K key = inverseLookup.apply(value);
-					return key != null ? DataResult.success(key) : DataResult.error("Could not find a key in the map for the given value");
+					return key != null ? DataResult.success(key) : DataResult.error(() -> "Could not find a key in the map for the given value");
 				}
 		);
 	}
@@ -67,7 +67,7 @@ public class CodecExtras {
 	public static <R, T extends R> Codec<R> toSubclass(Codec<T> codec, Class<T> subclass) {
 		return codec.flatComapMap(
 				m -> m,
-				v -> subclass.isInstance(v) ? DataResult.success(subclass.cast(v)) : DataResult.error("Value " + v + "is not of type " + subclass.getName())
+				v -> subclass.isInstance(v) ? DataResult.success(subclass.cast(v)) : DataResult.error(() -> "Value " + v + "is not of type " + subclass.getName())
 		);
 	}
 
@@ -103,9 +103,10 @@ public class CodecExtras {
 				}
 				if (builder != null) {
 					builder.append("\nEnd choices.");
-					return DataResult.error(errMessage + " Errors: " + builder);
+					StringBuilder finalBuilder = builder;
+					return DataResult.error(() -> errMessage + " Errors: " + finalBuilder);
 				}
-				return DataResult.error("No codecs?!");
+				return DataResult.error(() -> "No codecs?!");
 			}
 
 			@Override

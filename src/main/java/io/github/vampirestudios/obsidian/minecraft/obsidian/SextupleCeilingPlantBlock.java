@@ -28,7 +28,7 @@ public class SextupleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<SextupleBlockPart> PART = CProperties.SEXTUPLE_BLOCK_PART;
 
     public SextupleCeilingPlantBlock(Settings settings) {
-        super(settings.offsetType(OffsetType.XZ));
+        super(settings.offset(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, SextupleBlockPart.TOP));
     }
 

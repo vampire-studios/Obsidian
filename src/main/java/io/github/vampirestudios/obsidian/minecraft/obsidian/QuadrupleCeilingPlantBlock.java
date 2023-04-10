@@ -28,7 +28,7 @@ public class QuadrupleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<QuadrupleBlockPart> PART = CProperties.QUADRUPLE_BLOCK_PART;
 
     public QuadrupleCeilingPlantBlock(Settings settings) {
-        super(settings.offsetType(OffsetType.XZ));
+        super(settings.offset(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, QuadrupleBlockPart.UPPER));
     }
 

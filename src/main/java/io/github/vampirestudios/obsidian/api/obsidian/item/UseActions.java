@@ -9,6 +9,7 @@ public class UseActions {
 	public String right_click_actions;
 	public int gui_size;
 	public NameInformation gui_title;
+	public String url;
 
 	public UseAction getAction() {
 		return switch (action) {

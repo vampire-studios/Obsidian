@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.minecraft.block.CakeBlock;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
 
@@ -12,7 +13,7 @@ public class CakeBaseBlock extends CakeBlock {
     }
 
     public CakeBaseBlock(int slices) {
-        super(Settings.of(Material.CAKE).strength(0.5F).sounds(BlockSoundGroup.WOOL));
+        super(Settings.of(Material.GENERIC, MapColor.CLEAR).strength(0.5F).sounds(BlockSoundGroup.WOOL));
         this.slices = slices;
     }
 

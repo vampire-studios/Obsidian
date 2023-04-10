@@ -27,8 +27,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -220,14 +218,6 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 			}
 		});
 
-		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
-			ClientCommandManager.literal("open_gui")
-				.executes(context -> {
-					context.getSource().getClient().setScreen(new ImguiScreen());
-					return 0;
-				})
-		));
-
 		//Item Groups
 		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", ItemGroups.BUILDING_BLOCKS);
 		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "colored_blocks", ItemGroups.COLORED_BLOCKS);
@@ -340,13 +330,13 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
-		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
+//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "condensed_item_entries", new CondensedItemEntries());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "guis", new Guis());
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "huds", new Huds());
+//		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+//			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "guis", new Guis());
+//		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+//			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "huds", new Huds());
 
 		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information.isConvertible) {

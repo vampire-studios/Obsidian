@@ -2,7 +2,6 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.DyeableItem;
@@ -18,7 +17,7 @@ public class DyeableArmorItemImpl extends ArmorItem implements DyeableItem {
     public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
 
     public DyeableArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Settings settings) {
-        super(material, EquipmentSlot.byName(item.armorSlot), settings);
+        super(material, ArmorItem.Type.valueOf(item.armorType), settings);
         this.item = item;
     }
 

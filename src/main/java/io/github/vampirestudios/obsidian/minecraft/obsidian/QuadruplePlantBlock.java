@@ -30,7 +30,7 @@ public class QuadruplePlantBlock extends PlantBlock {
     public static final EnumProperty<QuadrupleBlockPart> PART = CProperties.QUADRUPLE_BLOCK_PART;
 
     public QuadruplePlantBlock(Settings settings) {
-        super(settings.offsetType(OffsetType.XZ));
+        super(settings.offset(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, QuadrupleBlockPart.LOWER));
     }
 

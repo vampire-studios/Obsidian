@@ -1,11 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
-import blue.endless.jankson.annotation.SerializedName;
 import com.google.gson.JsonObject;
-import io.wispforest.owo.ui.container.Containers;
-import io.wispforest.owo.ui.core.HorizontalAlignment;
-import io.wispforest.owo.ui.core.VerticalAlignment;
-import io.wispforest.owo.ui.util.Drawer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
@@ -20,8 +15,8 @@ public class UI {
 
 	public Identifier id;
 
-	@SerializedName("horizontal_alignment") public HorizontalAlignment horizontalAlignment;
-	@SerializedName("vertical_alignment") public VerticalAlignment verticalAlignment;
+//	@SerializedName("horizontal_alignment") public HorizontalAlignment horizontalAlignment;
+//	@SerializedName("vertical_alignment") public VerticalAlignment verticalAlignment;
 
 	public int rows;
 	public int columns;
@@ -59,7 +54,7 @@ public class UI {
 		return LayoutOrientation.valueOf(orientation.toUpperCase(Locale.ROOT));
 	}
 
-	public io.wispforest.owo.ui.core.Component getLayout(JsonObject jsonObject) {
+	/*public io.wispforest.owo.ui.core.Component getLayout(JsonObject jsonObject) {
 		Sizing horizontalSizing = sizing(jsonObject, "horizontal_sizing");
 		Sizing verticalSizing = sizing(jsonObject, "vertical_sizing");
 		return switch (getLayoutType()) {
@@ -69,7 +64,7 @@ public class UI {
 					case HORIZONTAL -> Containers.horizontalFlow(horizontalSizing.get(), verticalSizing.get());
 			};
 		};
-	}
+	}*/
 
 	public static class Surface {
 		public SurfaceType type;
@@ -123,7 +118,7 @@ public class UI {
 			return this;
 		}
 
-		public io.wispforest.owo.ui.core.Surface getSurface() {
+		/*public io.wispforest.owo.ui.core.Surface getSurface() {
 			return switch (type) {
 				case PANEL -> io.wispforest.owo.ui.core.Surface.PANEL;
 				case DARK_PANEL -> io.wispforest.owo.ui.core.Surface.DARK_PANEL;
@@ -139,7 +134,7 @@ public class UI {
 						parseColor(bottomRightColor), parseColor(bottomLeftColor)
 				);
 			};
-		}
+		}*/
 
 		public int parseColor(String color) {
 			String color1 = !color.isEmpty() && !color.isBlank()

@@ -10,11 +10,11 @@
 	"client.config.GameOptionsMixin",
 	"client.config.MinecraftClientMixin",
 	"client.toggle.KeyBindMixin",
-	"client.EntryListWidgetAccessor",
+//	"client.EntryListWidgetAccessor",
 	"client.GameOptionsAccessor",
 	"client.GameOptionsMixin",
 	"client.KeyBindAccessor",
-	"client.KeyBindEntryMixin",
+//	"client.KeyBindEntryMixin",
 	"client.KeyBindMixin",
 	"client.KeyBindsScreenMixin"
   ],

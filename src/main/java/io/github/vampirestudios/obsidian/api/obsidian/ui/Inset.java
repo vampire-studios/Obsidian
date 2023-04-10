@@ -1,7 +1,5 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
-import io.wispforest.owo.ui.core.Insets;
-
 public class Inset {
 	public Side side;
 
@@ -13,7 +11,7 @@ public class Inset {
 	public int vertical;
 	public int horizontal;
 
-	public Insets getInsets() {
+	/*public Insets getInsets() {
 		return switch (side) {
 			case TOP -> Insets.top(top);
 			case BOTTOM -> Insets.bottom(bottom);
@@ -25,7 +23,7 @@ public class Inset {
 			case HORIZONTAL -> Insets.horizontal(horizontal);
 			case BOTH_DIRECTIONS -> Insets.both(vertical, horizontal);
 		};
-	}
+	}*/
 
 	public enum Side {
 		TOP,

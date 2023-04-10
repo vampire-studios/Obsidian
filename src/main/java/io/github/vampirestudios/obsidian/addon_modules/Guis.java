@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
@@ -33,3 +34,4 @@ public class Guis implements AddonModule {
         return "client/gui";
     }
 }
+*/

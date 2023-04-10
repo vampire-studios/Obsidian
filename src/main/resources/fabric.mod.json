@@ -46,7 +46,6 @@
   "depends": {
     "fabricloader": ">=0.12.12",
     "fabric": "*",
-    "owo": "*",
     "vampirelib": "*"
   },
   "custom": {

@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.enchantments;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 
 public class ProtectionAmount {
 
@@ -10,28 +11,29 @@ public class ProtectionAmount {
     public int protection_amount = 1;
 
     public DamageSource getDamageSource(Entity source) {
+        DamageSources damageSources = source.getDamageSources();
         return switch (damage_source) {
-            case "inFire" -> DamageSource.IN_FIRE;
-            case "lightningBolt" -> DamageSource.LIGHTNING_BOLT;
-            case "onFire" -> DamageSource.ON_FIRE;
-            case "lava" -> DamageSource.LAVA;
-            case "hotFloor" -> DamageSource.HOT_FLOOR;
-            case "inWall" -> DamageSource.IN_WALL;
-            case "cramming" -> DamageSource.CRAMMING;
-            case "drown" -> DamageSource.DROWN;
-            case "starve" -> DamageSource.STARVE;
-            case "cactus" -> DamageSource.CACTUS;
-            case "fall" -> DamageSource.FALL;
-            case "flyIntoWall" -> DamageSource.FLY_INTO_WALL;
-            case "outOfWorld" -> DamageSource.OUT_OF_WORLD;
-            case "magic" -> DamageSource.MAGIC;
-            case "wither" -> DamageSource.WITHER;
-            case "anvil" -> DamageSource.anvil(source);
-            case "fallingBlock" -> DamageSource.fallingBlock(source);
-            case "dragonBreath" -> DamageSource.DRAGON_BREATH;
-            case "dryout" -> DamageSource.DRYOUT;
-            case "sweetBerryBush" -> DamageSource.SWEET_BERRY_BUSH;
-            default -> DamageSource.GENERIC;
+            case "inFire" -> damageSources.inFire();
+            case "lightningBolt" -> damageSources.lightningBolt();
+            case "onFire" -> damageSources.onFire();
+            case "lava" -> damageSources.lava();
+            case "hotFloor" -> damageSources.hotFloor();
+            case "inWall" -> damageSources.inWall();
+            case "cramming" -> damageSources.cramming();
+            case "drown" -> damageSources.drown();
+            case "starve" -> damageSources.starve();
+            case "cactus" -> damageSources.cactus();
+            case "fall" -> damageSources.fall();
+            case "flyIntoWall" -> damageSources.flyIntoWall();
+            case "outOfWorld" -> damageSources.outOfWorld();
+            case "magic" -> damageSources.magic();
+            case "wither" -> damageSources.wither();
+            case "anvil" -> damageSources.fallingAnvil(source);
+            case "fallingBlock" -> damageSources.fallingBlock(source);
+            case "dragonBreath" -> damageSources.dragonBreath();
+            case "dryout" -> damageSources.dryOut();
+            case "sweetBerryBush" -> damageSources.sweetBerryBush();
+            default -> damageSources.generic();
         };
     }
 

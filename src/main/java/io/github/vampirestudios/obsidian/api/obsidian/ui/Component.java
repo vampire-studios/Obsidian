@@ -2,14 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
-import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
@@ -64,7 +57,7 @@ public class Component {
 		return ComponentType.valueOf(type.toUpperCase(Locale.ROOT));
 	}
 
-	@Environment(EnvType.CLIENT)
+	/*@Environment(EnvType.CLIENT)
 	public io.wispforest.owo.ui.core.Component getComponent(JsonObject jsonObject) {
 		Sizing horizontalSizing = sizing(jsonObject, "horizontal_sizing");
 		Sizing verticalSizing = sizing(jsonObject, "vertical_sizing");
@@ -102,7 +95,7 @@ public class Component {
 			case BOX -> Components.box(horizontalSizing.get(), verticalSizing.get());
 			case DROPDOWN -> Components.dropdown(sizing.get());
 		};
-	}
+	}*/
 
 	public enum ComponentType {
 		TEXTURED_BUTTON_CUSTOM_TEXTURE_SIZE,

@@ -62,7 +62,9 @@ dependencies {
 		noCottonMC
 		noQuiltMC
 	}
-	include (libs.clothconfig) {
+
+	include (libs.appleskin) {
+		transitive false
 		noFapi
 		noFLoader
 		noCottonMC
@@ -75,7 +77,7 @@ dependencies {
 		noCottonMC
 		noQuiltMC
 	}
-	include (libs.vampirelib) {
+	include(libs.vampirelib) {
 		noFapi
 		noFLoader
 		noCottonMC
@@ -89,15 +91,14 @@ dependencies {
 		noCottonMC
 		noQuiltMC
 	}
-	include (libs.appleskin) {
-		transitive false
+	include (libs.vampirelib) {
 		noFapi
 		noFLoader
 		noCottonMC
 		noQuiltMC
 	}
 
-	modImplementation (libs.owo.lib) {
+	/*modImplementation (libs.owo.lib) {
 		noFapi
 		noFLoader
 		noCottonMC
@@ -108,27 +109,14 @@ dependencies {
 		noFLoader
 		noCottonMC
 		noQuiltMC
-	}
+	}*/
 
-	/*modImplementation (libs.libzoomer) {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
-	include (libs.libzoomer) {
+	/*modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
 		noFapi
 		noFLoader
 		noCottonMC
 		noQuiltMC
 	}*/
-
-	modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
 
 	implementation group: 'com.amihaiemil.web', name: 'eo-yaml', version: '6.0.1'
 	implementation 'com.electronwill.night-config:core:3.6.6'
@@ -143,12 +131,6 @@ dependencies {
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.14.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.14.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
-
-
-	implementation "io.github.spair:imgui-java-binding:$imguiVersion"
-	implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
-
-	implementation "io.github.spair:imgui-java-natives-windows:$imguiVersion"
 }
 
 processResources {

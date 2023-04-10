@@ -4,9 +4,10 @@ import io.github.vampirestudios.obsidian.api.IRenderModeAware;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ItemInformation;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.Util;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -30,39 +32,38 @@ public class ItemImpl extends Item implements IRenderModeAware {
     }
 
     @Override
-    public BakedModel getModel(ItemStack stack, ModelTransformation.Mode mode, BakedModel original) {
+    public BakedModel getModel(ItemStack stack, ModelTransformationMode mode, BakedModel original) {
         if (item.information.customRenderMode) {
             for (ItemInformation.RenderModeModel renderModeModel : item.information.renderModeModels) {
                 for (String renderMode : renderModeModel.modes) {
+                    final boolean firstPersonHands = mode.equals(ModelTransformationMode.FIRST_PERSON_LEFT_HAND)
+                            || mode.equals(ModelTransformationMode.FIRST_PERSON_RIGHT_HAND);
+                    final boolean thirdPersonHands = mode.equals(ModelTransformationMode.THIRD_PERSON_LEFT_HAND)
+                            || mode.equals(ModelTransformationMode.THIRD_PERSON_RIGHT_HAND);
                     switch (renderMode) {
                         case "HAND" -> {
-                            if (mode.equals(ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND) ||
-                                    mode.equals(ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND) ||
-                                    mode.equals(ModelTransformation.Mode.THIRD_PERSON_LEFT_HAND) ||
-                                    mode.equals(ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND)) {
+                            if (firstPersonHands || thirdPersonHands) {
                                 return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
                             } else {
                                 return original;
                             }
                         }
                         case "FIRST_PERSON_HAND" -> {
-                            if (mode.equals(ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND) ||
-                                    mode.equals(ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND)) {
+                            if (firstPersonHands) {
                                 return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
                             } else {
                                 return original;
                             }
                         }
                         case "THIRD_PERSON_HAND" -> {
-                            if (mode.equals(ModelTransformation.Mode.THIRD_PERSON_LEFT_HAND) ||
-                                    mode.equals(ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND)) {
+                            if (thirdPersonHands) {
                                 return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
                             } else {
                                 return original;
                             }
                         }
                         default -> {
-                            if (mode.equals(ModelTransformation.Mode.valueOf(renderMode))) {
+                            if (mode.equals(ModelTransformationMode.valueOf(renderMode))) {
                                 return MinecraftClient.getInstance().getBakedModelManager().getModel(renderModeModel.model);
                             } else {
                                 return original;
@@ -94,17 +95,14 @@ public class ItemImpl extends Item implements IRenderModeAware {
                     default -> throw new IllegalStateException("Unexpected value: " + item.useActions.gui_size);
                 }, item.useActions.gui_title.getName("gui")));
             } else if (item.useActions.right_click_actions.equals("run_command")) {
-                user.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inventory, playerx) -> switch (item.useActions.gui_size) {
-                    case 1 -> GenericContainerScreenHandler.createGeneric9x1(syncId, playerx.getInventory());
-                    case 2 -> GenericContainerScreenHandler.createGeneric9x2(syncId, playerx.getInventory());
-                    case 3 -> GenericContainerScreenHandler.createGeneric9x3(syncId, playerx.getInventory());
-                    case 4 -> GenericContainerScreenHandler.createGeneric9x4(syncId, playerx.getInventory());
-                    case 5 -> GenericContainerScreenHandler.createGeneric9x5(syncId, playerx.getInventory());
-                    case 6 -> GenericContainerScreenHandler.createGeneric9x6(syncId, playerx.getInventory());
-                    default -> throw new IllegalStateException("Unexpected value: " + item.useActions.gui_size);
-                }, item.useActions.gui_title.getName("gui")));
+                //TODO
             } else if (item.useActions.right_click_actions.equals("open_url")) {
-
+                if (world.isClient())
+                    MinecraftClient.getInstance().setScreen(new ConfirmLinkScreen(bl -> {
+                        if (bl) {
+                            Util.getOperatingSystem().open(item.useActions.url);
+                        }
+                    }, item.useActions.url, true));
             }
         }
 

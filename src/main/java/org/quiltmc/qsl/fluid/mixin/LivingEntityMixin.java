@@ -56,7 +56,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	public abstract Vec3d applyFluidMovingSpeed(double d, boolean bl, Vec3d vec3d);
 
 	@Shadow
-	public abstract void updateLimbs(LivingEntity entity, boolean flutter);
+	public abstract void updateLimbs(boolean flutter);
 
 	@Shadow
 	public abstract boolean canWalkOnFluid(FluidState fluidState);
@@ -112,7 +112,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getVelocityAffectingPos()Lnet/minecraft/util/math/BlockPos;"), cancellable = true)
 	private void cancelIfCustomFluid(Vec3d movementInput, CallbackInfo ci) {
 		if (this.quilt$isInCustomFluid() && this.shouldSwimInFluids() && !this.canWalkOnFluid(world.getFluidState(getBlockPos()))) {
-			this.updateLimbs((LivingEntity) (Object) this, this instanceof Flutterer);
+			this.updateLimbs(this instanceof Flutterer);
 			ci.cancel();
 		}
 	}

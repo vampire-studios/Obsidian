@@ -20,7 +20,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -308,7 +307,7 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	default void onSplash(World world, Vec3d pos, Entity splashing, Random random) {
-		Entity passenger = splashing.hasPassengers() && splashing.getPrimaryPassenger() != null ? splashing.getPrimaryPassenger() : splashing;
+		Entity passenger = splashing.hasPassengers() && splashing.getControllingPassenger() != null ? splashing.getControllingPassenger() : splashing;
 		float volumeMultiplier = passenger == splashing ? 0.2f : 0.9f;
 		Vec3d velocity = passenger.getVelocity();
 		double volume = Math.min(
@@ -382,12 +381,12 @@ public interface QuiltFlowableFluidExtensions {
 					}
 				}
 
-				drowning.damage(DamageSource.DROWN, 2.0F);
+				drowning.damage(drowning.getDamageSources().drown(), 2.0F);
 			}
 		}
 
 		// dismount vehicles that can't swim (horses)
-		if (!drowning.world.isClient && drowning.hasVehicle() && drowning.getVehicle() != null && !drowning.getVehicle().canBeRiddenInWater()) {
+		if (!drowning.world.isClient && drowning.hasVehicle() && drowning.getVehicle() != null && !drowning.getVehicle().shouldDismountUnderwater()) {
 			drowning.stopRiding();
 		}
 	}

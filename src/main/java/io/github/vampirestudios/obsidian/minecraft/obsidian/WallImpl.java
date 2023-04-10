@@ -32,7 +32,7 @@ public class WallImpl extends WallBlock {
     }
 
     @Override
-    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
         return block.information.blockProperties.translucent;
     }
 

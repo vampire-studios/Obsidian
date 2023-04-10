@@ -28,7 +28,7 @@ public class QuintupleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<QuintupleBlockPart> PART = CProperties.QUINTUPLE_BLOCK_PART;
 
     public QuintupleCeilingPlantBlock(Settings settings) {
-        super(settings.offsetType(OffsetType.XZ));
+        super(settings.offset(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, QuintupleBlockPart.UPPER));
     }
 

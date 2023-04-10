@@ -72,7 +72,7 @@ public class LegacyItemGroups implements AddonModule {
 
             ItemGroup itemGroup1 = FabricItemGroup.builder(identifier)
                     .icon(() -> new ItemStack(net.minecraft.registry.Registries.ITEM.get(itemGroup.icon)))
-                    .entries((featureSet, entries, bl) -> {
+                    .entries((displayContext, entries) -> {
                         if (itemGroup.tags != null) {
                             for (Map.Entry<String, Identifier> tag : itemGroup.tags.entrySet()) {
                                 if (tag.getKey().equals("block")) {
@@ -95,38 +95,32 @@ public class LegacyItemGroups implements AddonModule {
                                 entries.add(net.minecraft.registry.Registries.BLOCK.get(block));
                             }
                         }
-                        if (itemGroup.opItems != null && bl) {
+                        if (itemGroup.opItems != null && displayContext.comp_1252()) {
                             for (Identifier item : itemGroup.opItems) {
                                 entries.add(net.minecraft.registry.Registries.ITEM.get(item));
                             }
                         }
-                        if (itemGroup.opBlocks != null && bl) {
+                        if (itemGroup.opBlocks != null && displayContext.comp_1252()) {
                             for (Identifier block : itemGroup.opBlocks) {
                                 entries.add(net.minecraft.registry.Registries.BLOCK.get(block));
                             }
                         }
                         if (itemGroup.featureSetItems != null) {
                             for (Map.Entry<String, Identifier> entry : itemGroup.featureSetItems.entrySet()) {
-                                if (entry.getKey().equals("vanilla") && featureSet.contains(FeatureFlags.VANILLA)) {
+                                if (entry.getKey().equals("vanilla") && displayContext.comp_1251().contains(FeatureFlags.VANILLA)) {
                                     entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
                                 }
-                                if (entry.getKey().equals("bundle") && featureSet.contains(FeatureFlags.BUNDLE)) {
-                                    entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
-                                }
-                                if (entry.getKey().equals("update_1_20") && featureSet.contains(FeatureFlags.UPDATE_1_20)) {
+                                if (entry.getKey().equals("bundle") && displayContext.comp_1251().contains(FeatureFlags.BUNDLE)) {
                                     entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
                                 }
                             }
                         }
                         if (itemGroup.featureSetBlocks != null) {
                             for (Map.Entry<String, Identifier> entry : itemGroup.featureSetBlocks.entrySet()) {
-                                if (entry.getKey().equals("vanilla") && featureSet.contains(FeatureFlags.VANILLA)) {
+                                if (entry.getKey().equals("vanilla") && displayContext.comp_1251().contains(FeatureFlags.VANILLA)) {
                                     entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
                                 }
-                                if (entry.getKey().equals("bundle") && featureSet.contains(FeatureFlags.BUNDLE)) {
-                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
-                                }
-                                if (entry.getKey().equals("update_1_20") && featureSet.contains(FeatureFlags.UPDATE_1_20)) {
+                                if (entry.getKey().equals("bundle") && displayContext.comp_1251().contains(FeatureFlags.BUNDLE)) {
                                     entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
                                 }
                             }

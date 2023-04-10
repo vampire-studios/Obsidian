@@ -23,7 +23,7 @@ public class HorizontalFacingTallFlowerBlockImpl extends TallPlantBlock implemen
     }
 
     public BlockState getPlacementState(ItemPlacementContext context) {
-        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
+        return this.getDefaultState().with(FACING, context.getPlayerLookDirection().getOpposite());
     }
 
     protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {

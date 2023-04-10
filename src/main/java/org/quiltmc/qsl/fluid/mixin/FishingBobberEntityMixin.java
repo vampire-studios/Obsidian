@@ -65,8 +65,8 @@ public abstract class FishingBobberEntityMixin implements CustomFluidInteracting
 		return instance.getFluidState().isIn(quilt$canFishingBobberCatchIn());
 	}
 
-	@Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootManager;getTable(Lnet/minecraft/util/Identifier;)Lnet/minecraft/loot/LootTable;"))
+	@Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootManager;getLootTable(Lnet/minecraft/util/Identifier;)Lnet/minecraft/loot/LootTable;"))
 	public LootTable changeLootTable(LootManager instance, Identifier id) {
-		return ((FishingBobberEntity) (Object) this).world.getServer().getLootManager().getTable(this.quilt$getFishingLootTable());
+		return ((FishingBobberEntity) (Object) this).world.getServer().getLootManager().getLootTable(this.quilt$getFishingLootTable());
 	}
 }

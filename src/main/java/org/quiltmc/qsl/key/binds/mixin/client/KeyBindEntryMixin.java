@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -26,9 +25,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.objectweb.asm.Opcodes;
-import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 import org.spongepowered.asm.mixin.Final;
@@ -37,7 +34,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -55,9 +51,6 @@ public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry impleme
 	private ButtonWidget editButton;
 
 	@Unique
-	private List<Text> quilt$conflictTooltips = new ObjectArrayList<>();
-
-	@Unique
 	private List<InputUtil.Key> quilt$previousProtoChord;
 
 	@Unique
@@ -66,60 +59,11 @@ public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry impleme
 	@Unique
 	private boolean quilt$addKeyNameToTooltip;
 
-	@Shadow(aliases = "field_2742", remap = false)
-	@Final
-	ControlsListWidget field_2742;
-
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initPreviousBoundKey(ControlsListWidget list, KeyBinding key, Text text, CallbackInfo ci) {
 		quilt$previousProtoChord = null;
 		quilt$changedProtoChord = null;
 		quilt$addKeyNameToTooltip = false;
-	}
-
-	@Inject(
-			method = "render",
-			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/option/KeyBinding;isUnbound()Z"
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
-		InputUtil.Key boundKey = this.binding.getBoundKey();
-		KeyChord boundChord = this.binding.getBoundChord();
-		List<InputUtil.Key> boundProtoChord;
-
-		if (boundChord == null) {
-			boundProtoChord = List.of(boundKey);
-		} else {
-			boundProtoChord = List.copyOf(boundChord.keys.keySet());
-		}
-
-		if (!boundProtoChord.equals(this.quilt$previousProtoChord) || quilt$changedProtoChord != null) {
-			this.quilt$conflictTooltips.clear();
-			if (quilt$changedProtoChord != null && quilt$changedProtoChord.equals(boundProtoChord)) {
-				quilt$changedProtoChord = null;
-			} else {
-				quilt$changedProtoChord = boundProtoChord;
-			}
-
-			quilt$addKeyNameToTooltip = true;
-
-			if (!this.binding.isUnbound()) {
-				for (KeyBinding otherKey : KeyBindRegistryImpl.getKeyBinds()) {
-					if (otherKey != this.binding && this.binding.equals(otherKey)) {
-						if (this.quilt$conflictTooltips.isEmpty()) {
-							this.quilt$conflictTooltips.add(Text.translatable("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
-						}
-
-						this.quilt$conflictTooltips.add(Text.translatable("key.qsl.key_conflict.tooltip.entry", Text.translatable(otherKey.getTranslationKey())).formatted(Formatting.RED));
-					}
-				}
-			}
-		}
-
-		this.quilt$previousProtoChord = boundProtoChord;
 	}
 
 	@Inject(
@@ -164,7 +108,7 @@ public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry impleme
 
 			if (client.textRenderer.getWidth(protoText.toString()) > targetWidth) {
 				if (quilt$addKeyNameToTooltip) {
-					this.quilt$conflictTooltips.add(0, this.binding.getBoundKeyLocalizedText());
+//					this.quilt$conflictTooltips.add(0, this.binding.getBoundKeyLocalizedText());
 					quilt$addKeyNameToTooltip = false;
 				}
 
@@ -174,22 +118,5 @@ public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry impleme
 
 			this.editButton.setMessage(Text.literal(protoText.toString()));
 		}
-	}
-
-	@ModifyArg(
-			method = "render",
-			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/widget/ButtonWidget;setMessage(Lnet/minecraft/text/Text;)V",
-				ordinal = 2
-			)
-	)
-	private Text addConflictIndicator(Text originalText) {
-		return Text.translatable("key.qsl.key_conflict.indicator", originalText).formatted(Formatting.RED);
-	}
-
-	@Override
-	public List<Text> getKeyBindTooltips() {
-		return this.quilt$conflictTooltips;
 	}
 }

@@ -51,12 +51,12 @@ public class Sizing {
 		return this;
 	}
 
-	public io.wispforest.owo.ui.core.Sizing get() {
+	/*public io.wispforest.owo.ui.core.Sizing get() {
 		return switch (type) {
 			case FIXED -> io.wispforest.owo.ui.core.Sizing.fixed(value);
 			case CONTENT -> io.wispforest.owo.ui.core.Sizing.content();
 			case CONTENT_WITH_PADDING -> io.wispforest.owo.ui.core.Sizing.content(padding);
 			case FILL -> io.wispforest.owo.ui.core.Sizing.fill(percent);
 		};
-	}
+	}*/
 }

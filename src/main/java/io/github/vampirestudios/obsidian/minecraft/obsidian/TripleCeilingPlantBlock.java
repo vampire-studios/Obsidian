@@ -26,7 +26,7 @@ public class TripleCeilingPlantBlock extends PlantBlock {
     public static final EnumProperty<TripleBlockPart> PART = CProperties.TRIPLE_BLOCK_PART;
 
     public TripleCeilingPlantBlock(Settings settings) {
-        super(settings.offsetType(OffsetType.XZ));
+        super(settings.offset(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, TripleBlockPart.UPPER));
     }
 

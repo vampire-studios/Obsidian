@@ -4,9 +4,9 @@ import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.WoodType;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
@@ -17,8 +17,8 @@ public class FenceGateImpl extends FenceGateBlock {
 
     public Block block;
 
-    public FenceGateImpl(Block block, Settings settings, SoundEvent closeSound, SoundEvent openSound) {
-        super(settings, closeSound, openSound);
+    public FenceGateImpl(Block block, Settings settings, WoodType woodType) {
+        super(settings, woodType);
         this.block = block;
     }
 
@@ -33,7 +33,7 @@ public class FenceGateImpl extends FenceGateBlock {
     }
 
     @Override
-    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
         return block.information.blockProperties.translucent;
     }
 

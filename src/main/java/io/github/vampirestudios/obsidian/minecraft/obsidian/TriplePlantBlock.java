@@ -31,7 +31,7 @@ public class TriplePlantBlock extends PlantBlock {
     public static final EnumProperty<TripleBlockPart> PART = CProperties.TRIPLE_BLOCK_PART;
 
     public TriplePlantBlock(Settings settings) {
-        super(settings.offsetType(OffsetType.XZ));
+        super(settings.offset(OffsetType.XZ));
         this.setDefaultState(this.stateManager.getDefaultState().with(PART, TripleBlockPart.LOWER));
     }
 

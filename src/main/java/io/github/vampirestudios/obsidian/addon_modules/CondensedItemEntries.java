@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
@@ -35,32 +36,38 @@ public class CondensedItemEntries implements AddonModule {
 			CondensedItemEntry.Builder builder;
 			if (condensedEntry.type == CondensedEntry.Type.ITEM_TAG) {
 				builder = CondensedEntryRegistry.fromItemTag(condensedEntry.name, net.minecraft.registry.Registries.ITEM.get(condensedEntry.base), TagKey.of(RegistryKeys.ITEM, condensedEntry.tag));
-				/*if (condensedEntry.specificCreativeTab) {
+				*/
+/*if (condensedEntry.specificCreativeTab) {
 					ItemGroup itemGroup = Obsidian.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup);
 					TabbedGroup tabbedGroup = ObsidianAddonLoader.EXPANDED_ITEM_GROUPS.get(condensedEntry.tabbedGroup);
 					if (condensedEntry.specificTabbedGroup) builder.addItemGroup(itemGroup, ObsidianAddonLoader.EXPANDED_ITEM_GROUPS.getRawId(tabbedGroup));
 					else builder.addItemGroup(Obsidian.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup));
-				}*/
+				}*//*
+
 				if (condensedEntry.specificCreativeTab) builder.addItemGroup(Registries.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup));
 			} else if (condensedEntry.type == CondensedEntry.Type.BLOCK_TAG) {
 				builder = CondensedEntryRegistry.fromBlockTag(condensedEntry.name, net.minecraft.registry.Registries.ITEM.get(condensedEntry.base), TagKey.of(RegistryKeys.BLOCK, condensedEntry.tag));
-				/*if (condensedEntry.specificCreativeTab) {
+				*/
+/*if (condensedEntry.specificCreativeTab) {
 					ItemGroup itemGroup = Obsidian.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup);
 					TabbedGroup tabbedGroup = ObsidianAddonLoader.EXPANDED_ITEM_GROUPS.get(condensedEntry.tabbedGroup);
 					if (condensedEntry.specificTabbedGroup) builder.addItemGroup(itemGroup, ObsidianAddonLoader.EXPANDED_ITEM_GROUPS.getRawId(tabbedGroup));
 					else builder.addItemGroup(Obsidian.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup));
-				}*/
+				}*//*
+
 				if (condensedEntry.specificCreativeTab) builder.addItemGroup(Registries.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup));
 			} else if (condensedEntry.type == CondensedEntry.Type.ITEM_LIST) {
 				List<Item> items = new ArrayList<>();
 				condensedEntry.items.forEach(identifier -> items.add(net.minecraft.registry.Registries.ITEM.get(identifier)));
 				builder = CondensedEntryRegistry.fromItems(condensedEntry.name, net.minecraft.registry.Registries.ITEM.get(condensedEntry.base), items);
-				/*if (condensedEntry.specificCreativeTab) {
+				*/
+/*if (condensedEntry.specificCreativeTab) {
 					ItemGroup itemGroup = Obsidian.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup);
 					TabbedGroup tabbedGroup = ObsidianAddonLoader.EXPANDED_ITEM_GROUPS.get(condensedEntry.tabbedGroup);
 					if (condensedEntry.specificTabbedGroup) builder.addItemGroup(itemGroup, ObsidianAddonLoader.EXPANDED_ITEM_GROUPS.getRawId(tabbedGroup));
 					else builder.addItemGroup(Obsidian.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup));
-				}*/
+				}*//*
+
 				if (condensedEntry.specificCreativeTab) builder.addItemGroup(Registries.ITEM_GROUP_REGISTRY.get(condensedEntry.targetGroup));
 			}
             register(ContentRegistries.CONDENSED_ITEM_ENTRIES, "condensed_item", new Identifier(id.modId(), "condensed_" + condensedEntry.base.getPath() + "_entry"), condensedEntry);
@@ -74,4 +81,4 @@ public class CondensedItemEntries implements AddonModule {
         return "item_groups/condensed_items";
     }
 
-}
+}*/

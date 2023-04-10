@@ -6,5 +6,6 @@ public class ArmorItem extends Item {
     @Deprecated public ArmorMaterial material;
     public Identifier armorMaterial;
     public String armorSlot;
+    public String armorType;
 
 }

@@ -33,12 +33,12 @@ public class HorizontalFacingPlantBlockImpl extends PlantBlock {
     }
 
     @Override
-    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
         return block.information.blockProperties.translucent;
     }
 
     public BlockState getPlacementState(ItemPlacementContext context) {
-        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
+        return this.getDefaultState().with(FACING, context.getPlayerLookDirection().getOpposite());
     }
 
     protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
