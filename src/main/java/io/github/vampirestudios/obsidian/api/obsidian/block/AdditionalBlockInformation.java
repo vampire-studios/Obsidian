@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class AdditionalBlockInformation {
 
@@ -43,17 +43,17 @@ public class AdditionalBlockInformation {
         public boolean drops_item = false;
         public boolean reversible = false;
 
-        public Identifier parent_block;
-        public Identifier transformed_block;
-        public Identifier dropped_item;
-        public Identifier sound;
+        public ResourceLocation parent_block;
+        public ResourceLocation transformed_block;
+        public ResourceLocation dropped_item;
+        public ResourceLocation sound;
 
         public ConversionItem conversionItem;
         public ConversionItem reversalItem;
 
         public static class ConversionItem {
-            public Identifier item;
-            public Identifier tag;
+            public ResourceLocation item;
+            public ResourceLocation tag;
         }
 
     }

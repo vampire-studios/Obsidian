@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.currency;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class CurrencyItem {
 
-    public Identifier item;
+    public ResourceLocation item;
     public int worth;
 
 }

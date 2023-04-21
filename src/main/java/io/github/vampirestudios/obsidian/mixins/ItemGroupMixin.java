@@ -1,22 +1,22 @@
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.api.IForgeItemGroup;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(ItemGroup.class)
+@Mixin(CreativeModeTab.class)
 public class ItemGroupMixin implements IForgeItemGroup {
-	Identifier backgroundLocation;
+	ResourceLocation backgroundLocation;
 
 	@Override
-	public ItemGroup setBackgroundImage(Identifier texture) {
+	public CreativeModeTab setBackgroundImage(ResourceLocation texture) {
 		this.backgroundLocation = texture;
-		return (ItemGroup) (Object) this;
+		return (CreativeModeTab) (Object) this;
 	}
 
 	@Override
-	public Identifier getBackgroundImage() {
+	public ResourceLocation getBackgroundImage() {
 		if (backgroundLocation != null) return backgroundLocation; //FORGE: allow custom namespace
 		return IForgeItemGroup.super.getBackgroundImage();
 	}

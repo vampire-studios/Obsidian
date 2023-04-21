@@ -7,10 +7,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import io.github.vampirestudios.obsidian.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.Identifier;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +16,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.properties.Property;
 
 public class CodecExtras {
 	public static final Codec<Property> PROPERTY_CODEC = registryNameCodec(Registries.PROPERTIES);
@@ -61,7 +60,7 @@ public class CodecExtras {
 	}
 
 	public static <T> Codec<T> registryNameCodec(Registry<T> registry) {
-		return mappingCodec(Identifier.CODEC, registry::get, registry::getId);
+		return mappingCodec(ResourceLocation.CODEC, registry::get, registry::getKey);
 	}
 
 	public static <R, T extends R> Codec<R> toSubclass(Codec<T> codec, Class<T> subclass) {

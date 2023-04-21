@@ -2,18 +2,18 @@ package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 
 public class ArmorMaterial {
 
-    public Identifier name;
+    public ResourceLocation name;
     public int protection_amount;
     public int enchantability;
-    @JsonProperty("equip_sound") public Identifier equipSound;
+    @JsonProperty("equip_sound") public ResourceLocation equipSound;
     public float toughness;
     public float knockback_resistance;
-    public Identifier repair_item;
+    public ResourceLocation repair_item;
     public Object durability;
 
     public int getDurability(EquipmentSlot slot) {
@@ -33,9 +33,9 @@ public class ArmorMaterial {
         }
     }
 
-    public Identifier texture1;
-    public Identifier texture2;
-    public Identifier customArmorModel;
+    public ResourceLocation texture1;
+    public ResourceLocation texture2;
+    public ResourceLocation customArmorModel;
 
     public static class Durability {
         public int helmetDurability;

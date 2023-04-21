@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian.soundEvent;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class SoundEvent {
 
-    public Identifier id;
+    public ResourceLocation id;
 
 }

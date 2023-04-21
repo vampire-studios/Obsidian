@@ -15,14 +15,10 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,7 +30,7 @@ public class CreativeTabs implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         JsonObject jsonObject = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
-        Identifier identifier = new Identifier(id.modId(), id.addonPath());
+        ResourceLocation identifier = new ResourceLocation(id.modId(), id.addonPath());
 
         try {
             DataResult<Pair<CreativeTab, JsonElement>> result = CreativeTab.CODEC.decode(JsonOps.INSTANCE, jsonObject);
@@ -45,7 +41,7 @@ public class CreativeTabs implements AddonModule {
 
             if (result.result().isPresent()) {
                 CreativeTab creativeTab = result.result().get().getFirst();
-                ItemGroup itemGroup1 = FabricItemGroup.builder(identifier)
+                CreativeModeTab itemGroup1 = FabricItemGroup.builder(identifier)
                         .icon(() -> new ItemStack(creativeTab.icon))
                         .entries((featureSet, entries) -> {
                             for (RegistryEntry<Item> item : creativeTab.items) {
@@ -54,10 +50,10 @@ public class CreativeTabs implements AddonModule {
                                 }
                             }
                         })
-                        .displayName(Text.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
+                        .displayName(Component.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
                         .build();
                 creativeTab.texture.ifPresent(itemGroup1::setBackgroundImage);
-                Registry.register(Registries.ITEM_GROUP_REGISTRY, new Identifier(id.modId(), id.addonPath()), itemGroup1);
+                Registry.register(Registries.ITEM_GROUP_REGISTRY, new ResourceLocation(id.modId(), id.addonPath()), itemGroup1);
                 ObsidianAddonLoader.register(ContentRegistries.CREATIVE_TABS, "creative_tab", identifier, creativeTab);
             }
         } catch (Exception e) {

@@ -3,12 +3,12 @@ package io.github.vampirestudios.obsidian.block.spread;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import io.github.vampirestudios.obsidian.Obsidian;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class SpreadBehaviors {
 	private static final Table<Block, SpreaderType, ISpreadingBehavior> SPREADERS = HashBasedTable.create();
@@ -30,7 +30,7 @@ public class SpreadBehaviors {
 	 * This method allows you to add a simple spreading behavior
 	 */
 	public static void addSimpleSpreaderBehavior(Block block, SpreaderType type) {
-		addSpreaderBehavior(block, type, new SimpleSpreaderBehavior(block.getDefaultState()));
+		addSpreaderBehavior(block, type, new SimpleSpreaderBehavior(block.defaultBlockState()));
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class SpreadBehaviors {
 		return getSpreadingBehavior(state.getBlock(), type) != null;
 	}
 
-	public static BlockState getSpreadState(BlockState state, World level, BlockPos pos, SpreaderType type) {
+	public static BlockState getSpreadState(BlockState state, Level level, BlockPos pos, SpreaderType type) {
 		ISpreadingBehavior behavior = getSpreadingBehavior(state.getBlock(), type);
 		if (behavior == null) return state;
 		return behavior.getSpreadingState(state, level, pos);
@@ -58,43 +58,43 @@ public class SpreadBehaviors {
 		addSpreaderBehavior(
 				Blocks.DIRT,
 				SpreaderType.GRASS,
-				(state, level, pos) -> Blocks.GRASS_BLOCK.getDefaultState().with(Properties.SNOWY, level.getBlockState(pos.up()).isOf(Blocks.SNOW))
+				(state, level, pos) -> Blocks.GRASS_BLOCK.defaultBlockState().setValue(BlockStateProperties.SNOWY, level.getBlockState(pos.above()).is(Blocks.SNOW))
 		);
 		addSpreaderBehavior(
 				Blocks.GRASS_BLOCK,
 				SpreaderType.REVERT,
-				(state, level, pos) -> Blocks.DIRT.getDefaultState()
+				(state, level, pos) -> Blocks.DIRT.defaultBlockState()
 		);
 		addSpreaderBehavior(
 				Blocks.DIRT,
 				SpreaderType.MYCELIUM,
-				(state, level, pos) -> Blocks.MYCELIUM.getDefaultState()
-						.with( Properties.SNOWY, level.getBlockState( pos.up() ).isOf(Blocks.SNOW) )
+				(state, level, pos) -> Blocks.MYCELIUM.defaultBlockState()
+						.setValue( BlockStateProperties.SNOWY, level.getBlockState( pos.above() ).is(Blocks.SNOW) )
 		);
 		addSpreaderBehavior(
 				Blocks.MYCELIUM,
 				SpreaderType.REVERT,
-				(state, level, pos) -> Blocks.DIRT.getDefaultState()
+				(state, level, pos) -> Blocks.DIRT.defaultBlockState()
 		);
 		addSpreaderBehavior(
 				Blocks.NETHERRACK,
 				SpreaderType.CRIMSON,
-				(state, level, pos) -> Blocks.CRIMSON_NYLIUM.getDefaultState()
+				(state, level, pos) -> Blocks.CRIMSON_NYLIUM.defaultBlockState()
 		);
 		addSpreaderBehavior(
 				Blocks.CRIMSON_NYLIUM,
 				SpreaderType.REVERT,
-				(state, level, pos) -> Blocks.NETHERRACK.getDefaultState()
+				(state, level, pos) -> Blocks.NETHERRACK.defaultBlockState()
 		);
 		addSpreaderBehavior(
 				Blocks.NETHERRACK,
 				SpreaderType.WARPED,
-				(state, level, pos) -> Blocks.WARPED_NYLIUM.getDefaultState()
+				(state, level, pos) -> Blocks.WARPED_NYLIUM.defaultBlockState()
 		);
 		addSpreaderBehavior(
 				Blocks.WARPED_NYLIUM,
 				SpreaderType.REVERT,
-				(state, level, pos) -> Blocks.NETHERRACK.getDefaultState()
+				(state, level, pos) -> Blocks.NETHERRACK.defaultBlockState()
 		);
 	}
 
@@ -107,7 +107,7 @@ public class SpreadBehaviors {
 		}
 
 		@Override
-		public BlockState getSpreadingState(BlockState state, World level, BlockPos pos) {
+		public BlockState getSpreadingState(BlockState state, Level level, BlockPos pos) {
 			return this.state;
 		}
 	}

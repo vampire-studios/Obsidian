@@ -9,11 +9,10 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.MusicDiscItemImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,18 +26,18 @@ public class MusicDiscs implements AddonModule {
         MusicDisc musicDisc = Obsidian.GSON.fromJson(new FileReader(file), MusicDisc.class);
         try {
             if (musicDisc == null) return;
-            Item.Settings settings = new Item.Settings().maxCount(musicDisc.information.maxStackSize)
+            Item.Properties settings = new Item.Properties().stacksTo(musicDisc.information.maxStackSize)
                     .rarity(musicDisc.information.rarity);
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     musicDisc.information.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (musicDisc.information.name.id == null) musicDisc.information.name.id = new Identifier(id.modId(), file.getName()
+            if (musicDisc.information.name.id == null) musicDisc.information.name.id = new ResourceLocation(id.modId(), file.getName()
                     .replaceAll(".json", ""));
 
-            Item item = Registry.register(Registries.ITEM, identifier, new MusicDiscItemImpl(musicDisc, settings
-                    .maxDamage(musicDisc.information.useDuration)));
+            Item item = Registry.register(BuiltInRegistries.ITEM, identifier, new MusicDiscItemImpl(musicDisc, settings
+                    .durability(musicDisc.information.useDuration)));
             ItemGroupEvents.modifyEntriesEvent(musicDisc.information.getItemGroup()).register(entries -> entries.add(item));
             register(ContentRegistries.MUSIC_DISCS, "music_disc", identifier, musicDisc);
         } catch (Exception e) {

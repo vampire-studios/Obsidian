@@ -18,9 +18,9 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import org.quiltmc.qsl.key.binds.impl.InternalQuiltKeyBind;
 import org.quiltmc.qsl.key.binds.impl.KeyBindManager;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
@@ -35,12 +35,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.io.File;
 
 @Environment(EnvType.CLIENT)
-@Mixin(GameOptions.class)
+@Mixin(Options.class)
 public abstract class GameOptionsMixin {
 	@Shadow
 	@Mutable
 	@Final
-	public KeyBinding[] allKeys;
+	public KeyMapping[] allKeys;
 
 	@Shadow
 	@Final
@@ -53,14 +53,14 @@ public abstract class GameOptionsMixin {
 			),
 			method = "<init>"
 	)
-	private void modifyAllKeys(MinecraftClient client, File file, CallbackInfo ci) {
+	private void modifyAllKeys(Minecraft client, File file, CallbackInfo ci) {
 		if (this.optionsFile.equals(new File(file, "options.txt"))) {
 			// Mark the Vanilla key binds as Vanilla
-			for (KeyBinding key : this.allKeys) {
+			for (KeyMapping key : this.allKeys) {
 				((InternalQuiltKeyBind) key).markAsVanilla();
 			}
 
-			KeyBindRegistryImpl.setKeyBindManager(new KeyBindManager((GameOptions) (Object) this, this.allKeys));
+			KeyBindRegistryImpl.setKeyBindManager(new KeyBindManager((Options) (Object) this, this.allKeys));
 			this.allKeys = KeyBindRegistryImpl.getKeyBinds();
 		}
 	}

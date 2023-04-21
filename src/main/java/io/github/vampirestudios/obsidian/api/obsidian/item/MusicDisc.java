@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class MusicDisc extends Item {
 
-    public Identifier music;
+    public ResourceLocation music;
     public int comparator_output;
     public int length;
 

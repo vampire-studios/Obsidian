@@ -16,16 +16,16 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.config;
 
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Options;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GameOptions.class)
+@Mixin(Options.class)
 public abstract class GameOptionsMixin {
 	@Inject(
 			at = @At(
@@ -34,7 +34,7 @@ public abstract class GameOptionsMixin {
 			),
 			method = "setKeyCode"
 	)
-	private void writeToKeyBindConfig(KeyBinding key, InputUtil.Key code, CallbackInfo ci) {
+	private void writeToKeyBindConfig(KeyMapping key, InputConstants.Key code, CallbackInfo ci) {
 //		QuiltKeyBindsConfigManager.updateConfig(false);
 	}
 
@@ -45,5 +45,5 @@ public abstract class GameOptionsMixin {
 			),
 			method = "accept"
 	)
-	private void useOurConfigInstead(KeyBinding keyBind, InputUtil.Key key) { }
+	private void useOurConfigInstead(KeyMapping keyBind, InputConstants.Key key) { }
 }

@@ -2,16 +2,16 @@ package io.github.vampirestudios.obsidian.api.obsidian.enchantments;
 
 import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import net.minecraft.enchantment.EnchantmentTarget;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
 public class Enchantment {
 
     public NameInformation name;
     public String[] slots;
-    @SerializedName("accepted_items") public Identifier[] acceptedItems;
-    @SerializedName("blacklisted_enchantments") public Identifier[] blacklistedEnchantments;
+    @SerializedName("accepted_items") public ResourceLocation[] acceptedItems;
+    @SerializedName("blacklisted_enchantments") public ResourceLocation[] blacklistedEnchantments;
     public String target = "breakable";
     public String rarity = "common";
     @SerializedName("minimum_level") public int minimumLevel = 1;
@@ -29,8 +29,8 @@ public class Enchantment {
     public boolean discoverable = true;
     @SerializedName("allow_on_books") public boolean allowOnBooks = true;
 
-    public net.minecraft.enchantment.Enchantment.Rarity getRarity() {
-        return net.minecraft.enchantment.Enchantment.Rarity.valueOf(rarity);
+    public net.minecraft.world.item.enchantment.Enchantment.Rarity getRarity() {
+        return net.minecraft.world.item.enchantment.Enchantment.Rarity.valueOf(rarity);
     }
 
     public int getMinimumPower(int level) {
@@ -49,8 +49,8 @@ public class Enchantment {
         }
     }
 
-    public EnchantmentTarget getEnchantmentTarget() {
-        return EnchantmentTarget.valueOf(target);
+    public EnchantmentCategory getEnchantmentTarget() {
+        return EnchantmentCategory.valueOf(target);
     }
 
     public EquipmentSlot[] getEquipmentSlots() {

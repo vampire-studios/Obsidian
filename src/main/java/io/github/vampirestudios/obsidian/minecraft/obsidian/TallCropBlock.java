@@ -3,47 +3,53 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.*;
-import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
 
-public class TallCropBlock extends PlantBlock implements Fertilizable {
+public class TallCropBlock extends BushBlock implements BonemealableBlock {
 
-    public static final IntProperty AGE;
+    public static final IntegerProperty AGE;
     public static final EnumProperty<DoubleBlockHalf> HALF;
     public static int growthDelay;
 
     static {
-        AGE = Properties.AGE_7;
-        HALF = Properties.DOUBLE_BLOCK_HALF;
+        AGE = BlockStateProperties.AGE_7;
+        HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     }
 
-    public TallCropBlock(int delay, Settings settings) {
+    public TallCropBlock(int delay, Properties settings) {
         super(settings);
         growthDelay = delay;
-        this.setDefaultState(this.stateManager.getDefaultState().with(this.getAgeProperty(), 0).with(HALF, DoubleBlockHalf.LOWER));
+        this.registerDefaultState(this.stateDefinition.any().setValue(this.getAgeProperty(), 0).setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
-    protected boolean canPlantOnTop(BlockState floor, BlockView view, BlockPos pos) {
-        return floor.isOf(Blocks.SOUL_SAND) || floor.isOf(Blocks.SOUL_SOIL);
+    protected boolean mayPlaceOn(BlockState floor, BlockGetter view, BlockPos pos) {
+        return floor.is(Blocks.SOUL_SAND) || floor.is(Blocks.SOUL_SOIL);
     }
 
-    public IntProperty getAgeProperty() {
+    public IntegerProperty getAgeProperty() {
         return AGE;
     }
 
@@ -52,106 +58,106 @@ public class TallCropBlock extends PlantBlock implements Fertilizable {
     }
 
     protected int getAge(BlockState state) {
-        return state.get(this.getAgeProperty());
+        return state.getValue(this.getAgeProperty());
     }
 
     public BlockState withAge(int age) {
-        return this.getDefaultState().with(this.getAgeProperty(), age);
+        return this.defaultBlockState().setValue(this.getAgeProperty(), age);
     }
 
     public boolean isMature(BlockState state) {
-        return state.get(this.getAgeProperty()) >= this.getMaxAge();
+        return state.getValue(this.getAgeProperty()) >= this.getMaxAge();
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.scheduledTick(state, world, pos, random);
-        if (world.getBaseLightLevel(pos, 0) >= 9) {
-            int age = state.get(AGE);
-            if (state.get(HALF).equals(DoubleBlockHalf.UPPER)) {
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        super.tick(state, world, pos, random);
+        if (world.getRawBrightness(pos, 0) >= 9) {
+            int age = state.getValue(AGE);
+            if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
                 if (age < getMaxAge() && age >= 5 && world.random.nextInt(growthDelay) == 0) {
-                    world.setBlockState(pos, this.withAge(age + 1).with(HALF, DoubleBlockHalf.UPPER), 2);
-                    world.setBlockState(pos.down(), this.withAge(age + 1).with(HALF, DoubleBlockHalf.LOWER), 2);
+                    world.setBlock(pos, this.withAge(age + 1).setValue(HALF, DoubleBlockHalf.UPPER), 2);
+                    world.setBlock(pos.below(), this.withAge(age + 1).setValue(HALF, DoubleBlockHalf.LOWER), 2);
                 }
             } else {
                 if (age < getMaxAge() && world.random.nextInt(growthDelay) == 0) {
                     if (age >= 4)
-                        world.setBlockState(pos.up(), this.withAge(age + 1).with(HALF, DoubleBlockHalf.UPPER), 2);
-                    world.setBlockState(pos, this.withAge(age + 1).with(HALF, DoubleBlockHalf.LOWER), 2);
+                        world.setBlock(pos.above(), this.withAge(age + 1).setValue(HALF, DoubleBlockHalf.UPPER), 2);
+                    world.setBlock(pos, this.withAge(age + 1).setValue(HALF, DoubleBlockHalf.LOWER), 2);
                 }
             }
         }
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (state.get(AGE).equals(getMaxAge())) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (state.getValue(AGE).equals(getMaxAge())) {
             int count = world.random.nextInt(3) + 1;
-            ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(this, count));
-            if (state.get(HALF).equals(DoubleBlockHalf.UPPER)) {
-                world.setBlockState(pos, this.withAge(6).with(HALF, DoubleBlockHalf.UPPER));
-                world.setBlockState(pos.down(), this.withAge(6).with(HALF, DoubleBlockHalf.LOWER));
+            Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(this, count));
+            if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
+                world.setBlockAndUpdate(pos, this.withAge(6).setValue(HALF, DoubleBlockHalf.UPPER));
+                world.setBlockAndUpdate(pos.below(), this.withAge(6).setValue(HALF, DoubleBlockHalf.LOWER));
             } else {
-                world.setBlockState(pos.up(), this.withAge(6).with(HALF, DoubleBlockHalf.UPPER));
-                world.setBlockState(pos, this.withAge(6).with(HALF, DoubleBlockHalf.LOWER));
+                world.setBlockAndUpdate(pos.above(), this.withAge(6).setValue(HALF, DoubleBlockHalf.UPPER));
+                world.setBlockAndUpdate(pos, this.withAge(6).setValue(HALF, DoubleBlockHalf.LOWER));
             }
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
-    public void applyGrowth(World world, BlockPos pos, BlockState state) {
-        int age = state.get(AGE);
+    public void applyGrowth(Level world, BlockPos pos, BlockState state) {
+        int age = state.getValue(AGE);
         int i = this.getAge(state) + this.getGrowthAmount(world);
         int j = this.getMaxAge();
         if (i > j) {
             i = j;
         }
 
-        if (state.get(HALF).equals(DoubleBlockHalf.UPPER)) {
+        if (state.getValue(HALF).equals(DoubleBlockHalf.UPPER)) {
             if (age < getMaxAge() && world.random.nextInt(growthDelay) == 0) {
-                world.setBlockState(pos, this.withAge(i).with(HALF, DoubleBlockHalf.UPPER));
-                world.setBlockState(pos.down(), this.withAge(i).with(HALF, DoubleBlockHalf.LOWER));
+                world.setBlockAndUpdate(pos, this.withAge(i).setValue(HALF, DoubleBlockHalf.UPPER));
+                world.setBlockAndUpdate(pos.below(), this.withAge(i).setValue(HALF, DoubleBlockHalf.LOWER));
             }
         } else {
             if (age < getMaxAge() && world.random.nextInt(growthDelay) == 0) {
-                world.setBlockState(pos.up(), this.withAge(i).with(HALF, DoubleBlockHalf.UPPER));
-                world.setBlockState(pos, this.withAge(i).with(HALF, DoubleBlockHalf.LOWER));
+                world.setBlockAndUpdate(pos.above(), this.withAge(i).setValue(HALF, DoubleBlockHalf.UPPER));
+                world.setBlockAndUpdate(pos, this.withAge(i).setValue(HALF, DoubleBlockHalf.LOWER));
             }
         }
     }
 
-    protected int getGrowthAmount(World world) {
-        return MathHelper.nextInt(world.random, 1, 2);
+    protected int getGrowthAmount(Level world) {
+        return Mth.nextInt(world.random, 1, 2);
     }
 
     @Environment(EnvType.CLIENT)
-    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
         return new ItemStack(this);
     }
 
     @Override
-    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
         return !this.isMature(state);
     }
 
     @Override
-    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
+    public boolean isBonemealSuccess(Level world, RandomSource random, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
+    public void performBonemeal(ServerLevel world, RandomSource random, BlockPos pos, BlockState state) {
         this.applyGrowth(world, pos, state);
     }
 
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HALF);
         builder.add(AGE);
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
 }

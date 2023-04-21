@@ -7,15 +7,14 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.Painting;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.entity.decoration.painting.PaintingVariant;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -26,13 +25,13 @@ public class Paintings implements AddonModule {
         try {
             if (painting == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     painting.name,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (painting.name == null) painting.name = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (painting.name == null) painting.name = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
-            Registry.register(Registries.PAINTING_VARIANT, identifier, new PaintingVariant(painting.width, painting.height));
+            Registry.register(BuiltInRegistries.PAINTING_VARIANT, identifier, new PaintingVariant(painting.width, painting.height));
             register(ContentRegistries.PAINTINGS, "painting", identifier, painting);
         } catch (Exception e) {
             failedRegistering("painting", file.getName(), e);

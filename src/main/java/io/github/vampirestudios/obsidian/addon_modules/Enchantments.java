@@ -8,14 +8,13 @@ import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EnchantmentImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -25,12 +24,12 @@ public class Enchantments implements AddonModule {
         Enchantment enchantment = Obsidian.GSON.fromJson(new FileReader(file), Enchantment.class);
         try {
             if (enchantment == null) return;
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     enchantment.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (enchantment.name.id == null) enchantment.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
-            Registry.register(Registries.ENCHANTMENT, identifier, new EnchantmentImpl(enchantment));
+            if (enchantment.name.id == null) enchantment.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+            Registry.register(BuiltInRegistries.ENCHANTMENT, identifier, new EnchantmentImpl(enchantment));
             register(ContentRegistries.ENCHANTMENTS, "enchantment", identifier, enchantment);
         } catch (Exception e) {
             failedRegistering("enchantment", file.getName(), e);

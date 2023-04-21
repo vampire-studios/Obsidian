@@ -18,7 +18,7 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -26,10 +26,10 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import java.util.Map;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeyBinding.class)
+@Mixin(KeyMapping.class)
 public interface KeyBindAccessor {
 	@Accessor(value = "KEYS_BY_ID")
-	static Map<String, KeyBinding> getKeyBinds() {
+	static Map<String, KeyMapping> getKeyBinds() {
 		return null;
 	}
 

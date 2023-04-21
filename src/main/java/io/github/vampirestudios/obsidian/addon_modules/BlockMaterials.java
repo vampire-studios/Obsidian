@@ -7,12 +7,11 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomMaterial;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.util.Identifier;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
+import net.minecraft.resources.ResourceLocation;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -24,11 +23,11 @@ public class BlockMaterials implements AddonModule {
 		try {
 			if (customMaterial == null) return;
 
-			Identifier identifier = Objects.requireNonNullElseGet(
+			ResourceLocation identifier = Objects.requireNonNullElseGet(
 					customMaterial.id,
-					() -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (customMaterial.id == null) customMaterial.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+			if (customMaterial.id == null) customMaterial.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
 			register(ContentRegistries.BLOCK_MATERIALS, "block_material", identifier, customMaterial);
 		} catch (Exception e) {

@@ -1,19 +1,19 @@
 package io.github.vampirestudios.obsidian.api.obsidian.world;
 
 import io.github.vampirestudios.obsidian.api.obsidian.biomeLayouts.MultiNoise;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class Biome {
 
-    public Identifier id;
+    public ResourceLocation id;
     public String displayName;
     public MultiNoise multiNoise;
     public String parent = "";
     public String dimension;
     public String category = "plains";
     public String precipitation = "none";
-    public Identifier surfaceBuilder;
-    public Identifier surfaceConfig;
+    public ResourceLocation surfaceBuilder;
+    public ResourceLocation surfaceConfig;
     public float temperature;
     public float downfall;
     public int waterColor;

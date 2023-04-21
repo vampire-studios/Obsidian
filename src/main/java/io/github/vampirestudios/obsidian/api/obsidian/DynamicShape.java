@@ -5,15 +5,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.vampirestudios.obsidian.registry.Registries;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.function.BooleanBiFunction;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-
 import javax.annotation.Nullable;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class DynamicShape {
 			CodecExtras.PROPERTY_CODEC.optionalFieldOf("shape_rotation").forGetter(shape -> Optional.ofNullable(shape.facing))
 	).apply(instance, (shape, facing) -> new DynamicShape(shape, (Property<Direction>) facing.orElse(null))));
 
-	private static final DynamicShape EMPTY = new DynamicShape(new CombinedShape(BooleanBiFunction.OR, Collections.emptyList()), null);
+	private static final DynamicShape EMPTY = new DynamicShape(new CombinedShape(BooleanOp.OR, Collections.emptyList()), null);
 
 	public static DynamicShape empty() {
 		return EMPTY;
@@ -45,7 +44,7 @@ public class DynamicShape {
 	public static DynamicShape parseShape(JsonElement element, @Nullable Property<Direction> facingProperty, Map<String, Property<?>> propertiesByName) {
 		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
 			String name = element.getAsString();
-			DynamicShape shape = Registries.DYNAMIC_SHAPES.get(new Identifier(name));
+			DynamicShape shape = Registries.DYNAMIC_SHAPES.get(new ResourceLocation(name));
 			if (shape == null)
 				throw new IllegalStateException("No shape known with name " + name);
 			return shape;
@@ -66,8 +65,8 @@ public class DynamicShape {
 
 	public VoxelShape getShape(BlockState blockstate) {
 		return shapeCache.computeIfAbsent(blockstate, state -> {
-			Direction d = facing != null ? state.get(facing) : Direction.NORTH;
-			return shape.getShape(state, d).orElseGet(VoxelShapes::fullCube);
+			Direction d = facing != null ? state.getValue(facing) : Direction.NORTH;
+			return shape.getShape(state, d).orElseGet(Shapes::block);
 		});
 	}
 
@@ -81,12 +80,12 @@ public class DynamicShape {
 	@SuppressWarnings("SuspiciousNameCombination")
 	public static VoxelShape cuboidWithRotation(Direction facing, double x1, double y1, double z1, double x2, double y2, double z2) {
 		return switch (facing) {
-			case NORTH -> VoxelShapes.cuboid(x1, y1, z1, x2, y2, z2);
-			case SOUTH -> VoxelShapes.cuboid(1 - x2, y1, 1 - z2, 1 - x1, y2, 1 - z1);
-			case WEST -> VoxelShapes.cuboid(z1, y1, 1 - x2, z2, y2, 1 - x1);
-			case EAST -> VoxelShapes.cuboid(1 - z2, y1, x1, 1 - z1, y2, x2);
-			case UP -> VoxelShapes.cuboid(1 - y1, x1, z1, 1 - y2, x2, z2);
-			case DOWN -> VoxelShapes.cuboid(y1, 1 - x1, z1, y2, 1 - x2, z2);
+			case NORTH -> Shapes.box(x1, y1, z1, x2, y2, z2);
+			case SOUTH -> Shapes.box(1 - x2, y1, 1 - z2, 1 - x1, y2, 1 - z1);
+			case WEST -> Shapes.box(z1, y1, 1 - x2, z2, y2, 1 - x1);
+			case EAST -> Shapes.box(1 - z2, y1, x1, 1 - z1, y2, x2);
+			case UP -> Shapes.box(1 - y1, x1, z1, 1 - y2, x2, z2);
+			case DOWN -> Shapes.box(y1, 1 - x1, z1, y2, 1 - x2, z2);
 		};
 	}
 }

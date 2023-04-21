@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import net.minecraft.block.Block;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.Block;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
@@ -13,6 +13,6 @@ public class BlockMixin {
 	 */
 	@Overwrite
 	public String toString() {
-		return this.getClass().toString() + "{" + Registries.BLOCK.getId((Block)(Object)this) + "}";
+		return this.getClass().toString() + "{" + BuiltInRegistries.BLOCK.getKey((Block)(Object)this) + "}";
 	}
 }

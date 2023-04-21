@@ -1,7 +1,6 @@
 [versions]
     minecraft = '23w16a'
     quilt-mappings = '23w16a+build.1' # Latest version is available at https://lambdaurora.dev/tools/import_quilt.html
-    yarn_mappings = '23w16a+build.4'
     fabric-loader = '0.14.19' # Latest version is available at https://fabricmc.net/versions.html
 
     fabric_api = '0.78.1+1.20'
@@ -15,7 +14,6 @@
 
 [libraries]
     minecraft = { module = 'com.mojang:minecraft', version.ref = 'minecraft' }
-    yarn-mappings = { module = 'net.fabricmc:yarn', version.ref = 'yarn-mappings' }
     fabric-loader = { module = 'net.fabricmc:fabric-loader', version.ref = 'fabric-loader' }
 
     fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }

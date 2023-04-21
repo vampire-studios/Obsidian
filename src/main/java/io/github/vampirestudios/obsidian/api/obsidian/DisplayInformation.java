@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class DisplayInformation {
 
@@ -21,7 +21,7 @@ public class DisplayInformation {
     public BlockProperty blockState;
 
     public static class Property {
-        public Identifier model;
+        public ResourceLocation model;
         public int x;
         public int y;
         public int z;

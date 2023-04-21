@@ -1,11 +1,11 @@
 package org.quiltmc.qsl.enchantment.impl;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,9 +22,9 @@ public class EnchantmentContext {
 	// The item stack for the enchantment to be applied to
 	ItemStack stack;
 	// The world in which the item is being enchanted
-	World world;
+	Level world;
 	// The player currently trying to enchant the item
-	PlayerEntity player;
+	Player player;
 	// The block position of the enchantment table
 	BlockPos pos;
 	// The block state of the enchantment table
@@ -32,7 +32,7 @@ public class EnchantmentContext {
 	// The block entity of the enchantment table
 	@Nullable BlockEntity entity;
 
-	public EnchantmentContext(int level, int power, int bookcases, ItemStack stack, World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity entity) {
+	public EnchantmentContext(int level, int power, int bookcases, ItemStack stack, Level world, Player player, BlockPos pos, BlockState state, BlockEntity entity) {
 		this.level = level;
 		this.power = power;
 		this.bookcases = bookcases;
@@ -60,11 +60,11 @@ public class EnchantmentContext {
 		return this.stack;
 	}
 
-	public World getWorld() {
+	public Level getWorld() {
 		return this.world;
 	}
 
-	public PlayerEntity getPlayer() {
+	public Player getPlayer() {
 		return this.player;
 	}
 

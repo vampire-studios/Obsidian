@@ -2,13 +2,12 @@ package io.github.vampirestudios.obsidian.utils;
 
 import com.google.gson.*;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
 import java.lang.reflect.Type;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 //Based from ee3's code
 public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
@@ -24,7 +23,7 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
 
             String name = null;
             int stackSize = 1;
-            NbtCompound tagCompound = null;
+            CompoundTag tagCompound = null;
 
             if (jsonObject.has(NAME) && jsonObject.get(NAME).isJsonPrimitive()) {
                 name = jsonObject.getAsJsonPrimitive(NAME).getAsString();
@@ -36,15 +35,15 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
 
             if (jsonObject.has(TAG_COMPOUND) && jsonObject.get(TAG_COMPOUND).isJsonPrimitive()) {
                 try {
-                    tagCompound = StringNbtReader.parse(jsonObject.getAsJsonPrimitive(TAG_COMPOUND).getAsString());
+                    tagCompound = TagParser.parseTag(jsonObject.getAsJsonPrimitive(TAG_COMPOUND).getAsString());
                 } catch (CommandSyntaxException ignored) {
 
                 }
             }
 
-            if (name != null && Registries.ITEM.get(new Identifier(name)) != null) {
-                ItemStack itemStack = new ItemStack(Registries.ITEM.get(new Identifier(name)), stackSize);
-                itemStack.setNbt(tagCompound);
+            if (name != null && BuiltInRegistries.ITEM.get(new ResourceLocation(name)) != null) {
+                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(name)), stackSize);
+                itemStack.setTag(tagCompound);
                 return itemStack;
             }
         }
@@ -58,16 +57,16 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
         if (src != null && src.getItem() != null) {
             JsonObject jsonObject = new JsonObject();
 
-            if (Registries.ITEM.getId(src.getItem()) != null) {
-                jsonObject.addProperty(NAME, Registries.ITEM.getId(src.getItem()).toString());
+            if (BuiltInRegistries.ITEM.getKey(src.getItem()) != null) {
+                jsonObject.addProperty(NAME, BuiltInRegistries.ITEM.getKey(src.getItem()).toString());
             } else {
                 return JsonNull.INSTANCE;
             }
 
             jsonObject.addProperty(STACK_SIZE, src.getCount());
 
-            if (src.getNbt() != null) {
-                jsonObject.addProperty(TAG_COMPOUND, src.getNbt().toString());
+            if (src.getTag() != null) {
+                jsonObject.addProperty(TAG_COMPOUND, src.getTag().toString());
             }
 
             return jsonObject;

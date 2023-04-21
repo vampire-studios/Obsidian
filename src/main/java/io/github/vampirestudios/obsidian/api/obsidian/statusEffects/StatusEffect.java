@@ -1,10 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian.statusEffects;
 
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectCategory;
 
 public class StatusEffect {
 
@@ -13,11 +12,11 @@ public class StatusEffect {
     public String color;
     public List<EffectAttributes> attributes;
 
-    public StatusEffectCategory getStatusEffectType() {
+    public MobEffectCategory getStatusEffectType() {
         return switch (status_effect_type) {
-            case "beneficial" -> StatusEffectCategory.BENEFICIAL;
-            case "harmful" -> StatusEffectCategory.HARMFUL;
-            case "neutral" -> StatusEffectCategory.NEUTRAL;
+            case "beneficial" -> MobEffectCategory.BENEFICIAL;
+            case "harmful" -> MobEffectCategory.HARMFUL;
+            case "neutral" -> MobEffectCategory.NEUTRAL;
             default -> null;
         };
     }
@@ -28,7 +27,7 @@ public class StatusEffect {
     }
 
     public static class EffectAttributes {
-        public Identifier attribute;
+        public ResourceLocation attribute;
         public String uuid;
         public double amount;
         public String operation;

@@ -4,7 +4,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class ItemInitThread implements Runnable {
 
@@ -23,9 +23,9 @@ public class ItemInitThread implements Runnable {
             ));
         }
         if (item.information.dyeable) {
-            net.minecraft.item.Item registeredItem = Registries.ITEM.get(item.information.name.id);
-            ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateSubNbt("display").contains("color") ?
-                    stack.getOrCreateSubNbt("display").getInt("color") : item.information.defaultColor, registeredItem);
+            net.minecraft.world.item.Item registeredItem = BuiltInRegistries.ITEM.get(item.information.name.id);
+            ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateTagElement("display").contains("color") ?
+                    stack.getOrCreateTagElement("display").getInt("color") : item.information.defaultColor, registeredItem);
         }
         /*if (item.information.wearable && item.information.wearableSlot != null && item.information.wearableSlot.equals("chest")) {
             LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {

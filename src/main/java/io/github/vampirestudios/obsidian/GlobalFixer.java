@@ -2,10 +2,10 @@ package io.github.vampirestudios.obsidian;
 
 import io.github.vampirestudios.obsidian.api.RegistryEntryDeletedCallback;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 
 public final class GlobalFixer<T> {
     private final Registry<T> registry;
@@ -15,7 +15,7 @@ public final class GlobalFixer<T> {
     }
 
     public static void init() {
-        for (Registry<?> registry : Registries.REGISTRIES) {
+        for (Registry<?> registry : BuiltInRegistries.REGISTRY) {
             new GlobalFixer<>(registry).register();
         }
     }
@@ -25,13 +25,13 @@ public final class GlobalFixer<T> {
         RegistryEntryDeletedCallback.event(registry).register(this::onEntryDeleted);
     }
 
-    private void onEntryDeleted(int rawId, RegistryEntry.Reference<?> entry) {
+    private void onEntryDeleted(int rawId, Holder.Reference<?> entry) {
         ((DeletableObjectInternal) entry).obsidian$setDeleted(true);
-        if (entry.comp_349() instanceof DeletableObjectInternal obj) obj.obsidian$setDeleted(true);
+        if (entry.value() instanceof DeletableObjectInternal obj) obj.obsidian$setDeleted(true);
     }
 
-    private void onEntryAdded(int rawId, Identifier id, Object obj) {
-        ((DeletableObjectInternal) registry.getEntry(rawId).orElseThrow()).obsidian$setDeleted(false);
+    private void onEntryAdded(int rawId, ResourceLocation id, Object obj) {
+        ((DeletableObjectInternal) registry.getHolder(rawId).orElseThrow()).obsidian$setDeleted(false);
         if (obj instanceof DeletableObjectInternal doi) doi.obsidian$setDeleted(false);
     }
 }

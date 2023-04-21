@@ -17,14 +17,14 @@
 package net.fabricmc.fabric.mixin.elytra.client;
 
 import net.fabricmc.fabric.api.item.v1.elytra.FabricElytraExtensions;
-import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.entity.layers.CapeLayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(CapeFeatureRenderer.class)
+@Mixin(CapeLayer.class)
 public class CapeFeatureRendererMixin {
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	private boolean redirectGetItem(ItemStack itemStack, Item item) {

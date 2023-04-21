@@ -1,12 +1,12 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class TooltipInformation {
 
     public NameInformation text;
 
-    public Text getTextType(String type) {
+    public Component getTextType(String type) {
         return text.getName(type);
     }
 

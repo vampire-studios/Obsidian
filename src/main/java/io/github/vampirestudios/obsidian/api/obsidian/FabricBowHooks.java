@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * An interface to implement for all custom bows.

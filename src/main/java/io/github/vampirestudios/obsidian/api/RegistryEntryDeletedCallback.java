@@ -2,11 +2,11 @@ package io.github.vampirestudios.obsidian.api;
 
 import net.fabricmc.fabric.api.event.AutoInvokingEvent;
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 
 public interface RegistryEntryDeletedCallback<T> {
-    void onEntryDeleted(int rawId, RegistryEntry.Reference<T> entry);
+    void onEntryDeleted(int rawId, Holder.Reference<T> entry);
 
     @SuppressWarnings("unchecked")
     @AutoInvokingEvent

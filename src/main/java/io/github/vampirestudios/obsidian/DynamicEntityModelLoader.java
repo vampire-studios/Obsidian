@@ -23,13 +23,13 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.github.vampirestudios.obsidian.animation.Codecs;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,37 +44,37 @@ import java.util.regex.Pattern;
 
 public class DynamicEntityModelLoader implements SimpleResourceReloadListener<DynamicEntityModelLoader.ModelLoader> {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Entity Model Manager");
-	private Map<EntityModelLayer, TexturedModelData> modelData;
+	private Map<ModelLayerLocation, LayerDefinition> modelData;
 
-	public TexturedModelData getModelData(EntityModelLayer layer) {
+	public LayerDefinition getModelData(ModelLayerLocation layer) {
 		return modelData.get(layer);
 	}
 
 	@Override
-	public CompletableFuture<ModelLoader> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<ModelLoader> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> new ModelLoader(manager, profiler), executor);
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(ModelLoader prepared, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(ModelLoader prepared, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
 		this.modelData = prepared.getModelData();
 		return CompletableFuture.runAsync(() -> {
 		});
 	}
 
 	@Override
-	public Identifier getFabricId() {
-		return new Identifier("quilt_entity_models", "entity_model_reloader");
+	public ResourceLocation getFabricId() {
+		return new ResourceLocation("quilt_entity_models", "entity_model_reloader");
 	}
 
 	public static class ModelLoader {
 		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("entity/model/(\\w*)/(\\w*)\\.json");
 
 		private final ResourceManager manager;
-		private final Profiler profiler;
-		private final Map<EntityModelLayer, TexturedModelData> modelData = new HashMap<>();
+		private final ProfilerFiller profiler;
+		private final Map<ModelLayerLocation, LayerDefinition> modelData = new HashMap<>();
 
-		public ModelLoader(ResourceManager manager, Profiler profiler) {
+		public ModelLoader(ResourceManager manager, ProfilerFiller profiler) {
 			this.manager = manager;
 			this.profiler = profiler;
 			loadAnimations();
@@ -82,24 +82,24 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 
 		private void loadAnimations() {
 			profiler.push("Load Entity Models");
-			Map<Identifier, Resource> resources = manager.findResources("model/entity", id -> id.getPath().endsWith(".json"));
-			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
+			Map<ResourceLocation, Resource> resources = manager.listResources("model/entity", id -> id.getPath().endsWith(".json"));
+			for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
 				addModel(entry.getKey(), entry.getValue());
 			}
 			profiler.pop();
 		}
 
-		private void addModel(Identifier id, Resource resource) {
+		private void addModel(ResourceLocation id, Resource resource) {
 			BufferedReader reader;
 			try {
-				reader = resource.getReader();
+				reader = resource.openAsReader();
 			} catch (IOException e) {
 				LOGGER.error(String.format("Unable to open BufferedReader for id %s", id), e);
 				return;
 			}
 
-			JsonObject json = JsonHelper.deserialize(reader);
-			DataResult<Pair<TexturedModelData, JsonElement>> result = Codecs.Model.TEXTURED_MODEL_DATA.decode(JsonOps.INSTANCE, json);
+			JsonObject json = GsonHelper.parse(reader);
+			DataResult<Pair<LayerDefinition, JsonElement>> result = Codecs.Model.TEXTURED_MODEL_DATA.decode(JsonOps.INSTANCE, json);
 
 			if (result.error().isPresent()) {
 				LOGGER.error(String.format("Unable to parse entity model file %s.\nReason: %s", id, result.error().get().message()));
@@ -115,11 +115,11 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 			String path = matcher.group(1);
 			String name = matcher.group(2);
 
-			Identifier modelID = new Identifier(id.getNamespace(), path);
-			modelData.put(new EntityModelLayer(modelID, name), result.result().get().getFirst());
+			ResourceLocation modelID = new ResourceLocation(id.getNamespace(), path);
+			modelData.put(new ModelLayerLocation(modelID, name), result.result().get().getFirst());
 		}
 
-		public Map<EntityModelLayer, TexturedModelData> getModelData() {
+		public Map<ModelLayerLocation, LayerDefinition> getModelData() {
 			return modelData;
 		}
 	}

@@ -20,11 +20,10 @@ import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
 import io.github.vampirestudios.obsidian.utils.EntityUtils;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -44,10 +43,10 @@ public class Entities implements AddonModule {
             String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
             String overlayColor = entity.information.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
             entity.components = new HashMap<>();
-            JsonObject components = JsonHelper.getObject(entityJson, "components");
+            JsonObject components = GsonHelper.getAsJsonObject(entityJson, "components");
             for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
-                Identifier identifier = new Identifier(entry.getKey());
-                Class<? extends Component> componentClass = Registries.ENTITY_COMPONENT_REGISTRY.getOrEmpty(identifier).orElseThrow(() ->
+                ResourceLocation identifier = new ResourceLocation(entry.getKey());
+                Class<? extends Component> componentClass = Registries.ENTITY_COMPONENT_REGISTRY.getOptional(identifier).orElseThrow(() ->
                         new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
 
                 entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));
@@ -82,11 +81,11 @@ public class Entities implements AddonModule {
             BreathableComponent finalBreathableComponent = breathableComponent;
             assert finalHealthComponent != null;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     entity.information.identifier,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (entity.information.identifier == null) entity.information.identifier = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (entity.information.identifier == null) entity.information.identifier = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
             EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(identifier)
                     .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value, finalBreathableComponent))

@@ -1,22 +1,22 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import net.minecraft.client.model.ModelData;
-import net.minecraft.client.model.TextureDimensions;
-import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MaterialDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(TexturedModelData.class)
+@Mixin(LayerDefinition.class)
 public interface TexturedModelDataAccessor {
 	@Invoker("<init>")
-	static TexturedModelData create(ModelData modelData, TextureDimensions textureDimensions) {
+	static LayerDefinition create(MeshDefinition modelData, MaterialDefinition textureDimensions) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Accessor
-	ModelData getData();
+	MeshDefinition getData();
 
 	@Accessor
-	TextureDimensions getDimensions();
+	MaterialDefinition getDimensions();
 }

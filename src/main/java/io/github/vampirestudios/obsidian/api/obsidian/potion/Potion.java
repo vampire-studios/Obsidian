@@ -1,11 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.potion;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.StatusEffectImpl;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class Potion {
 
-    public Identifier name;
+    public ResourceLocation name;
     public EffectInstance[] effects;
 
     public EffectInstance getEffects() {

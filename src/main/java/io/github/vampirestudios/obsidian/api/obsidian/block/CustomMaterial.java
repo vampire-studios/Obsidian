@@ -1,14 +1,13 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import net.minecraft.block.MapColor;
-import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.util.Identifier;
-
 import java.util.Locale;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.PushReaction;
 
 public class CustomMaterial {
 
-    public Identifier id;
+    public ResourceLocation id;
 
     public String map_color;
     public boolean blocks_movement;
@@ -19,81 +18,81 @@ public class CustomMaterial {
     public boolean solid;
     public String piston_behavior;
 
-    public MapColor getMapColor() {
+    public MaterialColor getMapColor() {
         return switch(map_color) {
-            case "CLEAR" -> MapColor.CLEAR;
-            case "PALE_GREEN" -> MapColor.PALE_GREEN;
-            case "PALE_YELLOW" -> MapColor.PALE_YELLOW;
-            case "WHITE_GRAY" -> MapColor.WHITE_GRAY;
-            case "BRIGHT_RED" -> MapColor.BRIGHT_RED;
-            case "PALE_PURPLE" -> MapColor.PALE_PURPLE;
-            case "IRON_GRAY" -> MapColor.IRON_GRAY;
-            case "DARK_GREEN" -> MapColor.DARK_GREEN;
-            case "WHITE" -> MapColor.WHITE;
-            case "LIGHT_BLUE_GRAY" -> MapColor.LIGHT_BLUE_GRAY;
-            case "DIRT_BROWN" -> MapColor.DIRT_BROWN;
-            case "STONE_GRAY" -> MapColor.STONE_GRAY;
-            case "WATER_BLUE" -> MapColor.WATER_BLUE;
-            case "OAK_TAN" -> MapColor.OAK_TAN;
-            case "OFF_WHITE" -> MapColor.OFF_WHITE;
-            case "ORANGE" -> MapColor.ORANGE;
-            case "MAGENTA" -> MapColor.MAGENTA;
-            case "LIGHT_BLUE" -> MapColor.LIGHT_BLUE;
-            case "YELLOW" -> MapColor.YELLOW;
-            case "LIME" -> MapColor.LIME;
-            case "PINK" -> MapColor.PINK;
-            case "GRAY" -> MapColor.GRAY;
-            case "LIGHT_GRAY" -> MapColor.LIGHT_GRAY;
-            case "CYAN" -> MapColor.CYAN;
-            case "PURPLE" -> MapColor.PURPLE;
-            case "BLUE" -> MapColor.BLUE;
-            case "BROWN" -> MapColor.BROWN;
-            case "GREEN" -> MapColor.GREEN;
-            case "RED" -> MapColor.RED;
-            case "BLACK" -> MapColor.BLACK;
-            case "GOLD" -> MapColor.GOLD;
-            case "DIAMOND_BLUE" -> MapColor.DIAMOND_BLUE;
-            case "LAPIS_BLUE" -> MapColor.LAPIS_BLUE;
-            case "EMERALD_GREEN" -> MapColor.EMERALD_GREEN;
-            case "SPRUCE_BROWN" -> MapColor.SPRUCE_BROWN;
-            case "DARK_RED" -> MapColor.DARK_RED;
-            case "TERRACOTTA_WHITE" -> MapColor.TERRACOTTA_WHITE;
-            case "TERRACOTTA_ORANGE" -> MapColor.TERRACOTTA_ORANGE;
-            case "TERRACOTTA_MAGENTA" -> MapColor.TERRACOTTA_MAGENTA;
-            case "TERRACOTTA_LIGHT_BLUE" -> MapColor.TERRACOTTA_LIGHT_BLUE;
-            case "TERRACOTTA_YELLOW" -> MapColor.TERRACOTTA_YELLOW;
-            case "TERRACOTTA_LIME" -> MapColor.TERRACOTTA_LIME;
-            case "TERRACOTTA_PINK" -> MapColor.TERRACOTTA_PINK;
-            case "TERRACOTTA_GRAY" -> MapColor.TERRACOTTA_GRAY;
-            case "TERRACOTTA_LIGHT_GRAY" -> MapColor.TERRACOTTA_LIGHT_GRAY;
-            case "TERRACOTTA_CYAN" -> MapColor.TERRACOTTA_CYAN;
-            case "TERRACOTTA_PURPLE" -> MapColor.TERRACOTTA_PURPLE;
-            case "TERRACOTTA_BLUE" -> MapColor.TERRACOTTA_BLUE;
-            case "TERRACOTTA_BROWN" -> MapColor.TERRACOTTA_BROWN;
-            case "TERRACOTTA_GREEN" -> MapColor.TERRACOTTA_GREEN;
-            case "TERRACOTTA_RED" -> MapColor.TERRACOTTA_RED;
-            case "TERRACOTTA_BLACK" -> MapColor.TERRACOTTA_BLACK;
-            case "DULL_RED" -> MapColor.DULL_RED;
-            case "DULL_PINK" -> MapColor.DULL_PINK;
-            case "DARK_CRIMSON" -> MapColor.DARK_CRIMSON;
-            case "TEAL" -> MapColor.TEAL;
-            case "DARK_AQUA" -> MapColor.DARK_AQUA;
-            case "DARK_DULL_PINK" -> MapColor.DARK_DULL_PINK;
-            case "BRIGHT_TEAL" -> MapColor.BRIGHT_TEAL;
-            case "DEEPSLATE_GRAY" -> MapColor.DEEPSLATE_GRAY;
-            case "RAW_IRON_PINK" -> MapColor.RAW_IRON_PINK;
-            case "LICHEN_GREEN" -> MapColor.LICHEN_GREEN;
+            case "CLEAR" -> MaterialColor.NONE;
+            case "PALE_GREEN" -> MaterialColor.GRASS;
+            case "PALE_YELLOW" -> MaterialColor.SAND;
+            case "WHITE_GRAY" -> MaterialColor.WOOL;
+            case "BRIGHT_RED" -> MaterialColor.FIRE;
+            case "PALE_PURPLE" -> MaterialColor.ICE;
+            case "IRON_GRAY" -> MaterialColor.METAL;
+            case "DARK_GREEN" -> MaterialColor.PLANT;
+            case "WHITE" -> MaterialColor.SNOW;
+            case "LIGHT_BLUE_GRAY" -> MaterialColor.CLAY;
+            case "DIRT_BROWN" -> MaterialColor.DIRT;
+            case "STONE_GRAY" -> MaterialColor.STONE;
+            case "WATER_BLUE" -> MaterialColor.WATER;
+            case "OAK_TAN" -> MaterialColor.WOOD;
+            case "OFF_WHITE" -> MaterialColor.QUARTZ;
+            case "ORANGE" -> MaterialColor.COLOR_ORANGE;
+            case "MAGENTA" -> MaterialColor.COLOR_MAGENTA;
+            case "LIGHT_BLUE" -> MaterialColor.COLOR_LIGHT_BLUE;
+            case "YELLOW" -> MaterialColor.COLOR_YELLOW;
+            case "LIME" -> MaterialColor.COLOR_LIGHT_GREEN;
+            case "PINK" -> MaterialColor.COLOR_PINK;
+            case "GRAY" -> MaterialColor.COLOR_GRAY;
+            case "LIGHT_GRAY" -> MaterialColor.COLOR_LIGHT_GRAY;
+            case "CYAN" -> MaterialColor.COLOR_CYAN;
+            case "PURPLE" -> MaterialColor.COLOR_PURPLE;
+            case "BLUE" -> MaterialColor.COLOR_BLUE;
+            case "BROWN" -> MaterialColor.COLOR_BROWN;
+            case "GREEN" -> MaterialColor.COLOR_GREEN;
+            case "RED" -> MaterialColor.COLOR_RED;
+            case "BLACK" -> MaterialColor.COLOR_BLACK;
+            case "GOLD" -> MaterialColor.GOLD;
+            case "DIAMOND_BLUE" -> MaterialColor.DIAMOND;
+            case "LAPIS_BLUE" -> MaterialColor.LAPIS;
+            case "EMERALD_GREEN" -> MaterialColor.EMERALD;
+            case "SPRUCE_BROWN" -> MaterialColor.PODZOL;
+            case "DARK_RED" -> MaterialColor.NETHER;
+            case "TERRACOTTA_WHITE" -> MaterialColor.TERRACOTTA_WHITE;
+            case "TERRACOTTA_ORANGE" -> MaterialColor.TERRACOTTA_ORANGE;
+            case "TERRACOTTA_MAGENTA" -> MaterialColor.TERRACOTTA_MAGENTA;
+            case "TERRACOTTA_LIGHT_BLUE" -> MaterialColor.TERRACOTTA_LIGHT_BLUE;
+            case "TERRACOTTA_YELLOW" -> MaterialColor.TERRACOTTA_YELLOW;
+            case "TERRACOTTA_LIME" -> MaterialColor.TERRACOTTA_LIGHT_GREEN;
+            case "TERRACOTTA_PINK" -> MaterialColor.TERRACOTTA_PINK;
+            case "TERRACOTTA_GRAY" -> MaterialColor.TERRACOTTA_GRAY;
+            case "TERRACOTTA_LIGHT_GRAY" -> MaterialColor.TERRACOTTA_LIGHT_GRAY;
+            case "TERRACOTTA_CYAN" -> MaterialColor.TERRACOTTA_CYAN;
+            case "TERRACOTTA_PURPLE" -> MaterialColor.TERRACOTTA_PURPLE;
+            case "TERRACOTTA_BLUE" -> MaterialColor.TERRACOTTA_BLUE;
+            case "TERRACOTTA_BROWN" -> MaterialColor.TERRACOTTA_BROWN;
+            case "TERRACOTTA_GREEN" -> MaterialColor.TERRACOTTA_GREEN;
+            case "TERRACOTTA_RED" -> MaterialColor.TERRACOTTA_RED;
+            case "TERRACOTTA_BLACK" -> MaterialColor.TERRACOTTA_BLACK;
+            case "DULL_RED" -> MaterialColor.CRIMSON_NYLIUM;
+            case "DULL_PINK" -> MaterialColor.CRIMSON_STEM;
+            case "DARK_CRIMSON" -> MaterialColor.CRIMSON_HYPHAE;
+            case "TEAL" -> MaterialColor.WARPED_NYLIUM;
+            case "DARK_AQUA" -> MaterialColor.WARPED_STEM;
+            case "DARK_DULL_PINK" -> MaterialColor.WARPED_HYPHAE;
+            case "BRIGHT_TEAL" -> MaterialColor.WARPED_WART_BLOCK;
+            case "DEEPSLATE_GRAY" -> MaterialColor.DEEPSLATE;
+            case "RAW_IRON_PINK" -> MaterialColor.RAW_IRON;
+            case "LICHEN_GREEN" -> MaterialColor.GLOW_LICHEN;
             default -> throw new IllegalStateException("Unexpected value: " + map_color);
         };
     }
 
-    public PistonBehavior getPistonBehavior() {
+    public PushReaction getPistonBehavior() {
         return switch(piston_behavior.toUpperCase(Locale.ROOT)) {
-            case "NORMAL" -> PistonBehavior.NORMAL;
-            case "DESTROY" -> PistonBehavior.DESTROY;
-            case "BLOCK" -> PistonBehavior.BLOCK;
-            case "IGNORE" -> PistonBehavior.IGNORE;
-            case "PUSH_ONLY" -> PistonBehavior.PUSH_ONLY;
+            case "NORMAL" -> PushReaction.NORMAL;
+            case "DESTROY" -> PushReaction.DESTROY;
+            case "BLOCK" -> PushReaction.BLOCK;
+            case "IGNORE" -> PushReaction.IGNORE;
+            case "PUSH_ONLY" -> PushReaction.PUSH_ONLY;
             default -> throw new IllegalStateException("Unexpected value: " + piston_behavior);
         };
     }

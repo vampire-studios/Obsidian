@@ -1,83 +1,83 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Fertilizable;
-import net.minecraft.block.TallPlantBlock;
-import net.minecraft.block.Waterloggable;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
-public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements Fertilizable, Waterloggable {
-    public static IntProperty AGE;
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
+public class WaterloggableTallFlowerBlockImpl extends DoublePlantBlock implements BonemealableBlock, SimpleWaterloggedBlock {
+    public static IntegerProperty AGE;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private final Block block;
 
-    public WaterloggableTallFlowerBlockImpl(Block block, Settings settings) {
+    public WaterloggableTallFlowerBlockImpl(Block block, Properties settings) {
         super(settings);
         this.block = block;
         if (block.growable != null) {
-            AGE = IntProperty.of("age", block.growable.min_age, block.growable.max_age);
-            this.setDefaultState(this.stateManager.getDefaultState().with(this.getAgeProperty(), 0).with(WATERLOGGED, false));
+            AGE = IntegerProperty.create("age", block.growable.min_age, block.growable.max_age);
+            this.registerDefaultState(this.stateDefinition.any().setValue(this.getAgeProperty(), 0).setValue(WATERLOGGED, false));
         } else {
-            this.setDefaultState(this.stateManager.getDefaultState().with(WATERLOGGED, false));
+            this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
         }
     }
 
     @Override
-    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
         return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
     }
 
     @Override
-    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
+    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
         return !block.information.blockProperties.translucent;
     }
 
     @Override
-    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
         return block.information.blockProperties.translucent;
     }
 
-    public IntProperty getAgeProperty() {
+    public IntegerProperty getAgeProperty() {
         return AGE;
     }
 
-    public boolean canReplace(BlockState state, ItemPlacementContext context) {
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         return false;
     }
 
-    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
         return true;
     }
 
-    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
+    public boolean isBonemealSuccess(Level world, RandomSource random, BlockPos pos, BlockState state) {
         return true;
     }
 
-    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-        dropStack(world, pos, new ItemStack(this));
+    public void performBonemeal(ServerLevel world, RandomSource random, BlockPos pos, BlockState state) {
+        popResource(world, pos, new ItemStack(this));
     }
 
     @Nullable
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockPos blockPos = ctx.getBlockPos();
-        World world = ctx.getWorld();
-        boolean bl = world.getFluidState(blockPos).getFluid() == Fluids.WATER;
-        return blockPos.getY() < world.getTopY() - 1 && world.getBlockState(blockPos.up()).with(WATERLOGGED, bl).canReplace(ctx) ? super.getPlacementState(ctx) : null;
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockPos blockPos = ctx.getClickedPos();
+        Level world = ctx.getLevel();
+        boolean bl = world.getFluidState(blockPos).getType() == Fluids.WATER;
+        return blockPos.getY() < world.getMaxBuildHeight() - 1 && world.getBlockState(blockPos.above()).setValue(WATERLOGGED, bl).canBeReplaced(ctx) ? super.getStateForPlacement(ctx) : null;
     }
 
     public int getMaxAge() {
@@ -85,24 +85,24 @@ public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements 
     }
 
     protected int getAge(BlockState state) {
-        return state.get(this.getAgeProperty());
+        return state.getValue(this.getAgeProperty());
     }
 
     public BlockState withAge(int age) {
-        return this.getDefaultState().with(this.getAgeProperty(), age);
+        return this.defaultBlockState().setValue(this.getAgeProperty(), age);
     }
 
     public boolean isMature(BlockState state) {
-        return state.get(this.getAgeProperty()) >= this.getMaxAge();
+        return state.getValue(this.getAgeProperty()) >= this.getMaxAge();
     }
 
-    public boolean hasRandomTicks(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return !this.isMature(state);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
         if (block.growable != null) {
             builder.add(AGE);
@@ -110,30 +110,30 @@ public class WaterloggableTallFlowerBlockImpl extends TallPlantBlock implements 
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (world.getBaseLightLevel(pos, 0) >= 9) {
+    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        if (world.getRawBrightness(pos, 0) >= 9) {
             int i = this.getAge(state);
             if (i < this.getMaxAge()) {
                 float f = 1.0F;
                 if (random.nextInt((int)(25.0F / f) + 1) == 0) {
-                    world.setBlockState(pos, this.withAge(i + 1), 2);
+                    world.setBlock(pos, this.withAge(i + 1), 2);
                 }
             }
         }
 
     }
 
-    public void applyGrowth(World world, BlockPos pos, BlockState state) {
+    public void applyGrowth(Level world, BlockPos pos, BlockState state) {
         int i = this.getAge(state) + this.getGrowthAmount(world);
         int j = this.getMaxAge();
         if (i > j) {
             i = j;
         }
 
-        world.setBlockState(pos, this.withAge(i), 2);
+        world.setBlock(pos, this.withAge(i), 2);
     }
 
-    protected int getGrowthAmount(World world) {
-        return MathHelper.nextInt(world.random, 2, 5);
+    protected int getGrowthAmount(Level world) {
+        return Mth.nextInt(world.random, 2, 5);
     }
 }

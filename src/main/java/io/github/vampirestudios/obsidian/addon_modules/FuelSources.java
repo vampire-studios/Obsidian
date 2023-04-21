@@ -9,11 +9,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,27 +33,27 @@ public class FuelSources implements AddonModule {
                 if (fileName.contains("remove_")) fileName.replace("remove_", "");
                 if (fileName.contains("item")) {
                     fileName.replace("_item.json", "");
-                    FuelRegistry.INSTANCE.remove(Registries.ITEM.get(Identifier.tryParse(fileName)));
+                    FuelRegistry.INSTANCE.remove(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(fileName)));
                 } else {
                     fileName.replace("_tag.json", "");
-                    FuelRegistry.INSTANCE.remove(TagKey.of(RegistryKeys.ITEM, Identifier.tryParse(fileName)));
+                    FuelRegistry.INSTANCE.remove(TagKey.create(Registries.ITEM, ResourceLocation.tryParse(fileName)));
                 }
             } else {
                 if (fuelSource.burn_time > 0) {
                     if (fuelSource.item != null) {
-                        FuelRegistry.INSTANCE.add(Registries.ITEM.get(fuelSource.item), fuelSource.burn_time);
+                        FuelRegistry.INSTANCE.add(BuiltInRegistries.ITEM.get(fuelSource.item), fuelSource.burn_time);
                     } else {
                         FuelRegistry.INSTANCE.add(fuelSource.getTag(), fuelSource.burn_time);
                     }
                 } else {
                     if (fuelSource.item != null) {
-                        FuelRegistry.INSTANCE.remove(Registries.ITEM.get(fuelSource.item));
+                        FuelRegistry.INSTANCE.remove(BuiltInRegistries.ITEM.get(fuelSource.item));
                     } else {
                         FuelRegistry.INSTANCE.remove(fuelSource.getTag());
                     }
                 }
             }
-            register(ContentRegistries.FUEL_SOURCES, "fuel_source", new Identifier(id.modId(), file.getName().replace(".json", "")), fuelSource);
+            register(ContentRegistries.FUEL_SOURCES, "fuel_source", new ResourceLocation(id.modId(), file.getName().replace(".json", "")), fuelSource);
         } catch (Exception e) {
             failedRegistering("fuel_source", file.getName(), e);
         }

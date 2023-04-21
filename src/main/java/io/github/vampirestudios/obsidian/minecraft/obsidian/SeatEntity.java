@@ -1,55 +1,54 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
 import java.util.HashMap;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class SeatEntity extends Entity {
-    public static final HashMap<Vec3d,BlockPos> OCCUPIED = new HashMap<>();
+    public static final HashMap<Vec3,BlockPos> OCCUPIED = new HashMap<>();
 
-    public SeatEntity(World world) {
+    public SeatEntity(Level world) {
         super(Obsidian.SEAT, world);
-        noClip = true;
+        noPhysics = true;
     }
 
-    public SeatEntity(EntityType<?> entityType, World world) {
+    public SeatEntity(EntityType<?> entityType, Level world) {
         super(entityType, world);
     }
 
     @Override
-    protected void initDataTracker() {}
+    protected void defineSynchedData() {}
 
     @Override
-    public Vec3d updatePassengerForDismount(LivingEntity passenger) {
-        if(passenger instanceof PlayerEntity) {
-            BlockPos pos = OCCUPIED.remove(getPos());
+    public Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
+        if(passenger instanceof Player) {
+            BlockPos pos = OCCUPIED.remove(position());
             if(pos != null) {
                 remove(RemovalReason.DISCARDED);
-                return new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+                return new Vec3(pos.getX(), pos.getY(), pos.getZ());
             }
         }
         remove(RemovalReason.DISCARDED);
-        return super.updatePassengerForDismount(passenger);
+        return super.getDismountLocationForPassenger(passenger);
     }
 
     @Override
     public void remove(RemovalReason reason) {
         super.remove(reason);
-        OCCUPIED.remove(getPos());
+        OCCUPIED.remove(position());
     }
 
     @Override
-    protected void readCustomDataFromNbt(NbtCompound var1) {}
+    protected void readAdditionalSaveData(CompoundTag var1) {}
 
     @Override
-    protected void writeCustomDataToNbt(NbtCompound var1) {}
+    protected void addAdditionalSaveData(CompoundTag var1) {}
 
 }

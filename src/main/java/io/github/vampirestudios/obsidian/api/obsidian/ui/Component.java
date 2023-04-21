@@ -2,17 +2,15 @@ package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-
 import java.util.Locale;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 
 public class Component {
 	public String type;
-	public Identifier texture;
-	public Identifier textureAtlas;
+	public ResourceLocation texture;
+	public ResourceLocation textureAtlas;
 	public Object text;
 	public int width;
 	public int height;
@@ -24,30 +22,30 @@ public class Component {
 	public int regionHeight;
 //	public ButtonWidget.PressAction onPress;
 	public String textBoxText;
-	public NbtCompound nbt;
-	public Identifier entityType;
-	public Identifier item;
+	public CompoundTag nbt;
+	public ResourceLocation entityType;
+	public ResourceLocation item;
 	public int count = 1;
 	public double minSliderValue, maxSliderValue;
 
 	public int row;
 	public int column;
 
-	public Text getText(JsonObject jsonObject) {
-		if(JsonHelper.hasString(jsonObject, "text")) {
-			return Text.literal(JsonHelper.getString(jsonObject, "text"));
-		} else if(JsonHelper.hasJsonObject(jsonObject, "text")) {
-			return SpecialText.of(JsonHelper.getObject(jsonObject, "text"));
+	public net.minecraft.network.chat.Component getText(JsonObject jsonObject) {
+		if(GsonHelper.isStringValue(jsonObject, "text")) {
+			return net.minecraft.network.chat.Component.literal(GsonHelper.getAsString(jsonObject, "text"));
+		} else if(GsonHelper.isObjectNode(jsonObject, "text")) {
+			return SpecialText.of(GsonHelper.getAsJsonObject(jsonObject, "text"));
 		} else {
-			return Text.literal("");
+			return net.minecraft.network.chat.Component.literal("");
 		}
 	}
 
 	public Sizing sizing(JsonObject jsonObject, String type) {
-		if(JsonHelper.hasString(jsonObject, type)) {
-			return Sizing.of(JsonHelper.getString(jsonObject, type));
-		} else if(JsonHelper.hasJsonObject(jsonObject, type)) {
-			return Sizing.of(JsonHelper.getObject(jsonObject, type));
+		if(GsonHelper.isStringValue(jsonObject, type)) {
+			return Sizing.of(GsonHelper.getAsString(jsonObject, type));
+		} else if(GsonHelper.isObjectNode(jsonObject, type)) {
+			return Sizing.of(GsonHelper.getAsJsonObject(jsonObject, type));
 		} else {
 			return new Sizing().setType(SizingType.CONTENT);
 		}

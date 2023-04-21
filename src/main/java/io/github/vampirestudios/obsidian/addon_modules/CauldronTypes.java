@@ -7,15 +7,14 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.cauldron.CauldronBehavior;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
+import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -26,20 +25,20 @@ public class CauldronTypes implements AddonModule {
         try {
             if (cauldronType == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     cauldronType.name,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (cauldronType.name == null) cauldronType.name = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (cauldronType.name == null) cauldronType.name = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
-            CauldronBehavior cauldronBehavior = (state, world, pos, player, hand, stack) -> {
-                BlockState blockState = getState(Registries.BLOCK.get(cauldronType.blockstate.block), cauldronType.blockstate.properties);
-                return CauldronBehavior.fillCauldron(world, pos, player, hand, stack, blockState, Registries.SOUND_EVENT.get(cauldronType.sound_event));
+            CauldronInteraction cauldronBehavior = (state, world, pos, player, hand, stack) -> {
+                BlockState blockState = getState(BuiltInRegistries.BLOCK.get(cauldronType.blockstate.block), cauldronType.blockstate.properties);
+                return CauldronInteraction.emptyBucket(world, pos, player, hand, stack, blockState, BuiltInRegistries.SOUND_EVENT.get(cauldronType.sound_event));
             };
-            CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.put(Registries.ITEM.get(cauldronType.item), cauldronBehavior);
-            CauldronBehavior.WATER_CAULDRON_BEHAVIOR.put(Registries.ITEM.get(cauldronType.item), cauldronBehavior);
-            CauldronBehavior.LAVA_CAULDRON_BEHAVIOR.put(Registries.ITEM.get(cauldronType.item), cauldronBehavior);
-            CauldronBehavior.POWDER_SNOW_CAULDRON_BEHAVIOR.put(Registries.ITEM.get(cauldronType.item), cauldronBehavior);
+            CauldronInteraction.EMPTY.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
+            CauldronInteraction.WATER.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
+            CauldronInteraction.LAVA.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
+            CauldronInteraction.POWDER_SNOW.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
             register(ContentRegistries.CAULDRON_TYPES, "cauldron_type", identifier, cauldronType);
         } catch (Exception e) {
             failedRegistering("cauldron_types", file.getName(), e);

@@ -7,14 +7,13 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -27,11 +26,11 @@ public class BlockSoundGroups implements AddonModule {
 		try {
 			if (customSoundGroup == null) return;
 
-			Identifier identifier = Objects.requireNonNullElseGet(
+			ResourceLocation identifier = Objects.requireNonNullElseGet(
 					customSoundGroup.id,
-					() -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (customSoundGroup.id == null) customSoundGroup.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+			if (customSoundGroup.id == null) customSoundGroup.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
 			registerSoundIfNotFound(customSoundGroup.break_sound);
 			registerSoundIfNotFound(customSoundGroup.step_sound);
@@ -44,8 +43,8 @@ public class BlockSoundGroups implements AddonModule {
 		}
 	}
 
-	private void registerSoundIfNotFound(Identifier sound) {
-		if (!Registries.SOUND_EVENT.containsId(sound)) Obsidian.registerInRegistry(Registries.SOUND_EVENT, sound, SoundEvent.of(sound));
+	private void registerSoundIfNotFound(ResourceLocation sound) {
+		if (!BuiltInRegistries.SOUND_EVENT.containsKey(sound)) Obsidian.registerInRegistry(BuiltInRegistries.SOUND_EVENT, sound, SoundEvent.createVariableRangeEvent(sound));
 	}
 
 	@Override

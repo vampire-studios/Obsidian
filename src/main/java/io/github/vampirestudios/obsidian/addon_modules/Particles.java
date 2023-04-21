@@ -12,11 +12,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,12 +30,12 @@ public class Particles implements AddonModule {
         Particle particle = Obsidian.GSON.fromJson(new FileReader(file), Particle.class);
         try {
             if (particle == null) return;
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     particle.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (particle.id == null) particle.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
-            DefaultParticleType particleType = Registry.register(Registries.PARTICLE_TYPE, identifier,
+            if (particle.id == null) particle.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+            SimpleParticleType particleType = Registry.register(BuiltInRegistries.PARTICLE_TYPE, identifier,
                     FabricParticleTypes.simple(false));
             ParticleFactoryRegistry.getInstance().register(particleType, provider -> new ParticleImpl.Factory(particle, provider));
             register(ContentRegistries.PARTICLES, "particle", identifier, particle);

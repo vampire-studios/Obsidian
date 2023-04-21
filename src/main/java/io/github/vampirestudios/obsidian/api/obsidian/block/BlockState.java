@@ -1,12 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import net.minecraft.util.Identifier;
-
 import java.util.Map;
+import net.minecraft.resources.ResourceLocation;
 
 public class BlockState {
 
-    public Identifier block;
+    public ResourceLocation block;
     public Map<String, String> properties;
 
 }

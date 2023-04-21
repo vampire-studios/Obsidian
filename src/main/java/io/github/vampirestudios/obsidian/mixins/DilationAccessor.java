@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(Dilation.class)
+@Mixin(CubeDeformation.class)
 public interface DilationAccessor {
     @Accessor
     float getRadiusX();

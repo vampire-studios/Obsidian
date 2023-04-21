@@ -19,7 +19,7 @@ package org.quiltmc.qsl.key.binds.impl;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +31,13 @@ import java.util.List;
 public class KeyBindRegistryImpl {
 	public static final Logger LOGGER = LoggerFactory.getLogger("KeyBindRegistry");
 
-	private static final List<KeyBinding> ALL_KEY_BINDS = new ReferenceArrayList<>();
-	private static final List<KeyBinding> ENABLED_KEYS = new ReferenceArrayList<>();
+	private static final List<KeyMapping> ALL_KEY_BINDS = new ReferenceArrayList<>();
+	private static final List<KeyMapping> ENABLED_KEYS = new ReferenceArrayList<>();
 	private static KeyBindManager keyBindManager = null;
 
-	public static KeyBinding getKeyBind(String translationKey) {
-		for (KeyBinding key : ALL_KEY_BINDS) {
-			if (key.getTranslationKey().equals(translationKey)) {
+	public static KeyMapping getKeyBind(String translationKey) {
+		for (KeyMapping key : ALL_KEY_BINDS) {
+			if (key.getName().equals(translationKey)) {
 				return key;
 			}
 		}
@@ -45,16 +45,16 @@ public class KeyBindRegistryImpl {
 		return null;
 	}
 
-	public static List<KeyBinding> getAllKeyBinds() {
+	public static List<KeyMapping> getAllKeyBinds() {
 		return ALL_KEY_BINDS;
 	}
 
-	public static void registerKeyBind(KeyBinding key) {
+	public static void registerKeyBind(KeyMapping key) {
 		ALL_KEY_BINDS.add(key);
 		ENABLED_KEYS.add(key);
 	}
 
-	public static void updateKeyBindState(KeyBinding key) {
+	public static void updateKeyBindState(KeyMapping key) {
 		if (key.isEnabled()) {
 			ENABLED_KEYS.add(key);
 		} else {
@@ -68,8 +68,8 @@ public class KeyBindRegistryImpl {
 		//QuiltKeyBindsConfigManager.CONFIG.save();
 	}
 
-	public static KeyBinding[] getKeyBinds() {
-		return ENABLED_KEYS.toArray(new KeyBinding[0]);
+	public static KeyMapping[] getKeyBinds() {
+		return ENABLED_KEYS.toArray(new KeyMapping[0]);
 	}
 
 	public static void setKeyBindManager(KeyBindManager manager) {

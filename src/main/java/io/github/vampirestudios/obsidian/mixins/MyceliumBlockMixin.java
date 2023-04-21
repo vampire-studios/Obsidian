@@ -18,8 +18,8 @@ package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.block.spread.IForgeSpreadingBlock;
 import io.github.vampirestudios.obsidian.block.spread.SpreaderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.MyceliumBlock;
+import net.minecraft.world.level.block.MyceliumBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(MyceliumBlock.class)

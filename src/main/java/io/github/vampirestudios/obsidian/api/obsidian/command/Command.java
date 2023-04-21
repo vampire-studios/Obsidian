@@ -1,11 +1,53 @@
 package io.github.vampirestudios.obsidian.api.obsidian.command;
 
 import com.mojang.brigadier.arguments.*;
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.*;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.arguments.AngleArgument;
+import net.minecraft.commands.arguments.ColorArgument;
+import net.minecraft.commands.arguments.ComponentArgument;
+import net.minecraft.commands.arguments.CompoundTagArgument;
+import net.minecraft.commands.arguments.DimensionArgument;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.GameModeArgument;
+import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.commands.arguments.MessageArgument;
+import net.minecraft.commands.arguments.NbtPathArgument;
+import net.minecraft.commands.arguments.NbtTagArgument;
+import net.minecraft.commands.arguments.ObjectiveArgument;
+import net.minecraft.commands.arguments.ObjectiveCriteriaArgument;
+import net.minecraft.commands.arguments.OperationArgument;
+import net.minecraft.commands.arguments.ParticleArgument;
+import net.minecraft.commands.arguments.RangeArgument;
+import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.commands.arguments.ResourceKeyArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.ResourceOrTagArgument;
+import net.minecraft.commands.arguments.ResourceOrTagKeyArgument;
+import net.minecraft.commands.arguments.ScoreHolderArgument;
+import net.minecraft.commands.arguments.ScoreboardSlotArgument;
+import net.minecraft.commands.arguments.SlotArgument;
+import net.minecraft.commands.arguments.TeamArgument;
+import net.minecraft.commands.arguments.TemplateMirrorArgument;
+import net.minecraft.commands.arguments.TemplateRotationArgument;
+import net.minecraft.commands.arguments.TimeArgument;
+import net.minecraft.commands.arguments.UuidArgument;
+import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
+import net.minecraft.commands.arguments.blocks.BlockStateArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
+import net.minecraft.commands.arguments.coordinates.RotationArgument;
+import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
+import net.minecraft.commands.arguments.coordinates.Vec2Argument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.commands.arguments.item.FunctionArgument;
+import net.minecraft.commands.arguments.item.ItemArgument;
+import net.minecraft.commands.arguments.item.ItemPredicateArgument;
+import net.minecraft.gametest.framework.TestClassNameArgument;
+import net.minecraft.gametest.framework.TestFunctionArgument;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +61,7 @@ public class Command {
     }
     
     public class CommandNode extends Node {
-        public Identifier name;
+        public ResourceLocation name;
         public boolean dedicatedOnly = false;
     }
     
@@ -28,9 +70,9 @@ public class Command {
         public double min;
         public double max;
 
-        public Identifier registry;
+        public ResourceLocation registry;
 
-        public ArgumentType<?> getArgumentType(CommandRegistryAccess commandBuildContext) {
+        public ArgumentType<?> getArgumentType(CommandBuildContext commandBuildContext) {
             Map<String, ArgumentType<?>> argumentTypeMap = new HashMap<>();
             argumentTypeMap.put("string", StringArgumentType.string());
             argumentTypeMap.put("word", StringArgumentType.word());
@@ -46,76 +88,76 @@ public class Command {
             argumentTypeMap.put("integer_min", IntegerArgumentType.integer((int) min));
             argumentTypeMap.put("integer_min_max", IntegerArgumentType.integer((int) min, (int) max));
 
-            argumentTypeMap.put("angel", AngleArgumentType.angle());
+            argumentTypeMap.put("angel", AngleArgument.angle());
 
             //Block Stuff
-            argumentTypeMap.put("block_mirror", BlockMirrorArgumentType.blockMirror());
-            argumentTypeMap.put("block_pos", BlockPosArgumentType.blockPos());
-            argumentTypeMap.put("block_predicate", BlockPredicateArgumentType.blockPredicate(commandBuildContext));
-            argumentTypeMap.put("block_rotation", BlockRotationArgumentType.blockRotation());
-            argumentTypeMap.put("block_state", BlockStateArgumentType.blockState(commandBuildContext));
+            argumentTypeMap.put("block_mirror", TemplateMirrorArgument.templateMirror());
+            argumentTypeMap.put("block_pos", BlockPosArgument.blockPos());
+            argumentTypeMap.put("block_predicate", BlockPredicateArgument.blockPredicate(commandBuildContext));
+            argumentTypeMap.put("block_rotation", TemplateRotationArgument.templateRotation());
+            argumentTypeMap.put("block_state", BlockStateArgument.block(commandBuildContext));
 
-            argumentTypeMap.put("color", ColorArgumentType.color());
+            argumentTypeMap.put("color", ColorArgument.color());
 
-            argumentTypeMap.put("column_pos", ColumnPosArgumentType.columnPos());
-            argumentTypeMap.put("command_function", CommandFunctionArgumentType.commandFunction());
-            argumentTypeMap.put("dimension", DimensionArgumentType.dimension());
+            argumentTypeMap.put("column_pos", ColumnPosArgument.columnPos());
+            argumentTypeMap.put("command_function", FunctionArgument.functions());
+            argumentTypeMap.put("dimension", DimensionArgument.dimension());
 
             //Entity Stuff
-            argumentTypeMap.put("entity_anchor", EntityAnchorArgumentType.entityAnchor());
-            argumentTypeMap.put("entity", EntityArgumentType.entity());
-            argumentTypeMap.put("player", EntityArgumentType.player());
-            argumentTypeMap.put("players", EntityArgumentType.players());
-            argumentTypeMap.put("entities", EntityArgumentType.entities());
+            argumentTypeMap.put("entity_anchor", EntityAnchorArgument.anchor());
+            argumentTypeMap.put("entity", EntityArgument.entity());
+            argumentTypeMap.put("player", EntityArgument.player());
+            argumentTypeMap.put("players", EntityArgument.players());
+            argumentTypeMap.put("entities", EntityArgument.entities());
 
-            argumentTypeMap.put("game_mode", GameModeArgumentType.gameMode());
-            argumentTypeMap.put("game_profile", GameProfileArgumentType.gameProfile());
+            argumentTypeMap.put("game_mode", GameModeArgument.gameMode());
+            argumentTypeMap.put("game_profile", GameProfileArgument.gameProfile());
 
-            argumentTypeMap.put("identifier", IdentifierArgumentType.identifier());
+            argumentTypeMap.put("identifier", ResourceLocationArgument.id());
 
             //Item Stuff
-            argumentTypeMap.put("item_predicate", ItemPredicateArgumentType.itemPredicate(commandBuildContext));
-            argumentTypeMap.put("item_slot", ItemSlotArgumentType.itemSlot());
-            argumentTypeMap.put("item_stack", ItemStackArgumentType.itemStack(commandBuildContext));
+            argumentTypeMap.put("item_predicate", ItemPredicateArgument.itemPredicate(commandBuildContext));
+            argumentTypeMap.put("item_slot", SlotArgument.slot());
+            argumentTypeMap.put("item_stack", ItemArgument.item(commandBuildContext));
 
-            argumentTypeMap.put("message", MessageArgumentType.message());
+            argumentTypeMap.put("message", MessageArgument.message());
 
             //NBT Stuff
-            argumentTypeMap.put("nbt_compound", NbtCompoundArgumentType.nbtCompound());
-            argumentTypeMap.put("nbt_element", NbtElementArgumentType.nbtElement());
-            argumentTypeMap.put("nbt_path", NbtPathArgumentType.nbtPath());
+            argumentTypeMap.put("nbt_compound", CompoundTagArgument.compoundTag());
+            argumentTypeMap.put("nbt_element", NbtTagArgument.nbtTag());
+            argumentTypeMap.put("nbt_path", NbtPathArgument.nbtPath());
 
             //Number Ranges
-            argumentTypeMap.put("float_range", NumberRangeArgumentType.floatRange());
-            argumentTypeMap.put("int_range", NumberRangeArgumentType.intRange());
+            argumentTypeMap.put("float_range", RangeArgument.floatRange());
+            argumentTypeMap.put("int_range", RangeArgument.intRange());
 
-            argumentTypeMap.put("operation", OperationArgumentType.operation());
-            argumentTypeMap.put("particle_effect", ParticleEffectArgumentType.particleEffect(commandBuildContext));
+            argumentTypeMap.put("operation", OperationArgument.operation());
+            argumentTypeMap.put("particle_effect", ParticleArgument.particle(commandBuildContext));
 
-            argumentTypeMap.put("registry_entry", RegistryEntryArgumentType.registryEntry(commandBuildContext, RegistryKey.ofRegistry(registry)));
-            argumentTypeMap.put("registry_entry_predicate", RegistryEntryPredicateArgumentType.registryEntryPredicate(commandBuildContext, RegistryKey.ofRegistry(registry)));
-            argumentTypeMap.put("registry_key", RegistryKeyArgumentType.registryKey(RegistryKey.ofRegistry(registry)));
-            argumentTypeMap.put("registry_predicate", RegistryPredicateArgumentType.registryPredicate(RegistryKey.ofRegistry(registry)));
+            argumentTypeMap.put("registry_entry", ResourceArgument.resource(commandBuildContext, ResourceKey.createRegistryKey(registry)));
+            argumentTypeMap.put("registry_entry_predicate", ResourceOrTagArgument.resourceOrTag(commandBuildContext, ResourceKey.createRegistryKey(registry)));
+            argumentTypeMap.put("registry_key", ResourceKeyArgument.key(ResourceKey.createRegistryKey(registry)));
+            argumentTypeMap.put("registry_predicate", ResourceOrTagKeyArgument.resourceOrTagKey(ResourceKey.createRegistryKey(registry)));
 
-            argumentTypeMap.put("rotation", RotationArgumentType.rotation());
+            argumentTypeMap.put("rotation", RotationArgument.rotation());
 
-            argumentTypeMap.put("scoreboard_criterion", ScoreboardCriterionArgumentType.scoreboardCriterion());
-            argumentTypeMap.put("scoreboard_objective", ScoreboardObjectiveArgumentType.scoreboardObjective());
-            argumentTypeMap.put("scoreboard_slot", ScoreboardSlotArgumentType.scoreboardSlot());
+            argumentTypeMap.put("scoreboard_criterion", ObjectiveCriteriaArgument.criteria());
+            argumentTypeMap.put("scoreboard_objective", ObjectiveArgument.objective());
+            argumentTypeMap.put("scoreboard_slot", ScoreboardSlotArgument.displaySlot());
 
-            argumentTypeMap.put("score_holder", ScoreHolderArgumentType.scoreHolder());
-            argumentTypeMap.put("score_holders", ScoreHolderArgumentType.scoreHolders());
+            argumentTypeMap.put("score_holder", ScoreHolderArgument.scoreHolder());
+            argumentTypeMap.put("score_holders", ScoreHolderArgument.scoreHolders());
 
-            argumentTypeMap.put("swizzle", SwizzleArgumentType.swizzle());
-            argumentTypeMap.put("team", TeamArgumentType.team());
-            argumentTypeMap.put("test_class", TestClassArgumentType.testClass());
-            argumentTypeMap.put("test_function", TestFunctionArgumentType.testFunction());
-            argumentTypeMap.put("text", TextArgumentType.text());
-            argumentTypeMap.put("time", TimeArgumentType.time());
-            argumentTypeMap.put("uuid", UuidArgumentType.uuid());
+            argumentTypeMap.put("swizzle", SwizzleArgument.swizzle());
+            argumentTypeMap.put("team", TeamArgument.team());
+            argumentTypeMap.put("test_class", TestClassNameArgument.testClassName());
+            argumentTypeMap.put("test_function", TestFunctionArgument.testFunctionArgument());
+            argumentTypeMap.put("text", ComponentArgument.textComponent());
+            argumentTypeMap.put("time", TimeArgument.time());
+            argumentTypeMap.put("uuid", UuidArgument.uuid());
 
-            argumentTypeMap.put("vec2", Vec2ArgumentType.vec2());
-            argumentTypeMap.put("vec3", Vec3ArgumentType.vec3());
+            argumentTypeMap.put("vec2", Vec2Argument.vec2());
+            argumentTypeMap.put("vec3", Vec3Argument.vec3());
 
             return argumentTypeMap.get(argument_type);
         }

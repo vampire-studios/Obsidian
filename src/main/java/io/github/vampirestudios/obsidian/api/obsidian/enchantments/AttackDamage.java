@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.enchantments;
 
-import net.minecraft.entity.EntityGroup;
+import net.minecraft.world.entity.MobType;
 
 public class AttackDamage {
 
@@ -8,13 +8,13 @@ public class AttackDamage {
     public String entity_group;
     public float attack_damage;
 
-    public EntityGroup getEntityGroup() {
+    public MobType getEntityGroup() {
         return switch (entity_group) {
-            default -> EntityGroup.DEFAULT;
-            case "undead" -> EntityGroup.UNDEAD;
-            case "arthropod" -> EntityGroup.ARTHROPOD;
-            case "illager" -> EntityGroup.ILLAGER;
-            case "aquatic" -> EntityGroup.AQUATIC;
+            default -> MobType.UNDEFINED;
+            case "undead" -> MobType.UNDEAD;
+            case "arthropod" -> MobType.ARTHROPOD;
+            case "illager" -> MobType.ILLAGER;
+            case "aquatic" -> MobType.WATER;
         };
     }
 }

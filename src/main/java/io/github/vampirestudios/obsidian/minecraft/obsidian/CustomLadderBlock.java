@@ -1,13 +1,12 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.block.LadderBlock;
-import net.minecraft.block.Material;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.SoundType;
 
 public class CustomLadderBlock extends LadderBlock {
     public CustomLadderBlock() {
-        super(Settings.of(Material.AGGREGATE).strength(0.4F).sounds(BlockSoundGroup.LADDER).nonOpaque());
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(WATERLOGGED, false));
+        super(Properties.of(Material.AGGREGATE).strength(0.4F).sounds(SoundType.LADDER).nonOpaque());
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 }

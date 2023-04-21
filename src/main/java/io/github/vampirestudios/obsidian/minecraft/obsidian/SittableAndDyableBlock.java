@@ -1,55 +1,55 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class SittableAndDyableBlock extends DyeableBlock {
 
-    public static final BooleanProperty OCCUPIED = BooleanProperty.of("occupied");
+    public static final BooleanProperty OCCUPIED = BooleanProperty.create("occupied");
 
-    public SittableAndDyableBlock(Block block, Settings settings) {
+    public SittableAndDyableBlock(Block block, Properties settings) {
         super(block, settings);
     }
 
     @Override
-    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
         return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
     }
 
     @Override
-    public boolean isShapeFullCube(BlockState state, BlockView world, BlockPos pos) {
+    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
         return !block.information.blockProperties.translucent;
     }
 
     @Override
-    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
         return block.information.blockProperties.translucent;
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if(state.get(OCCUPIED) || !world.getBlockState(pos.up()).isAir() || player.hasVehicle())
-            return super.onUse(state, world, pos, player, hand, hit);
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if(state.getValue(OCCUPIED) || !world.getBlockState(pos.above()).isAir() || player.isPassenger())
+            return super.use(state, world, pos, player, hand, hit);
 
-        if(!world.isClient) {
+        if(!world.isClientSide) {
             SeatEntity entity = new SeatEntity(world);
-            entity.setPos(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5);
+            entity.setPosRaw(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5);
 
-            world.spawnEntity(entity);
+            world.addFreshEntity(entity);
             player.startRiding(entity);
 
-            world.setBlockState(pos, state.with(OCCUPIED, true));
+            world.setBlockAndUpdate(pos, state.setValue(OCCUPIED, true));
         }
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
 }

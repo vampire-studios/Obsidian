@@ -1,9 +1,5 @@
 package io.github.vampirestudios.obsidian.mixins;
 
-import net.minecraft.client.model.Dilation;
-import net.minecraft.client.model.ModelCuboidData;
-import net.minecraft.client.util.math.Vector2f;
-import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,11 +7,15 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.Set;
+import net.minecraft.client.model.geom.builders.CubeDefinition;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.UVPair;
+import net.minecraft.core.Direction;
 
-@Mixin(ModelCuboidData.class)
+@Mixin(CubeDefinition.class)
 public interface ModelCuboidDataAccessor {
 	@Invoker("<init>")
-	static ModelCuboidData createModelCuboidData(
+	static CubeDefinition createModelCuboidData(
 		@Nullable String string,
 		float f,
 		float g,
@@ -25,7 +25,7 @@ public interface ModelCuboidDataAccessor {
 		float k,
 		float l,
 		float m,
-		Dilation dilation,
+		CubeDeformation dilation,
 		boolean bl,
 		float n,
 		float o,
@@ -44,16 +44,16 @@ public interface ModelCuboidDataAccessor {
 	Vector3f getDimensions();
 
 	@Accessor
-	Dilation getExtraSize();
+	CubeDeformation getExtraSize();
 
 	@Accessor
 	boolean isMirror();
 
 	@Accessor
-	Vector2f getTextureUV();
+	UVPair getTextureUV();
 
 	@Accessor
-	Vector2f getTextureScale();
+	UVPair getTextureScale();
 
 	@Accessor
 	Set<Direction> getDirections();

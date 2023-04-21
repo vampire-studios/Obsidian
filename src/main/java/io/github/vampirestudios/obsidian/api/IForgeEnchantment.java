@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.MobType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public interface IForgeEnchantment {
     private Enchantment self()
@@ -19,18 +19,18 @@ public interface IForgeEnchantment {
     }
 
     /**
-     * ItemStack aware version of {@link Enchantment#getAttackDamage(int, EntityGroup)}
+     * ItemStack aware version of {@link Enchantment#getDamageBonus(int, MobType)}
      * @param level the level of the enchantment
      * @param mobType the mob type being attacked
      * @param enchantedItem the item used for the attack
      * @return the damage bonus
      */
-    default float getDamageBonus(int level, EntityGroup mobType, ItemStack enchantedItem) {
-        return self().getAttackDamage(level, mobType);
+    default float getDamageBonus(int level, MobType mobType, ItemStack enchantedItem) {
+        return self().getDamageBonus(level, mobType);
     }
 
     /**
-     * This applies specifically to applying at the enchanting table. The other method {@link Enchantment#isAcceptableItem(ItemStack)}
+     * This applies specifically to applying at the enchanting table. The other method {@link Enchantment#canEnchant(ItemStack)}
      * applies for <i>all possible</i> enchantments.
      */
     default boolean canApplyAtEnchantingTable(ItemStack stack) {

@@ -1,32 +1,32 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.item.DyeableItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.DyeableLeatherItem;
+import net.minecraft.world.item.ItemStack;
 
-public class DyeableItemImpl extends ItemImpl implements DyeableItem {
+public class DyeableItemImpl extends ItemImpl implements DyeableLeatherItem {
 
     public io.github.vampirestudios.obsidian.api.obsidian.item.Item item;
 
-    public DyeableItemImpl(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Settings settings) {
+    public DyeableItemImpl(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Properties settings) {
         super(item, settings);
         this.item = item;
     }
 
     @Override
     public int getColor(ItemStack stack) {
-        NbtCompound nbtCompound = stack.getSubNbt("display");
+        CompoundTag nbtCompound = stack.getTagElement("display");
         return nbtCompound != null && nbtCompound.contains("color", 99) ? nbtCompound.getInt("color") : item.information.defaultColor;
     }
 
     @Override
     public void setColor(ItemStack stack, int color) {
-        DyeableItem.super.setColor(stack, color);
+        DyeableLeatherItem.super.setColor(stack, color);
         if (color == item.information.defaultColor) {
-            stack.addHideFlag(ItemStack.TooltipSection.DYE);
+            stack.hideTooltipPart(ItemStack.TooltipPart.DYE);
         } else {
-            NbtCompound nbtCompound = stack.getOrCreateNbt();
-            nbtCompound.putInt("HideFlags", nbtCompound.getInt("HideFlags") |~ ItemStack.TooltipSection.DYE.getFlag());
+            CompoundTag nbtCompound = stack.getOrCreateTag();
+            nbtCompound.putInt("HideFlags", nbtCompound.getInt("HideFlags") |~ ItemStack.TooltipPart.DYE.getMask());
         }
     }
 

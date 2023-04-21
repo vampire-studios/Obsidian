@@ -1,8 +1,8 @@
 package net.fabricmc.fabric.api.item.v1.elytra;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ElytraItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ElytraItem;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * An interface to implement on all custom elytras.
@@ -16,6 +16,6 @@ public interface FabricElytraExtensions {
 	 * @return {@code true} if the elytra is usable
 	 */
 	default boolean isUsable(ItemStack stack, LivingEntity user) {
-		return ElytraItem.isUsable(stack);
+		return ElytraItem.isFlyEnabled(stack);
 	}
 }

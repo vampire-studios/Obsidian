@@ -18,13 +18,11 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.controls.KeyBindsList;
+import net.minecraft.network.chat.Component;
 import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
@@ -36,31 +34,32 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ControlsListWidget.KeyBindingEntry.class)
-public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry implements KeyBindTooltipHolder {
+@Mixin(KeyBindsList.KeyEntry.class)
+public abstract class KeyBindEntryMixin extends KeyBindsList.Entry implements KeyBindTooltipHolder {
 	@Shadow
 	@Final
-	private KeyBinding binding;
+	private KeyMapping binding;
 
 	@Shadow
 	@Final
-	private ButtonWidget editButton;
+	private Button editButton;
 
 	@Unique
-	private List<InputUtil.Key> quilt$previousProtoChord;
+	private List<InputConstants.Key> quilt$previousProtoChord;
 
 	@Unique
-	private static List<InputUtil.Key> quilt$changedProtoChord;
+	private static List<InputConstants.Key> quilt$changedProtoChord;
 
 	@Unique
 	private boolean quilt$addKeyNameToTooltip;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initPreviousBoundKey(ControlsListWidget list, KeyBinding key, Text text, CallbackInfo ci) {
+	private void initPreviousBoundKey(KeyBindsList list, KeyMapping key, Component text, CallbackInfo ci) {
 		quilt$previousProtoChord = null;
 		quilt$changedProtoChord = null;
 		quilt$addKeyNameToTooltip = false;
@@ -76,23 +75,23 @@ public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry impleme
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void shortenText(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
+	private void shortenText(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
 		// TODO - Get client from the parent screen instead
-		MinecraftClient client = MinecraftClient.getInstance();
-		Text text = this.editButton.getMessage();
+		Minecraft client = Minecraft.getInstance();
+		Component text = this.editButton.getMessage();
 		int targetWidth = /*bl || bl2 ? 50 - 10 : */75 - 10;
-		if (client.textRenderer.getWidth(text) > targetWidth) {
+		if (client.font.width(text) > targetWidth) {
 			StringBuilder protoText = new StringBuilder(text.getString());
 			if (this.binding.getBoundChord() != null) {
 				protoText = new StringBuilder();
 				KeyChord chord = this.binding.getBoundChord();
 
-				for (InputUtil.Key key : chord.keys.keySet()) {
+				for (InputConstants.Key key : chord.keys.keySet()) {
 					if (protoText.length() > 0) {
 						protoText.append(" + ");
 					}
 
-					StringBuilder keyString = new StringBuilder(key.getLocalizedText().getString());
+					StringBuilder keyString = new StringBuilder(key.getDisplayName().getString());
 
 					if (keyString.length() > 3) {
 						String[] keySegments = keyString.toString().split(" ");
@@ -106,17 +105,17 @@ public abstract class KeyBindEntryMixin extends ControlsListWidget.Entry impleme
 				}
 			}
 
-			if (client.textRenderer.getWidth(protoText.toString()) > targetWidth) {
+			if (client.font.width(protoText.toString()) > targetWidth) {
 				if (quilt$addKeyNameToTooltip) {
 //					this.quilt$conflictTooltips.add(0, this.binding.getBoundKeyLocalizedText());
 					quilt$addKeyNameToTooltip = false;
 				}
 
-				protoText = new StringBuilder(client.textRenderer.trimToWidth(protoText.toString(), targetWidth));
+				protoText = new StringBuilder(client.font.plainSubstrByWidth(protoText.toString(), targetWidth));
 				protoText.append("...");
 			}
 
-			this.editButton.setMessage(Text.literal(protoText.toString()));
+			this.editButton.setMessage(Component.literal(protoText.toString()));
 		}
 	}
 }

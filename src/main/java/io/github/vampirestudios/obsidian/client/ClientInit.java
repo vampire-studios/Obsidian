@@ -2,6 +2,7 @@ package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
@@ -20,8 +21,7 @@ import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.util.ModelIdentifier;
-
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +34,7 @@ public class ClientInit implements ClientModInitializer {
      * <code>Map< AddonID, Map< LanguageID, Map< TranslationKey, Translation > > ></code>
      */
     private static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
-    public static final List<ModelIdentifier> customModels = new ArrayList<>();
+    public static final List<ModelResourceLocation> customModels = new ArrayList<>();
 
     public static void addTranslation( String addonId, String languageId, String translationKey, String translation ) {
         synchronized (translationMap) {
@@ -46,7 +46,7 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getGameVersion().getName()));
+        Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().getName()));
 
         EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
         for (var addonPack : ObsidianAddonLoader.OBSIDIAN_ADDONS) {

@@ -6,12 +6,12 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.client.render.entity.animation.Animation;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.client.animation.AnimationDefinition;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,35 +24,35 @@ import java.util.concurrent.Executor;
 
 public class AnimationManager implements SimpleResourceReloadListener<AnimationManager.AnimationLoader> {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Obsidian Animation Manager");
-	private Map<Identifier, Animation> animations;
+	private Map<ResourceLocation, AnimationDefinition> animations;
 
-	public Animation getAnimation(Identifier id) {
+	public AnimationDefinition getAnimation(ResourceLocation id) {
 		return animations.get(id);
 	}
 
 	@Override
-	public CompletableFuture<AnimationLoader> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<AnimationLoader> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> new AnimationLoader(manager, profiler), executor);
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(AnimationLoader prepared, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(AnimationLoader prepared, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
 		this.animations = prepared.getAnimations();
 		return CompletableFuture.runAsync(() -> {
 		});
 	}
 
 	@Override
-	public Identifier getFabricId() {
-		return new Identifier("obsidian", "animation_reloader");
+	public ResourceLocation getFabricId() {
+		return new ResourceLocation("obsidian", "animation_reloader");
 	}
 
 	public static class AnimationLoader {
 		private final ResourceManager manager;
-		private final Profiler profiler;
-		private final Map<Identifier, Animation> animations = new HashMap<>();
+		private final ProfilerFiller profiler;
+		private final Map<ResourceLocation, AnimationDefinition> animations = new HashMap<>();
 
-		public AnimationLoader(ResourceManager manager, Profiler profiler) {
+		public AnimationLoader(ResourceManager manager, ProfilerFiller profiler) {
 			this.manager = manager;
 			this.profiler = profiler;
 			loadAnimations();
@@ -60,34 +60,34 @@ public class AnimationManager implements SimpleResourceReloadListener<AnimationM
 
 		private void loadAnimations() {
 			profiler.push("Load Animations");
-			Map<Identifier, Resource> resources = manager.findResources("animations", id -> id.getPath().endsWith(".json"));
-			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
+			Map<ResourceLocation, Resource> resources = manager.listResources("animations", id -> id.getPath().endsWith(".json"));
+			for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
 				addAnimation(entry.getKey(), entry.getValue());
 			}
 			profiler.pop();
 		}
 
-		private void addAnimation(Identifier id, Resource resource) {
+		private void addAnimation(ResourceLocation id, Resource resource) {
 			BufferedReader reader;
 			try {
-				reader = resource.getReader();
+				reader = resource.openAsReader();
 			} catch (IOException e) {
 				LOGGER.error(String.format("Unable to open BufferedReader for id %s", id), e);
 				return;
 			}
 
-			JsonObject json = JsonHelper.deserialize(reader);
-			DataResult<Pair<Animation, JsonElement>> result = Codecs.Animations.ANIMATION.decode(JsonOps.INSTANCE, json);
+			JsonObject json = GsonHelper.parse(reader);
+			DataResult<Pair<AnimationDefinition, JsonElement>> result = Codecs.Animations.ANIMATION.decode(JsonOps.INSTANCE, json);
 
 			if (result.error().isPresent()) {
 				LOGGER.error(String.format("Unable to parse animation file %s.\nReason: %s", id, result.error().get().message()));
 				return;
 			}
 
-			animations.put(new Identifier(id.getNamespace(), id.getPath().substring("animations/".length())), result.result().get().getFirst());
+			animations.put(new ResourceLocation(id.getNamespace(), id.getPath().substring("animations/".length())), result.result().get().getFirst());
 		}
 
-		public Map<Identifier, Animation> getAnimations() {
+		public Map<ResourceLocation, AnimationDefinition> getAnimations() {
 			return animations;
 		}
 	}

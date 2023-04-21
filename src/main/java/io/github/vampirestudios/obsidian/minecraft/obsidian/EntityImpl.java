@@ -8,32 +8,36 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviou
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.RandomLookAroundBehaviourComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.TemptBehaviourComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
-import net.minecraft.entity.AnimationState;
-import net.minecraft.entity.EntityType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EntityImpl extends PathAwareEntity {
+public class EntityImpl extends PathfinderMob {
     private final Entity entity;
     private final float health;
     private final Map<String, Component> components;
     private final BreathableComponent breathableComponent;
-    public final Map<AnimationState, Identifier> animationStates = new HashMap<>();
+    public final Map<AnimationState, ResourceLocation> animationStates = new HashMap<>();
 
-    public EntityImpl(EntityType<EntityImpl> type, World world, Entity entity, float health, BreathableComponent breathableComponent) {
+    public EntityImpl(EntityType<EntityImpl> type, Level world, Entity entity, float health, BreathableComponent breathableComponent) {
         super(type, world);
         this.entity = entity;
         this.health = health;
@@ -43,13 +47,13 @@ public class EntityImpl extends PathAwareEntity {
     }
 
     @Override
-    public boolean canBreatheInWater() {
+    public boolean canBreatheUnderwater() {
         return breathableComponent.breathes_water;
     }
 
     @Override
-    public float getPathfindingFavor(BlockPos pos, WorldView world) {
-        return super.getPathfindingFavor(pos, world);
+    public float getWalkTargetValue(BlockPos pos, LevelReader world) {
+        return super.getWalkTargetValue(pos, world);
     }
 
     @Override
@@ -68,8 +72,8 @@ public class EntityImpl extends PathAwareEntity {
     }
 
     @Override
-    protected void initGoals() {
-        super.initGoals();
+    protected void registerGoals() {
+        super.registerGoals();
         if (entity == null) return;
 
         BasicMovementComponent basicMovementComponent = null;
@@ -78,7 +82,7 @@ public class EntityImpl extends PathAwareEntity {
             basicMovementComponent = basicMovementComponent1;
         }
         assert basicMovementComponent != null;
-        this.goalSelector.add(1, new WanderAroundFarGoal(this, 1.0D));
+        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0D));
 
         PanicBehaviourComponent panicBehaviourComponent = null;
         c = components.get("minecraft:behaviour.panic");
@@ -86,7 +90,7 @@ public class EntityImpl extends PathAwareEntity {
             panicBehaviourComponent = panicBehaviourComponent1;
         }
         assert panicBehaviourComponent != null;
-        this.goalSelector.add(panicBehaviourComponent.priority, new EscapeDangerGoal(this, panicBehaviourComponent.speed_multiplier));
+        this.goalSelector.addGoal(panicBehaviourComponent.priority, new PanicGoal(this, panicBehaviourComponent.speed_multiplier));
 
         TemptBehaviourComponent temptBehaviourComponent = null;
         c = components.get("minecraft:behaviour.tempt");
@@ -95,8 +99,8 @@ public class EntityImpl extends PathAwareEntity {
         }
         assert temptBehaviourComponent != null;
         List<ItemStack> temptItems = new ArrayList<>();
-        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(Registries.ITEM.get(Identifier.tryParse(item)))));
-        this.goalSelector.add(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.ofStacks(temptItems.stream()), temptBehaviourComponent.can_be_scared));
+        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item)))));
+        this.goalSelector.addGoal(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.of(temptItems.stream()), temptBehaviourComponent.can_be_scared));
 
         RandomLookAroundBehaviourComponent randomLookAroundBehaviourComponent = null;
         c = components.get("minecraft:behaviour.random_look_around");
@@ -104,7 +108,7 @@ public class EntityImpl extends PathAwareEntity {
             randomLookAroundBehaviourComponent = randomLookAroundBehaviourComponent1;
         }
         assert randomLookAroundBehaviourComponent != null;
-        this.goalSelector.add(randomLookAroundBehaviourComponent.priority, new LookAroundGoal(this));
+        this.goalSelector.addGoal(randomLookAroundBehaviourComponent.priority, new RandomLookAroundGoal(this));
 
         LookAtPlayerBehaviourComponent lookAtPlayerBehaviourComponent = null;
         c = components.get("minecraft:behaviour.look_at_player");
@@ -112,7 +116,7 @@ public class EntityImpl extends PathAwareEntity {
             lookAtPlayerBehaviourComponent = lookAtPlayerBehaviourComponent1;
         }
         assert lookAtPlayerBehaviourComponent != null;
-        this.goalSelector.add(lookAtPlayerBehaviourComponent.priority, new LookAtEntityGoal(this, PlayerEntity.class, lookAtPlayerBehaviourComponent.look_distance, lookAtPlayerBehaviourComponent.probability));
+        this.goalSelector.addGoal(lookAtPlayerBehaviourComponent.priority, new LookAtPlayerGoal(this, Player.class, lookAtPlayerBehaviourComponent.look_distance, lookAtPlayerBehaviourComponent.probability));
     }
 
 }

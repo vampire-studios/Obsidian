@@ -2,12 +2,12 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.AttackDamage;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.ProtectionAmount;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.MobType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public class EnchantmentImpl extends Enchantment {
     private final io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment enchantment;
@@ -23,7 +23,7 @@ public class EnchantmentImpl extends Enchantment {
     }
 
     @Override
-    public int getMinPower(int level) {
+    public int getMinCost(int level) {
         return enchantment.getMinimumPower(level);
     }
 
@@ -33,15 +33,15 @@ public class EnchantmentImpl extends Enchantment {
     }
 
     @Override
-    public int getMaxPower(int level) {
+    public int getMaxCost(int level) {
         return enchantment.getMaximumPower(level);
     }
 
     @Override
-    public int getProtectionAmount(int level, DamageSource source) {
+    public int getDamageProtection(int level, DamageSource source) {
         if (enchantment.protectionAmounts != null) {
             for (ProtectionAmount protectionAmount : enchantment.protectionAmounts) {
-                if (protectionAmount.level == level && protectionAmount.getDamageSource(source.getSource()) == source) {
+                if (protectionAmount.level == level && protectionAmount.getDamageSource(source.getDirectEntity()) == source) {
                     return protectionAmount.protection_amount;
                 }
             }
@@ -50,7 +50,7 @@ public class EnchantmentImpl extends Enchantment {
     }
 
     @Override
-    public float getAttackDamage(int level, EntityGroup group) {
+    public float getDamageBonus(int level, MobType group) {
         if (enchantment.attackDamages != null) {
             for (AttackDamage attackDamage : enchantment.attackDamages) {
                 if (attackDamage.level == level && attackDamage.getEntityGroup() == group) {
@@ -62,12 +62,12 @@ public class EnchantmentImpl extends Enchantment {
     }
 
     @Override
-    public boolean isTreasure() {
+    public boolean isTreasureOnly() {
         return enchantment.treasure;
     }
 
     @Override
-    public boolean isCursed() {
+    public boolean isCurse() {
         return enchantment.curse;
     }
 
@@ -77,12 +77,12 @@ public class EnchantmentImpl extends Enchantment {
     }
 
     @Override
-    public boolean isAvailableForEnchantedBookOffer() {
+    public boolean isTradeable() {
         return enchantment.tradeable;
     }
 
     @Override
-    public boolean isAvailableForRandomSelection() {
+    public boolean isDiscoverable() {
         return enchantment.discoverable;
     }
 
@@ -92,10 +92,10 @@ public class EnchantmentImpl extends Enchantment {
     }
 
     @Override
-    protected boolean canAccept(Enchantment other) {
+    protected boolean checkCompatibility(Enchantment other) {
         if (enchantment.blacklistedEnchantments != null) {
-            Identifier enchantmentId = Registries.ENCHANTMENT.getId(other);
-            for (Identifier identifier : enchantment.blacklistedEnchantments) {
+            ResourceLocation enchantmentId = BuiltInRegistries.ENCHANTMENT.getKey(other);
+            for (ResourceLocation identifier : enchantment.blacklistedEnchantments) {
                 if(identifier.equals(enchantmentId)) return false;
             }
         }
@@ -103,10 +103,10 @@ public class EnchantmentImpl extends Enchantment {
     }
 
     @Override
-    public boolean isAcceptableItem(ItemStack stack) {
+    public boolean canEnchant(ItemStack stack) {
         if (enchantment.acceptedItems != null) {
-            Identifier itemId = Registries.ITEM.getId(stack.getItem());
-            for (Identifier identifier : enchantment.acceptedItems) {
+            ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            for (ResourceLocation identifier : enchantment.acceptedItems) {
                 if(identifier.equals(itemId)) return true;
             }
             return false;

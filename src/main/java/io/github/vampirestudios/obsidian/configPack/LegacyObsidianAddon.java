@@ -1,11 +1,10 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import net.minecraft.resource.DirectoryResourcePack;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ZipResourcePack;
-
 import java.io.File;
+import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PathPackResources;
 
 public class LegacyObsidianAddon implements IAddonPack {
 
@@ -33,10 +32,10 @@ public class LegacyObsidianAddon implements IAddonPack {
     }
 
     @Override
-    public ResourcePack getVirtualResourcePack() {
+    public PackResources getVirtualResourcePack() {
         if (file == null) return null;
-        if (file.isDirectory()) return new DirectoryResourcePack(obsidianAddonInfo.folderName, file.toPath(), false);
-        return new ZipResourcePack(obsidianAddonInfo.folderName, file, false);
+        if (file.isDirectory()) return new PathPackResources(obsidianAddonInfo.folderName, file.toPath(), false);
+        return new FilePackResources(obsidianAddonInfo.folderName, file, false);
     }
 
 }

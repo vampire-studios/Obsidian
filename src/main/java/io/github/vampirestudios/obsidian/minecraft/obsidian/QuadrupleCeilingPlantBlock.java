@@ -2,135 +2,134 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.PlantBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public class QuadrupleCeilingPlantBlock extends PlantBlock {
+public class QuadrupleCeilingPlantBlock extends BushBlock {
     public static final EnumProperty<QuadrupleBlockPart> PART = CProperties.QUADRUPLE_BLOCK_PART;
 
-    public QuadrupleCeilingPlantBlock(Settings settings) {
-        super(settings.offset(OffsetType.XZ));
-        this.setDefaultState(this.stateManager.getDefaultState().with(PART, QuadrupleBlockPart.UPPER));
+    public QuadrupleCeilingPlantBlock(Properties settings) {
+        super(settings.offsetType(OffsetType.XZ));
+        this.registerDefaultState(this.stateDefinition.any().setValue(PART, QuadrupleBlockPart.UPPER));
     }
 
-    protected boolean canPlantBelow(BlockState state, BlockView world, BlockPos pos) {
-        return this.canPlantOnTop(state, world, pos);
+    protected boolean canPlantBelow(BlockState state, BlockGetter world, BlockPos pos) {
+        return this.mayPlaceOn(state, world, pos);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(PART);
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
-        QuadrupleBlockPart part = state.get(PART);
+    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
+        QuadrupleBlockPart part = state.getValue(PART);
         if (direction == Direction.UP && part != QuadrupleBlockPart.LOWER) {
             Block block = newState.getBlock();
-            if (block != this) return Blocks.AIR.getDefaultState();
+            if (block != this) return Blocks.AIR.defaultBlockState();
         } else if (direction == Direction.DOWN && part != QuadrupleBlockPart.UPPER) {
             Block block = newState.getBlock();
-            if (block != this) return Blocks.AIR.getDefaultState();
+            if (block != this) return Blocks.AIR.defaultBlockState();
         }
 
-        return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);
+        return super.updateShape(state, direction, newState, world, pos, posFrom);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockPos blockPos = ctx.getBlockPos();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockPos blockPos = ctx.getClickedPos();
         return blockPos.getY() > 0 &&
-                ctx.getWorld().getBlockState(blockPos.down(1)).canReplace(ctx) &&
-                ctx.getWorld().getBlockState(blockPos.down(2)).canReplace(ctx) &&
-                ctx.getWorld().getBlockState(blockPos.down(3)).canReplace(ctx)
-                ? super.getPlacementState(ctx)
+                ctx.getLevel().getBlockState(blockPos.below(1)).canBeReplaced(ctx) &&
+                ctx.getLevel().getBlockState(blockPos.below(2)).canBeReplaced(ctx) &&
+                ctx.getLevel().getBlockState(blockPos.below(3)).canBeReplaced(ctx)
+                ? super.getStateForPlacement(ctx)
                 : null;
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        world.setBlockState(pos.down(1), this.getDefaultState().with(PART, QuadrupleBlockPart.UPPER_MIDDLE), 3);
-        world.setBlockState(pos.down(2), this.getDefaultState().with(PART, QuadrupleBlockPart.LOWER_MIDDLE), 3);
-        world.setBlockState(pos.down(3), this.getDefaultState().with(PART, QuadrupleBlockPart.LOWER), 3);
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        world.setBlock(pos.below(1), this.defaultBlockState().setValue(PART, QuadrupleBlockPart.UPPER_MIDDLE), 3);
+        world.setBlock(pos.below(2), this.defaultBlockState().setValue(PART, QuadrupleBlockPart.LOWER_MIDDLE), 3);
+        world.setBlock(pos.below(3), this.defaultBlockState().setValue(PART, QuadrupleBlockPart.LOWER), 3);
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        if (state.get(PART) == QuadrupleBlockPart.UPPER) {
-            BlockPos blockPos = pos.up();
+    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+        if (state.getValue(PART) == QuadrupleBlockPart.UPPER) {
+            BlockPos blockPos = pos.above();
             return this.canPlantBelow(world.getBlockState(blockPos), world, pos);
         } else {
-            BlockState blockState = world.getBlockState(pos.up());
-            return blockState.isOf(this) && blockState.get(PART) == QuadrupleBlockPart.UPPER;
+            BlockState blockState = world.getBlockState(pos.above());
+            return blockState.is(this) && blockState.getValue(PART) == QuadrupleBlockPart.UPPER;
         }
     }
 
     @Override
-    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
-        super.afterBreak(world, player, pos, Blocks.AIR.getDefaultState(), blockEntity, stack);
+    public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
+        super.playerDestroy(world, player, pos, Blocks.AIR.defaultBlockState(), blockEntity, stack);
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (!world.isClient) {
+    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+        if (!world.isClientSide) {
             if (player.isCreative()) {
                 onBreakInCreative(world, pos, state, player);
             } else {
-                dropStacks(state, world, pos, null, player, player.getMainHandStack());
+                dropResources(state, world, pos, null, player, player.getMainHandItem());
             }
         }
 
-        super.onBreak(world, pos, state, player);
+        super.playerWillDestroy(world, pos, state, player);
     }
 
-    protected static void onBreakInCreative(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    protected static void onBreakInCreative(Level world, BlockPos pos, BlockState state, Player player) {
         ArrayList<BlockPos> positions = new ArrayList<>();
-        QuadrupleBlockPart tripleBlockPart = state.get(PART);
+        QuadrupleBlockPart tripleBlockPart = state.getValue(PART);
 
         if (tripleBlockPart == QuadrupleBlockPart.UPPER) {
-            positions.add(pos.down(1));
-            positions.add(pos.down(2));
+            positions.add(pos.below(1));
+            positions.add(pos.below(2));
         } else if (tripleBlockPart == QuadrupleBlockPart.LOWER_MIDDLE) {
-            positions.add(pos.down(1));
-            positions.add(pos.up(1));
+            positions.add(pos.below(1));
+            positions.add(pos.above(1));
         } else if (tripleBlockPart == QuadrupleBlockPart.UPPER_MIDDLE) {
-            positions.add(pos.down(1));
-            positions.add(pos.down(2));
-            positions.add(pos.up(1));
+            positions.add(pos.below(1));
+            positions.add(pos.below(2));
+            positions.add(pos.above(1));
         } else if (tripleBlockPart == QuadrupleBlockPart.LOWER) {
-            positions.add(pos.up(1));
-            positions.add(pos.up(2));
+            positions.add(pos.above(1));
+            positions.add(pos.above(2));
         }
 
         positions.forEach((blockPos) -> {
-            world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 35);
-            world.syncWorldEvent(player, 2001, blockPos, Block.getRawIdFromState(state));
+            world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 35);
+            world.levelEvent(player, 2001, blockPos, Block.getId(state));
         });
     }
 
     @SuppressWarnings("deprecation")
     @Override
     @Environment(EnvType.CLIENT)
-    public long getRenderingSeed(BlockState state, BlockPos pos) {
-        return MathHelper.hashCode(pos.getX(), pos.down(state.get(PART) == QuadrupleBlockPart.LOWER ? 0 : 1).getY(), pos.getZ());
+    public long getSeed(BlockState state, BlockPos pos) {
+        return Mth.getSeed(pos.getX(), pos.below(state.getValue(PART) == QuadrupleBlockPart.LOWER ? 0 : 1).getY(), pos.getZ());
     }
 }

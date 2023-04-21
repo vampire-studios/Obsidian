@@ -18,7 +18,7 @@ package org.quiltmc.qsl.key.binds.api;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class KeyBindRegistry {
 	 * @param translationKey the key bind's translation key
 	 * @return the key bind if found, {@code null} otherwise
 	 */
-	public static KeyBinding getKeyBind(String translationKey) {
+	public static KeyMapping getKeyBind(String translationKey) {
 		return KeyBindRegistryImpl.getKeyBind(translationKey);
 	}
 
@@ -48,7 +48,7 @@ public class KeyBindRegistry {
 	 *
 	 * @return a list containing key binds
 	 */
-	public static List<KeyBinding> getAllKeyBinds() {
+	public static List<KeyMapping> getAllKeyBinds() {
 		return KeyBindRegistryImpl.getAllKeyBinds();
 	}
 }

@@ -1,53 +1,52 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
-import net.minecraft.world.World;
-
 import java.util.List;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 
 public class FoodItemImpl extends Item {
 
     public io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem item;
 
-    public FoodItemImpl(io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem item, Settings settings) {
+    public FoodItemImpl(io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem item, Properties settings) {
         super(settings);
         this.item = item;
     }
 
     @Override
-    public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        super.finishUsing(stack, world, user);
-        if (user instanceof ServerPlayerEntity serverPlayerEntity) {
-            Criteria.CONSUME_ITEM.trigger(serverPlayerEntity, stack);
-            serverPlayerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
+    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity user) {
+        super.finishUsingItem(stack, world, user);
+        if (user instanceof ServerPlayer serverPlayerEntity) {
+            CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayerEntity, stack);
+            serverPlayerEntity.awardStat(Stats.ITEM_USED.get(this));
         }
 
         if (stack.isEmpty()) {
             if (item.food_information.returnItem != null) {
-                return new ItemStack(Registries.ITEM.get(item.food_information.returnItem));
+                return new ItemStack(BuiltInRegistries.ITEM.get(item.food_information.returnItem));
             } else {
                 return ItemStack.EMPTY;
             }
         } else {
-            if (user instanceof PlayerEntity playerEntity && !((PlayerEntity)user).getAbilities().creativeMode) {
-                ItemStack itemStack = new ItemStack(Registries.ITEM.get(item.food_information.returnItem));
-                if (!playerEntity.getInventory().insertStack(itemStack)) {
-                    playerEntity.dropItem(itemStack, false);
+            if (user instanceof Player playerEntity && !((Player)user).getAbilities().instabuild) {
+                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(item.food_information.returnItem));
+                if (!playerEntity.getInventory().add(itemStack)) {
+                    playerEntity.drop(itemStack, false);
                 }
             }
 
@@ -56,32 +55,32 @@ public class FoodItemImpl extends Item {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getUseDuration(ItemStack stack) {
         return item.food_information.use_time;
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return item.food_information.drinkable ? UseAction.DRINK : UseAction.EAT;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return item.food_information.drinkable ? UseAnim.DRINK : UseAnim.EAT;
     }
 
     @Override
-    public SoundEvent getDrinkSound() {
-        return Registries.SOUND_EVENT.get(item.food_information.drinkSound);
+    public SoundEvent getDrinkingSound() {
+        return BuiltInRegistries.SOUND_EVENT.get(item.food_information.drinkSound);
     }
 
     @Override
-    public SoundEvent getEatSound() {
-        return Registries.SOUND_EVENT.get(item.food_information.eatSound);
+    public SoundEvent getEatingSound() {
+        return BuiltInRegistries.SOUND_EVENT.get(item.food_information.eatSound);
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        return ItemUsage.consumeHeldItem(world, user, hand);
+    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+        return ItemUtils.startUsingInstantly(world, user, hand);
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         return item.information.hasEnchantmentGlint;
     }
 
@@ -91,17 +90,17 @@ public class FoodItemImpl extends Item {
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
         return item.information.enchantability;
     }
 
     @Override
-    public Text getName() {
+    public Component getDescription() {
         return item.information.name.getName("item");
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
+    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
         if (item.display != null && item.display.lore.length != 0) {
             for (TooltipInformation tooltipInformation : item.display.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));

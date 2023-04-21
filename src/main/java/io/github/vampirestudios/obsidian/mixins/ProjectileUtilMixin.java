@@ -16,10 +16,10 @@
 
 package io.github.vampirestudios.obsidian.mixins;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,12 +27,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ProjectileUtil.class)
 public abstract class ProjectileUtilMixin {
-	private static final Hand[] HANDS = Hand.values(); // Cache the hands to not create the hands array each time the loop is run
+	private static final InteractionHand[] HANDS = InteractionHand.values(); // Cache the hands to not create the hands array each time the loop is run
 
 	// Because the uses of this method are hardcoded, checking each hand for the Quilt interfaces of the items is needed.
 	// Note: this does not cancel for the vanilla items unless they are holding a custom implementation of the items
 	@Inject(method = "getHandPossiblyHolding", at = @At(value = "HEAD"), cancellable = true)
-	private static void getHandPossiblyHolding(LivingEntity entity, Item item, CallbackInfoReturnable<Hand> cir) {
+	private static void getHandPossiblyHolding(LivingEntity entity, Item item, CallbackInfoReturnable<InteractionHand> cir) {
 		/*for (Hand hand : HANDS) {
 			if (item == Items.BOW) { // Make sure we only check for bows when searching for bows
 				if (entity.getStackInHand(hand).getItem() instanceof BowExtensions) {

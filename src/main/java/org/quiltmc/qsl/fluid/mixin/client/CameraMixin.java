@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.fluid.mixin.client;
 
-import net.minecraft.client.render.Camera;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
+import net.minecraft.client.Camera;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.material.FluidState;
 import org.quiltmc.qsl.fluid.impl.CameraExtensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,10 +28,10 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Camera.class)
 public class CameraMixin implements CameraExtensions {
 	@Shadow
-	private BlockView area;
+	private BlockGetter area;
 	@Shadow
 	@Final
-	private BlockPos.Mutable blockPos;
+	private BlockPos.MutableBlockPos blockPos;
 
 	/**
 	 * Returns the fluid in which the camera is submerged.

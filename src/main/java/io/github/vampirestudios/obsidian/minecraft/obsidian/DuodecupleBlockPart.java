@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.StringRepresentable;
 
-public enum DuodecupleBlockPart implements StringIdentifiable {
+public enum DuodecupleBlockPart implements StringRepresentable {
     TOP,
     UPPER,
     UPPER_MIDDLE,
@@ -18,11 +18,11 @@ public enum DuodecupleBlockPart implements StringIdentifiable {
 
     @Override
     public String toString() {
-        return this.asString();
+        return this.getSerializedName();
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return switch (this) {
             case TOP -> "top";
             case UPPER -> "upper";

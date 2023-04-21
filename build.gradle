@@ -47,8 +47,11 @@ dependencies {
 	def noQuiltMC = { exclude group: 'org.quiltmc' }
 
 	minecraft libs.minecraft
-	mappings libs.yarn.mappings
-//	mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
+	mappings loom.layered {
+		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
+//		it.parchment("org.parchmentmc.data:parchment-1.19.3:${libs.versions.parchment.get()}@zip")
+		it.officialMojangMappings()
+	}
 
 	modImplementation libs.fabric.loader
 

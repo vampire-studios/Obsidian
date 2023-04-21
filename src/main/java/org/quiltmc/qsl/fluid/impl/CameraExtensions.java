@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
-import net.minecraft.fluid.FluidState;
+import net.minecraft.world.level.material.FluidState;
 
 public interface CameraExtensions {
 	FluidState quilt$getSubmergedFluidState();

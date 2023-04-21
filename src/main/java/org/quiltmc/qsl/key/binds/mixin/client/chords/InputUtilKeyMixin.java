@@ -16,15 +16,15 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(InputUtil.Key.class)
-public abstract class InputUtilKeyMixin implements Comparable<InputUtil.Key> {
+@Mixin(InputConstants.Key.class)
+public abstract class InputUtilKeyMixin implements Comparable<InputConstants.Key> {
 	@Override
-	public int compareTo(InputUtil.Key key) {
-		return Integer.compare(this.getCode(), key.getCode());
+	public int compareTo(InputConstants.Key key) {
+		return Integer.compare(this.getCode(), key.getValue());
 	}
 
 	@Shadow

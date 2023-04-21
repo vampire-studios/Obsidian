@@ -16,16 +16,15 @@
 
 package org.quiltmc.qsl.key.binds.impl.chords;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
-import net.minecraft.client.util.InputUtil;
-
 import java.util.SortedMap;
 
 public class KeyChord {
 	// TODO - Private this, add methods for getting/modifying it
-	public SortedMap<InputUtil.Key, Boolean> keys = new Object2BooleanAVLTreeMap<>();
+	public SortedMap<InputConstants.Key, Boolean> keys = new Object2BooleanAVLTreeMap<>();
 
-	public KeyChord(SortedMap<InputUtil.Key, Boolean> keys) {
+	public KeyChord(SortedMap<InputConstants.Key, Boolean> keys) {
 		this.keys = keys;
 	}
 

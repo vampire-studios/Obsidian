@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.key.binds.api;
 
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public interface QuiltKeyBind {
 	/**
@@ -37,7 +37,7 @@ public interface QuiltKeyBind {
 	 *
 	 * @return the key bind's bound key
 	 */
-	default InputUtil.Key getBoundKey() {
+	default InputConstants.Key getBoundKey() {
 		throw new UnsupportedOperationException();
 	}
 }

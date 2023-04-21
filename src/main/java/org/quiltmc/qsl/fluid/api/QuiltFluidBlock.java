@@ -1,14 +1,14 @@
 package org.quiltmc.qsl.fluid.api;
 
-import net.minecraft.block.FluidBlock;
-import net.minecraft.fluid.FlowableFluid;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.material.FlowingFluid;
 
-public class QuiltFluidBlock extends FluidBlock {
+public class QuiltFluidBlock extends LiquidBlock {
 
 	/**
 	 * Utility class, to not deal with anonymous classes.
 	 */
-	public QuiltFluidBlock(FlowableFluid flowableFluid, Settings settings) {
+	public QuiltFluidBlock(FlowingFluid flowableFluid, Properties settings) {
 		super(flowableFluid, settings);
 	}
 }

@@ -1,16 +1,16 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class ShieldItem extends Item {
 
     @SerializedName("shield_base")
-    public Identifier shieldBase;
+    public ResourceLocation shieldBase;
     @SerializedName("shield_base_no_pattern")
-    public Identifier shieldBaseNoPattern;
+    public ResourceLocation shieldBaseNoPattern;
     public boolean can_have_banner = true;
     public int cooldownTicks;
-    public Identifier repairItem = new Identifier("air");
+    public ResourceLocation repairItem = new ResourceLocation("air");
 
 }

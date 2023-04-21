@@ -8,11 +8,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.FluidImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.fluid.FluidState;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import net.minecraft.world.level.material.FluidState;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -29,12 +28,12 @@ public class Fluids implements AddonModule {
 
             new FluidImpl(fluid) {
                 @Override
-                public boolean isStill(FluidState state) {
+                public boolean isSource(FluidState state) {
                     return false;
                 }
 
                 @Override
-                public int getLevel(FluidState state) {
+                public int getAmount(FluidState state) {
                     return 0;
                 }
             };

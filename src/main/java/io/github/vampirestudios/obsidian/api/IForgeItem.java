@@ -1,16 +1,16 @@
 package io.github.vampirestudios.obsidian.api;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.mob.PiglinBrain;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterials;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 public interface IForgeItem {
@@ -27,7 +27,7 @@ public interface IForgeItem {
 	 * @param displayName the name that will be displayed unless it is changed in
 	 *                    this method.
 	 */
-	default Text getHighlightTip(ItemStack item, Text displayName) {
+	default Component getHighlightTip(ItemStack item, Component displayName) {
 		return displayName;
 	}
 
@@ -37,7 +37,7 @@ public interface IForgeItem {
 	 * @return True if this item can be used as "currency" by piglins
 	 */
 	default boolean isPiglinCurrency(ItemStack stack) {
-		return stack.getItem() == PiglinBrain.BARTERING_ITEM;
+		return stack.getItem() == PiglinAi.BARTERING_ITEM;
 	}
 
 	/**
@@ -71,13 +71,13 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * ItemStack sensitive version of {@link Item#getEnchantability()}.
+	 * ItemStack sensitive version of {@link Item#getEnchantmentValue()}.
 	 *
 	 * @param stack The ItemStack
 	 * @return the enchantment value
 	 */
 	default int getEnchantmentValue(ItemStack stack) {
-		return self().getEnchantability();
+		return self().getEnchantmentValue();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public interface IForgeItem {
 	 * @return true if the enchantment can be applied to this item
 	 */
 	default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-		return enchantment.target.isAcceptableItem(stack.getItem());
+		return enchantment.category.canEnchant(stack.getItem());
 	}
 
 	/**
@@ -117,7 +117,7 @@ public interface IForgeItem {
 	 * @param endermanEntity The enderman that the player look
 	 * @return true if this Item can be used to hide player head for enderman
 	 */
-	default boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity) {
+	default boolean isEnderMask(ItemStack stack, Player player, EnderMan endermanEntity) {
 		return stack.getItem() == Blocks.CARVED_PUMPKIN.asItem();
 	}
 
@@ -126,7 +126,7 @@ public interface IForgeItem {
 	 *
 	 * @param stack the stack
 	 * @return the default hide flags
-	 * @see ItemStack.TooltipSection
+	 * @see ItemStack.TooltipPart
 	 */
 	default int getDefaultTooltipHideFlags(@NotNull ItemStack stack) {
 		return 0;

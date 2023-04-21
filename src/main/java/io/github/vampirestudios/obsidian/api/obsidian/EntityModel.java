@@ -2,16 +2,22 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.utils.Vec2i;
 import net.minecraft.client.model.*;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.core.Vec3i;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
 import java.util.List;
 
 public class EntityModel {
 
-    public Identifier name;
-    public Identifier animation;
+    public ResourceLocation name;
+    public ResourceLocation animation;
     public Bone[] bones;
     public int textureWidth;
     public int textureHeight;
@@ -36,35 +42,35 @@ public class EntityModel {
 
     }
 
-    public TexturedModelData getTexturedModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
+    public LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
         for (EntityModel.Bone part : bones) {
-            ModelPartBuilder modelPartBuilder = ModelPartBuilder.create();
+            CubeListBuilder modelPartBuilder = CubeListBuilder.create();
             for (EntityModel.Bone.Cube cube : part.cubes) {
-                modelPartBuilder.uv(cube.uv.x(), cube.uv.y());
-                Dilation dilation = Dilation.NONE;
-                if(cube.radiusArray != null) dilation.add(cube.radiusArray.getX(), cube.radiusArray.getY(), cube.radiusArray.getZ());
-                else dilation.add(cube.radius);
-                modelPartBuilder.cuboid(cube.origin.x(), cube.origin.y(), cube.origin.z(),
+                modelPartBuilder.texOffs(cube.uv.x(), cube.uv.y());
+                CubeDeformation dilation = CubeDeformation.NONE;
+                if(cube.radiusArray != null) dilation.extend(cube.radiusArray.getX(), cube.radiusArray.getY(), cube.radiusArray.getZ());
+                else dilation.extend(cube.radius);
+                modelPartBuilder.addBox(cube.origin.x(), cube.origin.y(), cube.origin.z(),
                         cube.size.x(), cube.size.y(), cube.size.z(), dilation);
-                modelPartBuilder.mirrored(cube.mirrored);
+                modelPartBuilder.mirror(cube.mirrored);
             }
             if (part.parent != null && !part.parent.isEmpty() && !part.parent.isBlank()) modelPartData.getChild(part.parent)
-                    .addChild(part.name, modelPartBuilder,
-                            ModelTransform.of(
+                    .addOrReplaceChild(part.name, modelPartBuilder,
+                            PartPose.offsetAndRotation(
                                     part.pivot.x(), part.pivot.y(), part.pivot.z(),
                                     part.rotation.x(), part.rotation.y(), part.rotation.z()
                             )
                     );
-            else modelPartData.addChild(part.name, modelPartBuilder,
-                    ModelTransform.of(
+            else modelPartData.addOrReplaceChild(part.name, modelPartBuilder,
+                    PartPose.offsetAndRotation(
                             part.pivot.x(), part.pivot.y(), part.pivot.z(),
                             part.rotation.x(), part.rotation.y(), part.rotation.z()
                     )
             );
         }
-        return TexturedModelData.of(modelData, textureWidth, textureHeight);
+        return LayerDefinition.create(modelData, textureWidth, textureHeight);
     }
 
 }

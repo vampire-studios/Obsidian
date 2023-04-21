@@ -7,13 +7,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 
 public class Block {
 
@@ -30,22 +29,22 @@ public class Block {
     public OreInformation ore_information;
     public FoodInformation food_information;
     public CampfireProperties campfire_properties;
-    public List<Identifier> can_plant_on = new ArrayList<>();
-    public Identifier particle_type;
+    public List<ResourceLocation> can_plant_on = new ArrayList<>();
+    public ResourceLocation particle_type;
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
     public Map<String, Event> events;
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
-    public Identifier placable_feature;
+    public ResourceLocation placable_feature;
     public Properties properties;
 
     public TooltipInformation[] lore = new TooltipInformation[0];
 
 
-	public List<net.minecraft.block.Block> getSupportableBlocks() {
-        List<net.minecraft.block.Block> blocks2 = new ArrayList<>();
-        can_plant_on.forEach(identifier -> blocks2.add(Registries.BLOCK.get(identifier)));
+	public List<net.minecraft.world.level.block.Block> getSupportableBlocks() {
+        List<net.minecraft.world.level.block.Block> blocks2 = new ArrayList<>();
+        can_plant_on.forEach(identifier -> blocks2.add(BuiltInRegistries.BLOCK.get(identifier)));
         return blocks2;
     }
 

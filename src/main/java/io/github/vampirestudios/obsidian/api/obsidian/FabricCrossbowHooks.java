@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ArrowItem;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ArrowItem;
 
 /**
  * An interface to implement on all custom crossbows.
@@ -14,7 +14,7 @@ public interface FabricCrossbowHooks {
      * @param arrowItem                  The arrow type
      * @param persistentProjectileEntity The arrow entity
      */
-    void createArrow(ArrowItem arrowItem, PersistentProjectileEntity persistentProjectileEntity);
+    void createArrow(ArrowItem arrowItem, AbstractArrow persistentProjectileEntity);
 
     /**
      * Gets the speed of the crossbow projectile.

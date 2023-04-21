@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class Elytra extends Item {
-    public Identifier texture;
+    public ResourceLocation texture;
     public boolean shouldRenderCapeTexture = false;
 }

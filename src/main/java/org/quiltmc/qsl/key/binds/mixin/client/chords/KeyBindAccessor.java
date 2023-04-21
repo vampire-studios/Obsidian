@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(KeyBinding.class)
+@Mixin(KeyMapping.class)
 public interface KeyBindAccessor {
 	@Accessor
 	int getTimesPressed();

@@ -3,20 +3,19 @@ package io.github.vampirestudios.obsidian.client;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 
 public class ModelGenerator {
 	public static class Element {
-		private Box box = new Box(0D, 0D, 0D, 1D, 1D, 1D);
+		private AABB box = new AABB(0D, 0D, 0D, 1D, 1D, 1D);
 		private final JsonObject faces = new JsonObject();
 
-		public Element box(Box b) {
+		public Element box(AABB b) {
 			box = b;
 			return this;
 		}
@@ -43,7 +42,7 @@ public class ModelGenerator {
 			Face f = new Face();
 			f.direction = direction;
 			consumer.accept(f);
-			faces.add(direction.asString(), f.toJson());
+			faces.add(direction.getSerializedName(), f.toJson());
 		}
 	}
 
@@ -59,7 +58,7 @@ public class ModelGenerator {
 			json.addProperty("texture", texture);
 
 			if (cullface != null) {
-				json.addProperty("cullface", cullface.asString());
+				json.addProperty("cullface", cullface.getSerializedName());
 			}
 
 			if (uv != null) {

@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api;
 
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 
 public interface ExtendedBlockSettings {
-    void obsidian$write(PacketByteBuf buf);
+    void obsidian$write(FriendlyByteBuf buf);
 }

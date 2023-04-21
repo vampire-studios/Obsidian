@@ -18,19 +18,18 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.KeyMapping;
 import org.quiltmc.qsl.key.binds.api.QuiltKeyBind;
 import org.quiltmc.qsl.key.binds.impl.InternalQuiltKeyBind;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.Map;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeyBinding.class)
+@Mixin(KeyMapping.class)
 public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind {
 	@Shadow
 	@Mutable
@@ -38,13 +37,13 @@ public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind
 	private static Map<String, Integer> CATEGORY_ORDER_MAP;
 
 	@Shadow
-	private InputUtil.Key boundKey;
+	private InputConstants.Key boundKey;
 
 	@Unique
 	private boolean quilt$vanilla;
 
 	@Inject(method = "<init>(Ljava/lang/String;Lnet/minecraft/client/util/InputUtil$Type;ILjava/lang/String;)V", at = @At("RETURN"))
-	private void addModdedCategory(String translationKey, InputUtil.Type type, int keyCode, String category, CallbackInfo ci) {
+	private void addModdedCategory(String translationKey, InputConstants.Type type, int keyCode, String category, CallbackInfo ci) {
 		if (!CATEGORY_ORDER_MAP.containsKey(category)) {
 			CATEGORY_ORDER_MAP.put(category, CATEGORY_ORDER_MAP.size() + 1);
 		}
@@ -63,7 +62,7 @@ public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind
 	}
 
 	@Override
-	public InputUtil.Key getBoundKey() {
+	public InputConstants.Key getBoundKey() {
 		return this.boundKey;
 	}
 }

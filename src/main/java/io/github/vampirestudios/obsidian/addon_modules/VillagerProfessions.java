@@ -9,12 +9,11 @@ import io.github.vampirestudios.obsidian.mixins.PointOfInterestTypesAccessor;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.object.builder.v1.villager.VillagerProfessionBuilder;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.poi.PointOfInterestType;
-
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,14 +28,14 @@ public class VillagerProfessions implements AddonModule {
         VillagerProfession villagerProfession = Obsidian.GSON.fromJson(new FileReader(file), VillagerProfession.class);
         try {
             if (villagerProfession == null) return;
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     villagerProfession.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (villagerProfession.name.id == null) villagerProfession.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
-            RegistryKey<PointOfInterestType> registryKey = RegistryKey.of(RegistryKeys.POINT_OF_INTEREST_TYPE, villagerProfession.poi.id);
+            if (villagerProfession.name.id == null) villagerProfession.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+            ResourceKey<PoiType> registryKey = ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, villagerProfession.poi.id);
             PointOfInterestTypesAccessor.callRegister(
-                    Registries.POINT_OF_INTEREST_TYPE,
+                    BuiltInRegistries.POINT_OF_INTEREST_TYPE,
                     registryKey,
                     villagerProfession.poi.getBlocks(), villagerProfession.poi.ticket_count,
                     villagerProfession.poi.search_distance
@@ -45,7 +44,7 @@ public class VillagerProfessions implements AddonModule {
                     .id(identifier)
                     .harvestableItems(villagerProfession.getHarvestableItems())
                     .workstation(registryKey)
-                    .workSound(Registries.SOUND_EVENT.get(villagerProfession.work_sound))
+                    .workSound(BuiltInRegistries.SOUND_EVENT.get(villagerProfession.work_sound))
                     .build();
             register(ContentRegistries.VILLAGER_PROFESSIONS, "villager_profession", identifier, villagerProfession);
         } catch (Exception e) {

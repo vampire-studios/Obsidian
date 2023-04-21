@@ -4,19 +4,25 @@ import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.minecraft.block.Block;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.structure.rule.*;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.YOffset;
-import net.minecraft.world.gen.heightprovider.HeightProvider;
-import net.minecraft.world.gen.heightprovider.TrapezoidHeightProvider;
-import net.minecraft.world.gen.heightprovider.UniformHeightProvider;
-
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
+import net.minecraft.world.level.levelgen.heightproviders.TrapezoidHeight;
+import net.minecraft.world.level.levelgen.heightproviders.UniformHeight;
+import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockStateMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RandomBlockMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RandomBlockStateMatchTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -25,11 +31,11 @@ public class OreInformation {
 
     public String test_type = "tag";
     public TargetState target_state;
-    public Identifier[] biomes;
+    public ResourceLocation[] biomes;
     public boolean triangleRange = false;
     public int plateau = 0;
     public String spawnPredicate = "built_in";
-    public List<RegistryKey<Biome>> biomeCategories;
+    public List<ResourceKey<Biome>> biomeCategories;
     public int size = 17;
     public int chance = 30;
     @SerializedName("discard_on_air_chance")
@@ -38,8 +44,8 @@ public class OreInformation {
     public CustomYOffset bottomOffset;
 
     public HeightProvider heightRange() {
-        return triangleRange ? TrapezoidHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset(), plateau)
-                : UniformHeightProvider.create(bottomOffset.yOffset(), topOffset.yOffset());
+        return triangleRange ? TrapezoidHeight.of(bottomOffset.yOffset(), topOffset.yOffset(), plateau)
+                : UniformHeight.of(bottomOffset.yOffset(), topOffset.yOffset());
     }
 
     public TagKey<Block> getBlockTag() {
@@ -52,12 +58,12 @@ public class OreInformation {
 
     public RuleTest ruleTest() {
         return switch (test_type) {
-            case "tag" -> new TagMatchRuleTest(getBlockTag());
-            case "always_true" -> AlwaysTrueRuleTest.INSTANCE;
-            case "block_match" -> new BlockMatchRuleTest(Registries.BLOCK.get(target_state.block));
-            case "block_state_match" -> new BlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registries.BLOCK.get(target_state.block), target_state.properties));
-            case "random_block_match" -> new RandomBlockMatchRuleTest(Registries.BLOCK.get(target_state.block), target_state.probability);
-            case "random_block_state_match" -> new RandomBlockStateMatchRuleTest(ObsidianAddonLoader.getState(Registries.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
+            case "tag" -> new TagMatchTest(getBlockTag());
+            case "always_true" -> AlwaysTrueTest.INSTANCE;
+            case "block_match" -> new BlockMatchTest(BuiltInRegistries.BLOCK.get(target_state.block));
+            case "block_state_match" -> new BlockStateMatchTest(ObsidianAddonLoader.getState(BuiltInRegistries.BLOCK.get(target_state.block), target_state.properties));
+            case "random_block_match" -> new RandomBlockMatchTest(BuiltInRegistries.BLOCK.get(target_state.block), target_state.probability);
+            case "random_block_state_match" -> new RandomBlockStateMatchTest(ObsidianAddonLoader.getState(BuiltInRegistries.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
             default -> throw new IllegalStateException("Unexpected value: " + test_type);
         };
     }
@@ -99,21 +105,21 @@ public class OreInformation {
         public String type = "fixed";
         public int offset = 0;
 
-        public YOffset yOffset() {
+        public VerticalAnchor yOffset() {
             return switch (type) {
-                case "fixed" -> new YOffset.Fixed(offset);
-                case "above_bottom" -> new YOffset.AboveBottom(offset);
-                case "below_top" -> new YOffset.BelowTop(offset);
-                case "bottom" -> YOffset.getBottom();
-                case "top" -> YOffset.getTop();
+                case "fixed" -> new VerticalAnchor.Absolute(offset);
+                case "above_bottom" -> new VerticalAnchor.AboveBottom(offset);
+                case "below_top" -> new VerticalAnchor.BelowTop(offset);
+                case "bottom" -> VerticalAnchor.bottom();
+                case "top" -> VerticalAnchor.top();
                 default -> throw new IllegalArgumentException();
             };
         }
     }
 
     protected static class TargetState {
-        public Identifier block;
-        public Identifier tag = new Identifier("base_stone_overworld");
+        public ResourceLocation block;
+        public ResourceLocation tag = new ResourceLocation("base_stone_overworld");
         public Map<String, String> properties;
         public float probability;
     }

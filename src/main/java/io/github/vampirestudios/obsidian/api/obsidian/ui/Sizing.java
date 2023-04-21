@@ -1,10 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
-import net.minecraft.util.JsonHelper;
-
 import java.util.Arrays;
 import java.util.Locale;
+import net.minecraft.util.GsonHelper;
 
 public class Sizing {
 	public SizingType type;
@@ -18,16 +17,16 @@ public class Sizing {
 
 	public static Sizing of(JsonObject type) {
 		Sizing sizing = new Sizing();
-		sizing.type = switch (JsonHelper.getString(type, "type").toUpperCase(Locale.ROOT)) {
+		sizing.type = switch (GsonHelper.getAsString(type, "type").toUpperCase(Locale.ROOT)) {
 			case "CONTENT" -> SizingType.CONTENT;
 			case "CONTENT_WITH_PADDING" -> SizingType.CONTENT_WITH_PADDING;
 			case "FIXED" -> SizingType.FIXED;
 			case "FILL" -> SizingType.FILL;
 			default -> throw new IllegalStateException("Unexpected value: " + Arrays.toString(SizingType.values()));
 		};
-		if (JsonHelper.hasNumber(type, "value")) sizing.value = JsonHelper.getInt(type, "value");
-		if (JsonHelper.hasNumber(type, "padding")) sizing.padding = JsonHelper.getInt(type, "padding");
-		if (JsonHelper.hasNumber(type, "percent")) sizing.percent = JsonHelper.getInt(type, "percent");
+		if (GsonHelper.isNumberValue(type, "value")) sizing.value = GsonHelper.getAsInt(type, "value");
+		if (GsonHelper.isNumberValue(type, "padding")) sizing.padding = GsonHelper.getAsInt(type, "padding");
+		if (GsonHelper.isNumberValue(type, "percent")) sizing.percent = GsonHelper.getAsInt(type, "percent");
 		return sizing;
 	}
 

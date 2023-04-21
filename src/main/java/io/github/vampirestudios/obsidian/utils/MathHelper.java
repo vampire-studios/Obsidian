@@ -1,8 +1,7 @@
 package io.github.vampirestudios.obsidian.utils;
 
-import net.minecraft.util.math.Vec3i;
-
 import java.util.Random;
+import net.minecraft.core.Vec3i;
 
 public class MathHelper {
 	private static final Vec3i[] RANDOM_OFFSETS = new Vec3i[3 * 3 * 3 - 1];

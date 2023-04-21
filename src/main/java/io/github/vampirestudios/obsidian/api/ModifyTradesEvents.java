@@ -2,15 +2,15 @@ package io.github.vampirestudios.obsidian.api;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.village.TradeOffer;
-import net.minecraft.village.TradeOffers;
-import net.minecraft.village.VillagerProfession;
+import net.minecraft.core.NonNullList;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -107,12 +107,12 @@ public final class ModifyTradesEvents {
     /**
      * Registers trades into a villager trade list.
      */
-    public static class TradeRegistry implements List<TradeOffers.Factory> {
+    public static class TradeRegistry implements List<VillagerTrades.ItemListing> {
 
-        private final List<TradeOffers.Factory> trades;
+        private final List<VillagerTrades.ItemListing> trades;
 
         public TradeRegistry() {
-            this.trades = DefaultedList.of();
+            this.trades = NonNullList.create();
         }
 
         @Override
@@ -132,7 +132,7 @@ public final class ModifyTradesEvents {
 
         @NotNull
         @Override
-        public Iterator<TradeOffers.Factory> iterator() {
+        public Iterator<VillagerTrades.ItemListing> iterator() {
             return this.trades.iterator();
         }
 
@@ -149,7 +149,7 @@ public final class ModifyTradesEvents {
         }
 
         @Override
-        public boolean add(TradeOffers.Factory listing) {
+        public boolean add(VillagerTrades.ItemListing listing) {
             return this.trades.add(listing);
         }
 
@@ -164,12 +164,12 @@ public final class ModifyTradesEvents {
         }
 
         @Override
-        public boolean addAll(@NotNull Collection<? extends TradeOffers.Factory> c) {
+        public boolean addAll(@NotNull Collection<? extends VillagerTrades.ItemListing> c) {
             return this.trades.addAll(c);
         }
 
         @Override
-        public boolean addAll(int index, @NotNull Collection<? extends TradeOffers.Factory> c) {
+        public boolean addAll(int index, @NotNull Collection<? extends VillagerTrades.ItemListing> c) {
             return this.trades.addAll(index, c);
         }
 
@@ -189,22 +189,22 @@ public final class ModifyTradesEvents {
         }
 
         @Override
-        public TradeOffers.Factory get(int index) {
+        public VillagerTrades.ItemListing get(int index) {
             return this.trades.get(index);
         }
 
         @Override
-        public TradeOffers.Factory set(int index, TradeOffers.Factory element) {
+        public VillagerTrades.ItemListing set(int index, VillagerTrades.ItemListing element) {
             return this.trades.set(index, element);
         }
 
         @Override
-        public void add(int index, TradeOffers.Factory element) {
+        public void add(int index, VillagerTrades.ItemListing element) {
             this.trades.add(index, element);
         }
 
         @Override
-        public TradeOffers.Factory remove(int index) {
+        public VillagerTrades.ItemListing remove(int index) {
             return this.trades.remove(index);
         }
 
@@ -220,19 +220,19 @@ public final class ModifyTradesEvents {
 
         @NotNull
         @Override
-        public ListIterator<TradeOffers.Factory> listIterator() {
+        public ListIterator<VillagerTrades.ItemListing> listIterator() {
             return this.trades.listIterator();
         }
 
         @NotNull
         @Override
-        public ListIterator<TradeOffers.Factory> listIterator(int index) {
+        public ListIterator<VillagerTrades.ItemListing> listIterator(int index) {
             return this.trades.listIterator(index);
         }
 
         @NotNull
         @Override
-        public List<TradeOffers.Factory> subList(int fromIndex, int toIndex) {
+        public List<VillagerTrades.ItemListing> subList(int fromIndex, int toIndex) {
             return this.trades.subList(fromIndex, toIndex);
         }
 
@@ -246,7 +246,7 @@ public final class ModifyTradesEvents {
          * @param xpGain         The amount of experience gained by this exchange
          * @param sellToVillager Whether the villager is buying or selling the item for emeralds
          */
-        public void add(ItemConvertible item, int emeralds, int itemCount, int maxUses, int xpGain, boolean sellToVillager) {
+        public void add(ItemLike item, int emeralds, int itemCount, int maxUses, int xpGain, boolean sellToVillager) {
             this.add(new ItemTrade(() -> item, emeralds, itemCount, maxUses, xpGain, 0.05F, sellToVillager));
         }
 
@@ -261,7 +261,7 @@ public final class ModifyTradesEvents {
          * @param priceMultiplier The multiplier for how much the price deviates
          * @param sellToVillager  Whether the villager is buying or selling the item for emeralds
          */
-        public void add(ItemConvertible item, int emeralds, int itemCount, int maxUses, int xpGain, float priceMultiplier, boolean sellToVillager) {
+        public void add(ItemLike item, int emeralds, int itemCount, int maxUses, int xpGain, float priceMultiplier, boolean sellToVillager) {
             this.add(new ItemTrade(() -> item, emeralds, itemCount, maxUses, xpGain, priceMultiplier, sellToVillager));
         }
 
@@ -275,7 +275,7 @@ public final class ModifyTradesEvents {
          * @param xpGain         The amount of experience gained by this exchange
          * @param sellToVillager Whether the villager is buying or selling the item for emeralds
          */
-        public void add(Supplier<? extends ItemConvertible> item, int emeralds, int itemCount, int maxUses, int xpGain, boolean sellToVillager) {
+        public void add(Supplier<? extends ItemLike> item, int emeralds, int itemCount, int maxUses, int xpGain, boolean sellToVillager) {
             this.add(new ItemTrade(item, emeralds, itemCount, maxUses, xpGain, 0.05F, sellToVillager));
         }
 
@@ -290,20 +290,20 @@ public final class ModifyTradesEvents {
          * @param priceMultiplier The multiplier for how much the price deviates
          * @param sellToVillager  Whether the villager is buying or selling the item for emeralds
          */
-        public void add(Supplier<? extends ItemConvertible> item, int emeralds, int itemCount, int maxUses, int xpGain, float priceMultiplier, boolean sellToVillager) {
+        public void add(Supplier<? extends ItemLike> item, int emeralds, int itemCount, int maxUses, int xpGain, float priceMultiplier, boolean sellToVillager) {
             this.add(new ItemTrade(item, emeralds, itemCount, maxUses, xpGain, priceMultiplier, sellToVillager));
         }
     }
 
-    private record ItemTrade(Supplier<? extends ItemConvertible> item, int emeralds,
+    private record ItemTrade(Supplier<? extends ItemLike> item, int emeralds,
                              int itemCount, int maxUses, int xpGain, float priceMultiplier,
-                             boolean sellToVillager) implements TradeOffers.Factory {
+                             boolean sellToVillager) implements VillagerTrades.ItemListing {
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, RandomSource random) {
             ItemStack emeralds = new ItemStack(Items.EMERALD, this.emeralds);
             ItemStack item = new ItemStack(this.item.get(), this.itemCount);
 
-            return new TradeOffer(this.sellToVillager ? item : emeralds, this.sellToVillager ? emeralds : item, this.maxUses, this.xpGain, this.priceMultiplier);
+            return new MerchantOffer(this.sellToVillager ? item : emeralds, this.sellToVillager ? emeralds : item, this.maxUses, this.xpGain, this.priceMultiplier);
         }
     }
 }

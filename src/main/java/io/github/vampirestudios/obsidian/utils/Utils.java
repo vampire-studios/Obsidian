@@ -5,12 +5,11 @@ import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.configPack.*;
-import net.minecraft.util.Identifier;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import net.minecraft.resources.ResourceLocation;
 
 public class Utils {
 
@@ -18,7 +17,7 @@ public class Utils {
         if (legacyInfoFile.exists()) {
             LegacyObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(new FileReader(legacyInfoFile), LegacyObsidianAddonInfo.class);
             LegacyObsidianAddon obsidianAddon = new LegacyObsidianAddon(obsidianAddonInfo, legacyInfoFile);
-            if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.containsId(Const.id(obsidianAddon.getConfigPackInfo().namespace))
+            if (!ObsidianAddonLoader.OBSIDIAN_ADDONS.containsKey(Const.id(obsidianAddon.getConfigPackInfo().namespace))
                     && obsidianAddon.getConfigPackInfo().addonVersion == ObsidianAddonLoader.SCHEMA_VERSION) {
                 Obsidian.registerInRegistry(ObsidianAddonLoader.OBSIDIAN_ADDONS, obsidianAddon.getConfigPackInfo().namespace, obsidianAddon);
                 Obsidian.LOGGER.info("Registering obsidian addon: {}", obsidianAddon.getConfigPackInfo().displayName);
@@ -32,7 +31,7 @@ public class Utils {
             JsonObject jsonObject = Obsidian.JANKSON.load(newInfoFile);
             ObsidianAddonInfo obsidianAddonInfo = Obsidian.JANKSON.fromJson(jsonObject, ObsidianAddonInfo.class);
             ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, newInfoFile);
-            if (obsidianAddon.getConfigPackInfo().addon != null && !ObsidianAddonLoader.OBSIDIAN_ADDONS.containsId(Const.id(obsidianAddon.getConfigPackInfo().addon.id))
+            if (obsidianAddon.getConfigPackInfo().addon != null && !ObsidianAddonLoader.OBSIDIAN_ADDONS.containsKey(Const.id(obsidianAddon.getConfigPackInfo().addon.id))
                     && obsidianAddon.getConfigPackInfo().version == ObsidianAddonLoader.SCHEMA_VERSION) {
                 Obsidian.registerInRegistry(ObsidianAddonLoader.OBSIDIAN_ADDONS, obsidianAddon.getConfigPackInfo().addon.id, obsidianAddon);
                 Obsidian.LOGGER.info("Registering obsidian addon: {}", obsidianAddon.getConfigPackInfo().addon.name);
@@ -56,16 +55,16 @@ public class Utils {
         }
     }*/
 
-    public static Identifier appendToPath(Identifier identifier, String suffix) {
-        return new Identifier(identifier.getNamespace(), identifier.getPath() + suffix);
+    public static ResourceLocation appendToPath(ResourceLocation identifier, String suffix) {
+        return new ResourceLocation(identifier.getNamespace(), identifier.getPath() + suffix);
     }
 
-    public static Identifier prependToPath(Identifier identifier, String prefix) {
-        return new Identifier(identifier.getNamespace(), prefix + identifier.getPath());
+    public static ResourceLocation prependToPath(ResourceLocation identifier, String prefix) {
+        return new ResourceLocation(identifier.getNamespace(), prefix + identifier.getPath());
     }
 
-    public static Identifier appendAndPrependToPath(Identifier identifier, String prefix, String suffix) {
-        return new Identifier(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
+    public static ResourceLocation appendAndPrependToPath(ResourceLocation identifier, String prefix, String suffix) {
+        return new ResourceLocation(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
     }
 
     public static <T> T[] stripNulls(T[] arr) {

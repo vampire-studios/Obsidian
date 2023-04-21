@@ -1,49 +1,49 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class HorizontalFacingSittableBlock extends HorizontalFacingBlockImpl {
 
-    public static final BooleanProperty OCCUPIED = BooleanProperty.of("occupied");
+    public static final BooleanProperty OCCUPIED = BooleanProperty.create("occupied");
 
-    public HorizontalFacingSittableBlock(Block block, Settings settings) {
+    public HorizontalFacingSittableBlock(Block block, Properties settings) {
         super(block, settings);
-        this.setDefaultState(this.getDefaultState().with(OCCUPIED, false).with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.defaultBlockState().setValue(OCCUPIED, false).setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if(state.get(OCCUPIED) || !world.getBlockState(pos.up()).isAir() || player.hasVehicle())
-            return super.onUse(state, world, pos, player, hand, hit);
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if(state.getValue(OCCUPIED) || !world.getBlockState(pos.above()).isAir() || player.isPassenger())
+            return super.use(state, world, pos, player, hand, hit);
 
-        if(!world.isClient) {
+        if(!world.isClientSide) {
             SeatEntity entity = new SeatEntity(world);
-            entity.setPos(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5);
+            entity.setPosRaw(pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5);
 
-            world.spawnEntity(entity);
+            world.addFreshEntity(entity);
             player.startRiding(entity);
 
-            world.setBlockState(pos, state.with(OCCUPIED, true));
+            world.setBlockAndUpdate(pos, state.setValue(OCCUPIED, true));
         }
 
-        world.setBlockState(pos, state.with(OCCUPIED, false));
+        world.setBlockAndUpdate(pos, state.setValue(OCCUPIED, false));
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
-        super.appendProperties(builder.add(OCCUPIED));
+    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(OCCUPIED));
     }
 
 }

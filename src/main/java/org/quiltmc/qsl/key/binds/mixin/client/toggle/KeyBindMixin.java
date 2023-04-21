@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.toggle;
 
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import org.quiltmc.qsl.key.binds.api.ToggleableKeyBind;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.spongepowered.asm.mixin.Final;
@@ -27,19 +25,20 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.client.KeyMapping;
 
-@Mixin(KeyBinding.class)
+@Mixin(KeyMapping.class)
 public abstract class KeyBindMixin implements ToggleableKeyBind {
 	@Shadow
 	@Final
-	private static Map<String, KeyBinding> KEYS_BY_ID;
+	private static Map<String, KeyMapping> KEYS_BY_ID;
 
 	@Unique
-	private static final List<KeyBinding> QUILT$ALL_KEY_BINDS = new ArrayList<>();
+	private static final List<KeyMapping> QUILT$ALL_KEY_BINDS = new ArrayList<>();
 
 	@Unique
 	private int quilt$disableCounter;
@@ -51,16 +50,16 @@ public abstract class KeyBindMixin implements ToggleableKeyBind {
 	protected abstract void reset();
 
 	@Inject(method = "<init>(Ljava/lang/String;Lnet/minecraft/client/util/InputUtil$Type;ILjava/lang/String;)V", at = @At("RETURN"))
-	private void initializeToggleFields(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
-		for (KeyBinding otherKey : QUILT$ALL_KEY_BINDS) {
+	private void initializeToggleFields(String string, InputConstants.Type type, int i, String string2, CallbackInfo ci) {
+		for (KeyMapping otherKey : QUILT$ALL_KEY_BINDS) {
 			if (this.equals(otherKey)) {
 				throw new IllegalArgumentException(String.format("%s has already been registered!", this.getTranslationKey()));
-			} else if (this.getTranslationKey().equals(otherKey.getTranslationKey())) {
+			} else if (this.getTranslationKey().equals(otherKey.getName())) {
 				throw new IllegalArgumentException(String.format("Attempted to register {}, but a key bind with the same translation key has already been registered!", this.getTranslationKey()));
 			}
 		}
 
-		KeyBindRegistryImpl.registerKeyBind((KeyBinding) (Object) this);
+		KeyBindRegistryImpl.registerKeyBind((KeyMapping) (Object) this);
 		quilt$disableCounter = 0;
 	}
 
@@ -81,9 +80,9 @@ public abstract class KeyBindMixin implements ToggleableKeyBind {
 
 		quilt$disableCounter--;
 		if (quilt$disableCounter == 0) {
-			KeyBindRegistryImpl.updateKeyBindState((KeyBinding) (Object) this);
-			KEYS_BY_ID.put(this.getTranslationKey(), (KeyBinding) (Object) this);
-			KeyBinding.updateKeysByCode();
+			KeyBindRegistryImpl.updateKeyBindState((KeyMapping) (Object) this);
+			KEYS_BY_ID.put(this.getTranslationKey(), (KeyMapping) (Object) this);
+			KeyMapping.resetMapping();
 			this.reset();
 		}
 	}
@@ -92,9 +91,9 @@ public abstract class KeyBindMixin implements ToggleableKeyBind {
 	public void disable() {
 		quilt$disableCounter++;
 		if (quilt$disableCounter == 1) {
-			KeyBindRegistryImpl.updateKeyBindState((KeyBinding) (Object) this);
-			KEYS_BY_ID.remove(this.getTranslationKey(), (KeyBinding) (Object) this);
-			KeyBinding.updateKeysByCode();
+			KeyBindRegistryImpl.updateKeyBindState((KeyMapping) (Object) this);
+			KEYS_BY_ID.remove(this.getTranslationKey(), (KeyMapping) (Object) this);
+			KeyMapping.resetMapping();
 			this.reset();
 		}
 	}

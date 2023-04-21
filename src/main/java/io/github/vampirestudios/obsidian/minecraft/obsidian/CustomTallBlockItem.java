@@ -1,41 +1,41 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class CustomTallBlockItem extends BlockItem {
 
     public final Block block;
 
-    public CustomTallBlockItem(Block block, net.minecraft.block.Block blockImpl, Settings settings) {
+    public CustomTallBlockItem(Block block, net.minecraft.world.level.block.Block blockImpl, Properties settings) {
         super(blockImpl, settings);
         this.block = block;
     }
 
-    protected boolean place(ItemPlacementContext itemPlacementContext, BlockState blockState) {
-        World world = itemPlacementContext.getWorld();
-        BlockPos blockPos = itemPlacementContext.getBlockPos().up();
-        BlockState blockState2 = world.isWater(blockPos) ? Blocks.WATER.getDefaultState() : Blocks.AIR.getDefaultState();
-        world.setBlockState(blockPos, blockState2, 27);
-        return super.place(itemPlacementContext, blockState);
+    protected boolean placeBlock(BlockPlaceContext itemPlacementContext, BlockState blockState) {
+        Level world = itemPlacementContext.getLevel();
+        BlockPos blockPos = itemPlacementContext.getClickedPos().above();
+        BlockState blockState2 = world.isWaterAt(blockPos) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
+        world.setBlock(blockPos, blockState2, 27);
+        return super.placeBlock(itemPlacementContext, blockState);
     }
 
     @Override
-    public ItemStack getDefaultStack() {
-        ItemStack stack = super.getDefaultStack();
-        block.information.getRemovedTooltipSections().forEach(stack::addHideFlag);
+    public ItemStack getDefaultInstance() {
+        ItemStack stack = super.getDefaultInstance();
+        block.information.getRemovedTooltipSections().forEach(stack::hideTooltipPart);
         return stack;
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         return block.information.itemProperties.has_glint;
     }
 
@@ -45,12 +45,12 @@ public class CustomTallBlockItem extends BlockItem {
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
         return block.information.itemProperties.enchantability;
     }
 
     @Override
-    public Text getName() {
+    public Component getDescription() {
         return block.information.name.getName("block");
     }
 

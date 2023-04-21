@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class ToolMaterial {
 
@@ -9,6 +9,6 @@ public class ToolMaterial {
     public float miningSpeed;
     public float attackDamage;
     public int enchantability;
-    public Identifier repairItem;
+    public ResourceLocation repairItem;
 
 }

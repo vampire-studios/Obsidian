@@ -33,46 +33,45 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.brain.Schedule;
-import net.minecraft.entity.ai.brain.sensor.SensorType;
-import net.minecraft.entity.decoration.painting.PaintingVariant;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.potion.Potion;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.resource.ResourcePackSource;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.stat.StatType;
-import net.minecraft.structure.StructurePieceType;
-import net.minecraft.structure.pool.StructurePoolElementType;
-import net.minecraft.structure.processor.StructureProcessorType;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.village.VillagerProfession;
-import net.minecraft.village.VillagerType;
-import net.minecraft.world.dimension.DimensionTypes;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.structure.StructureType;
-import net.minecraft.world.poi.PointOfInterestType;
+import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.stats.StatType;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.entity.schedule.Schedule;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElementType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -83,85 +82,85 @@ import java.io.FileNotFoundException;
 public class Obsidian implements ModInitializer, AppleSkinApi {
 
 	public static final Gson GSON = new GsonBuilder()
-			.registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
-			.registerTypeAdapter(ModelIdentifier.class, (SimpleStringDeserializer<ModelIdentifier>) s -> (ModelIdentifier) ModelIdentifier.tryParse(s))
+			.registerTypeAdapter(ResourceLocation.class, (SimpleStringDeserializer<?>) ResourceLocation::new)
+			.registerTypeAdapter(ModelResourceLocation.class, (SimpleStringDeserializer<ModelResourceLocation>) s -> (ModelResourceLocation) ModelResourceLocation.tryParse(s))
 			.setPrettyPrinting()
 			.setLenient()
 			.create();
 
 	public static final Jankson JANKSON = Jankson.builder()
-			.registerDeserializer(String.class, Identifier.class, (s, m) -> new Identifier(s))
-			.registerSerializer(Identifier.class, (i, m) -> new JsonPrimitive(i.toString()))
-			.registerDeserializer(String.class, ModelIdentifier.class, (s, m) -> {
+			.registerDeserializer(String.class, ResourceLocation.class, (s, m) -> new ResourceLocation(s))
+			.registerSerializer(ResourceLocation.class, (i, m) -> new JsonPrimitive(i.toString()))
+			.registerDeserializer(String.class, ModelResourceLocation.class, (s, m) -> {
 				String[] strings = s.split("#");
-				Identifier identifier = Identifier.tryParse(strings[0]);
+				ResourceLocation identifier = ResourceLocation.tryParse(strings[0]);
 				assert identifier != null;
-				return new ModelIdentifier(identifier, strings[1]);
+				return new ModelResourceLocation(identifier, strings[1]);
 			})
-			.registerSerializer(ModelIdentifier.class, (i, m) -> new JsonPrimitive(i.toString()))
-			.registerDeserializer(String.class, Enchantment.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.ENCHANTMENT))
-			.registerSerializer(Enchantment.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.ENCHANTMENT))
-			.registerDeserializer(String.class, EntityType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.ENTITY_TYPE))
-			.registerSerializer(EntityType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.ENTITY_TYPE))
-			.registerDeserializer(String.class, Feature.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.FEATURE))
-			.registerSerializer(Feature.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.FEATURE))
-			.registerDeserializer(String.class, Fluid.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.FLUID))
-			.registerSerializer(Fluid.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.FLUID))
-			.registerDeserializer(String.class, Item.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.ITEM))
-			.registerSerializer(Item.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.ITEM))
-			.registerDeserializer(String.class, ItemGroup.class, (s, m) -> lookupDeserialize(s, Registries.ITEM_GROUP_REGISTRY))
-			.registerSerializer(ItemGroup.class, (s, m) -> lookupSerialize(s, Registries.ITEM_GROUP_REGISTRY))
-			.registerDeserializer(String.class, MemoryModuleType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.MEMORY_MODULE_TYPE))
-			.registerSerializer(MemoryModuleType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.MEMORY_MODULE_TYPE))
-			.registerDeserializer(String.class, PaintingVariant.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.PAINTING_VARIANT))
-			.registerSerializer(PaintingVariant.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.PAINTING_VARIANT))
-			.registerDeserializer(String.class, ParticleType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.PARTICLE_TYPE))
-			.registerSerializer(ParticleType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.PARTICLE_TYPE))
-			.registerDeserializer(String.class, PointOfInterestType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.POINT_OF_INTEREST_TYPE))
-			.registerSerializer(PointOfInterestType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.POINT_OF_INTEREST_TYPE))
-			.registerDeserializer(String.class, Potion.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.POTION))
-			.registerSerializer(Potion.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.POTION))
-			.registerDeserializer(String.class, RecipeSerializer.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.RECIPE_SERIALIZER))
-			.registerSerializer(RecipeSerializer.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.RECIPE_SERIALIZER))
-			.registerDeserializer(String.class, RecipeType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.RECIPE_TYPE))
-			.registerSerializer(RecipeType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.RECIPE_TYPE))
-			.registerDeserializer(String.class, Registry.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.REGISTRIES))
-			.registerSerializer(Registry.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.REGISTRIES))
-			.registerDeserializer(String.class, Schedule.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.SCHEDULE))
-			.registerSerializer(Schedule.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.SCHEDULE))
-			.registerDeserializer(String.class, SensorType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.SENSOR_TYPE))
-			.registerSerializer(SensorType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.SENSOR_TYPE))
-			.registerDeserializer(String.class, SoundEvent.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.SOUND_EVENT))
-			.registerSerializer(SoundEvent.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.SOUND_EVENT))
-			.registerDeserializer(String.class, StatType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.STAT_TYPE))
-			.registerSerializer(StatType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.STAT_TYPE))
-			.registerDeserializer(String.class, StatusEffect.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.STATUS_EFFECT))
-			.registerSerializer(StatusEffect.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.STATUS_EFFECT))
-			.registerDeserializer(String.class, StructureType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.STRUCTURE_TYPE))
-			.registerSerializer(StructureType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.STRUCTURE_TYPE))
-			.registerDeserializer(String.class, StructurePieceType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.STRUCTURE_PIECE))
-			.registerSerializer(StructurePieceType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.STRUCTURE_PIECE))
-			.registerDeserializer(String.class, StructurePoolElementType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.STRUCTURE_POOL_ELEMENT))
-			.registerSerializer(StructurePoolElementType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.STRUCTURE_POOL_ELEMENT))
-			.registerDeserializer(String.class, StructureProcessorType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.STRUCTURE_PROCESSOR))
-			.registerSerializer(StructureProcessorType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.STRUCTURE_PROCESSOR))
-			.registerDeserializer(String.class, VillagerProfession.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.VILLAGER_PROFESSION))
-			.registerSerializer(VillagerProfession.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.VILLAGER_PROFESSION))
-			.registerDeserializer(String.class, VillagerType.class, (s, m) -> lookupDeserialize(s, net.minecraft.registry.Registries.VILLAGER_TYPE))
-			.registerSerializer(VillagerType.class, (s, m) -> lookupSerialize(s, net.minecraft.registry.Registries.VILLAGER_TYPE))
+			.registerSerializer(ModelResourceLocation.class, (i, m) -> new JsonPrimitive(i.toString()))
+			.registerDeserializer(String.class, Enchantment.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT))
+			.registerSerializer(Enchantment.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT))
+			.registerDeserializer(String.class, EntityType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE))
+			.registerSerializer(EntityType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE))
+			.registerDeserializer(String.class, Feature.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.FEATURE))
+			.registerSerializer(Feature.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.FEATURE))
+			.registerDeserializer(String.class, Fluid.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.FLUID))
+			.registerSerializer(Fluid.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.FLUID))
+			.registerDeserializer(String.class, Item.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.ITEM))
+			.registerSerializer(Item.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.ITEM))
+			.registerDeserializer(String.class, CreativeModeTab.class, (s, m) -> lookupDeserialize(s, Registries.ITEM_GROUP_REGISTRY))
+			.registerSerializer(CreativeModeTab.class, (s, m) -> lookupSerialize(s, Registries.ITEM_GROUP_REGISTRY))
+			.registerDeserializer(String.class, MemoryModuleType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.MEMORY_MODULE_TYPE))
+			.registerSerializer(MemoryModuleType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.MEMORY_MODULE_TYPE))
+			.registerDeserializer(String.class, PaintingVariant.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.PAINTING_VARIANT))
+			.registerSerializer(PaintingVariant.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.PAINTING_VARIANT))
+			.registerDeserializer(String.class, ParticleType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE))
+			.registerSerializer(ParticleType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE))
+			.registerDeserializer(String.class, PoiType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.POINT_OF_INTEREST_TYPE))
+			.registerSerializer(PoiType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.POINT_OF_INTEREST_TYPE))
+			.registerDeserializer(String.class, Potion.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.POTION))
+			.registerSerializer(Potion.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.POTION))
+			.registerDeserializer(String.class, RecipeSerializer.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.RECIPE_SERIALIZER))
+			.registerSerializer(RecipeSerializer.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.RECIPE_SERIALIZER))
+			.registerDeserializer(String.class, RecipeType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.RECIPE_TYPE))
+			.registerSerializer(RecipeType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.RECIPE_TYPE))
+			.registerDeserializer(String.class, Registry.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.REGISTRY))
+			.registerSerializer(Registry.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.REGISTRY))
+			.registerDeserializer(String.class, Schedule.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.SCHEDULE))
+			.registerSerializer(Schedule.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.SCHEDULE))
+			.registerDeserializer(String.class, SensorType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.SENSOR_TYPE))
+			.registerSerializer(SensorType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.SENSOR_TYPE))
+			.registerDeserializer(String.class, SoundEvent.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT))
+			.registerSerializer(SoundEvent.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT))
+			.registerDeserializer(String.class, StatType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.STAT_TYPE))
+			.registerSerializer(StatType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.STAT_TYPE))
+			.registerDeserializer(String.class, MobEffect.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT))
+			.registerSerializer(MobEffect.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT))
+			.registerDeserializer(String.class, StructureType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_TYPE))
+			.registerSerializer(StructureType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_TYPE))
+			.registerDeserializer(String.class, StructurePieceType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_PIECE))
+			.registerSerializer(StructurePieceType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_PIECE))
+			.registerDeserializer(String.class, StructurePoolElementType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_POOL_ELEMENT))
+			.registerSerializer(StructurePoolElementType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_POOL_ELEMENT))
+			.registerDeserializer(String.class, StructureProcessorType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_PROCESSOR))
+			.registerSerializer(StructureProcessorType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_PROCESSOR))
+			.registerDeserializer(String.class, VillagerProfession.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION))
+			.registerSerializer(VillagerProfession.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION))
+			.registerDeserializer(String.class, VillagerType.class, (s, m) -> lookupDeserialize(s, net.minecraft.core.registries.BuiltInRegistries.VILLAGER_TYPE))
+			.registerSerializer(VillagerType.class, (s, m) -> lookupSerialize(s, net.minecraft.core.registries.BuiltInRegistries.VILLAGER_TYPE))
 			.build();
 	public static final Logger LOGGER = LogManager.getLogger(Const.MOD_NAME);
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger(Const.MOD_NAME + " | Bedrock");
-	public static final EntityType<SeatEntity> SEAT = Registry.register(net.minecraft.registry.Registries.ENTITY_TYPE, Const.id("seat"), FabricEntityTypeBuilder.
-			<SeatEntity>create(SpawnGroup.MISC, SeatEntity::new)
+	public static final EntityType<SeatEntity> SEAT = Registry.register(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE, Const.id("seat"), FabricEntityTypeBuilder.
+			<SeatEntity>create(MobCategory.MISC, SeatEntity::new)
 			.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
 			.build());
 	public static ObsidianConfig CONFIG;
 
-	public static ResourcePackSource RESOURCE_PACK_SOURCE = ResourcePackSource.create(text -> Text.translatable("pack.source.obsidian"), false);
-	public static KeyBinding binding = new KeyBinding("key.uwu.hud_test", GLFW.GLFW_KEY_J, "misc");
+	public static PackSource RESOURCE_PACK_SOURCE = PackSource.create(text -> Component.translatable("pack.source.obsidian"), false);
+	public static KeyMapping binding = new KeyMapping("key.uwu.hud_test", GLFW.GLFW_KEY_J, "misc");
 
-	public static Identifier id(String path) {
+	public static ResourceLocation id(String path) {
 		return Const.id(path);
 	}
 
@@ -173,7 +172,7 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		registerInRegistry(registry, Const.id(name), idk);
 	}
 
-	public static <T> void registerInRegistry(Registry<T> registry, Identifier name, T idk) {
+	public static <T> void registerInRegistry(Registry<T> registry, ResourceLocation name, T idk) {
 		Registry.register(registry, name, idk);
 	}
 
@@ -189,19 +188,19 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 	}*/
 
 	private static <T> T lookupDeserialize(String s, Registry<T> registry) {
-		return registry.get(new Identifier(s));
+		return registry.get(new ResourceLocation(s));
 	}
 
 	private static <T, U extends T> JsonElement lookupSerialize(T t, Registry<U> registry) {
 		@SuppressWarnings("unchecked") //Widening cast happening because of generic type parameters in the registry class
-		Identifier id = registry.getId((U) t);
+		ResourceLocation id = registry.getKey((U) t);
 		if (id == null) return JsonNull.INSTANCE;
 		return new JsonPrimitive(id.toString());
 	}
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getGameVersion().getName()));
+		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().getName()));
 		AutoConfig.register(ObsidianConfig.class, GsonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 		KeyBindingHelper.registerKeyBinding(binding);
@@ -209,28 +208,28 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 //		GlobalFixer.init();
 
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
-			if (destination.getDimensionKey().equals(DimensionTypes.THE_END)) {
+			if (destination.dimensionTypeId().equals(BuiltinDimensionTypes.END)) {
 				MinecraftServer server = destination.getServer();
-				Advancement advancement = server.getAdvancementLoader().get(new Identifier("I don't know, probably something like `the_end/kill_dragon`"));
-				if(!server.getPlayerManager().getAdvancementTracker(player).getProgress(advancement).isDone()) {
+				Advancement advancement = server.getAdvancements().getAdvancement(new ResourceLocation("I don't know, probably something like `the_end/kill_dragon`"));
+				if(!server.getPlayerList().getPlayerAdvancements(player).getOrStartProgress(advancement).isDone()) {
 
 				}
 			}
 		});
 
 		//Item Groups
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", ItemGroups.BUILDING_BLOCKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "colored_blocks", ItemGroups.COLORED_BLOCKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "natural", ItemGroups.NATURAL);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "functional", ItemGroups.FUNCTIONAL);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "redstone", ItemGroups.REDSTONE);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "search", ItemGroups.SEARCH);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "tools", ItemGroups.TOOLS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "combat", ItemGroups.COMBAT);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "food_and_drink", ItemGroups.FOOD_AND_DRINK);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "ingredients", ItemGroups.INGREDIENTS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "spawn_eggs", ItemGroups.SPAWN_EGGS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "operator", ItemGroups.OPERATOR);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", CreativeModeTabs.BUILDING_BLOCKS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "colored_blocks", CreativeModeTabs.COLORED_BLOCKS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "natural", CreativeModeTabs.NATURAL_BLOCKS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "functional", CreativeModeTabs.FUNCTIONAL_BLOCKS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "redstone", CreativeModeTabs.REDSTONE_BLOCKS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "search", CreativeModeTabs.SEARCH);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "tools", CreativeModeTabs.TOOLS_AND_UTILITIES);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "combat", CreativeModeTabs.COMBAT);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "food_and_drink", CreativeModeTabs.FOOD_AND_DRINKS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "ingredients", CreativeModeTabs.INGREDIENTS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "spawn_eggs", CreativeModeTabs.SPAWN_EGGS);
+		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "operator", CreativeModeTabs.OP_BLOCKS);
 
 		//Entity Components
 		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
@@ -341,15 +340,15 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information.isConvertible) {
 				AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
-				net.minecraft.block.Block parentBlock = net.minecraft.registry.Registries.BLOCK.get(convertible.parent_block);
-				net.minecraft.block.Block transformedBlock = net.minecraft.registry.Registries.BLOCK.get(convertible.transformed_block);
+				net.minecraft.world.level.block.Block parentBlock = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(convertible.parent_block);
+				net.minecraft.world.level.block.Block transformedBlock = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(convertible.transformed_block);
 				AdditionalBlockInformation.Convertible.ConversionItem conversionItem = convertible.conversionItem;
 				Item conversionItemItem;
-				if (conversionItem.item != null) conversionItemItem = net.minecraft.registry.Registries.ITEM.get(conversionItem.item);
+				if (conversionItem.item != null) conversionItemItem = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(conversionItem.item);
 				else conversionItemItem = null;
 
 				TagKey<Item> conversionItemTag = null;
-				if (conversionItem.tag != null) conversionItemTag = TagKey.of(RegistryKeys.ITEM, conversionItem.tag);
+				if (conversionItem.tag != null) conversionItemTag = TagKey.create(net.minecraft.core.registries.Registries.ITEM, conversionItem.tag);
 
 				Item reversalItemItem = null;
 				TagKey<Item> reversalItemTag = null;
@@ -358,18 +357,18 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 					if (convertible.reversalItem != null) reversalItem = convertible.reversalItem;
 
 					if (reversalItem != null) {
-						if (reversalItem.item != null) reversalItemItem = net.minecraft.registry.Registries.ITEM.get(conversionItem.item);
+						if (reversalItem.item != null) reversalItemItem = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(conversionItem.item);
 						if (reversalItem.tag != null)
-							reversalItemTag = TagKey.of(RegistryKeys.ITEM, conversionItem.tag);
+							reversalItemTag = TagKey.create(net.minecraft.core.registries.Registries.ITEM, conversionItem.tag);
 					}
 				}
 
 				SoundEvent sound;
-				if (convertible.sound != null) sound = net.minecraft.registry.Registries.SOUND_EVENT.get(convertible.sound);
+				if (convertible.sound != null) sound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(convertible.sound);
 				else sound = null;
 
 				Item droppedItem;
-				if (convertible.dropped_item != null) droppedItem = net.minecraft.registry.Registries.ITEM.get(convertible.dropped_item);
+				if (convertible.dropped_item != null) droppedItem = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(convertible.dropped_item);
 				else droppedItem = null;
 
 				ConvertibleBlockPair.ConversionItem reversalItem1;
@@ -406,33 +405,33 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		BedrockAddonLoader.loadBedrockAddons();
 
 		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
-			if (world.isClient)
-				return ActionResult.PASS;
+			if (world.isClientSide)
+				return InteractionResult.PASS;
 
-			if (!world.canPlayerModifyAt(player, hit.getBlockPos()))
-				return ActionResult.PASS;
+			if (!world.mayInteract(player, hit.getBlockPos()))
+				return InteractionResult.PASS;
 
-			net.minecraft.block.Block b = world.getBlockState(hit.getBlockPos()).getBlock();
+			net.minecraft.world.level.block.Block b = world.getBlockState(hit.getBlockPos()).getBlock();
 
-			if ((b instanceof SittableBlock || b instanceof HorizontalFacingSittableBlock || b instanceof SittableAndDyableBlock || b instanceof HorizontalFacingSittableAndDyableBlock) && !SeatEntity.OCCUPIED.containsKey(new Vec3d(hit.getBlockPos().getX(), hit.getBlockPos().getY(), hit.getBlockPos().getZ())) && player.getStackInHand(hand).isEmpty()) {
-				Vec3d comparePos = new Vec3d(player.getBlockPos().getX() + 0.5D, player.getBlockPos().getY() + 1.25D, player.getBlockPos().getZ() + 0.5D);
+			if ((b instanceof SittableBlock || b instanceof HorizontalFacingSittableBlock || b instanceof SittableAndDyableBlock || b instanceof HorizontalFacingSittableAndDyableBlock) && !SeatEntity.OCCUPIED.containsKey(new Vec3(hit.getBlockPos().getX(), hit.getBlockPos().getY(), hit.getBlockPos().getZ())) && player.getItemInHand(hand).isEmpty()) {
+				Vec3 comparePos = new Vec3(player.blockPosition().getX() + 0.5D, player.blockPosition().getY() + 1.25D, player.blockPosition().getZ() + 0.5D);
 
 				//only allow sitting when right-clicking the top face of a block, and disallow sitting players from sitting again
 				if (SeatEntity.OCCUPIED.containsKey(comparePos))
-					return ActionResult.PASS;
+					return InteractionResult.PASS;
 
 				SeatEntity sit = Obsidian.SEAT.create(world);
-				Vec3d vec3d = new Vec3d(hit.getBlockPos().getX() + 0.5D, hit.getBlockPos().getY() + 0.25D, hit.getBlockPos().getZ() + 0.5D);
+				Vec3 vec3d = new Vec3(hit.getBlockPos().getX() + 0.5D, hit.getBlockPos().getY() + 0.25D, hit.getBlockPos().getZ() + 0.5D);
 
-				SeatEntity.OCCUPIED.put(vec3d, player.getBlockPos());
+				SeatEntity.OCCUPIED.put(vec3d, player.blockPosition());
 				assert sit != null;
-				sit.updatePosition(vec3d.getX(), vec3d.getY(), vec3d.getZ());
-				world.spawnEntity(sit);
+				sit.absMoveTo(vec3d.x(), vec3d.y(), vec3d.z());
+				world.addFreshEntity(sit);
 				player.startRiding(sit);
-				return ActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 
-			return ActionResult.PASS;
+			return InteractionResult.PASS;
 		});
 	}
 

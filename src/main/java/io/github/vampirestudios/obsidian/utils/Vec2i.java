@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.utils;
 
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 /**
  * An immutable vector composed of 2 ints.
@@ -36,7 +36,7 @@ public record Vec2i(int x, int y) {
     }
 
     public float length() {
-        return MathHelper.sqrt(this.x * this.x + this.y * this.y);
+        return Mth.sqrt(this.x * this.x + this.y * this.y);
     }
 
     public float lengthSquared() {

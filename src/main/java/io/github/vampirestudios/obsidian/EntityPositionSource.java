@@ -2,14 +2,13 @@ package io.github.vampirestudios.obsidian;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraft.world.event.PositionSource;
-import net.minecraft.world.event.PositionSourceType;
-
 import java.util.Optional;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.PositionSource;
+import net.minecraft.world.level.gameevent.PositionSourceType;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityPositionSource implements PositionSource {
 	public static final Codec<EntityPositionSource> CODEC = RecordCodecBuilder.create(
@@ -33,12 +32,12 @@ public class EntityPositionSource implements PositionSource {
 	}
 
 	@Override
-	public Optional<Vec3d> getPos(World level) {
+	public Optional<Vec3> getPosition(Level level) {
 		if (this.sourceEntity.isEmpty()) {
-			this.sourceEntity = Optional.ofNullable(level.getEntityById(this.sourceEntityId));
+			this.sourceEntity = Optional.ofNullable(level.getEntity(this.sourceEntityId));
 		}
 
-		return this.sourceEntity.map(entity -> entity.getPos().add(0.0, this.yOffset, 0.0));
+		return this.sourceEntity.map(entity -> entity.position().add(0.0, this.yOffset, 0.0));
 	}
 
 	@Override
@@ -47,17 +46,17 @@ public class EntityPositionSource implements PositionSource {
 	}
 
 	public static class Type implements PositionSourceType<EntityPositionSource> {
-		public EntityPositionSource readFromBuf(PacketByteBuf friendlyByteBuf) {
+		public EntityPositionSource read(FriendlyByteBuf friendlyByteBuf) {
 			return new EntityPositionSource(friendlyByteBuf.readVarInt(), friendlyByteBuf.readFloat());
 		}
 
-		public void writeToBuf(PacketByteBuf friendlyByteBuf, EntityPositionSource entityPositionSource) {
+		public void writeToBuf(FriendlyByteBuf friendlyByteBuf, EntityPositionSource entityPositionSource) {
 			friendlyByteBuf.writeVarInt(entityPositionSource.sourceEntityId);
 			friendlyByteBuf.writeFloat(entityPositionSource.yOffset);
 		}
 
 		@Override
-		public Codec<EntityPositionSource> getCodec() {
+		public Codec<EntityPositionSource> codec() {
 			return EntityPositionSource.CODEC;
 		}
 	}

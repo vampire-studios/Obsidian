@@ -1,19 +1,19 @@
 package io.github.vampirestudios.obsidian.client.renderer;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
-import net.minecraft.client.render.Frustum;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 
 public class SeatEntityRenderer extends EntityRenderer<SeatEntity> {
 
-	public SeatEntityRenderer(EntityRendererFactory.Context ctx) {
+	public SeatEntityRenderer(EntityRendererProvider.Context ctx) {
 		super(ctx);
 	}
 
 	@Override
-	public Identifier getTexture(SeatEntity entity) {
+	public ResourceLocation getTexture(SeatEntity entity) {
 		return null;
 	}
 

@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.biomeLayouts;
 
-import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+import net.minecraft.world.level.biome.Climate;
 
 public class MultiNoise {
 
@@ -34,10 +34,10 @@ public class MultiNoise {
             POINT
         }
 
-        public MultiNoiseUtil.ParameterRange getValue() {
+        public Climate.Parameter getValue() {
             return switch(type) {
-                case POINT -> MultiNoiseUtil.ParameterRange.of(value);
-                case RANGE -> MultiNoiseUtil.ParameterRange.of(minimum, maximum);
+                case POINT -> Climate.Parameter.point(value);
+                case RANGE -> Climate.Parameter.span(minimum, maximum);
             };
         }
     }

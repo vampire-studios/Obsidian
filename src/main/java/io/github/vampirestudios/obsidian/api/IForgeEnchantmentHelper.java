@@ -1,11 +1,11 @@
 package io.github.vampirestudios.obsidian.api;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public interface IForgeEnchantmentHelper {
 	// Helpers for accessing Item data
@@ -15,14 +15,14 @@ public interface IForgeEnchantmentHelper {
 
 	static int getTagEnchantmentLevel(Enchantment enchantment, ItemStack stack) {
 		if (!stack.isEmpty()) {
-			Identifier identifier = EnchantmentHelper.getEnchantmentId(enchantment);
-			NbtList nbtList = stack.getEnchantments();
+			ResourceLocation identifier = EnchantmentHelper.getEnchantmentId(enchantment);
+			ListTag nbtList = stack.getEnchantmentTags();
 
 			for (int i = 0; i < nbtList.size(); ++i) {
-				NbtCompound nbtCompound = nbtList.getCompound(i);
-				Identifier identifier2 = EnchantmentHelper.getIdFromNbt(nbtCompound);
+				CompoundTag nbtCompound = nbtList.getCompound(i);
+				ResourceLocation identifier2 = EnchantmentHelper.getEnchantmentId(nbtCompound);
 				if (identifier2 != null && identifier2.equals(identifier)) {
-					return EnchantmentHelper.getLevelFromNbt(nbtCompound);
+					return EnchantmentHelper.getEnchantmentLevel(nbtCompound);
 				}
 			}
 

@@ -8,9 +8,8 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,13 +24,13 @@ public class Tools implements AddonModule {
         try {
             if (tool == null) return;
             CustomToolMaterial material = new CustomToolMaterial(tool.material);
-            Item.Settings settings = new Item.Settings().maxCount(tool.information.maxStackSize)
+            Item.Properties settings = new Item.Properties().stacksTo(tool.information.maxStackSize)
                     .rarity(tool.information.rarity);
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     tool.information.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (tool.information.name.id == null) tool.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (tool.information.name.id == null) tool.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
             Item item = null;
             switch (tool.tool_type) {

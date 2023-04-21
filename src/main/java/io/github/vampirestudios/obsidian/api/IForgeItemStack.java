@@ -1,13 +1,13 @@
 package io.github.vampirestudios.obsidian.api;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
@@ -37,7 +37,7 @@ public interface IForgeItemStack {
 	/**
 	 * Gets the level of the enchantment currently present on the stack. By default, returns the enchantment level present in NBT.
 	 * <p>
-	 * Equivalent to calling {@link EnchantmentHelper#getLevel(Enchantment, ItemStack)}
+	 * Equivalent to calling {@link EnchantmentHelper#getItemEnchantmentLevel(Enchantment, ItemStack)}
 	 * Use in place of {@link EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} for checking presence of an enchantment in logic implementing the enchantment behavior.
 	 * Use {@link EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} instead when modifying an item's enchantments.
 	 *
@@ -50,7 +50,7 @@ public interface IForgeItemStack {
 	}
 
 	/**
-	 * ItemStack sensitive version of {@link Item#getEnchantability()}.
+	 * ItemStack sensitive version of {@link Item#getEnchantmentValue()}.
 	 *
 	 * @return the enchantment value of this ItemStack
 	 */
@@ -84,7 +84,7 @@ public interface IForgeItemStack {
 	 * @param displayName the name that will be displayed unless it is changed in
 	 *                    this method.
 	 */
-	default Text getHighlightTip(Text displayName) {
+	default Component getHighlightTip(Component displayName) {
 		return self().getItem().getHighlightTip(self(), displayName);
 	}
 
@@ -99,7 +99,7 @@ public interface IForgeItemStack {
 			return other.isEmpty();
 		else
 			return !other.isEmpty() && self().getCount() == other.getCount() && self().getItem() == other.getItem() &&
-					ItemStack.areEqual(self(), other);
+					ItemStack.matches(self(), other);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public interface IForgeItemStack {
 	 * @param endermanEntity The enderman that the player look
 	 * @return true if this Item can be used.
 	 */
-	default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity) {
+	default boolean isEnderMask(Player player, EnderMan endermanEntity) {
 		return self().getItem().isEnderMask(self(), player, endermanEntity);
 	}
 

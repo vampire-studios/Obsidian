@@ -16,36 +16,36 @@
 
 package org.quiltmc.qsl.fluid.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.LavaFluid;
-import net.minecraft.loot.LootTables;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.LavaFluid;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.phys.Vec3;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(LavaFluid.class)
-public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowableFluidExtensions {
+public abstract class LavaFluidMixin extends FlowingFluid implements QuiltFlowableFluidExtensions {
 
 	@Override
-	public float getDefaultTemperature(World world, BlockPos blockPos) {
+	public float getDefaultTemperature(Level world, BlockPos blockPos) {
 		return LAVA_TEMPERATURE;
 	}
 
 	@Override
-	public float getDefaultDensity(World world, BlockPos blockPos) {
+	public float getDefaultDensity(Level world, BlockPos blockPos) {
 		return LAVA_DENSITY;
 	}
 
@@ -61,7 +61,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 
 	@Override
 	public float getPushStrength(FluidState state, Entity effected) {
-		return effected.world.getDimension().ultrawarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+		return effected.level.dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	public float getFogStart(FluidState state, Entity affected, float viewDistance) {
 		if (affected.isSpectator()) {
 			return -8.0f;
-		} else if (affected instanceof LivingEntity living && living.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
+		} else if (affected instanceof LivingEntity living && living.hasEffect(MobEffects.FIRE_RESISTANCE)) {
 			return 0.0f;
 		} else {
 			return 0.25f;
@@ -84,7 +84,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	public float getFogEnd(FluidState state, Entity affected, float viewDistance) {
 		if (affected.isSpectator()) {
 			return viewDistance / 2;
-		} else if (affected instanceof LivingEntity living && living.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
+		} else if (affected instanceof LivingEntity living && living.hasEffect(MobEffects.FIRE_RESISTANCE)) {
 			return 3.0f;
 		} else {
 			return 1.0f;
@@ -97,7 +97,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	}
 
 	@Override
-	public int getColor(FluidState state, World world, BlockPos pos) {
+	public int getColor(FluidState state, Level world, BlockPos pos) {
 		return LAVA_FOG_COLOR;
 	}
 
@@ -117,7 +117,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	}
 
 	@Override
-	public void doDrownEffects(FluidState state, LivingEntity drowning, Random random) {}
+	public void doDrownEffects(FluidState state, LivingEntity drowning, RandomSource random) {}
 
 	@Override
 	public int getFogColor(FluidState state, Entity affected) {
@@ -125,41 +125,41 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	}
 
 	@Override
-	public SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, Random random) {
+	public SoundEvent getSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return null;
 	}
 
 	@Override
-	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, Random random) {
+	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return null;
 	}
 
 	@Override
-	public ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, Random random) {
+	public ParticleOptions getSplashParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return null;
 	}
 
 	@Override
-	public ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, Random random) {
+	public ParticleOptions getBubbleParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return null;
 	}
 
 	@Override
-	public GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, Random random) {
+	public GameEvent getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return null;
 	}
 
 	@Override
-	public void spawnSplashParticles(Entity splashing, Vec3d splashPos, Random random) {}
+	public void spawnSplashParticles(Entity splashing, Vec3 splashPos, RandomSource random) {}
 
 	@Override
-	public void spawnBubbleParticles(Entity splashing, Vec3d splashPos, Random random) {}
+	public void spawnBubbleParticles(Entity splashing, Vec3 splashPos, RandomSource random) {}
 
 	@Override
-	public void onSplash(World world, Vec3d pos, Entity splashing, Random random) {}
+	public void onSplash(Level world, Vec3 pos, Entity splashing, RandomSource random) {}
 
 	@Override
-	public FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
+	public FluidEnchantmentHelper customEnchantmentEffects(Vec3 movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
 	}
 
@@ -169,17 +169,17 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	}
 
 	@Override
-	public boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
+	public boolean bobberFloats(FluidState state, FishingHook affected) {
 		return false;
 	}
 
 	@Override
-	public boolean canFish(FluidState state, FishingBobberEntity affected) {
+	public boolean canFish(FluidState state, FishingHook affected) {
 		return false;
 	}
 
 	@Override
-	public Identifier getFishingLootTable() {
-		return LootTables.EMPTY;
+	public ResourceLocation getFishingLootTable() {
+		return BuiltInLootTables.EMPTY;
 	}
 }

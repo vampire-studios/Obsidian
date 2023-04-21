@@ -10,9 +10,8 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.MeleeWeaponImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,13 +25,13 @@ public class Weapons implements AddonModule {
         WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
         try {
             if (weapon == null) return;
-            Item.Settings settings = new Item.Settings().maxCount(weapon.information.maxStackSize)
+            Item.Properties settings = new Item.Properties().stacksTo(weapon.information.maxStackSize)
                     .rarity(weapon.information.rarity);
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     weapon.information.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (weapon.information.name.id == null) weapon.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (weapon.information.name.id == null) weapon.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
             CustomToolMaterial material = new CustomToolMaterial(weapon.material);
             Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings));
             ItemGroupEvents.modifyEntriesEvent(weapon.information.getItemGroup()).register(entries -> entries.add(registeredItem));

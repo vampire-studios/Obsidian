@@ -1,15 +1,15 @@
 package io.github.vampirestudios.obsidian.utils;
 
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 public class EntityUtils {
 
-    public static DefaultAttributeContainer.Builder createGenericEntityAttributes(double maxHealth, double movementSpeed) {
-        return PathAwareEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, movementSpeed)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, maxHealth);
+    public static AttributeSupplier.Builder createGenericEntityAttributes(double maxHealth, double movementSpeed) {
+        return PathfinderMob.createMobAttributes()
+                .add(Attributes.MOVEMENT_SPEED, movementSpeed)
+                .add(Attributes.MAX_HEALTH, maxHealth);
     }
 
 }

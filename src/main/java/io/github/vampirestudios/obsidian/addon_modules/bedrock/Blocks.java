@@ -13,10 +13,8 @@ import io.github.vampirestudios.obsidian.registry.BedrockContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.block.Material;
-import net.minecraft.item.ItemGroups;
-
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.block.Block;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -48,7 +46,7 @@ public class Blocks implements AddonModule {
 			RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();
 
 			Block block = expanded.registerBlock(new BlockImpl(baseBlock, blockSettings),
-					baseBlock.block.description.identifier.getPath(), ItemGroups.BUILDING_BLOCKS);
+					baseBlock.block.description.identifier.getPath(), CreativeModeTabs.BUILDING_BLOCKS);
 
 			if (component != null && component.flammable != null) {
 				FlammableBlockRegistry.getDefaultInstance().add(block, component.flammable.catch_chance_modifier,

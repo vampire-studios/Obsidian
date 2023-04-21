@@ -1,26 +1,26 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Equipment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Equipable;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-public class WearableItemImpl extends ItemImpl implements Equipment {
-	public WearableItemImpl(Item item, Settings settings) {
+public class WearableItemImpl extends ItemImpl implements Equipable {
+	public WearableItemImpl(Item item, Properties settings) {
 		super(item, settings);
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		return this.equipAndSwap(this, world, user, hand);
+	public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+		return this.swapWithEquipmentSlot(this, world, user, hand);
 	}
 
 	@Override
-	public EquipmentSlot getSlotType() {
+	public EquipmentSlot getEquipmentSlot() {
 		return EquipmentSlot.byName(item.information.wearableSlot);
 	}
 }

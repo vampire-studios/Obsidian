@@ -23,9 +23,8 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,7 +40,7 @@ public class BedrockAddonLoader {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian: Bedrock"));
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::new)
+            .registerTypeAdapter(ResourceLocation.class, (SimpleStringDeserializer<?>) ResourceLocation::new)
             .setPrettyPrinting().create();
     public static final File BEDROCK_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDir().toFile(), "bedrock_addons");
     public static final Map<IBedrockAddon, String> BEDROCK_ADDONS = new HashMap<>();
@@ -193,17 +192,17 @@ public class BedrockAddonLoader {
         }
     }
 
-    public static <T> T register(Registry<T> list, String type, Identifier name, T idk) {
+    public static <T> T register(Registry<T> list, String type, ResourceLocation name, T idk) {
         Obsidian.BEDROCK_LOGGER.info("Registered {} {}.", type, name);
         if (list.get(name) != null) return list.get(name);
         else return Registry.register(list, name, idk);
     }
 
     public static void failedRegistering(String type, String name, Exception e) {
-        failedRegistering(type, Identifier.tryParse(name), e);
+        failedRegistering(type, ResourceLocation.tryParse(name), e);
     }
 
-    public static void failedRegistering(String type, Identifier name, Exception e) {
+    public static void failedRegistering(String type, ResourceLocation name, Exception e) {
         Obsidian.BEDROCK_LOGGER.error("Failed to register {} {}.", type, name);
         Obsidian.BEDROCK_LOGGER.error(e.getMessage(), e);
     }

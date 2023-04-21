@@ -1,48 +1,48 @@
 package io.github.vampirestudios.obsidian.client.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Elytra;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.item.v1.elytra.FabricElytraExtensions;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.model.ElytraEntityModel;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
-import net.minecraft.client.render.entity.model.EntityModelLoader;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.model.ElytraModel;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
-public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
-    private final ElytraEntityModel<T> elytraEntityModel;
+public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+    private final ElytraModel<T> elytraEntityModel;
     private final Elytra elytra;
 
-    public CustomElytraFeatureRenderer(Elytra elytra, FeatureRendererContext<T, M> context, EntityModelLoader entityModelLoader) {
+    public CustomElytraFeatureRenderer(Elytra elytra, RenderLayerParent<T, M> context, EntityModelSet entityModelLoader) {
         super(context);
         this.elytra = elytra;
-        this.elytraEntityModel = new ElytraEntityModel<>(entityModelLoader.getModelPart(EntityModelLayers.ELYTRA));
+        this.elytraEntityModel = new ElytraModel<>(entityModelLoader.bakeLayer(ModelLayers.ELYTRA));
     }
 
     @Override
-    public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l) {
-        ItemStack itemStack = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
+    public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l) {
+        ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
         if (itemStack.getItem() instanceof FabricElytraExtensions) {
-            Identifier identifier4;
-            if (livingEntity instanceof AbstractClientPlayerEntity abstractClientPlayerEntity) {
-                if (abstractClientPlayerEntity.canRenderElytraTexture() && abstractClientPlayerEntity.getElytraTexture() != null) {
-                    identifier4 = abstractClientPlayerEntity.getElytraTexture();
-                } else if (abstractClientPlayerEntity.canRenderCapeTexture() && abstractClientPlayerEntity.getCapeTexture() != null && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE)) {
-                    identifier4 = abstractClientPlayerEntity.getCapeTexture();
+            ResourceLocation identifier4;
+            if (livingEntity instanceof AbstractClientPlayer abstractClientPlayerEntity) {
+                if (abstractClientPlayerEntity.isElytraLoaded() && abstractClientPlayerEntity.getElytraTextureLocation() != null) {
+                    identifier4 = abstractClientPlayerEntity.getElytraTextureLocation();
+                } else if (abstractClientPlayerEntity.isCapeLoaded() && abstractClientPlayerEntity.getCloakTextureLocation() != null && abstractClientPlayerEntity.isModelPartShown(PlayerModelPart.CAPE)) {
+                    identifier4 = abstractClientPlayerEntity.getCloakTextureLocation();
                 } else {
                     identifier4 = elytra.texture;
                 }
@@ -50,13 +50,13 @@ public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends Entit
                 identifier4 = elytra.texture;
             }
 
-            matrixStack.push();
+            matrixStack.pushPose();
             matrixStack.translate(0.0D, 0.0D, 0.125D);
-            this.getContextModel().copyStateTo(this.elytraEntityModel);
-            this.elytraEntityModel.setAngles(livingEntity, f, g, j, k, l);
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, this.elytraEntityModel.getLayer(identifier4), false, itemStack.hasGlint());
-            this.elytraEntityModel.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            matrixStack.pop();
+            this.getParentModel().copyPropertiesTo(this.elytraEntityModel);
+            this.elytraEntityModel.setupAnim(livingEntity, f, g, j, k, l);
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, this.elytraEntityModel.renderType(identifier4), false, itemStack.hasFoil());
+            this.elytraEntityModel.renderToBuffer(matrixStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            matrixStack.popPose();
         }
     }
 

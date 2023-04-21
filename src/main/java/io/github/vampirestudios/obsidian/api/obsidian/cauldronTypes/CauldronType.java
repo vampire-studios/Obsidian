@@ -1,13 +1,13 @@
 package io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.BlockState;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class CauldronType {
 
-    public Identifier name;
-    public Identifier item;
+    public ResourceLocation name;
+    public ResourceLocation item;
     public BlockState blockstate;
-    public Identifier sound_event;
+    public ResourceLocation sound_event;
 
 }

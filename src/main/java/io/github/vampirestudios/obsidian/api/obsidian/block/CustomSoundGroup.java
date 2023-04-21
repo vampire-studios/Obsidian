@@ -1,15 +1,15 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class CustomSoundGroup {
 
-    public Identifier id;
+    public ResourceLocation id;
 
-    public Identifier break_sound;
-    public Identifier step_sound;
-    public Identifier place_sound;
-    public Identifier hit_sound;
-    public Identifier fall_sound;
+    public ResourceLocation break_sound;
+    public ResourceLocation step_sound;
+    public ResourceLocation place_sound;
+    public ResourceLocation hit_sound;
+    public ResourceLocation fall_sound;
 
 }

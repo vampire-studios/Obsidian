@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class Painting {
 
-    public Identifier name;
+    public ResourceLocation name;
     public int width;
     public int height;
 

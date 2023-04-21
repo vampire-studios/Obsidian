@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
 
-public class CustomToolMaterial implements ToolMaterial {
+public class CustomToolMaterial implements Tier {
 
     public io.github.vampirestudios.obsidian.api.obsidian.item.ToolMaterial toolMaterial;
 
@@ -13,33 +13,33 @@ public class CustomToolMaterial implements ToolMaterial {
     }
 
     @Override
-    public int getDurability() {
+    public int getUses() {
         return toolMaterial.durability;
     }
 
     @Override
-    public float getMiningSpeedMultiplier() {
+    public float getSpeed() {
         return toolMaterial.miningSpeed;
     }
 
     @Override
-    public float getAttackDamage() {
+    public float getAttackDamageBonus() {
         return toolMaterial.attackDamage;
     }
 
     @Override
-    public int getMiningLevel() {
+    public int getLevel() {
         return toolMaterial.miningLevel;
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
         return toolMaterial.enchantability;
     }
 
     @Override
     public Ingredient getRepairIngredient() {
-        return Ingredient.ofItems(Registries.ITEM.get(toolMaterial.repairItem));
+        return Ingredient.of(BuiltInRegistries.ITEM.get(toolMaterial.repairItem));
     }
 
 }

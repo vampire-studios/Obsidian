@@ -1,34 +1,34 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.vampirestudios.obsidian.utils.ConstantUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class KeyBinding {
 
-    public Identifier id;
+    public ResourceLocation id;
     public String translationKey;
     public String categoryTranslationKey;
     public String type;
     public String keyCode;
 
     @Environment(EnvType.CLIENT)
-    public static InputUtil.Type parseInputType(String string) {
-        InputUtil.Type t;
+    public static InputConstants.Type parseInputType(String string) {
+        InputConstants.Type t;
         try {
             if (string == null) {
-                return InputUtil.Type.KEYSYM;
+                return InputConstants.Type.KEYSYM;
             }
-            t = InputUtil.Type.valueOf(string);
+            t = InputConstants.Type.valueOf(string);
         } catch (IllegalArgumentException ex) {
-            t = InputUtil.Type.KEYSYM;
+            t = InputConstants.Type.KEYSYM;
         }
         return t;
     }
 
-    public InputUtil.Type getType() {
+    public InputConstants.Type getType() {
         return parseInputType(type);
     }
 

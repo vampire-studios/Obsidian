@@ -12,11 +12,10 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,20 +30,20 @@ public class Items implements AddonModule {
         try {
             if (item == null) return;
 			FabricItemSettings settings = new FabricItemSettings()
-					.maxCount(item.information.maxStackSize)
+					.stacksTo(item.information.maxStackSize)
                     .rarity(item.information.rarity);
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     item.information.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (item.information.name.id == null) item.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (item.information.name.id == null) item.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
             RegistryHelperItemExpanded expanded = (RegistryHelperItemExpanded) REGISTRY_HELPER.items();
 
             Item registeredItem;
             if (item.information.canPlaceBlock) {
-                registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new BlockItemImpl(item, Registries.BLOCK.get(item.information.placableBlock),
+                registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new BlockItemImpl(item, BuiltInRegistries.BLOCK.get(item.information.placableBlock),
                         settings));
             } else {
                 if (item.information.renderModeModels != null) {

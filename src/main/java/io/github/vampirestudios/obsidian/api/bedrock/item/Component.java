@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.bedrock.item;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class Component {
 
@@ -25,16 +25,16 @@ public class Component {
     }
 
     public static class OnUse {
-        public Identifier event;
+        public ResourceLocation event;
     }
 
     public static class OnUseOn {
-        public Identifier event;
+        public ResourceLocation event;
     }
 
     public static class Projectile {
         public int minimum_critical_power;
-        public Identifier projectile_entity;
+        public ResourceLocation projectile_entity;
     }
 
     public static class Durability {
@@ -50,8 +50,8 @@ public class Component {
         public boolean can_always_eat;
         public int nutrition;
         public int saturation_modifier;
-        public Identifier using_converts_to;
-        public Identifier on_consume;
+        public ResourceLocation using_converts_to;
+        public ResourceLocation on_consume;
     }
 
     public static class KnockbackResistance {
@@ -60,7 +60,7 @@ public class Component {
 
     public static class Icon {
         public int frame;
-        public Identifier texture;
+        public ResourceLocation texture;
     }
 
     public static class EntityCollision {

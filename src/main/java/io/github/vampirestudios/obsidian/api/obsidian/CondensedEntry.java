@@ -1,20 +1,19 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
 
 public class CondensedEntry {
-    public Identifier name;
+    public ResourceLocation name;
     public Type type;
-    @SerializedName("target_group") public Identifier targetGroup;
-    @SerializedName("tabbed_group") public Identifier tabbedGroup;
+    @SerializedName("target_group") public ResourceLocation targetGroup;
+    @SerializedName("tabbed_group") public ResourceLocation tabbedGroup;
     public boolean specificCreativeTab = false;
     public boolean specificTabbedGroup = false;
-    public Identifier base;
-    public Identifier tag;
-    public List<Identifier> items;
+    public ResourceLocation base;
+    public ResourceLocation tag;
+    public List<ResourceLocation> items;
 
     public enum Type {
         ITEM_TAG,

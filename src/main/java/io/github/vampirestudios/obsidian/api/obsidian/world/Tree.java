@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.world;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class Tree {
-	public Identifier id;
+	public ResourceLocation id;
 }

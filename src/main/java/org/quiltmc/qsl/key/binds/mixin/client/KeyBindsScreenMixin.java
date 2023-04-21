@@ -16,15 +16,15 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.screen.option.KeybindsScreen;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.controls.KeyBindsList;
+import net.minecraft.client.gui.screens.controls.KeyBindsScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,18 +32,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeybindsScreen.class)
-public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
+@Mixin(KeyBindsScreen.class)
+public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 	@Shadow
-	private ControlsListWidget controlsList;
+	private KeyBindsList controlsList;
 
-	private KeyBindsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
+	private KeyBindsScreenMixin(Screen screen, Options gameOptions, Component text) {
 		super(screen, gameOptions, text);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Inject(method = "render", at = @At("TAIL"))
-	private void renderConflictTooltips(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	private void renderConflictTooltips(PoseStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		// TODO - Somehow extend the hover area to include the label too
 //		ControlsListWidget.Entry entry = ((EntryListWidgetAccessor<ControlsListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
 //		if (entry != null && entry instanceof ControlsListWidget.KeyBindingEntry keyBindEntry) {

@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.fluid.mixin;
 
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.fluid.WaterFluid;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.WaterFluid;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(WaterFluid.class)
-public abstract class WaterFluidMixin extends FlowableFluid implements QuiltFlowableFluidExtensions {
+public abstract class WaterFluidMixin extends FlowingFluid implements QuiltFlowableFluidExtensions {
 }

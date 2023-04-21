@@ -1,19 +1,19 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.StringRepresentable;
 
-public enum TripleBlockPart implements StringIdentifiable {
+public enum TripleBlockPart implements StringRepresentable {
     UPPER,
     MIDDLE,
     LOWER;
 
     @Override
     public String toString() {
-        return this.asString();
+        return this.getSerializedName();
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return switch (this) {
             case UPPER -> "upper";
             case MIDDLE -> "middle";

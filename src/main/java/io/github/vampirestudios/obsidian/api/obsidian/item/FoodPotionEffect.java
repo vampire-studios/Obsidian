@@ -1,11 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class FoodPotionEffect {
 
-    public Identifier effect;
+    public ResourceLocation effect;
     public float chance;
     public int duration;
     public int amplifier;

@@ -16,17 +16,17 @@
 
 package org.quiltmc.qsl.fluid.mixin;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.loot.LootManager;
-import net.minecraft.loot.LootTable;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.quiltmc.qsl.fluid.impl.FishingBobberEntityExtensions;
 import org.quiltmc.qsl.fluid.impl.QuiltFluid;
@@ -37,36 +37,36 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-@Mixin(FishingBobberEntity.class)
+@Mixin(FishingHook.class)
 public abstract class FishingBobberEntityMixin implements CustomFluidInteracting, FishingBobberEntityExtensions {
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 0))
 	public boolean tick(FluidState instance, TagKey<Fluid> tag) {
-		QuiltFluid fluid = (QuiltFluid) instance.getFluid();
-		return instance.isIn(this.quilt$canFishingBobberSwimOn()) && fluid.bobberFloats(instance,(FishingBobberEntity) (Object)this);
+		QuiltFluid fluid = (QuiltFluid) instance.getType();
+		return instance.is(this.quilt$canFishingBobberSwimOn()) && fluid.bobberFloats(instance,(FishingHook) (Object)this);
 	}
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 1))
 	public boolean tick2(FluidState instance, TagKey<Fluid> tag) {
-		return instance.isIn(this.quilt$canFishingBobberSwimOn());
+		return instance.is(this.quilt$canFishingBobberSwimOn());
 	}
 
 	@Inject(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;up()Lnet/minecraft/util/math/BlockPos;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void canFish(BlockPos pos, CallbackInfo ci, ServerWorld serverWorld, int i) {
+	public void canFish(BlockPos pos, CallbackInfo ci, ServerLevel serverWorld, int i) {
 		FluidState state = serverWorld.getBlockState(pos).getFluidState();
-		QuiltFluid fluid = (QuiltFluid) state.getFluid();
-		if (!state.isIn(this.quilt$canFishingBobberCatchIn()) || !fluid.canFish(state, (FishingBobberEntity) (Object)this)) {
+		QuiltFluid fluid = (QuiltFluid) state.getType();
+		if (!state.is(this.quilt$canFishingBobberCatchIn()) || !fluid.canFish(state, (FishingHook) (Object)this)) {
 			ci.cancel();
 		}
 	}
 
 	@Redirect(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"))
 	public boolean spawnParticles(BlockState instance, Block block) {
-		return instance.getFluidState().isIn(quilt$canFishingBobberCatchIn());
+		return instance.getFluidState().is(quilt$canFishingBobberCatchIn());
 	}
 
 	@Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootManager;getLootTable(Lnet/minecraft/util/Identifier;)Lnet/minecraft/loot/LootTable;"))
-	public LootTable changeLootTable(LootManager instance, Identifier id) {
-		return ((FishingBobberEntity) (Object) this).world.getServer().getLootManager().getLootTable(this.quilt$getFishingLootTable());
+	public LootTable changeLootTable(LootDataManager instance, ResourceLocation id) {
+		return ((FishingHook) (Object) this).level.getServer().getLootData().getLootTable(this.quilt$getFishingLootTable());
 	}
 }

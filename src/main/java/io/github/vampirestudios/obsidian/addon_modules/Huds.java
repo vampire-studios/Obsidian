@@ -8,11 +8,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.HUD;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.util.JsonHelper;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import net.minecraft.util.GsonHelper;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -21,7 +20,7 @@ public class Huds implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         HUD hud = Obsidian.GSON.fromJson(new FileReader(file), HUD.class);
-        JsonObject jsonObject = JsonHelper.deserialize(new FileReader(file));
+        JsonObject jsonObject = GsonHelper.parse(new FileReader(file));
         try {
             if (hud == null) return;
 

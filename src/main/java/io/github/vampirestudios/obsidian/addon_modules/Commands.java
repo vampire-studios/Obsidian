@@ -12,10 +12,9 @@ import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.File;
@@ -71,11 +70,11 @@ public class Commands implements AddonModule {
             if (command == null || json.isEmpty()) return;
             String finalJson = json;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     command.name,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (command.name == null) command.name = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (command.name == null) command.name = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
             CommandRegistrationCallback.EVENT.register((dispatcher, context, environment) -> parseNodes(dispatcher, context, environment, finalJson));
             register(ContentRegistries.COMMANDS, "command", identifier, command);
@@ -93,34 +92,34 @@ public class Commands implements AddonModule {
         return "commands";
     }
 
-    void parseNodes(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, String json) {
+    void parseNodes(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext, net.minecraft.commands.Commands.CommandSelection environment, String json) {
         Command.CommandNode node = Obsidian.GSON.fromJson(json, Command.CommandNode.class);
         if (node.dedicatedOnly) {
-            if (environment.dedicated) {
-                LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name.getPath());
+            if (environment.includeDedicated) {
+                LiteralArgumentBuilder<CommandSourceStack> root = net.minecraft.commands.Commands.literal(node.name.getPath());
                 parse(root, buildContext, environment, node, new String[]{ });
                 dispatcher.register(root);
             }
         } else {
-            LiteralArgumentBuilder<ServerCommandSource> root = CommandManager.literal(node.name.getPath());
+            LiteralArgumentBuilder<CommandSourceStack> root = net.minecraft.commands.Commands.literal(node.name.getPath());
             parse(root, buildContext, environment, node, new String[]{ });
             dispatcher.register(root);
         }
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, Command.LiteralNode node, String name, String[] args) {
-        LiteralArgumentBuilder<ServerCommandSource> _this = CommandManager.literal(name);
+    void parse(ArgumentBuilder<CommandSourceStack, ?> parent, CommandBuildContext buildContext, net.minecraft.commands.Commands.CommandSelection environment, Command.LiteralNode node, String name, String[] args) {
+        LiteralArgumentBuilder<CommandSourceStack> _this = net.minecraft.commands.Commands.literal(name);
         parse(_this, buildContext, environment, node, args);
         parent.then(_this);
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, Command.ArgumentNode node, String name, String[] args) {
-        RequiredArgumentBuilder<ServerCommandSource, ?> _this = CommandManager.argument(name, node.getArgumentType(buildContext));
+    void parse(ArgumentBuilder<CommandSourceStack, ?> parent, CommandBuildContext buildContext, net.minecraft.commands.Commands.CommandSelection environment, Command.ArgumentNode node, String name, String[] args) {
+        RequiredArgumentBuilder<CommandSourceStack, ?> _this = net.minecraft.commands.Commands.argument(name, node.getArgumentType(buildContext));
         parse(_this, buildContext, environment, node, args);
         parent.then(_this);
     }
 
-    void parse(ArgumentBuilder<ServerCommandSource, ?> parent, CommandRegistryAccess buildContext, CommandManager.RegistrationEnvironment environment, Command.Node node, String[] args) {
+    void parse(ArgumentBuilder<CommandSourceStack, ?> parent, CommandBuildContext buildContext, net.minecraft.commands.Commands.CommandSelection environment, Command.Node node, String[] args) {
         if (node.arguments != null) {
             node.arguments.forEach((_name, _node) -> {
                 ArrayList<String> list = new ArrayList<>(Arrays.asList(args));
@@ -132,7 +131,7 @@ public class Commands implements AddonModule {
             node.literals.forEach((_name, _node) -> parse(parent, buildContext, environment, _node, _name, args));
         }
         if (node.op_level != null) {
-            parent.requires((ctx) -> ctx.hasPermissionLevel(node.op_level));
+            parent.requires((ctx) -> ctx.hasPermission(node.op_level));
         }
         if (node.executes != null) {
             parent.executes((ctx) -> {
@@ -145,8 +144,8 @@ public class Commands implements AddonModule {
 
                 for (String command : node.executes) {
                     String formatted = sub.replace(command);
-                    ServerCommandSource source = ctx.getSource().withLevel(node.op_level);
-                    source.getServer().getCommandManager()
+                    CommandSourceStack source = ctx.getSource().withPermission(node.op_level);
+                    source.getServer().getCommands()
                             .getDispatcher().execute(formatted, source);
                 }
                 return 0;

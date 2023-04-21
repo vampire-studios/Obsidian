@@ -1,28 +1,28 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 
 public class CustomBlockItem extends BlockItem {
 
     public final Block block;
 
-    public CustomBlockItem(Block block, net.minecraft.block.Block blockImpl, Settings settings) {
+    public CustomBlockItem(Block block, net.minecraft.world.level.block.Block blockImpl, Properties settings) {
         super(blockImpl, settings);
         this.block = block;
     }
 
     @Override
-    public ItemStack getDefaultStack() {
-        ItemStack stack = super.getDefaultStack();
-        block.information.getRemovedTooltipSections().forEach(stack::addHideFlag);
+    public ItemStack getDefaultInstance() {
+        ItemStack stack = super.getDefaultInstance();
+        block.information.getRemovedTooltipSections().forEach(stack::hideTooltipPart);
         return stack;
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         return block.information.itemProperties.has_glint;
     }
 
@@ -32,12 +32,12 @@ public class CustomBlockItem extends BlockItem {
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
         return block.information.itemProperties.enchantability;
     }
 
     @Override
-    public Text getName() {
+    public Component getDescription() {
         return block.information.name.getName("block");
     }
 

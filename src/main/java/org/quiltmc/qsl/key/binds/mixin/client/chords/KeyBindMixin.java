@@ -16,13 +16,9 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import org.quiltmc.qsl.key.binds.api.ChordedKeyBind;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 import org.spongepowered.asm.mixin.Final;
@@ -38,18 +34,22 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
-@Mixin(KeyBinding.class)
+@Mixin(KeyMapping.class)
 public class KeyBindMixin implements ChordedKeyBind {
 	@Shadow
 	@Final
-	private static Map<String, KeyBinding> KEYS_BY_ID;
+	private static Map<String, KeyMapping> KEYS_BY_ID;
 
 	@Shadow
-	private InputUtil.Key boundKey;
+	private InputConstants.Key boundKey;
 
 	@Unique
-	private static final Map<KeyChord, KeyBinding> KEY_BINDS_BY_CHORD = new Reference2ReferenceOpenHashMap<>();
+	private static final Map<KeyChord, KeyMapping> KEY_BINDS_BY_CHORD = new Reference2ReferenceOpenHashMap<>();
 
 	@Unique
 	private KeyChord quilt$defaultChord;
@@ -61,18 +61,18 @@ public class KeyBindMixin implements ChordedKeyBind {
 			at = @At("RETURN"),
 			method = "<init>(Ljava/lang/String;Lnet/minecraft/client/util/InputUtil$Type;ILjava/lang/String;)V"
 	)
-	private void initializeChordFields(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
+	private void initializeChordFields(String string, InputConstants.Type type, int i, String string2, CallbackInfo ci) {
 		quilt$defaultChord = null;
 		quilt$boundChord = null;
 	}
 
 	@Inject(at = @At("HEAD"), method = "onKeyPressed")
-	private static void detectChordsOnIncrement(InputUtil.Key startingKey, CallbackInfo ci) {
+	private static void detectChordsOnIncrement(InputConstants.Key startingKey, CallbackInfo ci) {
 		for (KeyChord chord : KEY_BINDS_BY_CHORD.keySet()) {
 			if (chord.keys.containsKey(startingKey) && !chord.keys.containsValue(false)) {
 				// This ensures that the chord will only be incremented once instead of N times
 				if (startingKey.equals(chord.keys.keySet().toArray()[0])) {
-					KeyBinding keyBind = KEY_BINDS_BY_CHORD.get(chord);
+					KeyMapping keyBind = KEY_BINDS_BY_CHORD.get(chord);
 					((KeyBindAccessor) keyBind).setTimesPressed(((KeyBindAccessor) keyBind).getTimesPressed() + 1);
 				}
 			}
@@ -80,11 +80,11 @@ public class KeyBindMixin implements ChordedKeyBind {
 	}
 
 	@Inject(at = @At("HEAD"), method = "setKeyPressed")
-	private static void detectChordsOnSet(InputUtil.Key startingKey, boolean pressed, CallbackInfo ci) {
+	private static void detectChordsOnSet(InputConstants.Key startingKey, boolean pressed, CallbackInfo ci) {
 		for (KeyChord chord : KEY_BINDS_BY_CHORD.keySet()) {
 			if (chord.keys.containsKey(startingKey)) {
 				chord.keys.put(startingKey, pressed);
-				KEY_BINDS_BY_CHORD.get(chord).setPressed(!chord.keys.containsValue(false));
+				KEY_BINDS_BY_CHORD.get(chord).setDown(!chord.keys.containsValue(false));
 			}
 		}
 	}
@@ -98,16 +98,16 @@ public class KeyBindMixin implements ChordedKeyBind {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	private static void updateChordsToo(CallbackInfo ci, Iterator<?> iterator, KeyBinding keyBind) {
+	private static void updateChordsToo(CallbackInfo ci, Iterator<?> iterator, KeyMapping keyBind) {
 		KeyChord chord = ((KeyBindMixin) (Object) keyBind).quilt$boundChord;
 		if (chord != null) {
-			long window = MinecraftClient.getInstance().getWindow().getHandle();
-			for (InputUtil.Key key : chord.keys.keySet()) {
-				if (key.getCategory() == InputUtil.Type.KEYSYM) {
-					chord.keys.put(key, InputUtil.isKeyPressed(window, key.getCode()));
+			long window = Minecraft.getInstance().getWindow().getWindow();
+			for (InputConstants.Key key : chord.keys.keySet()) {
+				if (key.getType() == InputConstants.Type.KEYSYM) {
+					chord.keys.put(key, InputConstants.isKeyDown(window, key.getValue()));
 				}
 			}
-			KEY_BINDS_BY_CHORD.get(chord).setPressed(!chord.keys.containsValue(false));
+			KEY_BINDS_BY_CHORD.get(chord).setDown(!chord.keys.containsValue(false));
 			ci.cancel();
 		}
 	}
@@ -116,7 +116,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 	private static void updateChordBoundKeys(CallbackInfo cir) {
 		KEY_BINDS_BY_CHORD.clear();
 
-		for (KeyBinding key : KEYS_BY_ID.values()) {
+		for (KeyMapping key : KEYS_BY_ID.values()) {
 			KeyChord chord = ((KeyBindMixin) (Object) key).quilt$boundChord;
 			if (chord != null) {
 				KEY_BINDS_BY_CHORD.put(chord, key);
@@ -136,7 +136,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 	}
 
 	@Inject(at = @At("HEAD"), method = "equals", cancellable = true)
-	private void keyOrChordEquals(KeyBinding other, CallbackInfoReturnable<Boolean> cir) {
+	private void keyOrChordEquals(KeyMapping other, CallbackInfoReturnable<Boolean> cir) {
 		if (this.quilt$boundChord != null) {
 			if (other.getBoundChord() != null) {
 				cir.setReturnValue(this.quilt$boundChord.equals(other.getBoundChord()));
@@ -154,15 +154,15 @@ public class KeyBindMixin implements ChordedKeyBind {
 	}
 
 	@Inject(at = @At("HEAD"), method = "getBoundKeyLocalizedText", cancellable = true)
-	private void useChordName(CallbackInfoReturnable<Text> cir) {
+	private void useChordName(CallbackInfoReturnable<Component> cir) {
 		if (this.quilt$boundChord != null) {
-			MutableText text = Text.empty();
-			for (InputUtil.Key key : this.quilt$boundChord.keys.keySet()) {
+			MutableComponent text = Component.empty();
+			for (InputConstants.Key key : this.quilt$boundChord.keys.keySet()) {
 				if (text.getSiblings().size() != 0) {
 					text.append(" + ");
 				}
 
-				text.append(key.getLocalizedText());
+				text.append(key.getDisplayName());
 			}
 
 			cir.setReturnValue(text);
@@ -183,25 +183,25 @@ public class KeyBindMixin implements ChordedKeyBind {
 
 	@Override
 	public void setBoundChord(KeyChord chord) {
-		this.boundKey = InputUtil.UNKNOWN_KEY;
+		this.boundKey = InputConstants.UNKNOWN;
 		this.quilt$boundChord = chord;
 	}
 
 	@Override
-	public KeyBinding withChord(InputUtil.Key... keys) {
+	public KeyMapping withChord(InputConstants.Key... keys) {
 		// TODO - Perhaps have cases for length 0 and 1?
 		if (keys.length > 1) {
-			SortedMap<InputUtil.Key, Boolean> protoChord = new Object2BooleanAVLTreeMap<>();
-			for (InputUtil.Key key : keys) {
+			SortedMap<InputConstants.Key, Boolean> protoChord = new Object2BooleanAVLTreeMap<>();
+			for (InputConstants.Key key : keys) {
 				protoChord.put(key, false);
 			}
 
 			KeyChord chord = new KeyChord(protoChord);
 			this.setBoundChord(chord);
 			this.quilt$defaultChord = chord;
-			KeyBinding.updateKeysByCode();
+			KeyMapping.resetMapping();
 		}
 
-		return (KeyBinding) (Object) this;
+		return (KeyMapping) (Object) this;
 	}
 }

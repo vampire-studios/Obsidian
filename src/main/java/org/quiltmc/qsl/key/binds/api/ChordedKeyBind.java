@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.key.binds.api;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.KeyMapping;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
 @Environment(EnvType.CLIENT)
@@ -31,7 +31,7 @@ public interface ChordedKeyBind {
 	default void setBoundChord(KeyChord chord) { }
 
 	// TODO - This is a temporary measure until CHASM comes. Replace it with a proper constructor or builder
-	default KeyBinding withChord(InputUtil.Key... keys) {
+	default KeyMapping withChord(InputConstants.Key... keys) {
 		throw new UnsupportedOperationException();
 	}
 }

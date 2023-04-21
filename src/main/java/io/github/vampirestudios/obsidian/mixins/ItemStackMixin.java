@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.api.IForgeItemStack;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -14,7 +14,7 @@ public abstract class ItemStackMixin implements IForgeItemStack {
 
 	@Shadow public abstract boolean hasNbt();
 
-	@Shadow private @Nullable NbtCompound nbt;
+	@Shadow private @Nullable CompoundTag nbt;
 
 	@Shadow public abstract Item getItem();
 

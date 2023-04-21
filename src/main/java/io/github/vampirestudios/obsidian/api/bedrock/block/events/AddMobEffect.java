@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.bedrock.block.events;
 
 import io.github.vampirestudios.obsidian.api.bedrock.block.Event;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class AddMobEffect extends Event {
 
@@ -9,7 +9,7 @@ public class AddMobEffect extends Event {
 
     public float duration;
 
-    public Identifier effect;
+    public ResourceLocation effect;
 
     public String target;
 

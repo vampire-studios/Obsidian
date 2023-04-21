@@ -1,12 +1,5 @@
 package org.quiltmc.qsl.enchantment.mixin;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.collection.Weight;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 import org.quiltmc.qsl.enchantment.impl.EnchantmentContext;
 import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
@@ -19,6 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Iterator;
 import java.util.List;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.random.Weight;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
 @Mixin(value = EnchantmentHelper.class)
 public class EnchantmentHelperMixin {
@@ -29,14 +29,14 @@ public class EnchantmentHelperMixin {
 	}
 
 	@Inject(method = "getPossibleEntries", at = @At("RETURN"), cancellable = true)
-	private static void handleCustomEnchants(int power, ItemStack stack, boolean treasureAllowed, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
-		List<EnchantmentLevelEntry> extraEntries = callback.getReturnValue();
-		Registries.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment).forEach((enchantment) -> {
+	private static void handleCustomEnchants(int power, ItemStack stack, boolean treasureAllowed, CallbackInfoReturnable<List<EnchantmentInstance>> callback) {
+		List<EnchantmentInstance> extraEntries = callback.getReturnValue();
+		BuiltInRegistries.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment).forEach((enchantment) -> {
 			for (int level = enchantment.getMinLevel(); level <= enchantment.getMaxLevel(); level++) {
 				EnchantmentContext context = EnchantmentGodClass.context.get().withLevel(level).withPower(power);
 				int probability = ((QuiltEnchantment) enchantment).weightFromEnchantmentContext(context);
 				if (probability > 0) {
-					EnchantmentLevelEntry entry = new EnchantmentLevelEntry(enchantment, level);
+					EnchantmentInstance entry = new EnchantmentInstance(enchantment, level);
 					((MutableWeight) entry).setWeight(Weight.of(probability));
 					extraEntries.add(entry);
 				}

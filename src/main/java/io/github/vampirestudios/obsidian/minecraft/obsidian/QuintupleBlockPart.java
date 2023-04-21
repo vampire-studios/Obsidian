@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.StringRepresentable;
 
-public enum QuintupleBlockPart implements StringIdentifiable {
+public enum QuintupleBlockPart implements StringRepresentable {
     UPPER,
     UPPER_MIDDLE,
     MIDDLE,
@@ -11,11 +11,11 @@ public enum QuintupleBlockPart implements StringIdentifiable {
 
     @Override
     public String toString() {
-        return this.asString();
+        return this.getSerializedName();
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return switch (this) {
             case UPPER -> "upper";
             case UPPER_MIDDLE -> "upper_middle";

@@ -12,9 +12,8 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableArmorItemImpl
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -30,14 +29,14 @@ public class Armor implements AddonModule {
         try {
             if (armor == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     armor.information.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (armor.information.name.id == null) armor.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (armor.information.name.id == null) armor.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
             ArmorMaterial material;
-            if (armor.armorMaterial != null && ContentRegistries.ARMOR_MATERIALS.containsId(armor.armorMaterial)) {
+            if (armor.armorMaterial != null && ContentRegistries.ARMOR_MATERIALS.containsKey(armor.armorMaterial)) {
                 material = ContentRegistries.ARMOR_MATERIALS.get(armor.armorMaterial);
             } else {
                 material = armor.material;
@@ -45,8 +44,8 @@ public class Armor implements AddonModule {
             CustomArmorMaterial customArmorMaterial = new CustomArmorMaterial(material);
 
             Item item;
-            Item.Settings settings = new Item.Settings()
-                    .maxCount(armor.information.maxStackSize)
+            Item.Properties settings = new Item.Properties()
+                    .stacksTo(armor.information.maxStackSize)
                     .rarity(armor.information.rarity);
             if (armor.information.dyeable) item = new DyeableArmorItemImpl(customArmorMaterial, armor, settings);
             else item = new ArmorItemImpl(customArmorMaterial, armor, settings);

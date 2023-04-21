@@ -1,15 +1,15 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
 public class FuelSource {
 
     public String operation;
-    public Identifier item;
-    public Identifier tag;
+    public ResourceLocation item;
+    public ResourceLocation tag;
     public int burn_time = -1;
 
     public Operation getOperation() {
@@ -21,7 +21,7 @@ public class FuelSource {
     }
 
     public TagKey<Item> getTag() {
-        return TagKey.of(RegistryKeys.ITEM, tag);
+        return TagKey.create(Registries.ITEM, tag);
     }
 
     public enum Operation {

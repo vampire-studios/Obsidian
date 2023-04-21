@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class DropInformation {
 	public Drop[] drops;
@@ -11,7 +11,7 @@ public class DropInformation {
 	public int xpDropAmount = 1;
 
 	public static class Drop {
-		public Identifier name;
+		public ResourceLocation name;
 		@SerializedName("drops_if_silk_touch")
 		public boolean dropsIfSilkTouch = false;
 	}

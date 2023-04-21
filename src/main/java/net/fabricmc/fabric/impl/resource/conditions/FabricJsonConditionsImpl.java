@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.resource.conditions.v1.JsonResourceConditions;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.util.GsonHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,7 +45,7 @@ public class FabricJsonConditionsImpl {
 			}
 
 			return true;
-		} else if (JsonHelper.isString(element)) {
+		} else if (GsonHelper.isStringValue(element)) {
 			return isModEntryLoaded(element);
 		} else {
 			throw new IllegalArgumentException("Expected mods_loaded entry to be a string or an array, but it is: " + element);
@@ -53,7 +53,7 @@ public class FabricJsonConditionsImpl {
 	};
 
 	private static boolean isModEntryLoaded(JsonElement mod) {
-		if (JsonHelper.isString(mod)) {
+		if (GsonHelper.isStringValue(mod)) {
 			return FabricLoader.getInstance().isModLoaded(mod.getAsString());
 		} else {
 			throw new IllegalArgumentException("Expected mods_loaded mod entry to be a string, but it is: " + mod);

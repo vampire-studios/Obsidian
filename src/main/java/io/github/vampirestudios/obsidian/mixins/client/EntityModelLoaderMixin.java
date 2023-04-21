@@ -17,9 +17,9 @@
 package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.DynamicEntityModelLoader;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.render.entity.model.EntityModelLoader;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(EntityModelLoader.class)
+@Mixin(EntityModelSet.class)
 public class EntityModelLoaderMixin {
     @Unique
     private DynamicEntityModelLoader quilt$dynamicEntityModelLoader;
@@ -39,7 +39,7 @@ public class EntityModelLoaderMixin {
     }
 
     @Inject(method = "getModelPart", at = @At("HEAD"), cancellable = true)
-    public void returnDynamicModel(EntityModelLayer layer, CallbackInfoReturnable<ModelPart> cir) {
+    public void returnDynamicModel(ModelLayerLocation layer, CallbackInfoReturnable<ModelPart> cir) {
 //        TexturedModelData modelData = quilt$dynamicEntityModelLoader.getModelData(layer);
 //        if (modelData != null) {
 //            cir.setReturnValue(modelData.createModel());

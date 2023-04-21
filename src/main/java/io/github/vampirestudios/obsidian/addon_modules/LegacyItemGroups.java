@@ -12,15 +12,9 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.resource.featuretoggle.FeatureFlags;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.yaml.snakeyaml.Yaml;
@@ -64,13 +58,13 @@ public class LegacyItemGroups implements AddonModule {
         try {
             if (itemGroup == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     itemGroup.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (itemGroup.name.id == null) itemGroup.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (itemGroup.name.id == null) itemGroup.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
-            ItemGroup itemGroup1 = FabricItemGroup.builder(identifier)
+            CreativeModeTab itemGroup1 = FabricItemGroup.builder(identifier)
                     .icon(() -> new ItemStack(net.minecraft.registry.Registries.ITEM.get(itemGroup.icon)))
                     .entries((displayContext, entries) -> {
                         if (itemGroup.tags != null) {

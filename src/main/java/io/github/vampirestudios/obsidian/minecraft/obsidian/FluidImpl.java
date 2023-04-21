@@ -2,63 +2,63 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.fluid.api.QuiltFluidBlock;
 import org.quiltmc.qsl.fluid.impl.QuiltFluid;
 
 public abstract class FluidImpl extends QuiltFluid {
-	public static IntProperty LEVEL;
+	public static IntegerProperty LEVEL;
 
 	private final QuiltFluidBlock fluidBlock;
 	private final io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid;
 
 	public FluidImpl(io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid) {
-		LEVEL = IntProperty.of("level", 0, fluid.maxFluidLevel);
+		LEVEL = IntegerProperty.create("level", 0, fluid.maxFluidLevel);
 		this.fluid = fluid;
-		this.fluidBlock = Registry.register(Registries.BLOCK, fluid.name.id, new QuiltFluidBlock(this, FabricBlockSettings.copyOf(Blocks.WATER)));
+		this.fluidBlock = Registry.register(BuiltInRegistries.BLOCK, fluid.name.id, new QuiltFluidBlock(this, FabricBlockSettings.copyOf(Blocks.WATER)));
 	}
 
 	@Override
 	public Fluid getFlowing() {
-		return Registry.register(Registries.FLUID, Utils.appendToPath(this.fluid.name.id, "_flowing"), new Flowing(this.fluid));
+		return Registry.register(BuiltInRegistries.FLUID, Utils.appendToPath(this.fluid.name.id, "_flowing"), new Flowing(this.fluid));
 	}
 
 	@Override
-	public Fluid getStill() {
-		return Registry.register(Registries.FLUID, this.fluid.name.id, new Still(this.fluid));
+	public Fluid getSource() {
+		return Registry.register(BuiltInRegistries.FLUID, this.fluid.name.id, new Still(this.fluid));
 	}
 
 	@Override
-	public Item getBucketItem() {
-		return Registry.register(Registries.ITEM, Utils.appendToPath(this.fluid.name.id, "_bucket"), new BucketItem(this, new Item.Settings()
-				.maxCount(1)));
+	public Item getBucket() {
+		return Registry.register(BuiltInRegistries.ITEM, Utils.appendToPath(this.fluid.name.id, "_bucket"), new BucketItem(this, new Item.Properties()
+				.stacksTo(1)));
 	}
 
 	@Override
-	protected BlockState toBlockState(FluidState state) {
-		return this.fluidBlock.getDefaultState().with(Properties.LEVEL_15, getBlockStateLevel(state));
+	protected BlockState createLegacyBlock(FluidState state) {
+		return this.fluidBlock.defaultBlockState().setValue(BlockStateProperties.LEVEL, getLegacyLevel(state));
 	}
 
 	public io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid getFluid() {
@@ -66,7 +66,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	}
 
 	@Override
-	public int getColor(FluidState state, World world, BlockPos pos) {
+	public int getColor(FluidState state, Level world, BlockPos pos) {
 		return Integer.parseInt(this.fluid.fluidColor);
 	}
 
@@ -88,7 +88,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Override
 	public float getPushStrength(FluidState state, Entity affected) {
 		return this.fluid.pushStrengthChangesWhenWarm
-				? affected.world.getDimension().ultrawarm() ? this.fluid.pushStrengthUltrawarm : this.fluid.pushStrength
+				? affected.level.dimensionType().ultraWarm() ? this.fluid.pushStrengthUltrawarm : this.fluid.pushStrength
 				: this.fluid.pushStrength;
 	}
 
@@ -98,28 +98,28 @@ public abstract class FluidImpl extends QuiltFluid {
 	}
 
 	@Override
-	protected int getFlowSpeed(WorldView worldView) {
+	protected int getSlopeFindDistance(LevelReader worldView) {
 		return this.fluid.flowSpeedChangesWhenWarm
-				? worldView.getDimension().ultrawarm() ? this.fluid.flowSpeedUltrawarm : this.fluid.flowSpeed
+				? worldView.dimensionType().ultraWarm() ? this.fluid.flowSpeedUltrawarm : this.fluid.flowSpeed
 				: this.fluid.flowSpeed;
 	}
 
 	@Override
-	protected boolean isInfinite(World world) {
+	protected boolean canConvertToSource(Level world) {
 		return this.fluid.canBeInfinite;
 	}
 
 	@Override
-	protected int getLevelDecreasePerBlock(WorldView worldView) {
+	protected int getDropOff(LevelReader worldView) {
 		return this.fluid.levelDecreasePerBlockChangesWhenWarm
-				? worldView.getDimension().ultrawarm() ? this.fluid.levelDecreasePerBlockUltrawarm : this.fluid.levelDecreasePerBlock
+				? worldView.dimensionType().ultraWarm() ? this.fluid.levelDecreasePerBlockUltrawarm : this.fluid.levelDecreasePerBlock
 				: this.fluid.levelDecreasePerBlock;
 	}
 
 	@Override
-	public int getTickRate(WorldView worldView) {
+	public int getTickDelay(LevelReader worldView) {
 		return this.fluid.tickRateChangesWhenWarm
-				? worldView.getDimension().ultrawarm() ? this.fluid.tickRateUltrawarm : this.fluid.tickRate
+				? worldView.dimensionType().ultraWarm() ? this.fluid.tickRateUltrawarm : this.fluid.tickRate
 				: this.fluid.tickRate;
 	}
 
@@ -129,22 +129,22 @@ public abstract class FluidImpl extends QuiltFluid {
 	}
 
 	@Override
-	public boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
+	public boolean bobberFloats(FluidState state, FishingHook affected) {
 		return this.fluid.fishingBobberFloats;
 	}
 
 	@Override
-	public boolean canFish(FluidState state, FishingBobberEntity affected) {
+	public boolean canFish(FluidState state, FishingHook affected) {
 		return this.fluid.canFish;
 	}
 
 	@Override
-	public float getDefaultDensity(World world, BlockPos blockpos) {
+	public float getDefaultDensity(Level world, BlockPos blockpos) {
 		return this.fluid.density;
 	}
 
 	@Override
-	public float getDefaultTemperature(World world, BlockPos blockpos) {
+	public float getDefaultTemperature(Level world, BlockPos blockpos) {
 		return this.fluid.temperature;
 	}
 
@@ -165,30 +165,30 @@ public abstract class FluidImpl extends QuiltFluid {
 
 	@Nullable
 	@Override
-	public SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, Random random) {
-		return Registries.SOUND_EVENT.get(this.fluid.splashSound);
+	public SoundEvent getSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
+		return BuiltInRegistries.SOUND_EVENT.get(this.fluid.splashSound);
 	}
 
 	@Nullable
 	@Override
-	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, Random random) {
-		return Registries.SOUND_EVENT.get(this.fluid.highSpeedSplashSound);
+	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
+		return BuiltInRegistries.SOUND_EVENT.get(this.fluid.highSpeedSplashSound);
 	}
 
 	@Nullable
 	@Override
-	public ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, Random random) {
-		return (DefaultParticleType) Registries.PARTICLE_TYPE.get(this.fluid.splashParticle);
+	public ParticleOptions getSplashParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
+		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(this.fluid.splashParticle);
 	}
 
 	@Nullable
 	@Override
-	public ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, Random random) {
-		return (DefaultParticleType) Registries.PARTICLE_TYPE.get(this.fluid.bubbleParticle);
+	public ParticleOptions getBubbleParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
+		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(this.fluid.bubbleParticle);
 	}
 
 	@Override
-	public Identifier getFishingLootTable() {
+	public ResourceLocation getFishingLootTable() {
 		return this.fluid.fishingLootTable;
 	}
 
@@ -199,8 +199,8 @@ public abstract class FluidImpl extends QuiltFluid {
 
 	@Nullable
 	@Override
-	protected ParticleEffect getParticle() {
-		return (DefaultParticleType) Registries.PARTICLE_TYPE.get(this.fluid.particleType);
+	protected ParticleOptions getDripParticle() {
+		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(this.fluid.particleType);
 	}
 
 	@Override
@@ -214,18 +214,18 @@ public abstract class FluidImpl extends QuiltFluid {
 			super(fluid);
 		}
 		@Override
-		protected void appendProperties(StateManager.Builder<Fluid, FluidState> builder) {
-			super.appendProperties(builder);
+		protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
+			super.createFluidStateDefinition(builder);
 			builder.add(LEVEL);
 		}
 
 		@Override
-		public int getLevel(FluidState fluidState) {
-			return fluidState.get(LEVEL);
+		public int getAmount(FluidState fluidState) {
+			return fluidState.getValue(LEVEL);
 		}
 
 		@Override
-		public boolean isStill(FluidState state) {
+		public boolean isSource(FluidState state) {
 			return false;
 		}
 	}
@@ -237,12 +237,12 @@ public abstract class FluidImpl extends QuiltFluid {
 		}
 
 		@Override
-		public int getLevel(FluidState fluidState) {
+		public int getAmount(FluidState fluidState) {
 			return this.getFluid().maxFluidLevel;
 		}
 
 		@Override
-		public boolean isStill(FluidState state) {
+		public boolean isSource(FluidState state) {
 			return true;
 		}
 

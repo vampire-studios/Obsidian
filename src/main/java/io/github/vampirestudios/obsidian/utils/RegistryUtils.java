@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.utils;
 
 import io.github.vampirestudios.obsidian.api.ExtendedRegistry;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 
 public class RegistryUtils {
 
@@ -17,13 +17,13 @@ public class RegistryUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> void remove(Registry<T> registry, RegistryKey<T> key) {
+	public static <T> void remove(Registry<T> registry, ResourceKey<T> key) {
 		((ExtendedRegistry<T>) registry).obsidian$remove(key);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void remove(Registry<?> registry, Identifier id) {
-		remove((Registry<Object>) registry, (RegistryKey<Object>) RegistryKey.of(registry.getKey(), id));
+	public static void remove(Registry<?> registry, ResourceLocation id) {
+		remove((Registry<Object>) registry, (ResourceKey<Object>) ResourceKey.create(registry.key(), id));
 	}
 
 }

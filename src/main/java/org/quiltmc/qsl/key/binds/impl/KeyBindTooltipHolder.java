@@ -18,7 +18,7 @@ package org.quiltmc.qsl.key.binds.impl;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
@@ -26,5 +26,5 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
 public interface KeyBindTooltipHolder {
-	List<Text> getKeyBindTooltips();
+	List<Component> getKeyBindTooltips();
 }

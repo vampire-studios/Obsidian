@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block.events;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class PlayEffect extends Event {
-    public Identifier effect;
+    public ResourceLocation effect;
     public String target;
 }

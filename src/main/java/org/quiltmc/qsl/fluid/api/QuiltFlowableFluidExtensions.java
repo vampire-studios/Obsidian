@@ -16,30 +16,29 @@
 
 package org.quiltmc.qsl.fluid.api;
 
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectUtil;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.loot.LootTables;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
-
 import javax.annotation.Nullable;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffectUtil;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.phys.Vec3;
 
 public interface QuiltFlowableFluidExtensions {
 
@@ -62,13 +61,13 @@ public interface QuiltFlowableFluidExtensions {
 	int WATER_FOG_COLOR = -1;
 	int LAVA_FOG_COLOR = 0x991900;
 
-	Identifier WATER_FISHING_LOOT_TABLE = LootTables.FISHING_GAMEPLAY;
+	ResourceLocation WATER_FISHING_LOOT_TABLE = BuiltInLootTables.FISHING;
 
 	/**
 	 * The color of this fluid.
 	 */
-	default int getColor(FluidState state, World world, BlockPos pos) {
-		return world.getBiome(pos).comp_349().getWaterColor();
+	default int getColor(FluidState state, Level world, BlockPos pos) {
+		return world.getBiome(pos).value().getWaterColor();
 	}
 
 	/**
@@ -88,7 +87,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @see QuiltFlowableFluidExtensions#WATER_VISCOSITY
 	 */
 	default float getVerticalViscosity(FluidState state, Entity affected) {
-		if(state.isIn(FluidTags.LAVA)) return LAVA_VISCOSITY;
+		if(state.is(FluidTags.LAVA)) return LAVA_VISCOSITY;
 		return WATER_VISCOSITY;
 	}
 
@@ -102,8 +101,8 @@ public interface QuiltFlowableFluidExtensions {
 	 * @see QuiltFlowableFluidExtensions#LAVA_PUSH_STRENGTH_ULTRAWARM
 	 */
 	default float getPushStrength(FluidState state, Entity affected) {
-		if(state.isIn(FluidTags.LAVA)) {
-			return affected.world.getDimension().ultrawarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+		if(state.is(FluidTags.LAVA)) {
+			return affected.level.dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 		}
 		return WATER_PUSH_STRENGTH;
 	}
@@ -119,7 +118,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return an updated horizontalViscosity, specifically regarding potion effects
 	 */
 	default float modifyEntityHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
-		if (affected.hasStatusEffect(StatusEffects.DOLPHINS_GRACE)) {
+		if (affected.hasEffect(MobEffects.DOLPHINS_GRACE)) {
 			horizontalViscosity = 0.96f;
 		}
 		return horizontalViscosity;
@@ -129,11 +128,11 @@ public interface QuiltFlowableFluidExtensions {
 		return true;
 	}
 
-	default boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
+	default boolean bobberFloats(FluidState state, FishingHook affected) {
 		return true;
 	}
 
-	default boolean canFish(FluidState state, FishingBobberEntity affected) {
+	default boolean canFish(FluidState state, FishingHook affected) {
 		return true;
 	}
 
@@ -145,7 +144,7 @@ public interface QuiltFlowableFluidExtensions {
 		return !canExtinguish(state, affected);
 	}
 
-	default int getNextAirSubmerged(int air, LivingEntity entity, Random random) {
+	default int getNextAirSubmerged(int air, LivingEntity entity, RandomSource random) {
 		int i = EnchantmentHelper.getRespiration(entity);
 		return i > 0 && random.nextInt(i + 1) > 0 ? air : air - 1;
 	}
@@ -158,8 +157,8 @@ public interface QuiltFlowableFluidExtensions {
 	 * @see QuiltFlowableFluidExtensions#WATER_DENSITY
 	 * @see QuiltFlowableFluidExtensions#LAVA_DENSITY
 	 */
-	default float getDefaultDensity(World world, BlockPos blockpos) {
-		if(world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_DENSITY;
+	default float getDefaultDensity(Level world, BlockPos blockpos) {
+		if(world.getFluidState(blockpos).is(FluidTags.LAVA)) return LAVA_DENSITY;
 		return WATER_DENSITY;
 	}
 
@@ -171,8 +170,8 @@ public interface QuiltFlowableFluidExtensions {
 	 * @see QuiltFlowableFluidExtensions#WATER_TEMPERATURE
 	 * @see QuiltFlowableFluidExtensions#LAVA_TEMPERATURE
 	 */
-	default float getDefaultTemperature(World world, BlockPos blockpos) {
-		if(world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_TEMPERATURE;
+	default float getDefaultTemperature(Level world, BlockPos blockpos) {
+		if(world.getFluidState(blockpos).is(FluidTags.LAVA)) return LAVA_TEMPERATURE;
 		return WATER_TEMPERATURE;
 	}
 
@@ -186,9 +185,9 @@ public interface QuiltFlowableFluidExtensions {
 	 * @see QuiltFlowableFluidExtensions#NO_FALL_DAMAGE_REDUCTION
 	 */
 	default float getFallDamageReduction(Entity entity) {
-		BlockPos entityPos = entity.getBlockPos();
+		BlockPos entityPos = entity.blockPosition();
 
-		if(entity.world.getFluidState(entityPos).isIn(FluidTags.LAVA)) return HALF_FALL_DAMAGE_REDUCTION;
+		if(entity.level.getFluidState(entityPos).is(FluidTags.LAVA)) return HALF_FALL_DAMAGE_REDUCTION;
 
 		return FULL_FALL_DAMAGE_REDUCTION;
 	}
@@ -198,7 +197,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * value returned will be treated as a normal color.
 	 */
 	default int getFogColor(FluidState state, Entity affected) {
-		if(state.isIn(FluidTags.LAVA)) return LAVA_FOG_COLOR;
+		if(state.is(FluidTags.LAVA)) return LAVA_FOG_COLOR;
 		return WATER_FOG_COLOR;
 	}
 
@@ -216,8 +215,8 @@ public interface QuiltFlowableFluidExtensions {
 	 */
 	default float getFogEnd(FluidState state, Entity affected, float viewDistance) {
 		float distance = 192.0F;
-		if (affected instanceof ClientPlayerEntity player) {
-			distance *= Math.max(0.25F, player.getUnderwaterVisibility());
+		if (affected instanceof LocalPlayer player) {
+			distance *= Math.max(0.25F, player.getWaterVision());
 			/*Biome biome = player.world.getBiome(player.getBlockPos());
 			if (biome.getCategory() == Biome.Category.SWAMP) {
 				distance *= 0.85F;
@@ -227,8 +226,8 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	@Nullable
-	default SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, Random random) {
-		return SoundEvents.ENTITY_PLAYER_SPLASH;
+	default SoundEvent getSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
+		return SoundEvents.PLAYER_SPLASH;
 	}
 
 	/**
@@ -236,26 +235,26 @@ public interface QuiltFlowableFluidExtensions {
 	 *	Logic found in FlowableFluidExtensions.onSplash
 	 */
 	@Nullable
-	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, Random random) {
-		return SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED;
+	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
+		return SoundEvents.PLAYER_SPLASH_HIGH_SPEED;
 	}
 
 	@Nullable
-	default ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, Random random) {
+	default ParticleOptions getSplashParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return ParticleTypes.SPLASH;
 	}
 
 	@Nullable
-	default ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, Random random) {
+	default ParticleOptions getBubbleParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return ParticleTypes.BUBBLE;
 	}
 
 	@Nullable
-	default GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, Random random) {
+	default GameEvent getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return GameEvent.SPLASH;
 	}
 
-	default Identifier getFishingLootTable() {
+	default ResourceLocation getFishingLootTable() {
 		return WATER_FISHING_LOOT_TABLE;
 	}
 
@@ -265,14 +264,14 @@ public interface QuiltFlowableFluidExtensions {
 
 	// Overriding of any methods below this comment is generally unnecessary,
 	// and only made available to cover as many cases as possible.
-	default void spawnSplashParticles(Entity splashing, Vec3d splashPos, Random random) {
+	default void spawnSplashParticles(Entity splashing, Vec3 splashPos, RandomSource random) {
 		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width * 20.0f; ++i) {
 			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
-			int yFloor = MathHelper.floor(splashing.getY());
-			ParticleEffect particle = getSplashParticle(splashing, splashPos, random);
+			int yFloor = Mth.floor(splashing.getY());
+			ParticleOptions particle = getSplashParticle(splashing, splashPos, random);
 			if (particle != null) {
-				splashing.world.addParticle(
+				splashing.level.addParticle(
 						particle,
 						splashing.getX() + xOffset,
 						yFloor + 1.0f,
@@ -285,14 +284,14 @@ public interface QuiltFlowableFluidExtensions {
 		}
 	}
 
-	default void spawnBubbleParticles(Entity splashing, Vec3d splashPos, Random random) {
+	default void spawnBubbleParticles(Entity splashing, Vec3 splashPos, RandomSource random) {
 		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width * 20.0f; ++i) {
 			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
-			int yFloor = MathHelper.floor(splashing.getY());
-			ParticleEffect particle = getBubbleParticle(splashing, splashPos, random);
+			int yFloor = Mth.floor(splashing.getY());
+			ParticleOptions particle = getBubbleParticle(splashing, splashPos, random);
 			if (particle != null) {
-				splashing.world.addParticle(
+				splashing.level.addParticle(
 						particle,
 						splashing.getX() + xOffset,
 						yFloor + 1.0f,
@@ -306,10 +305,10 @@ public interface QuiltFlowableFluidExtensions {
 		}
 	}
 
-	default void onSplash(World world, Vec3d pos, Entity splashing, Random random) {
-		Entity passenger = splashing.hasPassengers() && splashing.getControllingPassenger() != null ? splashing.getControllingPassenger() : splashing;
+	default void onSplash(Level world, Vec3 pos, Entity splashing, RandomSource random) {
+		Entity passenger = splashing.isVehicle() && splashing.getControllingPassenger() != null ? splashing.getControllingPassenger() : splashing;
 		float volumeMultiplier = passenger == splashing ? 0.2f : 0.9f;
-		Vec3d velocity = passenger.getVelocity();
+		Vec3 velocity = passenger.getDeltaMovement();
 		double volume = Math.min(
 				1.0f,
 				Math.sqrt(velocity.x * velocity.x * 0.2 + velocity.y * velocity.y + velocity.z * velocity.z * 0.2D) * volumeMultiplier
@@ -329,7 +328,7 @@ public interface QuiltFlowableFluidExtensions {
 
 		GameEvent splash = getSplashGameEvent(splashing, pos, random);
 		if (splash != null) {
-			splashing.emitGameEvent(splash);
+			splashing.gameEvent(splash);
 		}
 	}
 
@@ -338,7 +337,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @return a Helper class which contains the calculated horizontalViscosity and speed. The class contains two fields, which are both floats.
 	 */
-	default FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
+	default FluidEnchantmentHelper customEnchantmentEffects(Vec3 movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		float depthStriderLevel = EnchantmentHelper.getDepthStrider(entity);
 		if (depthStriderLevel > 3.0f) {
 			depthStriderLevel = 3.0f;
@@ -350,29 +349,29 @@ public interface QuiltFlowableFluidExtensions {
 
 		if (depthStriderLevel > 0.0f) {
 			horizontalViscosity += (0.546f - horizontalViscosity) * depthStriderLevel / 3.0f;
-			speed += (entity.getMovementSpeed() - speed) * depthStriderLevel / 3.0f;
+			speed += (entity.getSpeed() - speed) * depthStriderLevel / 3.0f;
 		}
 
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
 	}
 
-	default void doDrownEffects(FluidState state, LivingEntity drowning, Random random) {
-		boolean isPlayer = drowning instanceof PlayerEntity;
-		boolean invincible = isPlayer && ((PlayerEntity) drowning).getAbilities().invulnerable;
-		if (!drowning.canBreatheInWater() && !StatusEffectUtil.hasWaterBreathing(drowning) && !invincible) {
-			drowning.setAir(getNextAirSubmerged(drowning.getAir(), drowning, random));
+	default void doDrownEffects(FluidState state, LivingEntity drowning, RandomSource random) {
+		boolean isPlayer = drowning instanceof Player;
+		boolean invincible = isPlayer && ((Player) drowning).getAbilities().invulnerable;
+		if (!drowning.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(drowning) && !invincible) {
+			drowning.setAirSupply(getNextAirSubmerged(drowning.getAirSupply(), drowning, random));
 			// if out of air
-			if (drowning.getAir() == -20) {
-				drowning.setAir(0);
-				Vec3d vec3d = drowning.getVelocity();
+			if (drowning.getAirSupply() == -20) {
+				drowning.setAirSupply(0);
+				Vec3 vec3d = drowning.getDeltaMovement();
 
 				for (int i = 0; i < 8; ++i) {
 					double f = random.nextDouble() - random.nextDouble();
 					double g = random.nextDouble() - random.nextDouble();
 					double h = random.nextDouble() - random.nextDouble();
-					ParticleEffect particle = getBubbleParticle(drowning, drowning.getPos(), random);
+					ParticleOptions particle = getBubbleParticle(drowning, drowning.position(), random);
 					if (particle != null) {
-						drowning.world.addParticle(
+						drowning.level.addParticle(
 								particle,
 								drowning.getX() + f,
 								drowning.getY() + g,
@@ -381,12 +380,12 @@ public interface QuiltFlowableFluidExtensions {
 					}
 				}
 
-				drowning.damage(drowning.getDamageSources().drown(), 2.0F);
+				drowning.hurt(drowning.damageSources().drown(), 2.0F);
 			}
 		}
 
 		// dismount vehicles that can't swim (horses)
-		if (!drowning.world.isClient && drowning.hasVehicle() && drowning.getVehicle() != null && !drowning.getVehicle().shouldDismountUnderwater()) {
+		if (!drowning.level.isClientSide && drowning.isPassenger() && drowning.getVehicle() != null && !drowning.getVehicle().dismountsUnderwater()) {
 			drowning.stopRiding();
 		}
 	}

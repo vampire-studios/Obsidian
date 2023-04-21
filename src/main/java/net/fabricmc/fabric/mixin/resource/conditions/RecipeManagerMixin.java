@@ -19,10 +19,10 @@ package net.fabricmc.fabric.mixin.resource.conditions;
 import com.google.gson.JsonElement;
 import net.fabricmc.fabric.api.resource.conditions.v1.JsonResourceConditions;
 import net.fabricmc.fabric.impl.resource.conditions.FabricJsonConditionsImpl;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,14 +37,14 @@ public class RecipeManagerMixin {
 			at = @At("HEAD"),
 			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V"
 	)
-	public void checkRecipeConditions(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci) {
+	public void checkRecipeConditions(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
 		profiler.push("Fabric: check recipe conditions");
 		int skippedRecipes = 0;
 
-		Iterator<Map.Entry<Identifier, JsonElement>> it = map.entrySet().iterator();
+		Iterator<Map.Entry<ResourceLocation, JsonElement>> it = map.entrySet().iterator();
 
 		while (it.hasNext()) {
-			Map.Entry<Identifier, JsonElement> entry = it.next();
+			Map.Entry<ResourceLocation, JsonElement> entry = it.next();
 			JsonElement recipeData = entry.getValue();
 
 			try {

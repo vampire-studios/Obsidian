@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.enchantments;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.entity.Entity;
 
 public class ProtectionAmount {
 
@@ -11,7 +11,7 @@ public class ProtectionAmount {
     public int protection_amount = 1;
 
     public DamageSource getDamageSource(Entity source) {
-        DamageSources damageSources = source.getDamageSources();
+        DamageSources damageSources = source.damageSources();
         return switch (damage_source) {
             case "inFire" -> damageSources.inFire();
             case "lightningBolt" -> damageSources.lightningBolt();
@@ -28,7 +28,7 @@ public class ProtectionAmount {
             case "outOfWorld" -> damageSources.outOfWorld();
             case "magic" -> damageSources.magic();
             case "wither" -> damageSources.wither();
-            case "anvil" -> damageSources.fallingAnvil(source);
+            case "anvil" -> damageSources.anvil(source);
             case "fallingBlock" -> damageSources.fallingBlock(source);
             case "dragonBreath" -> damageSources.dragonBreath();
             case "dryout" -> damageSources.dryOut();

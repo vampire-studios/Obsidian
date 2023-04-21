@@ -13,13 +13,12 @@ import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.registry.Registry;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -41,19 +40,19 @@ public class ObsidianAddonLoader {
             createObsidianAddonsFolder();
     }
 
-    public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, net.minecraft.item.ItemGroup tab) {
-        Block block1 = register(name, block, new net.minecraft.item.Item.Settings());
+    public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, net.minecraft.world.item.CreativeModeTab tab) {
+        Block block1 = register(name, block, new net.minecraft.world.item.Item.Properties());
         ItemGroupEvents.modifyEntriesEvent(tab).register(entries -> entries.add(block1));
         return block1;
     }
 
-    public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, net.minecraft.item.Item.Settings properties) {
+    public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, net.minecraft.world.item.Item.Properties properties) {
         return register(name, block, new BlockItem(block, properties));
     }
 
-    public net.minecraft.block.Block register(Identifier name, net.minecraft.block.Block block, BlockItem item) {
-        Registry.register(net.minecraft.registry.Registries.BLOCK, name, block);
-        Registry.register(net.minecraft.registry.Registries.ITEM, name, item);
+    public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, BlockItem item) {
+        Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK, name, block);
+        Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, name, item);
         return block;
     }
 
@@ -88,13 +87,13 @@ public class ObsidianAddonLoader {
         }
 
         String moduleText;
-        if (OBSIDIAN_ADDONS.getIds().size() > 1) {
+        if (OBSIDIAN_ADDONS.keySet().size() > 1) {
             moduleText = "Loading {} obsidian addons:";
         } else {
             moduleText = "Loading {} obsidian addon:";
         }
 
-        Obsidian.LOGGER.info(moduleText, OBSIDIAN_ADDONS.getIds().size());
+        Obsidian.LOGGER.info(moduleText, OBSIDIAN_ADDONS.keySet().size());
 
         for (IAddonPack pack : OBSIDIAN_ADDONS) {
             String name;
@@ -128,17 +127,17 @@ public class ObsidianAddonLoader {
         OBSIDIAN_ADDON_DIRECTORY.mkdirs();
     }
 
-    public static BlockState getState(net.minecraft.block.Block block, Map<String, String> jsonProperties) {
-        BlockState blockstate = block.getDefaultState();
+    public static BlockState getState(net.minecraft.world.level.block.Block block, Map<String, String> jsonProperties) {
+        BlockState blockstate = block.defaultBlockState();
         Collection<Property<?>> properties = blockstate.getProperties();
         for (Property property : properties) {
             String propertyName = property.getName();
             if (jsonProperties.containsKey(propertyName)) {
                 String valueName = jsonProperties.get(propertyName);
-                Optional valueOpt = property.parse(valueName);
+                Optional valueOpt = property.getValue(valueName);
                 if (valueOpt.isPresent()) {
                     Comparable value = (Comparable) valueOpt.get();
-                    blockstate = blockstate.with(property, value);
+                    blockstate = blockstate.setValue(property, value);
                 } else {
                     Obsidian.LOGGER.error("Property[{}={}] doesn't exist for {}", propertyName, valueName, block);
                 }
@@ -166,17 +165,17 @@ public class ObsidianAddonLoader {
         }
     }
 
-    public static <T> T register(Registry<T> list, String type, Identifier name, T idk) {
+    public static <T> T register(Registry<T> list, String type, ResourceLocation name, T idk) {
         Obsidian.LOGGER.info("Registered {} {}.", type, name);
         if (list.get(name) != null) return list.get(name);
         else return Registry.register(list, name, idk);
     }
 
     public static void failedRegistering(String type, String name, Exception e) {
-        failedRegistering(type, Identifier.tryParse(name), e);
+        failedRegistering(type, ResourceLocation.tryParse(name), e);
     }
 
-    public static void failedRegistering(String type, Identifier name, Exception e) {
+    public static void failedRegistering(String type, ResourceLocation name, Exception e) {
         Obsidian.LOGGER.error("Failed to register {} {}.", type, name);
         Obsidian.LOGGER.error(e.getMessage(), e);
     }

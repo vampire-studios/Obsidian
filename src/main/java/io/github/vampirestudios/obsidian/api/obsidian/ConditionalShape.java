@@ -5,16 +5,15 @@ import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ConditionalShape implements IShapeProvider {
 	public static final Codec<List<Pair<String, Set<String>>>> CONDITION_CODEC = Codec.unboundedMap(Codec.STRING, CodecExtras.maybeList(Codec.STRING)).xmap(
@@ -59,7 +58,7 @@ public class ConditionalShape implements IShapeProvider {
 	}
 
 	private <T extends Comparable<T>> String getPropertyValueByName(BlockState state, Property<T> property) {
-		return property.name(state.get(property));
+		return property.getName(state.getValue(property));
 	}
 
 	public IShapeProvider bake(Function<String, Property<?>> propertyLookup) {
@@ -81,7 +80,7 @@ public class ConditionalShape implements IShapeProvider {
 	}
 
 	private <T extends Comparable<T>> T parseValueFromProperty(Property<T> prop, String s) {
-		return prop.parse(s).orElseThrow(() -> new IllegalStateException("Property value " + s + " not valid in property " + prop.getName()));
+		return prop.getValue(s).orElseThrow(() -> new IllegalStateException("Property value " + s + " not valid in property " + prop.getName()));
 	}
 
 	public class Baked implements IShapeProvider {
@@ -101,7 +100,7 @@ public class ConditionalShape implements IShapeProvider {
 				for (Pair<Property<?>, Set<Comparable<?>>> p : condition) {
 					Property<?> property = p.getFirst();
 					Set<Comparable<?>> set = p.getSecond();
-					if (!set.contains(state.get(property))) {
+					if (!set.contains(state.getValue(property))) {
 						allMatch = false;
 						break;
 					}

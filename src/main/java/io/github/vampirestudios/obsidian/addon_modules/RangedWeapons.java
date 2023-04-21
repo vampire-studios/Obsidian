@@ -10,12 +10,11 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.CrossbowItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.client.item.ModelPredicateProviderRegistry;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,40 +28,40 @@ public class RangedWeapons implements AddonModule {
         RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
         try {
             if (rangedWeapon == null) return;
-            Item.Settings settings = new Item.Settings().maxCount(rangedWeapon.information.maxStackSize)
+            Item.Properties settings = new Item.Properties().stacksTo(rangedWeapon.information.maxStackSize)
                     .rarity(rangedWeapon.information.rarity);
-            Identifier identifier = Objects.requireNonNullElseGet(
+            ResourceLocation identifier = Objects.requireNonNullElseGet(
                     rangedWeapon.information.name.id,
-                    () -> new Identifier(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (rangedWeapon.information.name.id == null) rangedWeapon.information.name.id = new Identifier(id.modId(), file.getName().replaceAll(".json", ""));
+            if (rangedWeapon.information.name.id == null) rangedWeapon.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
             Item item = null;
             switch (rangedWeapon.weapon_type) {
                 case "bow" -> {
                     item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new BowItemImpl(rangedWeapon, settings));
-                    ModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
+                    ItemProperties.register(item, new ResourceLocation("pull"), (stack, world, entity, seed) -> {
                         if (entity == null) return 0.0F;
-                        else return entity.getActiveItem() != stack ? 0.0F : (stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / 20.0F;
+                        else return entity.getUseItem() != stack ? 0.0F : (stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
                     });
-                    ModelPredicateProviderRegistry.register(item, new Identifier("pulling"), (stack, world, entity, seed) ->
-                            entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
+                    ItemProperties.register(item, new ResourceLocation("pulling"), (stack, world, entity, seed) ->
+                            entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
                 }
                 case "crossbow" ->  {
                     item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new CrossbowItemImpl(rangedWeapon, settings));
-                    ModelPredicateProviderRegistry.register(item, new Identifier("pull"), (stack, world, entity, seed) -> {
+                    ItemProperties.register(item, new ResourceLocation("pull"), (stack, world, entity, seed) -> {
                         if (entity == null) {
                             return 0.0F;
                         } else {
-                            return CrossbowItem.isCharged(stack) ? 0.0F : (float)(stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / (float)CrossbowItem.getPullTime(stack);
+                            return CrossbowItem.isCharged(stack) ? 0.0F : (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / (float)CrossbowItem.getChargeDuration(stack);
                         }
                     });
-                    ModelPredicateProviderRegistry.register(item, new Identifier("pulling"), (stack, world, entity, seed) ->
-                            entity != null && entity.isUsingItem() && entity.getActiveItem() == stack &&
+                    ItemProperties.register(item, new ResourceLocation("pulling"), (stack, world, entity, seed) ->
+                            entity != null && entity.isUsingItem() && entity.getUseItem() == stack &&
                                     !CrossbowItem.isCharged(stack) ? 1.0F : 0.0F);
-                    ModelPredicateProviderRegistry.register(item, new Identifier("charged"), (stack, world, entity, seed) ->
+                    ItemProperties.register(item, new ResourceLocation("charged"), (stack, world, entity, seed) ->
                             entity != null && CrossbowItem.isCharged(stack) ? 1.0F : 0.0F);
-                    ModelPredicateProviderRegistry.register(item, new Identifier("firework"), (stack, world, entity, seed) ->
-                            entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.hasProjectile(stack,
+                    ItemProperties.register(item, new ResourceLocation("firework"), (stack, world, entity, seed) ->
+                            entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.containsChargedProjectile(stack,
                                     Items.FIREWORK_ROCKET) ? 1.0F : 0.0F);
                 }
                 /*case "trident" -> {

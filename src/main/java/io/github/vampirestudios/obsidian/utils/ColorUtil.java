@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.utils;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 public class ColorUtil {
 	private static final float[] FLOAT_BUFFER = new float[4];
@@ -177,7 +177,7 @@ public class ColorUtil {
 	public static int colorBrigtness(int color, float val) {
 		RGBtoHSB((color >> 16) & 255, (color >> 8) & 255, color & 255, FLOAT_BUFFER);
 		FLOAT_BUFFER[2] += val / 10.0F;
-		FLOAT_BUFFER[2] = MathHelper.clamp(FLOAT_BUFFER[2], 0.0F, 1.0F);
+		FLOAT_BUFFER[2] = Mth.clamp(FLOAT_BUFFER[2], 0.0F, 1.0F);
 		return HSBtoRGB(FLOAT_BUFFER[0], FLOAT_BUFFER[1], FLOAT_BUFFER[2]);
 	}
 

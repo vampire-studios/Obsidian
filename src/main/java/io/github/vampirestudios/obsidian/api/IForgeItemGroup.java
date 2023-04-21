@@ -1,25 +1,25 @@
 package io.github.vampirestudios.obsidian.api;
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 
 public interface IForgeItemGroup {
 
-	private ItemGroup self() {
-		return (ItemGroup) this;
+	private CreativeModeTab self() {
+		return (CreativeModeTab) this;
 	}
 
-	default ItemGroup setBackgroundImage(Identifier texture) {
+	default CreativeModeTab setBackgroundImage(ResourceLocation texture) {
 		return self();
 	}
 
-	default Identifier getBackgroundImage() {
-		return new Identifier("textures/gui/container/creative_inventory/tab_" + self().getTexture());
+	default ResourceLocation getBackgroundImage() {
+		return new ResourceLocation("textures/gui/container/creative_inventory/tab_" + self().getBackgroundSuffix());
 	}
 
-	Identifier CREATIVE_INVENTORY_TABS = new Identifier("textures/gui/container/creative_inventory/tabs.png");
+	ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
 
-	default Identifier getTabsImage() {
+	default ResourceLocation getTabsImage() {
 		return CREATIVE_INVENTORY_TABS;
 	}
 

@@ -1,12 +1,12 @@
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.api.ExtendedBlockSettings;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,13 +14,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AbstractBlock.Settings.class)
+@Mixin(BlockBehaviour.Properties.class)
 public class BlockSettingsMixin implements ExtendedBlockSettings {
 
     @Shadow Material material;
 
     @Shadow boolean collidable;
-    @Shadow BlockSoundGroup soundGroup;
+    @Shadow SoundType soundGroup;
     @Shadow float resistance;
     @Shadow float hardness;
     @Shadow boolean toolRequired;
@@ -28,14 +28,14 @@ public class BlockSettingsMixin implements ExtendedBlockSettings {
     @Shadow float slipperiness;
     @Shadow float velocityMultiplier;
     @Shadow float jumpVelocityMultiplier;
-    @Shadow Identifier lootTableId;
+    @Shadow ResourceLocation lootTableId;
     @Shadow boolean opaque;
     @Shadow boolean isAir;
     @Shadow boolean dynamicBounds;
-    private MapColor obsidian$mapColor;
+    private MaterialColor obsidian$mapColor;
 
     @Override
-    public void obsidian$write(PacketByteBuf buf) {
+    public void obsidian$write(FriendlyByteBuf buf) {
 //        SimpleSerializers.writeMaterial(buf, material);
         buf.writeVarInt(obsidian$mapColor.id);
         buf.writeBoolean(collidable);
@@ -50,7 +50,7 @@ public class BlockSettingsMixin implements ExtendedBlockSettings {
 
         buf.writeBoolean(lootTableId != null);
         if (lootTableId != null) {
-            buf.writeIdentifier(lootTableId);
+            buf.writeResourceLocation(lootTableId);
         }
 
         buf.writeBoolean(opaque);
@@ -59,12 +59,12 @@ public class BlockSettingsMixin implements ExtendedBlockSettings {
     }
 
     @Inject(method = "<init>(Lnet/minecraft/block/Material;Lnet/minecraft/block/MapColor;)V", at = @At("RETURN"))
-    private void setMapColor(Material material, MapColor mapColorProvider, CallbackInfo ci) {
+    private void setMapColor(Material material, MaterialColor mapColorProvider, CallbackInfo ci) {
         obsidian$mapColor = mapColorProvider;
     }
 
     @Inject(method = "mapColor", at = @At("HEAD"))
-    private void setMapColor(MapColor color, CallbackInfoReturnable<AbstractBlock.Settings> cir) {
+    private void setMapColor(MaterialColor color, CallbackInfoReturnable<BlockBehaviour.Properties> cir) {
         obsidian$mapColor = color;
     }
 }
