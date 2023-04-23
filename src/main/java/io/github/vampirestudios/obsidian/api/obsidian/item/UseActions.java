@@ -10,8 +10,9 @@ public class UseActions {
 	public int gui_size;
 	public NameInformation gui_title;
 	public String url;
+	public Integer useTime;
 
-	public UseAnim getAction() {
+    public UseAnim getAction() {
 		return switch (action) {
 			case "none" -> UseAnim.NONE;
 			case "eat" -> UseAnim.EAT;

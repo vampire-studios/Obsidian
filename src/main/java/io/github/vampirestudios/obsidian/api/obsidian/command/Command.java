@@ -1,49 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.command;
 
 import com.mojang.brigadier.arguments.*;
-import net.minecraft.command.argument.*;
 import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.arguments.AngleArgument;
-import net.minecraft.commands.arguments.ColorArgument;
-import net.minecraft.commands.arguments.ComponentArgument;
-import net.minecraft.commands.arguments.CompoundTagArgument;
-import net.minecraft.commands.arguments.DimensionArgument;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.GameModeArgument;
-import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.commands.arguments.NbtPathArgument;
-import net.minecraft.commands.arguments.NbtTagArgument;
-import net.minecraft.commands.arguments.ObjectiveArgument;
-import net.minecraft.commands.arguments.ObjectiveCriteriaArgument;
-import net.minecraft.commands.arguments.OperationArgument;
-import net.minecraft.commands.arguments.ParticleArgument;
-import net.minecraft.commands.arguments.RangeArgument;
-import net.minecraft.commands.arguments.ResourceArgument;
-import net.minecraft.commands.arguments.ResourceKeyArgument;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.commands.arguments.ResourceOrTagArgument;
-import net.minecraft.commands.arguments.ResourceOrTagKeyArgument;
-import net.minecraft.commands.arguments.ScoreHolderArgument;
-import net.minecraft.commands.arguments.ScoreboardSlotArgument;
-import net.minecraft.commands.arguments.SlotArgument;
-import net.minecraft.commands.arguments.TeamArgument;
-import net.minecraft.commands.arguments.TemplateMirrorArgument;
-import net.minecraft.commands.arguments.TemplateRotationArgument;
-import net.minecraft.commands.arguments.TimeArgument;
-import net.minecraft.commands.arguments.UuidArgument;
-import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
-import net.minecraft.commands.arguments.blocks.BlockStateArgument;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
-import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
-import net.minecraft.commands.arguments.coordinates.RotationArgument;
-import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
-import net.minecraft.commands.arguments.coordinates.Vec2Argument;
-import net.minecraft.commands.arguments.coordinates.Vec3Argument;
-import net.minecraft.commands.arguments.item.FunctionArgument;
-import net.minecraft.commands.arguments.item.ItemArgument;
-import net.minecraft.commands.arguments.item.ItemPredicateArgument;
+import net.minecraft.commands.arguments.*;
+import net.minecraft.commands.arguments.blocks.*;
+import net.minecraft.commands.arguments.coordinates.*;
+import net.minecraft.commands.arguments.item.*;
 import net.minecraft.gametest.framework.TestClassNameArgument;
 import net.minecraft.gametest.framework.TestFunctionArgument;
 import net.minecraft.resources.ResourceKey;
@@ -100,6 +62,7 @@ public class Command {
             argumentTypeMap.put("color", ColorArgument.color());
 
             argumentTypeMap.put("column_pos", ColumnPosArgument.columnPos());
+
             argumentTypeMap.put("command_function", FunctionArgument.functions());
             argumentTypeMap.put("dimension", DimensionArgument.dimension());
 

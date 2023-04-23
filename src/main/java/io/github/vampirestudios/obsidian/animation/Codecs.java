@@ -9,7 +9,6 @@ import net.minecraft.Util;
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDefinition;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -70,8 +69,8 @@ public class Codecs {
     public static final class Model {
         public static final Codec<MaterialDefinition> TEXTURE_DIMENSIONS = RecordCodecBuilder.create((instance) ->
                 instance.group(
-                        Codec.INT.fieldOf("width").forGetter(obj -> ((TextureDimensionsAccessor) obj).getWidth()),
-                        Codec.INT.fieldOf("height").forGetter(obj -> ((TextureDimensionsAccessor) obj).getHeight())
+                        Codec.INT.fieldOf("width").forGetter(obj -> ((TextureDimensionsAccessor) obj).getXTexSize()),
+                        Codec.INT.fieldOf("height").forGetter(obj -> ((TextureDimensionsAccessor) obj).getYTexSize())
                 ).apply(instance, MaterialDefinition::new)
         );
 
@@ -85,9 +84,9 @@ public class Codecs {
         public static final Codec<CubeDeformation> DILATION = VECTOR3F_CODEC.xmap(
                 vec -> new CubeDeformation(vec.x(), vec.y(), vec.z()),
                 dil -> new Vector3f(
-                        ((DilationAccessor) dil).getRadiusX(),
-                        ((DilationAccessor) dil).getRadiusY(),
-                        ((DilationAccessor) dil).getRadiusZ()
+                        ((DilationAccessor) dil).getGrowX(),
+                        ((DilationAccessor) dil).getGrowY(),
+                        ((DilationAccessor) dil).getGrowZ()
                 )
         );
 
@@ -104,21 +103,21 @@ public class Codecs {
 
         public static final Codec<CubeDefinition> MODEL_CUBOID_DATA = RecordCodecBuilder.create((instance) ->
                 instance.group(
-                        Codec.STRING.optionalFieldOf("name").forGetter(obj -> Optional.ofNullable(((ModelCuboidDataAccessor) (Object) obj).getName())),
-                        VECTOR3F_CODEC.fieldOf("offset").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getOffset()),
+                        Codec.STRING.optionalFieldOf("name").forGetter(obj -> Optional.ofNullable(((ModelCuboidDataAccessor) (Object) obj).getComment())),
+                        VECTOR3F_CODEC.fieldOf("offset").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getOrigin()),
                         VECTOR3F_CODEC.fieldOf("dimensions").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getDimensions()),
-                        DILATION.optionalFieldOf("dilation", CubeDeformation.NONE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getExtraSize()),
+                        DILATION.optionalFieldOf("dilation", CubeDeformation.NONE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getGrow()),
                         Codec.BOOL.optionalFieldOf("mirror", false).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).isMirror()),
-                        VECTOR2F.fieldOf("uv").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getTextureUV()),
-                        VECTOR2F.optionalFieldOf("uv_scale", DEFAULT_UV_SCALE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getTextureScale()),
-                        Direction.CODEC.listOf().xmap(Set::copyOf, List::copyOf).fieldOf("directions").forGetter(modelCuboidData -> ((ModelCuboidDataAccessor) (Object) modelCuboidData).getDirections())
+                        VECTOR2F.fieldOf("uv").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getTexCoord()),
+                        VECTOR2F.optionalFieldOf("uv_scale", DEFAULT_UV_SCALE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getTexScale()),
+                        Direction.CODEC.listOf().xmap(Set::copyOf, List::copyOf).fieldOf("directions").forGetter(modelCuboidData -> ((ModelCuboidDataAccessor) (Object) modelCuboidData).getVisibleFaces())
                 ).apply(instance, Model::createCuboidData)
         );
 
         public static final Codec<PartDefinition> MODEL_PART_DATA = RecordCodecBuilder.create((instance) ->
                 instance.group(
-                        MODEL_TRANSFORM.optionalFieldOf("transform", PartPose.ZERO).forGetter(obj -> ((ModelPartDataAccessor) obj).getRotationData()),
-                        Codec.list(MODEL_CUBOID_DATA).fieldOf("cuboids").forGetter(obj -> ((ModelPartDataAccessor) obj).getCuboidData()),
+                        MODEL_TRANSFORM.optionalFieldOf("transform", PartPose.ZERO).forGetter(obj -> ((ModelPartDataAccessor) obj).getPartPose()),
+                        Codec.list(MODEL_CUBOID_DATA).fieldOf("cuboids").forGetter(obj -> ((ModelPartDataAccessor) obj).getCubes()),
                         Codec.unboundedMap(Codec.STRING, Model.MODEL_PART_DATA).optionalFieldOf("children", new HashMap<>()).forGetter(obj -> ((ModelPartDataAccessor) obj).getChildren())
                 ).apply(instance, (transform, cuboids, children) -> {
                     var data = ModelPartDataAccessor.create(cuboids, transform);
@@ -129,8 +128,8 @@ public class Codecs {
 
         public static final Codec<LayerDefinition> TEXTURED_MODEL_DATA = RecordCodecBuilder.create((instance) ->
                 instance.group(
-                        TEXTURE_DIMENSIONS.fieldOf("texture").forGetter(obj -> ((TexturedModelDataAccessor) obj).getDimensions()),
-                        Codec.unboundedMap(Codec.STRING, MODEL_PART_DATA).fieldOf("bones").forGetter(obj -> ((ModelPartDataAccessor) ((TexturedModelDataAccessor) obj).getData().getRoot()).getChildren())
+                        TEXTURE_DIMENSIONS.fieldOf("texture").forGetter(obj -> ((TexturedModelDataAccessor) obj).getMaterial()),
+                        Codec.unboundedMap(Codec.STRING, MODEL_PART_DATA).fieldOf("bones").forGetter(obj -> ((ModelPartDataAccessor) ((TexturedModelDataAccessor) obj).getMesh().getRoot()).getChildren())
                 ).apply(instance, (texture, bones) -> {
                     var data = new MeshDefinition();
                     ((ModelPartDataAccessor) data.getRoot()).getChildren().putAll(bones);

@@ -7,11 +7,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(CubeDeformation.class)
 public interface DilationAccessor {
     @Accessor
-    float getRadiusX();
+    float getGrowX();
 
     @Accessor
-    float getRadiusY();
+    float getGrowY();
 
     @Accessor
-    float getRadiusZ();
+    float getGrowZ();
 }

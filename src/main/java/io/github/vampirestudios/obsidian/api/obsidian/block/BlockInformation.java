@@ -4,15 +4,16 @@ import blue.endless.jankson.annotation.SerializedName;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BlockInformation {
     @SerializedName("parent_block") public ResourceLocation parentBlock;
@@ -61,17 +62,8 @@ public class BlockInformation {
 
         static {
             vanillaMaterials.put(new ResourceLocation("plant"), Material.PLANT);
-            vanillaMaterials.put(new ResourceLocation("aggregate"), Material.AGGREGATE);
-            vanillaMaterials.put(new ResourceLocation("wood"), Material.WOOD);
-            vanillaMaterials.put(new ResourceLocation("stone"), Material.STONE);
-            vanillaMaterials.put(new ResourceLocation("glass"), Material.GLASS);
-            vanillaMaterials.put(new ResourceLocation("allows_movement_light_passes_through_not_solid_replaceable"), Material.ALLOWS_MOVEMENT_LIGHT_PASSES_THROUGH_NOT_SOLID_REPLACEABLE);
-            vanillaMaterials.put(new ResourceLocation("allows_movement_light_passes_through_not_solid"), Material.DEPRECATED_NONSOLID);
-            vanillaMaterials.put(new ResourceLocation("allows_movement"), Material.ALLOWS_MOVEMENT);
-            vanillaMaterials.put(new ResourceLocation("light_passes_through"), Material.LIGHT_PASSES_THROUGH);
-            vanillaMaterials.put(new ResourceLocation("cobweb"), Material.COBWEB);
-            vanillaMaterials.put(new ResourceLocation("not_solid_allows_movement"), Material.NOT_SOLID_ALLOWS_MOVEMENT);
-            vanillaMaterials.put(new ResourceLocation("generic"), Material.DEPRECATED);
+            vanillaMaterials.put(new ResourceLocation("deprecated_non_solid"), Material.DEPRECATED_NONSOLID);
+            vanillaMaterials.put(new ResourceLocation("deprecated"), Material.DEPRECATED);
 
             vanillaSoundGroups.put(new ResourceLocation("wood"), SoundType.WOOD);
             vanillaSoundGroups.put(new ResourceLocation("gravel"), SoundType.GRAVEL);
@@ -221,10 +213,7 @@ public class BlockInformation {
             if (customMaterial != null) {
                 CustomMaterial customMaterial = ContentRegistries.BLOCK_MATERIALS.get(this.customMaterial);
                 assert customMaterial != null;
-                return new Material(customMaterial.getMapColor(), customMaterial.solid,
-                        customMaterial.blocks_movement, customMaterial.blocks_light,
-                        customMaterial.replaceable
-                );
+                return new Material(customMaterial.getMapColor(), customMaterial.blocks_movement);
             } else {
                 return vanillaMaterials.get(vanillaMaterial);
             }

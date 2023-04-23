@@ -23,7 +23,6 @@ import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -128,7 +127,7 @@ public class Blocks implements AddonModule {
                     .sound(block.information.blockProperties.getBlockSoundGroup())
                     .friction(block.information.blockProperties.slipperiness)
                     .emissiveRendering((state, world, pos) -> block.information.blockProperties.is_emissive)
-                    .luminance(block.information.blockProperties.luminance)
+                    .lightLevel(state -> block.information.blockProperties.luminance)
                     .speedFactor(block.information.blockProperties.velocity_modifier)
                     .jumpFactor(block.information.blockProperties.jump_velocity_modifier);
             if (block.information.blockProperties.randomTicks) blockSettings.randomTicks();

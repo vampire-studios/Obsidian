@@ -35,7 +35,7 @@ public class KeyBindManager {
 	}
 
 	public void addModdedKeyBinds() {
-		((GameOptionsAccessor) this.options).setAllKeys(KeyBindRegistryImpl.getKeyBinds());
+		((GameOptionsAccessor) this.options).setKeyMappings(KeyBindRegistryImpl.getKeyBinds());
 	}
 
 	public KeyMapping[] getAllKeys() {

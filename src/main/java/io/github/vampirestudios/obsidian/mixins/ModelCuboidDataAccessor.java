@@ -1,5 +1,9 @@
 package io.github.vampirestudios.obsidian.mixins;
 
+import net.minecraft.client.model.geom.builders.CubeDefinition;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.UVPair;
+import net.minecraft.core.Direction;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -7,10 +11,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.Set;
-import net.minecraft.client.model.geom.builders.CubeDefinition;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.core.Direction;
 
 @Mixin(CubeDefinition.class)
 public interface ModelCuboidDataAccessor {
@@ -35,26 +35,26 @@ public interface ModelCuboidDataAccessor {
 	}
 
 	@Accessor
-	String getName();
+	String getComment();
 
 	@Accessor
-	Vector3f getOffset();
+	Vector3f getOrigin();
 
 	@Accessor
 	Vector3f getDimensions();
 
 	@Accessor
-	CubeDeformation getExtraSize();
+	CubeDeformation getGrow();
 
 	@Accessor
 	boolean isMirror();
 
 	@Accessor
-	UVPair getTextureUV();
+	UVPair getTexCoord();
 
 	@Accessor
-	UVPair getTextureScale();
+	UVPair getTexScale();
 
 	@Accessor
-	Set<Direction> getDirections();
+	Set<Direction> getVisibleFaces();
 }

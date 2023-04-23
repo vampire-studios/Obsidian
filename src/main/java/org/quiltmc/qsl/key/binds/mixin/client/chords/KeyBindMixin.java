@@ -73,7 +73,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 				// This ensures that the chord will only be incremented once instead of N times
 				if (startingKey.equals(chord.keys.keySet().toArray()[0])) {
 					KeyMapping keyBind = KEY_BINDS_BY_CHORD.get(chord);
-					((KeyBindAccessor) keyBind).setTimesPressed(((KeyBindAccessor) keyBind).getTimesPressed() + 1);
+					((KeyBindAccessor) keyBind).setClickCount(((KeyBindAccessor) keyBind).getClickCount() + 1);
 				}
 			}
 		}

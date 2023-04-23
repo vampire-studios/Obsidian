@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(MaterialDefinition.class)
 public interface TextureDimensionsAccessor {
 	@Accessor
-	int getWidth();
+	int getXTexSize();
 
 	@Accessor
-	int getHeight();
+	int getYTexSize();
 }

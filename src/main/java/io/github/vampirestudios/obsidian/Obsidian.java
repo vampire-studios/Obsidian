@@ -14,6 +14,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotati
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.annotations.OpenDoorAnnotationComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviour.*;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
+import io.github.vampirestudios.obsidian.api.scripting.ScriptParser;
 import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
@@ -31,6 +32,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.Advancement;
@@ -41,6 +43,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatType;
@@ -58,7 +61,6 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.entity.schedule.Schedule;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -205,6 +207,9 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 		KeyBindingHelper.registerKeyBinding(binding);
 
+		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES)
+				.registerReloadListener(new ScriptParser());
+
 //		GlobalFixer.init();
 
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
@@ -218,18 +223,18 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		});
 
 		//Item Groups
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", CreativeModeTabs.BUILDING_BLOCKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "colored_blocks", CreativeModeTabs.COLORED_BLOCKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "natural", CreativeModeTabs.NATURAL_BLOCKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "functional", CreativeModeTabs.FUNCTIONAL_BLOCKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "redstone", CreativeModeTabs.REDSTONE_BLOCKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "search", CreativeModeTabs.SEARCH);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "tools", CreativeModeTabs.TOOLS_AND_UTILITIES);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "combat", CreativeModeTabs.COMBAT);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "food_and_drink", CreativeModeTabs.FOOD_AND_DRINKS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "ingredients", CreativeModeTabs.INGREDIENTS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "spawn_eggs", CreativeModeTabs.SPAWN_EGGS);
-		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "operator", CreativeModeTabs.OP_BLOCKS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "building_blocks", CreativeModeTabs.BUILDING_BLOCKS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "colored_blocks", CreativeModeTabs.COLORED_BLOCKS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "natural", CreativeModeTabs.NATURAL_BLOCKS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "functional", CreativeModeTabs.FUNCTIONAL_BLOCKS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "redstone", CreativeModeTabs.REDSTONE_BLOCKS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "search", CreativeModeTabs.SEARCH);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "tools", CreativeModeTabs.TOOLS_AND_UTILITIES);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "combat", CreativeModeTabs.COMBAT);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "food_and_drink", CreativeModeTabs.FOOD_AND_DRINKS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "ingredients", CreativeModeTabs.INGREDIENTS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "spawn_eggs", CreativeModeTabs.SPAWN_EGGS);
+//		registerInRegistryVanilla(Registries.ITEM_GROUP_REGISTRY, "operator", CreativeModeTabs.OP_BLOCKS);
 
 		//Entity Components
 		registerInRegistryVanilla(Registries.ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);

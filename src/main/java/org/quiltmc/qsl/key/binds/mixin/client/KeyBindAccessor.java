@@ -28,11 +28,11 @@ import java.util.Map;
 @Environment(EnvType.CLIENT)
 @Mixin(KeyMapping.class)
 public interface KeyBindAccessor {
-	@Accessor(value = "KEYS_BY_ID")
+	@Accessor(value = "MAP")
 	static Map<String, KeyMapping> getKeyBinds() {
 		return null;
 	}
 
 	@Invoker
-	void callReset();
+	void callResetMapping();
 }

@@ -1,23 +1,16 @@
 package io.github.vampirestudios.obsidian.api.obsidian.entity;
 
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityModelImpl;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.minecraft.client.model.ChickenModel;
-import net.minecraft.client.model.CowModel;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.PigModel;
-import net.minecraft.client.model.SkeletonModel;
-import net.minecraft.client.model.SquidModel;
-import net.minecraft.client.model.VillagerModel;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.render.entity.model.*;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+
 import java.util.Optional;
 
 public class Information {

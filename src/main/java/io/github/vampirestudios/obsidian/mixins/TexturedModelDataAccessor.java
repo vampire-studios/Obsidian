@@ -15,8 +15,8 @@ public interface TexturedModelDataAccessor {
 	}
 
 	@Accessor
-	MeshDefinition getData();
+	MeshDefinition getMesh();
 
 	@Accessor
-	MaterialDefinition getDimensions();
+	MaterialDefinition getMaterial();
 }

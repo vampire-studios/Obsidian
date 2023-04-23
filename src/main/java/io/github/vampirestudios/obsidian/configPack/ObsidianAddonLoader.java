@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
@@ -40,9 +41,9 @@ public class ObsidianAddonLoader {
             createObsidianAddonsFolder();
     }
 
-    public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, net.minecraft.world.item.CreativeModeTab tab) {
+    public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, ResourceKey<net.minecraft.world.item.CreativeModeTab> tab) {
         Block block1 = register(name, block, new net.minecraft.world.item.Item.Properties());
-        ItemGroupEvents.modifyEntriesEvent(tab).register(entries -> entries.add(block1));
+        ItemGroupEvents.modifyEntriesEvent(tab).register(entries -> entries.accept(block1));
         return block1;
     }
 

@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.block.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
