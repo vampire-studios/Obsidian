@@ -33,7 +33,7 @@ public class ObsidianAddonLoader {
 
     public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve(Obsidian.CONFIG.addonsFolder).toFile();
     public static final Registry<IAddonPack> OBSIDIAN_ADDONS = FabricRegistryBuilder.createSimple(IAddonPack.class, id("obsidian_addons")).buildAndRegister();
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
     public static RegistryHelper REGISTRY_HELPER;
 
     public static void loadDefaultObsidianAddons() {
