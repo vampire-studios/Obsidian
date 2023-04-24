@@ -5,7 +5,7 @@
 
     fabric_api = '0.78.1+1.20'
 
-    vampirelib = "6.4.0+build.1-23w14a"
+    vampirelib = "7.0.0+build.1-23w16a"
     clothconfig = '10.0.96'
     owo-lib = '0.10.3+1.19.3'
     appleskin = 'mc1.19-2.4.0'
