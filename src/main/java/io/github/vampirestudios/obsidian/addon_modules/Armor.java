@@ -50,7 +50,7 @@ public class Armor implements AddonModule {
             if (armor.information.dyeable) item = new DyeableArmorItemImpl(customArmorMaterial, armor, settings);
             else item = new ArmorItemImpl(customArmorMaterial, armor, settings);
             REGISTRY_HELPER.items().registerItem(identifier.getPath(), item);
-            ItemGroupEvents.modifyEntriesEvent(armor.information.getItemGroup()).register(entries -> entries.add(item));
+            ItemGroupEvents.modifyEntriesEvent(armor.information.getItemGroup()).register(entries -> entries.accept(item));
 
             register(ContentRegistries.ARMORS, "armor", identifier, armor);
         } catch (Exception e) {

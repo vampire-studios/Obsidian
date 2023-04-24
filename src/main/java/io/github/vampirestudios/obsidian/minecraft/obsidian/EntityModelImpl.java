@@ -28,7 +28,7 @@ public class EntityModelImpl extends HierarchicalModel<EntityImpl> {
     }
 
     @Override
-    public void setAngles(EntityImpl entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(EntityImpl entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         entity.animationStates.forEach((animationState, identifier) -> this.animate(
                 animationState, Registries.ANIMATION_DEFINITIONS.get(identifier), animationProgress
         ));

@@ -2,13 +2,14 @@ package io.github.vampirestudios.obsidian;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.Optional;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.level.gameevent.PositionSourceType;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Optional;
 
 public class EntityPositionSource implements PositionSource {
 	public static final Codec<EntityPositionSource> CODEC = RecordCodecBuilder.create(
@@ -50,9 +51,10 @@ public class EntityPositionSource implements PositionSource {
 			return new EntityPositionSource(friendlyByteBuf.readVarInt(), friendlyByteBuf.readFloat());
 		}
 
-		public void writeToBuf(FriendlyByteBuf friendlyByteBuf, EntityPositionSource entityPositionSource) {
-			friendlyByteBuf.writeVarInt(entityPositionSource.sourceEntityId);
-			friendlyByteBuf.writeFloat(entityPositionSource.yOffset);
+		@Override
+		public void write(FriendlyByteBuf buf, EntityPositionSource positionSource) {
+			buf.writeVarInt(positionSource.sourceEntityId);
+			buf.writeFloat(positionSource.yOffset);
 		}
 
 		@Override

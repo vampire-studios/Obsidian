@@ -46,7 +46,7 @@ public class Food implements AddonModule {
             Item item = Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, identifier, new FoodItemImpl(foodItem, settings
                     .durability(foodItem.information.useDuration)
                     .food(foodComponent)));
-            ItemGroupEvents.modifyEntriesEvent(foodItem.information.getItemGroup()).register(entries -> entries.add(item));
+            ItemGroupEvents.modifyEntriesEvent(foodItem.information.getItemGroup()).register(entries -> entries.accept(item));
             register(ContentRegistries.FOODS, "food", identifier, foodItem);
         } catch (Exception e) {
             failedRegistering("food", file.getName(), e);

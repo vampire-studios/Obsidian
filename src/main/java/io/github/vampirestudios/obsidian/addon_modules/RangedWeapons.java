@@ -71,7 +71,7 @@ public class RangedWeapons implements AddonModule {
                 }*/
             }
             Item finalItem = item;
-            ItemGroupEvents.modifyEntriesEvent(rangedWeapon.information.getItemGroup()).register(entries -> entries.add(finalItem));
+            ItemGroupEvents.modifyEntriesEvent(rangedWeapon.information.getItemGroup()).register(entries -> entries.accept(finalItem));
             register(ContentRegistries.RANGED_WEAPONS, "ranged_weapon", identifier, rangedWeapon);
         } catch (Exception e) {
             failedRegistering("ranged_weapon", file.getName(), e);

@@ -38,7 +38,7 @@ public class MusicDiscs implements AddonModule {
 
             Item item = Registry.register(BuiltInRegistries.ITEM, identifier, new MusicDiscItemImpl(musicDisc, settings
                     .durability(musicDisc.information.useDuration)));
-            ItemGroupEvents.modifyEntriesEvent(musicDisc.information.getItemGroup()).register(entries -> entries.add(item));
+            ItemGroupEvents.modifyEntriesEvent(musicDisc.information.getItemGroup()).register(entries -> entries.accept(item));
             register(ContentRegistries.MUSIC_DISCS, "music_disc", identifier, musicDisc);
         } catch (Exception e) {
             failedRegistering("music_disc", file.getName(), e);

@@ -20,19 +20,19 @@ public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<En
     }
 
     @Override
-    public ResourceLocation getTexture(EntityImpl entityImpl) {
+    public ResourceLocation getTextureLocation(EntityImpl entityImpl) {
         return entity.information.getEntityTexture();
     }
 
     @Override
-    protected boolean hasLabel(EntityImpl livingEntity) {
+    protected boolean shouldShowName(EntityImpl mob) {
         return false;
     }
 
     @Nullable
     @Override
-    protected RenderType getRenderLayer(EntityImpl entity, boolean showBody, boolean translucent, boolean showOutline) {
-        ResourceLocation identifier = this.getTexture(entity);
+    protected RenderType getRenderType(EntityImpl entity, boolean showBody, boolean translucent, boolean showOutline) {
+        ResourceLocation identifier = this.getTextureLocation(entity);
         if (translucent) {
             return RenderType.itemEntityTranslucentCull(identifier);
         } else if (showBody) {

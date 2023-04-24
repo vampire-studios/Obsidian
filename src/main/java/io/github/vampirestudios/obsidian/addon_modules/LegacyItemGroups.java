@@ -9,12 +9,17 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.yaml.snakeyaml.Yaml;
@@ -64,65 +69,64 @@ public class LegacyItemGroups implements AddonModule {
             );
             if (itemGroup.name.id == null) itemGroup.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
-            CreativeModeTab itemGroup1 = FabricItemGroup.builder(identifier)
-                    .icon(() -> new ItemStack(net.minecraft.registry.Registries.ITEM.get(itemGroup.icon)))
-                    .entries((displayContext, entries) -> {
+            CreativeModeTab itemGroup1 = FabricItemGroup.builder()
+                    .icon(() -> new ItemStack(BuiltInRegistries.ITEM.get(itemGroup.icon)))
+                    .displayItems((displayContext, entries) -> {
                         if (itemGroup.tags != null) {
-                            for (Map.Entry<String, Identifier> tag : itemGroup.tags.entrySet()) {
+                            for (Map.Entry<String, ResourceLocation> tag : itemGroup.tags.entrySet()) {
                                 if (tag.getKey().equals("block")) {
-                                    TagKey<Block> blockTagKey = TagKey.of(RegistryKeys.BLOCK, tag.getValue());
-                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(blockTagKey.id()));
+                                    TagKey<Block> blockTagKey = TagKey.create(net.minecraft.core.registries.Registries.BLOCK, tag.getValue());
+                                    entries.accept(BuiltInRegistries.BLOCK.get(blockTagKey.location()));
                                 }
                                 if (tag.getKey().equals("item")) {
-                                    TagKey<Item> blockTagKey = TagKey.of(RegistryKeys.ITEM, tag.getValue());
-                                    entries.add(net.minecraft.registry.Registries.ITEM.get(blockTagKey.id()));
+                                    TagKey<Item> blockTagKey = TagKey.create(net.minecraft.core.registries.Registries.ITEM, tag.getValue());
+                                    entries.accept(BuiltInRegistries.ITEM.get(blockTagKey.location()));
                                 }
                             }
                         }
                         if (itemGroup.items != null) {
-                            for (Identifier item : itemGroup.items) {
-                                entries.add(net.minecraft.registry.Registries.ITEM.get(item));
+                            for (ResourceLocation item : itemGroup.items) {
+                                entries.accept(BuiltInRegistries.ITEM.get(item));
                             }
                         }
                         if (itemGroup.blocks != null) {
-                            for (Identifier block : itemGroup.blocks) {
-                                entries.add(net.minecraft.registry.Registries.BLOCK.get(block));
+                            for (ResourceLocation block : itemGroup.blocks) {
+                                entries.accept(BuiltInRegistries.BLOCK.get(block));
                             }
                         }
-                        if (itemGroup.opItems != null && displayContext.comp_1252()) {
-                            for (Identifier item : itemGroup.opItems) {
-                                entries.add(net.minecraft.registry.Registries.ITEM.get(item));
+                        if (itemGroup.opItems != null && displayContext.hasPermissions()) {
+                            for (ResourceLocation item : itemGroup.opItems) {
+                                entries.accept(BuiltInRegistries.ITEM.get(item));
                             }
                         }
-                        if (itemGroup.opBlocks != null && displayContext.comp_1252()) {
-                            for (Identifier block : itemGroup.opBlocks) {
-                                entries.add(net.minecraft.registry.Registries.BLOCK.get(block));
+                        if (itemGroup.opBlocks != null && displayContext.hasPermissions()) {
+                            for (ResourceLocation block : itemGroup.opBlocks) {
+                                entries.accept(BuiltInRegistries.BLOCK.get(block));
                             }
                         }
                         if (itemGroup.featureSetItems != null) {
-                            for (Map.Entry<String, Identifier> entry : itemGroup.featureSetItems.entrySet()) {
-                                if (entry.getKey().equals("vanilla") && displayContext.comp_1251().contains(FeatureFlags.VANILLA)) {
-                                    entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
+                            for (Map.Entry<String, ResourceLocation> entry : itemGroup.featureSetItems.entrySet()) {
+                                if (entry.getKey().equals("vanilla") && displayContext.enabledFeatures().contains(FeatureFlags.VANILLA)) {
+                                    entries.accept(BuiltInRegistries.ITEM.get(entry.getValue()));
                                 }
-                                if (entry.getKey().equals("bundle") && displayContext.comp_1251().contains(FeatureFlags.BUNDLE)) {
-                                    entries.add(net.minecraft.registry.Registries.ITEM.get(entry.getValue()));
+                                if (entry.getKey().equals("bundle") && displayContext.enabledFeatures().contains(FeatureFlags.BUNDLE)) {
+                                    entries.accept(BuiltInRegistries.ITEM.get(entry.getValue()));
                                 }
                             }
                         }
                         if (itemGroup.featureSetBlocks != null) {
-                            for (Map.Entry<String, Identifier> entry : itemGroup.featureSetBlocks.entrySet()) {
-                                if (entry.getKey().equals("vanilla") && displayContext.comp_1251().contains(FeatureFlags.VANILLA)) {
-                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
+                            for (Map.Entry<String, ResourceLocation> entry : itemGroup.featureSetBlocks.entrySet()) {
+                                if (entry.getKey().equals("vanilla") && displayContext.enabledFeatures().contains(FeatureFlags.VANILLA)) {
+                                    entries.accept(BuiltInRegistries.BLOCK.get(entry.getValue()));
                                 }
-                                if (entry.getKey().equals("bundle") && displayContext.comp_1251().contains(FeatureFlags.BUNDLE)) {
-                                    entries.add(net.minecraft.registry.Registries.BLOCK.get(entry.getValue()));
+                                if (entry.getKey().equals("bundle") && displayContext.enabledFeatures().contains(FeatureFlags.BUNDLE)) {
+                                    entries.accept(BuiltInRegistries.BLOCK.get(entry.getValue()));
                                 }
                             }
                         }
                     })
                     .build();
-
-            Registry.register(Registries.ITEM_GROUP_REGISTRY, identifier, itemGroup1);
+            Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, identifier, itemGroup1);
             register(ContentRegistries.ITEM_GROUPS, "item_group", identifier, itemGroup);
         } catch (Exception e) {
             failedRegistering("item_group", file.getName(), e);

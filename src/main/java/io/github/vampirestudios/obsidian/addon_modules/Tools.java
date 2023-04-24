@@ -40,7 +40,7 @@ public class Tools implements AddonModule {
                 case "axe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings));
             }
             Item finalItem = item;
-            ItemGroupEvents.modifyEntriesEvent(tool.information.getItemGroup()).register(entries -> entries.add(finalItem));
+            ItemGroupEvents.modifyEntriesEvent(tool.information.getItemGroup()).register(entries -> entries.accept(finalItem));
             register(ContentRegistries.TOOLS, "tool", identifier, tool);
         } catch (Exception e) {
             failedRegistering("tool", file.getName(), e);

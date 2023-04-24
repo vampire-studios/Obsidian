@@ -56,7 +56,7 @@ public class Ores implements AddonModule {
 					.sound(block.information.blockProperties.getBlockSoundGroup())
 					.friction(block.information.blockProperties.slipperiness)
 					.emissiveRendering((state, world, pos) -> block.information.blockProperties.is_emissive)
-					.luminance(block.information.blockProperties.luminance)
+					.lightLevel(blockState -> block.information.blockProperties.luminance)
 					.speedFactor(block.information.blockProperties.velocity_modifier)
 					.jumpFactor(block.information.blockProperties.jump_velocity_modifier);
 			if (block.information.blockProperties.randomTicks) blockSettings.randomTicks();

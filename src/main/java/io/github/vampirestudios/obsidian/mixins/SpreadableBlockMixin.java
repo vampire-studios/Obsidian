@@ -23,12 +23,12 @@ public abstract class SpreadableBlockMixin extends SnowyDirtBlock implements IFo
 	}
 
 	@Shadow
-	protected static boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+	private static boolean canBeGrass(BlockState state, LevelReader world, BlockPos pos) {
 		return false;
 	}
 
 	@Shadow
-	protected static boolean canSpread(BlockState state, LevelReader world, BlockPos pos) {
+	private static boolean canPropagate(BlockState state, LevelReader world, BlockPos pos) {
 		return false;
 	}
 
@@ -38,7 +38,7 @@ public abstract class SpreadableBlockMixin extends SnowyDirtBlock implements IFo
 	@Overwrite
 	@Override
 	public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-		if (!canSurvive(state, world, pos)) {
+		if (!canBeGrass(state, world, pos)) {
 			if (!world.hasChunksAt(pos.offset(-1, -1, -1), pos.offset(1, 1, 1))) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
 			if (SpreadBehaviors.canSpread(state, SpreaderType.REVERT)) //Forge: switch to use SpreadBehaviors API, so this class can be used more easily
 				world.setBlockAndUpdate(pos, SpreadBehaviors.getSpreadState(state, world, pos, SpreaderType.REVERT));
@@ -51,7 +51,7 @@ public abstract class SpreadableBlockMixin extends SnowyDirtBlock implements IFo
 
 				for (int i = 0; i < 4; ++i) {
 					BlockPos blockPos = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
-					if (world.getBlockState(blockPos).is(Blocks.DIRT) && canSpread(blockState, world, blockPos)) {
+					if (world.getBlockState(blockPos).is(Blocks.DIRT) && canPropagate(blockState, world, blockPos)) {
 						world.setBlockAndUpdate(blockPos, blockState.setValue(SNOWY, world.getBlockState(blockPos.above()).is(Blocks.SNOW)));
 					}
 				}

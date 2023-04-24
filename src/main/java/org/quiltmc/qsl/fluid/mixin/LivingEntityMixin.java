@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.fluid.mixin;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.entity.*;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
@@ -49,33 +48,32 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	}
 
 	@Shadow
-	public abstract boolean hasStatusEffect(MobEffect effect);
+	public abstract boolean hasEffect(MobEffect effect);
 
 	@Shadow
-	protected abstract boolean shouldSwimInFluids();
+	protected abstract boolean isAffectedByFluids();
 
 	@Shadow
-	public abstract boolean isClimbing();
+	public abstract boolean onClimbable();
 
 	@Shadow
-	public abstract Vec3 applyFluidMovingSpeed(double d, boolean bl, Vec3 vec3d);
+	public abstract Vec3 getFluidFallingAdjustedMovement(double d, boolean bl, Vec3 vec3d);
 
 	@Shadow
-	public abstract void updateLimbs(boolean flutter);
-
-	@Shadow
-	public abstract boolean canWalkOnFluid(FluidState fluidState);
+	public abstract boolean canStandOnFluid(FluidState fluidState);
 
 	@Shadow
 	protected abstract void defineSynchedData();
 
-	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isFallFlying()Z"))
+	@Shadow public abstract void calculateEntityAnimation(boolean flutter);
+
+	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isFallFlying()Z"))
 	private boolean redirectFallFlyingToAddCase(LivingEntity instance, Vec3 movementInput) {
 		FluidState fluidState = level.getFluidState(blockPosition());
-		if (this.quilt$isInCustomFluid() && this.shouldSwimInFluids() && !this.canWalkOnFluid(fluidState)) {
+		if (this.quilt$isInCustomFluid() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidState)) {
 			double fallSpeed = 0.08;
 			boolean falling = this.getDeltaMovement().y <= 0.0;
-			if (falling && this.hasStatusEffect(MobEffects.SLOW_FALLING)) {
+			if (falling && this.hasEffect(MobEffects.SLOW_FALLING)) {
 				fallSpeed = 0.01;
 				this.resetFallDistance();
 			}
@@ -99,12 +97,12 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 			this.moveRelative(speed, movementInput);
 			this.move(MoverType.SELF, this.getDeltaMovement());
 			Vec3 vec3d = this.getDeltaMovement();
-			if (this.horizontalCollision && this.isClimbing()) {
+			if (this.horizontalCollision && this.onClimbable()) {
 				vec3d = new Vec3(vec3d.x, 0.2, vec3d.z);
 			}
 
 			this.setDeltaMovement(vec3d.multiply(horizVisc, vertVisc, horizVisc));
-			Vec3 vec3d2 = this.applyFluidMovingSpeed(fallSpeed, falling, this.getDeltaMovement());
+			Vec3 vec3d2 = this.getFluidFallingAdjustedMovement(fallSpeed, falling, this.getDeltaMovement());
 			this.setDeltaMovement(vec3d2);
 			if (this.horizontalCollision && this.isFree(vec3d2.x, vec3d2.y + 0.6 - this.getY() + y, vec3d2.z)) {
 				this.setDeltaMovement(vec3d2.x, 0.3, vec3d2.z);
@@ -114,16 +112,16 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 		return instance.isFallFlying();
 	}
 
-	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getVelocityAffectingPos()Lnet/minecraft/util/math/BlockPos;"), cancellable = true)
+	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBlockPosBelowThatAffectsMyMovement()Lnet/minecraft/core/BlockPos;"), cancellable = true)
 	private void cancelIfCustomFluid(Vec3 movementInput, CallbackInfo ci) {
-		if (this.quilt$isInCustomFluid() && this.shouldSwimInFluids() && !this.canWalkOnFluid(level.getFluidState(blockPosition()))) {
-			this.updateLimbs(this instanceof FlyingAnimal);
+		if (this.quilt$isInCustomFluid() && this.isAffectedByFluids() && !this.canStandOnFluid(level.getFluidState(blockPosition()))) {
+			this.calculateEntityAnimation(this instanceof FlyingAnimal);
 			ci.cancel();
 		}
 	}
 
-	@Redirect(method = "tickMovement",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getFluidHeight(Lnet/minecraft/registry/tag/TagKey;)D", ordinal = 1))
+	@Redirect(method = "aiStep",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidHeight(Lnet/minecraft/tags/TagKey;)D", ordinal = 1))
 	private double redirectGetFluidHeight(LivingEntity instance, TagKey<Fluid> tag) {
 		if (quilt$isInCustomFluid()) {
 			return getFluidHeight(TagKey.create(Registries.FLUID,this.level.getFluidState(instance.blockPosition()).getType().builtInRegistryHolder().key().registry()));
@@ -131,8 +129,8 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 		return getFluidHeight(FluidTags.WATER);
 	}
 
-	@Redirect(method = "tickMovement",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isTouchingWater()Z"))
+	@Redirect(method = "aiStep",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInWater()Z"))
 	private boolean redirectTouchingWaterToCheckIfSwim(LivingEntity instance) {
 		if (quilt$isInCustomFluid()) {
 			FluidState fluidState = this.level.getFluidState(blockPosition());
@@ -143,13 +141,13 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 		return isInWater();
 	}
 
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;swimUpward(Lnet/minecraft/registry/tag/TagKey;)V"))
+	@Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;jumpInLiquid(Lnet/minecraft/tags/TagKey;)V"))
 	private void redirectSwimUpward(LivingEntity instance, TagKey<Fluid> fluid) {
 		//Remove need for TagKey here
 		this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.04F, 0.0));
 	}
 
-	@Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getAir()I", ordinal = 2))
+	@Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getAirSupply()I", ordinal = 2))
 	private int baseTick(LivingEntity instance) {
 		if (quilt$isSubmergedInCustomFluid()) {
 			FluidState fluidState = this.level.getFluidState(blockPosition());

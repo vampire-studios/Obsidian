@@ -2,8 +2,9 @@ package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import blue.endless.jankson.annotation.SerializedName;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import io.github.vampirestudios.obsidian.registry.Registries;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Rarity;
@@ -27,8 +28,9 @@ public class ItemInformation {
 	@SerializedName("custom_render_mode") public boolean customRenderMode = false;
     @SerializedName("render_mode_models") public RenderModeModel[] renderModeModels;
 
-	public CreativeModeTab getItemGroup() {
-		return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
+	public ResourceKey<CreativeModeTab> getItemGroup() {
+        CreativeModeTab creativeModeTab = BuiltInRegistries.CREATIVE_MODE_TAB.get(creativeTab);
+		return BuiltInRegistries.CREATIVE_MODE_TAB.createIntrusiveHolder(creativeModeTab).key();
 	}
 
     public static class RenderModeModel {

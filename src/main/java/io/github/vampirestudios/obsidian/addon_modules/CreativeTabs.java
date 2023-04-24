@@ -15,10 +15,14 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,16 +45,16 @@ public class CreativeTabs implements AddonModule {
 
             if (result.result().isPresent()) {
                 CreativeTab creativeTab = result.result().get().getFirst();
-                CreativeModeTab itemGroup1 = FabricItemGroup.builder(identifier)
+                CreativeModeTab itemGroup1 = FabricItemGroup.builder()
                         .icon(() -> new ItemStack(creativeTab.icon))
-                        .entries((featureSet, entries) -> {
-                            for (RegistryEntry<Item> item : creativeTab.items) {
-                                if (item.hasKeyAndValue()) {
-                                    entries.add(new ItemStack(item.comp_349()));
+                        .displayItems((featureSet, entries) -> {
+                            for (Holder<Item> item : creativeTab.items) {
+                                if (item.isBound()) {
+                                    entries.accept(new ItemStack(item.value()));
                                 }
                             }
                         })
-                        .displayName(Component.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
+                        .title(Component.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
                         .build();
                 creativeTab.texture.ifPresent(itemGroup1::setBackgroundImage);
                 Registry.register(Registries.ITEM_GROUP_REGISTRY, new ResourceLocation(id.modId(), id.addonPath()), itemGroup1);
