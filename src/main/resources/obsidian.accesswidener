@@ -36,3 +36,5 @@ accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen 
 accessible class net/minecraft/data/server/recipe/CookingRecipeJsonBuilder$CookingRecipeJsonProvider
 
 accessible method net/minecraft/data/server/recipe/RecipeJsonBuilder getCraftingCategory (Lnet/minecraft/recipe/book/RecipeCategory;)Lnet/minecraft/recipe/book/CraftingRecipeCategory;
+
+accessible method net/minecraft/server/packs/PackType <init> (Ljava/lang/String;)V

@@ -19,6 +19,7 @@ import io.github.vampirestudios.obsidian.config.ObsidianConfig;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
+import io.github.vampirestudios.obsidian.mixins.PackTypeAccessor;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
@@ -207,7 +208,8 @@ public class Obsidian implements ModInitializer, AppleSkinApi {
 		CONFIG = AutoConfig.getConfigHolder(ObsidianConfig.class).getConfig();
 		KeyBindingHelper.registerKeyBinding(binding);
 
-		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES)
+		PackType type = PackTypeAccessor.createPackType("content");
+		ResourceManagerHelper.get(type)
 				.registerReloadListener(new ScriptParser());
 
 //		GlobalFixer.init();
