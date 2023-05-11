@@ -42,7 +42,7 @@ public class Food implements AddonModule {
 
             Item.Properties settings = new Item.Properties()
                     .stacksTo(foodItem.information.maxStackSize).rarity(foodItem.information.rarity);
-            FoodProperties foodComponent = Registries.FOOD_COMPONENTS.get(foodItem.food_information.foodComponent);
+            FoodProperties foodComponent = Registries.FOODS.get(foodItem.food_information.foodComponent);
             Item item = Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, identifier, new FoodItemImpl(foodItem, settings
                     .durability(foodItem.information.useDuration)
                     .food(foodComponent)));

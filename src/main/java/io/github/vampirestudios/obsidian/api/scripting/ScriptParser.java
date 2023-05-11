@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.scripting;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.ThingResourceManager;
 import io.github.vampirestudios.obsidian.api.scripting.rhino.RhinoThingScript;
 import io.github.vampirestudios.obsidian.utils.KeyNotFoundException;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
@@ -26,8 +27,21 @@ public class ScriptParser extends SimplePreparableReloadListener<Map<ResourceLoc
     public static final String JS_EXTENSION = ".js";
     public static final int JS_EXTENSION_LENGTH = JS_EXTENSION.length();
 
+    private static boolean enabled = false;
+
     public static ScriptParser instance() {
         return instance;
+    }
+
+    public static void enable(ThingResourceManager manager) {
+        if (!enabled) {
+            manager.addResourceReloadListener(instance());
+            enabled = true;
+        }
+    }
+
+    public static boolean isEnabled() {
+        return enabled;
     }
 
     private Map<ResourceLocation, ThingScript> scripts = new HashMap<>();

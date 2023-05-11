@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ThrownTridentRenderer.class)
 public class TridentEntityRendererMixin {
-    @Inject(method = "getTexture(Lnet/minecraft/entity/projectile/TridentEntity;)Lnet/minecraft/util/Identifier;", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "getTextureLocation(Lnet/minecraft/world/entity/projectile/ThrownTrident;)Lnet/minecraft/resources/ResourceLocation;", at = @At(value = "HEAD"), cancellable = true)
     public void getTextureMixin(ThrownTrident entity, CallbackInfoReturnable<ResourceLocation> cir) {
         if(((TridentEntityAccessor) entity).getTridentStack().getItem() instanceof TridentExtensions tridentItem) {
             cir.setReturnValue(tridentItem.getRenderTexture());

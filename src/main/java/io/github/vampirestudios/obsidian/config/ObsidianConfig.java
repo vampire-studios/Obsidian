@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.config;
 
 import me.shedaniel.autoconfig.ConfigData;
@@ -8,4 +9,4 @@ public class ObsidianConfig implements ConfigData {
 
     public String addonsFolder = "obsidian_addons";
 
-}
+}*/

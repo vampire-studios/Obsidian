@@ -38,7 +38,7 @@ public class EntityModelLoaderMixin {
 //        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this.quilt$dynamicEntityModelLoader);
     }
 
-    @Inject(method = "getModelPart", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "bakeLayer", at = @At("HEAD"), cancellable = true)
     public void returnDynamicModel(ModelLayerLocation layer, CallbackInfoReturnable<ModelPart> cir) {
 //        TexturedModelData modelData = quilt$dynamicEntityModelLoader.getModelData(layer);
 //        if (modelData != null) {

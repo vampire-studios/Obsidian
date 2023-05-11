@@ -19,6 +19,10 @@ package org.quiltmc.qsl.key.binds.mixin.client.chords;
 import com.mojang.blaze3d.platform.InputConstants;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.quiltmc.qsl.key.binds.api.ChordedKeyBind;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 import org.spongepowered.asm.mixin.Final;
@@ -34,19 +38,15 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
 @Mixin(KeyMapping.class)
 public class KeyBindMixin implements ChordedKeyBind {
 	@Shadow
 	@Final
-	private static Map<String, KeyMapping> KEYS_BY_ID;
+	private static Map<String, KeyMapping> ALL;
 
 	@Shadow
-	private InputConstants.Key boundKey;
+	private InputConstants.Key key;
 
 	@Unique
 	private static final Map<KeyChord, KeyMapping> KEY_BINDS_BY_CHORD = new Reference2ReferenceOpenHashMap<>();
@@ -59,14 +59,14 @@ public class KeyBindMixin implements ChordedKeyBind {
 
 	@Inject(
 			at = @At("RETURN"),
-			method = "<init>(Ljava/lang/String;Lnet/minecraft/client/util/InputUtil$Type;ILjava/lang/String;)V"
+			method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputConstants$Type;ILjava/lang/String;)V"
 	)
 	private void initializeChordFields(String string, InputConstants.Type type, int i, String string2, CallbackInfo ci) {
 		quilt$defaultChord = null;
 		quilt$boundChord = null;
 	}
 
-	@Inject(at = @At("HEAD"), method = "onKeyPressed")
+	@Inject(at = @At("HEAD"), method = "click")
 	private static void detectChordsOnIncrement(InputConstants.Key startingKey, CallbackInfo ci) {
 		for (KeyChord chord : KEY_BINDS_BY_CHORD.keySet()) {
 			if (chord.keys.containsKey(startingKey) && !chord.keys.containsValue(false)) {
@@ -79,7 +79,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "setKeyPressed")
+	@Inject(at = @At("HEAD"), method = "set")
 	private static void detectChordsOnSet(InputConstants.Key startingKey, boolean pressed, CallbackInfo ci) {
 		for (KeyChord chord : KEY_BINDS_BY_CHORD.keySet()) {
 			if (chord.keys.containsKey(startingKey)) {
@@ -92,9 +92,9 @@ public class KeyBindMixin implements ChordedKeyBind {
 	@Inject(
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/util/InputUtil$Key;getCategory()Lnet/minecraft/client/util/InputUtil$Type;"
+				target = "Lcom/mojang/blaze3d/platform/InputConstants$Key;getType()Lcom/mojang/blaze3d/platform/InputConstants$Type;"
 			),
-			method = "updatePressedStates",
+			method = "setAll",
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
@@ -112,11 +112,11 @@ public class KeyBindMixin implements ChordedKeyBind {
 		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "updateKeysByCode")
+	@Inject(at = @At("HEAD"), method = "setAll")
 	private static void updateChordBoundKeys(CallbackInfo cir) {
 		KEY_BINDS_BY_CHORD.clear();
 
-		for (KeyMapping key : KEYS_BY_ID.values()) {
+		for (KeyMapping key : ALL.values()) {
 			KeyChord chord = ((KeyBindMixin) (Object) key).quilt$boundChord;
 			if (chord != null) {
 				KEY_BINDS_BY_CHORD.put(chord, key);
@@ -125,17 +125,17 @@ public class KeyBindMixin implements ChordedKeyBind {
 	}
 
 	// TODO - Detect chords for matchesKey too; They are such a weird case
-	@Inject(at = @At("HEAD"), method = "matchesKey", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "matches", cancellable = true)
 	private void matchesChordKey(CallbackInfoReturnable<Boolean> ci) { }
 
 	// TODO - Detect chords for matchesMouseButton as well
 
-	@Inject(at = @At("HEAD"), method = "setBoundKey", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "setKey", cancellable = true)
 	private void resetChord(CallbackInfo ci) {
 		this.quilt$boundChord = null;
 	}
 
-	@Inject(at = @At("HEAD"), method = "equals", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "same", cancellable = true)
 	private void keyOrChordEquals(KeyMapping other, CallbackInfoReturnable<Boolean> cir) {
 		if (this.quilt$boundChord != null) {
 			if (other.getBoundChord() != null) {
@@ -153,7 +153,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "getBoundKeyLocalizedText", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "getTranslatedKeyMessage", cancellable = true)
 	private void useChordName(CallbackInfoReturnable<Component> cir) {
 		if (this.quilt$boundChord != null) {
 			MutableComponent text = Component.empty();
@@ -183,7 +183,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 
 	@Override
 	public void setBoundChord(KeyChord chord) {
-		this.boundKey = InputConstants.UNKNOWN;
+		this.key = InputConstants.UNKNOWN;
 		this.quilt$boundChord = chord;
 	}
 

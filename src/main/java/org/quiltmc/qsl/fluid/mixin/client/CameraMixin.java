@@ -28,16 +28,16 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Camera.class)
 public class CameraMixin implements CameraExtensions {
 	@Shadow
-	private BlockGetter area;
+	private BlockGetter level;
 	@Shadow
 	@Final
-	private BlockPos.MutableBlockPos blockPos;
+	private BlockPos.MutableBlockPos blockPosition;
 
 	/**
 	 * Returns the fluid in which the camera is submerged.
 	 */
 	@Override
 	public FluidState quilt$getSubmergedFluidState() {
-		return this.area.getFluidState(this.blockPos);
+		return this.level.getFluidState(this.blockPosition);
 	}
 }

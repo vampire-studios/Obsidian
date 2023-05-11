@@ -5,12 +5,14 @@ import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import io.github.cottonmc.jankson.JanksonFactory;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.SaplingBaseBlock;
+import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyType;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
@@ -18,7 +20,9 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import io.github.vampirestudios.obsidian.utils.ThingParseException;
 import io.github.vampirestudios.obsidian.utils.Utils;
+import io.github.vampirestudios.obsidian.utils.parse.value.ObjValue;
 import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -27,36 +31,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.level.block.BarrelBlock;
-import net.minecraft.world.level.block.BeehiveBlock;
-import net.minecraft.world.level.block.BlastFurnaceBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ButtonBlock;
-import net.minecraft.world.level.block.CarpetBlock;
-import net.minecraft.world.level.block.ChainBlock;
-import net.minecraft.world.level.block.CraftingTableBlock;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.FurnaceBlock;
-import net.minecraft.world.level.block.LanternBlock;
-import net.minecraft.world.level.block.LoomBlock;
-import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.SmokerBlock;
-import net.minecraft.world.level.block.TallFlowerBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.material.MapColor;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -73,8 +62,8 @@ public class Blocks implements AddonModule {
             if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
                 block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
-                JsonObject jsonObject = Obsidian.JANKSON.load(file);
-                block = Obsidian.JANKSON.fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+                JsonObject jsonObject = JanksonFactory.builder().build().load(file);
+                block = JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
 //                LoadSettings settings = LoadSettings.builder().build();
 //                Load load = new Load(settings);
@@ -120,10 +109,12 @@ public class Blocks implements AddonModule {
             if (block.information.parentBlock != null) {
                 blockSettings = FabricBlockSettings.copyOf(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(block.information.parentBlock));
             } else {
-                blockSettings = FabricBlockSettings.of(block.information.blockProperties.getMaterial());
+                blockSettings = FabricBlockSettings.of();
             }
 
             blockSettings.destroyTime(block.information.blockProperties.hardness).explosionResistance(block.information.blockProperties.resistance)
+                    .mapColor(block.information.blockProperties.getMapColor())
+                    .pushReaction(block.information.blockProperties.getPushReaction())
                     .sound(block.information.blockProperties.getBlockSoundGroup())
                     .friction(block.information.blockProperties.slipperiness)
                     .emissiveRendering((state, world, pos) -> block.information.blockProperties.is_emissive)
@@ -136,7 +127,7 @@ public class Blocks implements AddonModule {
             if (block.information.blockProperties.translucent) blockSettings.noOcclusion();
             if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicShape();
 
-            FabricItemSettings settings = new FabricItemSettings()/*.group(block.information.itemProperties.getItemGroup())*/;
+            FabricItemSettings settings = new FabricItemSettings();
             settings.stacksTo(block.information.itemProperties.maxStackSize);
             settings.rarity(Rarity.valueOf(block.information.itemProperties.rarity.toUpperCase(Locale.ROOT)));
             if (block.information.itemProperties.maxDurability != 0)
@@ -144,10 +135,10 @@ public class Blocks implements AddonModule {
             if (!block.information.itemProperties.equipmentSlot.isEmpty() && !block.information.itemProperties.equipmentSlot.isBlank())
                 settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
             if (block.food_information != null)
-                settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
+                settings.food(Registries.FOODS.get(block.food_information.foodComponent));
             if (block.information.itemProperties.fireproof) settings.fireResistant();
 
-            RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();
+            RegistryHelperBlockExpanded expanded = new RegistryHelperBlockExpanded(REGISTRY_HELPER.modId());
 
             if (block.additional_information != null) {
                 if (block.additional_information.path) {
@@ -233,9 +224,10 @@ public class Blocks implements AddonModule {
                     case BAMBOO_DOOR ->
                             expanded.registerBlock(new DoorBlock(blockSettings, WoodType.BAMBOO.setType()), block, blockId.getPath(), settings);
                     case LOG ->
-                            expanded.registerLog(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(),
-                                    block.information.blockProperties.getMaterial().getColor(), settings);
-                    case STEM -> expanded.registerNetherStemBlock(block, blockId.getPath(), block.information.blockProperties.getMaterial().getColor(), settings);
+                            expanded.registerLog(block, blockId.getPath(), /*block.information.blockProperties.getMaterial().getColor()*/MapColor.STONE,
+                                    /*block.information.blockProperties.getMaterial().getColor()*/MapColor.STONE, settings);
+                    case STEM ->
+                            expanded.registerNetherStemBlock(block, blockId.getPath(), /*block.information.blockProperties.getMaterial().getColor()*/MapColor.STONE, settings);
                     case OXIDIZING_BLOCK -> {
                         List<ResourceLocation> names = new ArrayList<>();
                         block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
@@ -252,13 +244,15 @@ public class Blocks implements AddonModule {
                             expanded.registerBlock(new PlantBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                         }
                     }
-                    case ROTATED_PILLAR -> expanded.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case ROTATED_PILLAR ->
+                            expanded.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     case HORIZONTAL_FACING_PLANT ->
-                        expanded.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollission().instabreak()), block, blockId.getPath(), settings);
-                    case SAPLING -> expanded.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockSettings.noCollission().instabreak()), block, blockId.getPath(), settings);
+                    case SAPLING ->
+                            expanded.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
                     case TORCH ->
                         //TODO: Add particle lookup registry/method
-                        expanded.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
+                            expanded.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
                     case BEEHIVE -> {
                         Block beeHive = expanded.registerBlock(new BeehiveBlock(blockSettings), block, blockId.getPath(), settings);
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beeHive), blockId.getPath() + "_beehive_be");
@@ -288,9 +282,12 @@ public class Blocks implements AddonModule {
                             expanded.registerDoubleBlock(new TallFlowerBlock(blockSettings.noCollission().instabreak()), block, blockId.getPath(), settings);
                     case HANGING_DOUBLE_LEAVES ->
                             expanded.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollission().instabreak()), block, blockId.getPath(), settings);
-                    case LANTERN -> expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
-                    case CHAIN -> expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
-                    case PANE -> expanded.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                    case LANTERN ->
+                            expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CHAIN ->
+                            expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
+                    case PANE ->
+                            expanded.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     case DYEABLE -> {
                         Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(block, blockSettings));
                         expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
@@ -298,8 +295,10 @@ public class Blocks implements AddonModule {
                                         (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                 blockId.getPath() + "_be");
                     }
-                    case LOOM -> expanded.registerBlock(new LoomBlock(blockSettings), block, blockId.getPath(), settings);
-                    case CRAFTING_TABLE -> expanded.registerBlock(new CraftingTableBlock(blockSettings), block, blockId.getPath(), settings);
+                    case LOOM ->
+                            expanded.registerBlock(new LoomBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CRAFTING_TABLE ->
+                            expanded.registerBlock(new CraftingTableBlock(blockSettings), block, blockId.getPath(), settings);
                     case FURNACE -> {
                         Block furnace = expanded.registerBlock(new FurnaceBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.FURNACE).vlAddBlocks(furnace);
@@ -316,7 +315,8 @@ public class Blocks implements AddonModule {
                         Block barrel = expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
                         ((IBlockEntityType) BlockEntityType.BARREL).vlAddBlocks(barrel);
                     }
-                    case CARPET -> expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
+                    case CARPET ->
+                            expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
 
                     /*case PANE:
 //                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(blockId, "_base"));
@@ -339,7 +339,7 @@ public class Blocks implements AddonModule {
                     }
                     if (additionalInformation.stairs) {
                         expanded.registerBlock(new StairsImpl(block, blockSettings), block, new ResourceLocation(id.modId(),
-                                        identifier.getPath() + "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS);
+                                identifier.getPath() + "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS);
                     }
                     if (additionalInformation.fence) {
                         expanded.registerBlock(new FenceImpl(block, blockSettings), block,
@@ -359,14 +359,14 @@ public class Blocks implements AddonModule {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
                         expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, blockSettings,
-                                getWoodTypeSpecificSounds(soundType).setType()), block,
+                                        getWoodTypeSpecificSounds(soundType).setType()), block,
                                 Utils.appendToPath(identifier, "_pressure_plate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
                     }
                     if (additionalInformation.button) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
                         expanded.registerBlock(new ButtonBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType(),
-                                30, true), block, Utils.appendToPath(identifier, "_button").getPath(),
+                                        30, true), block, Utils.appendToPath(identifier, "_button").getPath(),
                                 CreativeModeTabs.REDSTONE_BLOCKS, settings);
                     }
                     if (additionalInformation.door) {
@@ -408,14 +408,15 @@ public class Blocks implements AddonModule {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
                         expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, blockSettings,
-                                getWoodTypeSpecificSounds(soundType).setType()), block,
+                                        getWoodTypeSpecificSounds(soundType).setType()), block,
                                 Utils.appendToPath(blockId, "_pressure_plate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
                     }
                     if (additionalInformation.button) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
                                 additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
                         expanded.registerBlock(new ButtonBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType(),
-                                30, true), block, Utils.appendToPath(blockId, "_button").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
+                                        30, true), block, Utils.appendToPath(blockId, "_button").getPath(),
+                                CreativeModeTabs.REDSTONE_BLOCKS, settings);
                     }
                     if (additionalInformation.door) {
                         SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
@@ -461,6 +462,23 @@ public class Blocks implements AddonModule {
                 failedRegistering("block", file.getName(), e);
             }
         }
+    }
+
+    private Map<String, Property<?>> parseProperties(ObjValue props) {
+        Map<String, Property<?>> map = new HashMap<>();
+
+        props.forEach((name, val) -> val
+                .ifString(str -> str.handle(prop -> {
+                    var property = Registries.PROPERTIES.get(new ResourceLocation(prop));
+                    if (property == null)
+                        throw new ThingParseException("Property with name " + prop + " not found in ThingRegistries.PROPERTIES");
+                    if (!property.getName().equals(name))
+                        throw new ThingParseException("The stock property '" + prop + "' does not have the expected name '" + name + "' != '" + property.getName() + "'");
+                    map.put(name, property);
+                }))
+                .ifObj(obj -> obj.raw(rawObj -> map.put(name, PropertyType.deserialize(name, rawObj))))
+                .typeError());
+        return map;
     }
 
     @Override

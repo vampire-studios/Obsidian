@@ -5,6 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -34,22 +35,25 @@ public class Commands implements AddonModule {
         String tmpl = """
                 {
                   "name": "testing",
+                  "aliases": [
+                    "testing2"
+                  ]
                   "op_level": 2,
                   "arguments": {
                     "target_pos" : {
-                      "argument_type": "block_pos",
+                      "type": "block_pos",
                       "executes": [
                         "tp @s {target_pos}"
                       ]
                     },
                     "user": {
-                      "argument_type": "player",
+                      "type": "player",
                       "executes": [
                         "tp @s {user}"
                       ],
                       "arguments": {
                         "target": {
-                          "argument_type": "player",
+                          "type": "player",
                           "executes": [
                             "tp {user} {target}"
                           ]
@@ -98,12 +102,22 @@ public class Commands implements AddonModule {
             if (environment.includeDedicated) {
                 LiteralArgumentBuilder<CommandSourceStack> root = net.minecraft.commands.Commands.literal(node.name.getPath());
                 parse(root, buildContext, environment, node, new String[]{ });
-                dispatcher.register(root);
+                LiteralCommandNode<CommandSourceStack> registered = dispatcher.register(root);
+                if (node.aliases != null) {
+                    for (String alias : node.aliases) {
+                        dispatcher.register(net.minecraft.commands.Commands.literal(alias).redirect(registered));
+                    }
+                }
             }
         } else {
             LiteralArgumentBuilder<CommandSourceStack> root = net.minecraft.commands.Commands.literal(node.name.getPath());
             parse(root, buildContext, environment, node, new String[]{ });
-            dispatcher.register(root);
+            LiteralCommandNode<CommandSourceStack> registered = dispatcher.register(root);
+            if (node.aliases != null) {
+                for (String alias : node.aliases) {
+                    dispatcher.register(net.minecraft.commands.Commands.literal(alias).redirect(registered));
+                }
+            }
         }
     }
 

@@ -34,18 +34,18 @@ public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind
 	@Shadow
 	@Mutable
 	@Final
-	private static Map<String, Integer> CATEGORY_ORDER_MAP;
+	private static Map<String, Integer> ALL;
 
 	@Shadow
-	private InputConstants.Key boundKey;
+	private InputConstants.Key key;
 
 	@Unique
 	private boolean quilt$vanilla;
 
-	@Inject(method = "<init>(Ljava/lang/String;Lnet/minecraft/client/util/InputUtil$Type;ILjava/lang/String;)V", at = @At("RETURN"))
+	@Inject(method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputConstants$Type;ILjava/lang/String;)V", at = @At("RETURN"))
 	private void addModdedCategory(String translationKey, InputConstants.Type type, int keyCode, String category, CallbackInfo ci) {
-		if (!CATEGORY_ORDER_MAP.containsKey(category)) {
-			CATEGORY_ORDER_MAP.put(category, CATEGORY_ORDER_MAP.size() + 1);
+		if (!ALL.containsKey(category)) {
+			ALL.put(category, ALL.size() + 1);
 		}
 
 		this.quilt$vanilla = false;
@@ -63,6 +63,6 @@ public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind
 
 	@Override
 	public InputConstants.Key getBoundKey() {
-		return this.boundKey;
+		return this.key;
 	}
 }

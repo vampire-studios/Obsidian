@@ -5,14 +5,14 @@ import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.IoSupplier;
+
+import java.io.InputStream;
+import java.util.Set;
 
 public class ObsidianAddonResourcePack implements PackResources {
     private final PackResources virtualPack;
@@ -25,28 +25,28 @@ public class ObsidianAddonResourcePack implements PackResources {
 
     @Override
     public IoSupplier<InputStream> getRootResource(String... var1) {
-        try {
-            return virtualPack.getRootResource(var1);
-        } catch (Throwable ignored) {}
+//        try {
+//            return virtualPack.getRootResource(var1);
+//        } catch (Throwable ignored) {}
         return null;
     }
 
     @Override
     public IoSupplier<InputStream> getResource(PackType var1, ResourceLocation var2) {
-        try {
-            return virtualPack.getResource(var1, var2);
-        } catch (Throwable ignored) {}
+//        try {
+//            return virtualPack.getResource(var1, var2);
+//        } catch (Throwable ignored) {}
         return null;
     }
 
     @Override
     public void listResources(PackType resourceType, String string, String string2, ResourceOutput resultConsumer) {
-        virtualPack.listResources(resourceType, string, string2, resultConsumer);
+//        virtualPack.listResources(resourceType, string, string2, resultConsumer);
     }
 
     @Override
     public Set<String> getNamespaces(PackType var1) {
-        return new HashSet<>(virtualPack.getNamespaces(var1));
+        return Set.of(/*virtualPack.getNamespaces(var1)*/"minecraft", "tutorial");
     }
 
     @Override
@@ -76,10 +76,10 @@ public class ObsidianAddonResourcePack implements PackResources {
 
     @Override
     public void close() {
-        try {
-            virtualPack.close();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+//        try {
+//            virtualPack.close();
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
     }
 }

@@ -35,7 +35,7 @@ import java.util.Map;
 public class RecipeManagerMixin {
 	@Inject(
 			at = @At("HEAD"),
-			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V"
+			method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V"
 	)
 	public void checkRecipeConditions(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
 		profiler.push("Fabric: check recipe conditions");

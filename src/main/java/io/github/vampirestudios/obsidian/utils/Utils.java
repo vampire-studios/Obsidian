@@ -2,14 +2,16 @@ package io.github.vampirestudios.obsidian.utils;
 
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
+import io.github.cottonmc.jankson.JanksonFactory;
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.configPack.*;
+import net.minecraft.resources.ResourceLocation;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import net.minecraft.resources.ResourceLocation;
 
 public class Utils {
 
@@ -28,8 +30,8 @@ public class Utils {
             }
         }
         if (newInfoFile.exists()) {
-            JsonObject jsonObject = Obsidian.JANKSON.load(newInfoFile);
-            ObsidianAddonInfo obsidianAddonInfo = Obsidian.JANKSON.fromJson(jsonObject, ObsidianAddonInfo.class);
+            JsonObject jsonObject = JanksonFactory.builder().build().load(newInfoFile);
+            ObsidianAddonInfo obsidianAddonInfo = JanksonFactory.builder().build().fromJson(jsonObject, ObsidianAddonInfo.class);
             ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, newInfoFile);
             if (obsidianAddon.getConfigPackInfo().addon != null && !ObsidianAddonLoader.OBSIDIAN_ADDONS.containsKey(Const.id(obsidianAddon.getConfigPackInfo().addon.id))
                     && obsidianAddon.getConfigPackInfo().version == ObsidianAddonLoader.SCHEMA_VERSION) {

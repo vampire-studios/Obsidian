@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MinecraftClientMixin {
 	// You can't INVOKE_ASSIGN at GameOptions for some reason
 	@Inject(
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/tutorial/TutorialManager;<init>(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/option/GameOptions;)V"),
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/tutorial/Tutorial;<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/Options;)V"),
 			method = "<init>"
 	)
 	private void handleQuiltKeyBindsConfig(GameConfig runArgs, CallbackInfo ci) {

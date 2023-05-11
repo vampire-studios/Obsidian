@@ -40,7 +40,7 @@ public abstract class GameOptionsMixin {
 	@Shadow
 	@Mutable
 	@Final
-	public KeyMapping[] allKeys;
+	public KeyMapping[] keyMappings;
 
 	@Shadow
 	@Final
@@ -49,19 +49,19 @@ public abstract class GameOptionsMixin {
 	@Inject(
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/option/GameOptions;load()V"
+				target = "Lnet/minecraft/client/Options;load()V"
 			),
 			method = "<init>"
 	)
 	private void modifyAllKeys(Minecraft client, File file, CallbackInfo ci) {
 		if (this.optionsFile.equals(new File(file, "options.txt"))) {
 			// Mark the Vanilla key binds as Vanilla
-			for (KeyMapping key : this.allKeys) {
+			for (KeyMapping key : this.keyMappings) {
 				((InternalQuiltKeyBind) key).markAsVanilla();
 			}
 
-			KeyBindRegistryImpl.setKeyBindManager(new KeyBindManager((Options) (Object) this, this.allKeys));
-			this.allKeys = KeyBindRegistryImpl.getKeyBinds();
+			KeyBindRegistryImpl.setKeyBindManager(new KeyBindManager((Options) (Object) this, this.keyMappings));
+			this.keyMappings = KeyBindRegistryImpl.getKeyBinds();
 		}
 	}
 }

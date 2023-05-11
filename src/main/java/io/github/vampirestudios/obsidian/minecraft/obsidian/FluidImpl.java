@@ -88,7 +88,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Override
 	public float getPushStrength(FluidState state, Entity affected) {
 		return this.fluid.pushStrengthChangesWhenWarm
-				? affected.level.dimensionType().ultraWarm() ? this.fluid.pushStrengthUltrawarm : this.fluid.pushStrength
+				? affected.level().dimensionType().ultraWarm() ? this.fluid.pushStrengthUltrawarm : this.fluid.pushStrength
 				: this.fluid.pushStrength;
 	}
 

@@ -1,7 +1,5 @@
 package io.github.vampirestudios.obsidian.configPack;
 
-import blue.endless.jankson.api.DeserializationException;
-import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.vampirestudios.obsidian.Obsidian;
@@ -25,11 +23,10 @@ import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -179,17 +176,17 @@ public class BedrockAddonLoader {
     }
 
     private static void loadAddonModule(IAddonPack bedrockAddon, BasicAddonInfo id, AddonModule addonModule) {
-        if (Paths.get(id.addonPath(), addonModule.getType()).toFile().exists()) {
-            for (File file : Objects.requireNonNull(Paths.get(id.addonPath(), addonModule.getType()).toFile().listFiles())) {
-                if (file.isFile()) {
-                    try {
-                        addonModule.init(bedrockAddon, file, id);
-                    } catch (IOException | SyntaxError | DeserializationException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+//        if (Paths.get(id.addonPath(), addonModule.getType()).toFile().exists()) {
+//            for (File file : Objects.requireNonNull(Paths.get(id.addonPath(), addonModule.getType()).toFile().listFiles())) {
+//                if (file.isFile()) {
+//                    try {
+//                        addonModule.init(bedrockAddon, file, id);
+//                    } catch (IOException | SyntaxError | DeserializationException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
     }
 
     public static <T> T register(Registry<T> list, String type, ResourceLocation name, T idk) {

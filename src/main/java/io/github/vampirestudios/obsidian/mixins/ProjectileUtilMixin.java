@@ -31,7 +31,7 @@ public abstract class ProjectileUtilMixin {
 
 	// Because the uses of this method are hardcoded, checking each hand for the Quilt interfaces of the items is needed.
 	// Note: this does not cancel for the vanilla items unless they are holding a custom implementation of the items
-	@Inject(method = "getHandPossiblyHolding", at = @At(value = "HEAD"), cancellable = true)
+	@Inject(method = "getWeaponHoldingHand", at = @At(value = "HEAD"), cancellable = true)
 	private static void getHandPossiblyHolding(LivingEntity entity, Item item, CallbackInfoReturnable<InteractionHand> cir) {
 		/*for (Hand hand : HANDS) {
 			if (item == Items.BOW) { // Make sure we only check for bows when searching for bows

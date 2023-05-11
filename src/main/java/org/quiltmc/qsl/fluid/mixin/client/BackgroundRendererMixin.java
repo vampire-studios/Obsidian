@@ -34,15 +34,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BackgroundRendererMixin {
 
 	@Shadow
-	private static float red;
+	private static float fogRed;
 	@Shadow
-	private static float green;
+	private static float fogGreen;
 	@Shadow
-	private static float blue;
+	private static float fogBlue;
 	@Shadow
-	private static long lastWaterFogColorUpdateTime = -1L;
+	private static long biomeChangedTime = -1L;
 
-	@Inject(method = "render(Lnet/minecraft/client/render/Camera;FLnet/minecraft/client/world/ClientWorld;IF)V",
+	@Inject(method = "setupColor",
 			at = @At("HEAD"),
 			cancellable = true)
 	private static void render(Camera camera, float tickDelta, ClientLevel world, int i, float f, CallbackInfo ci) {
@@ -55,22 +55,22 @@ public class BackgroundRendererMixin {
 			int fogColor = fluid.getFogColor(fluidState, camera.getEntity());
 			if (fogColor != -1) { // water color special casing, -1 marks water color
 				//This is a hexadecimal color, so we need to get the three "red", "green", and "blue" values.
-				red = (fogColor >> 16 & 255) / 255f;
-				green = (fogColor >> 8 & 255) / 255f;
-				blue = (fogColor & 255) / 255f;
+				fogRed = (fogColor >> 16 & 255) / 255f;
+				fogGreen = (fogColor >> 8 & 255) / 255f;
+				fogBlue = (fogColor & 255) / 255f;
 
 				//This is for compatibility, just add!
-				lastWaterFogColorUpdateTime = -1L;
+				biomeChangedTime = -1L;
 
 				//Apply the color, then return.
-				RenderSystem.clearColor(red, green, blue, 0.0f);
+				RenderSystem.clearColor(fogRed, fogGreen, fogBlue, 0.0f);
 
 				ci.cancel();
 			}
 		}
 	}
 
-	@Inject(method = "applyFog",
+	@Inject(method = "setupFog",
 			at = @At("HEAD"),
 			cancellable = true)
 	private static void applyFog(Camera camera, FogRenderer.FogMode fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci) {

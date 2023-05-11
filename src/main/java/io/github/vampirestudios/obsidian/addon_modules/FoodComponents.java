@@ -8,14 +8,16 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.FoodComponent;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class FoodComponents implements AddonModule {
 
@@ -32,7 +34,7 @@ public class FoodComponents implements AddonModule {
 			if (foodComponent.id == null) foodComponent.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
 			net.minecraft.world.food.FoodProperties foodComponent1 = foodComponent.getBuilder().build();
-			Registry.register(Registries.FOOD_COMPONENTS, identifier, foodComponent1);
+			Registry.register(Registries.FOODS, identifier, foodComponent1);
 			register(ContentRegistries.FOOD_COMPONENTS, "food_component", identifier, foodComponent);
 		} catch (Exception e) {
 			failedRegistering("food_component", file.getName(), e);

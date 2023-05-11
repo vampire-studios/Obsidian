@@ -1,18 +1,22 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import blue.endless.jankson.annotation.SerializedName;
+import io.github.vampirestudios.obsidian.api.MapColors;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.Registries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class BlockInformation {
@@ -31,8 +35,12 @@ public class BlockInformation {
     public boolean wearable = false;
     public ResourceLocation wearableModel;
 
-    @SerializedName("block_properties") public BlockProperties blockProperties;
-    @SerializedName("item_properties") public ItemProperties itemProperties;
+
+    @SerializedName("block_properties")
+    @com.google.gson.annotations.SerializedName("block_properties") public BlockProperties blockProperties;
+
+    @SerializedName("item_properties")
+    @com.google.gson.annotations.SerializedName("item_properties") public ItemProperties itemProperties;
 
     public List<ItemStack.TooltipPart> getRemovedTooltipSections() {
         return List.of();
@@ -57,14 +65,9 @@ public class BlockInformation {
     }*/
 
     public static class BlockProperties {
-        private static final Map<ResourceLocation, Material> vanillaMaterials = new HashMap<>();
         private static final Map<ResourceLocation, SoundType> vanillaSoundGroups = new HashMap<>();
 
         static {
-            vanillaMaterials.put(new ResourceLocation("plant"), Material.PLANT);
-            vanillaMaterials.put(new ResourceLocation("deprecated_non_solid"), Material.DEPRECATED_NONSOLID);
-            vanillaMaterials.put(new ResourceLocation("deprecated"), Material.DEPRECATED);
-
             vanillaSoundGroups.put(new ResourceLocation("wood"), SoundType.WOOD);
             vanillaSoundGroups.put(new ResourceLocation("gravel"), SoundType.GRAVEL);
             vanillaSoundGroups.put(new ResourceLocation("grass"), SoundType.GRASS);
@@ -169,16 +172,9 @@ public class BlockInformation {
             vanillaSoundGroups.put(new ResourceLocation("decorated_pot_shatter"), SoundType.DECORATED_POT_CRACKED);
         }
 
-        @SerializedName("material") public ResourceLocation vanillaMaterial = new ResourceLocation("air");
-        public ResourceLocation customMaterial;
-
         @SerializedName("sound_group")
         @com.google.gson.annotations.SerializedName("sound_group")
-        public ResourceLocation vanillaSoundGroup = new ResourceLocation("stone");
-
-        @SerializedName("new_sound_group")
-        @com.google.gson.annotations.SerializedName("new_sound_group")
-        public ResourceLocation customSoundGroup;
+        public Object soundGroup = new ResourceLocation("stone");
 
         public boolean collidable = true;
         public float hardness = 3.0F;
@@ -193,30 +189,47 @@ public class BlockInformation {
         public boolean is_emissive = false;
         public boolean translucent = false;
         public boolean dynamic_boundaries = false;
+        public String push_reaction;
+        public String map_color;
+
+        public MapColor getMapColor() {
+            return MapColors.get(map_color);
+        }
+
+        public PushReaction getPushReaction() {
+            return switch(push_reaction.toUpperCase(Locale.ROOT)) {
+                case "NORMAL" -> PushReaction.NORMAL;
+                case "DESTROY" -> PushReaction.DESTROY;
+                case "BLOCK" -> PushReaction.BLOCK;
+                case "IGNORE" -> PushReaction.IGNORE;
+                case "PUSH_ONLY" -> PushReaction.PUSH_ONLY;
+                default -> throw new IllegalStateException("Unexpected value: " + push_reaction);
+            };
+        }
 
         public SoundType getBlockSoundGroup() {
-            if (customSoundGroup != null) {
-                CustomSoundGroup soundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(this.customSoundGroup);
-                assert soundGroup != null;
-                SoundEvent breakSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(soundGroup.break_sound);
-                SoundEvent stepSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(soundGroup.step_sound);
-                SoundEvent placeSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(soundGroup.place_sound);
-                SoundEvent hitSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(soundGroup.hit_sound);
-                SoundEvent fallSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(soundGroup.fall_sound);
-                return new SoundType(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
+            if (soundGroup instanceof ResourceLocation resourceLocation) {
+                if (!resourceLocation.getNamespace().equals("minecraft")) {
+                    CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(resourceLocation);
+                    assert customSoundGroup != null;
+                    return createSoundType(customSoundGroup);
+                } else {
+                    return vanillaSoundGroups.get(resourceLocation);
+                }
+            } else if (soundGroup instanceof CustomSoundGroup customSoundGroup) {
+                return createSoundType(customSoundGroup);
             } else {
-                return vanillaSoundGroups.get(vanillaSoundGroup);
+                return SoundType.STONE;
             }
         }
 
-        public Material getMaterial() {
-            if (customMaterial != null) {
-                CustomMaterial customMaterial = ContentRegistries.BLOCK_MATERIALS.get(this.customMaterial);
-                assert customMaterial != null;
-                return new Material(customMaterial.getMapColor(), customMaterial.blocks_movement);
-            } else {
-                return vanillaMaterials.get(vanillaMaterial);
-            }
+        private SoundType createSoundType(CustomSoundGroup customSoundGroup) {
+            SoundEvent breakSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.break_sound);
+            SoundEvent stepSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.step_sound);
+            SoundEvent placeSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.place_sound);
+            SoundEvent hitSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.hit_sound);
+            SoundEvent fallSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.fall_sound);
+            return new SoundType(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
         }
     }
 
@@ -234,8 +247,8 @@ public class BlockInformation {
         public String rarity = "common";
         public String equipmentSlot = "";
 
-        public CreativeModeTab getItemGroup() {
-            return Registries.ITEM_GROUP_REGISTRY.get(creativeTab);
+        public ResourceKey<CreativeModeTab> getItemGroup() {
+            return ResourceKey.create(Registries.CREATIVE_MODE_TAB, creativeTab);
         }
     }
 
@@ -248,6 +261,14 @@ public class BlockInformation {
         public float[] west_shape = new float[] {0, 0, 0, 16, 16, 16};
         public float[] up_shape = new float[] {0, 0, 0, 16, 16, 16};
         public float[] down_shape = new float[] {0, 0, 0, 16, 16, 16};
+//        private DynamicShape generalShape;
+//        private DynamicShape collisionShape;
+//        private DynamicShape raytraceShape;
+//        private DynamicShape renderShape;
+//
+//        public static class Shape {
+//
+//        }
     }
 
 }

@@ -32,12 +32,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayer imple
 		super(clientWorld, gameProfile);
 	}
 
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isSubmergedInWater()Z"))
+	@Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUnderWater()Z"))
 	private boolean redirectSubmergedInWater(LocalPlayer instance) {
 		return this.isUnderWater() || this.quilt$isSubmergedInCustomFluid();
 	}
 
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isTouchingWater()Z"))
+	@Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isInWater()Z"))
 	private boolean redirectTouchingWater(LocalPlayer instance) {
 		return this.isInWater() || this.quilt$isInCustomFluid();
 	}

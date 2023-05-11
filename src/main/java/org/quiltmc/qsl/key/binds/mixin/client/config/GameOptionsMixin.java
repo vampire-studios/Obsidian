@@ -30,9 +30,9 @@ public abstract class GameOptionsMixin {
 	@Inject(
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/option/GameOptions;write()V"
+				target = "Lnet/minecraft/client/Options;save()V"
 			),
-			method = "setKeyCode"
+			method = "setKey"
 	)
 	private void writeToKeyBindConfig(KeyMapping key, InputConstants.Key code, CallbackInfo ci) {
 //		QuiltKeyBindsConfigManager.updateConfig(false);
@@ -41,9 +41,9 @@ public abstract class GameOptionsMixin {
 	@Redirect(
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/option/KeyBinding;setBoundKey(Lnet/minecraft/client/util/InputUtil$Key;)V"
+				target = "Lnet/minecraft/client/KeyMapping;setKey(Lcom/mojang/blaze3d/platform/InputConstants$Key;)V"
 			),
-			method = "accept"
+			method = "processOptions"
 	)
 	private void useOurConfigInstead(KeyMapping keyBind, InputConstants.Key key) { }
 }

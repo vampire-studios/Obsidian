@@ -44,19 +44,19 @@ public abstract class BoatEntityMixin extends Entity implements CustomFluidInter
 		super(entityType, world);
 	}
 
-	@Redirect(method = "getWaterHeightBelow", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"))
+	@Redirect(method = "getWaterLevelAbove", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;is(Lnet/minecraft/tags/TagKey;)Z"))
 	public boolean getFluidLevelAbove(FluidState instance, TagKey<Fluid> tag) {
 		if(!(instance.getType() instanceof QuiltFlowableFluidExtensions)) return true;
 		QuiltFluid fluid = (QuiltFluid) instance.getType();
 		return fluid.canBoatSwimOn();
 	}
 
-	@Redirect(method = "checkBoatInWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"))
+	@Redirect(method = "checkInWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;is(Lnet/minecraft/tags/TagKey;)Z"))
 	public boolean checkBoatInFluid(FluidState instance, TagKey<Fluid> tag) {
 		return instance.getType() instanceof QuiltFlowableFluidExtensions;
 	}
 
-	@Inject(method = "getUnderWaterLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	@Inject(method = "isUnderwater", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;is(Lnet/minecraft/tags/TagKey;)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void getUnderwaterLocation(CallbackInfoReturnable<Boat.Status> cir, AABB box, double d, int i, int j, int k, int l, int m, int n, boolean bl, BlockPos.MutableBlockPos mutable, int o, int p, int q, FluidState fluidState) {
 		if (fluidState.getType() instanceof QuiltFlowableFluidExtensions && d < (mutable.getY() + fluidState.getHeight(this.level, mutable))) {
 			if (!fluidState.isSource()) {
@@ -66,7 +66,7 @@ public abstract class BoatEntityMixin extends Entity implements CustomFluidInter
 		}
 	}
 
-	@Inject(method = "fall", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"))
+	@Inject(method = "checkFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;is(Lnet/minecraft/tags/TagKey;)Z"))
 	public void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition, CallbackInfo ci) {
 		if (!(this.level.getFluidState(this.blockPosition().below()).getType() instanceof QuiltFlowableFluidExtensions) && heightDifference < 0.0) {
 			this.fallDistance -= (float) heightDifference;

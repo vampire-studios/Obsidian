@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class Ores implements AddonModule {
 			if (block.information.parentBlock != null) {
 				blockSettings = FabricBlockSettings.copyOf(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(block.information.parentBlock));
 			} else {
-				blockSettings = FabricBlockSettings.of(block.information.blockProperties.getMaterial());
+				blockSettings = FabricBlockSettings.of();
 			}
 
 			blockSettings.destroyTime(block.information.blockProperties.hardness).explosionResistance(block.information.blockProperties.resistance)
@@ -66,7 +67,7 @@ public class Ores implements AddonModule {
 			if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicShape();
 
 			Item.Properties settings = new Item.Properties();
-			if (block.food_information != null) settings.food(Registries.FOOD_COMPONENTS.get(block.food_information.foodComponent));
+			if (block.food_information != null) settings.food(Registries.FOODS.get(block.food_information.foodComponent));
 			if (block.information.itemProperties.fireproof) settings.fireResistant();
 
 			RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();

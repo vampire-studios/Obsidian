@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BlockItemInject {
     @Inject(
         cancellable = true,
-        method = "writeNbtToBlockEntity",
+        method = "updateCustomBlockEntityTag(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)Z",
         at = @At("HEAD")
     )
     private static void injected(Level world, Player player, BlockPos pos, ItemStack stack, CallbackInfoReturnable<Boolean> info) {

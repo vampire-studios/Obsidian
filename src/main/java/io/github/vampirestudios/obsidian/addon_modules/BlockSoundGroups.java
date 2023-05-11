@@ -7,13 +7,14 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -37,6 +38,7 @@ public class BlockSoundGroups implements AddonModule {
 			registerSoundIfNotFound(customSoundGroup.place_sound);
 			registerSoundIfNotFound(customSoundGroup.hit_sound);
 			registerSoundIfNotFound(customSoundGroup.fall_sound);
+
 			register(ContentRegistries.BLOCK_SOUND_GROUPS, "sound_groups", identifier, customSoundGroup);
 		} catch (Exception e) {
 			failedRegistering("sound_groups", file.getName(), e);

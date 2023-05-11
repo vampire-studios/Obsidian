@@ -10,4 +10,8 @@ public class Const {
 	public static ResourceLocation id(String path) {
 		return new ResourceLocation(MOD_ID, path);
 	}
+
+	public static ResourceLocation vanillaId(String path) {
+		return new ResourceLocation(path);
+	}
 }

@@ -12,11 +12,11 @@ import io.github.vampirestudios.obsidian.api.obsidian.CreativeTab;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -57,7 +57,7 @@ public class CreativeTabs implements AddonModule {
                         .title(Component.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
                         .build();
                 creativeTab.texture.ifPresent(itemGroup1::setBackgroundImage);
-                Registry.register(Registries.ITEM_GROUP_REGISTRY, new ResourceLocation(id.modId(), id.addonPath()), itemGroup1);
+                Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(id.modId(), id.addonPath()), itemGroup1);
                 ObsidianAddonLoader.register(ContentRegistries.CREATIVE_TABS, "creative_tab", identifier, creativeTab);
             }
         } catch (Exception e) {

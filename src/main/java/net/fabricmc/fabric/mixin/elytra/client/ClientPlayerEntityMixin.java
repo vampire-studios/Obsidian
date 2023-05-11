@@ -28,12 +28,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(LocalPlayer.class)
 public class ClientPlayerEntityMixin {
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
+	@Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
 	private boolean redirectGetItem(ItemStack itemStack, Item item) {
 		return item instanceof FabricElytraExtensions;
 	}
 
-	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ElytraItem;isUsable(Lnet/minecraft/item/ItemStack;)Z"))
+	@Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ElytraItem;isFlyEnabled(Lnet/minecraft/world/item/ItemStack;)Z"))
 	private boolean redirectIsUsable(ItemStack stack) {
 		return stack.getItem() instanceof FabricElytraExtensions ? ((FabricElytraExtensions) stack.getItem()).isUsable(stack, (LivingEntity) (Object) this) : ElytraItem.isFlyEnabled(stack);
 	}

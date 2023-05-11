@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.fluid.api;
 
-import javax.annotation.Nullable;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -39,6 +38,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
 
 public interface QuiltFlowableFluidExtensions {
 
@@ -102,7 +103,7 @@ public interface QuiltFlowableFluidExtensions {
 	 */
 	default float getPushStrength(FluidState state, Entity affected) {
 		if(state.is(FluidTags.LAVA)) {
-			return affected.level.dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+			return affected.level().dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 		}
 		return WATER_PUSH_STRENGTH;
 	}
@@ -187,7 +188,7 @@ public interface QuiltFlowableFluidExtensions {
 	default float getFallDamageReduction(Entity entity) {
 		BlockPos entityPos = entity.blockPosition();
 
-		if(entity.level.getFluidState(entityPos).is(FluidTags.LAVA)) return HALF_FALL_DAMAGE_REDUCTION;
+		if(entity.level().getFluidState(entityPos).is(FluidTags.LAVA)) return HALF_FALL_DAMAGE_REDUCTION;
 
 		return FULL_FALL_DAMAGE_REDUCTION;
 	}
@@ -271,7 +272,7 @@ public interface QuiltFlowableFluidExtensions {
 			int yFloor = Mth.floor(splashing.getY());
 			ParticleOptions particle = getSplashParticle(splashing, splashPos, random);
 			if (particle != null) {
-				splashing.level.addParticle(
+				splashing.level().addParticle(
 						particle,
 						splashing.getX() + xOffset,
 						yFloor + 1.0f,
@@ -291,7 +292,7 @@ public interface QuiltFlowableFluidExtensions {
 			int yFloor = Mth.floor(splashing.getY());
 			ParticleOptions particle = getBubbleParticle(splashing, splashPos, random);
 			if (particle != null) {
-				splashing.level.addParticle(
+				splashing.level().addParticle(
 						particle,
 						splashing.getX() + xOffset,
 						yFloor + 1.0f,
@@ -343,7 +344,7 @@ public interface QuiltFlowableFluidExtensions {
 			depthStriderLevel = 3.0f;
 		}
 
-		if (!entity.isOnGround()) {
+		if (!entity.onGround()) {
 			depthStriderLevel *= 0.5f;
 		}
 
@@ -371,7 +372,7 @@ public interface QuiltFlowableFluidExtensions {
 					double h = random.nextDouble() - random.nextDouble();
 					ParticleOptions particle = getBubbleParticle(drowning, drowning.position(), random);
 					if (particle != null) {
-						drowning.level.addParticle(
+						drowning.level().addParticle(
 								particle,
 								drowning.getX() + f,
 								drowning.getY() + g,
@@ -385,7 +386,7 @@ public interface QuiltFlowableFluidExtensions {
 		}
 
 		// dismount vehicles that can't swim (horses)
-		if (!drowning.level.isClientSide && drowning.isPassenger() && drowning.getVehicle() != null && !drowning.getVehicle().dismountsUnderwater()) {
+		if (!drowning.level().isClientSide && drowning.isPassenger() && drowning.getVehicle() != null && !drowning.getVehicle().dismountsUnderwater()) {
 			drowning.stopRiding();
 		}
 	}

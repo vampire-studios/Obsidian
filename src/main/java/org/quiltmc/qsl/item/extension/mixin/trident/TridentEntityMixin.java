@@ -21,7 +21,7 @@ public abstract class TridentEntityMixin extends Entity {
         super(entityType, world);
     }
 
-    @Inject(method = "createSpawnPacket", at = @At("HEAD"))
+    @Inject(method = "getAddEntityPacket", at = @At("HEAD"))
     public void sendTridentStackBeforeSpawnPacket(CallbackInfoReturnable<Packet<?>> cir) {
         if ((Object) this instanceof ThrownTrident trident) {
             FriendlyByteBuf passedData = PacketByteBufs.create();

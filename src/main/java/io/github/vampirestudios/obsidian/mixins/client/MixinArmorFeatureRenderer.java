@@ -40,7 +40,7 @@ public abstract class MixinArmorFeatureRenderer extends RenderLayer<LivingEntity
 		super(context);
 	}
 
-	@Inject(method = "renderArmor", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "renderArmorPiece", at = @At("HEAD"), cancellable = true)
 	private void renderArmor(PoseStack matrices, MultiBufferSource vertexConsumers, LivingEntity entity, EquipmentSlot armorSlot, int light, HumanoidModel<LivingEntity>model, CallbackInfo ci){
 		ItemStack stack = entity.getItemBySlot(armorSlot);
 		ArmorRenderer renderer = ArmorRenderer.getRenderer(stack.getItem());

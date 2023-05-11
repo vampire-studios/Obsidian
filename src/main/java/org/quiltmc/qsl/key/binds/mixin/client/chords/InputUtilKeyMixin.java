@@ -24,9 +24,9 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class InputUtilKeyMixin implements Comparable<InputConstants.Key> {
 	@Override
 	public int compareTo(InputConstants.Key key) {
-		return Integer.compare(this.getCode(), key.getValue());
+		return Integer.compare(this.getValue(), key.getValue());
 	}
 
 	@Shadow
-	public abstract int getCode();
+	public abstract int getValue();
 }

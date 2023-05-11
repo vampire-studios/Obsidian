@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.addon_modules;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.SyntaxError;
+import io.github.cottonmc.jankson.JanksonFactory;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -13,6 +14,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.flag.FeatureFlags;
@@ -46,8 +48,8 @@ public class LegacyItemGroups implements AddonModule {
             if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
                 itemGroup = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
-                JsonObject jsonObject = Obsidian.JANKSON.load(file);
-                itemGroup = Obsidian.JANKSON.fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
+                JsonObject jsonObject = JanksonFactory.builder().build().load(file);
+                itemGroup = JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
                 Yaml yaml = new Yaml();
                 InputStream inputStream = this.getClass()
@@ -71,6 +73,7 @@ public class LegacyItemGroups implements AddonModule {
 
             CreativeModeTab itemGroup1 = FabricItemGroup.builder()
                     .icon(() -> new ItemStack(BuiltInRegistries.ITEM.get(itemGroup.icon)))
+                    .title(Component.literal(identifier.getPath()))
                     .displayItems((displayContext, entries) -> {
                         if (itemGroup.tags != null) {
                             for (Map.Entry<String, ResourceLocation> tag : itemGroup.tags.entrySet()) {

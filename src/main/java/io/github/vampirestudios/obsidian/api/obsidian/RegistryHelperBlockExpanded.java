@@ -16,8 +16,7 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
 public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
@@ -52,8 +51,10 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 			block = BuiltInRegistries.BLOCK.get(new ResourceLocation(this.modId, name));
 		else block = Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(this.modId, name), block);
 		if (block2.information.has_item) {
-			if (BuiltInRegistries.ITEM.containsKey(new ResourceLocation(this.modId, name))) BuiltInRegistries.ITEM.get(new ResourceLocation(this.modId, name));
-			else Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(this.modId, name), new CustomBlockItem(block2, block, settings));
+			Item item;
+			if (BuiltInRegistries.ITEM.containsKey(new ResourceLocation(this.modId, name))) item = BuiltInRegistries.ITEM.get(new ResourceLocation(this.modId, name));
+			else item = Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(this.modId, name), new CustomBlockItem(block2, block, settings));
+			ItemGroupEvents.modifyEntriesEvent(block2.information.itemProperties.getItemGroup()).register(entries -> entries.accept(item));
 		}
 		return block;
 	}
@@ -65,7 +66,8 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 
 	public void registerLeavesBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Properties settings) {
 		Block leavesBlock = new LeavesBlock(
-				BlockBehaviour.Properties.of(Material.DEPRECATED_NONSOLID, MaterialColor.PLANT)
+				BlockBehaviour.Properties.of()
+						.mapColor(MapColor.PLANT)
 						.strength(0.2F)
 						.randomTicks()
 						.sound(block2.information.blockProperties.getBlockSoundGroup())
@@ -80,14 +82,14 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 		if (block2.information.has_item) registerItem(new CustomBlockItem(block2, block, settings), name);
 	}
 
-	public void registerLog(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MaterialColor topMapColor, MaterialColor sideMapColor, Properties settings) {
-		this.registerBlock(new PillarBlockImpl(block, BlockBehaviour.Properties.of(Material.DEPRECATED, (state) ->
+	public void registerLog(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor topMapColor, MapColor sideMapColor, Properties settings) {
+		this.registerBlock(new PillarBlockImpl(block, BlockBehaviour.Properties.of().mapColor((state) ->
 						state.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? topMapColor : sideMapColor)
 				.strength(2.0F).sound(SoundType.WOOD)), block, name, settings);
 	}
 
-	public void registerNetherStemBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MaterialColor mapColor, Properties settings) {
-		this.registerBlock(new PillarBlockImpl(block, BlockBehaviour.Properties.of(Material.DEPRECATED, blockState -> mapColor).strength(2.0F).sound(SoundType.STEM)),
+	public void registerNetherStemBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor mapColor, Properties settings) {
+		this.registerBlock(new PillarBlockImpl(block, BlockBehaviour.Properties.of().mapColor(blockState -> mapColor).strength(2.0F).sound(SoundType.STEM)),
 				block, name, settings);
 	}
 

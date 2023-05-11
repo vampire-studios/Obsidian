@@ -25,19 +25,19 @@ public class ModelLoaderMixin {
     public void ob_injectLoadModel(ResourceLocation id, CallbackInfo info) {
         if(id instanceof ModelResourceLocation modelIdentifier) {
             if (ClientInit.customModels.contains(modelIdentifier)) {
-                BlockModel jsonUnbakedModel = this.loadModelFromJson(modelIdentifier);
-                this.putModel(modelIdentifier, jsonUnbakedModel);
+                BlockModel jsonUnbakedModel = this.loadBlockModel(modelIdentifier);
+                this.cacheAndQueueDependencies(modelIdentifier, jsonUnbakedModel);
                 info.cancel();
             }
         }
     }
     
     @Shadow
-    private void addModel(ModelResourceLocation modelId) { }
+    private void loadTopLevel(ModelResourceLocation modelId) { }
     
     @Shadow
-    private BlockModel loadModelFromJson(ResourceLocation id) { return null; }
+    private BlockModel loadBlockModel(ResourceLocation id) { return null; }
     
     @Shadow
-    private void putModel(ResourceLocation id, UnbakedModel unbakedModel) { }
+    private void cacheAndQueueDependencies(ResourceLocation id, UnbakedModel unbakedModel) { }
 }

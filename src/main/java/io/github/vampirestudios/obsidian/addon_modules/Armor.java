@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.cottonmc.jankson.JanksonFactory;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial;
@@ -14,6 +14,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -23,8 +24,8 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*
 public class Armor implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        JsonObject jsonObject = Obsidian.JANKSON.load(file);
-        io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = Obsidian.JANKSON.fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
+        JsonObject jsonObject = JanksonFactory.builder().build().load(file);
+        io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem armor = JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem.class);
 
         try {
             if (armor == null) return;

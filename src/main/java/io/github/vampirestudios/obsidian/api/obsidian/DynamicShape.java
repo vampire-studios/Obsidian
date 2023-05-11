@@ -5,7 +5,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.vampirestudios.obsidian.registry.Registries;
-import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,6 +12,8 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -71,8 +72,7 @@ public class DynamicShape {
 	}
 
 	public static DynamicShape fromJson(JsonElement data, @Nullable Property<Direction> facingProperty, Function<String, Property<?>> properties) {
-		IShapeProvider shape = SHAPE_CODEC.decode(JsonOps.INSTANCE, data).getOrThrow(false, str -> {
-		}).getFirst();
+		IShapeProvider shape = SHAPE_CODEC.decode(JsonOps.INSTANCE, data).getOrThrow(false, str -> {}).getFirst();
 		shape = shape.bake(properties);
 		return new DynamicShape(shape, facingProperty);
 	}

@@ -1,9 +1,7 @@
 package io.github.vampirestudios.obsidian.registry;
 
 import io.github.vampirestudios.obsidian.api.obsidian.*;
-import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.api.obsidian.block.CustomMaterial;
-import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
+import io.github.vampirestudios.obsidian.api.obsidian.block.*;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.emoji.Emoji;
@@ -30,8 +28,9 @@ public class ContentRegistries {
 	public static Registry<Item> ITEMS = FabricRegistryBuilder.createSimple(Item.class, id("items")).buildAndRegister();
 	public static Registry<FoodItem> FOODS = FabricRegistryBuilder.createSimple(FoodItem.class, id("foods")).buildAndRegister();
 	public static Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, id("custom_food_components")).buildAndRegister();
-	public static Registry<CustomMaterial> BLOCK_MATERIALS = FabricRegistryBuilder.createSimple(CustomMaterial.class, id("block_materials")).buildAndRegister();
 	public static Registry<CustomSoundGroup> BLOCK_SOUND_GROUPS = FabricRegistryBuilder.createSimple(CustomSoundGroup.class, id("block_sound_groups")).buildAndRegister();
+	public static Registry<BlockSetType> BLOCK_SET_TYPES = FabricRegistryBuilder.createSimple(BlockSetType.class, id("block_set_types")).buildAndRegister();
+	public static Registry<WoodType> WOOD_TYPES = FabricRegistryBuilder.createSimple(WoodType.class, id("wood_types")).buildAndRegister();
 	public static Registry<MusicDisc> MUSIC_DISCS = FabricRegistryBuilder.createSimple(MusicDisc.class, id("music_discs")).buildAndRegister();
 	public static Registry<KeyBinding> KEY_BINDINGS = FabricRegistryBuilder.createSimple(KeyBinding.class, id("key_bindings")).buildAndRegister();
 	public static Registry<Particle> PARTICLES = FabricRegistryBuilder.createSimple(Particle.class, id("particles")).buildAndRegister();

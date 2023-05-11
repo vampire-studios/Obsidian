@@ -15,13 +15,13 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader.register;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.REGISTRY_HELPER;
 
 public class Blocks implements AddonModule {
@@ -37,12 +37,12 @@ public class Blocks implements AddonModule {
 			Component component = baseBlock.block.components;
 
 			if (component != null) {
-				blockSettings = FabricBlockSettings.of(Material.DEPRECATED)
+				blockSettings = FabricBlockSettings.of()
 						.strength(component.destroy_time, component.explosion_resistance)
 						.luminance(component.light_emission)
 						.slipperiness(component.friction);
 			} else {
-				blockSettings = FabricBlockSettings.of(Material.DEPRECATED);
+				blockSettings = FabricBlockSettings.of();
 			}
 
 			RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();

@@ -12,14 +12,14 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Enchantment.class)
 public class EnchantmentMixin implements IForgeEnchantment {
 
-	@Shadow @Final public EnchantmentCategory target;
+	@Shadow @Final public EnchantmentCategory category;
 
 	/**
 	 * @author Olivia
 	 * @reason idk
 	 */
 	@Overwrite
-	public boolean isAcceptableItem(ItemStack stack) {
+	public boolean canEnchant(ItemStack stack) {
 		return this.canApplyAtEnchantingTable(stack);
 	}
 

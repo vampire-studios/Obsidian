@@ -12,9 +12,10 @@ public abstract class EnchantmentHelperMixin implements IForgeEnchantmentHelper 
 
 	/**
 	 * @author Olivia
+	 * @reason idk
 	 */
 	@Overwrite
-	public static int getLevel(Enchantment enchantment, ItemStack stack) {
+	public static int getItemEnchantmentLevel(Enchantment enchantment, ItemStack stack) {
 		return stack.getEnchantmentLevel(enchantment);
 	}
 

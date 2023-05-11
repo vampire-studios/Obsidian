@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'fabric-loom' version '1.2-SNAPSHOT'
 	id 'io.github.juuxel.loom-quiltflower' version '1.8.+'
 	id 'maven-publish'
 }
@@ -37,6 +37,7 @@ repositories {
 			includeGroup "dev.ftb.mods"
 		}
 	}
+	maven { url = "https://maven.parchmentmc.net/" }
 }
 
 loom {
@@ -47,6 +48,13 @@ quiltflower {
 	addToRuntimeClasspath.set(true)
 }
 
+configurations.configureEach {
+	resolutionStrategy {
+		force("net.fabricmc.fabric-api:fabric-api:0.80.0+1.20")
+		force("net.fabricmc:fabric-loader:0.14.19")
+	}
+}
+
 dependencies {
 	def noFapi = { exclude group: 'net.fabricmc.fabric-api' }
 	def noFLoader = { exclude group: 'net.fabricmc' }
@@ -55,31 +63,15 @@ dependencies {
 
 	minecraft libs.minecraft
 	mappings loom.layered {
-		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
-//		it.parchment("org.parchmentmc.data:parchment-1.19.3:${libs.versions.parchment.get()}@zip")
+//		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
+//		it.mappings("net.fabricmc:yarn:${libs.versions.fabric.mappings.get()}:v2")
+		it.parchment("org.parchmentmc.data:parchment-1.19.3:${libs.versions.parchment.get()}@zip")
 		it.officialMojangMappings()
 	}
 
 	modImplementation libs.fabric.loader
 
-	modImplementation (libs.bundles.fabric) {
-		force = true
-	}
-
-	modImplementation (libs.clothconfig) {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
-
-	include (libs.appleskin) {
-		transitive false
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
+	modImplementation (libs.fabric.api)
 
 	modImplementation (libs.vampirelib) {
 		noFapi
@@ -94,19 +86,21 @@ dependencies {
 		noQuiltMC
 	}
 
-	modImplementation (libs.appleskin) {
+	modImplementation include("io.github.cottonmc:Jankson-Fabric:5.0.1+j1.2.2")
+
+	/*modImplementation (libs.appleskin) {
 		transitive false
 		noFapi
 		noFLoader
 		noCottonMC
 		noQuiltMC
 	}
-	include (libs.vampirelib) {
+	include (libs.appleskin) {
 		noFapi
 		noFLoader
 		noCottonMC
 		noQuiltMC
-	}
+	}*/
 
 	/*modImplementation (libs.owo.lib) {
 		noFapi

@@ -61,7 +61,7 @@ public abstract class LavaFluidMixin extends FlowingFluid implements QuiltFlowab
 
 	@Override
 	public float getPushStrength(FluidState state, Entity effected) {
-		return effected.level.dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+		return effected.level().dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 	}
 
 	@Override

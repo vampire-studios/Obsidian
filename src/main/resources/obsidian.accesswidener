@@ -1,38 +1,18 @@
-accessWidener v1 named
-accessible method net/minecraft/text/TextColor <init> (I)V
-accessible method net/minecraft/enchantment/Enchantment <init> (Lnet/minecraft/enchantment/Enchantment$Rarity;Lnet/minecraft/enchantment/EnchantmentTarget;[Lnet/minecraft/entity/EquipmentSlot;)V
-
-extendable class net/minecraft/world/biome/Biome
-accessible method net/minecraft/world/biome/Biome <init> (Lnet/minecraft/world/biome/Biome$Weather;Lnet/minecraft/world/biome/BiomeEffects;Lnet/minecraft/world/biome/GenerationSettings;Lnet/minecraft/world/biome/SpawnSettings;)V
-accessible class net/minecraft/world/biome/Biome$Weather
-
-accessible class net/minecraft/entity/mob/DrownedEntity$TridentAttackGoal
+accessWidener v2 named
+accessible method net/minecraft/network/chat/TextColor <init> (I)V
 
 accessible method net/minecraft/client/model/geom/ModelLayers register (Ljava/lang/String;)Lnet/minecraft/client/model/geom/ModelLayerLocation;
 
-accessible method net/minecraft/block/Material$Builder lightPassesThrough ()Lnet/minecraft/block/Material$Builder;
+accessible class net/minecraft/world/level/levelgen/VerticalAnchor$Absolute
+accessible class net/minecraft/world/level/levelgen/VerticalAnchor$AboveBottom
+accessible class net/minecraft/world/level/levelgen/VerticalAnchor$BelowTop
+accessible method net/minecraft/world/level/levelgen/VerticalAnchor$Absolute <init> (I)V
+accessible method net/minecraft/world/level/levelgen/VerticalAnchor$AboveBottom <init> (I)V
+accessible method net/minecraft/world/level/levelgen/VerticalAnchor$BelowTop <init> (I)V
 
-accessible class net/minecraft/world/gen/YOffset$Fixed
-accessible class net/minecraft/world/gen/YOffset$AboveBottom
-accessible class net/minecraft/world/gen/YOffset$BelowTop
-accessible method net/minecraft/world/gen/YOffset$Fixed <init> (I)V
-accessible method net/minecraft/world/gen/YOffset$AboveBottom <init> (I)V
-accessible method net/minecraft/world/gen/YOffset$BelowTop <init> (I)V
+accessible field net/minecraft/world/level/block/state/properties/WoodType VALUES Ljava/util/Set;
+accessible field net/minecraft/world/level/block/state/properties/BlockSetType VALUES Ljava/util/Set;
+accessible method net/minecraft/world/level/block/state/properties/WoodType register (Lnet/minecraft/world/level/block/state/properties/WoodType;)Lnet/minecraft/world/level/block/state/properties/WoodType;
+accessible method net/minecraft/world/level/block/state/properties/BlockSetType register (Lnet/minecraft/world/level/block/state/properties/BlockSetType;)Lnet/minecraft/world/level/block/state/properties/BlockSetType;
 
-accessible method net/minecraft/block/entity/BlockEntity writeNbt (Lnet/minecraft/nbt/NbtCompound;)V
-extendable class net/minecraft/client/model/ModelPart
-
-accessible field net/minecraft/item/ShovelItem PATH_STATES Ljava/util/Map;
-accessible field net/minecraft/item/AxeItem STRIPPED_BLOCKS Ljava/util/Map;
-
-accessible field net/minecraft/block/FireBlock burnChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
-accessible field net/minecraft/block/FireBlock spreadChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
-
-accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
-extendable class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
-
-accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen TEXTURE Lnet/minecraft/util/Identifier;
-
-accessible class net/minecraft/data/server/recipe/CookingRecipeJsonBuilder$CookingRecipeJsonProvider
-
-accessible method net/minecraft/data/server/recipe/RecipeJsonBuilder getCraftingCategory (Lnet/minecraft/recipe/book/RecipeCategory;)Lnet/minecraft/recipe/book/CraftingRecipeCategory;
+transitive-accessible method net/minecraft/commands/synchronization/ArgumentTypeInfos register (Lnet/minecraft/core/Registry;Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;

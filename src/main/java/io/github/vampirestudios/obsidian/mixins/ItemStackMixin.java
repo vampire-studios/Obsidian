@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements IForgeItemStack {
 
-	@Shadow public abstract boolean hasNbt();
+	@Shadow public abstract boolean hasTag();
 
-	@Shadow private @Nullable CompoundTag nbt;
+	@Shadow private @Nullable CompoundTag tag;
 
 	@Shadow public abstract Item getItem();
 
@@ -24,7 +24,7 @@ public abstract class ItemStackMixin implements IForgeItemStack {
 	 */
 	@Overwrite
 	private int getHideFlags() {
-		return this.hasNbt() && this.nbt.contains("HideFlags", 99) ? this.nbt.getInt("HideFlags") : this.getItem().getDefaultTooltipHideFlags((ItemStack) (Object) this);
+		return this.hasTag() && this.tag.contains("HideFlags", 99) ? this.tag.getInt("HideFlags") : this.getItem().getDefaultTooltipHideFlags((ItemStack) (Object) this);
 	}
 
 }

@@ -2,7 +2,6 @@ package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
@@ -22,6 +21,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +69,6 @@ public class ClientInit implements ClientModInitializer {
 
         }
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
-            String name = iAddonPack.getObsidianDisplayName();
             String id;
             if (iAddonPack.getConfigPackInfo() instanceof LegacyObsidianAddonInfo legacyObsidianAddonInfo) {
                 id = legacyObsidianAddonInfo.namespace;
@@ -78,7 +77,6 @@ public class ClientInit implements ClientModInitializer {
                 id = addonInfo.addon.id;
             }
             if (!iAddonPack.getConfigPackInfo().hasAssets) {
-                System.out.println("Testing");
                 for (Block block : ContentRegistries.BLOCKS)
                     if (block.information.name.id.getNamespace().equals(id))
                         new BlockInitThread(block).run();

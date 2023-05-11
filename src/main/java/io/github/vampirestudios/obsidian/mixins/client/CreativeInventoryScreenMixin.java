@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 public abstract class CreativeInventoryScreenMixin {
 	@Shadow private static CreativeModeTab selectedTab;
 
-	@ModifyConstant(method = "drawForeground", constant = @Constant(intValue = 4210752))
+	@ModifyConstant(method = "renderLabels", constant = @Constant(intValue = 4210752))
 	public int readNbt(int old) {
 		CreativeModeTab itemGroup = selectedTab;
 		return itemGroup.getLabelColor();

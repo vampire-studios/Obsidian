@@ -7,6 +7,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import io.github.vampirestudios.obsidian.registry.Registries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.properties.Property;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,12 +20,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.state.properties.Property;
 
 public class CodecExtras {
-	public static final Codec<Property> PROPERTY_CODEC = registryNameCodec(Registries.PROPERTIES);
+	public static final Codec<Property<?>> PROPERTY_CODEC = registryNameCodec(Registries.PROPERTIES);
 
 	public static final Codec<DoubleStream> DOUBLE_STREAM = Codec.DOUBLE.listOf().xmap(
 			list -> list.stream().mapToDouble(d -> d),

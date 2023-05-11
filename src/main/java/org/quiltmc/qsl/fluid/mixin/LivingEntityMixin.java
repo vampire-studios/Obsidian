@@ -69,7 +69,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 
 	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isFallFlying()Z"))
 	private boolean redirectFallFlyingToAddCase(LivingEntity instance, Vec3 movementInput) {
-		FluidState fluidState = level.getFluidState(blockPosition());
+		FluidState fluidState = level().getFluidState(blockPosition());
 		if (this.quilt$isInCustomFluid() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidState)) {
 			double fallSpeed = 0.08;
 			boolean falling = this.getDeltaMovement().y <= 0.0;
@@ -114,7 +114,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 
 	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBlockPosBelowThatAffectsMyMovement()Lnet/minecraft/core/BlockPos;"), cancellable = true)
 	private void cancelIfCustomFluid(Vec3 movementInput, CallbackInfo ci) {
-		if (this.quilt$isInCustomFluid() && this.isAffectedByFluids() && !this.canStandOnFluid(level.getFluidState(blockPosition()))) {
+		if (this.quilt$isInCustomFluid() && this.isAffectedByFluids() && !this.canStandOnFluid(level().getFluidState(blockPosition()))) {
 			this.calculateEntityAnimation(this instanceof FlyingAnimal);
 			ci.cancel();
 		}
@@ -124,7 +124,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidHeight(Lnet/minecraft/tags/TagKey;)D", ordinal = 1))
 	private double redirectGetFluidHeight(LivingEntity instance, TagKey<Fluid> tag) {
 		if (quilt$isInCustomFluid()) {
-			return getFluidHeight(TagKey.create(Registries.FLUID,this.level.getFluidState(instance.blockPosition()).getType().builtInRegistryHolder().key().registry()));
+			return getFluidHeight(TagKey.create(Registries.FLUID,this.level().getFluidState(instance.blockPosition()).getType().builtInRegistryHolder().key().registry()));
 		}
 		return getFluidHeight(FluidTags.WATER);
 	}
@@ -133,7 +133,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInWater()Z"))
 	private boolean redirectTouchingWaterToCheckIfSwim(LivingEntity instance) {
 		if (quilt$isInCustomFluid()) {
-			FluidState fluidState = this.level.getFluidState(blockPosition());
+			FluidState fluidState = this.level().getFluidState(blockPosition());
 			if (fluidState.getType() instanceof QuiltFlowableFluidExtensions fluid) {
 				return fluid.enableDoubleTapSpacebarSwimming(fluidState, instance);
 			}
@@ -150,7 +150,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	@Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getAirSupply()I", ordinal = 2))
 	private int baseTick(LivingEntity instance) {
 		if (quilt$isSubmergedInCustomFluid()) {
-			FluidState fluidState = this.level.getFluidState(blockPosition());
+			FluidState fluidState = this.level().getFluidState(blockPosition());
 			if (fluidState.getType() instanceof QuiltFlowableFluidExtensions fluid) {
 				fluid.doDrownEffects(fluidState, instance, random);
 				return getMaxAirSupply();
