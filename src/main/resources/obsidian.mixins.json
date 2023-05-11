@@ -1,39 +1,42 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "io.github.vampirestudios.obsidian.mixins",
-  "compatibilityLevel": "JAVA_16",
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "mixins": [
-    "ArmorMaterialsAccessor",
-    "BlockItemInject",
-    "BlockMixin",
-    "CraftingScreenHandlerMixin",
-    "DilationAccessor",
-    "EnchantmentHelperMixin",
-    "EnchantmentMixin",
-    "ItemGroupMixin",
-    "ItemStackMixin",
-    "LoomScreenHandlerMixin",
-    "ModelCuboidDataAccessor",
-    "ModelPartDataAccessor",
-    "PackAccessor",
-    "PointOfInterestTypesAccessor",
-    "ProjectileUtilMixin",
-    "TextureDimensionsAccessor",
-    "TexturedModelDataAccessor"
-  ],
-  "client": [
-    "client.CreativeInventoryScreenMixin",
-    "client.EntityModelLoaderMixin",
-    "client.EntityRenderDispatcherMixin",
-    "client.EntityRendererFactoryContextMixin",
-    //    "client.ItemRendererMixin",
-    "client.MixinArmorFeatureRenderer",
-    "client.ModelLoaderMixin",
-    "client.PlayerEntityRendererMixin",
-    "client.ReloadableResourceManagerImplMixin"
-  ]
+	"required": true,
+	"minVersion": "0.8",
+	"package": "io.github.vampirestudios.obsidian.mixins",
+	"compatibilityLevel": "JAVA_16",
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"mixins": [
+		"BlockItemInject",
+		"BlockMixin",
+		"BlockSettingsMixin",
+		"CraftingScreenHandlerMixin",
+		"DilationAccessor",
+		"EnchantmentHelperMixin",
+		"EnchantmentMixin",
+		"IdListMixin",
+		"ItemGroupMixin",
+		"ItemStackMixin",
+		"LoomScreenHandlerMixin",
+		"ModelCuboidDataAccessor",
+		"ModelPartDataAccessor",
+		"PackTypeAccessor",
+		"PointOfInterestTypesAccessor",
+		"ProjectileUtilMixin",
+		"ReferenceRegistryEntryMixin",
+		"SimpleRegistryMixin",
+		"TextureDimensionsAccessor",
+		"TexturedModelDataAccessor"
+	],
+	"client": [
+		"client.CreativeInventoryScreenMixin",
+		"client.EntityModelLoaderMixin",
+		"client.EntityRenderDispatcherMixin",
+		"client.EntityRendererFactoryContextMixin",
+		//    "client.ItemRendererMixin",
+		"client.MixinArmorFeatureRenderer",
+		"client.ModelLoaderMixin",
+		"client.PlayerEntityRendererMixin",
+		"client.ReloadableResourceManagerImplMixin"
+	]
 }
