@@ -1,6 +1,6 @@
 plugins {
 	id 'fabric-loom' version '1.2-SNAPSHOT'
-	id 'io.github.juuxel.loom-quiltflower' version '1.8.+'
+	id 'io.github.juuxel.loom-quiltflower' version '1.9.+'
 	id 'maven-publish'
 }
 
@@ -30,12 +30,17 @@ repositories {
 	maven { url = 'https://jitpack.io' }
 	maven { url = 'https://dl.bintray.com/kotlin/kotlin-dev' }
 	maven { url = 'https://raw.githubusercontent.com/kotlin-graphics/mary/master' }
+	maven { url = 'https://maven.isxander.dev/releases' }
 	maven {
 		url "https://maven.saps.dev/minecraft"
 		content {
 			includeGroup "dev.latvian.mods"
 			includeGroup "dev.ftb.mods"
 		}
+	}
+	maven {
+		name 'Xander Maven'
+		url 'https://maven.isxander.dev/releases'
 	}
 	maven { url = "https://maven.parchmentmc.net/" }
 }
@@ -46,12 +51,13 @@ loom {
 
 quiltflower {
 	addToRuntimeClasspath.set(true)
+	fromLatestQuiltSnapshot()
 }
 
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.80.0+1.20")
-		force("net.fabricmc:fabric-loader:0.14.19")
+		force("net.fabricmc.fabric-api:fabric-api:0.82.1+1.20")
+		force("net.fabricmc:fabric-loader:0.14.21")
 	}
 }
 
@@ -63,7 +69,7 @@ dependencies {
 
 	minecraft libs.minecraft
 	mappings loom.layered {
-//		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
+		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
 //		it.mappings("net.fabricmc:yarn:${libs.versions.fabric.mappings.get()}:v2")
 		it.parchment("org.parchmentmc.data:parchment-1.19.3:${libs.versions.parchment.get()}@zip")
 		it.officialMojangMappings()
@@ -102,7 +108,7 @@ dependencies {
 		noQuiltMC
 	}*/
 
-	/*modImplementation (libs.owo.lib) {
+	modImplementation (libs.owo.lib) {
 		noFapi
 		noFLoader
 		noCottonMC
@@ -113,7 +119,7 @@ dependencies {
 		noFLoader
 		noCottonMC
 		noQuiltMC
-	}*/
+	}
 
 	/*modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
 		noFapi
@@ -121,6 +127,7 @@ dependencies {
 		noCottonMC
 		noQuiltMC
 	}*/
+	modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:3.0.0-beta.1+1.20"
 
 	implementation group: 'com.amihaiemil.web', name: 'eo-yaml', version: '6.0.1'
 	implementation 'com.electronwill.night-config:core:3.6.6'
@@ -135,7 +142,6 @@ dependencies {
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.14.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.14.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
-
 
 	modApi("dev.latvian.mods:rhino-fabric:1902.2.2-build.269")
 }

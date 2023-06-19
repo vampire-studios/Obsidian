@@ -18,7 +18,6 @@ import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.ModIdArgument;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
-import io.github.vampirestudios.obsidian.mixins.PackTypeAccessor;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
@@ -26,15 +25,14 @@ import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
 import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.client.renderer.debug.LightSectionDebugRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
@@ -62,8 +60,6 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.LightChunkGetter;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -212,7 +208,7 @@ public class Obsidian implements ModInitializer {
 			}
 		});
 
-		ArgumentTypeInfos.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Const.id("mod_id").toString(), ModIdArgument.class,
+		ArgumentTypeRegistry.registerArgumentType(Const.id("mod_id"), ModIdArgument.class,
 				SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument));
 
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
@@ -315,7 +311,7 @@ public class Obsidian implements ModInitializer {
 		BedrockAddonLoader.loadDefaultBedrockAddons();
 		BedrockAddonLoader.loadBedrockAddons();
 
-		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
+ 		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
 			if (world.isClientSide)
 				return InteractionResult.PASS;
 

@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.api;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.util.CommonLinks;
 import net.minecraft.world.level.material.MapColor;
 
 import java.util.Locale;
@@ -75,7 +74,6 @@ public class MapColors {
 
     public static void init() {
         /* nothing to do */
-        CommonLinks
     }
 
     public static MapColor get(String mapColor) {

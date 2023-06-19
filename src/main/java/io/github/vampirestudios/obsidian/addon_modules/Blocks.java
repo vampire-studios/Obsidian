@@ -65,19 +65,9 @@ public class Blocks implements AddonModule {
                 JsonObject jsonObject = JanksonFactory.builder().build().load(file);
                 block = JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
-//                LoadSettings settings = LoadSettings.builder().build();
-//                Load load = new Load(settings);
-//                Map<String, String> map = (Map<String, String>) load.loadFromReader(new FileReader(file));
-//                System.out.println(map);
-
                 ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
                 mapper.findAndRegisterModules();
                 block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-//                block = null;
-//                try (FileConfig config = FileConfig.of(file)) {
-//                    config.load();
-//                    System.out.println(config.valueMap());
-//                }
             } else if (addonInfo.format == ObsidianAddonInfo.Format.TOML) {
                 ObjectMapper mapper = new ObjectMapper(new TomlFactory());
                 mapper.findAndRegisterModules();
@@ -100,7 +90,7 @@ public class Blocks implements AddonModule {
                     blockId = block.information.name.id;
                 } else {
                     blockId = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
-                    block.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+                    block.information.name.id = blockId;
                 }
             }
 

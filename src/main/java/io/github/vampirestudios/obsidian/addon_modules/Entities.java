@@ -46,7 +46,7 @@ public class Entities implements AddonModule {
             JsonObject components = GsonHelper.getAsJsonObject(entityJson, "components");
             for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
                 ResourceLocation identifier = new ResourceLocation(entry.getKey());
-                Class<? extends Component> componentClass = Registries.ENTITY_COMPONENT_REGISTRY.getOptional(identifier).orElseThrow(() ->
+                Class<? extends Component> componentClass = Registries.ENTITY_COMPONENTS.getOptional(identifier).orElseThrow(() ->
                         new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
 
                 entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));

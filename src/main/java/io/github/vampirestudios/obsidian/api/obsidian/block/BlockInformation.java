@@ -189,8 +189,8 @@ public class BlockInformation {
         public boolean is_emissive = false;
         public boolean translucent = false;
         public boolean dynamic_boundaries = false;
-        public String push_reaction;
-        public String map_color;
+        public String push_reaction = "NORMAL";
+        public String map_color = "STONE";
 
         public MapColor getMapColor() {
             return MapColors.get(map_color);

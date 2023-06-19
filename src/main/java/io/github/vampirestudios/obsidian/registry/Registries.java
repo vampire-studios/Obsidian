@@ -42,6 +42,7 @@ public class Registries {
 //    public static final ResourceKey<Registry<FlexItemType<?>>> ITEM_TYPE_REGISTRY = createKey("item_types");
     public static final ResourceKey<Registry<SoundType>> SOUND_TYPE_REGISTRY = createKey("sound_types");
 //    public static final ResourceKey<Registry<FlexFluidType<?>>> FLUID_TYPE_REGISTRY = createKey("fluid_types");
+    public static final ResourceKey<Registry<Class<? extends Component>>> ENTITY_COMPONENT_REGISTRY = createKey("entity_components");
 
     public static final Registry<Registry<?>> OBSIDIAN_REGISTRIES = new MappedRegistry<>(THING_REGISTRIES_REGISTRY, Lifecycle.experimental(), false);
     public static final Registry<ArmorMaterial> ARMOR_MATERIALS = makeRegistry(ARMOR_MATERIAL_REGISTRY);
@@ -49,13 +50,13 @@ public class Registries {
     public static final Registry<PropertyType> PROPERTY_TYPES = makeRegistry(PROPERTY_TYPE_REGISTRY);
     public static final Registry<Property<?>> PROPERTIES = makeRegistry(PROPERTY_REGISTRY);
     public static final Registry<DynamicShape> DYNAMIC_SHAPES = makeRegistry(DYNAMIC_SHAPE_REGISTRY);
+    public static final Registry<Class<? extends Component>> ENTITY_COMPONENTS = makeRegistry(ENTITY_COMPONENT_REGISTRY);
     //    public static final Registry<FlexItemType<?>> ITEM_TYPES = makeRegistry(ITEM_TYPE_REGISTRY);
 //    public static final Registry<FlexBlockType<?>> BLOCK_TYPES = makeRegistry(BLOCK_TYPE_REGISTRY);
     public static final Registry<SoundType> SOUND_TYPES = makeRegistry(SOUND_TYPE_REGISTRY);
 //    public static final Registry<FlexFluidType<?>> FLUID_TYPES = makeRegistry(FLUID_TYPE_REGISTRY);
 
     public static final Registry<AddonModule> ADDON_MODULE_REGISTRY;
-    public static final Registry<Class<? extends Component>> ENTITY_COMPONENT_REGISTRY;
     //	public static final Registry<Transformation.Target> BLOCK_PROPERTIES;
 //	public static final Registry<Transformation.Target> BLOCK_GROUPS;
     public static Registry<AnimationDefinition> ANIMATION_DEFINITIONS;
@@ -76,7 +77,6 @@ public class Registries {
         MapColors.init();
 
         ADDON_MODULE_REGISTRY = new MappedRegistry<>(ResourceKey.createRegistryKey(Const.id("addon_modules")), Lifecycle.stable(), false);
-        ENTITY_COMPONENT_REGISTRY = new MappedRegistry<>(ResourceKey.createRegistryKey(Const.vanillaId("entity_components")), Lifecycle.stable(), false);
         ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(AnimationDefinition.class, Const.vanillaId("animation_definitions")).buildAndRegister();
         ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(AnimationChannel.Interpolation.class, Const.vanillaId("animation_channel_interpolations")).buildAndRegister();
         ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(AnimationChannel.Target.class, Const.vanillaId("animation_channel_targets")).buildAndRegister();
@@ -211,33 +211,33 @@ public class Registries {
     }
 
     private static void registerEntityComponents() {
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "annotation.break_door", BreakDoorAnnotationComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "annotation.open_door", OpenDoorAnnotationComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "annotation.break_door", BreakDoorAnnotationComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "annotation.open_door", OpenDoorAnnotationComponent.class);
 
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "admire_item", AdmireItemComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "ageable", AgeableComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "angry", AngryComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "area_attack", AreaAttackComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "attack_cooldown", AttackCooldownComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "barter", BarterComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "block_sensor", BlockSensorComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "boostable", BoostableComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "boss", BossComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "break_blocks", BreakBlocksComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "breathable", BreathableComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "celebrate", CelebrateBehaviourComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "collision_box", CollisionBoxComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "health", HealthComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement", MovementComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "nameable", NameableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "admire_item", AdmireItemComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "ageable", AgeableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "angry", AngryComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "area_attack", AreaAttackComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "attack_cooldown", AttackCooldownComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "barter", BarterComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "block_sensor", BlockSensorComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "boostable", BoostableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "boss", BossComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "break_blocks", BreakBlocksComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "breathable", BreathableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "celebrate", CelebrateBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "collision_box", CollisionBoxComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "health", HealthComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "movement", MovementComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "nameable", NameableComponent.class);
 
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "movement.basic", BasicMovementComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "movement.basic", BasicMovementComponent.class);
 
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.panic", PanicBehaviourComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.tempt", TemptBehaviourComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
-        registerInRegistryVanilla(ENTITY_COMPONENT_REGISTRY, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "behavior.panic", PanicBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "behavior.tempt", TemptBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "behavior.random_stroll", RandomStrollBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "behavior.random_look_around", RandomLookAroundBehaviourComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "behavior.look_at_player", LookAtPlayerBehaviourComponent.class);
     }
 
     private static void registerBedrockBlockEvent() {

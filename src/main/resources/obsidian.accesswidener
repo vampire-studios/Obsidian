@@ -14,23 +14,3 @@ accessible field net/minecraft/world/level/block/state/properties/WoodType VALUE
 accessible field net/minecraft/world/level/block/state/properties/BlockSetType VALUES Ljava/util/Set;
 accessible method net/minecraft/world/level/block/state/properties/WoodType register (Lnet/minecraft/world/level/block/state/properties/WoodType;)Lnet/minecraft/world/level/block/state/properties/WoodType;
 accessible method net/minecraft/world/level/block/state/properties/BlockSetType register (Lnet/minecraft/world/level/block/state/properties/BlockSetType;)Lnet/minecraft/world/level/block/state/properties/BlockSetType;
-
-accessible method net/minecraft/block/entity/BlockEntity writeNbt (Lnet/minecraft/nbt/NbtCompound;)V
-extendable class net/minecraft/client/model/ModelPart
-
-accessible field net/minecraft/item/ShovelItem PATH_STATES Ljava/util/Map;
-accessible field net/minecraft/item/AxeItem STRIPPED_BLOCKS Ljava/util/Map;
-
-accessible field net/minecraft/block/FireBlock burnChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
-accessible field net/minecraft/block/FireBlock spreadChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
-
-accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
-extendable class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot
-
-accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen TEXTURE Lnet/minecraft/util/Identifier;
-
-accessible class net/minecraft/data/server/recipe/CookingRecipeJsonBuilder$CookingRecipeJsonProvider
-
-accessible method net/minecraft/data/server/recipe/RecipeJsonBuilder getCraftingCategory (Lnet/minecraft/recipe/book/RecipeCategory;)Lnet/minecraft/recipe/book/CraftingRecipeCategory;
-
-accessible method net/minecraft/server/packs/PackType <init> (Ljava/lang/String;)V
