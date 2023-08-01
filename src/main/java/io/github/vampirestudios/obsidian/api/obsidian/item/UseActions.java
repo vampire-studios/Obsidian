@@ -5,15 +5,17 @@ import net.minecraft.world.item.UseAnim;
 
 public class UseActions {
 
-	public String action;
+	public String use_animation;
+	public Integer use_duration;
+
 	public String right_click_actions;
 	public int gui_size;
 	public NameInformation gui_title;
 	public String url;
-	public Integer useTime;
+	public String command;
 
-    public UseAnim getAction() {
-		return switch (action) {
+    public UseAnim getUseAnimation() {
+		return switch (use_animation) {
 			case "none" -> UseAnim.NONE;
 			case "eat" -> UseAnim.EAT;
 			case "drink" -> UseAnim.DRINK;
@@ -22,7 +24,7 @@ public class UseActions {
 			case "spear" -> UseAnim.SPEAR;
 			case "crossbow" -> UseAnim.CROSSBOW;
 			case "spyglass" -> UseAnim.SPYGLASS;
-			default -> throw new IllegalStateException("Unexpected value: " + action);
+			default -> throw new IllegalStateException("Unexpected value: " + use_animation);
 		};
 	}
 

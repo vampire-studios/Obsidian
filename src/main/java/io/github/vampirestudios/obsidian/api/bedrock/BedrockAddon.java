@@ -1,11 +1,13 @@
 package io.github.vampirestudios.obsidian.api.bedrock;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
-import java.io.File;
+import net.devtech.arrp.api.RuntimeResourcePack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PathPackResources;
+
+import java.io.File;
 
 public class BedrockAddon implements IBedrockAddon {
 
@@ -50,6 +52,11 @@ public class BedrockAddon implements IBedrockAddon {
         if (file == null) return null;
         if (file.isDirectory()) return new PathPackResources(manifestFile.header.name, file.toPath(), false);
         return new FilePackResources(manifestFile.header.name, file, false);
+    }
+
+    @Override
+    public RuntimeResourcePack getResourcePack() {
+        return null;
     }
 
 }

@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -16,7 +15,11 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class FacingBlockImpl extends DirectionalBlock {
 
@@ -30,17 +33,17 @@ public class FacingBlockImpl extends DirectionalBlock {
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent : super.isCollisionShapeFullBlock(state, world, pos);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties.translucent;
+        return block.information.blockProperties != null ? block.information.blockProperties.translucent : super.propagatesSkylightDown(state, world, pos);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class FacingBlockImpl extends DirectionalBlock {
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -67,42 +70,115 @@ public class FacingBlockImpl extends DirectionalBlock {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        VoxelShape shape = createShape(block.information.boundingBox.full_shape);
-        VoxelShape northShape = createShape(block.information.boundingBox.north_shape);
-        VoxelShape southShape = createShape(block.information.boundingBox.south_shape);
-        VoxelShape eastShape = createShape(block.information.boundingBox.east_shape);
-        VoxelShape westShape = createShape(block.information.boundingBox.west_shape);
-        VoxelShape upShape = createShape( block.information.boundingBox.up_shape);
-        VoxelShape downShape = createShape(block.information.boundingBox.down_shape);
-        Direction direction = state.getValue(FACING);
-        switch (direction) {
-            case NORTH -> {
-                if (northShape != null) return northShape;
-                else return shape;
+        if (block.information.collisionShape != null) {
+            if(block.information.collisionShape.collisionType != null) {
+                return switch(block.information.collisionShape.collisionType) {
+                    case FULL_BLOCK -> Shapes.block();
+                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
+                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+                    case CUSTOM -> {
+                        VoxelShape shape = createShape(block.information.collisionShape.full_shape);
+                        VoxelShape northShape = createShape(block.information.collisionShape.north_shape);
+                        VoxelShape southShape = createShape(block.information.collisionShape.south_shape);
+                        VoxelShape eastShape = createShape(block.information.collisionShape.east_shape);
+                        VoxelShape westShape = createShape(block.information.collisionShape.west_shape);
+                        VoxelShape upShape = createShape( block.information.collisionShape.up_shape);
+                        VoxelShape downShape = createShape(block.information.collisionShape.down_shape);
+                        Direction direction = state.getValue(FACING);
+                        switch (direction) {
+                            case NORTH -> {
+                                if (northShape != null) yield northShape;
+                                else yield shape;
+                            }
+                            case SOUTH -> {
+                                if (southShape != null) yield southShape;
+                                else yield shape;
+                            }
+                            case EAST -> {
+                                if (eastShape != null) yield eastShape;
+                                else yield shape;
+                            }
+                            case WEST -> {
+                                if (westShape != null) yield westShape;
+                                else yield shape;
+                            }
+                            case DOWN -> {
+                                if (downShape != null) yield downShape;
+                                else yield shape;
+                            }
+                            case UP -> {
+                                if (upShape != null) yield upShape;
+                                else yield shape;
+                            }
+                            default -> {
+                                yield shape;
+                            }
+                        }
+                    }
+                    case NONE -> Shapes.empty();
+                };
+            } else {
+                return Shapes.block();
             }
-            case SOUTH -> {
-                if (southShape != null) return southShape;
-                else return shape;
+        } else {
+            return Shapes.block();
+        }
+    }
+
+    @Override
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if (block.information.outlineShape != null) {
+            if(block.information.outlineShape.collisionType != null) {
+                return switch(block.information.outlineShape.collisionType) {
+                    case FULL_BLOCK -> Shapes.block();
+                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
+                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+                    case CUSTOM -> {
+                        VoxelShape shape = createShape(block.information.outlineShape.full_shape);
+                        VoxelShape northShape = createShape(block.information.outlineShape.north_shape);
+                        VoxelShape southShape = createShape(block.information.outlineShape.south_shape);
+                        VoxelShape eastShape = createShape(block.information.outlineShape.east_shape);
+                        VoxelShape westShape = createShape(block.information.outlineShape.west_shape);
+                        VoxelShape upShape = createShape( block.information.outlineShape.up_shape);
+                        VoxelShape downShape = createShape(block.information.outlineShape.down_shape);
+                        Direction direction = state.getValue(FACING);
+                        switch (direction) {
+                            case NORTH -> {
+                                if (northShape != null) yield northShape;
+                                else yield shape;
+                            }
+                            case SOUTH -> {
+                                if (southShape != null) yield southShape;
+                                else yield shape;
+                            }
+                            case EAST -> {
+                                if (eastShape != null) yield eastShape;
+                                else yield shape;
+                            }
+                            case WEST -> {
+                                if (westShape != null) yield westShape;
+                                else yield shape;
+                            }
+                            case DOWN -> {
+                                if (downShape != null) yield downShape;
+                                else yield shape;
+                            }
+                            case UP -> {
+                                if (upShape != null) yield upShape;
+                                else yield shape;
+                            }
+                            default -> {
+                                yield shape;
+                            }
+                        }
+                    }
+                    case NONE -> Shapes.empty();
+                };
+            } else {
+                return Shapes.block();
             }
-            case EAST -> {
-                if (eastShape != null) return eastShape;
-                else return shape;
-            }
-            case WEST -> {
-                if (westShape != null) return westShape;
-                else return shape;
-            }
-            case DOWN -> {
-                if (downShape != null) return downShape;
-                else return shape;
-            }
-            case UP -> {
-                if (upShape != null) return upShape;
-                else return shape;
-            }
-            default -> {
-                return shape;
-            }
+        } else {
+            return Shapes.block();
         }
     }
 

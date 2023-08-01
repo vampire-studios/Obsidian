@@ -20,9 +20,17 @@ import java.util.Locale;
 import java.util.Map;
 
 public class BlockInformation {
-    @SerializedName("parent_block") public ResourceLocation parentBlock;
+    @SerializedName("parent_block")
+    @com.google.gson.annotations.SerializedName("parent_block")
+    public ResourceLocation parentBlock;
 
-    @SerializedName("bounding_box") public BoundingBox boundingBox;
+    @SerializedName("collision_shape")
+    @com.google.gson.annotations.SerializedName("collision_shape")
+    public BoundingBox collisionShape;
+
+    @SerializedName("outline_shape")
+    @com.google.gson.annotations.SerializedName("outline_shape")
+    public BoundingBox outlineShape;
 
     public NameInformation name;
 
@@ -37,10 +45,12 @@ public class BlockInformation {
 
 
     @SerializedName("block_properties")
-    @com.google.gson.annotations.SerializedName("block_properties") public BlockProperties blockProperties;
+    @com.google.gson.annotations.SerializedName("block_properties")
+    public BlockProperties blockProperties;
 
     @SerializedName("item_properties")
-    @com.google.gson.annotations.SerializedName("item_properties") public ItemProperties itemProperties;
+    @com.google.gson.annotations.SerializedName("item_properties")
+    public ItemProperties itemProperties;
 
     public List<ItemStack.TooltipPart> getRemovedTooltipSections() {
         return List.of();
@@ -236,14 +246,18 @@ public class BlockInformation {
     public static class ItemProperties {
         @SerializedName("item_group")
         @com.google.gson.annotations.SerializedName("item_group")
-        public ResourceLocation creativeTab;
+        public ResourceLocation creativeTab = new ResourceLocation("minecraft:building_blocks");
 
         public boolean fireproof = false;
         public boolean has_glint = false;
         public boolean is_enchantable = false;
         public int enchantability = 5;
-        @SerializedName("max_stack_size") public int maxStackSize = 64;
-        @SerializedName("max_durability") public int maxDurability = 0;
+        @SerializedName("max_stack_size")
+        @com.google.gson.annotations.SerializedName("max_stack_size")
+        public int maxStackSize = 64;
+        @SerializedName("max_durability")
+        @com.google.gson.annotations.SerializedName("max_durability")
+        public int maxDurability = 0;
         public String rarity = "common";
         public String equipmentSlot = "";
 
@@ -253,6 +267,9 @@ public class BlockInformation {
     }
 
     public static class BoundingBox {
+        @SerializedName("collision_type")
+        @com.google.gson.annotations.SerializedName("collision_type")
+        public CollisionType collisionType;
         public boolean advanced = false;
         public float[] full_shape = new float[] {0, 0, 0, 16, 16, 16};
         public float[] north_shape = new float[] {0, 0, 0, 16, 16, 16};
@@ -261,14 +278,14 @@ public class BlockInformation {
         public float[] west_shape = new float[] {0, 0, 0, 16, 16, 16};
         public float[] up_shape = new float[] {0, 0, 0, 16, 16, 16};
         public float[] down_shape = new float[] {0, 0, 0, 16, 16, 16};
-//        private DynamicShape generalShape;
-//        private DynamicShape collisionShape;
-//        private DynamicShape raytraceShape;
-//        private DynamicShape renderShape;
-//
-//        public static class Shape {
-//
-//        }
+
+        public enum CollisionType {
+            FULL_BLOCK,
+            BOTTOM_SLAB,
+            TOP_SLAB,
+            CUSTOM,
+            NONE
+        }
     }
 
 }

@@ -144,10 +144,8 @@ public abstract class BaseBuilder<T, B extends BaseBuilder<T, B>> {
     }
 
     protected void constructEventHandlers(IEventRunner eventRunner) {
-        forEachEvent((key, list) -> {
-            ThingParser.processAndConsumeErrors(getParser().getThingType(), list, ev ->
-                            eventRunner.addEventHandler(key, ScriptParser.instance().getEvent(ev)),
-                    (unused) -> getRegistryName());
-        });
+        forEachEvent((key, list) -> ThingParser.processAndConsumeErrors(getParser().getThingType(), list, ev ->
+                        eventRunner.addEventHandler(key, ScriptParser.instance().getEvent(ev)),
+                (unused) -> getRegistryName()));
     }
 }

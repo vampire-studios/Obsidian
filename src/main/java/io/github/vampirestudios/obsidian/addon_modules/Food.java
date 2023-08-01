@@ -14,10 +14,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
@@ -41,10 +44,11 @@ public class Food implements AddonModule {
             if (foodItem.information.name.id == null) foodItem.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
             Item.Properties settings = new Item.Properties()
-                    .stacksTo(foodItem.information.maxStackSize).rarity(foodItem.information.rarity);
+                    .stacksTo(foodItem.information.maxStackSize)
+                    .rarity(Rarity.valueOf(foodItem.information.rarity.toUpperCase(Locale.ROOT)));
             FoodProperties foodComponent = Registries.FOODS.get(foodItem.food_information.foodComponent);
             Item item = Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, identifier, new FoodItemImpl(foodItem, settings
-                    .durability(foodItem.information.useDuration)
+                    .durability(foodItem.information.durability)
                     .food(foodComponent)));
             ItemGroupEvents.modifyEntriesEvent(foodItem.information.getItemGroup()).register(entries -> entries.accept(item));
             register(ContentRegistries.FOODS, "food", identifier, foodItem);

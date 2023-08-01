@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import java.util.List;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -12,12 +11,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class FoodItemImpl extends Item {
 
@@ -101,8 +98,8 @@ public class FoodItemImpl extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.display != null && item.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : item.display.lore) {
+        if (item.lore != null) {
+            for (TooltipInformation tooltipInformation : item.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

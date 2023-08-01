@@ -12,9 +12,12 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
@@ -26,7 +29,7 @@ public class Weapons implements AddonModule {
         try {
             if (weapon == null) return;
             Item.Properties settings = new Item.Properties().stacksTo(weapon.information.maxStackSize)
-                    .rarity(weapon.information.rarity);
+                    .rarity(Rarity.valueOf(weapon.information.rarity.toUpperCase(Locale.ROOT)));
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     weapon.information.name.id,
                     () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))

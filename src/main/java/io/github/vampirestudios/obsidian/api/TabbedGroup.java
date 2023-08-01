@@ -1,11 +1,9 @@
-/*
 package io.github.vampirestudios.obsidian.api;
 
-import com.glisco.owo.itemgroup.Icon;
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 public class TabbedGroup {
 
@@ -13,7 +11,7 @@ public class TabbedGroup {
 	public Tab[] tabs;
 	public Button[] buttons;
 	public int stackHeight = 4;
-	public Identifier customTexture = null;
+	public ResourceLocation customTexture = null;
 	public boolean displayTabNamesAsTitle = true;
 
 	public static class Button {
@@ -27,8 +25,8 @@ public class TabbedGroup {
 	public static class Tab {
 		public Icon icon;
 		public String name;
-		public Identifier contentTag;
-		public Identifier texture;
+		public ResourceLocation contentTag;
+		public ResourceLocation texture;
 	}
 
 	public static class Icon {
@@ -38,25 +36,24 @@ public class TabbedGroup {
 		public static class IconProperties {}
 
 		public static class Item extends IconProperties {
-			public Identifier item;
+			public ResourceLocation item;
 		}
 
 		public static class Texture extends IconProperties {
-			public Identifier texture;
+			public ResourceLocation texture;
 			public int u, v;
 			public int textureWidth, textureHeight;
 		}
 
-		public com.glisco.owo.itemgroup.Icon getIcon() {
+		public io.wispforest.owo.itemgroup.Icon getIcon() {
 			if (type.equals("texture")) {
 				Texture texture = (Texture) properties;
-				return new com.glisco.owo.itemgroup.Icon.TextureIcon(texture.texture, texture.u, texture.v, texture.textureWidth, texture.textureHeight);
+				return io.wispforest.owo.itemgroup.Icon.of(texture.texture, texture.u, texture.v, texture.textureWidth, texture.textureHeight);
 			} else {
 				Item item = (Item) properties;
-				return new com.glisco.owo.itemgroup.Icon.ItemIcon(new ItemStack(Registry.ITEM.get(item.item)));
+				return io.wispforest.owo.itemgroup.Icon.of(new ItemStack(BuiltInRegistries.ITEM.get(item.item)));
 			}
 		}
 	}
 
 }
-*/

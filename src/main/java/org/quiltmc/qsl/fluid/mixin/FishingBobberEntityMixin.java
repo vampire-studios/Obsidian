@@ -67,6 +67,6 @@ public abstract class FishingBobberEntityMixin implements CustomFluidInteracting
 
 	@Redirect(method = "retrieve", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootDataManager;getLootTable(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/world/level/storage/loot/LootTable;"))
 	public LootTable changeLootTable(LootDataManager instance, ResourceLocation id) {
-		return ((FishingHook) (Object) this).level.getServer().getLootData().getLootTable(this.quilt$getFishingLootTable());
+		return ((FishingHook) (Object) this).level().getServer().getLootData().getLootTable(this.quilt$getFishingLootTable());
 	}
 }

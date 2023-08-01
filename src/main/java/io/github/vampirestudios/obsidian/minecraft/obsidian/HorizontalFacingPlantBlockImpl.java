@@ -24,17 +24,17 @@ public class HorizontalFacingPlantBlockImpl extends BushBlock {
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent : super.isCollisionShapeFullBlock(state, world, pos);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties.translucent;
+        return block.information.blockProperties != null ? block.information.blockProperties.translucent : super.propagatesSkylightDown(state, world, pos);
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -47,11 +47,11 @@ public class HorizontalFacingPlantBlockImpl extends BushBlock {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        VoxelShape shape = createShape(block.information.boundingBox.full_shape);
-        VoxelShape northShape = createShape(block.information.boundingBox.north_shape);
-        VoxelShape southShape = createShape(block.information.boundingBox.south_shape);
-        VoxelShape eastShape = createShape(block.information.boundingBox.east_shape);
-        VoxelShape westShape = createShape(block.information.boundingBox.west_shape);
+        VoxelShape shape = createShape(block.information.collisionShape.full_shape);
+        VoxelShape northShape = createShape(block.information.collisionShape.north_shape);
+        VoxelShape southShape = createShape(block.information.collisionShape.south_shape);
+        VoxelShape eastShape = createShape(block.information.collisionShape.east_shape);
+        VoxelShape westShape = createShape(block.information.collisionShape.west_shape);
         Direction direction = state.getValue(FACING);
         switch(direction) {
             case NORTH:

@@ -7,6 +7,8 @@ public class AdditionalBlockInformation {
     public boolean overworldLike = true;
     public boolean netherLike = false;
     public boolean bambooLike = false;
+    public boolean pillarModel = false;
+    public boolean topBottomModel = false;
 
     public String extraBlocksName = "";
 

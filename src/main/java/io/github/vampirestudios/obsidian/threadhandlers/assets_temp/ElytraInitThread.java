@@ -29,8 +29,8 @@ public class ElytraInitThread implements Runnable {
 //            elytra.display.model.textures.forEach(modelBuilder::texture);
 //            clientResourcePackBuilder.addItemModel(elytra.information.name.id, modelBuilder);
 //        }
-        if (elytra.display != null && elytra.display.lore.length != 0) {
-            for (TooltipInformation lore : elytra.display.lore) {
+        if (elytra.lore != null) {
+            for (TooltipInformation lore : elytra.lore) {
                 if (lore.text.textType.equals("translatable")) {
                     lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                             elytra.information.name.id.getNamespace(), languageId,

@@ -20,16 +20,14 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.vampirestudios.obsidian.Obsidian"
+      "io.github.vampirestudios.obsidian.Obsidian",
+      "org.quiltmc.qsl.registry.attachment.impl.Initializer",
+      "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesImpl"
     ],
     "client": [
-      "io.github.vampirestudios.obsidian.client.ClientInit"
-    ],
-    "mealapi": [
-      "io.github.vampirestudios.obsidian.Obsidian"
-    ],
-    "appleskin": [
-      "io.github.vampirestudios.obsidian.Obsidian"
+      "io.github.vampirestudios.obsidian.client.ClientInit",
+      "org.quiltmc.qsl.registry.attachment.impl.client.ClientInitializer",
+      "org.quiltmc.qsl.block.content.registry.impl.client.BlockContentRegistriesClientInitializer"
     ]
   },
   "mixins": [
@@ -38,7 +36,9 @@
     "obsidian.mixins.json",
     "quilt_item_extensions.mixins.json",
     "qsl_content_other_enchantment.mixins.json",
-    "quilt_fluid_extensions.mixins.json"
+    "quilt_fluid_extensions.mixins.json",
+    "quilt_registry_entry_attachment.mixins.json",
+    "quilt_block_content_registry.mixins.json"
   ],
   "accessWidener": "obsidian.accesswidener",
 

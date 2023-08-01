@@ -1,7 +1,10 @@
 package io.github.vampirestudios.obsidian.configPack;
 
 import blue.endless.jankson.annotation.SerializedName;
+import net.fabricmc.loader.api.metadata.ContactInformation;
+import net.fabricmc.loader.api.metadata.Person;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +24,26 @@ public class ObsidianAddonInfo extends BaseAddonInfo {
         @SerializedName("folder_name") public String folderName;
         public String description;
         public List<String> authors;
+        public boolean has_assets = false;
         public String license = "";
+
+        public List<Person> getAuthors() {
+            List<Person> authors = new ArrayList<>();
+            this.authors.forEach(author -> {
+                authors.add(new Person() {
+                    @Override
+                    public String getName() {
+                        return author;
+                    }
+
+                    @Override
+                    public ContactInformation getContact() {
+                        return ContactInformation.EMPTY;
+                    }
+                });
+            });
+            return authors;
+        }
     }
 
     public static class Dependency {

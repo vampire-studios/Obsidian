@@ -1,10 +1,13 @@
 package io.github.vampirestudios.obsidian.configPack;
 
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import java.io.File;
+import net.devtech.arrp.api.RuntimeResourcePack;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PathPackResources;
+
+import java.io.File;
 
 public class ObsidianAddon implements IAddonPack {
 
@@ -37,9 +40,14 @@ public class ObsidianAddon implements IAddonPack {
 
     @Override
     public PackResources getVirtualResourcePack() {
-        if (file == null) return null;
-        if (file.isDirectory()) return new PathPackResources(obsidianAddonInfo.addon.folderName, file.toPath(), false);
-        return new FilePackResources(obsidianAddonInfo.addon.folderName, file, false);
+        if (file.getParentFile() == null) return null;
+        if (file.getParentFile().isDirectory()) return new PathPackResources(obsidianAddonInfo.addon.folderName, file.getParentFile().toPath(), true);
+        else return new FilePackResources(obsidianAddonInfo.addon.folderName, file.getParentFile(), true);
+    }
+
+    @Override
+    public RuntimeResourcePack getResourcePack() {
+        return RuntimeResourcePack.create(Obsidian.id(obsidianAddonInfo.addon.id));
     }
 
 }

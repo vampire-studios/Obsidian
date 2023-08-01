@@ -12,6 +12,8 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -21,6 +23,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -51,28 +55,28 @@ public class ItemImpl extends Item implements IRenderModeAware, IEventRunner {
                     switch (renderMode) {
                         case "HAND" -> {
                             if (firstPersonHands || thirdPersonHands) {
-                                return Minecraft.getInstance().getModelManager().getModel(renderModeModel.model);
+                                return Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(renderModeModel.model, "inventory"));
                             } else {
                                 return original;
                             }
                         }
                         case "FIRST_PERSON_HAND" -> {
                             if (firstPersonHands) {
-                                return Minecraft.getInstance().getModelManager().getModel(renderModeModel.model);
+                                return Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(renderModeModel.model, "inventory"));
                             } else {
                                 return original;
                             }
                         }
                         case "THIRD_PERSON_HAND" -> {
                             if (thirdPersonHands) {
-                                return Minecraft.getInstance().getModelManager().getModel(renderModeModel.model);
+                                return Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(renderModeModel.model, "inventory"));
                             } else {
                                 return original;
                             }
                         }
                         default -> {
                             if (mode.equals(ItemDisplayContext.valueOf(renderMode))) {
-                                return Minecraft.getInstance().getModelManager().getModel(renderModeModel.model);
+                                return Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(renderModeModel.model, "inventory"));
                             } else {
                                 return original;
                             }
@@ -86,12 +90,12 @@ public class ItemImpl extends Item implements IRenderModeAware, IEventRunner {
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        return item.useActions.getAction();
+        return item.useActions.getUseAnimation();
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
-        if (item.useActions != null && item.useActions.right_click_actions.equals("open_gui")) {
+        if (item.useActions != null && !item.useActions.right_click_actions.isEmpty()) {
             switch (item.useActions.right_click_actions) {
                 case "open_gui":
                     user.openMenu(new SimpleMenuProvider((syncId, inventory, playerx) -> switch (item.useActions.gui_size) {
@@ -116,16 +120,17 @@ public class ItemImpl extends Item implements IRenderModeAware, IEventRunner {
                         }, item.useActions.url, true));
                     break;
             }
-        }
 
-        ItemStack heldItem = user.getItemInHand(hand);
-        if (item.useActions.useTime != null && item.useActions.useTime > 0)
-            return runEvent("begin_using", FlexEventContext.of(world, user, hand, heldItem), () -> {
-                user.startUsingItem(hand);
-                return FlexEventResult.consume(heldItem);
-            }).holder();
-        else
-            return runEvent("use_on_air", FlexEventContext.of(world, user, hand, heldItem), () -> FlexEventResult.of(super.use(world, user, hand))).holder();
+            ItemStack heldItem = user.getItemInHand(hand);
+            if (item.useActions.use_duration != null && item.useActions.use_duration > 0)
+                return runEvent("begin_using", FlexEventContext.of(world, user, hand, heldItem), () -> {
+                    user.startUsingItem(hand);
+                    return FlexEventResult.consume(heldItem);
+                }).holder();
+            else
+                return runEvent("use_on_air", FlexEventContext.of(world, user, hand, heldItem), () -> FlexEventResult.of(super.use(world, user, hand))).holder();
+        }
+        return InteractionResultHolder.pass(getDefaultInstance());
     }
 
     @Override
@@ -149,6 +154,21 @@ public class ItemImpl extends Item implements IRenderModeAware, IEventRunner {
                     super.releaseUsing(stack, worldIn, entityLiving, timeLeft);
                     return FlexEventResult.pass(stack);
                 });
+    }
+
+    @Override
+    public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+        if (item.information.conversion != null) {
+            if(item.information.conversion.from.contains(BuiltInRegistries.ITEM.getKey(slot.getItem().getItem()))) {
+                Item toItem = BuiltInRegistries.ITEM.get(item.information.conversion.to);
+                ItemStack toStack = toItem.getDefaultInstance();
+                toStack.setTag(slot.getItem().getTag().copy());
+                slot.set(toStack);
+                stack.shrink(1);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -197,8 +217,8 @@ public class ItemImpl extends Item implements IRenderModeAware, IEventRunner {
 
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.display != null && item.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : item.display.lore) {
+        if (item.lore != null) {
+            for (TooltipInformation tooltipInformation : item.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

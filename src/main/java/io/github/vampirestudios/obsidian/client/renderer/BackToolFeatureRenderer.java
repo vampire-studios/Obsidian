@@ -34,8 +34,8 @@ public class BackToolFeatureRenderer extends ItemInHandLayer<AbstractClientPlaye
             matrixStack.pushPose();
             ModelPart modelPart = this.getParentModel().body;
             modelPart.translateAndRotate(matrixStack);
-            matrixStack.translate(0.0D, -1.0D, 0D);
-            matrixStack.scale(0.5F, 0.5F, 0.5F);
+            matrixStack.translate(0D, -1.8D, 0D);
+            matrixStack.scale(0.7F, 0.7F, 0.7F);
             matrixStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
             heldItemRenderer.renderItem(livingEntity, backSlotStack, ItemDisplayContext.HEAD, false, matrixStack, vertexConsumerProvider, i);
             matrixStack.popPose();

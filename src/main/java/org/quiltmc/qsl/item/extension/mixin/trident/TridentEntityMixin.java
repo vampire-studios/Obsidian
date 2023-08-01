@@ -26,7 +26,7 @@ public abstract class TridentEntityMixin extends Entity {
         if ((Object) this instanceof ThrownTrident trident) {
             FriendlyByteBuf passedData = PacketByteBufs.create();
             passedData.writeItem(((TridentEntityAccessor) trident).getTridentStack());
-            this.level.getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity ->
+            this.level().getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity ->
                     ServerPlayNetworking.send(serverPlayerEntity, TridentClientModInitializer.TRIDENT_SPAWN_PACKET_ID, passedData));
         }
     }

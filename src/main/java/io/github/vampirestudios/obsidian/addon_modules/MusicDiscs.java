@@ -13,9 +13,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
@@ -27,7 +30,7 @@ public class MusicDiscs implements AddonModule {
         try {
             if (musicDisc == null) return;
             Item.Properties settings = new Item.Properties().stacksTo(musicDisc.information.maxStackSize)
-                    .rarity(musicDisc.information.rarity);
+                    .rarity(Rarity.valueOf(musicDisc.information.rarity.toUpperCase(Locale.ROOT)));
 
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     musicDisc.information.name.id,
@@ -37,7 +40,7 @@ public class MusicDiscs implements AddonModule {
                     .replaceAll(".json", ""));
 
             Item item = Registry.register(BuiltInRegistries.ITEM, identifier, new MusicDiscItemImpl(musicDisc, settings
-                    .durability(musicDisc.information.useDuration)));
+                    .durability(musicDisc.information.durability)));
             ItemGroupEvents.modifyEntriesEvent(musicDisc.information.getItemGroup()).register(entries -> entries.accept(item));
             register(ContentRegistries.MUSIC_DISCS, "music_disc", identifier, musicDisc);
         } catch (Exception e) {

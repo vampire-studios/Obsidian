@@ -3,11 +3,6 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Functions;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.commands.CommandFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,6 +24,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class DyeableBlock extends BaseEntityBlock {
     public final Block block;
@@ -40,17 +44,17 @@ public class DyeableBlock extends BaseEntityBlock {
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent : super.isCollisionShapeFullBlock(state, world, pos);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties.translucent;
+        return block.information.blockProperties != null ? block.information.blockProperties.translucent : super.propagatesSkylightDown(state, world, pos);
     }
 
     @Override
@@ -104,10 +108,54 @@ public class DyeableBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.rendering != null && block.lore.length != 0) {
+        if (block.lore != null && block.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
+        }
+    }
+
+    @Override
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if (block.information.collisionShape != null) {
+            if(block.information.collisionShape.collisionType != null) {
+                return switch(block.information.collisionShape.collisionType) {
+                    case FULL_BLOCK -> Shapes.block();
+                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
+                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+                    case CUSTOM -> {
+                        float[] boundingBox = block.information.collisionShape.full_shape;
+                        yield box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
+                    }
+                    case NONE -> Shapes.empty();
+                };
+            } else {
+                return box(0, 0, 0, 16, 16, 16);
+            }
+        } else {
+            return box(0, 0, 0, 16, 16, 16);
+        }
+    }
+
+    @Override
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if (block.information.outlineShape != null) {
+            if(block.information.outlineShape.collisionType != null) {
+                return switch(block.information.outlineShape.collisionType) {
+                    case FULL_BLOCK -> Shapes.block();
+                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
+                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+                    case CUSTOM -> {
+                        float[] boundingBox = block.information.outlineShape.full_shape;
+                        yield box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
+                    }
+                    case NONE -> Shapes.empty();
+                };
+            } else {
+                return box(0, 0, 0, 16, 16, 16);
+            }
+        } else {
+            return box(0, 0, 0, 16, 16, 16);
         }
     }
 

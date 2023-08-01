@@ -1,14 +1,15 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import java.util.List;
-import java.util.Locale;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.Locale;
 
 public class ArmorItemImpl extends ArmorItem {
 
@@ -41,8 +42,8 @@ public class ArmorItemImpl extends ArmorItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.display != null && item.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : item.display.lore) {
+        if (item.lore != null) {
+            for (TooltipInformation tooltipInformation : item.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

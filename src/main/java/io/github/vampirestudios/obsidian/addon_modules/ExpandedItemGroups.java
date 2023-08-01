@@ -1,19 +1,32 @@
-/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.TabbedGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.api.obsidian.TabbedGroup;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.util.Identifier;
+import io.wispforest.owo.itemgroup.OwoItemGroup;
+import io.wispforest.owo.itemgroup.gui.ItemGroupButton;
+import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
+import io.wispforest.owo.itemgroup.json.WrapperGroup;
+import io.wispforest.owo.moddata.ModDataConsumer;
+import io.wispforest.owo.moddata.ModDataLoader;
+import io.wispforest.owo.util.pond.OwoItemExtensions;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -21,17 +34,17 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 public class ExpandedItemGroups implements AddonModule {
 
     @Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
         TabbedGroup itemGroup = Obsidian.GSON.fromJson(new FileReader(file), TabbedGroup.class);
         JsonObject jsonObject = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
 
         try {
             if (itemGroup == null) return;
 
-//            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
-//            groupTabLoader.acceptParsedFile(null, jsonObject);
-//            ModDataLoader.load(groupTabLoader);
-            register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", new Identifier(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
+            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
+            groupTabLoader.acceptParsedFile(null, jsonObject);
+            ModDataLoader.load(groupTabLoader);
+            register(io.github.vampirestudios.obsidian.registry.Registries.EXPANDED_ITEM_GROUPS, "tabbed_group", new ResourceLocation(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
         } catch (Exception e) {
             failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
         }
@@ -42,71 +55,95 @@ public class ExpandedItemGroups implements AddonModule {
         return "item_groups/expanded";
     }
 
-	*/
-/*public static class ExpandedTabs implements ModDataConsumer {
-    	private static TabbedGroup tabbedGroup;
-		private static final Map<String, Pair<List<ItemGroupTab>, List<ItemGroupButton>>> CACHED_BUTTONS = new HashMap<>();
+    public static class ExpandedTabs implements ModDataConsumer {
+        private static TabbedGroup tabbedGroup;
 
-		public ExpandedTabs(TabbedGroup tabbedGroupIn) {
-			tabbedGroup = tabbedGroupIn;
-		}
+        public static final ExpandedTabs INSTANCE = new ExpandedTabs(null);
+        private static final Map<ResourceLocation, JsonObject> BUFFERED_GROUPS = new HashMap<>();
 
-		public static ItemGroup onGroupCreated(String name, int index, Supplier<ItemStack> icon) {
-			if (!CACHED_BUTTONS.containsKey(name)) return null;
-			final var cache = CACHED_BUTTONS.remove(name);
-			final var wrapperGroup = new WrapperGroup(index, name, cache.getLeft(), cache.getRight(), icon) {
-				@Override
-				protected void setup() {
-					super.setup();
-					if (tabbedGroup.staticTitle) this.keepStaticTitle();
-					this.setTabStackHeight(tabbedGroup.stackHeight);
-					this.setCustomTexture(tabbedGroup.customTexture);
-				}
-			};
-			wrapperGroup.initialize();
-			return wrapperGroup;
-		}
+        public ExpandedTabs(TabbedGroup tabbedGroupIn) {
+            tabbedGroup = tabbedGroupIn;
+        }
 
-		@Override
-		public String getDataSubdirectory() {
-			return "item_group_tabs";
-		}
+        public static void onGroupCreated(CreativeModeTab group) {
+            var groupId = BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group);
 
-		@Override
-		public void acceptParsedFile(Identifier id, JsonObject json) {
-			List<ItemGroupTab> createdTabs = new ArrayList<>();
-			List<ItemGroupButton> createdButtons = new ArrayList<>();
+            if (!BUFFERED_GROUPS.containsKey(groupId)) return;
+            INSTANCE.acceptParsedFile(groupId, BUFFERED_GROUPS.remove(groupId));
+        }
 
-			if (tabbedGroup.tabs != null) {
-				for (TabbedGroup.Tab tab : tabbedGroup.tabs) {
-					createdTabs.add(new ItemGroupTab(tab.icon.getIcon(), tab.name,
-							TagKey.of(Registry.ITEM_KEY, tab.contentTag), tab.texture));
-				}
-			}
+        @Override
+        public String getDataSubdirectory() {
+            return "item_group_tabs";
+        }
 
-			if (tabbedGroup.buttons != null) {
-				for (TabbedGroup.Button button : tabbedGroup.buttons) {
-					createdButtons.add(new ItemGroupButton(button.icon.getIcon(), button.name,
-							() -> Util.getOperatingSystem().open(button.link)));
-				}
-			}
+        @Override
+        public void acceptParsedFile(ResourceLocation id, JsonObject json) {
+            var tabs = new ArrayList<ItemGroupTab>();
+            var buttons = new ArrayList<ItemGroupButton>();
 
-			for (ItemGroup group : ItemGroup.GROUPS) {
-				if (!group.getName().equals(tabbedGroup.targetGroup)) continue;
-				final var wrapperGroup = new WrapperGroup(group.getIndex(), group.getName(), createdTabs, createdButtons, group::createIcon);
-				wrapperGroup.initialize();
+            var targetGroupId = ResourceLocation.tryParse(tabbedGroup.targetGroup);
 
-				for (Item item : Registry.ITEM) {
-					if (item.getGroup() != group) continue;
-					((OwoItemExtensions) item).owo$setItemGroup(wrapperGroup);
-				}
+            CreativeModeTab searchGroup = null;
+            for (CreativeModeTab group : CreativeModeTabs.allTabs()) {
+                if (Objects.equals(BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group), targetGroupId)) {
+                    searchGroup = group;
+                    break;
+                }
+            }
 
-				return;
-			}
+            if (searchGroup == null) {
+                BUFFERED_GROUPS.put(targetGroupId, json);
+                return;
+            }
 
-			CACHED_BUTTONS.put(tabbedGroup.targetGroup, new Pair<>(createdTabs, createdButtons));
-		}
-	}*//*
+            final var targetGroup = searchGroup;
 
+            for (TabbedGroup.Tab tab : tabbedGroup.tabs) {
+                tabs.add(new ItemGroupTab(
+                        tab.icon.getIcon(),
+                        OwoItemGroup.ButtonDefinition.tooltipFor(targetGroup, "tab", tab.name),
+                        (context, entries) -> BuiltInRegistries.ITEM.stream().filter(item -> item.builtInRegistryHolder().is(tab.contentTag)).forEach(entries::accept),
+                        tab.texture,
+                        false
+                ));
+            }
+            if (tabbedGroup.buttons != null) {
+                for (TabbedGroup.Button button : tabbedGroup.buttons) {
+                    buttons.add(ItemGroupButton.link(targetGroup, button.icon.getIcon(), button.name, button.link));
+                }
+            }
 
-}*/
+            for (CreativeModeTab group : CreativeModeTabs.allTabs()) {
+                if (!BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group).toString().equals(tabbedGroup.targetGroup)) continue;
+                final var wrapperGroup = new WrapperGroup(group, ResourceLocation.tryParse(tabbedGroup.targetGroup), tabs, buttons);
+                wrapperGroup.initialize();
+
+                BuiltInRegistries.ITEM.stream()
+                        .filter(item -> ((OwoItemExtensions) item).owo$group() == targetGroup)
+                        .forEach(item -> ((OwoItemExtensions) item).owo$setGroup(wrapperGroup));
+                return;
+            }
+
+            if (targetGroup instanceof WrapperGroup wrapper) {
+                wrapper.addTabs(tabs);
+                wrapper.addButtons(buttons);
+
+//                if (GsonHelper.getAsBoolean(json, "extend", false)) wrapper.markExtension();
+            } else {
+                var wrapper = new WrapperGroup(targetGroup, targetGroupId, tabs, buttons);
+                wrapper.initialize();
+//                if (GsonHelper.getAsBoolean(json, "extend", false)) wrapper.markExtension();
+
+                BuiltInRegistries.ITEM.stream()
+                        .filter(item -> ((OwoItemExtensions) item).owo$group() == targetGroup)
+                        .forEach(item -> ((OwoItemExtensions) item).owo$setGroup(wrapper));
+            }
+        }
+
+        static {
+            RegistryEntryAddedCallback.event(BuiltInRegistries.CREATIVE_MODE_TAB).register((rawId, id, group) -> ExpandedTabs.onGroupCreated(group));
+        }
+    }
+
+}

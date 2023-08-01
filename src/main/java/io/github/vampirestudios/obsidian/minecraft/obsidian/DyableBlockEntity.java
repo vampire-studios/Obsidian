@@ -25,15 +25,14 @@ public class DyableBlockEntity extends BlockEntity {
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        this.setDyeColor(nbt.getInt("dyeColor"));
-        assert level != null;
-        if (level.isClientSide) level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(),
+        this.setDyeColor(nbt.getInt("color"));
+        if (this.hasLevel() && this.level.isClientSide) this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
     }
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
-        nbt.putInt("dyeColor", this.getDyeColor());
+        nbt.putInt("color", this.getDyeColor());
     }
 
     @Nullable

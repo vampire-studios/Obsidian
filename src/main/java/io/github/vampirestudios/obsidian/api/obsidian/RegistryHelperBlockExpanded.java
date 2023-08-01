@@ -50,11 +50,12 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 		if (BuiltInRegistries.BLOCK.containsKey(new ResourceLocation(this.modId, name)))
 			block = BuiltInRegistries.BLOCK.get(new ResourceLocation(this.modId, name));
 		else block = Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(this.modId, name), block);
+
 		if (block2.information.has_item) {
 			Item item;
 			if (BuiltInRegistries.ITEM.containsKey(new ResourceLocation(this.modId, name))) item = BuiltInRegistries.ITEM.get(new ResourceLocation(this.modId, name));
 			else item = Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(this.modId, name), new CustomBlockItem(block2, block, settings));
-			ItemGroupEvents.modifyEntriesEvent(block2.information.itemProperties.getItemGroup()).register(entries -> entries.accept(item));
+			if (block2.information.itemProperties != null) ItemGroupEvents.modifyEntriesEvent(block2.information.itemProperties.getItemGroup()).register(entries -> entries.accept(item));
 		}
 		return block;
 	}

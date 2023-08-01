@@ -1,8 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
-import java.io.File;
+import net.devtech.arrp.api.RuntimeResourcePack;
 import net.minecraft.server.packs.PackResources;
+
+import java.io.File;
 
 public interface IAddonPack {
 
@@ -13,5 +15,7 @@ public interface IAddonPack {
     String getObsidianDisplayName();
 
     PackResources getVirtualResourcePack();
+
+    RuntimeResourcePack getResourcePack();
 
 }

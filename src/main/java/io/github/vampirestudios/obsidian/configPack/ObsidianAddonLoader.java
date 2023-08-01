@@ -62,7 +62,11 @@ public class ObsidianAddonLoader {
             try {
                 File legacyPackInfoFile = new File(file, legacyFile);
                 File newPackInfoFile = new File(file, newFile);
-                Utils.registerAddon(legacyPackInfoFile, newPackInfoFile);
+                Optional<File> fabricModJson;
+                if (new File(file, "fabric.mod.json").exists())
+                    fabricModJson = Optional.of(new File(file, "fabric.mod.json"));
+                else fabricModJson = Optional.empty();
+                Utils.registerAddon(legacyPackInfoFile, newPackInfoFile, fabricModJson);
             } catch (Exception e) {
                 Obsidian.LOGGER.error("Failed to load obsidian addon!", e);
             }

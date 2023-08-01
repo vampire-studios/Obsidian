@@ -3,6 +3,8 @@ package io.github.vampirestudios.obsidian.registry;
 import com.mojang.serialization.Lifecycle;
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.api.MapColors;
+import io.github.vampirestudios.obsidian.api.SubItemGroup;
+import io.github.vampirestudios.obsidian.api.TabbedGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.DynamicShape;
 import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyType;
@@ -38,6 +40,8 @@ public class Registries {
     public static final ResourceKey<Registry<PropertyType>> PROPERTY_TYPE_REGISTRY = createKey("property_type");
     public static final ResourceKey<Registry<Property<?>>> PROPERTY_REGISTRY = createKey("property");
     public static final ResourceKey<Registry<DynamicShape>> DYNAMIC_SHAPE_REGISTRY = createKey("dynamic_shapes");
+    public static final ResourceKey<Registry<TabbedGroup>> EXPANDED_ITEM_GROUPS_REGISTRY = createKey("expanded_creative_tabs");
+    public static final ResourceKey<Registry<SubItemGroup>> SUB_ITEM_GROUPS_REGISTRY = createKey("sub_item_groups");
     //    public static final ResourceKey<Registry<FlexBlockType<?>>> BLOCK_TYPE_REGISTRY = createKey("block_types");
 //    public static final ResourceKey<Registry<FlexItemType<?>>> ITEM_TYPE_REGISTRY = createKey("item_types");
     public static final ResourceKey<Registry<SoundType>> SOUND_TYPE_REGISTRY = createKey("sound_types");
@@ -57,6 +61,8 @@ public class Registries {
 //    public static final Registry<FlexFluidType<?>> FLUID_TYPES = makeRegistry(FLUID_TYPE_REGISTRY);
 
     public static final Registry<AddonModule> ADDON_MODULE_REGISTRY;
+    public static final Registry<TabbedGroup> EXPANDED_ITEM_GROUPS;
+    public static final Registry<SubItemGroup> SUB_ITEM_GROUPS;
     //	public static final Registry<Transformation.Target> BLOCK_PROPERTIES;
 //	public static final Registry<Transformation.Target> BLOCK_GROUPS;
     public static Registry<AnimationDefinition> ANIMATION_DEFINITIONS;
@@ -77,6 +83,8 @@ public class Registries {
         MapColors.init();
 
         ADDON_MODULE_REGISTRY = new MappedRegistry<>(ResourceKey.createRegistryKey(Const.id("addon_modules")), Lifecycle.stable(), false);
+        EXPANDED_ITEM_GROUPS = new MappedRegistry<>(EXPANDED_ITEM_GROUPS_REGISTRY, Lifecycle.stable(), false);
+        SUB_ITEM_GROUPS = new MappedRegistry<>(SUB_ITEM_GROUPS_REGISTRY, Lifecycle.stable(), false);
         ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(AnimationDefinition.class, Const.vanillaId("animation_definitions")).buildAndRegister();
         ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(AnimationChannel.Interpolation.class, Const.vanillaId("animation_channel_interpolations")).buildAndRegister();
         ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(AnimationChannel.Target.class, Const.vanillaId("animation_channel_targets")).buildAndRegister();

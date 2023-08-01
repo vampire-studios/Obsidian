@@ -25,7 +25,7 @@ public class ProtectionAmount {
             case "cactus" -> damageSources.cactus();
             case "fall" -> damageSources.fall();
             case "flyIntoWall" -> damageSources.flyIntoWall();
-            case "outOfWorld" -> damageSources.outOfWorld();
+            case "outOfWorld" -> damageSources.fellOutOfWorld();
             case "magic" -> damageSources.magic();
             case "wither" -> damageSources.wither();
             case "anvil" -> damageSources.anvil(source);

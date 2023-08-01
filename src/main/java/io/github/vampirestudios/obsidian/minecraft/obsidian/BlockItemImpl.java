@@ -1,13 +1,14 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+
+import java.util.List;
 
 public class BlockItemImpl extends BlockItem {
 
@@ -45,8 +46,8 @@ public class BlockItemImpl extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.display != null && item.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : item.display.lore) {
+        if (item.lore != null) {
+            for (TooltipInformation tooltipInformation : item.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

@@ -20,11 +20,12 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -73,27 +74,22 @@ public class BlockImpl extends Block implements IEventRunner {
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent ? 0.2F : 1.0F;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return !block.information.blockProperties.translucent;
+        return block.information.blockProperties != null ? !block.information.blockProperties.translucent : super.isCollisionShapeFullBlock(state, world, pos);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties.translucent;
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
+        return block.information.blockProperties != null ? block.information.blockProperties.translucent : super.propagatesSkylightDown(state, world, pos);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.rendering != null && block.lore.length != 0) {
+        if (block.lore != null && block.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
@@ -101,10 +97,47 @@ public class BlockImpl extends Block implements IEventRunner {
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        /*float[] boundingBox = block.information.boundingBox.full_shape;
-        return box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);*/
-        return box(0, 0, 0, 16, 16, 16);
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if (block.information.collisionShape != null) {
+            if(block.information.collisionShape.collisionType != null) {
+                return switch(block.information.collisionShape.collisionType) {
+                    case FULL_BLOCK -> Shapes.block();
+                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
+                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+                    case CUSTOM -> {
+                        float[] boundingBox = block.information.collisionShape.full_shape;
+                        yield box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
+                    }
+                    case NONE -> Shapes.empty();
+                };
+            } else {
+                return Shapes.block();
+            }
+        } else {
+            return Shapes.block();
+        }
+    }
+
+    @Override
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if (block.information.outlineShape != null) {
+            if(block.information.outlineShape.collisionType != null) {
+                return switch(block.information.outlineShape.collisionType) {
+                    case FULL_BLOCK -> Shapes.block();
+                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
+                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+                    case CUSTOM -> {
+                        float[] boundingBox = block.information.outlineShape.full_shape;
+                        yield box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
+                    }
+                    case NONE -> Shapes.empty();
+                };
+            } else {
+                return Shapes.block();
+            }
+        } else {
+            return Shapes.block();
+        }
     }
 
     @Override

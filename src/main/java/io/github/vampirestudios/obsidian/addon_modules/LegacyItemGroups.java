@@ -73,7 +73,7 @@ public class LegacyItemGroups implements AddonModule {
 
             CreativeModeTab itemGroup1 = FabricItemGroup.builder()
                     .icon(() -> new ItemStack(BuiltInRegistries.ITEM.get(itemGroup.icon)))
-                    .title(Component.literal(identifier.getPath()))
+                    .title(Component.translatable("itemGroup." + itemGroup.name.id.getNamespace() + "." + itemGroup.name.id.getPath()))
                     .displayItems((displayContext, entries) -> {
                         if (itemGroup.tags != null) {
                             for (Map.Entry<String, ResourceLocation> tag : itemGroup.tags.entrySet()) {

@@ -2,13 +2,14 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem;
-import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class HoeItemImpl extends HoeItem {
 
@@ -46,8 +47,8 @@ public class HoeItemImpl extends HoeItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.display != null && item.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : item.display.lore) {
+        if (item.lore != null) {
+            for (TooltipInformation tooltipInformation : item.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

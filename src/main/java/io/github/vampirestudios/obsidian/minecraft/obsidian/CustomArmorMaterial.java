@@ -2,9 +2,11 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.NotNull;
 
 public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial material) implements ArmorMaterial {
 
@@ -24,8 +26,8 @@ public record CustomArmorMaterial(io.github.vampirestudios.obsidian.api.obsidian
     }
 
     @Override
-    public SoundEvent getEquipSound() {
-        return BuiltInRegistries.SOUND_EVENT.get(this.material.equipSound);
+    public @NotNull SoundEvent getEquipSound() {
+        return /*BuiltInRegistries.SOUND_EVENT.get(this.material.equipSound)*/SoundEvents.ARMOR_EQUIP_LEATHER;
     }
 
     @Override

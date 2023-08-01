@@ -2,13 +2,14 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.MusicDisc;
-import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class MusicDiscItemImpl extends RecordItem {
     private final MusicDisc musicDisc;
@@ -40,8 +41,8 @@ public class MusicDiscItemImpl extends RecordItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (musicDisc.display != null && musicDisc.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : musicDisc.display.lore) {
+        if (musicDisc.lore != null) {
+            for (TooltipInformation tooltipInformation : musicDisc.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }
         }

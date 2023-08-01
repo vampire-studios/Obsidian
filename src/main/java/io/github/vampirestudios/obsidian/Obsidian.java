@@ -60,6 +60,9 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.WeatheringCopper;
+import net.minecraft.world.level.block.WeatheringCopperFullBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -70,12 +73,18 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBlockStateBooster;
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 public class Obsidian implements ModInitializer {
 
 	public static final Gson GSON = new GsonBuilder()
 			.registerTypeAdapter(ResourceLocation.class, (SimpleStringDeserializer<?>) ResourceLocation::new)
-			.registerTypeAdapter(ModelResourceLocation.class, (SimpleStringDeserializer<ModelResourceLocation>) s -> (ModelResourceLocation) ModelResourceLocation.tryParse(s))
+//			.registerTypeAdapter(ModelResourceLocation.class, (SimpleStringDeserializer<ModelResourceLocation>) s -> (ModelResourceLocation) ModelResourceLocation.tryParse(s))
 			.setPrettyPrinting()
 			.setLenient()
 			.create();
@@ -149,6 +158,11 @@ public class Obsidian implements ModInitializer {
 			.build());
 //	public static ObsidianConfig CONFIG;
 
+
+	public static final RegistryEntryAttachment<net.minecraft.world.level.block.Block, Boolean> BASED =
+			RegistryEntryAttachment.boolBuilder(BuiltInRegistries.BLOCK, new ResourceLocation("quilt", "based"))
+					.side(RegistryEntryAttachment.Side.CLIENT).build();
+
 	public static ResourceLocation id(String path) {
 		return Const.id(path);
 	}
@@ -208,6 +222,16 @@ public class Obsidian implements ModInitializer {
 			}
 		});
 
+		RegistryExtensions.register(BuiltInRegistries.BLOCK, new ResourceLocation("quilt", "oxidizable_iron_block"),
+				new WeatheringCopperFullBlock(WeatheringCopper.WeatherState.UNAFFECTED, BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)),
+				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(net.minecraft.world.level.block.Blocks.IRON_BLOCK, false));
+
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.IRON_BLOCK, new ConstantBooster(3f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.DIAMOND_BLOCK, new ConstantBooster(15f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK, new ConstantBooster(100f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.OAK_PLANKS, new ConstantBooster(0.25f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE, new EnchantingBlockStateBooster());
+
 		ArgumentTypeRegistry.registerArgumentType(Const.id("mod_id"), ModIdArgument.class,
 				SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument));
 
@@ -244,8 +268,9 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
-//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
-//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "condensed_item_entries", new CondensedItemEntries());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "sub_item_groups", new SubItemGroups());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "condensed_item_entries", new CondensedItemEntries());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
 //		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 //			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "guis", new Guis());

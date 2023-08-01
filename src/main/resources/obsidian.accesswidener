@@ -14,3 +14,13 @@ accessible field net/minecraft/world/level/block/state/properties/WoodType VALUE
 accessible field net/minecraft/world/level/block/state/properties/BlockSetType VALUES Ljava/util/Set;
 accessible method net/minecraft/world/level/block/state/properties/WoodType register (Lnet/minecraft/world/level/block/state/properties/WoodType;)Lnet/minecraft/world/level/block/state/properties/WoodType;
 accessible method net/minecraft/world/level/block/state/properties/BlockSetType register (Lnet/minecraft/world/level/block/state/properties/BlockSetType;)Lnet/minecraft/world/level/block/state/properties/BlockSetType;
+
+accessible method net/minecraft/core/Holder$Reference bindValue (Ljava/lang/Object;)V
+
+transitive-accessible class net/minecraft/util/ExtraCodecs$EitherCodec
+accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;
+accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
+accessible field net/minecraft/world/level/block/FireBlock burnOdds Lit/unimi/dsi/fastutil/objects/Object2IntMap;
+accessible field net/minecraft/world/level/block/FireBlock igniteOdds Lit/unimi/dsi/fastutil/objects/Object2IntMap;
+
+accessible class net/minecraft/client/renderer/block/model/BlockElement$Deserializer

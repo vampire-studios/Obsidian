@@ -102,33 +102,37 @@ public class Blocks implements AddonModule {
                 blockSettings = FabricBlockSettings.of();
             }
 
-            blockSettings.destroyTime(block.information.blockProperties.hardness).explosionResistance(block.information.blockProperties.resistance)
-                    .mapColor(block.information.blockProperties.getMapColor())
-                    .pushReaction(block.information.blockProperties.getPushReaction())
-                    .sound(block.information.blockProperties.getBlockSoundGroup())
-                    .friction(block.information.blockProperties.slipperiness)
-                    .emissiveRendering((state, world, pos) -> block.information.blockProperties.is_emissive)
-                    .lightLevel(state -> block.information.blockProperties.luminance)
-                    .speedFactor(block.information.blockProperties.velocity_modifier)
-                    .jumpFactor(block.information.blockProperties.jump_velocity_modifier);
-            if (block.information.blockProperties.randomTicks) blockSettings.randomTicks();
-            if (block.information.blockProperties.instant_break) blockSettings.instabreak();
-            if (!block.information.blockProperties.collidable) blockSettings.noCollission();
-            if (block.information.blockProperties.translucent) blockSettings.noOcclusion();
-            if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicShape();
+            if (block.information.blockProperties != null) {
+                blockSettings.destroyTime(block.information.blockProperties.hardness).explosionResistance(block.information.blockProperties.resistance)
+                        .mapColor(block.information.blockProperties.getMapColor())
+                        .pushReaction(block.information.blockProperties.getPushReaction())
+                        .sound(block.information.blockProperties.getBlockSoundGroup())
+                        .friction(block.information.blockProperties.slipperiness)
+                        .emissiveRendering((state, world, pos) -> block.information.blockProperties.is_emissive)
+                        .lightLevel(state -> block.information.blockProperties.luminance)
+                        .speedFactor(block.information.blockProperties.velocity_modifier)
+                        .jumpFactor(block.information.blockProperties.jump_velocity_modifier);
+                if (block.information.blockProperties.randomTicks) blockSettings.randomTicks();
+                if (block.information.blockProperties.instant_break) blockSettings.instabreak();
+                if (!block.information.blockProperties.collidable) blockSettings.noCollission();
+                if (block.information.blockProperties.translucent) blockSettings.noOcclusion();
+                if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicShape();
+            }
 
             FabricItemSettings settings = new FabricItemSettings();
-            settings.stacksTo(block.information.itemProperties.maxStackSize);
-            settings.rarity(Rarity.valueOf(block.information.itemProperties.rarity.toUpperCase(Locale.ROOT)));
-            if (block.information.itemProperties.maxDurability != 0)
-                settings.durability(block.information.itemProperties.maxDurability);
-            if (!block.information.itemProperties.equipmentSlot.isEmpty() && !block.information.itemProperties.equipmentSlot.isBlank())
-                settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
-            if (block.food_information != null)
-                settings.food(Registries.FOODS.get(block.food_information.foodComponent));
-            if (block.information.itemProperties.fireproof) settings.fireResistant();
+            if (block.information.itemProperties != null) {
+                settings.stacksTo(block.information.itemProperties.maxStackSize);
+                settings.rarity(Rarity.valueOf(block.information.itemProperties.rarity.toUpperCase(Locale.ROOT)));
+                if (block.information.itemProperties.maxDurability != 0)
+                    settings.durability(block.information.itemProperties.maxDurability);
+                if (!block.information.itemProperties.equipmentSlot.isEmpty() && !block.information.itemProperties.equipmentSlot.isBlank())
+                    settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
+                if (block.food_information != null)
+                    settings.food(Registries.FOODS.get(block.food_information.foodComponent));
+                if (block.information.itemProperties.fireproof) settings.fireResistant();
+            }
 
-            RegistryHelperBlockExpanded expanded = new RegistryHelperBlockExpanded(REGISTRY_HELPER.modId());
+            RegistryHelperBlockExpanded expanded = new RegistryHelperBlockExpanded(id.modId());
 
             if (block.additional_information != null) {
                 if (block.additional_information.path) {
@@ -177,8 +181,7 @@ public class Blocks implements AddonModule {
                             REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
                                             (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
                                     blockId.getPath() + "_be");
-                        } else
-                            expanded.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
+                        } else expanded.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     }
                     case DIRECTIONAL ->
                             expanded.registerBlock(new FacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
@@ -441,7 +444,8 @@ public class Blocks implements AddonModule {
             } else {
                 register(ContentRegistries.BLOCKS, "block", blockId, block);
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
                 List<ResourceLocation> names = new ArrayList<>();
                 block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {

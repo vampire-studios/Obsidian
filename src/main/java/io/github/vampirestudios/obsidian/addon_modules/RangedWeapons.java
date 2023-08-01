@@ -15,9 +15,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
@@ -29,7 +32,7 @@ public class RangedWeapons implements AddonModule {
         try {
             if (rangedWeapon == null) return;
             Item.Properties settings = new Item.Properties().stacksTo(rangedWeapon.information.maxStackSize)
-                    .rarity(rangedWeapon.information.rarity);
+                    .rarity(Rarity.valueOf(rangedWeapon.information.rarity.toUpperCase(Locale.ROOT)));
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     rangedWeapon.information.name.id,
                     () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
