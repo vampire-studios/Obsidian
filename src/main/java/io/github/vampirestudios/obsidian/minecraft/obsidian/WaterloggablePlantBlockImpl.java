@@ -28,17 +28,17 @@ public class WaterloggablePlantBlockImpl extends BushBlock implements SimpleWate
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? !block.information.blockProperties.translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? !block.information.blockProperties.translucent : super.isCollisionShapeFullBlock(state, world, pos);
+        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? block.information.blockProperties.translucent : super.propagatesSkylightDown(state, world, pos);
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
     }
 
     @Override

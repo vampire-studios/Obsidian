@@ -21,17 +21,17 @@ public class MusicDiscItemImpl extends RecordItem {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return musicDisc.information.hasEnchantmentGlint;
+        return musicDisc.information.getItemSettings().hasEnchantmentGlint;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return musicDisc.information.isEnchantable;
+        return musicDisc.information.getItemSettings().isEnchantable;
     }
 
     @Override
     public int getEnchantmentValue() {
-        return musicDisc.information.enchantability;
+        return musicDisc.information.getItemSettings().enchantability;
     }
 
     @Override

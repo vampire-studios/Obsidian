@@ -37,15 +37,10 @@ public class WoodTypes implements AddonModule {
 			);
 			if (woodTypes.id == null) woodTypes.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
-//			registerSoundIfNotFound(blockSetType.soundType);
-//			registerSoundIfNotFound(blockSetType.doorClose);
-//			registerSoundIfNotFound(blockSetType.doorOpen);
-//			registerSoundIfNotFound(blockSetType.trapdoorClose);
-//			registerSoundIfNotFound(blockSetType.trapdoorOpen);
-//			registerSoundIfNotFound(blockSetType.pressurePlateClickOff);
-//			registerSoundIfNotFound(blockSetType.pressurePlateClickOn);
-//			registerSoundIfNotFound(blockSetType.buttonClickOff);
-//			registerSoundIfNotFound(blockSetType.buttonClickOn);
+			registerSoundIfNotFound(woodTypes.soundType);
+			registerSoundIfNotFound(woodTypes.hangingSignSoundType);
+			registerSoundIfNotFound(woodTypes.fenceGateClose);
+			registerSoundIfNotFound(woodTypes.fenceGateOpen);
 
 			register(ContentRegistries.WOOD_TYPES, "block_set_types", identifier, woodTypes);
 			WoodTypeRegistry.register(woodTypes.id, getBlockSetType(woodTypes.setType),
@@ -96,7 +91,7 @@ public class WoodTypes implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "blocks/sound_groups";
+		return "block/wood_types";
 	}
 
 }

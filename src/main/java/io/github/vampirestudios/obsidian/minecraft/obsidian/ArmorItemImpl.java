@@ -22,17 +22,17 @@ public class ArmorItemImpl extends ArmorItem {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return item.information.hasEnchantmentGlint;
+        return item.information.getItemSettings().hasEnchantmentGlint;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return item.information.isEnchantable;
+        return item.information.getItemSettings().isEnchantable;
     }
 
     @Override
     public int getEnchantmentValue() {
-        return item.information.enchantability;
+        return item.information.getItemSettings().enchantability;
     }
 
     @Override

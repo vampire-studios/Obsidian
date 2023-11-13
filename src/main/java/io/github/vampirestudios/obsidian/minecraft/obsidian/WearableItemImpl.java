@@ -21,6 +21,6 @@ public class WearableItemImpl extends ItemImpl implements Equipable {
 
 	@Override
 	public EquipmentSlot getEquipmentSlot() {
-		return EquipmentSlot.byName(item.information.wearableSlot);
+		return EquipmentSlot.byName(item.information.getItemSettings().wearableSlot);
 	}
 }

@@ -34,7 +34,7 @@ public class ArmorInitThread implements Runnable {
                     name
             ));
 
-        if (armor.information.renderModeModels != null && armor.information.customRenderMode) {
+        if (armor.information.getItemSettings().renderModeModels != null && armor.information.getItemSettings().customRenderMode) {
             ResourceLocation normalModel;
             if (armor.rendering != null) {
                 if(armor.rendering.model != null)
@@ -43,7 +43,7 @@ public class ArmorInitThread implements Runnable {
                     normalModel = armor.rendering.itemModel.parent;
                 else normalModel = armor.information.name.id;
             } else normalModel = armor.information.name.id;
-            CustomRenderModeItemRenderer customRenderModeItemRenderer = new CustomRenderModeItemRenderer(armor.information.name.id, armor.information.renderModeModels,
+            CustomRenderModeItemRenderer customRenderModeItemRenderer = new CustomRenderModeItemRenderer(armor.information.name.id,
                     normalModel);
             ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(customRenderModeItemRenderer);
             BuiltinItemRendererRegistry.INSTANCE.register(BuiltInRegistries.ITEM.get(armor.information.name.id), customRenderModeItemRenderer);

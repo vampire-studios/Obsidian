@@ -30,7 +30,7 @@ public class Elytras implements AddonModule {
             );
             if (item.information.name.id == null) item.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
             Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new ElytraItemImpl(item, new Item.Properties().stacksTo(1)));
-            ItemGroupEvents.modifyEntriesEvent(item.information.getItemGroup()).register(entries -> entries.accept(registeredItem));
+            ItemGroupEvents.modifyEntriesEvent(item.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(registeredItem));
             register(ContentRegistries.ELYTRAS, "elytra", identifier, item);
         } catch (Exception e) {
             failedRegistering("elytra", file.getName(), e);

@@ -28,8 +28,8 @@ public class Weapons implements AddonModule {
         WeaponItem weapon = Obsidian.GSON.fromJson(new FileReader(file), WeaponItem.class);
         try {
             if (weapon == null) return;
-            Item.Properties settings = new Item.Properties().stacksTo(weapon.information.maxStackSize)
-                    .rarity(Rarity.valueOf(weapon.information.rarity.toUpperCase(Locale.ROOT)));
+            Item.Properties settings = new Item.Properties().stacksTo(weapon.information.getItemSettings().maxStackSize)
+                    .rarity(Rarity.valueOf(weapon.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     weapon.information.name.id,
                     () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
@@ -37,7 +37,7 @@ public class Weapons implements AddonModule {
             if (weapon.information.name.id == null) weapon.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
             CustomToolMaterial material = new CustomToolMaterial(weapon.material);
             Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings));
-            ItemGroupEvents.modifyEntriesEvent(weapon.information.getItemGroup()).register(entries -> entries.accept(registeredItem));
+            ItemGroupEvents.modifyEntriesEvent(weapon.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(registeredItem));
             register(ContentRegistries.WEAPONS, "weapon", identifier, weapon);
         } catch (Exception e) {
             failedRegistering("weapon", file.getName(), e);

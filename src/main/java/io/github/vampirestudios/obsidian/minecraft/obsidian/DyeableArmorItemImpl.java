@@ -20,22 +20,22 @@ public class DyeableArmorItemImpl extends ArmorItem implements DyeableLeatherIte
     @Override
     public int getColor(ItemStack stack) {
         CompoundTag nbtCompound = stack.getTagElement("display");
-        return nbtCompound != null && nbtCompound.contains("color", 99) ? nbtCompound.getInt("color") : item.information.defaultColor;
+        return nbtCompound != null && nbtCompound.contains("color", 99) ? nbtCompound.getInt("color") : item.information.getItemSettings().defaultColor;
     }
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return item.information.hasEnchantmentGlint;
+        return item.information.getItemSettings().hasEnchantmentGlint;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return item.information.isEnchantable;
+        return item.information.getItemSettings().isEnchantable;
     }
 
     @Override
     public int getEnchantmentValue() {
-        return item.information.enchantability;
+        return item.information.getItemSettings().enchantability;
     }
 
     @Override

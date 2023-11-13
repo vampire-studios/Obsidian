@@ -23,17 +23,17 @@ public class CustomBlockItem extends BlockItem {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return block.information.itemProperties != null ? block.information.itemProperties.has_glint : super.isFoil(stack);
+        return block.information.getItemSettings() != null ? block.information.getItemSettings().hasEnchantmentGlint : super.isFoil(stack);
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return block.information.itemProperties != null ? block.information.itemProperties.is_enchantable : super.isEnchantable(stack);
+        return block.information.getItemSettings() != null ? block.information.getItemSettings().isEnchantable : super.isEnchantable(stack);
     }
 
     @Override
     public int getEnchantmentValue() {
-        return block.information.itemProperties != null ? block.information.itemProperties.enchantability : super.getEnchantmentValue();
+        return block.information.getItemSettings() != null ? block.information.getItemSettings().enchantability : super.getEnchantmentValue();
     }
 
     @Override

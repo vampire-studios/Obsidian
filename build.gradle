@@ -36,10 +36,6 @@ repositories {
 			includeGroup "dev.ftb.mods"
 		}
 	}
-	maven {
-		name 'Xander Maven'
-		url 'https://maven.isxander.dev/releases'
-	}
 	maven { url = "https://maven.parchmentmc.net/" }
 	maven { url = "https://ueaj.dev/maven" }
 	maven { url = "https://raw.githubusercontent.com/SolidBlock-cn/mvn-repo/main" }
@@ -58,8 +54,9 @@ quiltflower {
 
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.84.0+1.20.1")
-		force("net.fabricmc:fabric-loader:0.14.21")
+		force("net.fabricmc.fabric-api:fabric-api:0.86.1+1.20.1")
+		force("net.fabricmc:fabric-loader:0.14.22")
+		force("com.terraformersmc:modmenu:7.2.1")
 	}
 }
 
@@ -97,20 +94,6 @@ dependencies {
 
 	modImplementation include("io.github.cottonmc:Jankson-Fabric:5.0.1+j1.2.2")
 
-	/*modImplementation (libs.appleskin) {
-		transitive false
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
-	include (libs.appleskin) {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}*/
-
 	modImplementation (libs.owo.lib) {
 		noFapi
 		noFLoader
@@ -147,14 +130,17 @@ dependencies {
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.14.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
 
-	modApi("dev.latvian.mods:rhino-fabric:1902.2.2-builgustd.269")
+	modApi("dev.latvian.mods:rhino-fabric:1902.2.2-build.269")
 
 	modImplementation("net.devtech:arrp:0.6.5.0")
 
 	modImplementation include("maven.modrinth:fractal-lib:ZbTEXRfa")
-//	modImplementation "pers.solid:brrp-fabric:1.0.1-1.20.1"
 
-	modImplementation "com.lowdragmc.shimmer:Shimmer-fabric:1.20.1-0.1.18"
+	modImplementation "com.ptsmods:devlogin:3.3"
+
+	modImplementation include("maven.modrinth:dpu:1.0.7")
+
+	implementation "com.typesafe:config:1.4.2"
 }
 
 processResources {

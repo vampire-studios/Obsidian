@@ -2,9 +2,6 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Functions;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.commands.CommandFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -25,6 +22,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 public class PaneBlockImpl extends IronBarsBlock {
     private final io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
@@ -35,17 +36,17 @@ public class PaneBlockImpl extends IronBarsBlock {
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? !block.information.blockProperties.translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? !block.information.blockProperties.translucent : super.isCollisionShapeFullBlock(state, world, pos);
+        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? block.information.blockProperties.translucent : super.propagatesSkylightDown(state, world, pos);
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
     }
 
     @Override

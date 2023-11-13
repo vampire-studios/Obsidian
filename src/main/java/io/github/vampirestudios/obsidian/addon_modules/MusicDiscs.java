@@ -29,8 +29,8 @@ public class MusicDiscs implements AddonModule {
         MusicDisc musicDisc = Obsidian.GSON.fromJson(new FileReader(file), MusicDisc.class);
         try {
             if (musicDisc == null) return;
-            Item.Properties settings = new Item.Properties().stacksTo(musicDisc.information.maxStackSize)
-                    .rarity(Rarity.valueOf(musicDisc.information.rarity.toUpperCase(Locale.ROOT)));
+            Item.Properties settings = new Item.Properties().stacksTo(musicDisc.information.getItemSettings().maxStackSize)
+                    .rarity(Rarity.valueOf(musicDisc.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
 
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     musicDisc.information.name.id,
@@ -40,8 +40,8 @@ public class MusicDiscs implements AddonModule {
                     .replaceAll(".json", ""));
 
             Item item = Registry.register(BuiltInRegistries.ITEM, identifier, new MusicDiscItemImpl(musicDisc, settings
-                    .durability(musicDisc.information.durability)));
-            ItemGroupEvents.modifyEntriesEvent(musicDisc.information.getItemGroup()).register(entries -> entries.accept(item));
+                    .durability(musicDisc.information.getItemSettings().durability)));
+            ItemGroupEvents.modifyEntriesEvent(musicDisc.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
             register(ContentRegistries.MUSIC_DISCS, "music_disc", identifier, musicDisc);
         } catch (Exception e) {
             failedRegistering("music_disc", file.getName(), e);

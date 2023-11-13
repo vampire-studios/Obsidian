@@ -44,13 +44,13 @@ public class Food implements AddonModule {
             if (foodItem.information.name.id == null) foodItem.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
 
             Item.Properties settings = new Item.Properties()
-                    .stacksTo(foodItem.information.maxStackSize)
-                    .rarity(Rarity.valueOf(foodItem.information.rarity.toUpperCase(Locale.ROOT)));
+                    .stacksTo(foodItem.information.getItemSettings().maxStackSize)
+                    .rarity(Rarity.valueOf(foodItem.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
             FoodProperties foodComponent = Registries.FOODS.get(foodItem.food_information.foodComponent);
             Item item = Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, identifier, new FoodItemImpl(foodItem, settings
-                    .durability(foodItem.information.durability)
+                    .durability(foodItem.information.getItemSettings().durability)
                     .food(foodComponent)));
-            ItemGroupEvents.modifyEntriesEvent(foodItem.information.getItemGroup()).register(entries -> entries.accept(item));
+            ItemGroupEvents.modifyEntriesEvent(foodItem.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
             register(ContentRegistries.FOODS, "food", identifier, foodItem);
         } catch (Exception e) {
             failedRegistering("food", file.getName(), e);

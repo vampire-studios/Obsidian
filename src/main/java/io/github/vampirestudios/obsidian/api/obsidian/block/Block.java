@@ -10,15 +10,12 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Block {
 
     public Description description;
-    public BlockType block_type = BlockType.BLOCK;
+    public String block_type = "block";
     public BlockInformation information;
     public DisplayInformation rendering;
     @SerializedName("drop_information")
@@ -34,7 +31,7 @@ public class Block {
     public ResourceLocation particle_type;
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
-    public Map<String, Event> events;
+//    public Map<String, Event> events;
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
     public ResourceLocation placable_feature;
@@ -46,6 +43,10 @@ public class Block {
         List<net.minecraft.world.level.block.Block> blocks2 = new ArrayList<>();
         can_plant_on.forEach(identifier -> blocks2.add(BuiltInRegistries.BLOCK.get(identifier)));
         return blocks2;
+    }
+
+    public BlockType getBlockType() {
+        return BlockType.valueOf(block_type.toUpperCase(Locale.ROOT));
     }
 
     public enum BlockType {
@@ -142,7 +143,7 @@ public class Block {
 
     public static class Properties {
         public String facing;
-        public Map<String, PropertiesInfo> properties = new HashMap<>();
+//        public Map<String, PropertiesInfo> properties = new HashMap<>();
 
         public static class PropertiesInfo {
             public String type;

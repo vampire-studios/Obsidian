@@ -12,7 +12,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.SaplingBaseBlock;
-import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyType;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
@@ -20,15 +19,12 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.github.vampirestudios.obsidian.utils.ThingParseException;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import io.github.vampirestudios.obsidian.utils.parse.value.ObjValue;
 import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.*;
@@ -36,7 +32,6 @@ import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import org.hjson.JsonValue;
@@ -45,7 +40,9 @@ import org.hjson.Stringify;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -74,10 +71,15 @@ public class Blocks implements AddonModule {
                 block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.HJSON) {
                 block = Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-            } else {
+            }/* else if (addonInfo.format == ObsidianAddonInfo.Format.HOCON) {
+                block = ConfigFactory.parseReader(new FileReader(file)).root();
+                block = Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            }*/ else {
                 block = null;
             }
         }
+
+
 
         try {
             if (block == null) return;
@@ -102,34 +104,34 @@ public class Blocks implements AddonModule {
                 blockSettings = FabricBlockSettings.of();
             }
 
-            if (block.information.blockProperties != null) {
-                blockSettings.destroyTime(block.information.blockProperties.hardness).explosionResistance(block.information.blockProperties.resistance)
-                        .mapColor(block.information.blockProperties.getMapColor())
-                        .pushReaction(block.information.blockProperties.getPushReaction())
-                        .sound(block.information.blockProperties.getBlockSoundGroup())
-                        .friction(block.information.blockProperties.slipperiness)
-                        .emissiveRendering((state, world, pos) -> block.information.blockProperties.is_emissive)
-                        .lightLevel(state -> block.information.blockProperties.luminance)
-                        .speedFactor(block.information.blockProperties.velocity_modifier)
-                        .jumpFactor(block.information.blockProperties.jump_velocity_modifier);
-                if (block.information.blockProperties.randomTicks) blockSettings.randomTicks();
-                if (block.information.blockProperties.instant_break) blockSettings.instabreak();
-                if (!block.information.blockProperties.collidable) blockSettings.noCollission();
-                if (block.information.blockProperties.translucent) blockSettings.noOcclusion();
-                if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicShape();
+            if (block.information.getBlockSettings() != null) {
+                blockSettings.destroyTime(block.information.getBlockSettings().hardness).explosionResistance(block.information.getBlockSettings().resistance)
+                        .mapColor(block.information.getBlockSettings().getMapColor())
+                        .pushReaction(block.information.getBlockSettings().getPushReaction())
+                        .sound(block.information.getBlockSettings().getBlockSoundGroup())
+                        .friction(block.information.getBlockSettings().slipperiness)
+                        .emissiveRendering((state, world, pos) -> block.information.getBlockSettings().is_emissive)
+                        .lightLevel(state -> block.information.getBlockSettings().luminance)
+                        .speedFactor(block.information.getBlockSettings().velocity_modifier)
+                        .jumpFactor(block.information.getBlockSettings().jump_velocity_modifier);
+                if (block.information.getBlockSettings().randomTicks) blockSettings.randomTicks();
+                if (block.information.getBlockSettings().instant_break) blockSettings.instabreak();
+                if (!block.information.getBlockSettings().collidable) blockSettings.noCollission();
+                if (block.information.getBlockSettings().translucent) blockSettings.noOcclusion();
+                if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
             }
 
             FabricItemSettings settings = new FabricItemSettings();
-            if (block.information.itemProperties != null) {
-                settings.stacksTo(block.information.itemProperties.maxStackSize);
-                settings.rarity(Rarity.valueOf(block.information.itemProperties.rarity.toUpperCase(Locale.ROOT)));
-                if (block.information.itemProperties.maxDurability != 0)
-                    settings.durability(block.information.itemProperties.maxDurability);
-                if (!block.information.itemProperties.equipmentSlot.isEmpty() && !block.information.itemProperties.equipmentSlot.isBlank())
-                    settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.itemProperties.equipmentSlot.toLowerCase(Locale.ROOT)));
+            if (block.information.getItemSettings() != null) {
+                settings.stacksTo(block.information.getItemSettings().maxStackSize);
+                settings.rarity(Rarity.valueOf(block.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
+                if (block.information.getItemSettings().durability != 0)
+                    settings.durability(block.information.getItemSettings().durability);
+//                if (!block.information.getItemSettings().wearableSlot.isEmpty() && !block.information.getItemSettings().wearableSlot.isBlank())
+//                    settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.getItemSettings().wearableSlot.toLowerCase(Locale.ROOT)));
                 if (block.food_information != null)
                     settings.food(Registries.FOODS.get(block.food_information.foodComponent));
-                if (block.information.itemProperties.fireproof) settings.fireResistant();
+                if (block.information.getItemSettings().fireproof) settings.fireResistant();
             }
 
             RegistryHelperBlockExpanded expanded = new RegistryHelperBlockExpanded(id.modId());
@@ -150,8 +152,8 @@ public class Blocks implements AddonModule {
                 }
             }
 
-            if (block.block_type != null) {
-                switch (block.block_type) {
+            if (block.getBlockType() != null) {
+                switch (block.getBlockType()) {
                     case BLOCK, WOOD -> {
                         if (block.additional_information != null && block.additional_information.dyable) {
                             Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(block, blockSettings));
@@ -430,9 +432,7 @@ public class Blocks implements AddonModule {
                 new BlockInitThread(block);
             }
 
-//            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(blockId), block.information.getRenderLayer());
-
-            if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
+            if (block.getBlockType() == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
                 List<ResourceLocation> names = new ArrayList<>();
                 block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
                     if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
@@ -446,7 +446,7 @@ public class Blocks implements AddonModule {
             }
         } catch (
                 Exception e) {
-            if (block.block_type == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
+            if (block.getBlockType() == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
                 List<ResourceLocation> names = new ArrayList<>();
                 block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
                     if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
@@ -456,23 +456,6 @@ public class Blocks implements AddonModule {
                 failedRegistering("block", file.getName(), e);
             }
         }
-    }
-
-    private Map<String, Property<?>> parseProperties(ObjValue props) {
-        Map<String, Property<?>> map = new HashMap<>();
-
-        props.forEach((name, val) -> val
-                .ifString(str -> str.handle(prop -> {
-                    var property = Registries.PROPERTIES.get(new ResourceLocation(prop));
-                    if (property == null)
-                        throw new ThingParseException("Property with name " + prop + " not found in ThingRegistries.PROPERTIES");
-                    if (!property.getName().equals(name))
-                        throw new ThingParseException("The stock property '" + prop + "' does not have the expected name '" + name + "' != '" + property.getName() + "'");
-                    map.put(name, property);
-                }))
-                .ifObj(obj -> obj.raw(rawObj -> map.put(name, PropertyType.deserialize(name, rawObj))))
-                .typeError());
-        return map;
     }
 
     @Override

@@ -28,10 +28,12 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
@@ -55,7 +57,9 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.entity.schedule.Schedule;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -179,17 +183,6 @@ public class Obsidian implements ModInitializer {
 		Registry.register(registry, name, idk);
 	}
 
-	/*public static void registerDataPack(Identifier id, Processor<ArtificeResourcePack.ServerResourcePackBuilder> register) {
-		if (!ArtificeRegistry.DATA.containsId(id))
-			ArtificeImpl.registerSafely(ArtificeRegistry.DATA, id, new DynamicResourcePackFactory<>(ResourceType.SERVER_DATA, id, register));
-	}
-
-	@Environment(EnvType.CLIENT)
-	public static void registerAssetPack(Identifier id, Processor<ArtificeResourcePack.ClientResourcePackBuilder> register) {
-		if (!ArtificeRegistry.ASSETS.containsId(id))
-			ArtificeImpl.registerSafely(ArtificeRegistry.ASSETS, id, new DynamicResourcePackFactory<>(ResourceType.CLIENT_RESOURCES, id, register));
-	}*/
-
 	private static <T> T lookupDeserialize(String s, Registry<T> registry) {
 		return registry.get(new ResourceLocation(s));
 	}
@@ -235,9 +228,19 @@ public class Obsidian implements ModInitializer {
 		ArgumentTypeRegistry.registerArgumentType(Const.id("mod_id"), ModIdArgument.class,
 				SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument));
 
+		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COLORED_BLOCKS).register(entries -> {
+			if (Minecraft.getInstance().options.advancedItemTooltips) {
+				entries.getDisplayStacks().add(new ItemStack(net.minecraft.world.level.block.Blocks.DIRT));
+			}
+		});
+
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "creative_tab", new CreativeTabs());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_sound_groups", new BlockSoundGroups());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_set_types", new BlockSetTypes());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "wood_types", new WoodTypes());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_properties", new BlockProperties());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_properties", new ItemProperties());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "blocks", new Blocks());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ores", new Ores());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());

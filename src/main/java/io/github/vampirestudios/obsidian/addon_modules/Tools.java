@@ -27,8 +27,8 @@ public class Tools implements AddonModule {
         try {
             if (tool == null) return;
             CustomToolMaterial material = new CustomToolMaterial(tool.material);
-            Item.Properties settings = new Item.Properties().stacksTo(tool.information.maxStackSize)
-                    .rarity(Rarity.valueOf(tool.information.rarity.toUpperCase(Locale.ROOT)));
+            Item.Properties settings = new Item.Properties().stacksTo(tool.information.getItemSettings().maxStackSize)
+                    .rarity(Rarity.valueOf(tool.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     tool.information.name.id,
                     () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
@@ -43,7 +43,7 @@ public class Tools implements AddonModule {
                 case "axe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new AxeItemImpl(tool, material, tool.attackDamage, tool.attackSpeed, settings));
             }
             Item finalItem = item;
-            ItemGroupEvents.modifyEntriesEvent(tool.information.getItemGroup()).register(entries -> entries.accept(finalItem));
+            ItemGroupEvents.modifyEntriesEvent(tool.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(finalItem));
             register(ContentRegistries.TOOLS, "tool", identifier, tool);
         } catch (Exception e) {
             failedRegistering("tool", file.getName(), e);

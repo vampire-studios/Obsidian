@@ -55,7 +55,7 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 			Item item;
 			if (BuiltInRegistries.ITEM.containsKey(new ResourceLocation(this.modId, name))) item = BuiltInRegistries.ITEM.get(new ResourceLocation(this.modId, name));
 			else item = Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(this.modId, name), new CustomBlockItem(block2, block, settings));
-			if (block2.information.itemProperties != null) ItemGroupEvents.modifyEntriesEvent(block2.information.itemProperties.getItemGroup()).register(entries -> entries.accept(item));
+			if (block2.information.getItemSettings() != null) ItemGroupEvents.modifyEntriesEvent(block2.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
 		}
 		return block;
 	}
@@ -71,7 +71,7 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 						.mapColor(MapColor.PLANT)
 						.strength(0.2F)
 						.randomTicks()
-						.sound(block2.information.blockProperties.getBlockSoundGroup())
+						.sound(block2.information.getBlockSettings().getBlockSoundGroup())
 						.noOcclusion()
 						.isValidSpawn((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
 						.isSuffocating((state, world, pos) -> false)
@@ -117,16 +117,6 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> {
 			ItemStack stack = new ItemStack(item);
 			item.setColor(stack, item.block.additional_information.defaultColor);
-			entries.accept(stack);
-		});
-		return item;
-	}
-
-	public Item registerDyeableItem(DyeableItemImpl item, String name) {
-		register(BuiltInRegistries.ITEM, name, item);
-		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> {
-			ItemStack stack = new ItemStack(item);
-			item.setColor(stack, item.item.information.defaultColor);
 			entries.accept(stack);
 		});
 		return item;

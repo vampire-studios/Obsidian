@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -16,6 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
+import java.util.List;
+
 public class EightDirectionBlockImpl extends Block {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 7);
 
@@ -29,12 +30,12 @@ public class EightDirectionBlockImpl extends Block {
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties.translucent;
+        return block.information.getBlockSettings().translucent;
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties.translucent;
+        return block.information.getBlockSettings().translucent;
     }
 
     @Override

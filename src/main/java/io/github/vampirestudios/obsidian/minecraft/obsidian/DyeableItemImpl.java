@@ -16,13 +16,13 @@ public class DyeableItemImpl extends ItemImpl implements DyeableLeatherItem {
     @Override
     public int getColor(ItemStack stack) {
         CompoundTag nbtCompound = stack.getTagElement("display");
-        return nbtCompound != null && nbtCompound.contains("color", 99) ? nbtCompound.getInt("color") : item.information.defaultColor;
+        return nbtCompound != null && nbtCompound.contains("color", 99) ? nbtCompound.getInt("color") : item.information.getItemSettings().defaultColor;
     }
 
     @Override
     public void setColor(ItemStack stack, int color) {
         DyeableLeatherItem.super.setColor(stack, color);
-        if (color == item.information.defaultColor) {
+        if (color == item.information.getItemSettings().defaultColor) {
             stack.hideTooltipPart(ItemStack.TooltipPart.DYE);
         } else {
             CompoundTag nbtCompound = stack.getOrCreateTag();

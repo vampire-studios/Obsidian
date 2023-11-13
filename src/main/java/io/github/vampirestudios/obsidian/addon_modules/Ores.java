@@ -17,15 +17,17 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -82,24 +84,33 @@ public class Ores implements AddonModule {
 				blockSettings = FabricBlockSettings.of();
 			}
 
-			if (block.information.blockProperties != null) {
-				blockSettings.destroyTime(block.information.blockProperties.hardness).explosionResistance(block.information.blockProperties.resistance)
-						.sound(block.information.blockProperties.getBlockSoundGroup())
-						.friction(block.information.blockProperties.slipperiness)
-						.emissiveRendering((state, world, pos) -> block.information.blockProperties.is_emissive)
-						.lightLevel(blockState -> block.information.blockProperties.luminance)
-						.speedFactor(block.information.blockProperties.velocity_modifier)
-						.jumpFactor(block.information.blockProperties.jump_velocity_modifier);
-				if (block.information.blockProperties.randomTicks) blockSettings.randomTicks();
-				if (block.information.blockProperties.instant_break) blockSettings.instabreak();
-				if (!block.information.blockProperties.collidable) blockSettings.noCollission();
-				if (block.information.blockProperties.translucent) blockSettings.noOcclusion();
-				if (block.information.blockProperties.dynamic_boundaries) blockSettings.dynamicShape();
+			if (block.information.getBlockSettings() != null) {
+				blockSettings.destroyTime(block.information.getBlockSettings().hardness).explosionResistance(block.information.getBlockSettings().resistance)
+						.sound(block.information.getBlockSettings().getBlockSoundGroup())
+						.friction(block.information.getBlockSettings().slipperiness)
+						.emissiveRendering((state, world, pos) -> block.information.getBlockSettings().is_emissive)
+						.lightLevel(blockState -> block.information.getBlockSettings().luminance)
+						.speedFactor(block.information.getBlockSettings().velocity_modifier)
+						.jumpFactor(block.information.getBlockSettings().jump_velocity_modifier);
+				if (block.information.getBlockSettings().randomTicks) blockSettings.randomTicks();
+				if (block.information.getBlockSettings().instant_break) blockSettings.instabreak();
+				if (!block.information.getBlockSettings().collidable) blockSettings.noCollission();
+				if (block.information.getBlockSettings().translucent) blockSettings.noOcclusion();
+				if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
 			}
 
-			Item.Properties settings = new Item.Properties();
-			if (block.food_information != null) settings.food(Registries.FOODS.get(block.food_information.foodComponent));
-			if (block.information.itemProperties != null && block.information.itemProperties.fireproof) settings.fireResistant();
+			FabricItemSettings settings = new FabricItemSettings();
+			if (block.information.getItemSettings() != null) {
+				settings.stacksTo(block.information.getItemSettings().maxStackSize);
+				settings.rarity(Rarity.valueOf(block.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
+				if (block.information.getItemSettings().durability != 0)
+					settings.durability(block.information.getItemSettings().durability);
+//				if (!block.information.getItemSettings().wearableSlot.isEmpty() && !block.information.getItemSettings().wearableSlot.isBlank())
+//					settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.getItemSettings().wearableSlot.toLowerCase(Locale.ROOT)));
+				if (block.food_information != null)
+					settings.food(Registries.FOODS.get(block.food_information.foodComponent));
+				if (block.information.getItemSettings().fireproof) settings.fireResistant();
+			}
 
 			RegistryHelperBlockExpanded expanded = new RegistryHelperBlockExpanded(REGISTRY_HELPER.modId());
 

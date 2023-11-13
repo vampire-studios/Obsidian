@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
-import io.github.vampirestudios.obsidian.api.obsidian.item.ItemInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.RenderModeModel;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
@@ -75,38 +75,41 @@ public class Items implements AddonModule {
                 item.information.name.id = identifier;
             }
 
-            FabricItemSettings settings = (FabricItemSettings) new FabricItemSettings()
-                    .stacksTo(item.information.maxStackSize)
-                    .rarity(Rarity.valueOf(item.information.rarity.toUpperCase(Locale.ROOT)));
+            FabricItemSettings settings = new FabricItemSettings();
+            settings.stacksTo(item.information.getItemSettings().maxStackSize);
+            settings.rarity(Rarity.valueOf(item.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
+            if (item.information.getItemSettings().durability != 0)
+                settings.durability(item.information.getItemSettings().durability);
+            if (item.information.getItemSettings().fireproof) settings.fireResistant();
 
             RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 
             Item item1;
-            if (item.information.canPlaceBlock) {
-                item1 = expanded.registerItem(identifier.getPath(), new BlockItemImpl(item, BuiltInRegistries.BLOCK.get(item.information.placableBlock), settings),
-                        item.information.getItemGroup());
+            if (item.information.getItemSettings().canPlaceBlock) {
+                item1 = expanded.registerItem(identifier.getPath(), new BlockItemImpl(item, BuiltInRegistries.BLOCK.get(item.information.getItemSettings().placableBlock), settings),
+                        item.information.getItemSettings().getItemGroup());
             } else {
-                if (item.information.renderModeModels != null) {
-                    for (ItemInformation.RenderModeModel renderModeModel : item.information.renderModeModels) {
+                if (item.information.getItemSettings().renderModeModels != null) {
+                    for (RenderModeModel renderModeModel : item.information.getItemSettings().renderModeModels) {
                         ClientInit.customModels.add(new ModelResourceLocation(renderModeModel.model, "inventory"));
                     }
                 }
-                if (item.information.wearable && item.information.maxStackSize <= 1) {
-                    settings.equipmentSlot(stack -> EquipmentSlot.byName(item.information.wearableSlot));
-                    if (item.information.dyeable) {
-                        item1 = expanded.registerDyeableItem(new WearableAndDyeableItemImpl(item, settings), identifier.getPath(), item.information.getItemGroup());
+                if (item.information.getItemSettings().wearable && item.information.getItemSettings().maxStackSize <= 1) {
+                    settings.equipmentSlot(stack -> EquipmentSlot.byName(item.information.getItemSettings().wearableSlot));
+                    if (item.information.getItemSettings().dyeable) {
+                        item1 = expanded.registerDyeableItem(new WearableAndDyeableItemImpl(item, settings), identifier.getPath(), item.information.getItemSettings().getItemGroup());
                     } else {
-                        item1 = expanded.registerItem(identifier.getPath(), new WearableItemImpl(item, settings), item.information.getItemGroup());
+                        item1 = expanded.registerItem(identifier.getPath(), new WearableItemImpl(item, settings), item.information.getItemSettings().getItemGroup());
                     }
                 } else {
-                    if (item.information.dyeable) {
-                        item1 = expanded.registerDyeableItem(new DyeableItemImpl(item, settings), identifier.getPath(), item.information.getItemGroup());
+                    if (item.information.getItemSettings().dyeable) {
+                        item1 = expanded.registerDyeableItem(new DyeableItemImpl(item, settings), identifier.getPath(), item.information.getItemSettings().getItemGroup());
                     } else {
-                        item1 = expanded.registerItem(identifier.getPath(), new ItemImpl(item, settings), item.information.getItemGroup());
+                        item1 = expanded.registerItem(identifier.getPath(), new ItemImpl(item, settings), item.information.getItemSettings().getItemGroup());
                     }
                 }
             }
-            if (item.information.isFuel) FuelRegistry.INSTANCE.add(item1, item.information.fuelDuration);
+            if (item.information.getItemSettings().isFuel) FuelRegistry.INSTANCE.add(item1, item.information.getItemSettings().fuelDuration);
             register(ContentRegistries.ITEMS, "item", identifier, item);
         } catch (Exception e) {
             failedRegistering("item", file.getName(), e);

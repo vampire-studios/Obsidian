@@ -51,7 +51,7 @@ public class BlockSoundGroups implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "blocks/sound_groups";
+		return "block/sound_groups";
 	}
 
 }

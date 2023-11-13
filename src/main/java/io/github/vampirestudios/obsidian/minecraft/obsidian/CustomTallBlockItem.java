@@ -36,17 +36,17 @@ public class CustomTallBlockItem extends BlockItem {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return block.information.itemProperties.has_glint;
+        return block.information.getItemSettings().hasEnchantmentGlint;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return block.information.itemProperties.is_enchantable;
+        return block.information.getItemSettings().isEnchantable;
     }
 
     @Override
     public int getEnchantmentValue() {
-        return block.information.itemProperties.enchantability;
+        return block.information.getItemSettings().enchantability;
     }
 
     @Override

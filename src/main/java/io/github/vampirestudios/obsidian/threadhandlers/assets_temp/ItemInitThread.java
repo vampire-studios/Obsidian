@@ -32,12 +32,12 @@ public class ItemInitThread implements Runnable {
                     "item." + item.information.name.id.getNamespace() + "." + item.information.name.id.getPath(), name
             ));
         }
-        if (item.information.dyeable) {
+        if (item.information.getItemSettings().dyeable) {
             net.minecraft.world.item.Item registeredItem = BuiltInRegistries.ITEM.get(item.information.name.id);
             ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateTagElement("display").contains("color") ?
-                    stack.getOrCreateTagElement("display").getInt("color") : item.information.defaultColor, registeredItem);
+                    stack.getOrCreateTagElement("display").getInt("color") : item.information.getItemSettings().defaultColor, registeredItem);
         }
-        if (item.information.renderModeModels != null && item.information.customRenderMode) {
+        if (item.information.getItemSettings().renderModeModels != null && item.information.getItemSettings().customRenderMode) {
             ResourceLocation normalModel;
             if (item.rendering != null) {
                 if(item.rendering.model != null)
@@ -46,7 +46,7 @@ public class ItemInitThread implements Runnable {
                     normalModel = item.rendering.itemModel.parent;
                 else normalModel = item.information.name.id;
             } else normalModel = item.information.name.id;
-            CustomRenderModeItemRenderer customRenderModeItemRenderer = new CustomRenderModeItemRenderer(item.information.name.id, item.information.renderModeModels,
+            CustomRenderModeItemRenderer customRenderModeItemRenderer = new CustomRenderModeItemRenderer(item.information.name.id,
                     normalModel);
             ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(customRenderModeItemRenderer);
             BuiltinItemRendererRegistry.INSTANCE.register(BuiltInRegistries.ITEM.get(item.information.name.id), customRenderModeItemRenderer);

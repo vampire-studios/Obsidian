@@ -22,6 +22,6 @@ public class WearableAndDyeableItemImpl extends DyeableItemImpl implements Equip
 
 	@Override
 	public EquipmentSlot getEquipmentSlot() {
-		return EquipmentSlot.byName(item.information.wearableSlot);
+		return EquipmentSlot.byName(item.information.getItemSettings().wearableSlot);
 	}
 }

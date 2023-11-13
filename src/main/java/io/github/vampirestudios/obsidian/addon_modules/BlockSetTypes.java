@@ -85,7 +85,7 @@ public class BlockSetTypes implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "blocks/block_set_type";
+		return "block/block_set_type";
 	}
 
 }

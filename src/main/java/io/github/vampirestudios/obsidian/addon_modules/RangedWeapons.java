@@ -31,8 +31,8 @@ public class RangedWeapons implements AddonModule {
         RangedWeaponItem rangedWeapon = Obsidian.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
         try {
             if (rangedWeapon == null) return;
-            Item.Properties settings = new Item.Properties().stacksTo(rangedWeapon.information.maxStackSize)
-                    .rarity(Rarity.valueOf(rangedWeapon.information.rarity.toUpperCase(Locale.ROOT)));
+            Item.Properties settings = new Item.Properties().stacksTo(rangedWeapon.information.getItemSettings().maxStackSize)
+                    .rarity(Rarity.valueOf(rangedWeapon.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     rangedWeapon.information.name.id,
                     () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
@@ -74,7 +74,7 @@ public class RangedWeapons implements AddonModule {
                 }*/
             }
             Item finalItem = item;
-            ItemGroupEvents.modifyEntriesEvent(rangedWeapon.information.getItemGroup()).register(entries -> entries.accept(finalItem));
+            ItemGroupEvents.modifyEntriesEvent(rangedWeapon.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(finalItem));
             register(ContentRegistries.RANGED_WEAPONS, "ranged_weapon", identifier, rangedWeapon);
         } catch (Exception e) {
             failedRegistering("ranged_weapon", file.getName(), e);

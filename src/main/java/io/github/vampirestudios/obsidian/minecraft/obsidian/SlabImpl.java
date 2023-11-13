@@ -23,22 +23,22 @@ public class SlabImpl extends SlabBlock {
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? !block.information.blockProperties.translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? !block.information.blockProperties.translucent : super.isCollisionShapeFullBlock(state, world, pos);
+        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
     }
 
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.blockProperties != null ? block.information.blockProperties.translucent : super.propagatesSkylightDown(state, world, pos);
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.rendering != null && block.lore.length != 0) {
+        if (block.lore != null && block.lore.length != 0) {
             for (TooltipInformation tooltipInformation : block.lore) {
                 tooltip.add(tooltipInformation.getTextType("tooltip"));
             }

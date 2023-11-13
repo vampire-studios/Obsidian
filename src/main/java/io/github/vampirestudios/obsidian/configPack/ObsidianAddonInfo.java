@@ -61,7 +61,8 @@ public class ObsidianAddonInfo extends BaseAddonInfo {
         JSON5,
         TOML,
         YAML,
-        HJSON
+        HJSON,
+        HOCON
     }
 
 }

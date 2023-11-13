@@ -30,7 +30,7 @@ public class RegistryHelperItemExpanded extends RegistryHelper.Items {
 		registerItem(name, item);
 		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> {
 			ItemStack stack = new ItemStack(item);
-			item.setColor(stack, item.item.information.defaultColor);
+			item.setColor(stack, item.item.information.getItemSettings().defaultColor);
 			entries.accept(stack);
 		});
 		return item;
@@ -50,7 +50,7 @@ public class RegistryHelperItemExpanded extends RegistryHelper.Items {
 		registerItem(name, item);
 		ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> {
 			ItemStack stack = new ItemStack(item);
-			item.setColor(stack, item.item.information.defaultColor);
+			item.setColor(stack, item.item.information.getItemSettings().defaultColor);
 			entries.accept(stack);
 		});
 		return item;

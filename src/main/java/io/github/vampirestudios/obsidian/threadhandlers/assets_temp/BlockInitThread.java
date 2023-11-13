@@ -69,8 +69,8 @@ public class BlockInitThread implements Runnable {
                 }
             }
             if (block.rendering != null) {
-                if (block.block_type != null) {
-                    switch (block.block_type) {
+                if (block.getBlockType() != null) {
+                    switch (block.getBlockType()) {
                         default -> generateBlockState(block, resourcePack, blockId);
                         case HORIZONTAL_DIRECTIONAL -> generateHorizontalFacingBlockState(block, resourcePack, blockId);
                         case DIRECTIONAL -> generateFacingBlockState(block, resourcePack, blockId);
@@ -121,8 +121,8 @@ public class BlockInitThread implements Runnable {
                 }
                 if (block.rendering.blockModel != null) {
                     TextureAndModelInformation textureAndModelInformation = block.rendering.blockModel;
-                    if (block.block_type != null) {
-                        switch (block.block_type) {
+                    if (block.getBlockType() != null) {
+                        switch (block.getBlockType()) {
                             case OXIDIZING_BLOCK:
                                 for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
@@ -169,23 +169,23 @@ public class BlockInitThread implements Runnable {
                         }
                     }
 
-                    if (block.block_type != null) {
-                        switch (block.block_type) {
+                    if (block.getBlockType() != null) {
+                        switch (block.getBlockType()) {
                             case OXIDIZING_BLOCK:
                                 for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
                                         textureAndModelInformation = variantBlock.display.model;
-                                        ARRPGenerationHelper.generateBasicBlockState(resourcePack, variantBlock.name.id);
+                                        ARRPGenerationHelper.generateBasicBlockState(resourcePack, Utils.prependToPath(variantBlock.name.id, "block/"));
                                         ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                     }
                                 }
                                 break;
                             case LANTERN:
                                 TextureAndModelInformation textureAndModelInformation2 = block.rendering.hangingModel;
-                                ARRPGenerationHelper.generateLanternBlockModels(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures, textureAndModelInformation2.parent, textureAndModelInformation2.textures);
+                                ARRPGenerationHelper.generateLanternBlockModels(resourcePack, blockId, Utils.prependToPath(blockId, "block/"), textureAndModelInformation.textures, textureAndModelInformation2.parent, textureAndModelInformation2.textures);
                                 break;
                             case DIRECTIONAL:
-                                ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, textureAndModelInformation.parent);
+                                ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
                                     return;
@@ -193,7 +193,7 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case HORIZONTAL_DIRECTIONAL:
-                                ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, textureAndModelInformation.parent);
+                                ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
                                     return;
@@ -201,7 +201,7 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case ROTATED_PILLAR, LOG:
-                                ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, textureAndModelInformation.parent);
+                                ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
                                     return;
@@ -209,11 +209,12 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             default:
-                                ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, textureAndModelInformation.parent);
+                                ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
                                     return;
-                                }ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                }
+                                ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                         }
                     }
@@ -225,13 +226,7 @@ public class BlockInitThread implements Runnable {
                     if (textureAndModelInformation.textures != null)
                         textureAndModelInformation.textures.forEach((s, location) -> itemModel.textures(JModel.textures().var(s, location.toString())));
                     resourcePack.addModel(itemModel, blockId);
-                } else {
-                    if (block.rendering.model != null) {
-                        ARRPGenerationHelper.generateBlockItemModel1(resourcePack, blockId, block.rendering.model.parent);
-                    } else if(block.rendering.blockModel != null) {
-                        ARRPGenerationHelper.generateBlockItemModel1(resourcePack, blockId, block.rendering.blockModel.parent);
-                    }
-                }
+                } else ARRPGenerationHelper.generateBlockItemModel1(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
             }
             if (block.additional_information != null && translated != null) {
                 if (block.additional_information.slab) {
@@ -258,7 +253,7 @@ public class BlockInitThread implements Runnable {
                 ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.getOrCreateTagElement("display").contains("color") ?
                         stack.getOrCreateTagElement("display").getInt("color") : block.additional_information.defaultColor, registeredBlock.asItem());
             }
-            if (block.block_type != null && block.block_type == Block.BlockType.DYEABLE) {
+            if (block.getBlockType() != null && block.getBlockType() == Block.BlockType.DYEABLE) {
                 net.minecraft.world.level.block.Block registeredBlock = BuiltInRegistries.BLOCK.get(nameInformation.id);
                 ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
                         getBlockEntityColor(block, Objects.requireNonNull(world), pos), registeredBlock);
@@ -274,8 +269,7 @@ public class BlockInitThread implements Runnable {
         if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
             ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, block.rendering.blockState.model);
         } else {
-            if (block.rendering.blockModel != null) ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, block.rendering.blockModel.parent);
-            else if (block.rendering.model != null) ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, block.rendering.model.parent);
+            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
         }
     }
 
@@ -283,8 +277,7 @@ public class BlockInitThread implements Runnable {
         if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
             ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, block.rendering.blockState.model);
         } else {
-            if (block.rendering.blockModel != null) ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, block.rendering.blockModel.parent);
-            else if (block.rendering.model != null) ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, block.rendering.model.parent);
+            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
         }
     }
 
@@ -292,8 +285,7 @@ public class BlockInitThread implements Runnable {
         if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
             ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, block.rendering.blockState.model);
         } else {
-            if (block.rendering.blockModel != null) ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, block.rendering.blockModel.parent);
-            else if (block.rendering.model != null) ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, block.rendering.model.parent);
+            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
         }
     }
 
@@ -301,8 +293,7 @@ public class BlockInitThread implements Runnable {
         if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
             ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, block.rendering.blockState.model);
         } else {
-            if (block.rendering.blockModel != null) ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, block.rendering.blockModel.parent);
-            else if (block.rendering.model != null) ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, block.rendering.model.parent);
+            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
         }
     }
 

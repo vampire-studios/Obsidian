@@ -82,12 +82,12 @@ public class Armor implements AddonModule {
 
             Item item;
             Item.Properties settings = new Item.Properties()
-                    .stacksTo(armor.information.maxStackSize)
-                    .rarity(Rarity.valueOf(armor.information.rarity.toUpperCase(Locale.ROOT)));
-            if (armor.information.dyeable) item = new DyeableArmorItemImpl(customArmorMaterial, armor, settings);
+                    .stacksTo(armor.information.getItemSettings().maxStackSize)
+                    .rarity(Rarity.valueOf(armor.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
+            if (armor.information.getItemSettings().dyeable) item = new DyeableArmorItemImpl(customArmorMaterial, armor, settings);
             else item = new ArmorItemImpl(customArmorMaterial, armor, settings);
             REGISTRY_HELPER.items().registerItem(identifier.getPath(), item);
-            ItemGroupEvents.modifyEntriesEvent(armor.information.getItemGroup()).register(entries -> entries.accept(item));
+            ItemGroupEvents.modifyEntriesEvent(armor.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
 
             register(ContentRegistries.ARMORS, "armor", identifier, armor);
         } catch (Exception e) {

@@ -29,6 +29,8 @@ public class ContentRegistries {
 	public static Registry<FoodItem> FOODS = FabricRegistryBuilder.createSimple(FoodItem.class, id("foods")).buildAndRegister();
 	public static Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, id("custom_food_components")).buildAndRegister();
 	public static Registry<CustomSoundGroup> BLOCK_SOUND_GROUPS = FabricRegistryBuilder.createSimple(CustomSoundGroup.class, id("block_sound_groups")).buildAndRegister();
+	public static Registry<BlockSettings> BLOCK_SETTINGS = FabricRegistryBuilder.createSimple(BlockSettings.class, id("block_settings")).buildAndRegister();
+	public static Registry<ItemSettings> ITEM_SETTINGS = FabricRegistryBuilder.createSimple(ItemSettings.class, id("item_settings")).buildAndRegister();
 	public static Registry<BlockSetType> BLOCK_SET_TYPES = FabricRegistryBuilder.createSimple(BlockSetType.class, id("block_set_types")).buildAndRegister();
 	public static Registry<WoodType> WOOD_TYPES = FabricRegistryBuilder.createSimple(WoodType.class, id("wood_types")).buildAndRegister();
 	public static Registry<MusicDisc> MUSIC_DISCS = FabricRegistryBuilder.createSimple(MusicDisc.class, id("music_discs")).buildAndRegister();

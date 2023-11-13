@@ -1,10 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import com.google.gson.annotations.SerializedName;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -15,15 +13,8 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.heightproviders.TrapezoidHeight;
 import net.minecraft.world.level.levelgen.heightproviders.UniformHeight;
-import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.BlockStateMatchTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.RandomBlockMatchTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.RandomBlockStateMatchTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
+
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class OreInformation {
@@ -55,7 +46,7 @@ public class OreInformation {
         }
     }
 
-    public RuleTest ruleTest() {
+    /*public RuleTest ruleTest() {
         return switch (test_type) {
             case "tag" -> new TagMatchTest(getBlockTag());
             case "always_true" -> AlwaysTrueTest.INSTANCE;
@@ -65,7 +56,7 @@ public class OreInformation {
             case "random_block_state_match" -> new RandomBlockStateMatchTest(ObsidianAddonLoader.getState(BuiltInRegistries.BLOCK.get(target_state.block), target_state.properties), target_state.probability);
             default -> throw new IllegalStateException("Unexpected value: " + test_type);
         };
-    }
+    }*/
 
     public Predicate<BiomeSelectionContext> biomeSelector() {
         Predicate<BiomeSelectionContext> predicate;
@@ -119,7 +110,7 @@ public class OreInformation {
     protected static class TargetState {
         public ResourceLocation block;
         public ResourceLocation tag = new ResourceLocation("base_stone_overworld");
-        public Map<String, String> properties;
+//        public Map<String, String> properties;
         public float probability;
     }
 
