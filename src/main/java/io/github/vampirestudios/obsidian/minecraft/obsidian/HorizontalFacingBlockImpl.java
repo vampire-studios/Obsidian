@@ -71,7 +71,7 @@ public class HorizontalFacingBlockImpl extends HorizontalDirectionalBlock {
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, Direction.getFacingAxis(ctx.getPlayer(), Direction.Axis.X));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
