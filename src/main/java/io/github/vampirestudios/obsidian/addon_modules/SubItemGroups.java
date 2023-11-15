@@ -16,6 +16,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,7 +36,7 @@ public class SubItemGroups implements AddonModule {
             if (itemGroup == null) return;
             CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.get(itemGroup.targetGroup);
             assert tab != null;
-            ItemSubGroup.Builder builder = new ItemSubGroup.Builder(tab, Component.translatable(tab.getDisplayName().getString() + "." + itemGroup.name.id.getPath()));
+            ItemSubGroup.Builder builder = new ItemSubGroup.Builder(tab, Component.literal(WordUtils.capitalizeFully(itemGroup.name.id.getPath())));
             if (itemGroup.hasCustomTexture) builder.backgroundTexture(itemGroup.customTexture);
             builder.entries((displayContext, entries) -> {
                 if (itemGroup.tags != null) {
