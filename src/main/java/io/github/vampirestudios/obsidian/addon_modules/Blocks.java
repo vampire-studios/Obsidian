@@ -26,11 +26,13 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
@@ -50,36 +52,7 @@ public class Blocks implements AddonModule {
 
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
-
-        if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
-            block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-        } else {
-            ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addon.getConfigPackInfo();
-            if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
-                block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-            } else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
-                JsonObject jsonObject = JanksonFactory.builder().build().load(file);
-                block = JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-            } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
-                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-                mapper.findAndRegisterModules();
-                block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-            } else if (addonInfo.format == ObsidianAddonInfo.Format.TOML) {
-                ObjectMapper mapper = new ObjectMapper(new TomlFactory());
-                mapper.findAndRegisterModules();
-                block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-            } else if (addonInfo.format == ObsidianAddonInfo.Format.HJSON) {
-                block = Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-            }/* else if (addonInfo.format == ObsidianAddonInfo.Format.HOCON) {
-                block = ConfigFactory.parseReader(new FileReader(file)).root();
-                block = Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-            }*/ else {
-                block = null;
-            }
-        }
-
-
+        io.github.vampirestudios.obsidian.api.obsidian.block.Block block = getBlock(addon, file);
 
         try {
             if (block == null) return;
@@ -219,8 +192,8 @@ public class Blocks implements AddonModule {
                     case BAMBOO_DOOR ->
                             expanded.registerBlock(new DoorBlock(blockSettings, WoodType.BAMBOO.setType()), block, blockId.getPath(), settings);
                     case LOG ->
-                            expanded.registerLog(block, blockId.getPath(), /*block.information.blockProperties.getMaterial().getColor()*/MapColor.STONE,
-                                    /*block.information.blockProperties.getMaterial().getColor()*/MapColor.STONE, settings);
+                            expanded.registerLog(block, blockId.getPath(), /*block.information.getBlockSettings().getMapColor()*/MapColor.STONE,
+                                    /*block.information.getBlockSettings().getMapColor()*/MapColor.STONE, settings);
                     case STEM ->
                             expanded.registerNetherStemBlock(block, blockId.getPath(), /*block.information.blockProperties.getMaterial().getColor()*/MapColor.STONE, settings);
                     case OXIDIZING_BLOCK -> {
@@ -312,120 +285,13 @@ public class Blocks implements AddonModule {
                     }
                     case CARPET ->
                             expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
-
-                    /*case PANE:
-//                        BlockEntityType<SignBlockEntity> signBlockEntityBlockEntityType = REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(CraftingTableBlockEntity), Utils.appendToPath(blockId, "_base"));
-
-                        REGISTRY_HELPER.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;
-                    case PANE:
-                        REGISTRY_HELPER.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        break;*/
                 }
             }
 
             if (block.additional_information != null) {
                 AdditionalBlockInformation additionalInformation = block.additional_information;
-                if (!additionalInformation.extraBlocksName.isEmpty()) {
-                    ResourceLocation identifier = new ResourceLocation(blockId.getNamespace(), additionalInformation.extraBlocksName);
-                    if (additionalInformation.slab) {
-                        expanded.registerBlock(new SlabImpl(block, blockSettings), block,
-                                Utils.appendToPath(identifier, "_slab").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-                    }
-                    if (additionalInformation.stairs) {
-                        expanded.registerBlock(new StairsImpl(block, blockSettings), block, new ResourceLocation(id.modId(),
-                                identifier.getPath() + "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS);
-                    }
-                    if (additionalInformation.fence) {
-                        expanded.registerBlock(new FenceImpl(block, blockSettings), block,
-                                new ResourceLocation(id.modId(), identifier.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-                    }
-                    if (additionalInformation.fenceGate) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),
-                                block, Utils.appendToPath(identifier, "_fence_gate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.walls) {
-                        expanded.registerBlock(new WallImpl(block, blockSettings), block,
-                                Utils.appendToPath(identifier, "_wall").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-                    }
-                    if (additionalInformation.pressurePlate) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, blockSettings,
-                                        getWoodTypeSpecificSounds(soundType).setType()), block,
-                                Utils.appendToPath(identifier, "_pressure_plate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.button) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new ButtonBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType(),
-                                        30, true), block, Utils.appendToPath(identifier, "_button").getPath(),
-                                CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.door) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new DoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType()), block,
-                                Utils.appendToPath(identifier, "_door").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.trapdoor) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new TrapDoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType()),
-                                block, Utils.appendToPath(identifier, "_trapdoor").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                } else {
-                    if (additionalInformation.slab) {
-                        expanded.registerBlock(new SlabImpl(block, blockSettings), block,
-                                Utils.appendToPath(blockId, "_slab").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-                    }
-                    if (additionalInformation.stairs) {
-                        expanded.registerBlock(new StairsImpl(block, blockSettings), block, new ResourceLocation(id.modId(), blockId.getPath() + "_stairs").getPath(),
-                                CreativeModeTabs.BUILDING_BLOCKS);
-                    }
-                    if (additionalInformation.fence) {
-                        expanded.registerBlock(new FenceImpl(block, blockSettings), block,
-                                new ResourceLocation(id.modId(), blockId.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-                    }
-                    if (additionalInformation.fenceGate) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),
-                                block, Utils.appendToPath(blockId, "_fence_gate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.walls) {
-                        expanded.registerBlock(new WallImpl(block, blockSettings), block,
-                                Utils.appendToPath(blockId, "_wall").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-                    }
-                    if (additionalInformation.pressurePlate) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, blockSettings,
-                                        getWoodTypeSpecificSounds(soundType).setType()), block,
-                                Utils.appendToPath(blockId, "_pressure_plate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.button) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new ButtonBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType(),
-                                        30, true), block, Utils.appendToPath(blockId, "_button").getPath(),
-                                CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.door) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new DoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType()), block,
-                                Utils.appendToPath(blockId, "_door").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                    if (additionalInformation.trapdoor) {
-                        SoundType soundType = additionalInformation.overworldLike ? SoundType.OVERWORLD :
-                                additionalInformation.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
-                        expanded.registerBlock(new TrapDoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType()), block,
-                                Utils.appendToPath(blockId, "_trapdoor").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-                    }
-                }
+                ResourceLocation identifier = getIdentifier(additionalInformation, blockId);
+                registerBlocksIfNeeded(additionalInformation, identifier, block, blockSettings, id, settings, expanded);
             }
 
             if (!addon.getConfigPackInfo().hasData) {
@@ -444,8 +310,7 @@ public class Blocks implements AddonModule {
             } else {
                 register(ContentRegistries.BLOCKS, "block", blockId, block);
             }
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             if (block.getBlockType() == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
                 List<ResourceLocation> names = new ArrayList<>();
                 block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
@@ -456,6 +321,90 @@ public class Blocks implements AddonModule {
                 failedRegistering("block", file.getName(), e);
             }
         }
+    }
+
+    private io.github.vampirestudios.obsidian.api.obsidian.block.Block getBlock(IAddonPack addon, File file) throws IOException, SyntaxError {
+        if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
+            return parseJsonBlock(file);
+        } else {
+            ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addon.getConfigPackInfo();
+            if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
+                return parseJsonBlock(file);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
+                JsonObject jsonObject = JanksonFactory.builder().build().load(file);
+                return JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
+                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+                mapper.findAndRegisterModules();
+                return mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.TOML) {
+                ObjectMapper mapper = new ObjectMapper(new TomlFactory());
+                mapper.findAndRegisterModules();
+                return mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else if (addonInfo.format == ObsidianAddonInfo.Format.HJSON) {
+                return Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private io.github.vampirestudios.obsidian.api.obsidian.block.Block parseJsonBlock(File file) throws IOException {
+        return Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+    }
+
+    private ResourceLocation getIdentifier(AdditionalBlockInformation info, ResourceLocation defaultId) {
+        return !info.extraBlocksName.isEmpty()
+                ? new ResourceLocation(defaultId.getNamespace(), info.extraBlocksName)
+                : defaultId;
+    }
+
+    private void registerBlocksIfNeeded(AdditionalBlockInformation info, ResourceLocation identifier,
+                                        io.github.vampirestudios.obsidian.api.obsidian.block.Block block, BlockBehaviour.Properties blockSettings,
+                                        BasicAddonInfo id, Item.Properties settings, RegistryHelperBlockExpanded expanded) {
+        SoundType soundType = determineSoundType(info);
+        if (info.slab) {
+            expanded.registerBlock(new SlabImpl(block, blockSettings), block,
+                    Utils.appendToPath(identifier, "_slab").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
+        }
+        if (info.stairs) {
+            expanded.registerBlock(new StairsImpl(block, blockSettings), block, new ResourceLocation(id.modId(),
+                    identifier.getPath() + "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS);
+        }
+        if (info.fence) {
+            expanded.registerBlock(new FenceImpl(block, blockSettings), block,
+                    new ResourceLocation(id.modId(), identifier.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
+        }
+        if (info.fenceGate) {
+            expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),
+                    block, Utils.appendToPath(identifier, "_fence_gate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
+        }
+        if (info.walls) {
+            expanded.registerBlock(new WallImpl(block, blockSettings), block,
+                    Utils.appendToPath(identifier, "_wall").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
+        }
+        if (info.pressurePlate) {
+            expanded.registerBlock(new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, blockSettings,
+                            getWoodTypeSpecificSounds(soundType).setType()), block,
+                    Utils.appendToPath(identifier, "_pressure_plate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
+        }
+        if (info.button) {
+            expanded.registerBlock(new ButtonBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType(),
+                            30, true), block, Utils.appendToPath(identifier, "_button").getPath(),
+                    CreativeModeTabs.REDSTONE_BLOCKS, settings);
+        }
+        if (info.door) {
+            expanded.registerBlock(new DoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType()), block,
+                    Utils.appendToPath(identifier, "_door").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
+        }
+        if (info.trapdoor) {
+            expanded.registerBlock(new TrapDoorBlock(blockSettings, getWoodTypeSpecificSounds(soundType).setType()),
+                    block, Utils.appendToPath(identifier, "_trapdoor").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
+        }
+    }
+
+    private SoundType determineSoundType(AdditionalBlockInformation info) {
+        return info.overworldLike ? SoundType.OVERWORLD : info.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
     }
 
     @Override

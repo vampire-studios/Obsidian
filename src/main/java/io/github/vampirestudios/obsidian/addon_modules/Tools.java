@@ -26,7 +26,7 @@ public class Tools implements AddonModule {
         io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem tool = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem.class);
         try {
             if (tool == null) return;
-            CustomToolMaterial material = new CustomToolMaterial(tool.material);
+            CustomTier material = new CustomTier(tool.getTier());
             Item.Properties settings = new Item.Properties().stacksTo(tool.information.getItemSettings().maxStackSize)
                     .rarity(Rarity.valueOf(tool.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
             ResourceLocation identifier = Objects.requireNonNullElseGet(

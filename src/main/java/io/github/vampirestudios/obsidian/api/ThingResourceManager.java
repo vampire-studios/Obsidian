@@ -19,6 +19,8 @@ import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.util.Unit;
+import net.minecraft.world.level.validation.DirectoryValidator;
+import net.minecraft.world.level.validation.PathAllowList;
 import org.slf4j.Logger;
 
 import java.nio.file.Files;
@@ -55,7 +57,7 @@ public class ThingResourceManager {
 
     private ThingResourceManager() {
         resourceManager = new ReloadableResourceManager(PackType.SERVER_DATA);
-        folderPackFinder = new FolderRepositorySource(getThingPacksLocation(), PackType.SERVER_DATA, PackSource.DEFAULT);
+        folderPackFinder = new FolderRepositorySource(getThingPacksLocation(), PackType.SERVER_DATA, PackSource.DEFAULT, new DirectoryValidator(new PathAllowList()));
         packList = new PackRepository(folderPackFinder);
     }
 

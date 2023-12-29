@@ -15,6 +15,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -37,7 +38,18 @@ public class SubItemGroups implements AddonModule {
             CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.get(itemGroup.targetGroup);
             assert tab != null;
             ItemSubGroup.Builder builder = new ItemSubGroup.Builder(tab, Component.literal(WordUtils.capitalizeFully(itemGroup.name.id.getPath())));
-            if (itemGroup.hasCustomTexture) builder.backgroundTexture(itemGroup.customTexture);
+            if (itemGroup.styling != null) {
+                SubItemGroup.Styling styling = itemGroup.styling;
+                ItemSubGroup.Style.Builder style = new ItemSubGroup.Style.Builder();
+                if (styling.hasCustomBackground) style.background(styling.customBackground);
+                if (styling.hasCustomScrollBar) style.scrollbar(styling.customScrollBar[0], styling.customScrollBar[1]);
+                if (styling.hasCustomSubTab) style.subtab(styling.customSubTab[0], styling.customSubTab[1]);
+                if (styling.hasCustomTab) style.tab(styling.customTab[0], styling.customTab[1], styling.customTab[2], styling.customTab[3],
+                        styling.customTab[4], styling.customTab[5], styling.customTab[6], styling.customTab[7], styling.customTab[8],
+                        styling.customTab[9], styling.customTab[10], styling.customTab[11]
+                );
+                builder.styled(style.build());
+            }
             builder.entries((displayContext, entries) -> {
                 if (itemGroup.tags != null) {
                     for (Map.Entry<String, ResourceLocation> tag : itemGroup.tags.entrySet()) {
@@ -53,7 +65,12 @@ public class SubItemGroups implements AddonModule {
                 }
                 if (itemGroup.items != null) {
                     for (ResourceLocation item : itemGroup.items) {
-                        entries.accept(BuiltInRegistries.ITEM.get(item));
+                        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(item));
+                        if (stack.getCount() != 1) {
+                            System.out.println(item);
+                        } else {
+                            entries.accept(BuiltInRegistries.ITEM.get(item));
+                        }
                     }
                 }
                 if (itemGroup.blocks != null) {

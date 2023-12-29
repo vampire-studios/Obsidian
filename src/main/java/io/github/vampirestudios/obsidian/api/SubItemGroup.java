@@ -11,8 +11,7 @@ public class SubItemGroup {
     @SerializedName("target_group")
     @blue.endless.jankson.annotation.SerializedName("target_group")
     public ResourceLocation targetGroup;
-    public boolean hasCustomTexture;
-    public ResourceLocation customTexture = null;
+    public Styling styling;
 
     public Map<String, ResourceLocation> tags;
     public ResourceLocation[] blocks;
@@ -21,4 +20,15 @@ public class SubItemGroup {
     public ResourceLocation[] opItems;
     public Map<String, ResourceLocation> featureSetItems;
     public Map<String, ResourceLocation> featureSetBlocks;
+
+    public class Styling {
+        public boolean hasCustomBackground;
+        public boolean hasCustomScrollBar;
+        public boolean hasCustomSubTab;
+        public boolean hasCustomTab;
+        public ResourceLocation customBackground = null;
+        public ResourceLocation[] customScrollBar = null;
+        public ResourceLocation[] customSubTab = null;
+        public ResourceLocation[] customTab = null;
+    }
 }

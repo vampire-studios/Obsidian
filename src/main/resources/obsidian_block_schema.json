@@ -1,0 +1,107 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "block_type": {
+            "type": "string"
+        },
+        "information": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "translations": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "id"
+                    ]
+                },
+                "block_properties": {
+                    "type": "object",
+                    "properties": {
+                        "sound_group": {
+                            "type": "string"
+                        },
+                        "collidable": {
+                            "type": "boolean"
+                        },
+                        "hardness": {
+                            "type": "number"
+                        },
+                        "resistance": {
+                            "type": "number"
+                        },
+                        "randomTicks": {
+                            "type": "boolean"
+                        },
+                        "instant_break": {
+                            "type": "boolean"
+                        },
+                        "slipperiness": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "sound_group"
+                    ]
+                },
+                "item_properties": {
+                    "type": "object",
+                    "properties": {
+                        "item_group": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "item_group"
+                    ]
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "additional_information": {
+            "type": "object",
+            "properties": {
+                "dyable": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "dyable"
+            ]
+        },
+        "rendering": {
+            "type": "object",
+            "properties": {
+                "model": {
+                    "type": "object",
+                    "properties": {
+                        "parent": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "parent"
+                    ]
+                }
+            },
+            "required": [
+                "model"
+            ]
+        }
+    },
+    "required": [
+        "block_type",
+        "information",
+        "additional_information",
+        "rendering"
+    ]
+}

@@ -5,7 +5,7 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomToolMaterial;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomTier;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.MeleeWeaponImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
@@ -35,7 +35,7 @@ public class Weapons implements AddonModule {
                     () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (weapon.information.name.id == null) weapon.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
-            CustomToolMaterial material = new CustomToolMaterial(weapon.material);
+            CustomTier material = new CustomTier(weapon.getTier());
             Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings));
             ItemGroupEvents.modifyEntriesEvent(weapon.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(registeredItem));
             register(ContentRegistries.WEAPONS, "weapon", identifier, weapon);

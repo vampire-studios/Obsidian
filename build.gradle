@@ -54,9 +54,9 @@ quiltflower {
 
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.86.1+1.20.1")
-		force("net.fabricmc:fabric-loader:0.14.22")
-		force("com.terraformersmc:modmenu:7.2.1")
+		force("net.fabricmc.fabric-api:fabric-api:0.91.2+1.20.4")
+		force("net.fabricmc:fabric-loader:0.15.1")
+		force("com.terraformersmc:modmenu:9.0.0-pre.1")
 	}
 }
 
@@ -71,7 +71,7 @@ dependencies {
 	mappings loom.layered {
 		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
 //		it.mappings("net.fabricmc:yarn:${libs.versions.fabric.mappings.get()}:v2")
-		it.parchment("org.parchmentmc.data:parchment-1.20.1:${libs.versions.parchment.get()}@zip")
+		it.parchment("org.parchmentmc.data:parchment-1.20.2:${libs.versions.parchment.get()}@zip")
 		it.officialMojangMappings()
 	}
 
@@ -114,7 +114,7 @@ dependencies {
 		noQuiltMC
 	}
 
-	modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:3.0.0-beta.1+1.20"
+	modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:3.3.1+1.20.4"
 
 	implementation group: 'com.amihaiemil.web', name: 'eo-yaml', version: '6.0.1'
 	implementation 'com.electronwill.night-config:core:3.6.6'
@@ -134,13 +134,15 @@ dependencies {
 
 	modImplementation("net.devtech:arrp:0.6.5.0")
 
-	modImplementation include("maven.modrinth:fractal-lib:ZbTEXRfa")
+	modImplementation include("maven.modrinth:fractal-lib:ebzJnrWP")
 
 	modImplementation "com.ptsmods:devlogin:3.3"
 
-	modImplementation include("maven.modrinth:dpu:1.0.7")
+//	modImplementation include("maven.modrinth:dpu:1.0.7")
 
 	implementation "com.typesafe:config:1.4.2"
+
+	modImplementation "com.github.StellarWind22:Fabric-Shield-Lib:v1.7.2-1.20.4"
 }
 
 processResources {

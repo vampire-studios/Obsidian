@@ -52,11 +52,8 @@ public class RangedWeapons implements AddonModule {
                 case "crossbow" ->  {
                     item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new CrossbowItemImpl(rangedWeapon, settings));
                     ItemProperties.register(item, new ResourceLocation("pull"), (stack, world, entity, seed) -> {
-                        if (entity == null) {
-                            return 0.0F;
-                        } else {
-                            return CrossbowItem.isCharged(stack) ? 0.0F : (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / (float)CrossbowItem.getChargeDuration(stack);
-                        }
+                        if (entity == null) return 0.0F;
+                        else return CrossbowItem.isCharged(stack) ? 0.0F : (float) (stack.getUseDuration() - entity.getUseItemRemainingTicks()) / CrossbowItem.getChargeDuration(stack);
                     });
                     ItemProperties.register(item, new ResourceLocation("pulling"), (stack, world, entity, seed) ->
                             entity != null && entity.isUsingItem() && entity.getUseItem() == stack &&

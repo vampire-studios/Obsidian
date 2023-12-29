@@ -26,13 +26,11 @@ import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -40,7 +38,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatType;
 import net.minecraft.tags.TagKey;
@@ -67,7 +64,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.WeatheringCopperFullBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -91,6 +87,7 @@ public class Obsidian implements ModInitializer {
 //			.registerTypeAdapter(ModelResourceLocation.class, (SimpleStringDeserializer<ModelResourceLocation>) s -> (ModelResourceLocation) ModelResourceLocation.tryParse(s))
 			.setPrettyPrinting()
 			.setLenient()
+			.enableComplexMapKeySerialization()
 			.create();
 
 	public static final Jankson JANKSON = JanksonFactory.builder()
@@ -203,20 +200,8 @@ public class Obsidian implements ModInitializer {
 		manager.registerParser(new BlockSetTypeParser());
 		manager.registerParser(new ShapeParser());
 
-//		GlobalFixer.init();
-
-		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
-			if (destination.dimensionTypeId().equals(BuiltinDimensionTypes.END)) {
-				MinecraftServer server = destination.getServer();
-				Advancement advancement = server.getAdvancements().getAdvancement(new ResourceLocation("I don't know, probably something like `the_end/kill_dragon`"));
-				if(!server.getPlayerList().getPlayerAdvancements(player).getOrStartProgress(advancement).isDone()) {
-
-				}
-			}
-		});
-
 		RegistryExtensions.register(BuiltInRegistries.BLOCK, new ResourceLocation("quilt", "oxidizable_iron_block"),
-				new WeatheringCopperFullBlock(WeatheringCopper.WeatherState.UNAFFECTED, BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)),
+				new WeatheringCopperFullBlock(WeatheringCopper.WeatherState.UNAFFECTED, BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(net.minecraft.world.level.block.Blocks.IRON_BLOCK, false));
 
 		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.IRON_BLOCK, new ConstantBooster(3f));
@@ -241,6 +226,7 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "wood_types", new WoodTypes());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_properties", new BlockProperties());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_properties", new ItemProperties());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "tiers", new Tiers());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "blocks", new Blocks());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ores", new Ores());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
