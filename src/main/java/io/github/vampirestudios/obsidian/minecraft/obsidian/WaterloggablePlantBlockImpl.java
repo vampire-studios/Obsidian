@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,6 +20,17 @@ public class WaterloggablePlantBlockImpl extends BushBlock implements SimpleWate
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private final Block block;
+    private static final MapCodec<BushBlock> CODEC = simpleCodec(WaterloggablePlantBlockImpl::new);
+
+    @Override
+    public MapCodec<? extends BushBlock> codec() {
+        return CODEC;
+    }
+
+    public WaterloggablePlantBlockImpl(Properties settings) {
+        super(settings);
+        this.block = null;
+    }
 
     public WaterloggablePlantBlockImpl(Block block, Properties settings) {
         super(settings);

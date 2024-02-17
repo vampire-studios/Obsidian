@@ -51,7 +51,7 @@ public class BedrockAddon implements IBedrockAddon {
     public PackResources getVirtualResourcePack() {
         if (file == null) return null;
         if (file.isDirectory()) return new PathPackResources(manifestFile.header.name, file.toPath(), false);
-        return new FilePackResources(manifestFile.header.name, file, false);
+        return new FilePackResources(manifestFile.header.name, new FilePackResources.SharedZipFileAccess(this.file), false, manifestFile.header.name);
     }
 
     @Override

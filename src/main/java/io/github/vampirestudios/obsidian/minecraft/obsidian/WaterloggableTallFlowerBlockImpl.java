@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +26,17 @@ public class WaterloggableTallFlowerBlockImpl extends DoublePlantBlock implement
     public static IntegerProperty AGE;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private final Block block;
+    private static final MapCodec<DoublePlantBlock> CODEC = simpleCodec(WaterloggableTallFlowerBlockImpl::new);
+
+    @Override
+    public MapCodec<? extends DoublePlantBlock> codec() {
+        return CODEC;
+    }
+
+    public WaterloggableTallFlowerBlockImpl(Properties settings) {
+        super(settings);
+        this.block = null;
+    }
 
     public WaterloggableTallFlowerBlockImpl(Block block, Properties settings) {
         super(settings);
@@ -60,7 +72,7 @@ public class WaterloggableTallFlowerBlockImpl extends DoublePlantBlock implement
         return false;
     }
 
-    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state) {
         return true;
     }
 

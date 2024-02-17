@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -7,6 +8,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -16,6 +18,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class HorizontalFacingPlantBlockImpl extends BushBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     private final Block block;
+    private static final MapCodec<BushBlock> CODEC = simpleCodec(HorizontalFacingPlantBlockImpl::new);
+
+    @Override
+    protected MapCodec<? extends BushBlock> codec() {
+        return CODEC;
+    }
+
+    public HorizontalFacingPlantBlockImpl(BlockBehaviour.Properties properties) {
+        super(properties);
+        this.block = null;
+    }
 
     public HorizontalFacingPlantBlockImpl(Block block, Properties settings) {
         super(settings);

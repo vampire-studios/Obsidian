@@ -13,21 +13,20 @@ public class ItemInformation extends ItemSettings {
 	@com.google.gson.annotations.SerializedName("item_properties")
 	public Object itemSettings;
 
+	@SerializedName("item_type")
+	@com.google.gson.annotations.SerializedName("item_type")
+	public String itemType;
+
 	public ItemSettings getItemSettings() {
-		switch (itemSettings) {
-			case ResourceLocation resourceLocation -> {
-				return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
-			}
-			case String resourceLocation -> {
-				ResourceLocation location = ResourceLocation.tryParse(resourceLocation);
-				return ContentRegistries.ITEM_SETTINGS.get(location);
-			}
-			case ItemSettings itemSettings1 -> {
-				return itemSettings1;
-			}
-			case null, default -> {
-				return this;
-			}
+		if (itemSettings instanceof ResourceLocation resourceLocation) {
+			return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
+		} else if (itemSettings instanceof  String s) {
+			ResourceLocation location = ResourceLocation.tryParse(s);
+			return ContentRegistries.ITEM_SETTINGS.get(location);
+		} else if (itemSettings instanceof ItemSettings itemSettings1) {
+			return itemSettings1;
+		} else {
+			return this;
 		}
 	}
 }

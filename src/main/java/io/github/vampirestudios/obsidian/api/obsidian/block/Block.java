@@ -10,9 +10,17 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class Block {
+
+    /*public static final MapCodec<Block> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            Description.CODEC.fieldOf("description").forGetter(block -> block.description),
+            Codec.STRING.fieldOf("block_type").forGetter(block -> block.block_type),
+
+    ).apply(instance, Block::new));*/
 
     public Description description;
     public String block_type = "block";
@@ -31,13 +39,32 @@ public class Block {
     public ResourceLocation particle_type;
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
-//    public Map<String, Event> events;
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
     public ResourceLocation placable_feature;
-//    public Properties properties;
 
     public TooltipInformation[] lore = new TooltipInformation[0];
+
+    public Block(Description description, String block_type, BlockInformation information, DisplayInformation rendering, DropInformation dropInformation, AdditionalBlockInformation additional_information, Functions functions, OreInformation ore_information, FoodInformation food_information, CampfireProperties campfire_properties, List<ResourceLocation> can_plant_on, ResourceLocation particle_type, Growable growable, OxidizableProperties oxidizable_properties, boolean is_multi_block, MultiBlockInformation multi_block_information, ResourceLocation placable_feature, TooltipInformation[] lore) {
+        this.description = description;
+        this.block_type = block_type;
+        this.information = information;
+        this.rendering = rendering;
+        this.dropInformation = dropInformation;
+        this.additional_information = additional_information;
+        this.functions = functions;
+        this.ore_information = ore_information;
+        this.food_information = food_information;
+        this.campfire_properties = campfire_properties;
+        this.can_plant_on = can_plant_on;
+        this.particle_type = particle_type;
+        this.growable = growable;
+        this.oxidizable_properties = oxidizable_properties;
+        this.is_multi_block = is_multi_block;
+        this.multi_block_information = multi_block_information;
+        this.placable_feature = placable_feature;
+        this.lore = lore;
+    }
 
     public List<net.minecraft.world.level.block.Block> getSupportableBlocks() {
         List<net.minecraft.world.level.block.Block> blocks2 = new ArrayList<>();
@@ -58,18 +85,11 @@ public class Block {
         SLAB,
         WALL,
         FENCE,
-        OVERWORLD_FENCE_GATE,
-        NETHER_FENCE_GATE,
-        BAMBOO_FENCE_GATE,
+        FENCE_GATE,
         CAKE,
         BED,
-        OVERWORLD_TRAPDOOR,
-        NETHER_TRAPDOOR,
-        BAMBOO_TRAPDOOR,
-        METAL_DOOR,
-        OVERWORLD_DOOR,
-        NETHER_DOOR,
-        BAMBOO_DOOR,
+        TRAPDOOR,
+        DOOR,
         LOG,
         STEM,
         WOOD,
@@ -83,10 +103,8 @@ public class Block {
         LEAVES,
         LADDER,
         PATH,
-        OVERWORLD_WOOD_BUTTON,
-        NETHER_WOOD_BUTTON,
-        BAMBOO_BUTTON,
-        STONE_BUTTON,
+        BUTTON,
+        PRESSURE_PLATE,
         DOUBLE_PLANT,
         HORIZONTAL_FACING_DOUBLE_PLANT,
         HANGING_DOUBLE_LEAVES,

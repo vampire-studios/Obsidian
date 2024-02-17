@@ -7,14 +7,17 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Objects;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -35,10 +38,14 @@ public class CauldronTypes implements AddonModule {
                 BlockState blockState = getState(BuiltInRegistries.BLOCK.get(cauldronType.blockstate.block), cauldronType.blockstate.properties);
                 return CauldronInteraction.emptyBucket(world, pos, player, hand, stack, blockState, BuiltInRegistries.SOUND_EVENT.get(cauldronType.sound_event));
             };
-            CauldronInteraction.EMPTY.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
-            CauldronInteraction.WATER.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
-            CauldronInteraction.LAVA.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
-            CauldronInteraction.POWDER_SNOW.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
+            Map<Item, CauldronInteraction> map = CauldronInteraction.EMPTY.map();
+            map.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
+            Map<Item, CauldronInteraction> map1 = CauldronInteraction.WATER.map();
+            map1.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
+            Map<Item, CauldronInteraction> map2 = CauldronInteraction.EMPTY.map();
+            map2.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
+            Map<Item, CauldronInteraction> map3 = CauldronInteraction.EMPTY.map();
+            map3.put(BuiltInRegistries.ITEM.get(cauldronType.item), cauldronBehavior);
             register(ContentRegistries.CAULDRON_TYPES, "cauldron_type", identifier, cauldronType);
         } catch (Exception e) {
             failedRegistering("cauldron_types", file.getName(), e);

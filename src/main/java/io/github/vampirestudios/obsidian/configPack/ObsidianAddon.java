@@ -42,7 +42,7 @@ public class ObsidianAddon implements IAddonPack {
     public PackResources getVirtualResourcePack() {
         if (file.getParentFile() == null) return null;
         if (file.getParentFile().isDirectory()) return new PathPackResources(obsidianAddonInfo.addon.folderName, file.getParentFile().toPath(), true);
-        else return new FilePackResources(obsidianAddonInfo.addon.folderName, file.getParentFile(), true);
+        else return new FilePackResources(obsidianAddonInfo.addon.folderName, new FilePackResources.SharedZipFileAccess(this.file), false, obsidianAddonInfo.addon.id);
     }
 
     @Override

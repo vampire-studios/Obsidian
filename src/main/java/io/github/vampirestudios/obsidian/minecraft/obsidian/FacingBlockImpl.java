@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -24,6 +26,17 @@ import java.util.List;
 public class FacingBlockImpl extends DirectionalBlock {
 
     public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
+    private static final MapCodec<DirectionalBlock> CODEC = simpleCodec(FacingBlockImpl::new);
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return CODEC;
+    }
+
+    public FacingBlockImpl(BlockBehaviour.Properties properties) {
+        super(properties);
+        this.block = null;
+    }
 
     public FacingBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
         super(settings);

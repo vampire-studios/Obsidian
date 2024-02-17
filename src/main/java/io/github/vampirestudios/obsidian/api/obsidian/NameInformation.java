@@ -22,7 +22,7 @@ public class NameInformation extends SpecialText {
                 translatableText = translatableText.withStyle(ChatFormatting.getByName(formatting1));
             }
             if (!this.color.isEmpty() && !this.color.isBlank()) {
-                translatableText = translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parseColor(color1)));
+                translatableText = translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parseColor(color1).get().orThrow()));
             }
             return translatableText;
         } else {

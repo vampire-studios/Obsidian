@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
@@ -28,6 +29,12 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class TriplePlantBlock extends BushBlock {
     public static final EnumProperty<TripleBlockPart> PART = CProperties.TRIPLE_BLOCK_PART;
+    private static final MapCodec<BushBlock> CODEC = simpleCodec(TriplePlantBlock::new);
+
+    @Override
+    public MapCodec<? extends BushBlock> codec() {
+        return CODEC;
+    }
 
     public TriplePlantBlock(Properties settings) {
         super(settings.offsetType(OffsetType.XZ));
@@ -84,7 +91,7 @@ public class TriplePlantBlock extends BushBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (!world.isClientSide) {
             if (player.isCreative()) {
                 onBreakInCreative(world, pos, state, player);
@@ -93,7 +100,7 @@ public class TriplePlantBlock extends BushBlock {
             }
         }
 
-        super.playerWillDestroy(world, pos, state, player);
+        return super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override

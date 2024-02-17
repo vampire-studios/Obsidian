@@ -6,10 +6,10 @@ import net.minecraft.world.level.block.TorchBlock;
 
 public class TorchBaseBlock extends TorchBlock {
     public TorchBaseBlock() {
-        super(Properties.of(), ParticleTypes.FLAME);
+        super(ParticleTypes.FLAME, Properties.of());
     }
 
     public TorchBaseBlock(SimpleParticleType particleType) {
-        super(Properties.of(), particleType);
+        super(particleType, Properties.of());
     }
 }

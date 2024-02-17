@@ -11,20 +11,16 @@ public class WeaponItem extends Item {
     public boolean damageable = true;
 
     public Tier getTier() {
-        switch (material) {
-            case ResourceLocation resourceLocation -> {
-                return ContentRegistries.TIERS.get(resourceLocation);
-            }
-            case String resourceLocation -> {
-                ResourceLocation location = ResourceLocation.tryParse(resourceLocation);
-                return ContentRegistries.TIERS.get(location);
-            }
-            case Tier tier -> {
-                return tier;
-            }
-            case null, default -> {
-                return null;
-            }
+        if (material instanceof ResourceLocation resourceLocation) {
+            return ContentRegistries.TIERS.get(resourceLocation);
+        } else if (material instanceof  String s) {
+            ResourceLocation location = ResourceLocation.tryParse(s);
+            return ContentRegistries.TIERS.get(location);
+        } else if (material instanceof Tier itemSettings1) {
+            return itemSettings1;
+        } else {
+            System.out.printf("Tier is null for %s%n", this.information.name.id);
+            return null;
         }
     }
 

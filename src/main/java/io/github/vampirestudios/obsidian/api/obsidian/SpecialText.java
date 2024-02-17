@@ -4,13 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.GsonHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SpecialText {
 
@@ -62,7 +63,7 @@ public class SpecialText {
                     literalText = literalText.withStyle(ChatFormatting.getByName(formatting1));
                 }
                 if (!this.color.isEmpty() && !this.color.isBlank()) {
-                    literalText = literalText.setStyle(literalText.getStyle().withColor(TextColor.parseColor(color1)));
+                    literalText = literalText.setStyle(literalText.getStyle().withColor(TextColor.parseColor(color1).get().orThrow()));
                 }
                 return literalText;
             } else {
@@ -71,7 +72,7 @@ public class SpecialText {
                     translatableText = translatableText.withStyle(ChatFormatting.getByName(formatting1));
                 }
                 if (!this.color.isEmpty() && !this.color.isBlank()) {
-                    translatableText = translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parseColor(color1)));
+                    translatableText = translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parseColor(color1).get().orThrow()));
                 }
                 return translatableText;
             }

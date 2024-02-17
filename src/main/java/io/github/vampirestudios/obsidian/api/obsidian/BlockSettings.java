@@ -50,34 +50,29 @@ public class BlockSettings {
     }
 
     public SoundType getBlockSoundGroup() {
-        switch (soundGroup) {
-            case ResourceLocation resourceLocation -> {
-                if (!resourceLocation.getNamespace().equals("minecraft")) {
-                    CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(resourceLocation);
-                    assert customSoundGroup != null;
-                    return createSoundType(customSoundGroup);
-                } else {
-                    return VanillaSoundEvents.get(resourceLocation);
-                }
-            }
-            case String resourceLocation -> {
-                ResourceLocation location = ResourceLocation.tryParse(resourceLocation);
-                assert location != null;
-                if (!location.getNamespace().equals("minecraft")) {
-                    CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(location);
-                    assert customSoundGroup != null;
-                    return createSoundType(customSoundGroup);
-                } else {
-                    return VanillaSoundEvents.get(location);
-                }
-            }
-            case CustomSoundGroup customSoundGroup -> {
+        if (soundGroup instanceof ResourceLocation resourceLocation) {
+            if (!resourceLocation.getNamespace().equals("minecraft")) {
+                CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(resourceLocation);
+                assert customSoundGroup != null;
                 return createSoundType(customSoundGroup);
+            } else {
+                return VanillaSoundEvents.get(resourceLocation);
             }
-            case null, default -> {
-                System.out.println(soundGroup.toString());
-                return SoundType.STONE;
+        } else if(soundGroup instanceof String s) {
+            ResourceLocation location = ResourceLocation.tryParse(s);
+            assert location != null;
+            if (!location.getNamespace().equals("minecraft")) {
+                CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(location);
+                assert customSoundGroup != null;
+                return createSoundType(customSoundGroup);
+            } else {
+                return VanillaSoundEvents.get(location);
             }
+        } else if (soundGroup instanceof CustomSoundGroup customSoundGroup) {
+            return createSoundType(customSoundGroup);
+        } else {
+            System.out.println(soundGroup.toString());
+            return SoundType.STONE;
         }
     }
 

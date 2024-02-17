@@ -107,20 +107,15 @@ public class ItemSettings {
      * @return An Optional<ItemSettings> object.
      */
     public ItemSettings getBaseItemSettings() {
-        switch (baseItemSettings) {
-            case ResourceLocation resourceLocation -> {
-                return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
-            }
-            case String resourceLocation -> {
-                ResourceLocation location = ResourceLocation.tryParse(resourceLocation);
-                return ContentRegistries.ITEM_SETTINGS.get(location);
-            }
-            case ItemSettings itemSettings1 -> {
-                return itemSettings1;
-            }
-            case null, default -> {
-                return null;
-            }
+        if (baseItemSettings instanceof ResourceLocation resourceLocation) {
+            return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
+        } else if (baseItemSettings instanceof  String s) {
+            ResourceLocation location = ResourceLocation.tryParse(s);
+            return ContentRegistries.ITEM_SETTINGS.get(location);
+        } else if (baseItemSettings instanceof ItemSettings itemSettings1) {
+            return itemSettings1;
+        } else {
+            return this;
         }
     }
 

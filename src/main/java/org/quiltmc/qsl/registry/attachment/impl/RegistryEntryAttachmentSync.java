@@ -136,7 +136,7 @@ public final class RegistryEntryAttachmentSync {
 
 	private static boolean isPlayerLocal(ServerPlayer player) {
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-			return player.getStringUUID().equals(Minecraft.getInstance().getUser().getUuid());
+			return player.getUUID().equals(Minecraft.getInstance().getUser().getProfileId());
 		}
 
 		return false;

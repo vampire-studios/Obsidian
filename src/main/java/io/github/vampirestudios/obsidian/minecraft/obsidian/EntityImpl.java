@@ -43,11 +43,6 @@ public class EntityImpl extends PathfinderMob {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return breathableComponent.breathes_water;
-    }
-
-    @Override
     public float getWalkTargetValue(BlockPos pos, LevelReader world) {
         return super.getWalkTargetValue(pos, world);
     }

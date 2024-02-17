@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -9,6 +10,17 @@ import net.minecraft.world.level.block.state.BlockState;
 public class PlantBlockImpl extends BushBlock {
 
     private final Block block;
+	private static final MapCodec<BushBlock> CODEC = simpleCodec(PlantBlockImpl::new);
+
+	@Override
+	public MapCodec<? extends BushBlock> codec() {
+		return CODEC;
+	}
+
+	public PlantBlockImpl(Properties settings) {
+		super(settings);
+		this.block = null;
+	}
 
     public PlantBlockImpl(Block block, Properties settings) {
         super(settings.noCollission().instabreak());

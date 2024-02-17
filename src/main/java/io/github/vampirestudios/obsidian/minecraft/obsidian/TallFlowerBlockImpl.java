@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -19,6 +20,17 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 public class TallFlowerBlockImpl extends DoublePlantBlock implements BonemealableBlock {
     public static IntegerProperty AGE;
     private final Block block;
+    private static final MapCodec<DoublePlantBlock> CODEC = simpleCodec(TallFlowerBlockImpl::new);
+
+    @Override
+    public MapCodec<? extends DoublePlantBlock> codec() {
+        return CODEC;
+    }
+
+    public TallFlowerBlockImpl(BlockBehaviour.Properties settings) {
+        super(settings.dynamicShape());
+        this.block = null;
+    }
 
     public TallFlowerBlockImpl(Block block, BlockBehaviour.Properties settings) {
         super(settings.dynamicShape());
@@ -52,7 +64,7 @@ public class TallFlowerBlockImpl extends DoublePlantBlock implements Bonemealabl
         return false;
     }
 
-    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state) {
         return true;
     }
 

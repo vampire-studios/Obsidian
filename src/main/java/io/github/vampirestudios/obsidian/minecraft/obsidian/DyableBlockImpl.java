@@ -1,10 +1,12 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Functions;
 import io.github.vampirestudios.obsidian.utils.ColorUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandFunction;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.functions.CommandFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,8 +32,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class DyableBlockImpl extends BaseEntityBlock {
+    public static final MapCodec<DyableBlockImpl> CODEC = simpleCodec(DyableBlockImpl::new);
 
     public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
+
+    public DyableBlockImpl(Properties properties) {
+        super(properties);
+    }
 
     public DyableBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
         super(settings);
@@ -73,19 +81,19 @@ public class DyableBlockImpl extends BaseEntityBlock {
         if (!world.isClientSide) {
             Item item = BuiltInRegistries.ITEM.get(block.functions.use.item);
             if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING) && player.isShiftKeyDown() && block.functions.use.predicate.matches()) {
-                Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
                 function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
                 return InteractionResult.SUCCESS;
             } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_ITEM) && player.getMainHandItem().getItem().equals(item) && block.functions.use.predicate.matches()) {
-                Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
                 function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
                 return InteractionResult.SUCCESS;
             } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING_AND_ITEM) && player.isShiftKeyDown() && player.getMainHandItem().getItem().equals(item) && block.functions.use.predicate.matches()) {
-                Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
                 function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
                 return InteractionResult.SUCCESS;
             } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.NONE) &&  block.functions.use.predicate.matches()) {
-                Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
                 function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
                 return InteractionResult.SUCCESS;
             }
@@ -96,7 +104,7 @@ public class DyableBlockImpl extends BaseEntityBlock {
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         if (block.functions.scheduled_tick.predicate.matches()) {
-            Optional<CommandFunction> function = world.getServer().getFunctions().get(block.functions.scheduled_tick.function_file);
+            Optional<CommandFunction<CommandSourceStack>> function = world.getServer().getFunctions().get(block.functions.scheduled_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
         }
     }
@@ -104,7 +112,7 @@ public class DyableBlockImpl extends BaseEntityBlock {
     @Override
     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         if (block.functions.random_tick.predicate.matches()) {
-            Optional<CommandFunction> function = world.getServer().getFunctions().get(block.functions.random_tick.function_file);
+            Optional<CommandFunction<CommandSourceStack>> function = world.getServer().getFunctions().get(block.functions.random_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
         }
     }
@@ -112,13 +120,13 @@ public class DyableBlockImpl extends BaseEntityBlock {
     @Override
     public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
         if (!world.isClientSide && block.functions.random_display_tick.predicate.matches()) {
-            Optional<CommandFunction> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.random_display_tick.function_file);
+            Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.random_display_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
         }
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
         var stack = new ItemStack(this);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if(blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
@@ -144,6 +152,11 @@ public class DyableBlockImpl extends BaseEntityBlock {
             }
         }
         return 0;
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

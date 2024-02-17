@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
@@ -24,6 +25,17 @@ public class SaplingBaseBlock extends BushBlock implements BonemealableBlock {
 	public static final IntegerProperty STAGE = BlockStateProperties.STAGE;
 	protected static final VoxelShape SHAPE = net.minecraft.world.level.block.Block.box(2.0, 0.0, 2.0, 14.0, 12.0, 14.0);
 	private final Block block;
+	private static final MapCodec<BushBlock> CODEC = simpleCodec(SaplingBaseBlock::new);
+
+	@Override
+	protected MapCodec<? extends BushBlock> codec() {
+		return CODEC;
+	}
+
+	public SaplingBaseBlock(BlockBehaviour.Properties properties) {
+		super(properties);
+		this.block = null;
+	}
 
     public SaplingBaseBlock(Block block) {
         super(BlockBehaviour.Properties.of().noCollission().randomTicks().instabreak().sound(SoundType.GRASS));
@@ -59,7 +71,7 @@ public class SaplingBaseBlock extends BushBlock implements BonemealableBlock {
 	}
 
 	@Override
-	public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
+	public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
 		return true;
 	}
 

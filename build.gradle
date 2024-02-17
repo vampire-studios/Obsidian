@@ -142,7 +142,7 @@ dependencies {
 
 	implementation "com.typesafe:config:1.4.2"
 
-	modImplementation "com.github.StellarWind22:Fabric-Shield-Lib:v1.7.2-1.20.4"
+//	modImplementation "com.github.StellarWind22:Fabric-Shield-Lib:v1.7.2-1.20.4"
 }
 
 processResources {

@@ -11,6 +11,18 @@ public class BlockSetType {
     @blue.endless.jankson.annotation.SerializedName("can_open_by_hand")
     public boolean canOpenByHand;
 
+    @SerializedName("can_open_by_wind_charge")
+    @blue.endless.jankson.annotation.SerializedName("can_open_by_wind_charge")
+    public boolean canOpenByWindCharge;
+
+    @SerializedName("can_button_be_activated_by_arrows")
+    @blue.endless.jankson.annotation.SerializedName("can_button_be_activated_by_arrows")
+    public boolean canButtonBeActivatedByArrows;
+
+    @SerializedName("pressure_plate_sensitivity")
+    @blue.endless.jankson.annotation.SerializedName("pressure_plate_sensitivity")
+    public String pressurePlateSensitivity;
+
     @SerializedName("sound_type")
     @blue.endless.jankson.annotation.SerializedName("sound_type")
     public ResourceLocation soundType;
@@ -46,4 +58,8 @@ public class BlockSetType {
     @SerializedName("button_click_on")
     @blue.endless.jankson.annotation.SerializedName("button_click_on")
     public ResourceLocation buttonClickOn;
+
+    public net.minecraft.world.level.block.state.properties.BlockSetType.PressurePlateSensitivity getPressurePlateSensitivity() {
+        return net.minecraft.world.level.block.state.properties.BlockSetType.PressurePlateSensitivity.valueOf(pressurePlateSensitivity);
+    }
 }

@@ -77,9 +77,9 @@ public class BlockInitThread implements Runnable {
                         case LOG, ROTATED_PILLAR, STEM -> generatePillarBlockState(block, resourcePack, blockId);
                         case FURNACE, BLAST_FURNACE, SMOKER ->
                                 ARRPGenerationHelper.generateOnOffHorizontalFacingBlockState(resourcePack, blockId);
-                        case BAMBOO_DOOR, NETHER_DOOR, OVERWORLD_DOOR, METAL_DOOR ->
+                        case DOOR ->
                                 ARRPGenerationHelper.generateDoorBlockState(resourcePack, blockId);
-                        case BAMBOO_TRAPDOOR, NETHER_TRAPDOOR, OVERWORLD_TRAPDOOR ->
+                        case TRAPDOOR ->
                                 ARRPGenerationHelper.generateTrapdoorBlockState(resourcePack, blockId);
                         case STAIRS -> ARRPGenerationHelper.generateStairsBlockState(resourcePack, blockId);
                         case SLAB -> ARRPGenerationHelper.generateSlabBlockState(resourcePack, blockId, blockId);

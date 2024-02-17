@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.fabricmc.api.EnvType;
@@ -155,4 +156,4 @@ public class TallCropBlock extends BushBlock implements BonemealableBlock {
         return RenderShape.MODEL;
     }
 
-}
+}*/

@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl implements EntityBlock {
-
     public HorizontalFacingDyableBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
         super(block, settings);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
@@ -36,7 +36,7 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl i
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getCloneItemStack(world, pos, state);
         if (stack.getItem() instanceof CustomDyeableItem item) {
             BlockEntity entity = world.getBlockEntity(pos);

@@ -21,15 +21,15 @@ public class ItemDisplayInformation {
     public ResourceLocation parentModel;
 
     public TextureAndModelInformation getModel() {
-        return switch(testModel) {
-            case TextureAndModelInformation information -> information;
-            case String location -> {
-                TextureAndModelInformation textureAndModelInformation = new TextureAndModelInformation();
-                textureAndModelInformation.parent = ResourceLocation.tryParse(location);
-                yield textureAndModelInformation;
-            }
-            case null, default -> null;
-        };
+        if (testModel instanceof TextureAndModelInformation info) {
+            return info;
+        } else if (testModel instanceof  String s) {
+            TextureAndModelInformation textureAndModelInformation = new TextureAndModelInformation();
+            textureAndModelInformation.parent = ResourceLocation.tryParse(s);
+            return textureAndModelInformation;
+        } else {
+            return null;
+        }
     }
 
 }

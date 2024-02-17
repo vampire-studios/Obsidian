@@ -10,8 +10,6 @@ accessible method net/minecraft/world/level/levelgen/VerticalAnchor$Absolute <in
 accessible method net/minecraft/world/level/levelgen/VerticalAnchor$AboveBottom <init> (I)V
 accessible method net/minecraft/world/level/levelgen/VerticalAnchor$BelowTop <init> (I)V
 
-accessible field net/minecraft/world/level/block/state/properties/WoodType VALUES Ljava/util/Set;
-accessible field net/minecraft/world/level/block/state/properties/BlockSetType VALUES Ljava/util/Set;
 accessible method net/minecraft/world/level/block/state/properties/WoodType register (Lnet/minecraft/world/level/block/state/properties/WoodType;)Lnet/minecraft/world/level/block/state/properties/WoodType;
 accessible method net/minecraft/world/level/block/state/properties/BlockSetType register (Lnet/minecraft/world/level/block/state/properties/BlockSetType;)Lnet/minecraft/world/level/block/state/properties/BlockSetType;
 

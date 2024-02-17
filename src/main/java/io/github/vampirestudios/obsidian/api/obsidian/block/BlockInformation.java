@@ -12,6 +12,25 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class BlockInformation {
+
+    /*public static final MapCodec<BlockInformation> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            Description.CODEC.fieldOf("description").forGetter(block -> block.description),
+            Codec.STRING.fieldOf("block_type").forGetter(block -> block.block_type),
+
+    ).apply(instance, BlockInformation::new));*/
+
+    public NameInformation name;
+
+    @SerializedName("block_set_type")
+    @com.google.gson.annotations.SerializedName("block_set_type")
+    @Path("block_set_type")
+    public ResourceLocation blockSetType;
+
+    @SerializedName("wood_type")
+    @com.google.gson.annotations.SerializedName("wood_type")
+    @Path("wood_type")
+    public ResourceLocation woodType;
+
     @SerializedName("parent_block")
     @com.google.gson.annotations.SerializedName("parent_block")
     @Path("parent_block")
@@ -27,11 +46,10 @@ public class BlockInformation {
     @Path("outline_shape")
     public BoundingBox outlineShape;
 
-    public NameInformation name;
-
     public int cake_slices = 1;
 
     public boolean has_item = true;
+    public boolean wooden_button = true;
 
     public List<String> removedTooltipSections;
 
@@ -41,20 +59,15 @@ public class BlockInformation {
     public Object blockSettings;
 
     public BlockSettings getBlockSettings() {
-        switch (blockSettings) {
-            case ResourceLocation resourceLocation -> {
-                return ContentRegistries.BLOCK_SETTINGS.get(resourceLocation);
-            }
-            case String resourceLocation -> {
-                ResourceLocation location = ResourceLocation.tryParse(resourceLocation);
-                return ContentRegistries.BLOCK_SETTINGS.get(location);
-            }
-            case BlockSettings blockSettings1 -> {
-                return blockSettings1;
-            }
-            case null, default -> {
-                return null;
-            }
+        if (blockSettings instanceof ResourceLocation resourceLocation) {
+            return ContentRegistries.BLOCK_SETTINGS.get(resourceLocation);
+        } else if(blockSettings instanceof String s) {
+            ResourceLocation location = ResourceLocation.tryParse(s);
+            return ContentRegistries.BLOCK_SETTINGS.get(location);
+        } else if (blockSettings instanceof BlockSettings blockSettings1) {
+            return blockSettings1;
+        } else {
+            return null;
         }
     }
 
@@ -64,20 +77,15 @@ public class BlockInformation {
     public Object itemSettings;
 
     public ItemSettings getItemSettings() {
-        switch (itemSettings) {
-            case ResourceLocation resourceLocation -> {
-                return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
-            }
-            case String resourceLocation -> {
-                ResourceLocation location = ResourceLocation.tryParse(resourceLocation);
-                return ContentRegistries.ITEM_SETTINGS.get(location);
-            }
-            case ItemSettings itemSettings1 -> {
-                return itemSettings1;
-            }
-            case null, default -> {
-                return null;
-            }
+        if (itemSettings instanceof ResourceLocation resourceLocation) {
+            return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
+        } else if(itemSettings instanceof String s) {
+            ResourceLocation location = ResourceLocation.tryParse(s);
+            return ContentRegistries.ITEM_SETTINGS.get(location);
+        } else if (itemSettings instanceof ItemSettings itemSettings1) {
+            return itemSettings1;
+        } else {
+            return null;
         }
     }
 

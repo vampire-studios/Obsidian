@@ -8,12 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.cottonmc.jankson.JanksonFactory;
 import io.github.vampirestudios.obsidian.addon_modules.*;
-import io.github.vampirestudios.obsidian.api.ThingResourceManager;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.api.parsers.BlockSetTypeParser;
-import io.github.vampirestudios.obsidian.api.parsers.ShapeParser;
-import io.github.vampirestudios.obsidian.api.scripting.ScriptParser;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.ModIdArgument;
@@ -194,11 +190,6 @@ public class Obsidian implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().getName()));
-
-		var manager = ThingResourceManager.initialize();
-		ScriptParser.enable(manager);
-		manager.registerParser(new BlockSetTypeParser());
-		manager.registerParser(new ShapeParser());
 
 		RegistryExtensions.register(BuiltInRegistries.BLOCK, new ResourceLocation("quilt", "oxidizable_iron_block"),
 				new WeatheringCopperFullBlock(WeatheringCopper.WeatherState.UNAFFECTED, BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)),

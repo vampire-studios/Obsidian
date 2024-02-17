@@ -37,7 +37,7 @@ public class LegacyObsidianAddon implements IAddonPack {
     public PackResources getVirtualResourcePack() {
         if (file == null) return null;
         if (file.isDirectory()) return new PathPackResources(obsidianAddonInfo.folderName, file.toPath(), false);
-        return new FilePackResources(obsidianAddonInfo.folderName, file, false);
+        else return new FilePackResources(obsidianAddonInfo.folderName, new FilePackResources.SharedZipFileAccess(this.file), false, obsidianAddonInfo.namespace);
     }
 
     @Override
