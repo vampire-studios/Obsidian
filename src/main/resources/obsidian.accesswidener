@@ -15,7 +15,6 @@ accessible method net/minecraft/world/level/block/state/properties/BlockSetType 
 
 accessible method net/minecraft/core/Holder$Reference bindValue (Ljava/lang/Object;)V
 
-transitive-accessible class net/minecraft/util/ExtraCodecs$EitherCodec
 accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;
 accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
 accessible field net/minecraft/world/level/block/FireBlock burnOdds Lit/unimi/dsi/fastutil/objects/Object2IntMap;
@@ -23,6 +22,20 @@ accessible field net/minecraft/world/level/block/FireBlock igniteOdds Lit/unimi/
 
 accessible class net/minecraft/client/renderer/block/model/BlockElement$Deserializer
 
-accessible method net/minecraft/server/packs/FilePackResources <init> (Ljava/lang/String;Lnet/minecraft/server/packs/FilePackResources$SharedZipFileAccess;ZLjava/lang/String;)V
+accessible method net/minecraft/server/packs/FilePackResources <init> (Lnet/minecraft/server/packs/PackLocationInfo;Lnet/minecraft/server/packs/FilePackResources$SharedZipFileAccess;Ljava/lang/String;)V
 accessible method net/minecraft/server/packs/FilePackResources$SharedZipFileAccess <init> (Ljava/io/File;)V
 accessible class net/minecraft/server/packs/FilePackResources$SharedZipFileAccess
+
+accessible method net/minecraft/core/component/DataComponentPatch <init> (Lit/unimi/dsi/fastutil/objects/Reference2ObjectMap;)V
+
+accessible method net/minecraft/core/Holder$Reference bindTags (Ljava/util/Collection;)V
+accessible method net/minecraft/core/HolderSet$Named bind (Ljava/util/List;)V
+
+accessible method net/minecraft/world/inventory/MenuType$MenuSupplier create (ILnet/minecraft/world/entity/player/Inventory;)Lnet/minecraft/world/inventory/AbstractContainerMenu;
+
+accessible field net/minecraft/world/item/CreativeModeTabs COLORED_BLOCKS Lnet/minecraft/resources/ResourceKey;
+
+accessible method net/minecraft/world/entity/Display$ItemDisplay setItemStack (Lnet/minecraft/world/item/ItemStack;)V
+accessible method net/minecraft/world/entity/Display$ItemDisplay setItemTransform (Lnet/minecraft/world/item/ItemDisplayContext;)V
+
+accessible method net/minecraft/world/inventory/ChestMenu <init> (Lnet/minecraft/world/inventory/MenuType;ILnet/minecraft/world/entity/player/Inventory;I)V

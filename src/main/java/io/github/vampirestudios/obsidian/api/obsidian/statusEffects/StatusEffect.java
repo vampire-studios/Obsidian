@@ -1,9 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.statusEffects;
 
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectCategory;
+
+import java.util.List;
 
 public class StatusEffect {
 
@@ -28,7 +29,7 @@ public class StatusEffect {
 
     public static class EffectAttributes {
         public ResourceLocation attribute;
-        public String uuid;
+        public ResourceLocation name;
         public double amount;
         public String operation;
     }

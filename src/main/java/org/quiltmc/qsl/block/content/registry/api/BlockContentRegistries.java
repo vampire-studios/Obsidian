@@ -51,7 +51,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flattenable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, new ResourceLocation(NAMESPACE, "flattenable"), BlockState.class, BlockState.CODEC)
+			.builder(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(NAMESPACE, "flattenable"), BlockState.class, BlockState.CODEC)
 			.build();
 
 	/**
@@ -60,7 +60,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/oxidizable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, new ResourceLocation(NAMESPACE, "oxidizable"), ReversibleBlockEntry.class, ReversibleBlockEntry.CODEC)
+			.builder(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(NAMESPACE, "oxidizable"), ReversibleBlockEntry.class, ReversibleBlockEntry.CODEC)
 			.build();
 
 	/**
@@ -69,7 +69,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/waxable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, new ResourceLocation(NAMESPACE, "waxable"), ReversibleBlockEntry.class, ReversibleBlockEntry.CODEC)
+			.builder(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(NAMESPACE, "waxable"), ReversibleBlockEntry.class, ReversibleBlockEntry.CODEC)
 			.build();
 
 	/**
@@ -79,7 +79,7 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE = RegistryEntryAttachment
 			.builder(BuiltInRegistries.BLOCK,
-					new ResourceLocation(NAMESPACE, "strippable"),
+					ResourceLocation.fromNamespaceAndPath(NAMESPACE, "strippable"),
 					Block.class,
 					BuiltInRegistries.BLOCK.byNameCodec().flatXmap(block -> {
 						if (!block.defaultBlockState().hasProperty(BlockStateProperties.AXIS)) {
@@ -94,7 +94,6 @@ public class BlockContentRegistries {
 
 						return DataResult.success(block);
 					}))
-			.validator(block -> block.defaultBlockState().hasProperty(BlockStateProperties.AXIS))
 			.build();
 
 	/**
@@ -103,7 +102,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flammable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, new ResourceLocation(NAMESPACE, "flammable"), FlammableBlockEntry.class, FlammableBlockEntry.CODEC)
+			.builder(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(NAMESPACE, "flammable"), FlammableBlockEntry.class, FlammableBlockEntry.CODEC)
 			.build();
 
 	/**
@@ -112,6 +111,6 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
 	 */
 	public static final RegistryEntryAttachment<Block, EnchantingBooster> ENCHANTING_BOOSTERS = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, new ResourceLocation(NAMESPACE, "enchanting_boosters"), EnchantingBooster.class, EnchantingBoosters.CODEC)
+			.builder(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(NAMESPACE, "enchanting_boosters"), EnchantingBooster.class, EnchantingBoosters.CODEC)
 			.build();
 }

@@ -26,17 +26,14 @@ import org.quiltmc.qsl.registry.attachment.api.DefaultValueProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Predicate;
-
 public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends RegistryEntryAttachmentImpl<R, V> {
     private static final Logger COMPUTE_LOGGER = LoggerFactory.getLogger("RegistryEntryAttachment|Compute");
 
     private final @NotNull DefaultValueProvider<R, V> defaultValueProvider;
 
     public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, ResourceLocation id, Class<V> valueClass,
-                                                      Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider,
-                                                      Predicate<R> validator) {
-        super(registry, id, valueClass, codec, side, validator);
+                                                      Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider) {
+        super(registry, id, valueClass, codec, side);
         this.defaultValueProvider = defaultValueProvider;
     }
 

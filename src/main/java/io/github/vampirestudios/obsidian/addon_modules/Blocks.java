@@ -1,12 +1,12 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.github.cottonmc.jankson.JanksonFactory;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.VanillaBlockSetTypes;
 import io.github.vampirestudios.obsidian.api.VanillaWoodTypes;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
@@ -14,18 +14,18 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.SaplingBaseBlock;
+import io.github.vampirestudios.obsidian.block.PaintingTableBlock;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.OBE;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import io.github.vampirestudios.vampirelib.blocks.entity.IBlockEntityType;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -58,26 +58,18 @@ public class Blocks implements AddonModule {
         try {
             if (block == null) return;
 
-            ResourceLocation blockId;
-            if (block.description != null) {
-                blockId = block.description.identifier;
-            } else {
-                if (block.information.name.id != null) {
-                    blockId = block.information.name.id;
-                } else {
-                    blockId = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
-                    block.information.name.id = blockId;
-                }
-            }
+            ResourceLocation blockId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            block.information.name.id = blockId;
 
-            FabricBlockSettings blockSettings;
+            BlockBehaviour.Properties blockSettings;
 
             if (block.information.parentBlock != null) {
-                blockSettings = FabricBlockSettings.copyOf(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(block.information.parentBlock));
+                blockSettings = BlockBehaviour.Properties.ofLegacyCopy(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(block.information.parentBlock));
             } else {
-                blockSettings = FabricBlockSettings.of();
+                blockSettings = BlockBehaviour.Properties.of();
             }
 
+            blockSettings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
             if (block.information.getBlockSettings() != null) {
                 blockSettings.destroyTime(block.information.getBlockSettings().hardness)
                         .explosionResistance(block.information.getBlockSettings().resistance)
@@ -85,8 +77,8 @@ public class Blocks implements AddonModule {
                         .pushReaction(block.information.getBlockSettings().getPushReaction())
                         .sound(block.information.getBlockSettings().getBlockSoundGroup())
                         .friction(block.information.getBlockSettings().slipperiness)
-                        .emissiveRendering((state, world, pos) -> block.information.getBlockSettings().is_emissive)
-                        .lightLevel(state -> block.information.getBlockSettings().luminance)
+                        .emissiveRendering((_, _, _) -> block.information.getBlockSettings().is_emissive)
+                        .lightLevel(_ -> block.information.getBlockSettings().luminance)
                         .speedFactor(block.information.getBlockSettings().velocity_modifier)
                         .jumpFactor(block.information.getBlockSettings().jump_velocity_modifier);
                 if (block.information.getBlockSettings().randomTicks) blockSettings.randomTicks();
@@ -96,7 +88,9 @@ public class Blocks implements AddonModule {
                 if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
             }
 
-            FabricItemSettings settings = new FabricItemSettings();
+            Item.Properties settings = new Item.Properties();
+            settings.useBlockDescriptionPrefix();
+            settings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, blockId));
             if (block.information.getItemSettings() != null) {
                 settings.stacksTo(block.information.getItemSettings().maxStackSize);
                 settings.rarity(Rarity.valueOf(block.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
@@ -105,7 +99,7 @@ public class Blocks implements AddonModule {
 //                if (!block.information.getItemSettings().wearableSlot.isEmpty() && !block.information.getItemSettings().wearableSlot.isBlank())
 //                    settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.getItemSettings().wearableSlot.toLowerCase(Locale.ROOT)));
                 if (block.food_information != null)
-                    settings.food(Registries.FOODS.get(block.food_information.foodComponent));
+                    settings.food(Registries.FOODS.getValue(block.food_information.foodComponent));
                 if (block.information.getItemSettings().fireproof) settings.fireResistant();
             }
 
@@ -129,39 +123,50 @@ public class Blocks implements AddonModule {
 
             if (block.getBlockType() != null) {
                 switch (block.getBlockType()) {
+                    case PAINTING_TABLE -> {
+                        Block block1 = expanded.registerBlock(new PaintingTableBlock(block, blockSettings), block, blockId.getPath(), settings);
+                        OBE.PAINTING_TABLE.addSupportedBlock(block1);
+                    }
                     case BLOCK, WOOD -> {
                         if (block.additional_information != null && block.additional_information.dyable) {
-                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(block, blockSettings));
+                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(blockId, block, blockSettings));
                             expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    blockId.getPath() + "_be");
+                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
+                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
+                                    registeredBlock
+                            ), blockId.getPath() + "_be");
                         } else
                             expanded.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     }
                     case HORIZONTAL_DIRECTIONAL -> {
                         if (block.additional_information != null && block.additional_information.dyable && block.additional_information.sittable) {
-                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new HorizontalFacingSittableAndDyableBlock(
-                                    block, blockSettings
-                            ));
+                            Block registeredBlock = expanded.registerBlockWithoutItem(
+                                    blockId.getPath(),
+                                    new HorizontalFacingSittableAndDyableBlock(blockId, block, blockSettings)
+                            );
                             expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    blockId.getPath() + "_be");
+                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
+                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
+                                    registeredBlock
+                            ), blockId.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.dyable) {
-                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new HorizontalFacingDyableBlockImpl(block,
-                                    blockSettings));
+                            Block registeredBlock = expanded.registerBlockWithoutItem(
+                                    blockId.getPath(),
+                                    new HorizontalFacingDyableBlockImpl(blockId, block, blockSettings)
+                            );
                             expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    blockId.getPath() + "_be");
+                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
+                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
+                                    registeredBlock
+                            ), blockId.getPath() + "_be");
                         } else if (block.additional_information != null && block.additional_information.sittable) {
                             Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new HorizontalFacingSittableBlock(block,
                                     blockSettings));
                             expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                            (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
-                                    blockId.getPath() + "_be");
+                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
+                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
+                                    registeredBlock
+                            ), blockId.getPath() + "_be");
                         } else expanded.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     }
                     case DIRECTIONAL -> expanded.registerBlock(new FacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
@@ -180,7 +185,7 @@ public class Blocks implements AddonModule {
                     case DOOR ->
                             expanded.registerBlock(new DoorBlock(VanillaBlockSetTypes.get(block.information.blockSetType), blockSettings), block,
                                     blockId.getPath(), settings);
-                    case LOG -> expanded.registerLog(block, blockId.getPath(), MapColor.STONE, MapColor.STONE, settings);
+                    case LOG -> expanded.registerLog(block, blockSettings, blockId.getPath(), MapColor.STONE, MapColor.STONE, settings);
                     case STEM -> expanded.registerNetherStemBlock(block, blockId.getPath(), MapColor.STONE, settings);
                     case OXIDIZING_BLOCK -> {
                         List<ResourceLocation> names = new ArrayList<>();
@@ -233,29 +238,29 @@ public class Blocks implements AddonModule {
                     case CHAIN -> expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
                     case PANE -> expanded.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     case DYEABLE -> {
-                        Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(block, blockSettings));
+                        Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(blockId, block, blockSettings));
                         expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
                         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                        (blockPos, blockState) -> new DyableBlockEntity(block, blockPos, blockState), registeredBlock),
+                                        (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState), registeredBlock),
                                 blockId.getPath() + "_be");
                     }
                     case LOOM -> expanded.registerBlock(new LoomBlock(blockSettings), block, blockId.getPath(), settings);
                     case CRAFTING_TABLE -> expanded.registerBlock(new CraftingTableBlock(blockSettings), block, blockId.getPath(), settings);
                     case FURNACE -> {
                         Block furnace = expanded.registerBlock(new FurnaceBlock(blockSettings), block, blockId.getPath(), settings);
-                        ((IBlockEntityType) BlockEntityType.FURNACE).vlAddBlocks(furnace);
+                        BlockEntityType.FURNACE.addSupportedBlock(furnace);
                     }
                     case BLAST_FURNACE -> {
                         Block blastFurnace = expanded.registerBlock(new BlastFurnaceBlock(blockSettings), block, blockId.getPath(), settings);
-                        ((IBlockEntityType) BlockEntityType.BLAST_FURNACE).vlAddBlocks(blastFurnace);
+                        BlockEntityType.BLAST_FURNACE.addSupportedBlock(blastFurnace);
                     }
                     case SMOKER -> {
                         Block smoker = expanded.registerBlock(new SmokerBlock(blockSettings), block, blockId.getPath(), settings);
-                        ((IBlockEntityType) BlockEntityType.SMOKER).vlAddBlocks(smoker);
+                        BlockEntityType.SMOKER.addSupportedBlock(smoker);
                     }
                     case BARREL -> {
                         Block barrel = expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
-                        ((IBlockEntityType) BlockEntityType.BARREL).vlAddBlocks(barrel);
+                        BlockEntityType.BARREL.addSupportedBlock(barrel);
                     }
                     case CARPET -> expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
                 }
@@ -304,8 +309,8 @@ public class Blocks implements AddonModule {
             if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
                 return parseJsonBlock(file);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
-                JsonObject jsonObject = JanksonFactory.builder().build().load(file);
-                return JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+                JsonObject jsonObject = Jankson.builder().build().load(file);
+                return Jankson.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
                 ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
                 mapper.findAndRegisterModules();
@@ -315,7 +320,7 @@ public class Blocks implements AddonModule {
                 mapper.findAndRegisterModules();
                 return mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.HJSON) {
-                return Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED),
+                return BaseGson.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED),
                         io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
             } else {
                 return null;
@@ -324,12 +329,12 @@ public class Blocks implements AddonModule {
     }
 
     private io.github.vampirestudios.obsidian.api.obsidian.block.Block parseJsonBlock(File file) throws IOException {
-        return Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+        return BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
     }
 
     private ResourceLocation getIdentifier(AdditionalBlockInformation info, ResourceLocation defaultId) {
         return !info.extraBlocksName.isEmpty()
-                ? new ResourceLocation(defaultId.getNamespace(), info.extraBlocksName)
+                ? ResourceLocation.fromNamespaceAndPath(defaultId.getNamespace(), info.extraBlocksName)
                 : defaultId;
     }
 
@@ -342,12 +347,12 @@ public class Blocks implements AddonModule {
                     Utils.appendToPath(identifier, "_slab").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
         }
         if (info.stairs) {
-            expanded.registerBlock(new StairsImpl(block, blockSettings), block, new ResourceLocation(id.modId(),
+            expanded.registerBlock(new StairsImpl(block, blockSettings), block, ResourceLocation.fromNamespaceAndPath(id.modId(),
                     identifier.getPath() + "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS);
         }
         if (info.fence) {
             expanded.registerBlock(new FenceImpl(block, blockSettings), block,
-                    new ResourceLocation(id.modId(), identifier.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
+                    ResourceLocation.fromNamespaceAndPath(id.modId(), identifier.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
         }
         if (info.fenceGate) {
             expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),

@@ -10,17 +10,17 @@ import java.util.Map;
 
 public class VanillaWoodTypes {
     public static final Map<ResourceLocation, WoodType> SOUND_TYPES = ImmutableMap.<ResourceLocation, WoodType>builder()
-            .put(new ResourceLocation("oak"), WoodType.OAK)
-            .put(new ResourceLocation("spruce"), WoodType.SPRUCE)
-            .put(new ResourceLocation("birch"), WoodType.BIRCH)
-            .put(new ResourceLocation("acacia"), WoodType.ACACIA)
-            .put(new ResourceLocation("cherry"), WoodType.CHERRY)
-            .put(new ResourceLocation("jungle"), WoodType.JUNGLE)
-            .put(new ResourceLocation("dark_oak"), WoodType.DARK_OAK)
-            .put(new ResourceLocation("crimson"), WoodType.CRIMSON)
-            .put(new ResourceLocation("warped"), WoodType.WARPED)
-            .put(new ResourceLocation("mangrove"), WoodType.MANGROVE)
-            .put(new ResourceLocation("bamboo"), WoodType.BAMBOO)
+            .put(ResourceLocation.withDefaultNamespace("oak"), WoodType.OAK)
+            .put(ResourceLocation.withDefaultNamespace("spruce"), WoodType.SPRUCE)
+            .put(ResourceLocation.withDefaultNamespace("birch"), WoodType.BIRCH)
+            .put(ResourceLocation.withDefaultNamespace("acacia"), WoodType.ACACIA)
+            .put(ResourceLocation.withDefaultNamespace("cherry"), WoodType.CHERRY)
+            .put(ResourceLocation.withDefaultNamespace("jungle"), WoodType.JUNGLE)
+            .put(ResourceLocation.withDefaultNamespace("dark_oak"), WoodType.DARK_OAK)
+            .put(ResourceLocation.withDefaultNamespace("crimson"), WoodType.CRIMSON)
+            .put(ResourceLocation.withDefaultNamespace("warped"), WoodType.WARPED)
+            .put(ResourceLocation.withDefaultNamespace("mangrove"), WoodType.MANGROVE)
+            .put(ResourceLocation.withDefaultNamespace("bamboo"), WoodType.BAMBOO)
             .build();
 
     public static void init() {

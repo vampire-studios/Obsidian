@@ -1,0 +1,212 @@
+package io.github.vampirestudios.obsidian.threadhandlers.assets_temp;
+
+import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
+import io.github.vampirestudios.obsidian.client.ARRPGenerationHelper;
+import io.github.vampirestudios.obsidian.utils.Utils;
+import net.devtech.arrp.api.RuntimeResourcePack;
+import net.devtech.arrp.json.blockstate.JState;
+import net.devtech.arrp.json.blockstate.JVariant;
+import net.devtech.arrp.json.equipmentinfo.JEquipmentModel;
+import net.devtech.arrp.json.equipmentinfo.JLayer;
+import net.devtech.arrp.json.equipmentinfo.LayerType;
+import net.devtech.arrp.json.iteminfo.JItemInfo;
+import net.devtech.arrp.json.iteminfo.model.*;
+import net.devtech.arrp.json.iteminfo.model.special.JModelShield;
+import net.devtech.arrp.json.iteminfo.model.special.JModelSpecial;
+import net.devtech.arrp.json.iteminfo.model.special.JModelTrident;
+import net.devtech.arrp.json.iteminfo.property.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static net.devtech.arrp.json.blockstate.JState.*;
+
+public class OraxenItemInitThread implements Runnable {
+	private static final Set<String> GENERATED = ConcurrentHashMap.newKeySet();
+
+	private final NexoItem item;
+	private final RuntimeResourcePack resourcePack;
+
+	public OraxenItemInitThread(RuntimeResourcePack resourcePack, NexoItem item) {
+		this.item = item;
+		this.resourcePack = resourcePack;
+	}
+
+	@Override
+	public void run() {
+		if (item.mechanics != null && item.mechanics.armor != null) {
+			String ns = item.id.getNamespace();
+			String prefix = item.id.getPath().replaceAll("(.+?)_.*", "$1");
+
+			if (GENERATED.add(prefix)) {
+				// 1) body/legs/wolf/horse/llama
+				JEquipmentModel body = JEquipmentModel.builder()
+						.addLayer(LayerType.HUMANOID, JLayer.builder(STR."\{ns}:" + prefix).build())
+						.addLayer(LayerType.HUMANOID_LEGGINGS, JLayer.builder(STR."\{ns}:" + prefix).build())
+						.addLayer(LayerType.WOLF_BODY, JLayer.builder(STR."\{ns}:" + prefix).build())
+						.addLayer(LayerType.HORSE_BODY, JLayer.builder(STR."\{ns}:" + prefix).build())
+						.addLayer(LayerType.LLAMA_BODY, JLayer.builder(STR."\{ns}:" + prefix).build())
+						.build();
+
+				// writes to assets/<ns>/models/equipment/<prefix>.json
+				resourcePack.addEquipmentModel(
+						body,
+						ResourceLocation.fromNamespaceAndPath(ns, prefix)
+				);
+
+				// 2) elytra wings
+				JEquipmentModel wings = JEquipmentModel.builder()
+						.addLayer("wings",
+								JLayer.builder(STR."\{STR."\{ns}:" + prefix}_elytra")
+										.usePlayerTexture(true)
+										.build()
+						).build();
+
+				// writes to assets/<ns>/models/equipment/<prefix>_elytra.json
+				resourcePack.addEquipmentModel(
+						wings,
+						ResourceLocation.fromNamespaceAndPath(ns, STR."\{prefix}_elytra")
+				);
+			}
+		}
+
+		ResourceLocation id = item.id;
+		if (item.pack == null) return;
+
+		if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(id, "item/")) != null) return;
+
+		if (!item.pack.generate_model) {
+			if (item.pack.model != null) {
+				ARRPGenerationHelper.generateSimpleItemModel(item, resourcePack, id, item.pack.model);
+			}
+		} else {
+			if (item.pack.parent_model != null) {
+				ARRPGenerationHelper.generateItemModel(item, resourcePack, id, item.pack.parent_model, item.pack.getTextures());
+			}
+		}
+
+		JItemInfo itemInfo = new JItemInfo();
+		JItemModel model = JItemModel.model(Utils.prependToPath(id, "item/").toString());
+		if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
+			JPropertyUsingItem usingItemProperty = new JPropertyUsingItem();
+
+			// Create the nested shield model
+			JItemModel shieldNestedModel = JModelShield.shield();
+
+			// Create the on_false model (not blocking)
+			JModelSpecial onFalseModel = new JModelSpecial()
+					.base(item.pack.model.toString())
+					.model(shieldNestedModel);
+
+			// Create the on_true model (blocking)
+			JModelSpecial onTrueModel = new JModelSpecial()
+					.base(item.pack.blocking_model.toString())
+					.model(shieldNestedModel);
+
+			model = JItemModel.condition()
+					.property(usingItemProperty)
+					.onFalse(onFalseModel)
+					.onTrue(onTrueModel);
+		} else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
+			if (item.pack.pulling_models != null) {
+				JModelCondition cond = JModelCondition.condition()
+						.property(JPropertyUseDuration.useDuration());
+
+				// range dispatch for pulling stages
+				JModelRangeDispatch dispatch = JModelRangeDispatch.rangeDispatch()
+						.property(JPropertyUseDuration.useDuration());
+				int stages = item.pack.pulling_models.size();
+				for (int i = 0; i < stages; i++) {
+					float threshold = (i + 1) / (float) stages;
+					dispatch.entry(
+							JRangeEntry.of(
+									threshold,
+									JItemModel.model(item.pack.pulling_models.get(i).toString())
+							)
+					);
+				}
+				// fallback to unpulled model
+				dispatch.fallback(JItemModel.model(item.pack.model.toString()));
+
+				cond.onFalse(JItemModel.model(item.pack.model.toString()));
+				cond.onTrue(dispatch);
+				model = cond;
+			}
+		} else if (item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
+			// Create the range dispatch model for pulling
+			JModelRangeDispatch pullingModel = JModelRangeDispatch.rangeDispatch()
+					.property(JPropertyCrossbowPull.crossbowPull());
+
+			// Number of pull stages
+			int stages = item.pack.pulling_models.size();
+
+			// Generate thresholds and entries
+			for (int i = 0; i < stages; i++) {
+				float threshold = (float) (i + 1) / stages;
+				JRangeEntry entry = JRangeEntry.of(
+						threshold,
+						JItemModel.model(item.pack.pulling_models.get(i).toString())
+				);
+				pullingModel.entry(entry);
+			}
+			pullingModel.fallback(JItemModel.model(item.pack.model.toString()));
+
+			// Create the select model for the charged state
+			JModelSelect chargedSelectModel = JModelSelect.select()
+					.property(JPropertyChargeType.chargeType())
+					.addCase(JSelectCase.of("arrow", JItemModel.model(item.pack.charged_model.toString())))
+					.addCase(JSelectCase.of("rocket", JItemModel.model(item.pack.firework_model.toString())));
+			chargedSelectModel.fallback(JItemModel.model(item.pack.model.toString()));
+
+			// Create the condition model based on pulling
+			model = JModelCondition.condition()
+					.property(new JPropertyUsingItem())
+					.onTrue(pullingModel)
+					.onFalse(chargedSelectModel);
+		} else if (item.getItemType().equals(NexoItem.ItemType.FISHING_ROD)) {
+			model = JModelCondition.condition()
+					.property(JPropertyFishingRodCast.fishingRodCast())
+					.onFalse(JItemModel.model(item.pack.model.toString()))
+					.onTrue(JItemModel.model(item.pack.cast_model.toString()));
+		} else if (item.getItemType().equals(NexoItem.ItemType.TRIDENT)) {
+			model = JModelCondition.condition().property(new JPropertyUsingItem())
+					.onFalse(JModelTrident.trident().base(item.pack.model.toString()))
+					.onTrue(JModelTrident.trident().base(item.mechanics.trident.thrown_item_model.toString()));
+		}
+
+		itemInfo.model(model);
+		resourcePack.addItemModelInfo(itemInfo, id);
+
+		if (item.mechanics != null && item.mechanics.furniture != null) {
+			ResourceLocation furnitureModel = item.pack.model != null ? item.pack.model : id;
+			ResourceLocation lidId = (
+					item.mechanics.furniture.lights != null &&
+							item.mechanics.furniture.lights.toggled_item_model != null
+			) ? item.mechanics.furniture.lights.toggled_item_model : furnitureModel;
+			JVariant variant = new JVariant()
+					// north
+					.put("facing=north,lit=false,occupied=false", JState.model(furnitureModel))
+					.put("facing=north,lit=false,occupied=true",  JState.model(furnitureModel))
+					.put("facing=north,lit=true,occupied=false",  JState.model(lidId))
+					.put("facing=north,lit=true,occupied=true",   JState.model(lidId))
+					// east
+					.put("facing=east,lit=false,occupied=false",  JState.model(furnitureModel).y(90))
+					.put("facing=east,lit=false,occupied=true",   JState.model(furnitureModel).y(90))
+					.put("facing=east,lit=true,occupied=false",   JState.model(lidId).y(90))
+					.put("facing=east,lit=true,occupied=true",    JState.model(lidId).y(90))
+					// south
+					.put("facing=south,lit=false,occupied=false", JState.model(furnitureModel).y(180))
+					.put("facing=south,lit=false,occupied=true",  JState.model(furnitureModel).y(180))
+					.put("facing=south,lit=true,occupied=false",  JState.model(lidId).y(180))
+					.put("facing=south,lit=true,occupied=true",   JState.model(lidId).y(180))
+					// west
+					.put("facing=west,lit=false,occupied=false",  JState.model(furnitureModel).y(270))
+					.put("facing=west,lit=false,occupied=true",   JState.model(furnitureModel).y(270))
+					.put("facing=west,lit=true,occupied=false",   JState.model(lidId).y(270))
+					.put("facing=west,lit=true,occupied=true",    JState.model(lidId).y(270));
+			resourcePack.addBlockState(state(variant), id);
+		}
+	}
+}

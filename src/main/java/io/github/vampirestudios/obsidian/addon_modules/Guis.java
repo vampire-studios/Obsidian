@@ -1,13 +1,13 @@
-/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
 import java.io.FileReader;
@@ -19,19 +19,23 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 public class Guis implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        GUI gui = Obsidian.GSON.fromJson(new FileReader(file), GUI.class);
+        GUI gui = BaseGson.GSON.fromJson(new FileReader(file), GUI.class);
         try {
             if (gui == null) return;
-
-            register(ContentRegistries.GUIS, "gui", gui.id, gui);
+            ResourceLocation fileId;
+            if (gui.id != null) fileId = gui.id;
+            else {
+                fileId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+                gui.id = fileId;
+            }
+            register(ContentRegistries.GUIS, "gui", fileId, gui);
         } catch (Exception e) {
-            failedRegistering("gui", gui.id.toString(), e);
+            failedRegistering("gui", ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "")), e);
         }
     }
 
     @Override
     public String getType() {
-        return "client/gui";
+        return "gui";
     }
 }
-*/

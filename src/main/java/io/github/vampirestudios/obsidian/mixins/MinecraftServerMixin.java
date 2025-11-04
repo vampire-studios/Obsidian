@@ -16,25 +16,20 @@
 
 package io.github.vampirestudios.obsidian.mixins;
 
-import com.google.common.collect.ImmutableList;
 import io.github.vampirestudios.obsidian.ResourceLoaderEventContextsImpl;
 import io.github.vampirestudios.obsidian.ResourceLoaderEvents;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.packs.resources.CloseableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
@@ -44,20 +39,20 @@ public abstract class MinecraftServerMixin {
 	@Shadow
 	public abstract RegistryAccess.Frozen registryAccess();
 
-	@Inject(
-			method = "method_29437(Lnet/minecraft/core/RegistryAccess$Frozen;Lcom/google/common/collect/ImmutableList;)Ljava/util/concurrent/CompletionStage;",
-			at = @At("RETURN"),
-			locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void onReloadResourcesStart(
-			RegistryAccess.Frozen frozen, ImmutableList packs, CallbackInfoReturnable<CompletionStage> cir,
-			CloseableResourceManager currentResourceManager
-	) {
-		ResourceLoaderEventContextsImpl.server = new WeakReference<>((MinecraftServer) (Object) this);
-		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(new ResourceLoaderEventContextsImpl.ReloadStartContext(
-				() -> currentResourceManager, this.getResourceManager()
-		));
-	}
+//	@Inject(
+//			method = "method_29437(Lnet/minecraft/core/RegistryAccess$Frozen;Lcom/google/common/collect/ImmutableList;)Ljava/util/concurrent/CompletionStage;",
+//			at = @At("RETURN"),
+//			locals = LocalCapture.CAPTURE_FAILHARD
+//	)
+//	private void onReloadResourcesStart(
+//			RegistryAccess.Frozen frozen, ImmutableList packs, CallbackInfoReturnable<CompletionStage> cir,
+//			CloseableResourceManager currentResourceManager
+//	) {
+//		ResourceLoaderEventContextsImpl.server = new WeakReference<>((MinecraftServer) (Object) this);
+//		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(new ResourceLoaderEventContextsImpl.ReloadStartContext(
+//				() -> currentResourceManager, this.getResourceManager()
+//		));
+//	}
 
 	@Inject(method = "reloadResources", at = @At("TAIL"))
 	private void onReloadResourcesEnd(Collection<String> collection, CallbackInfoReturnable<CompletableFuture<Void>> cir) {

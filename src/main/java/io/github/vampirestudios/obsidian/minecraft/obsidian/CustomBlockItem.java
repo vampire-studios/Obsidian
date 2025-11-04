@@ -4,6 +4,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+
+import java.util.function.Consumer;
 
 public class CustomBlockItem extends BlockItem {
 
@@ -15,30 +19,15 @@ public class CustomBlockItem extends BlockItem {
     }
 
     @Override
-    public ItemStack getDefaultInstance() {
-        ItemStack stack = super.getDefaultInstance();
-        block.information.getRemovedTooltipSections().forEach(stack::hideTooltipPart);
-        return stack;
-    }
-
-    @Override
     public boolean isFoil(ItemStack stack) {
-        return block.information.getItemSettings() != null ? block.information.getItemSettings().hasEnchantmentGlint : super.isFoil(stack);
+        return block.information.getItemSettings() != null
+                ? block.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted())
+                : super.isFoil(stack);
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return block.information.getItemSettings() != null ? block.information.getItemSettings().isEnchantable : super.isEnchantable(stack);
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, tooltipContext, tooltipDisplay, consumer, tooltipFlag);
+        block.addLore(consumer);
     }
-
-    @Override
-    public int getEnchantmentValue() {
-        return block.information.getItemSettings() != null ? block.information.getItemSettings().enchantability : super.getEnchantmentValue();
-    }
-
-    @Override
-    public Component getDescription() {
-        return block.information.name.getName("block");
-    }
-
 }

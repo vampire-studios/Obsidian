@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 @Mixin(Entity.class)
 public abstract class EntityMixin implements CustomFluidInteracting {
 	@Shadow
-	public float fallDistance;
+	public double fallDistance;
 	@Shadow
 	private Level level;
 	@Shadow

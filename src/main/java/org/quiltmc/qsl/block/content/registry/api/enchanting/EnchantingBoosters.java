@@ -21,6 +21,7 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class EnchantingBoosters {
 	 */
 	public static Codec<EnchantingBoosterType> TYPE_CODEC = ResourceLocation.CODEC.flatXmap(id -> {
 		EnchantingBoosterType type = TYPES.get(id);
-		return type != null ? DataResult.success(type) : DataResult.error(() -> "Unknown enchanting booster type: " + id);
+		return type != null ? DataResult.success(type) : DataResult.error(() -> STR."Unknown enchanting booster type: \{id}");
 	}, type -> {
 		ResourceLocation identifier = TYPES.inverse().get(type);
 		return identifier != null ? DataResult.success(identifier) : DataResult.error(() -> "Unknown enchanting booster type");
@@ -55,7 +56,7 @@ public class EnchantingBoosters {
 											floatId.map(f -> DataResult.success(new ConstantBooster(f)), id -> {
 												EnchantingBoosterType type = TYPES.get(id);
 												if (type == null) {
-													return DataResult.error(() -> "Unknown Booster Type: " + id);
+													return DataResult.error(() -> STR."Unknown Booster Type: \{id}");
 												}
 
 												return type.simpleVariant().isPresent()
@@ -82,7 +83,7 @@ public class EnchantingBoosters {
 	 * @param codec the codec for the booster
 	 * @return the type for the booster
 	 */
-	public static EnchantingBoosterType register(ResourceLocation id, Codec<? extends EnchantingBooster> codec) {
+	public static EnchantingBoosterType register(ResourceLocation id, MapCodec<? extends EnchantingBooster> codec) {
 		var type = new EnchantingBoosterType(codec, Optional.empty());
 		return register(id, type);
 	}
@@ -96,9 +97,9 @@ public class EnchantingBoosters {
 	 */
 	public static EnchantingBoosterType register(ResourceLocation id, EnchantingBoosterType type) {
 		if (TYPES.containsKey(id)) {
-			throw new IllegalArgumentException(id + " already used as name");
+			throw new IllegalArgumentException(STR."\{id} already used as name");
 		} else if (TYPES.containsValue(type)) {
-			throw new IllegalArgumentException("Type already assigned to " + TYPES.inverse().get(type));
+			throw new IllegalArgumentException(STR."Type already assigned to \{TYPES.inverse().get(type)}");
 		}
 
 		TYPES.put(id, type);

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api.bedrock;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
@@ -59,4 +60,4 @@ public class BedrockAddon implements IBedrockAddon {
         return null;
     }
 
-}
+}*/

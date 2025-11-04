@@ -26,11 +26,13 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.impl.*;
+import org.quiltmc.qsl.registry.attachment.impl.ClientSideGuard;
+import org.quiltmc.qsl.registry.attachment.impl.Initializer;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
@@ -52,8 +54,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	static final Logger LOGGER = LogUtils.getLogger();
-	private static final ResourceLocation ID_DATA = new ResourceLocation(Initializer.NAMESPACE, "data");
-	private static final ResourceLocation ID_ASSETS = new ResourceLocation(Initializer.NAMESPACE, "assets");
+	private static final ResourceLocation ID_DATA = ResourceLocation.fromNamespaceAndPath(Initializer.NAMESPACE, "data");
+	private static final ResourceLocation ID_ASSETS = ResourceLocation.fromNamespaceAndPath(Initializer.NAMESPACE, "assets");
 
 	private final PackType source;
 	private final ResourceLocation id;
@@ -76,33 +78,29 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public CompletableFuture<LoadedData> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+	public CompletableFuture<LoadedData> load(ResourceManager manager, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
 			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
 			for (var entry : BuiltInRegistries.REGISTRY.entrySet()) {
 				ResourceLocation registryId = entry.getKey().location();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
-				profiler.push(this.id + "/finding_resources/" + path);
 
 				Map<ResourceLocation, List<Resource>> resources = manager.listResourceStacks("attachments/" + path,
 						s -> s.getPath().endsWith(".json"));
 				if (resources.isEmpty()) {
-					profiler.pop();
 					continue;
 				}
 
 				Registry<?> registry = entry.getValue();
-				this.processResources(profiler, attachDicts, resources, registry);
-
-				profiler.pop();
+				this.processResources(attachDicts, resources, registry);
 			}
 
 			return new LoadedData(attachDicts);
 		}, executor);
 	}
 
-	private void processResources(ProfilerFiller profiler,
+	private void processResources(
 			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
 			Map<ResourceLocation, List<Resource>> resources, Registry<?> registry) {
 		for (var entry : resources.entrySet()) {
@@ -119,8 +117,6 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				continue;
 			}
 
-			profiler.popPush(this.id + "/processing_resources{" + entry + "," + attachmentId + "}");
-
 			AttachmentDictionary<?, ?> attachDict = attachDicts.computeIfAbsent(attachment, this::createAttachmentMap);
 			for (var resource : entry.getValue()) {
 				attachDict.processResource(entry.getKey(), resource);
@@ -133,9 +129,9 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
-			data.apply(profiler);
+			data.apply();
 			if (this.source == PackType.SERVER_DATA) {
 				RegistryEntryAttachmentSync.clearEncodedValuesCache();
 				RegistryEntryAttachmentSync.syncAttachmentsToAllPlayers();
@@ -151,7 +147,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		int lastDot = path.lastIndexOf('.');
 		path = path.substring(0, lastDot);
-		return new ResourceLocation(jsonId.getNamespace(), path);
+		return ResourceLocation.fromNamespaceAndPath(jsonId.getNamespace(), path);
 	}
 
 	protected final class LoadedData {
@@ -162,51 +158,32 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		}
 
 		@SuppressWarnings("unchecked")
-		public void apply(ProfilerFiller profiler) {
-			profiler.push(RegistryEntryAttachmentReloader.this.id + "/prepare_attachments");
-
+		public void apply() {
 			for (var entry : BuiltInRegistries.REGISTRY.entrySet()) {
 				RegistryEntryAttachmentHolder.getData(entry.getValue())
 						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
 			for (var entry : this.attachmentMaps.entrySet()) {
-				profiler.popPush(RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}");
 				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
-
-			profiler.pop();
 		}
 
 		@SuppressWarnings("unchecked")
-		private <R, V> void applyOne(RegistryEntryAttachment<R, V> attachment, AttachmentDictionary<R, V> attachDict) {
+		private <R, V> void applyOne(RegistryEntryAttachment<R, V> attachment, AttachmentDictionary<R, V> attachAttachment) {
 			var registry = attachment.registry();
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);
-			for (var attachmentEntry : attachDict.getMap().entrySet()) {
+			for (Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
 				V value = (V) attachmentEntry.getValue();
 				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
-					case ENTRY -> holder.putValue(attachment, registry.get(target.id()), value);
+					case ENTRY -> holder.putValue(attachment, registry.getValue(target.id()), value);
 					case TAG -> holder.putValue(attachment, TagKey.create(registry.key(), target.id()), value);
 					default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
-
-			for (var mirrorEntry : attachDict.getMirrors().entrySet()) {
-				holder.mirrorTable.put(attachment,
-						attachment.registry().get(mirrorEntry.getKey()),
-						attachment.registry().get(mirrorEntry.getValue()));
-			}
-
-			for (var mirrorEntry : attachDict.getTagMirrors().entrySet()) {
-				holder.mirrorTagTable.put(attachment,
-						TagKey.create(attachment.registry().key(), mirrorEntry.getKey()),
-						TagKey.create(attachment.registry().key(), mirrorEntry.getValue()));
-			}
-
-			((RegistryEntryAttachmentImpl<R, V>) attachment).rebuildMirrorMaps();
 		}
 	}
 }

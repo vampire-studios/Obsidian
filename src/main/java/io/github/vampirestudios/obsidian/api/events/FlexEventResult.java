@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.api.events;
 
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -32,12 +31,12 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
 
     public static FlexEventResult consumePartial()
     {
-        return new FlexEventResult(InteractionResult.CONSUME_PARTIAL, null);
+        return new FlexEventResult(InteractionResult.CONSUME, null);
     }
 
     public static FlexEventResult consumePartial(@Nonnull Object resultState)
     {
-        return new FlexEventResult(InteractionResult.CONSUME_PARTIAL, resultState);
+        return new FlexEventResult(InteractionResult.CONSUME, resultState);
     }
 
     public static FlexEventResult pass()
@@ -60,11 +59,6 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
         return new FlexEventResult(InteractionResult.FAIL, resultState);
     }
 
-    public static FlexEventResult of(InteractionResultHolder<?> holder)
-    {
-        return new FlexEventResult(holder.getResult(), holder.getObject());
-    }
-
     public static FlexEventResult of(InteractionResult result)
     {
         return new FlexEventResult(result, null);
@@ -73,10 +67,5 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
     public ItemStack stack()
     {
         return (ItemStack) Objects.requireNonNull(object);
-    }
-
-    public InteractionResultHolder<ItemStack> holder()
-    {
-        return new InteractionResultHolder<>(result, stack());
     }
 }

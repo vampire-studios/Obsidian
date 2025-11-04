@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.ArmorModel;
@@ -11,3 +12,4 @@ public class ArmorModelImpl<T extends LivingEntity> extends HumanoidModel<T> {
     }
 
 }
+*/

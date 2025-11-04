@@ -1,7 +1,8 @@
+/*
 package org.quiltmc.qsl.enchantment.mixinterface;
 
-import net.minecraft.util.random.Weight;
+import net.minecraft.util.random.Weighted;
 
 public interface MutableWeight {
-	void setWeight(Weight weight);
-}
+	void setWeight(Weighted weight);
+}*/

@@ -1,11 +1,16 @@
 package io.github.vampirestudios.obsidian.client;
 
+import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.JBlockModel;
 import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.blockstate.JVariant;
+import net.devtech.arrp.json.iteminfo.JItemInfo;
+import net.devtech.arrp.json.iteminfo.model.JModelBasic;
+import net.devtech.arrp.json.loot.JCondition;
 import net.devtech.arrp.json.models.JModel;
+import net.devtech.arrp.json.models.JOverride;
 import net.devtech.arrp.json.models.JTextures;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -96,6 +101,20 @@ public class ARRPGenerationHelper {
             .put("facing=south", JState.model(modelId).y(180))
             .put("facing=east", JState.model(modelId).y(90))
             .put("facing=west", JState.model(modelId).y(270))
+        );
+        clientResourcePackBuilder.addBlockState(model, name);
+    }
+
+    public static void generateHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name, ResourceLocation modelId, ResourceLocation extraStateModelId, String extraState) {
+        JState model = JState.state(new JVariant()
+                .put("facing=north", JState.model(modelId))
+                .put("facing=south", JState.model(modelId).y(180))
+                .put("facing=east", JState.model(modelId).y(90))
+                .put("facing=west", JState.model(modelId).y(270))
+                .put(STR."facing=north,\{extraState}", JState.model(extraStateModelId))
+                .put(STR."facing=south,\{extraState}", JState.model(extraStateModelId).y(180))
+                .put(STR."facing=east,\{extraState}", JState.model(extraStateModelId).y(90))
+                .put(STR."facing=west,\{extraState}", JState.model(extraStateModelId).y(270))
         );
         clientResourcePackBuilder.addBlockState(model, name);
     }
@@ -191,6 +210,7 @@ public class ARRPGenerationHelper {
 
     public static void generateBlockItemModel(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name, ResourceLocation modelId) {
         clientResourcePackBuilder.addModel(JModel.model(Utils.prependToPath(modelId, "block/")), Utils.prependToPath(name, "item/"));
+
     }
 
     public static void generateBlockItemModel1(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name, ResourceLocation modelId) {
@@ -198,6 +218,7 @@ public class ARRPGenerationHelper {
     }
 
     public static void generateItemModel(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name, ResourceLocation parent, Map<String, ResourceLocation> textures) {
+        if (name == null || parent == null) return;
         JModel itemModel = JModel.model(parent);
         JTextures textures1 = JModel.textures();
         if (textures != null)
@@ -205,74 +226,74 @@ public class ARRPGenerationHelper {
         clientResourcePackBuilder.addModel(itemModel.textures(textures1), Utils.prependToPath(name, "item/"));
     }
 
-    /*public static void generateSimpleItemModel(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name) {
-        clientResourcePackBuilder.addModel(JModel.model("item/generated"), name);
-        clientResourcePackBuilder.addItemModel(name, new ModelBuilder().parent(new ResourceLocation("item/generated")).texture("layer0", Utils.prependToPath(name, "item/")));
+    public static void generateItemModel(NexoItem item, RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name, ResourceLocation parent, Map<String, ResourceLocation> textures) {
+        if (name == null || parent == null) return;
+        JModel itemModel = JModel.model(parent);
+
+        if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
+            if (item.pack.blocking_model != null) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("blocking", 1), item.pack.blocking_model.toString()));
+            }
+        } else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
+            if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.65f), item.pack.pulling_models.get(0).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.9f), item.pack.pulling_models.get(1).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+            }
+        } else if(item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
+            // Assuming crossbow has three stages similar to the bow for pulling, plus a loaded and a firing state.
+            if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.58f), item.pack.pulling_models.get(0).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.79f), item.pack.pulling_models.get(1).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+            }
+            // Handle charged state with normal arrow
+            if (item.pack.charged_model != null) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 0), item.pack.charged_model.toString()));
+            }
+            // Handle charged state with firework
+            if (item.pack.firework_model != null) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 1), item.pack.firework_model.toString()));
+            }
+        }
+
+        JTextures textures1 = JModel.textures();
+        if (textures != null)
+            textures.forEach((s, location) -> textures1.var(s, location.toString()));
+        clientResourcePackBuilder.addModel(itemModel.textures(textures1), Utils.prependToPath(name, "item/"));
     }
 
-    public static void generateSimpleItemModel(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name, ResourceLocation texture) {
-        clientResourcePackBuilder.addItemModel(name, new ModelBuilder().parent(new ResourceLocation("item/generated")).texture("layer0", texture));
-    }*/
+    public static void generateSimpleItemModel(NexoItem item, RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name, ResourceLocation parent) {
+        JModel itemModel = JModel.model(parent);
 
-    public static void generateStairsBlockState(RuntimeResourcePack pack, ResourceLocation name) {
-//        String JSON = JsonTemplates.STAIRS_BLOCKSTATE
-//                .replace("%MOD_ID%", name.getNamespace())
-//                .replace("%BLOCK_ID%", name.getPath());
-//        pack.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
+        if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
+            if (item.pack.blocking_model != null) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("blocking", 1), item.pack.blocking_model.toString()));
+            }
+        } else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
+            if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.65f), item.pack.pulling_models.get(0).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.9f), item.pack.pulling_models.get(1).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+            }
+        } else if(item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
+            // Assuming crossbow has three stages similar to the bow for pulling, plus a loaded and a firing state.
+            if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.58f), item.pack.pulling_models.get(0).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.79f), item.pack.pulling_models.get(1).toString()));
+                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+            }
+            // Handle charged state with normal arrow
+            if (item.pack.charged_model != null) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 0), item.pack.charged_model.toString()));
+            }
+            // Handle charged state with firework
+            if (item.pack.firework_model != null) {
+                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 1), item.pack.firework_model.toString()));
+            }
+        }
+        clientResourcePackBuilder.addModel(itemModel, Utils.prependToPath(name, "item/"));
     }
-
-    /*public static void generateStairsBlockModels(RuntimeResourcePack pack, ResourceLocation name, Map<String, ResourceLocation> textures) {
-        pack.addBlockModel(Utils.appendToPath(name, "_inner"), new ModelBuilder()
-                .parent(new ResourceLocation("block/inner_stairs"))
-                .texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
-                    textures.get("end") : textures.get("all"))
-                .texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-                .texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-                .texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-        );
-        pack.addBlockModel(Utils.appendToPath(name, "_outer"), new ModelBuilder()
-                .parent(new ResourceLocation("block/outer_stairs"))
-                .texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
-                    textures.get("end") : textures.get("all"))
-                .texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-                .texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-                .texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-        );
-        pack.addBlockModel(name, new ModelBuilder()
-                .parent(new ResourceLocation("block/stairs"))
-                .texture("particle", textures.containsKey("particle") ? textures.get("particle") : textures.containsKey("end") ?
-                    textures.get("end") : textures.get("all"))
-                .texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-                .texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-                .texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-        );
-    }*/
-
-    public static void generateWallBlockState(RuntimeResourcePack pack, ResourceLocation name) {
-//        String JSON = JsonTemplates.WALL_BLOCKSTATE
-//                .replace("%MOD_ID%", name.getNamespace())
-//                .replace("%BLOCK_ID%", name.getPath());
-//        pack.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
-    }
-
-    /*public static void generateWallBlockModels(RuntimeResourcePack pack, ResourceLocation name, Map<String, ResourceLocation> textures) {
-        pack.addBlockModel(Utils.appendToPath(name, "_inventory"), new ModelBuilder()
-                .parent(new ResourceLocation("block/wall_inventory"))
-                .texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-        );
-        pack.addBlockModel(Utils.appendToPath(name, "_post"), new ModelBuilder()
-                .parent(new ResourceLocation("block/template_wall_post"))
-                .texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-        );
-        pack.addBlockModel(Utils.appendToPath(name, "_side"), new ModelBuilder()
-                .parent(new ResourceLocation("block/template_wall_side"))
-                .texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-        );
-        pack.addBlockModel(Utils.appendToPath(name, "_side_tall"), new ModelBuilder()
-                .parent(new ResourceLocation("block/template_wall_side_tall"))
-                .texture("wall", textures.containsKey("wall") ? textures.get("wall") : textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-        );
-    }*/
 
     public static void generateSlabBlockState(RuntimeResourcePack pack, ResourceLocation name, ResourceLocation doubleBlockName) {
         JState state = JState.state();
@@ -287,242 +308,16 @@ public class ARRPGenerationHelper {
         pack.addBlockState(state, name);
     }
 
-    /*public static void generateSlabBlockModels(RuntimeResourcePack pack, ResourceLocation name, ResourceLocation texture) {
-        pack.addBlockModel(Utils.appendToPath(name, "_top"), new ModelBuilder()
-                .parent(new ResourceLocation("block/slab_top"))
-                .texture("particle", texture)
-                .texture("side", texture)
-                .texture("top", texture)
-                .texture("bottom", texture)
-        );
-        pack.addBlockModel(name, new ModelBuilder()
-                .parent(new ResourceLocation("block/slab"))
-                .texture("particle", texture)
-                .texture("side", texture)
-                .texture("top", texture)
-                .texture("bottom", texture)
-        );
-    }*/
-
-    /*public static void generateSlabBlockModels(RuntimeResourcePack pack, ResourceLocation name, Map<String, ResourceLocation> textures) {
-        ModelBuilder modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/slab_top"))
-                .texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-                .texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-                .texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
-        pack.addBlockModel(Utils.appendToPath(name, "_top"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/slab"))
-                .texture("side", textures.containsKey("side") ? textures.get("side") : textures.get("all"))
-                .texture("top", textures.containsKey("top") ? textures.get("top") : textures.containsKey("end") ? textures.get("end") : textures.get("all"))
-                .texture("bottom", textures.containsKey("bottom") ? textures.get("bottom") : textures.containsKey("end") ? textures.get("end") : textures.get("all"));
-        pack.addBlockModel(name, modelBuilder);
-    }*/
-
-    public static void generateFenceBlockState(RuntimeResourcePack pack, ResourceLocation name) {
-//        BlockStateBuilder state = new BlockStateBuilder().multipartCase(new BlockStateBuilder.Case().apply(new BlockStateBuilder.Variant().model(
-//                Utils.appendAndPrependToPath(name, "block/", "_post")
-//        )));
-//        for (Direction d : Direction.values()) {
-//            if (d != Direction.UP && d != Direction.DOWN) {
-//                state.multipartCase(new BlockStateBuilder.Case()
-//                        .when(d.asString(), "true")
-//                        .apply(new BlockStateBuilder.Variant()
-//                                .model(Utils.appendAndPrependToPath(name, "block/", "_side"))
-//                                .uvlock(true)
-//                                .y(switch (d) {
-//                                    case EAST -> 90;
-//                                    case WEST -> 270;
-//                                    case SOUTH -> 180;
-//                                    default -> throw new IllegalStateException("Unexpected value: " + d);
-//                                })
-//                        )
-//                );
-//            }
-//        }
-//        pack.addBlockState(name, state);
+    public static void generateBasicItemDefinition(RuntimeResourcePack pack, ResourceLocation name) {
+        JItemInfo itemInfo = new JItemInfo()
+                .model(JModelBasic.model(Utils.prependToPath(name, "item/").toString()));
+        pack.addItemModelInfo(itemInfo, name);
     }
 
-    /*public static void generateFenceBlockModels(RuntimeResourcePack pack, ResourceLocation name, Map<String, ResourceLocation> textures) {
-        ModelBuilder modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/fence_inventory"))
-                .texture("texture", textures.containsKey("texture") ? textures.get("texture") : textures.get("all"));
-        pack.addBlockModel(Utils.appendToPath(name, "_inventory"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/fence_post"))
-                .texture("texture", textures.containsKey("texture") ? textures.get("texture") : textures.get("all"));
-        pack.addBlockModel(Utils.appendToPath(name, "_post"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/fence_side"))
-                .texture("texture", textures.containsKey("texture") ? textures.get("texture") : textures.get("all"));
-        pack.addBlockModel(Utils.appendToPath(name, "_side"), modelBuilder);
+    public static void generateBasicItemDefinition(RuntimeResourcePack pack, ResourceLocation name, ResourceLocation model) {
+        JItemInfo itemInfo = new JItemInfo()
+                .model(JModelBasic.model(model.toString()));
+        pack.addItemModelInfo(itemInfo, name);
     }
 
-    public static void generateFenceGateBlockState(RuntimeResourcePack pack, ResourceLocation name) {
-        BlockStateBuilder state = new BlockStateBuilder();
-        for (Direction direction : Direction.values()) {
-            if (direction != Direction.UP && direction != Direction.DOWN) {
-                BlockStateBuilder.Variant var = new BlockStateBuilder.Variant()
-                        .model(Utils.prependToPath(name, "block/"))
-                        .uvlock(true)
-                        .y(switch (direction) {
-                            case NORTH -> 180;
-                            case WEST -> 90;
-                            case EAST -> 270;
-                            default -> throw new IllegalStateException("Unexpected value: " + direction);
-                        });
-                state.variant("facing=" + direction.asString() + ",in_wall=false,open=false", var);
-                var = new BlockStateBuilder.Variant()
-                        .model(Utils.appendAndPrependToPath(name, "block/", "_wall"))
-                        .uvlock(true)
-                        .y(switch (direction) {
-                            case NORTH -> 180;
-                            case WEST -> 90;
-                            case EAST -> 270;
-                            default -> throw new IllegalStateException("Unexpected value: " + direction);
-                        });
-                state.variant("facing=" + direction.asString() + ",in_wall=true,open=false", var);
-                var = new BlockStateBuilder.Variant()
-                        .model(Utils.appendAndPrependToPath(name, "block/", "_open"))
-                        .uvlock(true)
-                        .y(switch (direction) {
-                            case NORTH -> 180;
-                            case WEST -> 90;
-                            case EAST -> 270;
-                            default -> throw new IllegalStateException("Unexpected value: " + direction);
-                        });
-                state.variant("facing=" + direction.asString() + ",in_wall=false,open=true", var);
-                var = new BlockStateBuilder.Variant()
-                        .model(Utils.appendAndPrependToPath(name, "block/", "_wall_open"))
-                        .uvlock(true)
-                        .y(switch (direction) {
-                            case NORTH -> 180;
-                            case WEST -> 90;
-                            case EAST -> 270;
-                            default -> throw new IllegalStateException("Unexpected value: " + direction);
-                        });
-                state.variant("facing=" + direction.asString() + ",in_wall=true,open=true", var);
-            }
-        }
-        pack.addBlockState(name, state);
-    }
-
-    public static void generateFenceGateBlockModels(RuntimeResourcePack pack, ResourceLocation name, ResourceLocation texture) {
-        ModelBuilder modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/template_fence_gate_open"))
-                .texture("texture", texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_open"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/template_fence_gate_wall"))
-                .texture("texture", texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_wall"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/template_fence_gate_wall_open"))
-                .texture("texture", texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_wall_open"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(new ResourceLocation("block/template_fence_gate"))
-                .texture("texture", texture);
-        pack.addBlockModel(name, modelBuilder);
-    }*/
-
-    public static void generateDoorBlockState(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name) {
-//        String JSON = JsonTemplates.DOOR_BLOCKSTATE
-//                .replace("%MOD_ID%", name.getNamespace())
-//                .replace("%BLOCK_ID%", name.getPath());
-//        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
-    }
-
-    /*public static void generateDoorBlockModels(RuntimeResourcePack pack, ResourceLocation name,
-                                               ResourceLocation topParent, Map<String, ResourceLocation> topTextures,
-                                               ResourceLocation topHingeParent, Map<String, ResourceLocation> topHingeTextures,
-                                               ResourceLocation bottomParent, Map<String, ResourceLocation> bottomTextures,
-                                               ResourceLocation bottomHingeParent, Map<String, ResourceLocation> bottomHingeTextures) {
-        ModelBuilder modelBuilder = new ModelBuilder()
-                .parent(bottomParent != null ? bottomParent : new ResourceLocation("block/door_bottom"));
-        bottomTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_bottom"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(bottomHingeParent != null ? bottomHingeParent : new ResourceLocation("block/door_bottom_rh"));
-        bottomHingeTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_bottom_hinge"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(topParent != null ? topParent : new ResourceLocation("block/door_top"));
-        topTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_top"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(topHingeParent != null ? topHingeParent : new ResourceLocation("block/door_top_rh"));
-        topHingeTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_top_hinge"), modelBuilder);
-    }*/
-
-    public static void generateTrapdoorBlockState(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation name) {
-//        String JSON = JsonTemplates.TRAPDOOR_BLOCKSTATE
-//                .replace("%MOD_ID%", name.getNamespace())
-//                .replace("%BLOCK_ID%", name.getPath());
-//        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
-    }
-
-    /*public static void generateTrapdoorBlockModels(RuntimeResourcePack pack, ResourceLocation name,
-                                                   ResourceLocation topParent, Map<String, ResourceLocation> topTextures,
-                                                   ResourceLocation openParent, Map<String, ResourceLocation> openTextures,
-                                                   ResourceLocation bottomParent, Map<String, ResourceLocation> bottomTextures) {
-        ModelBuilder modelBuilder = new ModelBuilder()
-                .parent(bottomParent);
-        bottomTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_bottom"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(openParent);
-        openTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_open"), modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(topParent);
-        topTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_top"), modelBuilder);
-    }*/
-
-    public static void generateOnOffHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder,
-                                                               ResourceLocation name) {
-//        String JSON = JsonTemplates.HORIZONTAL_FACING_ON_OFF_BLOCKSTATE
-//                .replace("%MOD_ID%", name.getNamespace())
-//                .replace("%BLOCK_ID%", name.getPath());
-//        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(name, "blockstates/", ".json"), new StringResource(JSON));
-    }
-
-    /*public static void generateOnOffBlockModels(RuntimeResourcePack pack, ResourceLocation name,
-                                                   ResourceLocation onParent, Map<String, ResourceLocation> onTextures,
-                                                   ResourceLocation offParent, Map<String, ResourceLocation> offTextures) {
-        ModelBuilder modelBuilder = new ModelBuilder()
-                .parent(offParent);
-        offTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(name, modelBuilder);
-        modelBuilder = new ModelBuilder()
-                .parent(onParent);
-        onTextures.forEach(modelBuilder::texture);
-        pack.addBlockModel(Utils.appendToPath(name, "_on"), modelBuilder);
-    }*/
-
-    public static void generatePistonBlockState(RuntimeResourcePack clientResourcePackBuilder, ResourceLocation blockId, ResourceLocation model, ResourceLocation stickyModel) {
-//        String JSON = JsonTemplates.PISTON_BLOCKSTATE
-//                .replace("%MOD_ID%", blockId.getNamespace())
-//                .replace("%BLOCK_ID%", blockId.getPath());
-//        String STICKY_JSON = JsonTemplates.PISTON_BLOCKSTATE
-//                .replace("%MOD_ID%", blockId.getNamespace())
-//                .replace("%BLOCK_ID%", blockId.getPath() + "_sticky");
-//        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(blockId, "blockstates/", ".json"), new StringResource(JSON));
-//        clientResourcePackBuilder.add(Utils.appendAndPrependToPath(Utils.appendToPath(blockId, "_sticky"), "blockstates/", ".json"), new StringResource(STICKY_JSON));
-    }
-
-    public static void generatePistonModels(RuntimeResourcePack pack, ResourceLocation blockId,
-                                                ResourceLocation normalModel, Map<String, ResourceLocation> normalTextures,
-                                                ResourceLocation stickyModel, Map<String, ResourceLocation> stickyTextures) {
-//        ModelBuilder modelBuilder = new ModelBuilder()
-//                .parent(normalModel);
-//        normalTextures.forEach(modelBuilder::texture);
-//        pack.addBlockModel(blockId, modelBuilder);
-//        modelBuilder = new ModelBuilder()
-//                .parent(stickyModel);
-//        stickyTextures.forEach(modelBuilder::texture);
-//        pack.addBlockModel(Utils.appendToPath(blockId, "_sticky"), modelBuilder);
-    }
 }

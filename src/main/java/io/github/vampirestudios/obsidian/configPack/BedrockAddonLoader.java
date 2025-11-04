@@ -3,14 +3,13 @@ package io.github.vampirestudios.obsidian.configPack;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.api.bedrock.BedrockAddon;
+import io.github.vampirestudios.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.api.bedrock.IBedrockAddon;
 import io.github.vampirestudios.obsidian.api.bedrock.ManifestFile;
 import io.github.vampirestudios.obsidian.api.bedrock.block.BaseBlock;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
-import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
@@ -19,7 +18,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.statusEffects.StatusEffect
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
-import io.github.vampirestudios.vampirelib.utils.registry.RegistryHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +35,7 @@ public class BedrockAddonLoader {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian: Bedrock"));
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(ResourceLocation.class, (SimpleStringDeserializer<?>) ResourceLocation::new)
+            .registerTypeAdapter(ResourceLocation.class, (SimpleStringDeserializer<?>) ResourceLocation::parse)
             .setPrettyPrinting().create();
     public static final File BEDROCK_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDir().toFile(), "bedrock_addons");
     public static final Map<IBedrockAddon, String> BEDROCK_ADDONS = new HashMap<>();
@@ -45,7 +43,6 @@ public class BedrockAddonLoader {
     public static final List<Potion> POTIONS = new ArrayList<>();
     public static final List<Command> COMMANDS = new ArrayList<>();
     public static final List<StatusEffect> STATUS_EFFECTS = new ArrayList<>();
-    public static final List<Enchantment> ENCHANTMENTS = new ArrayList<>();
     public static final List<io.github.vampirestudios.obsidian.api.obsidian.ItemGroup> ITEM_GROUPS = new ArrayList<>();
     public static final List<Entity> ENTITIES = new ArrayList<>();
     public static RegistryHelper REGISTRY_HELPER;
@@ -67,8 +64,8 @@ public class BedrockAddonLoader {
                 File manifestFile = new File(file, "manifest.json");
                 if (manifestFile.exists()) {
                     ManifestFile packInfo = GSON.fromJson(new FileReader(manifestFile), ManifestFile.class);
-                    BedrockAddon configPack = new BedrockAddon(packInfo, file);
-                    if (!BEDROCK_ADDONS.containsKey(configPack)) {
+//                    BedrockAddon configPack = new BedrockAddon(packInfo, file);
+//                    if (!BEDROCK_ADDONS.containsKey(configPack)) {
                         /*TEMP_BEDROCK_ADDONS.put(configPack.getManifestFile().header.uuid, configPack);
                         boolean dependenciesLoaded = false;
                         Map<String, int[]> dependenciesInfo = new HashMap<>();
@@ -90,9 +87,9 @@ public class BedrockAddonLoader {
                             }
                         }
                         dependenciesUUIDList.forEach(TEMP_BEDROCK_ADDONS::remove);*/
-                        BEDROCK_ADDONS.put(configPack, configPack.getManifestFile().header.uuid);
-                    }
-                    Obsidian.BEDROCK_LOGGER.info(String.format("[Obsidian] Registering bedrock addon: %s (Type: %s)", configPack.getManifestFile().header.name, configPack.getManifestFile().modules[0].type));
+//                        BEDROCK_ADDONS.put(configPack, configPack.getManifestFile().header.uuid);
+//                    }
+//                    Obsidian.BEDROCK_LOGGER.info(String.format("[Obsidian] Registering bedrock addon: %s (Type: %s)", configPack.getManifestFile().header.name, configPack.getManifestFile().modules[0].type));
                 }
             } catch (Exception e) {
                 Obsidian.BEDROCK_LOGGER.error("[Obsidian] Failed to load bedrock addon!", e);
@@ -102,8 +99,8 @@ public class BedrockAddonLoader {
                 ZipEntry manifestFileEntry = zipFile.getEntry("manifest.json");
                 if (manifestFileEntry != null) {
                     ManifestFile manifestFile = GSON.fromJson(new InputStreamReader(zipFile.getInputStream(manifestFileEntry)), ManifestFile.class);
-                    BedrockAddon bedrockAddon = new BedrockAddon(manifestFile, file);
-                    if (!BEDROCK_ADDONS.containsKey(bedrockAddon)) {
+//                    BedrockAddon bedrockAddon = new BedrockAddon(manifestFile, file);
+//                    if (!BEDROCK_ADDONS.containsKey(bedrockAddon)) {
                         /*boolean dependenciesLoaded = false;
                         Map<String, int[]> dependenciesInfo = new HashMap<>();
                         for (ManifestFile.Dependencies dependency : bedrockAddon.getManifestFile().dependencies) {
@@ -114,9 +111,9 @@ public class BedrockAddonLoader {
                         if (!dependenciesExistsList.contains(false)) dependenciesLoaded = true;
 
                         if (dependenciesLoaded) */
-                        BEDROCK_ADDONS.put(bedrockAddon, bedrockAddon.getManifestFile().header.uuid);
-                    }
-                    Obsidian.BEDROCK_LOGGER.info(String.format("[Obsidian] Registering bedrock addon: %s (Type: %s)", bedrockAddon.getManifestFile().header.name, bedrockAddon.getManifestFile().modules[0].type));
+//                        BEDROCK_ADDONS.put(bedrockAddon, bedrockAddon.getManifestFile().header.uuid);
+//                    }
+//                    Obsidian.BEDROCK_LOGGER.info(String.format("[Obsidian] Registering bedrock addon: %s (Type: %s)", bedrockAddon.getManifestFile().header.name, bedrockAddon.getManifestFile().modules[0].type));
                 }
             } catch (Exception e) {
                 Obsidian.BEDROCK_LOGGER.error("[Obsidian] Failed to load bedrock addon from zip file!", e);
@@ -147,7 +144,7 @@ public class BedrockAddonLoader {
                 REGISTRY_HELPER = RegistryHelper.createRegistryHelper(modId);
 
                 try {
-                    Registries.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(pack, new BasicAddonInfo(modId, path), addonModule));
+                    Registries.ADDON_MODULE_REGISTRY.forEach(addonModule -> loadAddonModule(pack, new BasicAddonInfo(modId, path, "bedrock"), addonModule));
 //                    parseItemGroup(addonPath);
 //                    parseBlock(addonPath);
 //                    parseBasicItems(addonPath);
@@ -191,7 +188,7 @@ public class BedrockAddonLoader {
 
     public static <T> T register(Registry<T> list, String type, ResourceLocation name, T idk) {
         Obsidian.BEDROCK_LOGGER.info("Registered {} {}.", type, name);
-        if (list.get(name) != null) return list.get(name);
+        if (list.get(name) != null) return list.getValue(name);
         else return Registry.register(list, name, idk);
     }
 

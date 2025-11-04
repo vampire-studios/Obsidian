@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian;
 
 import net.fabricmc.loader.impl.FabricLoaderImpl;
-import net.fabricmc.loader.impl.discovery.ModCandidate;
+import net.fabricmc.loader.impl.discovery.ModCandidateImpl;
 import net.fabricmc.loader.impl.metadata.LoaderModMetadata;
 
 import java.lang.reflect.Field;
@@ -19,20 +19,20 @@ public class FabricLoaderInterface {
 
     static {
         try {
-            ADD_MOD_METHOD = FabricLoaderImpl.class.getDeclaredMethod("addMod", ModCandidate.class);
+            ADD_MOD_METHOD = FabricLoaderImpl.class.getDeclaredMethod("addMod", ModCandidateImpl.class);
             ADD_MOD_METHOD.setAccessible(true);
 
             MODS_FIELD = FabricLoaderImpl.class.getDeclaredField("mods");
             MODS_FIELD.setAccessible(true);
 
-            CREATE_PLAIN_METHOD = ModCandidate.class.getDeclaredMethod("createPlain", List.class, LoaderModMetadata.class, boolean.class, Collection.class);
+            CREATE_PLAIN_METHOD = ModCandidateImpl.class.getDeclaredMethod("createPlain", List.class, LoaderModMetadata.class, boolean.class, Collection.class);
             CREATE_PLAIN_METHOD.setAccessible(true);
         } catch (NoSuchMethodException | NoSuchFieldException e) {
             throw new IllegalStateException("failed to reflect addMod/createPlain/mods - fabric loader unsupported?", e);
         }
     }
 
-    public static void addMod(FabricLoaderImpl fabricLoader, ModCandidate candidate) {
+    public static void addMod(FabricLoaderImpl fabricLoader, ModCandidateImpl candidate) {
         try {
             ADD_MOD_METHOD.invoke(fabricLoader, candidate);
         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -40,9 +40,9 @@ public class FabricLoaderInterface {
         }
     }
 
-    public static ModCandidate createPlain(Path path, LoaderModMetadata metadata, boolean requiresRemap, Collection<ModCandidate> nestedMods) {
+    public static ModCandidateImpl createPlain(Path path, LoaderModMetadata metadata, boolean requiresRemap, Collection<ModCandidateImpl> nestedMods) {
         try {
-            return (ModCandidate) CREATE_PLAIN_METHOD.invoke(null, List.of(path), metadata, requiresRemap, nestedMods);
+            return (ModCandidateImpl) CREATE_PLAIN_METHOD.invoke(null, List.of(path), metadata, requiresRemap, nestedMods);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException("Failed to create plain mod container", e);
         }

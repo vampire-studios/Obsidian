@@ -20,7 +20,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.ApiStatus;
@@ -37,17 +36,15 @@ public class BlockContentRegistriesClientInitializer implements ClientModInitial
 
 	@Override
 	public void onInitializeClient() {
-		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) || FabricLoader.getInstance().isModLoaded("quilt_block_content_registry_testmod")) {
-			ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
-				Block block = Block.byItem(stack.getItem());
+		ItemTooltipCallback.EVENT.register((stack, _, _, lines) -> {
+			Block block = Block.byItem(stack.getItem());
 
-				BlockContentRegistries.FLATTENABLE.get(block).ifPresent(state -> lines.add(Component.literal("Flattenable block: " + state)));
-				BlockContentRegistries.OXIDIZABLE.get(block).ifPresent(_block -> lines.add(Component.literal("Oxidizes to: " + _block.block())));
-				BlockContentRegistries.WAXABLE.get(block).ifPresent(_block -> lines.add(Component.literal("Waxes to: " + _block.block())));
-				BlockContentRegistries.STRIPPABLE.get(block).ifPresent(_block -> lines.add(Component.literal("Strips to: " + _block)));
-				BlockContentRegistries.FLAMMABLE.get(block).ifPresent(entry -> lines.add(Component.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
-				BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).ifPresent(value -> lines.add(Component.literal("Enchanting booster: " + value)));
-			});
-		}
+			BlockContentRegistries.FLATTENABLE.get(block).ifPresent(state -> lines.add(Component.literal(STR."Flattenable block: \{state}")));
+			BlockContentRegistries.OXIDIZABLE.get(block).ifPresent(_block -> lines.add(Component.literal(STR."Oxidizes to: \{_block.block()}")));
+			BlockContentRegistries.WAXABLE.get(block).ifPresent(_block -> lines.add(Component.literal(STR."Waxes to: \{_block.block()}")));
+			BlockContentRegistries.STRIPPABLE.get(block).ifPresent(_block -> lines.add(Component.literal(STR."Strips to: \{_block}")));
+			BlockContentRegistries.FLAMMABLE.get(block).ifPresent(entry -> lines.add(Component.literal(STR."Flammable: \{entry.burn()} burn chance, \{entry.spread()} spread chance")));
+			BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).ifPresent(value -> lines.add(Component.literal(STR."Enchanting booster: \{value}")));
+		});
 	}
 }

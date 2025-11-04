@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.BlockSettings;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -20,10 +20,10 @@ public class BlockProperties implements AddonModule {
 
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		BlockSettings blockSettings = Obsidian.GSON.fromJson(new FileReader(file), BlockSettings.class);
+		BlockSettings blockSettings = BaseGson.GSON.fromJson(new FileReader(file), BlockSettings.class);
 		try {
 			if (blockSettings == null) return;
-			ResourceLocation identifier = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+			ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 			register(ContentRegistries.BLOCK_SETTINGS, "block_properties", identifier, blockSettings);
 		} catch (Exception e) {
 			failedRegistering("block_properties", file.getName(), e);
@@ -32,7 +32,7 @@ public class BlockProperties implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "block/properties";
+		return "block/property";
 	}
 
 }

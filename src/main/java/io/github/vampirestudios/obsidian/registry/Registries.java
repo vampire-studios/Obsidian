@@ -4,9 +4,8 @@ import com.mojang.serialization.Lifecycle;
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.api.MapColors;
 import io.github.vampirestudios.obsidian.api.SubItemGroup;
-import io.github.vampirestudios.obsidian.api.TabbedGroup;
+import io.github.vampirestudios.obsidian.api.VanillaSoundEvents;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
-import io.github.vampirestudios.obsidian.api.obsidian.DynamicShape;
 import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyType;
 import io.github.vampirestudios.obsidian.api.obsidian.block.properties.PropertyTypes;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
@@ -23,9 +22,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.Foods;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -35,36 +31,24 @@ import static io.github.vampirestudios.obsidian.Obsidian.registerInRegistryVanil
 
 public class Registries {
     public static final ResourceKey<Registry<Registry<?>>> THING_REGISTRIES_REGISTRY = createKey("registries");
-    public static final ResourceKey<Registry<ArmorMaterial>> ARMOR_MATERIAL_REGISTRY = createKey("armor_material");
     public static final ResourceKey<Registry<FoodProperties>> FOOD_REGISTRY = createKey("food");
     public static final ResourceKey<Registry<PropertyType>> PROPERTY_TYPE_REGISTRY = createKey("property_type");
     public static final ResourceKey<Registry<Property<?>>> PROPERTY_REGISTRY = createKey("property");
-    public static final ResourceKey<Registry<DynamicShape>> DYNAMIC_SHAPE_REGISTRY = createKey("dynamic_shapes");
-    public static final ResourceKey<Registry<TabbedGroup>> EXPANDED_ITEM_GROUPS_REGISTRY = createKey("expanded_creative_tabs");
+//    public static final ResourceKey<Registry<TabbedGroup>> EXPANDED_ITEM_GROUPS_REGISTRY = createKey("expanded_creative_tabs");
     public static final ResourceKey<Registry<SubItemGroup>> SUB_ITEM_GROUPS_REGISTRY = createKey("sub_item_groups");
     //    public static final ResourceKey<Registry<FlexBlockType<?>>> BLOCK_TYPE_REGISTRY = createKey("block_types");
 //    public static final ResourceKey<Registry<FlexItemType<?>>> ITEM_TYPE_REGISTRY = createKey("item_types");
-    public static final ResourceKey<Registry<SoundType>> SOUND_TYPE_REGISTRY = createKey("sound_types");
 //    public static final ResourceKey<Registry<FlexFluidType<?>>> FLUID_TYPE_REGISTRY = createKey("fluid_types");
     public static final ResourceKey<Registry<Class<? extends Component>>> ENTITY_COMPONENT_REGISTRY = createKey("entity_components");
 
     public static final Registry<Registry<?>> OBSIDIAN_REGISTRIES = new MappedRegistry<>(THING_REGISTRIES_REGISTRY, Lifecycle.experimental(), false);
-    public static final Registry<ArmorMaterial> ARMOR_MATERIALS = makeRegistry(ARMOR_MATERIAL_REGISTRY);
     public static final Registry<FoodProperties> FOODS = makeRegistry(FOOD_REGISTRY);
     public static final Registry<PropertyType> PROPERTY_TYPES = makeRegistry(PROPERTY_TYPE_REGISTRY);
     public static final Registry<Property<?>> PROPERTIES = makeRegistry(PROPERTY_REGISTRY);
-    public static final Registry<DynamicShape> DYNAMIC_SHAPES = makeRegistry(DYNAMIC_SHAPE_REGISTRY);
     public static final Registry<Class<? extends Component>> ENTITY_COMPONENTS = makeRegistry(ENTITY_COMPONENT_REGISTRY);
-    //    public static final Registry<FlexItemType<?>> ITEM_TYPES = makeRegistry(ITEM_TYPE_REGISTRY);
-//    public static final Registry<FlexBlockType<?>> BLOCK_TYPES = makeRegistry(BLOCK_TYPE_REGISTRY);
-    public static final Registry<SoundType> SOUND_TYPES = makeRegistry(SOUND_TYPE_REGISTRY);
-//    public static final Registry<FlexFluidType<?>> FLUID_TYPES = makeRegistry(FLUID_TYPE_REGISTRY);
 
     public static final Registry<AddonModule> ADDON_MODULE_REGISTRY;
-    public static final Registry<TabbedGroup> EXPANDED_ITEM_GROUPS;
     public static final Registry<SubItemGroup> SUB_ITEM_GROUPS;
-    //	public static final Registry<Transformation.Target> BLOCK_PROPERTIES;
-//	public static final Registry<Transformation.Target> BLOCK_GROUPS;
     public static Registry<AnimationDefinition> ANIMATION_DEFINITIONS;
     public static Registry<AnimationChannel.Interpolation> ANIMATION_CHANNEL_INTERPOLATIONS;
     public static Registry<AnimationChannel.Target> ANIMATION_CHANNEL_TARGETS;
@@ -72,18 +56,15 @@ public class Registries {
     public static Registry<WoodType> WOOD_TYPES;
 
     static {
-        registerArmorMaterials();
         registerFoods();
         registerEntityComponents();
         registerProperties();
-        registerDynamicShapes();
-        registerSoundTypes();
         registerBedrockBlockEvent();
         PropertyTypes.init();
         MapColors.init();
+        VanillaSoundEvents.init();
 
         ADDON_MODULE_REGISTRY = new MappedRegistry<>(ResourceKey.createRegistryKey(Const.id("addon_modules")), Lifecycle.stable(), false);
-        EXPANDED_ITEM_GROUPS = new MappedRegistry<>(EXPANDED_ITEM_GROUPS_REGISTRY, Lifecycle.stable(), false);
         SUB_ITEM_GROUPS = new MappedRegistry<>(SUB_ITEM_GROUPS_REGISTRY, Lifecycle.stable(), false);
         ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(AnimationDefinition.class, Const.vanillaId("animation_definitions")).buildAndRegister();
         ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(AnimationChannel.Interpolation.class, Const.vanillaId("animation_channel_interpolations")).buildAndRegister();
@@ -97,12 +78,8 @@ public class Registries {
     }
 
     private static <T> Registry<T> makeRegistry(ResourceKey<Registry<T>> key) {
-        MappedRegistry<T> registry = new MappedRegistry<>(key, Lifecycle.experimental(), false);
+        MappedRegistry<T> registry = new MappedRegistry<>(key, Lifecycle.stable(), false);
         return Registry.register(OBSIDIAN_REGISTRIES, key.location().toString(), registry);
-    }
-
-    private static void registerDynamicShapes() {
-        Registry.register(DYNAMIC_SHAPES, "empty", DynamicShape.empty());
     }
 
     private static void registerProperties() {
@@ -216,6 +193,8 @@ public class Registries {
         Registry.register(PROPERTIES, "chiseled_bookshelf_slot_5_occupied", BlockStateProperties.CHISELED_BOOKSHELF_SLOT_5_OCCUPIED);
         Registry.register(PROPERTIES, "dusted", BlockStateProperties.DUSTED);
         Registry.register(PROPERTIES, "cracked", BlockStateProperties.CRACKED);
+        Registry.register(PROPERTIES, "crafting", BlockStateProperties.CRAFTING);
+        Registry.register(PROPERTIES, "trial_spawner_state", BlockStateProperties.TRIAL_SPAWNER_STATE);
     }
 
     private static void registerEntityComponents() {
@@ -327,114 +306,4 @@ public class Registries {
         registerInRegistryVanilla(FOODS, "tropical_fish", Foods.TROPICAL_FISH);
     }
 
-    private static void registerArmorMaterials() {
-        for (ArmorMaterials mat : ArmorMaterials.values()) {
-            Registry.register(ARMOR_MATERIALS, mat.getName(), mat);
-        }
-    }
-
-    private static void registerSoundTypes() {
-        Registry.register(SOUND_TYPES, "wood", SoundType.WOOD);
-        Registry.register(SOUND_TYPES, "gravel", SoundType.GRAVEL);
-        Registry.register(SOUND_TYPES, "grass", SoundType.GRASS);
-        Registry.register(SOUND_TYPES, "lily_pad", SoundType.LILY_PAD);
-        Registry.register(SOUND_TYPES, "stone", SoundType.STONE);
-        Registry.register(SOUND_TYPES, "metal", SoundType.METAL);
-        Registry.register(SOUND_TYPES, "glass", SoundType.GLASS);
-        Registry.register(SOUND_TYPES, "wool", SoundType.WOOL);
-        Registry.register(SOUND_TYPES, "sand", SoundType.SAND);
-        Registry.register(SOUND_TYPES, "snow", SoundType.SNOW);
-        Registry.register(SOUND_TYPES, "powder_snow", SoundType.POWDER_SNOW);
-        Registry.register(SOUND_TYPES, "ladder", SoundType.LADDER);
-        Registry.register(SOUND_TYPES, "anvil", SoundType.ANVIL);
-        Registry.register(SOUND_TYPES, "slime_block", SoundType.SLIME_BLOCK);
-        Registry.register(SOUND_TYPES, "honey_block", SoundType.HONEY_BLOCK);
-        Registry.register(SOUND_TYPES, "wet_grass", SoundType.WET_GRASS);
-        Registry.register(SOUND_TYPES, "coral_block", SoundType.CORAL_BLOCK);
-        Registry.register(SOUND_TYPES, "bamboo", SoundType.BAMBOO);
-        Registry.register(SOUND_TYPES, "bamboo_sapling", SoundType.BAMBOO_SAPLING);
-        Registry.register(SOUND_TYPES, "scaffolding", SoundType.SCAFFOLDING);
-        Registry.register(SOUND_TYPES, "sweet_berry_bush", SoundType.SWEET_BERRY_BUSH);
-        Registry.register(SOUND_TYPES, "crop", SoundType.CROP);
-        Registry.register(SOUND_TYPES, "hard_crop", SoundType.HARD_CROP);
-        Registry.register(SOUND_TYPES, "vine", SoundType.VINE);
-        Registry.register(SOUND_TYPES, "nether_wart", SoundType.NETHER_WART);
-        Registry.register(SOUND_TYPES, "lantern", SoundType.LANTERN);
-        Registry.register(SOUND_TYPES, "stem", SoundType.STEM);
-        Registry.register(SOUND_TYPES, "nylium", SoundType.NYLIUM);
-        Registry.register(SOUND_TYPES, "fungus", SoundType.FUNGUS);
-        Registry.register(SOUND_TYPES, "roots", SoundType.ROOTS);
-        Registry.register(SOUND_TYPES, "shroomlight", SoundType.SHROOMLIGHT);
-        Registry.register(SOUND_TYPES, "weeping_vines", SoundType.WEEPING_VINES);
-        Registry.register(SOUND_TYPES, "twisting_vines", SoundType.TWISTING_VINES);
-        Registry.register(SOUND_TYPES, "soul_sand", SoundType.SOUL_SAND);
-        Registry.register(SOUND_TYPES, "soul_soil", SoundType.SOUL_SOIL);
-        Registry.register(SOUND_TYPES, "basalt", SoundType.BASALT);
-        Registry.register(SOUND_TYPES, "wart_block", SoundType.WART_BLOCK);
-        Registry.register(SOUND_TYPES, "netherrack", SoundType.NETHERRACK);
-        Registry.register(SOUND_TYPES, "nether_bricks", SoundType.NETHER_BRICKS);
-        Registry.register(SOUND_TYPES, "nether_sprouts", SoundType.NETHER_SPROUTS);
-        Registry.register(SOUND_TYPES, "nether_ore", SoundType.NETHER_ORE);
-        Registry.register(SOUND_TYPES, "bone_block", SoundType.BONE_BLOCK);
-        Registry.register(SOUND_TYPES, "netherite_block", SoundType.NETHERITE_BLOCK);
-        Registry.register(SOUND_TYPES, "ancient_debris", SoundType.ANCIENT_DEBRIS);
-        Registry.register(SOUND_TYPES, "lodestone", SoundType.LODESTONE);
-        Registry.register(SOUND_TYPES, "chain", SoundType.CHAIN);
-        Registry.register(SOUND_TYPES, "nether_gold_ore", SoundType.NETHER_GOLD_ORE);
-        Registry.register(SOUND_TYPES, "gilded_blackstone", SoundType.GILDED_BLACKSTONE);
-        Registry.register(SOUND_TYPES, "candle", SoundType.CANDLE);
-        Registry.register(SOUND_TYPES, "amethyst", SoundType.AMETHYST);
-        Registry.register(SOUND_TYPES, "amethyst_cluster", SoundType.AMETHYST_CLUSTER);
-        Registry.register(SOUND_TYPES, "small_amethyst_bud", SoundType.SMALL_AMETHYST_BUD);
-        Registry.register(SOUND_TYPES, "medium_amethyst_bud", SoundType.MEDIUM_AMETHYST_BUD);
-        Registry.register(SOUND_TYPES, "large_amethyst_bud", SoundType.LARGE_AMETHYST_BUD);
-        Registry.register(SOUND_TYPES, "tuff", SoundType.TUFF);
-        Registry.register(SOUND_TYPES, "calcite", SoundType.CALCITE);
-        Registry.register(SOUND_TYPES, "dripstone_block", SoundType.DRIPSTONE_BLOCK);
-        Registry.register(SOUND_TYPES, "pointed_dripstone", SoundType.POINTED_DRIPSTONE);
-        Registry.register(SOUND_TYPES, "copper", SoundType.COPPER);
-        Registry.register(SOUND_TYPES, "cave_vines", SoundType.CAVE_VINES);
-        Registry.register(SOUND_TYPES, "spore_blossom", SoundType.SPORE_BLOSSOM);
-        Registry.register(SOUND_TYPES, "azalea", SoundType.AZALEA);
-        Registry.register(SOUND_TYPES, "flowering_azalea", SoundType.FLOWERING_AZALEA);
-        Registry.register(SOUND_TYPES, "moss_carpet", SoundType.MOSS_CARPET);
-        Registry.register(SOUND_TYPES, "pink_petals", SoundType.PINK_PETALS);
-        Registry.register(SOUND_TYPES, "moss", SoundType.MOSS);
-        Registry.register(SOUND_TYPES, "big_dripleaf", SoundType.BIG_DRIPLEAF);
-        Registry.register(SOUND_TYPES, "small_dripleaf", SoundType.SMALL_DRIPLEAF);
-        Registry.register(SOUND_TYPES, "rooted_dirt", SoundType.ROOTED_DIRT);
-        Registry.register(SOUND_TYPES, "hanging_roots", SoundType.HANGING_ROOTS);
-        Registry.register(SOUND_TYPES, "azalea_leaves", SoundType.AZALEA_LEAVES);
-        Registry.register(SOUND_TYPES, "sculk_sensor", SoundType.SCULK_SENSOR);
-        Registry.register(SOUND_TYPES, "sculk_catalyst", SoundType.SCULK_CATALYST);
-        Registry.register(SOUND_TYPES, "sculk", SoundType.SCULK);
-        Registry.register(SOUND_TYPES, "sculk_vein", SoundType.SCULK_VEIN);
-        Registry.register(SOUND_TYPES, "sculk_shrieker", SoundType.SCULK_SHRIEKER);
-        Registry.register(SOUND_TYPES, "glow_lichen", SoundType.GLOW_LICHEN);
-        Registry.register(SOUND_TYPES, "deepslate", SoundType.DEEPSLATE);
-        Registry.register(SOUND_TYPES, "deepslate_bricks", SoundType.DEEPSLATE_BRICKS);
-        Registry.register(SOUND_TYPES, "deepslate_tiles", SoundType.DEEPSLATE_TILES);
-        Registry.register(SOUND_TYPES, "polished_deepslate", SoundType.POLISHED_DEEPSLATE);
-        Registry.register(SOUND_TYPES, "froglight", SoundType.FROGLIGHT);
-        Registry.register(SOUND_TYPES, "frogspawn", SoundType.FROGSPAWN);
-        Registry.register(SOUND_TYPES, "mangrove_roots", SoundType.MANGROVE_ROOTS);
-        Registry.register(SOUND_TYPES, "muddy_mangrove_roots", SoundType.MUDDY_MANGROVE_ROOTS);
-        Registry.register(SOUND_TYPES, "mud", SoundType.MUD);
-        Registry.register(SOUND_TYPES, "mud_bricks", SoundType.MUD_BRICKS);
-        Registry.register(SOUND_TYPES, "packed_mud", SoundType.PACKED_MUD);
-        Registry.register(SOUND_TYPES, "hanging_sign", SoundType.HANGING_SIGN);
-        Registry.register(SOUND_TYPES, "nether_wood_hanging_sign", SoundType.NETHER_WOOD_HANGING_SIGN);
-        Registry.register(SOUND_TYPES, "bamboo_wood_hanging_sign", SoundType.BAMBOO_WOOD_HANGING_SIGN);
-        Registry.register(SOUND_TYPES, "bamboo_wood", SoundType.BAMBOO_WOOD);
-        Registry.register(SOUND_TYPES, "nether_wood", SoundType.NETHER_WOOD);
-        Registry.register(SOUND_TYPES, "cherry_wood", SoundType.CHERRY_WOOD);
-        Registry.register(SOUND_TYPES, "cherry_sapling", SoundType.CHERRY_SAPLING);
-        Registry.register(SOUND_TYPES, "cherry_leaves", SoundType.CHERRY_LEAVES);
-        Registry.register(SOUND_TYPES, "cherry_wood_hanging_sign", SoundType.CHERRY_WOOD_HANGING_SIGN);
-        Registry.register(SOUND_TYPES, "chiseled_bookshelf", SoundType.CHISELED_BOOKSHELF);
-        Registry.register(SOUND_TYPES, "suspicious_sand", SoundType.SUSPICIOUS_SAND);
-        Registry.register(SOUND_TYPES, "suspicious_gravel", SoundType.SUSPICIOUS_GRAVEL);
-        Registry.register(SOUND_TYPES, "decorated_pot", SoundType.DECORATED_POT);
-        Registry.register(SOUND_TYPES, "decorated_pot_cracked", SoundType.DECORATED_POT_CRACKED);
-    }
 }

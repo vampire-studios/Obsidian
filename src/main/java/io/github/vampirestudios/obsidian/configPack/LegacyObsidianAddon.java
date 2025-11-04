@@ -2,11 +2,15 @@ package io.github.vampirestudios.obsidian.configPack;
 
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import net.devtech.arrp.api.RuntimeResourcePack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.PackSource;
 
 import java.io.File;
+import java.util.Optional;
 
 public class LegacyObsidianAddon implements IAddonPack {
 
@@ -35,9 +39,11 @@ public class LegacyObsidianAddon implements IAddonPack {
 
     @Override
     public PackResources getVirtualResourcePack() {
-        if (file == null) return null;
-        if (file.isDirectory()) return new PathPackResources(obsidianAddonInfo.folderName, file.toPath(), false);
-        else return new FilePackResources(obsidianAddonInfo.folderName, new FilePackResources.SharedZipFileAccess(this.file), false, obsidianAddonInfo.namespace);
+        PackLocationInfo packLocationInfo = new PackLocationInfo(obsidianAddonInfo.folderName, Component.literal(getObsidianDisplayName()),
+                PackSource.BUILT_IN, Optional.empty());
+        if (file.getParentFile() == null) return null;
+        if (file.getParentFile().isDirectory()) return new PathPackResources(packLocationInfo, file.getParentFile().toPath());
+        else return new FilePackResources(packLocationInfo, new FilePackResources.SharedZipFileAccess(this.file), obsidianAddonInfo.namespace);
     }
 
     @Override

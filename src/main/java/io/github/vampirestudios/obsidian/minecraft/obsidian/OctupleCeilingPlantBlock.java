@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -12,11 +11,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -25,12 +23,12 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public class OctupleCeilingPlantBlock extends BushBlock {
+public class OctupleCeilingPlantBlock extends VegetationBlock {
     public static final EnumProperty<OctupleBlockPart> PART = CProperties.OCTUPLE_BLOCK_PART;
-    private static final MapCodec<BushBlock> CODEC = simpleCodec(OctupleCeilingPlantBlock::new);
+    private static final MapCodec<VegetationBlock> CODEC = simpleCodec(OctupleCeilingPlantBlock::new);
 
     @Override
-    protected MapCodec<? extends BushBlock> codec() {
+    public MapCodec<? extends VegetationBlock> codec() {
         return CODEC;
     }
 
@@ -48,7 +46,7 @@ public class OctupleCeilingPlantBlock extends BushBlock {
         builder.add(PART);
     }
 
-    @Override
+    /*@Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
         OctupleBlockPart part = state.getValue(PART);
         if (direction == Direction.UP && part != OctupleBlockPart.BOTTOM) {
@@ -60,7 +58,7 @@ public class OctupleCeilingPlantBlock extends BushBlock {
         }
 
         return super.updateShape(state, direction, newState, world, pos, posFrom);
-    }
+    }*/
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {

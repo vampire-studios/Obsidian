@@ -16,11 +16,12 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 public interface FishingBobberEntityExtensions {
 	default TagKey<Fluid> quilt$canFishingBobberSwimOn() {
@@ -31,7 +32,7 @@ public interface FishingBobberEntityExtensions {
 		return FluidTags.WATER;
 	}
 
-	default ResourceLocation quilt$getFishingLootTable() {
+	default ResourceKey<LootTable> quilt$getFishingLootTable() {
 		return BuiltInLootTables.FISHING;
 	}
 }

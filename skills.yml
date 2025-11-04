@@ -1,0 +1,426 @@
+######## created by samus2002 #########
+
+Incarnation_P:
+    Cooldown: 80.0
+    Conditions:
+        - health{h=<2} true
+    Skills:
+        - sound{s=necromancer_sounds:samus.summon_minions;volume=1;pitch=1.3} @self
+        - sound{s=necromancer_sounds:samus.eternal_wheel;volume=1;pitch=1.1} @self
+        - particles{particle=soul;amount=6;hS=0.4;vS=1;y=1;speed=0;forwardOffset=0;sideOffset=0;repeat=4;repeatinterval=5} @self
+        - heal{a=1;repeatinterval=1;repeat=19} @self
+        - potion{type=SPEED;duration=40;level=2;hasParticles=false} @self
+
+# Eternal Flame #
+
+Eternal_Flame_P:
+    Cooldown: 2.0
+    Conditions:
+        - crouching false
+    Skills:
+        - sound{s=necromancer_sounds:samus.eternal_flame;volume=1;pitch=1;repeat=1;repeatinterval=10} @self
+        - projectile{bulletType=MOB;mob=Eternal_Flame_P;onHit=Eternal_Flame_DAMAGE_P;v=33;i=1;hR=1;vR=1;mr=40;hnp=true;hO=0;sE=true;sB=true;hs=false;hfs=0;syo=1;tyo=1;repeat=1;repeatinterval=10} @forward{f=10;y=0}
+
+    #Eternal_Flame_DAMAGE_P:
+    #  TargetConditions:
+    #  - isblocking false
+    #  - owner{} false
+    #  - entitytype{t=armorstands} false
+    #  - mythicmobtype{t=Eternal_Wheel1_P,Eternal_Wheel2_P,Skeletal_Minion_P,Will_O_Wisp_P} false
+    #  Skills:
+    #  - damage{a=3;pkb=false;hnp=true;hp=true}
+    #  - skill{s=Eternal_Flame_80_P}
+
+    #Eternal_Flame_80_P:
+    #  TargetConditions:
+    #  - owner{} false
+    #  - entitytype{t=armorstands} false
+    #  Skills:
+    #  - particles{particle=soul_fire_flame;amount=12;hS=0.3;vS=0.7;y=1;speed=0;forwardOffset=0;sideOffset=0;repeat=9;repeatinterval=8}
+    #  - damage{a=1;pkb=true;hnp=true;hp=true;repeat=3;repeatinterval=20}
+
+# Wheel of Eternal Flame #
+
+Wheel_of_Eternal_Flame_P:
+    Conditions:
+        - crouching false
+    #  - hasaurastacks{auraName=Empower_Minions} castinstead Life_Drain_P
+    Skills:
+        - sound{s=necromancer_sounds:samus.summon_minions;volume=1;pitch=0.85} @self
+        - summon{type=Eternal_Wheel1_P;amount=1;radius=0;yRadius=0;onSurface=true} @forward{f=1;y=0.5}
+        - summon{type=Eternal_Wheel2_P;amount=1;radius=0;yRadius=0;onSurface=true} @forward{f=1;y=0.5}
+        - skill{s=Wheel_of_Eternal_Flame_SKILL_TO_MINIOND;repeat=99;repeatinterval=1}
+
+
+
+
+
+Wheel_of_Eternal_Flame_SIGNAL:
+    Conditions:
+        - haspotioneffect{t=SPEED} false
+    Skills:
+        - sudoskill{s=Wheel_of_Eternal_Flame_SKILL_TO_MINION;cat=true} @owner
+
+Wheel_of_Eternal_Flame_SKILL_TO_MINION:
+    Skills:
+        - Aura{auraName=<trigger.uuid>7;duration=9} @trigger
+
+Wheel_of_Eternal_Flame_SKILL_TO_MINIOND:
+    Skills:
+        - skill{s=Wheel_of_Eternal_Flame_SKILL_TO_MINION22} @EIR{r=50}
+
+Wheel_of_Eternal_Flame_SKILL_TO_MINION22:
+    TargetConditions:
+        - hasaura{n=<target.uuid>7} true
+    Skills:
+        - totem{md=2;c=1;oH=Wheel_of_Eternal_Flame_DAMAGE_DAMAGE;hnp=true;hp=true;hR=1;vR=1;i=1}
+        - remove{delay=100}
+
+Wheel_of_Eternal_Flame_DAMAGE_DAMAGE:
+    Skills:
+        - skill{s=Wheel_of_Eternal_Flame_DAMAGE_DAMAGE2} @EntitiesNearOrigin{r=3.5;ignore=players}
+
+Wheel_of_Eternal_Flame_DAMAGE_DAMAGE2:
+    TargetConditions:
+        - hasaura{n=<target.uuid>7} false
+        - entitytype{t=armorstands} false
+        - mythicmobtype{t=Eternal_Wheel1_P,Eternal_Wheel2_P,Skeletal_Minion_P,Will_O_Wisp_P} false
+    Skills:
+        - damage{a=4;pkb=false;hnp=true;hp=true}
+        - particles{particle=soul_fire_flame;amount=8;hS=0.3;vS=0.7;y=1;speed=0;forwardOffset=0;sideOffset=0;repeat=3;repeatinterval=20}
+        - damage{a=1;pkb=true;hnp=true;hp=true;repeat=3;repeatinterval=20}
+
+
+
+
+
+
+
+
+# Will-o-wisps #
+
+Will_O_Wisps_P:
+    Cooldown: 10.0
+    Conditions:
+        - crouching true
+    Skills:
+        - sound{s=necromancer_sounds:samus.summon_wisps;volume=1;pitch=1} @self
+        - summon{t=Will_O_Wisp_P;amount=1;radius=0;yRadius=0;delay=10} @Forward{f=0;y=1;sideOffset=3}
+        - summon{t=Will_O_Wisp_P;amount=1;radius=0;yRadius=0} @Forward{f=2;y=1;sideOffset=0}
+        - summon{t=Will_O_Wisp_P;amount=1;radius=0;yRadius=0;delay=20} @Forward{f=0;y=1;sideOffset=-3}
+
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND;repeat=189;repeatinterval=1}
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND2;repeat=32;repeatinterval=1;delay=170}
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND2;repeat=32;repeatinterval=1;delay=180}
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND2;repeat=32;repeatinterval=1;delay=190}
+
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND_SPEED;repeat=189;repeatinterval=1}
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND2_SPEED;repeat=32;repeatinterval=1;delay=170}
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND2_SPEED;repeat=32;repeatinterval=1;delay=180}
+        - skill{s=Will_O_Wisps_SKILL_TO_MINIOND2_SPEED;repeat=32;repeatinterval=1;delay=190}
+
+Will_O_Wisps_SIGNAL2:
+    Conditions:
+        - haspotioneffect{t=SPEED} false
+    Skills:
+        - sudoskill{s=Will_O_Wisps_SKILL_TO_MINION2;cat=true} @owner
+
+Will_O_Wisps_SKILL_TO_MINION2:
+    Skills:
+        - Aura{auraName=<trigger.uuid>2;duration=9} @trigger
+
+Will_O_Wisps_SKILL_TO_MINIOND2:
+    Skills:
+        - skill{s=Will_O_Wisps_SKILL_TO_MINION222} @EIR{r=50}
+
+Will_O_Wisps_SKILL_TO_MINION222:
+    TargetConditions:
+        - hasaura{n=<target.uuid>2} true
+    Skills:
+        - totem{md=2;c=1;oH=Will_O_Wisps_DAMAGE_DAMAGE2;hnp=true;hp=true;hR=1;vR=1;i=1}
+
+Will_O_Wisps_DAMAGE_DAMAGE2:
+    Skills:
+        - skill{s=Will_O_Wisps_DAMAGE_DAMAGE2D} @EntitiesNearOrigin{r=4;ignore=players}
+        - sound{s=necromancer_sounds:samus.wisp_explode;volume=1;pitch=1} @origin
+        - particles{particle=explosion_huge;amount=1;hS=0;vS=0;y=1;speed=0;forwardOffset=0;sideOffset=0} @origin
+        - particles{particle=soul_fire_flame;amount=20;hS=0.8;vS=0.8;y=1;speed=0;forwardOffset=0;sideOffset=0} @origin
+
+Will_O_Wisps_DAMAGE_DAMAGE2D:
+    Skills:
+        - damage{a=8}
+
+Will_O_Wisps_SIGNAL:
+    Conditions:
+        - haspotioneffect{t=SPEED} false
+    Skills:
+        - sudoskill{s=Will_O_Wisps_SKILL_TO_MINION;cat=true} @owner
+
+Will_O_Wisps_SKILL_TO_MINION:
+    Skills:
+        - Aura{auraName=<trigger.uuid>;duration=9} @trigger
+
+Will_O_Wisps_SKILL_TO_MINION22:
+    TargetConditions:
+        - hasaura{n=<target.uuid>} true
+    Skills:
+        - totem{md=2;c=1;oH=Will_O_Wisps_DAMAGE_DAMAGE;hnp=true;hp=true;hR=1;vR=1;i=1}
+
+Will_O_Wisps_SKILL_TO_MINIOND:
+    Skills:
+        - skill{s=Will_O_Wisps_SKILL_TO_MINION22} @EIR{r=50}
+
+Will_O_Wisps_DAMAGE_DAMAGE:
+    Skills:
+        - skill{s=Will_O_Wisps_DAMAGE_DAMAGED} @EntitiesNearOrigin{r=2.5;ignore=players}
+
+Will_O_Wisps_DAMAGE_DAMAGED:
+    Skills:
+        - damage{a=3}
+
+Will_O_Wisps_SIGNAL2_SPEED:
+    Conditions:
+        - haspotioneffect{t=SPEED} true
+    Skills:
+        - sudoskill{s=Will_O_Wisps_SKILL_TO_MINION2_SPEED;cat=true} @owner
+
+Will_O_Wisps_SKILL_TO_MINION2_SPEED:
+    Skills:
+        - Aura{auraName=<trigger.uuid>5;duration=9} @trigger
+
+Will_O_Wisps_SKILL_TO_MINIOND2_SPEED:
+    Skills:
+        - skill{s=Will_O_Wisps_SKILL_TO_MINION222_SPEED} @EIR{r=50}
+
+Will_O_Wisps_SKILL_TO_MINION222_SPEED:
+    TargetConditions:
+        - hasaura{n=<target.uuid>5} true
+    Skills:
+        - totem{md=2;c=1;oH=Will_O_Wisps_DAMAGE_DAMAGE2_SPEED;hnp=true;hp=true;hR=1;vR=1;i=1}
+
+Will_O_Wisps_DAMAGE_DAMAGE2_SPEED:
+    Skills:
+        - skill{s=Will_O_Wisps_DAMAGE_DAMAGE2_SPEEDD} @EntitiesNearOrigin{r=4;ignore=players}
+        - sound{s=necromancer_sounds:samus.wisp_explode;volume=1;pitch=1} @origin
+        - particles{particle=explosion_huge;amount=1;hS=0;vS=0;y=1;speed=0;forwardOffset=0;sideOffset=0} @origin
+        - particles{particle=soul_fire_flame;amount=20;hS=0.8;vS=0.8;y=1;speed=0;forwardOffset=0;sideOffset=0} @origin
+
+Will_O_Wisps_DAMAGE_DAMAGE2_SPEEDD:
+    Skills:
+        - damage{a=10}
+
+Will_O_Wisps_SIGNAL_SPEED:
+    Conditions:
+        - haspotioneffect{t=SPEED} true
+    Skills:
+        - sudoskill{s=Will_O_Wisps_SKILL_TO_MINION_SPEED;cat=true} @owner
+
+Will_O_Wisps_SKILL_TO_MINION_SPEED:
+    Skills:
+        - Aura{auraName=<trigger.uuid>6;duration=9} @trigger
+
+Will_O_Wisps_SKILL_TO_MINIOND_SPEED:
+    Skills:
+        - skill{s=Will_O_Wisps_SKILL_TO_MINION22_SPEED} @EIR{r=50}
+
+Will_O_Wisps_SKILL_TO_MINION22_SPEED:
+    TargetConditions:
+        - hasaura{n=<target.uuid>6} true
+    Skills:
+        - totem{md=2;c=1;oH=Will_O_Wisps_DAMAGE_DAMAGE_SPEED;hnp=true;hp=true;hR=1;vR=1;i=1}
+
+Will_O_Wisps_DAMAGE_DAMAGE_SPEED:
+    Skills:
+        - skill{s=Will_O_Wisps_DAMAGE_DAMAGE_SPEEDD} @EntitiesNearOrigin{r=2.5;ignore=players}
+
+Will_O_Wisps_DAMAGE_DAMAGE_SPEEDD:
+    Skills:
+        - damage{a=4;pkb=true}
+
+# Life Drain #
+Life_Drain_P:
+    Cooldown: 2.0
+    Skills:
+        - projectile{onHit=Life_Drain_SKILL_P;v=40;i=1;hR=1;vR=1;mr=50;hnp=true;hO=0;sE=true;sB=true;hs=false;hfs=0;syo=1;tyo=1} @forward{f=10;y=0}
+
+Life_Drain_SKILL_P:
+    TargetConditions:
+        - entitytype{t=armorstands} false
+    Skills:
+        - sound{s=necromancer_sounds:samus.life_drain;volume=1;pitch=1;repeat=2;repeatinterval=40} @self
+        - skill{s=Life_Drain_SKILL_DAMAGE} @EntitiesNearOrigin{r=3;sort=NEAREST;limit=1;ignore=players}
+
+Life_Drain_SKILL_DAMAGE:
+    TargetConditions:
+        - entitytype{t=armorstands} false
+    Skills:
+        - damage{a=2;repeat=10;repeatinterval=10;pkb=true}
+        - particleline{particle=soul_fire_flame;amount=1;fromOrigin=false;syo=1.6;tyo=1;forwardOffset=0.7;repeat=19;repeatinterval=5;sso=0.7}
+        - heal{a=2;repeat=5;repeatinterval=20} @self
+        -
+        # Skeletal Minion - Attack #
+Skeletal_Minion_Attack_P2:
+    Conditions:
+        - haspotioneffect{t=SPEED} true
+    Cooldown: 0.0
+    Skills:
+        - randomskill{skills=Skeletal_Minion_SIGNAL_SWIPE123,Skeletal_Minion_SIGNAL_SWIPE223,Skeletal_Minion_SIGNAL23}
+
+
+
+Skeletal_Minion_SIGNAL_SWIPE123:
+    Conditions:
+        - targetwithin{d=7} true
+    Skills:
+        - state{s=left_swipe;li=4;lo=7;speed=2} @self
+        - sound{s=necromancer_sounds:samus.skeletal_minion_attack;volume=1;pitch=1;delay=3} @self 0.5
+        - delay 4
+        - sound{s=entity.player.attack.sweep;volume=1;pitch=1.4} @self
+        - sound{s=entity.puffer_fish.sting;volume=1;pitch=1.3} @self
+
+        - sudoskill{s=Skeletal_Minion_SKILL_TO_MINION23;cat=true} @owner
+
+Skeletal_Minion_SIGNAL_SWIPE223:
+    Conditions:
+        - targetwithin{d=7} true
+    Skills:
+        - state{s=right_swipe;li=4;lo=7;speed=2} @self
+        - sound{s=necromancer_sounds:samus.skeletal_minion_attack;volume=1;pitch=1;delay=3} @self 0.5
+        - delay 4
+        - sound{s=entity.player.attack.sweep;volume=1;pitch=1.4} @self
+        - sound{s=entity.puffer_fish.sting;volume=1;pitch=1.3} @self
+
+        - sudoskill{s=Skeletal_Minion_SKILL_TO_MINION23;cat=true} @owner
+
+Skeletal_Minion_SIGNAL23:
+    Conditions:
+        - targetwithin{d=10} true
+    Skills:
+        - state{s=bite;li=5;lo=6;speed=1.7} @self
+        - lunge{velocity=1.2;velocityY=0.2} @target
+        - sound{s=necromancer_sounds:samus.skeletal_minion_attack;volume=1;pitch=1;delay=3} @self 0.5
+        - delay 4
+        - sound{s=entity.phantom.bite;volume=1;pitch=1} @self
+
+        - sudoskill{s=Skeletal_Minion_SKILL_TO_MINION23;cat=true} @owner
+
+Skeletal_Minion_SKILL_TO_MINION23:
+    Skills:
+        - Aura{auraName=<trigger.uuid>4;duration=9} @trigger
+
+
+Skeletal_Minion_ACTIVATE2:
+    TargetConditions:
+        - hasaura{n=<target.uuid>4} true
+    Skills:
+        - totem{md=2;c=1;oT=Skeletal_Minion_SKILL_TO_MINIOND2;hnp=true;hp=true;hR=1;vR=1;i=1}
+
+
+Skeletal_Minion_SKILL_TO_MINIOND2:
+    Skills:
+        - skill{s=Skeletal_Minion_SKILL_TO_MINION222;targetisorigin=true} @EIR{r=50;limit=1;ignore=players}
+
+
+Skeletal_Minion_SKILL_TO_MINION222:
+    Skills:
+        - projectile{fromorigin=true;onHit=Skeletal_Minion_DAMAGE_DAMAGE2;d=10;sfo=1;v=1;i=1;hR=1;vR=1;mr=1;hnp=true;hO=0;sE=true;sB=false;hs=false;hfs=0;syo=1;tyo=1} @EIR{r=6;limit=1;sort=NEAREST;ignore=players}
+
+Skeletal_Minion_DAMAGE_DAMAGE2:
+    Skills:
+        - skill{s=Skeletal_Minion_DAMAGE_DAMAGE2D} @EntitiesNearOrigin{r=2.5;ignore=players}
+
+Skeletal_Minion_DAMAGE_DAMAGE2D:
+    Skills:
+        - damage{a=6;pkb=true}
+
+
+Skeletal_Minion_Attack_P:
+    Conditions:
+        - haspotioneffect{t=SPEED} false
+    Cooldown: 0.0
+    Skills:
+        - randomskill{skills=Skeletal_Minion_SIGNAL_SWIPE1,Skeletal_Minion_SIGNAL_SWIPE2,Skeletal_Minion_SIGNAL}
+
+
+
+Skeletal_Minion_SIGNAL_SWIPE1:
+    Conditions:
+        - targetwithin{d=7} true
+    Skills:
+        - state{s=left_swipe;li=4;lo=7;speed=1.5} @self
+        - sound{s=necromancer_sounds:samus.skeletal_minion_attack;volume=1;pitch=1;delay=3} @self 0.5
+        - delay 8
+        - sound{s=entity.player.attack.sweep;volume=1;pitch=1.4} @self
+        - sound{s=entity.puffer_fish.sting;volume=1;pitch=1.3} @self
+
+        - sudoskill{s=Skeletal_Minion_SKILL_TO_MINION;cat=true} @owner
+
+Skeletal_Minion_SIGNAL_SWIPE2:
+    Conditions:
+        - targetwithin{d=7} true
+    Skills:
+        - state{s=right_swipe;li=4;lo=7;speed=1.5} @self
+        - sound{s=necromancer_sounds:samus.skeletal_minion_attack;volume=1;pitch=1;delay=3} @self 0.5
+        - delay 8
+        - sound{s=entity.player.attack.sweep;volume=1;pitch=1.4} @self
+        - sound{s=entity.puffer_fish.sting;volume=1;pitch=1.3} @self
+
+        - sudoskill{s=Skeletal_Minion_SKILL_TO_MINION;cat=true} @owner
+
+Skeletal_Minion_SIGNAL:
+    Conditions:
+        - targetwithin{d=10} true
+    Skills:
+        - state{s=bite;li=5;lo=6;speed=1.2} @self
+        - lunge{velocity=1.2;velocityY=0.2} @target
+        - sound{s=necromancer_sounds:samus.skeletal_minion_attack;volume=1;pitch=1;delay=3} @self 0.5
+        - delay 8
+        - sound{s=entity.phantom.bite;volume=1;pitch=1} @self
+
+        - sudoskill{s=Skeletal_Minion_SKILL_TO_MINION;cat=true} @owner
+
+Skeletal_Minion_SKILL_TO_MINION:
+    Skills:
+        - Aura{auraName=<trigger.uuid>3;duration=9} @trigger
+
+
+Skeletal_Minion_ACTIVATE:
+    TargetConditions:
+        - hasaura{n=<target.uuid>3} true
+    Skills:
+        - totem{md=2;c=1;oT=Skeletal_Minion_SKILL_TO_MINIOND;hnp=true;hp=true;hR=1;vR=1;i=1}
+
+
+Skeletal_Minion_SKILL_TO_MINIOND:
+    Skills:
+        - skill{s=Skeletal_Minion_SKILL_TO_MINION22;targetisorigin=true} @EIR{r=50;limit=1;ignore=players}
+
+
+Skeletal_Minion_SKILL_TO_MINION22:
+    Skills:
+        - projectile{fromorigin=true;onHit=Skeletal_Minion_DAMAGE_DAMAGE;d=10;sfo=1;v=1;i=1;hR=1;vR=1;mr=1;hnp=true;hO=0;sE=true;sB=false;hs=false;hfs=0;syo=1;tyo=1} @EIR{r=6;limit=1;sort=NEAREST;ignore=players}
+
+Skeletal_Minion_DAMAGE_DAMAGE:
+    Skills:
+        - skill{s=Skeletal_Minion_DAMAGE_DAMAGED} @EntitiesNearOrigin{r=2.5;ignore=players}
+
+Skeletal_Minion_DAMAGE_DAMAGED:
+    Skills:
+        - damage{a=4;pkb=true}
+
+
+    ################
+
+Minion_ENCHANT:
+    TriggerConditions:
+        - owner{} true
+    Skills:
+        - enchant{en=true;em=false} @self
+        - delay 120
+        - enchant{en=false;em=false} @self
+
+
+ShadowDamage:
+    Skills:
+        - damage{amount=<skill.damage>;element=FIRE} @target ~onCombat
+        - effect{e=<skill.effect>} @target ~onCombat

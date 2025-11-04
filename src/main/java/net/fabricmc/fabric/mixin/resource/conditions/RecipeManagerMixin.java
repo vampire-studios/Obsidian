@@ -16,32 +16,26 @@
 
 package net.fabricmc.fabric.mixin.resource.conditions;
 
-import com.google.gson.JsonElement;
-import net.fabricmc.fabric.api.resource.conditions.v1.JsonResourceConditions;
-import net.fabricmc.fabric.impl.resource.conditions.FabricJsonConditionsImpl;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Iterator;
-import java.util.Map;
-
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
 	@Inject(
 			at = @At("HEAD"),
-			method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V"
+			method = "apply(Lnet/minecraft/world/item/crafting/RecipeMap;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V"
 	)
-	public void checkRecipeConditions(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
-		profiler.push("Fabric: check recipe conditions");
+	public void checkRecipeConditions(RecipeMap recipeMap, ResourceManager resourceManager, ProfilerFiller profilerFiller, CallbackInfo ci) {
+		/*profilerFiller.push("Fabric: check recipe conditions");
 		int skippedRecipes = 0;
 
-		Iterator<Map.Entry<ResourceLocation, JsonElement>> it = map.entrySet().iterator();
+		Iterator<Map.Entry<ResourceLocation, JsonElement>> it = recipeMap.values();
 
 		while (it.hasNext()) {
 			Map.Entry<ResourceLocation, JsonElement> entry = it.next();
@@ -62,6 +56,6 @@ public class RecipeManagerMixin {
 		}
 
 		FabricJsonConditionsImpl.LOGGER.info(String.format("Fabric JSON recipe conditions: skipping %d recipes.", skippedRecipes));
-		profiler.pop();
+		profiler.pop();*/
 	}
 }

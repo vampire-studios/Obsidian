@@ -3,14 +3,17 @@ package io.github.vampirestudios.obsidian.client;
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.SubItemGroup;
+import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
+import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import io.github.vampirestudios.obsidian.client.renderer.SeatEntityRenderer;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
+import io.github.vampirestudios.obsidian.minecraft.DynamicContainer;
+import io.github.vampirestudios.obsidian.minecraft.JsonGui;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.*;
@@ -18,15 +21,19 @@ import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.lang.JLang;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.SimpleContainer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.*;
 
 public class ClientInit implements ClientModInitializer {
 
@@ -34,8 +41,8 @@ public class ClientInit implements ClientModInitializer {
      * This is a map from the addon id to a map from the language id to a map from the translation key to the translation.<br>
      * <code>Map< AddonID, Map< LanguageID, Map< TranslationKey, Translation > > ></code>
      */
-    private static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
-    public static final List<ModelResourceLocation> customModels = new ArrayList<>();
+    public static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
+    public static final List<ModelLayerLocation> customModels = new ArrayList<>();
 
     public static void addTranslation( String addonId, String languageId, String translationKey, String translation ) {
         synchronized (translationMap) {
@@ -47,7 +54,7 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().getName()));
+        Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().name()));
 
         EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
@@ -58,6 +65,29 @@ public class ClientInit implements ClientModInitializer {
                 ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) iAddonPack.getConfigPackInfo();
                 id = addonInfo.addon.id;
             }
+
+            ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> dispatcher.register(
+                ClientCommandManager.literal("opengui").then(
+                    ClientCommandManager.argument("gui", ResourceLocationArgument.id())
+                        .suggests(new GuiSuggestionProvider())
+                        .executes(context -> {
+                            ResourceLocation gui = context.getArgument("gui", ResourceLocation.class);
+                            if (ContentRegistries.GUIS.containsKey(gui)) {
+                                FabricClientCommandSource commandSource = context.getSource();
+                                GUI gui1 = ContentRegistries.GUIS.getValue(gui);
+                                DynamicContainer dynamicContainer = new DynamicContainer(0, commandSource.getPlayer().getInventory());
+                                dynamicContainer.setGui(gui1);
+                                dynamicContainer.setContainerInventory(new SimpleContainer(Objects.requireNonNull(gui1).containerSize));
+                                dynamicContainer.setupSlots();
+                                Minecraft.getInstance().setScreen(new JsonGui(dynamicContainer, commandSource.getPlayer().getInventory(),
+                                        Objects.requireNonNull(gui1)
+                                ));
+                                return 1;
+                            } else return 0;
+                        })
+                )
+            ));
+
             RuntimeResourcePack resourcePack = iAddonPack.getResourcePack();
             if (!iAddonPack.getConfigPackInfo().hasAssets) {
                 for (Block block : ContentRegistries.BLOCKS)
@@ -69,6 +99,9 @@ public class ClientInit implements ClientModInitializer {
                 for (Item item : ContentRegistries.ITEMS)
                     if (item.information.name.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
+                for (NexoItem item : ContentRegistries.NEXO_ITEMS)
+                    if (item.id.getNamespace().equals(id))
+                        new OraxenItemInitThread(resourcePack, item).run();
                 for (ToolItem item : ContentRegistries.TOOLS)
                     if (item.information.name.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
@@ -84,9 +117,6 @@ public class ClientInit implements ClientModInitializer {
                 for (ArmorItem armor : ContentRegistries.ARMORS)
                     if (armor.information.name.id.getNamespace().equals(id))
                         new ArmorInitThread(resourcePack, armor).run();
-                for (Enchantment enchantment : ContentRegistries.ENCHANTMENTS)
-                    if (enchantment.name.id.getNamespace().equals(id))
-                        new EnchantmentInitThread(enchantment).run();
                 for (ItemGroup itemGroup : ContentRegistries.ITEM_GROUPS)
                     if (itemGroup.name.id.getNamespace().equals(id))
                         new ItemGroupInitThread(itemGroup).run();
@@ -99,10 +129,10 @@ public class ClientInit implements ClientModInitializer {
                 translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
                     JLang lang = JLang.lang();
                     translations.forEach(lang::entry);
-                    resourcePack.addLang(new ResourceLocation(modId, languageId), lang);
+                    resourcePack.addLang(ResourceLocation.fromNamespaceAndPath(modId, languageId), lang);
                 }));
                 RRPCallback.AFTER_VANILLA.register(a -> a.add(resourcePack));
-                resourcePack.dump();
+                resourcePack.dumpDirect(Path.of("rrp.debug"));
             }
         });
     }

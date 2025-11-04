@@ -52,8 +52,8 @@ public class TallFlowerBlockImpl extends DoublePlantBlock implements Bonemealabl
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
+    public boolean propagatesSkylightDown(BlockState state) {
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
     }
 
     public IntegerProperty getAgeProperty() {

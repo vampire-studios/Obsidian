@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -44,4 +45,4 @@ public class StackContext {
             stack.setTag(tag);
         return stack;
     }
-}
+}*/

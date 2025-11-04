@@ -109,7 +109,7 @@ public class OreInformation {
 
     protected static class TargetState {
         public ResourceLocation block;
-        public ResourceLocation tag = new ResourceLocation("base_stone_overworld");
+        public ResourceLocation tag = ResourceLocation.withDefaultNamespace("base_stone_overworld");
 //        public Map<String, String> properties;
         public float probability;
     }

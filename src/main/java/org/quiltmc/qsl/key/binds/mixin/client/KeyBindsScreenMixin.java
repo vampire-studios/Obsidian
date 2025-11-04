@@ -16,14 +16,14 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.screens.OptionsSubScreen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.controls.KeyBindsList;
-import net.minecraft.client.gui.screens.controls.KeyBindsScreen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
+import net.minecraft.client.gui.screens.options.controls.KeyBindsScreen;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,7 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyBindsScreen.class)
 public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 	@Shadow
-	private KeyBindsList controlsList;
+	private KeyBindsList keyBindsList;
 
 	private KeyBindsScreenMixin(Screen screen, Options gameOptions, Component text) {
 		super(screen, gameOptions, text);
@@ -43,7 +43,7 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 
 	@SuppressWarnings("unchecked")
 	@Inject(method = "render", at = @At("TAIL"))
-	private void renderConflictTooltips(PoseStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	private void renderConflictTooltips(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		// TODO - Somehow extend the hover area to include the label too
 //		ControlsListWidget.Entry entry = ((EntryListWidgetAccessor<ControlsListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
 //		if (entry != null && entry instanceof ControlsListWidget.KeyBindingEntry keyBindEntry) {

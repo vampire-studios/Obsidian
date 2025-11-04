@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import blue.endless.jankson.annotation.SerializedName;
+import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.MapColors;
 import io.github.vampirestudios.obsidian.api.VanillaSoundEvents;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
@@ -12,11 +13,16 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
 import java.util.Locale;
+import java.util.Map;
 
 public class BlockSettings {
+    @SerializedName("parent")
+    @com.google.gson.annotations.SerializedName("parent")
+    public Object baseBlockSettings;
+
     @SerializedName("sound_group")
     @com.google.gson.annotations.SerializedName("sound_group")
-    public Object soundGroup = new ResourceLocation("stone");
+    public Object soundGroup = ResourceLocation.withDefaultNamespace("stone");
 
     public boolean collidable = true;
     public float hardness = 3.0F;
@@ -24,7 +30,7 @@ public class BlockSettings {
     public boolean randomTicks = false;
     public boolean instant_break = false;
     public float slipperiness = 0.6F;
-    public ResourceLocation drop = new ResourceLocation("stone");
+    public ResourceLocation drop = ResourceLocation.withDefaultNamespace("stone");
     public float velocity_modifier = 1.0F;
     public float jump_velocity_modifier = 1.0F;
     public int luminance = 0;
@@ -50,38 +56,96 @@ public class BlockSettings {
     }
 
     public SoundType getBlockSoundGroup() {
-        if (soundGroup instanceof ResourceLocation resourceLocation) {
-            if (!resourceLocation.getNamespace().equals("minecraft")) {
-                CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(resourceLocation);
-                assert customSoundGroup != null;
-                return createSoundType(customSoundGroup);
-            } else {
-                return VanillaSoundEvents.get(resourceLocation);
-            }
-        } else if(soundGroup instanceof String s) {
-            ResourceLocation location = ResourceLocation.tryParse(s);
-            assert location != null;
-            if (!location.getNamespace().equals("minecraft")) {
-                CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(location);
-                assert customSoundGroup != null;
-                return createSoundType(customSoundGroup);
-            } else {
-                return VanillaSoundEvents.get(location);
-            }
-        } else if (soundGroup instanceof CustomSoundGroup customSoundGroup) {
-            return createSoundType(customSoundGroup);
-        } else {
-            System.out.println(soundGroup.toString());
-            return SoundType.STONE;
-        }
+		switch (soundGroup) {
+			case ResourceLocation resourceLocation -> {
+				if (!resourceLocation.getNamespace().equals("minecraft")) {
+					CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.getValue(resourceLocation);
+					assert customSoundGroup != null;
+					return createSoundType(customSoundGroup);
+				} else {
+					return VanillaSoundEvents.get(resourceLocation);
+				}
+			}
+			case String s -> {
+				ResourceLocation location = ResourceLocation.tryParse(s);
+				assert location != null;
+				if (!location.getNamespace().equals("minecraft")) {
+					CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.getValue(location);
+					assert customSoundGroup != null;
+					return createSoundType(customSoundGroup);
+				} else {
+					return VanillaSoundEvents.get(location);
+				}
+			}
+			case CustomSoundGroup customSoundGroup -> {
+				return createSoundType(customSoundGroup);
+			}
+			case null, default -> {
+				System.out.println(soundGroup.toString());
+				return SoundType.STONE;
+			}
+		}
     }
 
     private SoundType createSoundType(CustomSoundGroup customSoundGroup) {
-        SoundEvent breakSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.break_sound);
-        SoundEvent stepSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.step_sound);
-        SoundEvent placeSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.place_sound);
-        SoundEvent hitSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.hit_sound);
-        SoundEvent fallSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(customSoundGroup.fall_sound);
+        SoundEvent breakSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getValue(customSoundGroup.break_sound);
+        SoundEvent stepSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getValue(customSoundGroup.step_sound);
+        SoundEvent placeSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getValue(customSoundGroup.place_sound);
+        SoundEvent hitSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getValue(customSoundGroup.hit_sound);
+        SoundEvent fallSound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getValue(customSoundGroup.fall_sound);
         return new SoundType(1.0F, 1.0F, breakSound, stepSound, placeSound, hitSound, fallSound);
+    }
+
+    // This getter will handle the different possible types of 'itemSettings'
+    public BlockSettings getParentSettings() {
+        switch (baseBlockSettings) {
+            case Map<?, ?> propertiesMap -> {
+                System.out.println(STR."Map: \{propertiesMap}");
+                return constructBlockSettingsFromMap(propertiesMap);
+            }
+            case JsonObject jsonObject -> {
+                System.out.println(STR."Json Object: \{jsonObject.getAsString()}");
+                return null;
+            }
+            case String s -> {
+                System.out.println(STR."String: \{s}");
+                return getBlockSettingsFromReference(s);
+            }
+            case BlockSettings blockSettings -> {
+                return blockSettings;
+            }
+            case null, default -> {
+                return handleUnknownBlockSettingsType();
+            }
+        }
+    }
+
+    private BlockSettings constructBlockSettingsFromMap(Map<?, ?> propertiesMap) {
+//		System.out.println("Map: " + propertiesMap);
+        BlockSettings settings = new BlockSettings();
+        if (propertiesMap.containsKey("parent")) {
+            settings.baseBlockSettings = ContentRegistries.BLOCK_SETTINGS.get(ResourceLocation.tryParse((String) propertiesMap.get("parent")));
+        }
+        return settings; // Replace with actual construction logic
+    }
+
+    private BlockSettings getBlockSettingsFromReference(String reference) {
+        ResourceLocation location = ResourceLocation.tryParse(reference);
+        if (location != null) {
+            return ContentRegistries.BLOCK_SETTINGS.getValue(location);
+        } else {
+            System.out.println(STR."Invalid Reference: \{reference}");
+            return handleInvalidReference(reference);
+        }
+    }
+
+    private BlockSettings handleUnknownBlockSettingsType() {
+//		System.out.println("Unknown Item Settings Type");
+        return new BlockSettings(); // Replace with actual error handling logic
+    }
+
+    private BlockSettings handleInvalidReference(String reference) {
+//		System.out.println("Invalid reference: " + reference);
+        return new BlockSettings(); // Replace with actual error handling logic
     }
 }

@@ -8,28 +8,22 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.world.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
-public class BackToolFeatureRenderer extends ItemInHandLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
+public class BackToolFeatureRenderer extends ItemInHandLayer<PlayerRenderState, PlayerModel> {
 
-    private final ItemInHandRenderer heldItemRenderer;
-
-    public BackToolFeatureRenderer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> featureRendererContext, ItemInHandRenderer heldItemRenderer) {
-        super(featureRendererContext, heldItemRenderer);
-        this.heldItemRenderer = heldItemRenderer;
+    public BackToolFeatureRenderer(RenderLayerParent<PlayerRenderState, PlayerModel> featureRendererContext) {
+        super(featureRendererContext);
     }
 
     @Override
-    public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, AbstractClientPlayer livingEntity, float f, float g, float h, float j, float k, float l) {
-        ItemStack backSlotStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+    public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, PlayerRenderState livingEntity, float f, float g) {
+        ItemStack backSlotStack = livingEntity.chestEquipment;
         if (!backSlotStack.isEmpty() && (backSlotStack.getItem() instanceof WearableItemImpl || backSlotStack.getItem() instanceof WearableAndDyeableItemImpl)) {
             matrixStack.pushPose();
             ModelPart modelPart = this.getParentModel().body;
@@ -37,7 +31,7 @@ public class BackToolFeatureRenderer extends ItemInHandLayer<AbstractClientPlaye
             matrixStack.translate(0D, -1.8D, 0D);
             matrixStack.scale(0.7F, 0.7F, 0.7F);
             matrixStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
-            heldItemRenderer.renderItem(livingEntity, backSlotStack, ItemDisplayContext.HEAD, false, matrixStack, vertexConsumerProvider, i);
+//            heldItemRenderer.renderStatic(livingEntity., backSlotStack, ItemDisplayContext.HEAD, false, matrixStack, vertexConsumerProvider, i);
             matrixStack.popPose();
         }
     }

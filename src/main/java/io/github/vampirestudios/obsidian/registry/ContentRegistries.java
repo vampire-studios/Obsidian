@@ -1,11 +1,16 @@
 package io.github.vampirestudios.obsidian.registry;
 
+import io.github.vampirestudios.obsidian.api.crucible.CrucibleItem;
+import io.github.vampirestudios.obsidian.api.crucible.CrucibleSkill;
+import io.github.vampirestudios.obsidian.api.crucible.skills.effects.Effect;
 import io.github.vampirestudios.obsidian.api.obsidian.*;
-import io.github.vampirestudios.obsidian.api.obsidian.block.*;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.block.BlockSetType;
+import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
+import io.github.vampirestudios.obsidian.api.obsidian.block.WoodType;
 import io.github.vampirestudios.obsidian.api.obsidian.cauldronTypes.CauldronType;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
 import io.github.vampirestudios.obsidian.api.obsidian.emoji.Emoji;
-import io.github.vampirestudios.obsidian.api.obsidian.enchantments.Enchantment;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
@@ -19,22 +24,33 @@ import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerProfessio
 import io.github.vampirestudios.obsidian.api.obsidian.world.Biome;
 import io.github.vampirestudios.obsidian.api.obsidian.world.Structure;
 import io.github.vampirestudios.obsidian.api.obsidian.world.Tree;
+import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ToolMaterial;
 
 import static io.github.vampirestudios.obsidian.Obsidian.id;
 
 public class ContentRegistries {
-	public static Registry<Item> ITEMS = FabricRegistryBuilder.createSimple(Item.class, id("items")).buildAndRegister();
+	public static ResourceKey<Registry<Item>> ITEMS_KEY = ResourceKey.createRegistryKey(id("items"));
+	public static ResourceKey<Registry<CrucibleSkill>> SKILLS_KEY = ResourceKey.createRegistryKey(id("crucible_skills"));
+
+	public static Registry<Item> ITEMS = FabricRegistryBuilder.createSimple(ITEMS_KEY).buildAndRegister();
+
+	public static Registry<NexoItem> NEXO_ITEMS = FabricRegistryBuilder.createSimple(NexoItem.class, id("nexo_items")).buildAndRegister();
+	public static Registry<CrucibleItem> CRUCIBLE_ITEMS = FabricRegistryBuilder.createSimple(CrucibleItem.class, id("crucible_items")).buildAndRegister();
+	public static Registry<CrucibleSkill> CRUCIBLE_SKILLS = FabricRegistryBuilder.createSimple(SKILLS_KEY).buildAndRegister();
+	public static Registry<Effect> CRUCIBLE_EFFECTS = FabricRegistryBuilder.createSimple(Effect.class, id("crucible_effects")).buildAndRegister();
 	public static Registry<FoodItem> FOODS = FabricRegistryBuilder.createSimple(FoodItem.class, id("foods")).buildAndRegister();
 	public static Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, id("custom_food_components")).buildAndRegister();
 	public static Registry<CustomSoundGroup> BLOCK_SOUND_GROUPS = FabricRegistryBuilder.createSimple(CustomSoundGroup.class, id("block_sound_groups")).buildAndRegister();
 	public static Registry<BlockSettings> BLOCK_SETTINGS = FabricRegistryBuilder.createSimple(BlockSettings.class, id("block_settings")).buildAndRegister();
+	public static Registry<ToolMaterial> TOOL_MATERIALS = FabricRegistryBuilder.createSimple(ToolMaterial.class, id("tool_materials")).buildAndRegister();
 	public static Registry<Tier> TIERS = FabricRegistryBuilder.createSimple(Tier.class, id("tiers")).buildAndRegister();
 	public static Registry<ItemSettings> ITEM_SETTINGS = FabricRegistryBuilder.createSimple(ItemSettings.class, id("item_settings")).buildAndRegister();
 	public static Registry<BlockSetType> BLOCK_SET_TYPES = FabricRegistryBuilder.createSimple(BlockSetType.class, id("block_set_types")).buildAndRegister();
 	public static Registry<WoodType> WOOD_TYPES = FabricRegistryBuilder.createSimple(WoodType.class, id("wood_types")).buildAndRegister();
-	public static Registry<MusicDisc> MUSIC_DISCS = FabricRegistryBuilder.createSimple(MusicDisc.class, id("music_discs")).buildAndRegister();
 	public static Registry<KeyBinding> KEY_BINDINGS = FabricRegistryBuilder.createSimple(KeyBinding.class, id("key_bindings")).buildAndRegister();
 	public static Registry<Particle> PARTICLES = FabricRegistryBuilder.createSimple(Particle.class, id("particles")).buildAndRegister();
 	public static Registry<WeaponItem> WEAPONS = FabricRegistryBuilder.createSimple(WeaponItem.class, id("weapons")).buildAndRegister();
@@ -46,7 +62,6 @@ public class ContentRegistries {
 	public static Registry<Potion> POTIONS = FabricRegistryBuilder.createSimple(Potion.class, id("potions")).buildAndRegister();
 	public static Registry<Command.CommandNode> COMMANDS = FabricRegistryBuilder.createSimple(Command.CommandNode.class, id("commands")).buildAndRegister();
 	public static Registry<StatusEffect> STATUS_EFFECTS = FabricRegistryBuilder.createSimple(StatusEffect.class, id("status_effects")).buildAndRegister();
-	public static Registry<Enchantment> ENCHANTMENTS = FabricRegistryBuilder.createSimple(Enchantment.class, id("enchantments")).buildAndRegister();
 	public static Registry<ItemGroup> ITEM_GROUPS = FabricRegistryBuilder.createSimple(ItemGroup.class, id("item_groups_registry")).buildAndRegister();
 	public static Registry<CreativeTab> CREATIVE_TABS = FabricRegistryBuilder.createSimple(CreativeTab.class, id("creative_tabs")).buildAndRegister();
 //	public static Registry<TabbedGroup> EXPANDED_ITEM_GROUPS = FabricRegistryBuilder.createSimple(TabbedGroup.class, id("expanded_item_groups_registry")).buildAndRegister();
@@ -59,7 +74,6 @@ public class ContentRegistries {
 	public static Registry<Elytra> ELYTRAS = FabricRegistryBuilder.createSimple(Elytra.class, id("elytras")).buildAndRegister();
 //	public static Registry<ZoomableItem> ZOOMABLE_ITEMS = FabricRegistryBuilder.createSimple(ZoomableItem.class, id("zoomable_items")).buildAndRegister();
 	public static Registry<CauldronType> CAULDRON_TYPES = FabricRegistryBuilder.createSimple(CauldronType.class, id("cauldron_types")).buildAndRegister();
-	public static Registry<Painting> PAINTINGS = FabricRegistryBuilder.createSimple(Painting.class, id("paintings")).buildAndRegister();
 	public static Registry<ShieldItem> SHIELDS = FabricRegistryBuilder.createSimple(ShieldItem.class, id("shields")).buildAndRegister();
 	public static Registry<VillagerProfession> VILLAGER_PROFESSIONS = FabricRegistryBuilder.createSimple(VillagerProfession.class, id("villager_professions")).buildAndRegister();
 	public static Registry<VillagerBiomeType> VILLAGER_BIOME_TYPES = FabricRegistryBuilder.createSimple(VillagerBiomeType.class, id("villager_biome_types")).buildAndRegister();

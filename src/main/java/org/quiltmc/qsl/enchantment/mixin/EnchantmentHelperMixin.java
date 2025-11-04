@@ -1,8 +1,10 @@
+/*
 package org.quiltmc.qsl.enchantment.mixin;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.random.Weight;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -29,19 +31,19 @@ public class EnchantmentHelperMixin {
 	}
 
 	@Inject(method = "getAvailableEnchantmentResults", at = @At("RETURN"), cancellable = true)
-	private static void handleCustomEnchants(int power, ItemStack stack, boolean treasureAllowed, CallbackInfoReturnable<List<EnchantmentInstance>> callback) {
-		List<EnchantmentInstance> extraEntries = callback.getReturnValue();
+	private static void handleCustomEnchants(FeatureFlagSet enabledFeatures, int level, ItemStack stack, boolean allowTreasure, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
+		List<EnchantmentInstance> extraEntries = cir.getReturnValue();
 		BuiltInRegistries.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment).forEach((enchantment) -> {
-			for (int level = enchantment.getMinLevel(); level <= enchantment.getMaxLevel(); level++) {
-				EnchantmentContext context = EnchantmentGodClass.context.get().withLevel(level).withPower(power);
+			for (int level1 = enchantment.getMinLevel(); level1 <= enchantment.getMaxLevel(); level1++) {
+				EnchantmentContext context = EnchantmentGodClass.context.get().withLevel(level1).withPower(level);
 				int probability = ((QuiltEnchantment) enchantment).weightFromEnchantmentContext(context);
 				if (probability > 0) {
-					EnchantmentInstance entry = new EnchantmentInstance(enchantment, level);
+					EnchantmentInstance entry = new EnchantmentInstance(enchantment, level1);
 					((MutableWeight) entry).setWeight(Weight.of(probability));
 					extraEntries.add(entry);
 				}
 			}
 		});
-		callback.setReturnValue(extraEntries);
+		cir.setReturnValue(extraEntries);
 	}
-}
+}*/

@@ -1,23 +1,17 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.mojang.serialization.MapCodec;
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
-import io.github.vampirestudios.obsidian.api.obsidian.block.Functions;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.functions.CommandFunction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -26,19 +20,18 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 public class DyeableBlock extends BaseEntityBlock {
     public final Block block;
+    private ResourceLocation id;
     private static final MapCodec<BaseEntityBlock> CODEC = simpleCodec(DyeableBlock::new);
 
     public DyeableBlock(BlockBehaviour.Properties settings) {
@@ -46,8 +39,9 @@ public class DyeableBlock extends BaseEntityBlock {
         this.block = null;
     }
 
-    public DyeableBlock(Block block, BlockBehaviour.Properties settings) {
+    public DyeableBlock(ResourceLocation id, Block block, BlockBehaviour.Properties settings) {
         super(settings);
+        this.id = id;
         this.block = block;
     }
 
@@ -62,34 +56,36 @@ public class DyeableBlock extends BaseEntityBlock {
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
+    public boolean propagatesSkylightDown(BlockState state) {
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
     }
 
-    @Override
-    public InteractionResult use(BlockState blockState_1, Level world, BlockPos blockPos_1, Player playerEntity_1, InteractionHand hand_1, BlockHitResult blockHitResult_1) {
-        if (!world.isClientSide) {
-            Item item = BuiltInRegistries.ITEM.get(block.functions.use.item);
-            if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING) && playerEntity_1.isShiftKeyDown() && block.functions.use.predicate.matches()) {
-                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
-                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-                return InteractionResult.SUCCESS;
-            } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_ITEM) && playerEntity_1.getMainHandItem().getItem().equals(item) && block.functions.use.predicate.matches()) {
-                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
-                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-                return InteractionResult.SUCCESS;
-            } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING_AND_ITEM) && playerEntity_1.isShiftKeyDown() && playerEntity_1.getMainHandItem().getItem().equals(item) && block.functions.use.predicate.matches()) {
-                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
-                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-                return InteractionResult.SUCCESS;
-            } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.NONE) &&  block.functions.use.predicate.matches()) {
-                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
-                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return InteractionResult.FAIL;
-    }
+//    @Override
+//    public InteractionResult use(BlockState blockState_1, Level world, BlockPos blockPos_1, Player playerEntity_1, InteractionHand hand_1, BlockHitResult blockHitResult_1) {
+//        if (!world.isClientSide && block.functions != null) {
+//            if (block.functions.use == null) return InteractionResult.FAIL;
+//
+//            Item item = BuiltInRegistries.ITEM.get(block.functions.use.item);
+//            if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING) && playerEntity_1.isShiftKeyDown() && block.functions.use.predicate.matches()) {
+//                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+//                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
+//                return InteractionResult.SUCCESS;
+//            } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_ITEM) && playerEntity_1.getMainHandItem().getItem().equals(item) && block.functions.use.predicate.matches()) {
+//                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+//                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
+//                return InteractionResult.SUCCESS;
+//            } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.REQUIRES_SHIFTING_AND_ITEM) && playerEntity_1.isShiftKeyDown() && playerEntity_1.getMainHandItem().getItem().equals(item) && block.functions.use.predicate.matches()) {
+//                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+//                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
+//                return InteractionResult.SUCCESS;
+//            } else if (block.functions.use.functionType.equals(Functions.Function.FunctionType.NONE) &&  block.functions.use.predicate.matches()) {
+//                Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.use.function_file);
+//                function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
+//                return InteractionResult.SUCCESS;
+//            }
+//        }
+//        return InteractionResult.FAIL;
+//    }
 
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
@@ -112,15 +108,6 @@ public class DyeableBlock extends BaseEntityBlock {
         if (!world.isClientSide && block.functions.random_display_tick.predicate.matches()) {
             Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.random_display_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-        }
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.lore != null && block.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : block.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
         }
     }
 
@@ -171,7 +158,7 @@ public class DyeableBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DyableBlockEntity(block, pos, state);
+        return new DyableBlockEntity(id, pos, state);
     }
 
     @Override
@@ -185,12 +172,12 @@ public class DyeableBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
-        ItemStack stack = super.getCloneItemStack(world, pos, state);
-        if (stack.getItem() instanceof CustomDyeableItem item) {
+    protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean bl) {
+        ItemStack stack = super.getCloneItemStack(world, pos, state, bl);
+        if (stack.getItem() instanceof CustomDyeableItem) {
             BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof DyableBlockEntity dyeableBlockEntity) {
-                item.setColor(stack, dyeableBlockEntity.getDyeColor());
+                stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeableBlockEntity.getDyeColor()));
             }
         }
         return stack;
@@ -201,9 +188,9 @@ public class DyeableBlock extends BaseEntityBlock {
         super.setPlacedBy(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
-            int hue = itemStack.getOrCreateTagElement("display").getInt("color");
+            int hue = itemStack.get(DataComponents.DYED_COLOR).rgb();
             if (hue != 0) {
-                dyableBlockEntity.setDyeColor(itemStack.getOrCreateTagElement("display").getInt("color"));
+                dyableBlockEntity.setDyeColor(hue);
             } else {
                 dyableBlockEntity.setDyeColor(block.additional_information.defaultColor);
             }

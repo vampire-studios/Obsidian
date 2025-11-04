@@ -7,9 +7,9 @@ import io.github.vampirestudios.obsidian.api.obsidian.ItemSettings;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import java.util.Map;
 
 public class BlockInformation {
 
@@ -59,16 +59,21 @@ public class BlockInformation {
     public Object blockSettings;
 
     public BlockSettings getBlockSettings() {
-        if (blockSettings instanceof ResourceLocation resourceLocation) {
-            return ContentRegistries.BLOCK_SETTINGS.get(resourceLocation);
-        } else if(blockSettings instanceof String s) {
-            ResourceLocation location = ResourceLocation.tryParse(s);
-            return ContentRegistries.BLOCK_SETTINGS.get(location);
-        } else if (blockSettings instanceof BlockSettings blockSettings1) {
-            return blockSettings1;
-        } else {
-            return null;
-        }
+		switch (blockSettings) {
+			case ResourceLocation resourceLocation -> {
+				return ContentRegistries.BLOCK_SETTINGS.getValue(resourceLocation);
+			}
+			case String s -> {
+				ResourceLocation location = ResourceLocation.tryParse(s);
+				return ContentRegistries.BLOCK_SETTINGS.getValue(location);
+			}
+			case BlockSettings blockSettings1 -> {
+                return blockSettings1;
+			}
+			case null, default -> {
+				return null;
+			}
+		}
     }
 
     @SerializedName("item_properties")
@@ -77,21 +82,25 @@ public class BlockInformation {
     public Object itemSettings;
 
     public ItemSettings getItemSettings() {
-        if (itemSettings instanceof ResourceLocation resourceLocation) {
-            return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
-        } else if(itemSettings instanceof String s) {
-            ResourceLocation location = ResourceLocation.tryParse(s);
-            return ContentRegistries.ITEM_SETTINGS.get(location);
-        } else if (itemSettings instanceof ItemSettings itemSettings1) {
-            return itemSettings1;
-        } else {
-            return null;
-        }
+		switch (itemSettings) {
+			case ResourceLocation resourceLocation -> {
+				return ContentRegistries.ITEM_SETTINGS.getValue(resourceLocation);
+			}
+			case String s -> {
+				ResourceLocation location = ResourceLocation.tryParse(s);
+				return ContentRegistries.ITEM_SETTINGS.getValue(location);
+			}
+			case ItemSettings itemSettings1 -> {
+				return itemSettings1;
+			}
+			case null, default -> {
+				return new ItemSettings();
+			}
+		}
     }
 
-    public List<ItemStack.TooltipPart> getRemovedTooltipSections() {
-        return List.of();
-    }
+	public Map<String, String[]> properties;
+	public Map<String, String> defaultValue;
 
     /*public RenderLayer getRenderLayer() {
         return switch(renderLayer) {

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.utils;
 
 import com.google.gson.*;
@@ -74,4 +75,4 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
 
         return JsonNull.INSTANCE;
     }
-}
+}*/

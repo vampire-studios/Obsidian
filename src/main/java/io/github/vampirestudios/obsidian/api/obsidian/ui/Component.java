@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
@@ -55,7 +56,8 @@ public class Component {
 		return ComponentType.valueOf(type.toUpperCase(Locale.ROOT));
 	}
 
-	/*@Environment(EnvType.CLIENT)
+	*/
+/*@Environment(EnvType.CLIENT)
 	public io.wispforest.owo.ui.core.Component getComponent(JsonObject jsonObject) {
 		Sizing horizontalSizing = sizing(jsonObject, "horizontal_sizing");
 		Sizing verticalSizing = sizing(jsonObject, "vertical_sizing");
@@ -93,7 +95,8 @@ public class Component {
 			case BOX -> Components.box(horizontalSizing.get(), verticalSizing.get());
 			case DROPDOWN -> Components.dropdown(sizing.get());
 		};
-	}*/
+	}*//*
+
 
 	public enum ComponentType {
 		TEXTURED_BUTTON_CUSTOM_TEXTURE_SIZE,
@@ -114,4 +117,4 @@ public class Component {
 		BOX,
 		DROPDOWN
 	}
-}
+}*/

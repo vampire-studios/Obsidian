@@ -22,14 +22,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
-
 public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends RegistryEntryAttachmentImpl<R, V> {
     private final @Nullable V defaultValue;
 
     public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, ResourceLocation id, Class<V> valueClass,
-                                                      Codec<V> codec, Side side, @Nullable V defaultValue, Predicate<R> validator) {
-        super(registry, id, valueClass, codec, side, validator);
+                                                      Codec<V> codec, Side side, @Nullable V defaultValue) {
+        super(registry, id, valueClass, codec, side);
 
         if (defaultValue != null) {
             var encoded = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);

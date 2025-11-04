@@ -1,55 +1,36 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 
-import java.util.List;
+import java.util.function.Consumer;
 
-public class DyeableArmorItemImpl extends ArmorItem implements DyeableLeatherItem {
+public class DyeableArmorItemImpl extends Item {
 
     public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
 
     public DyeableArmorItemImpl(ArmorMaterial material, io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Properties settings) {
-        super(material, ArmorItem.Type.valueOf(item.armorType), settings);
+        super(settings
+                .humanoidArmor(material, ArmorType.valueOf(item.armorType))
+                .component(DataComponents.DYED_COLOR, new DyedItemColor(item.information.getItemSettings().defaultColor)));
         this.item = item;
     }
 
     @Override
-    public int getColor(ItemStack stack) {
-        CompoundTag nbtCompound = stack.getTagElement("display");
-        return nbtCompound != null && nbtCompound.contains("color", 99) ? nbtCompound.getInt("color") : item.information.getItemSettings().defaultColor;
-    }
-
-    @Override
     public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint;
+        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return item.information.getItemSettings().isEnchantable;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return item.information.getItemSettings().enchantability;
-    }
-
-    @Override
-    public Component getDescription() {
-        return item.information.name.getName("item");
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.lore != null) {
-            for (TooltipInformation tooltipInformation : item.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
-        }
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
+        item.addLore(consumer);
     }
 
 }

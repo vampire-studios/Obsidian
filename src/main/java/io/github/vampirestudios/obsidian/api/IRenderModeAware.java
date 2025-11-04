@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api;
 
 import net.minecraft.client.resources.model.BakedModel;
@@ -8,4 +9,4 @@ public interface IRenderModeAware {
   default BakedModel getModel(ItemStack stack, ItemDisplayContext mode, BakedModel original) {
     return original;
   }
-}
+}*/

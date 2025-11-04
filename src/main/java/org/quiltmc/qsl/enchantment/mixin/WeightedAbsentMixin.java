@@ -1,3 +1,4 @@
+/*
 package org.quiltmc.qsl.enchantment.mixin;
 
 import net.minecraft.util.random.Weight;
@@ -18,4 +19,4 @@ public class WeightedAbsentMixin implements MutableWeight {
 	public void setWeight(Weight weight) {
 		this.weight = weight;
 	}
-}
+}*/

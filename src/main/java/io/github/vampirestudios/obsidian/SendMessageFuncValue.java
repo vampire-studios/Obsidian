@@ -17,6 +17,7 @@
 package io.github.vampirestudios.obsidian;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
@@ -24,8 +25,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public final class SendMessageFuncValue extends FuncValue {
-	public static final ResourceLocation TYPE = new ResourceLocation("quilt", "send_message");
-	public static final Codec<SendMessageFuncValue> CODEC = RecordCodecBuilder.create(instance ->
+	public static final ResourceLocation TYPE = ResourceLocation.fromNamespaceAndPath("quilt", "send_message");
+	public static final MapCodec<SendMessageFuncValue> CODEC = RecordCodecBuilder.mapCodec(instance ->
 			instance.group(Codec.STRING.fieldOf("message").forGetter(sm -> sm.message))
 					.apply(instance, SendMessageFuncValue::new));
 

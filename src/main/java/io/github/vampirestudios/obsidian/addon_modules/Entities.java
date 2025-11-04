@@ -4,7 +4,7 @@ import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
@@ -13,17 +13,18 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.Breathab
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.CollisionBoxComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.HealthComponent;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.MovementComponent;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
+import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
 import io.github.vampirestudios.obsidian.utils.EntityUtils;
-import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,13 +32,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class Entities implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        JsonObject entityJson = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
-        Entity entity = Obsidian.GSON.fromJson(entityJson, Entity.class);
+        JsonObject entityJson = BaseGson.GSON.fromJson(new FileReader(file), JsonObject.class);
+        Entity entity = BaseGson.GSON.fromJson(entityJson, Entity.class);
         try {
             if (entity == null) return;
             String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
@@ -45,11 +47,11 @@ public class Entities implements AddonModule {
             entity.components = new HashMap<>();
             JsonObject components = GsonHelper.getAsJsonObject(entityJson, "components");
             for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
-                ResourceLocation identifier = new ResourceLocation(entry.getKey());
+                ResourceLocation identifier = ResourceLocation.tryParse(entry.getKey());
                 Class<? extends Component> componentClass = Registries.ENTITY_COMPONENTS.getOptional(identifier).orElseThrow(() ->
                         new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
 
-                entity.components.put(identifier.toString(), Obsidian.GSON.fromJson(entry.getValue(), componentClass));
+                entity.components.put(identifier.toString(), BaseGson.GSON.fromJson(entry.getValue(), componentClass));
             }
 
             CollisionBoxComponent collisionBoxComponent = null;
@@ -83,9 +85,9 @@ public class Entities implements AddonModule {
 
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     entity.information.identifier,
-                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (entity.information.identifier == null) entity.information.identifier = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+            if (entity.information.identifier == null) entity.information.identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(identifier)
                     .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value, finalBreathableComponent))
@@ -104,6 +106,6 @@ public class Entities implements AddonModule {
 
     @Override
     public String getType() {
-        return "entities";
+        return "entity";
     }
 }

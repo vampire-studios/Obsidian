@@ -8,10 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.BushBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -21,14 +18,14 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class SaplingBaseBlock extends BushBlock implements BonemealableBlock {
+public class SaplingBaseBlock extends VegetationBlock implements BonemealableBlock {
 	public static final IntegerProperty STAGE = BlockStateProperties.STAGE;
 	protected static final VoxelShape SHAPE = net.minecraft.world.level.block.Block.box(2.0, 0.0, 2.0, 14.0, 12.0, 14.0);
 	private final Block block;
-	private static final MapCodec<BushBlock> CODEC = simpleCodec(SaplingBaseBlock::new);
+	private static final MapCodec<VegetationBlock> CODEC = simpleCodec(SaplingBaseBlock::new);
 
 	@Override
-	protected MapCodec<? extends BushBlock> codec() {
+	protected MapCodec<? extends VegetationBlock> codec() {
 		return CODEC;
 	}
 
@@ -61,8 +58,8 @@ public class SaplingBaseBlock extends BushBlock implements BonemealableBlock {
 		} else {
 			if (block.placable_feature != null) {
 				world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-				if (world.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).containsKey(block.placable_feature)) {
-					ConfiguredFeature<?, ?> feature = world.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).get(block.placable_feature);
+				if (world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).containsKey(block.placable_feature)) {
+					ConfiguredFeature<?, ?> feature = world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValue(block.placable_feature);
 					assert feature != null;
 					feature.place(world, world.getChunkSource().getGenerator(), world.getRandom(), pos);
 				}

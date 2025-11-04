@@ -1,80 +1,33 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.ChatFormatting;
+import eu.pb4.placeholders.api.parsers.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.util.GsonHelper;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class SpecialText {
-
     public String text;
     @SerializedName("type")
-    public String textType;
-    public Map<String, String> translations = new HashMap<>();
-    public String color = "";
-    public String[] formatting = new String[0];
+    public String textType = "literal";
+    public Map<String, String> translations;
 
-    public static Component of(JsonObject jsonObject) {
-        SpecialText specialText = new SpecialText();
-        if (GsonHelper.isStringValue(jsonObject, "text")) specialText.text = GsonHelper.getAsString(jsonObject, "text");
-        if (GsonHelper.isStringValue(jsonObject, "type")) specialText.textType = GsonHelper.getAsString(jsonObject, "type");
-        if (GsonHelper.isStringValue(jsonObject, "color")) specialText.color = GsonHelper.getAsString(jsonObject, "color");
-        if (GsonHelper.isArrayNode(jsonObject, "formatting")) {
-            JsonArray jsonArr = GsonHelper.getAsJsonArray(jsonObject, "formatting");
-            String[] strArr = new String[jsonArr.size()];
-            for(int i = 0; i < jsonArr.size(); i++) {
-                JsonElement elem = jsonArr.get(i);
-                if(GsonHelper.isStringValue(elem)) {
-                    strArr[i] = elem.getAsString();
-                } else {
-                    throw new IllegalArgumentException("An element is not a string");
-                }
-            }
-            specialText.formatting = strArr;
-        }
-        if(GsonHelper.isObjectNode(jsonObject, "translations")) {
-            JsonObject translatedObject = GsonHelper.getAsJsonObject(jsonObject, "translations");
-            for(Map.Entry<String, JsonElement> entry: translatedObject.entrySet()) {
-                String lang = entry.getKey();
-                JsonElement value = entry.getValue();
-                if(GsonHelper.isStringValue(value)) {
-                    String translation = value.getAsString();
-                    specialText.translations.put(lang, translation);
-                }
-            }
-        }
-        return specialText.getName();
+    public SpecialText(String text, String textType, Map<String, String> translations) {
+        this.text = text;
+        this.textType = textType;
+        this.translations = translations;
     }
 
+    public SpecialText() {}
+
     public Component getName() {
-        String color1 = !this.color.isEmpty() && !this.color.isBlank() ? color.replace("#", "").replace("0x", "") : "ffffff";
-        if (!text.isEmpty()) {
-            if ("literal".equals(textType)) {
-                MutableComponent literalText = Component.literal(text);
-                for (String formatting1 : formatting) {
-                    literalText = literalText.withStyle(ChatFormatting.getByName(formatting1));
-                }
-                if (!this.color.isEmpty() && !this.color.isBlank()) {
-                    literalText = literalText.setStyle(literalText.getStyle().withColor(TextColor.parseColor(color1).get().orThrow()));
-                }
-                return literalText;
+        if (text != null && !text.isEmpty()) {
+            if ("translatable".equals(textType)) {
+                return Component.translatable(text);
+            } else if("space".equals(textType)) {
+                return Component.literal("");
             } else {
-                MutableComponent translatableText = Component.translatable(text);
-                for (String formatting1 : formatting) {
-                    translatableText = translatableText.withStyle(ChatFormatting.getByName(formatting1));
-                }
-                if (!this.color.isEmpty() && !this.color.isBlank()) {
-                    translatableText = translatableText.setStyle(translatableText.getStyle().withColor(TextColor.parseColor(color1).get().orThrow()));
-                }
-                return translatableText;
+                return TagParser.QUICK_TEXT_WITH_STF.parseNode(text).toText();
             }
         } else {
             return Component.literal("");

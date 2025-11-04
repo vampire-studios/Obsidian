@@ -1,163 +1,75 @@
 package io.github.vampirestudios.obsidian;
 
-import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonNull;
 import blue.endless.jankson.JsonPrimitive;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.github.cottonmc.jankson.JanksonFactory;
 import io.github.vampirestudios.obsidian.addon_modules.*;
+import io.github.vampirestudios.obsidian.addon_modules.crucible.CrucibleItems;
+import io.github.vampirestudios.obsidian.addon_modules.crucible.CrucibleSkills;
+import io.github.vampirestudios.obsidian.addon_modules.crucible.EffectsModule;
+import io.github.vampirestudios.obsidian.addon_modules.nexo.NexoItems;
+import io.github.vampirestudios.obsidian.api.crucible.skills.effects.AnimationManager;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
-import io.github.vampirestudios.obsidian.minecraft.ModIdArgument;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.Registries;
-import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
-import io.github.vampirestudios.vampirelib.api.ConvertibleBlockPair;
-import io.github.vampirestudios.vampirelib.api.ConvertibleBlocksRegistry;
+import io.github.vampirestudios.obsidian.minecraft.DynamicContainer;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
+import io.github.vampirestudios.obsidian.registry.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.stats.StatType;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.sensing.SensorType;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerType;
-import net.minecraft.world.entity.schedule.Schedule;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.block.WeatheringCopper;
-import net.minecraft.world.level.block.WeatheringCopperFullBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.structure.StructureType;
-import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
-import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElementType;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.equipment.EquipmentAsset;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
-import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBlockStateBooster;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Obsidian implements ModInitializer {
-
-	public static final Gson GSON = new GsonBuilder()
-			.registerTypeAdapter(ResourceLocation.class, (SimpleStringDeserializer<?>) ResourceLocation::new)
-//			.registerTypeAdapter(ModelResourceLocation.class, (SimpleStringDeserializer<ModelResourceLocation>) s -> (ModelResourceLocation) ModelResourceLocation.tryParse(s))
-			.setPrettyPrinting()
-			.setLenient()
-			.enableComplexMapKeySerialization()
-			.create();
-
-	public static final Jankson JANKSON = JanksonFactory.builder()
-			.registerDeserializer(String.class, ResourceLocation.class, (s, m) -> new ResourceLocation(s))
-			.registerSerializer(ResourceLocation.class, (i, m) -> new JsonPrimitive(i.toString()))
-			.registerDeserializer(String.class, ModelResourceLocation.class, (s, m) -> {
-				String[] strings = s.split("#");
-				ResourceLocation identifier = ResourceLocation.tryParse(strings[0]);
-				assert identifier != null;
-				return new ModelResourceLocation(identifier, strings[1]);
-			})
-			.registerSerializer(ModelResourceLocation.class, (i, m) -> new JsonPrimitive(i.toString()))
-			.registerDeserializer(String.class, Enchantment.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.ENCHANTMENT))
-			.registerSerializer(Enchantment.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.ENCHANTMENT))
-			.registerDeserializer(String.class, EntityType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.ENTITY_TYPE))
-			.registerSerializer(EntityType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.ENTITY_TYPE))
-			.registerDeserializer(String.class, Feature.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.FEATURE))
-			.registerSerializer(Feature.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.FEATURE))
-			.registerDeserializer(String.class, Fluid.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.FLUID))
-			.registerSerializer(Fluid.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.FLUID))
-			.registerDeserializer(String.class, Item.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.ITEM))
-			.registerSerializer(Item.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.ITEM))
-			.registerDeserializer(String.class, CreativeModeTab.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.CREATIVE_MODE_TAB))
-			.registerSerializer(CreativeModeTab.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.CREATIVE_MODE_TAB))
-			.registerDeserializer(String.class, MemoryModuleType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.MEMORY_MODULE_TYPE))
-			.registerSerializer(MemoryModuleType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.MEMORY_MODULE_TYPE))
-			.registerDeserializer(String.class, PaintingVariant.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.PAINTING_VARIANT))
-			.registerSerializer(PaintingVariant.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.PAINTING_VARIANT))
-			.registerDeserializer(String.class, ParticleType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.PARTICLE_TYPE))
-			.registerSerializer(ParticleType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.PARTICLE_TYPE))
-			.registerDeserializer(String.class, PoiType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.POINT_OF_INTEREST_TYPE))
-			.registerSerializer(PoiType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.POINT_OF_INTEREST_TYPE))
-			.registerDeserializer(String.class, Potion.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.POTION))
-			.registerSerializer(Potion.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.POTION))
-			.registerDeserializer(String.class, RecipeSerializer.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.RECIPE_SERIALIZER))
-			.registerSerializer(RecipeSerializer.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.RECIPE_SERIALIZER))
-			.registerDeserializer(String.class, RecipeType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.RECIPE_TYPE))
-			.registerSerializer(RecipeType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.RECIPE_TYPE))
-			.registerDeserializer(String.class, Registry.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.REGISTRY))
-			.registerSerializer(Registry.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.REGISTRY))
-			.registerDeserializer(String.class, Schedule.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.SCHEDULE))
-			.registerSerializer(Schedule.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.SCHEDULE))
-			.registerDeserializer(String.class, SensorType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.SENSOR_TYPE))
-			.registerSerializer(SensorType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.SENSOR_TYPE))
-			.registerDeserializer(String.class, SoundEvent.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.SOUND_EVENT))
-			.registerSerializer(SoundEvent.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.SOUND_EVENT))
-			.registerDeserializer(String.class, StatType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.STAT_TYPE))
-			.registerSerializer(StatType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.STAT_TYPE))
-			.registerDeserializer(String.class, MobEffect.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.MOB_EFFECT))
-			.registerSerializer(MobEffect.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.MOB_EFFECT))
-			.registerDeserializer(String.class, StructureType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.STRUCTURE_TYPE))
-			.registerSerializer(StructureType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.STRUCTURE_TYPE))
-			.registerDeserializer(String.class, StructurePieceType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.STRUCTURE_PIECE))
-			.registerSerializer(StructurePieceType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.STRUCTURE_PIECE))
-			.registerDeserializer(String.class, StructurePoolElementType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.STRUCTURE_POOL_ELEMENT))
-			.registerSerializer(StructurePoolElementType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.STRUCTURE_POOL_ELEMENT))
-			.registerDeserializer(String.class, StructureProcessorType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.STRUCTURE_PROCESSOR))
-			.registerSerializer(StructureProcessorType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.STRUCTURE_PROCESSOR))
-			.registerDeserializer(String.class, VillagerProfession.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.VILLAGER_PROFESSION))
-			.registerSerializer(VillagerProfession.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.VILLAGER_PROFESSION))
-			.registerDeserializer(String.class, VillagerType.class, (s, m) -> lookupDeserialize(s, BuiltInRegistries.VILLAGER_TYPE))
-			.registerSerializer(VillagerType.class, (s, m) -> lookupSerialize(s, BuiltInRegistries.VILLAGER_TYPE))
-			.build();
 	public static final Logger LOGGER = LogManager.getLogger(Const.MOD_NAME);
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger(Const.MOD_NAME + " | Bedrock");
 	public static final EntityType<SeatEntity> SEAT = Registry.register(BuiltInRegistries.ENTITY_TYPE, Const.id("seat"), FabricEntityTypeBuilder.
 			<SeatEntity>create(MobCategory.MISC, SeatEntity::new)
 			.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
-			.build());
-//	public static ObsidianConfig CONFIG;
+			.build(ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Const.id("seat"))));
+	public static final RegistryHelper OBSIDIAN_REGISTRY_HELPER = new RegistryHelper(Const.MOD_ID);
 
+	public static MinecraftServer SERVER;
+
+	public static final List<ConvertibleBlockPair> CONVERTIBLE_BLOCKS = new ArrayList<>();
+
+	public static final ResourceKey<? extends Registry<EquipmentAsset>> ROOT_ID = ResourceKey.createRegistryKey(Obsidian.id("obsidian_equipment_asset"));
 
 	public static final RegistryEntryAttachment<net.minecraft.world.level.block.Block, Boolean> BASED =
-			RegistryEntryAttachment.boolBuilder(BuiltInRegistries.BLOCK, new ResourceLocation("quilt", "based"))
+			RegistryEntryAttachment.boolBuilder(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath("quilt", "based"))
 					.side(RegistryEntryAttachment.Side.CLIENT).build();
 
 	public static ResourceLocation id(String path) {
@@ -177,7 +89,7 @@ public class Obsidian implements ModInitializer {
 	}
 
 	private static <T> T lookupDeserialize(String s, Registry<T> registry) {
-		return registry.get(new ResourceLocation(s));
+		return registry.getValue(ResourceLocation.tryParse(s));
 	}
 
 	private static <T, U extends T> JsonElement lookupSerialize(T t, Registry<U> registry) {
@@ -187,28 +99,30 @@ public class Obsidian implements ModInitializer {
 		return new JsonPrimitive(id.toString());
 	}
 
+
+	public final static MenuType<DynamicContainer> DYNAMIC_CONTAINER = Registry.register(
+			BuiltInRegistries.MENU,
+			Obsidian.id("dynamic_container"),
+			new MenuType<>(DynamicContainer::new, FeatureFlags.VANILLA_SET)
+	);
+
 	@Override
 	public void onInitialize() {
-		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().getName()));
+		LOGGER.info(String.format("You're now running Obsidian v%s for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().name()));
 
-		RegistryExtensions.register(BuiltInRegistries.BLOCK, new ResourceLocation("quilt", "oxidizable_iron_block"),
-				new WeatheringCopperFullBlock(WeatheringCopper.WeatherState.UNAFFECTED, BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)),
-				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(net.minecraft.world.level.block.Blocks.IRON_BLOCK, false));
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> SERVER = server);
+		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
+		ServerTickEvents.START_SERVER_TICK.register(server -> AnimationManager.getInstance().onTick());
 
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.IRON_BLOCK, new ConstantBooster(3f));
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.DIAMOND_BLOCK, new ConstantBooster(15f));
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK, new ConstantBooster(100f));
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.OAK_PLANKS, new ConstantBooster(0.25f));
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE, new EnchantingBlockStateBooster());
-
-		ArgumentTypeRegistry.registerArgumentType(Const.id("mod_id"), ModIdArgument.class,
-				SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument));
-
-		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COLORED_BLOCKS).register(entries -> {
-			if (Minecraft.getInstance().options.advancedItemTooltips) {
-				entries.getDisplayStacks().add(new ItemStack(net.minecraft.world.level.block.Blocks.DIRT));
-			}
-		});
+		OI.init();
+		OBE.init();
+		OStructureTypes.init();
+		OBlockTags.init();
+		OEntityTags.init();
+		OStructurePieceTypes.init();
+		OItemComponents.init();
+		new BaseGson();
+		OMenus.init();
 
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "creative_tab", new CreativeTabs());
@@ -221,7 +135,6 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "blocks", new Blocks());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ores", new Ores());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "cauldron_types", new CauldronTypes());
-		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "paintings", new Paintings());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "armor_materials", new ArmorMaterials());
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
@@ -229,17 +142,19 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "elytra", new Elytras());
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "emojis", new Emojis());
-//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item", new Items());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "oraxen_item", new NexoItems());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "crucible_skill", new CrucibleSkills());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "crucible_effect", new EffectsModule());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "crucible_item", new CrucibleItems());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "tool", new Tools());
+//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "particle", new Particles());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "sound_events", new SoundEvents());
-		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "music_discs", new MusicDiscs());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "weapon", new Weapons());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "commands", new Commands());
-		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "enchantments", new Enchantments());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "entities", new Entities());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "shields", new Shields());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "status_effects", new StatusEffects());
@@ -248,23 +163,23 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_professions", new VillagerProfessions());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "villager_biome_types", new VillagerBiomeTypes());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "fuel_sources", new FuelSources());
-		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
+//		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "expanded_item_group", new ExpandedItemGroups());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "sub_item_groups", new SubItemGroups());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "condensed_item_entries", new CondensedItemEntries());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "biome_layouts", new BiomeLayouts());
 //		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-//			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "guis", new Guis());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "guis", new Guis());
 //		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 //			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "huds", new Huds());
 
 		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information.isConvertible) {
 				AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
-				net.minecraft.world.level.block.Block parentBlock = BuiltInRegistries.BLOCK.get(convertible.parent_block);
-				net.minecraft.world.level.block.Block transformedBlock = BuiltInRegistries.BLOCK.get(convertible.transformed_block);
+				net.minecraft.world.level.block.Block parentBlock = BuiltInRegistries.BLOCK.getValue(convertible.parent_block);
+				net.minecraft.world.level.block.Block transformedBlock = BuiltInRegistries.BLOCK.getValue(convertible.transformed_block);
 				AdditionalBlockInformation.Convertible.ConversionItem conversionItem = convertible.conversionItem;
 				Item conversionItemItem;
-				if (conversionItem.item != null) conversionItemItem = BuiltInRegistries.ITEM.get(conversionItem.item);
+				if (conversionItem.item != null) conversionItemItem = BuiltInRegistries.ITEM.getValue(conversionItem.item);
 				else conversionItemItem = null;
 
 				TagKey<Item> conversionItemTag = null;
@@ -277,18 +192,18 @@ public class Obsidian implements ModInitializer {
 					if (convertible.reversalItem != null) reversalItem = convertible.reversalItem;
 
 					if (reversalItem != null) {
-						if (reversalItem.item != null) reversalItemItem = BuiltInRegistries.ITEM.get(conversionItem.item);
+						if (reversalItem.item != null) reversalItemItem = BuiltInRegistries.ITEM.getValue(conversionItem.item);
 						if (reversalItem.tag != null)
 							reversalItemTag = TagKey.create(net.minecraft.core.registries.Registries.ITEM, conversionItem.tag);
 					}
 				}
 
 				SoundEvent sound;
-				if (convertible.sound != null) sound = BuiltInRegistries.SOUND_EVENT.get(convertible.sound);
+				if (convertible.sound != null) sound = BuiltInRegistries.SOUND_EVENT.getValue(convertible.sound);
 				else sound = null;
 
 				Item droppedItem;
-				if (convertible.dropped_item != null) droppedItem = BuiltInRegistries.ITEM.get(convertible.dropped_item);
+				if (convertible.dropped_item != null) droppedItem = BuiltInRegistries.ITEM.getValue(convertible.dropped_item);
 				else droppedItem = null;
 
 				ConvertibleBlockPair.ConversionItem reversalItem1;
@@ -316,33 +231,66 @@ public class Obsidian implements ModInitializer {
 		BedrockAddonLoader.loadDefaultBedrockAddons();
 		BedrockAddonLoader.loadBedrockAddons();
 
- 		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
-			if (world.isClientSide)
-				return InteractionResult.PASS;
 
-			if (!world.mayInteract(player, hit.getBlockPos()))
-				return InteractionResult.PASS;
+		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+			if (!world.isClientSide()) {
+				for (ConvertibleBlockPair convertibleBlock : CONVERTIBLE_BLOCKS) {
+					ItemStack itemStack = player.getItemInHand(hand);
+					BlockState blockState = world.getBlockState(hitResult.getBlockPos());
+					if (convertibleBlock.getConversionItem().matches(itemStack)) {
+						if (blockState.getBlock() == convertibleBlock.getOriginal()) {
+							if (convertibleBlock.getSound() != null)
+								world.playSound(null, hitResult.getBlockPos(), convertibleBlock.getSound(),
+										SoundSource.BLOCKS, 1.0F, 1.0F);
 
-			net.minecraft.world.level.block.Block b = world.getBlockState(hit.getBlockPos()).getBlock();
+							if (convertibleBlock.getDroppedItem() != null) {
+								ItemStack newStack = new ItemStack(convertibleBlock.getDroppedItem());
+								if (!newStack.isEmpty() && world instanceof ServerLevel serverLevel &&
+										serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+									ItemEntity itemEntity = new ItemEntity(world, hitResult.getBlockPos().getX() + 0.5,
+											hitResult.getBlockPos().getY() + 0.5,
+											hitResult.getBlockPos().getZ() + 0.5,
+											newStack);
+									itemEntity.setDefaultPickUpDelay();
+									world.addFreshEntity(itemEntity);
+								}
+							}
 
-			if ((b instanceof SittableBlock || b instanceof HorizontalFacingSittableBlock || b instanceof SittableAndDyableBlock || b instanceof HorizontalFacingSittableAndDyableBlock) && !SeatEntity.OCCUPIED.containsKey(new Vec3(hit.getBlockPos().getX(), hit.getBlockPos().getY(), hit.getBlockPos().getZ())) && player.getItemInHand(hand).isEmpty()) {
-				Vec3 comparePos = new Vec3(player.blockPosition().getX() + 0.5D, player.blockPosition().getY() + 1.25D, player.blockPosition().getZ() + 0.5D);
+							world.setBlock(hitResult.getBlockPos(), convertibleBlock.getConverted()
+									.withPropertiesOf(blockState), 11);
+							if (!player.getAbilities().instabuild) itemStack.hurtAndBreak(1, player, hand);
+							world.gameEvent(GameEvent.BLOCK_CHANGE, hitResult.getBlockPos(),
+									GameEvent.Context.of(player, blockState));
+							return InteractionResult.SUCCESS;
+						}
+					} else if (convertibleBlock.getReversingItem() != null &&
+							convertibleBlock.getReversingItem().matches(itemStack) &&
+							blockState.is(convertibleBlock.getConverted())) {
+						if (convertibleBlock.getSound() != null)
+							world.playSound(null, hitResult.getBlockPos(), convertibleBlock.getSound(),
+									SoundSource.BLOCKS, 1.0F, 1.0F);
 
-				//only allow sitting when right-clicking the top face of a block, and disallow sitting players from sitting again
-				if (SeatEntity.OCCUPIED.containsKey(comparePos))
-					return InteractionResult.PASS;
+						if (convertibleBlock.getDroppedItem() != null) {
+							ItemStack newStack = new ItemStack(convertibleBlock.getDroppedItem());
+							if (!newStack.isEmpty() && world instanceof ServerLevel serverLevel &&
+									serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+								ItemEntity itemEntity = new ItemEntity(world, hitResult.getBlockPos().getX() + 0.5,
+										hitResult.getBlockPos().getY() + 0.5,
+										hitResult.getBlockPos().getZ() + 0.5, newStack);
+								itemEntity.setDefaultPickUpDelay();
+								world.addFreshEntity(itemEntity);
+							}
+						}
 
-				SeatEntity sit = Obsidian.SEAT.create(world);
-				Vec3 vec3d = new Vec3(hit.getBlockPos().getX() + 0.5D, hit.getBlockPos().getY() + 0.25D, hit.getBlockPos().getZ() + 0.5D);
-
-				SeatEntity.OCCUPIED.put(vec3d, player.blockPosition());
-				assert sit != null;
-				sit.absMoveTo(vec3d.x(), vec3d.y(), vec3d.z());
-				world.addFreshEntity(sit);
-				player.startRiding(sit);
-				return InteractionResult.SUCCESS;
+						world.setBlock(hitResult.getBlockPos(), convertibleBlock.getOriginal()
+								.withPropertiesOf(blockState), 11);
+						itemStack.hurtAndBreak(1, player, hand);
+						world.gameEvent(GameEvent.BLOCK_CHANGE, hitResult.getBlockPos(),
+								GameEvent.Context.of(player, blockState));
+						return InteractionResult.SUCCESS;
+					}
+				}
 			}
-
 			return InteractionResult.PASS;
 		});
 	}

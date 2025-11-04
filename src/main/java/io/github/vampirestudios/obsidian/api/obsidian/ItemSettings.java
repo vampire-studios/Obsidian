@@ -1,17 +1,21 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import blue.endless.jankson.annotation.SerializedName;
+import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.components.Conversion;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 
 import java.util.List;
+import java.util.Map;
 
 public class ItemSettings {
-    @SerializedName("base_item_properties")
-    @com.google.gson.annotations.SerializedName("base_item_properties")
+    @SerializedName("parent")
+    @com.google.gson.annotations.SerializedName("parent")
     public Object baseItemSettings;
 
     // Basic Info
@@ -21,14 +25,23 @@ public class ItemSettings {
 
     @SerializedName("max_stack_size")
     @com.google.gson.annotations.SerializedName("max_stack_size")
-    public Integer maxStackSize;
+    public Integer maxStackSize = 64;
 
     @SerializedName("max_uses")
     @com.google.gson.annotations.SerializedName("max_uses")
-    public int durability;
+    public int durability = 0;
 
-    public String rarity;
-    public boolean fireproof;
+    public String rarity = "common";
+    public boolean fireproof = false;
+
+    public Fuel fuel;
+
+    public static class Fuel {
+        public int duration = 10;
+        @SerializedName("return_item")
+        @com.google.gson.annotations.SerializedName("return_item")
+        public ResourceLocation returnItem;
+    }
 
     // Fuel
     @SerializedName("is_fuel")
@@ -42,7 +55,7 @@ public class ItemSettings {
     // Enchanting
     @SerializedName("has_enchantment_glint")
     @com.google.gson.annotations.SerializedName("has_enchantment_glint")
-    public boolean hasEnchantmentGlint;
+    public TriState hasEnchantmentGlint;
 
     @SerializedName("is_enchantable")
     @com.google.gson.annotations.SerializedName("is_enchantable")
@@ -56,6 +69,8 @@ public class ItemSettings {
 
     // Wearable
     public boolean wearable;
+    @SerializedName("wearable_slot")
+    @com.google.gson.annotations.SerializedName("wearable_slot")
     public String wearableSlot;
 
     // Dyeable
@@ -63,6 +78,18 @@ public class ItemSettings {
     @SerializedName("default_color")
     @com.google.gson.annotations.SerializedName("default_color")
     public int defaultColor;
+
+    public int getDefaultColor() {
+        int color;
+        if (this.defaultColor != 0)
+            color = this.defaultColor;
+        else if (this.getParentSettings().defaultColor != 0)
+            color = this.getParentSettings().defaultColor;
+        else
+            color = 10511680;
+
+        return color;
+    }
 
     // Rendering
     @SerializedName("custom_render_mode")
@@ -76,66 +103,67 @@ public class ItemSettings {
     public Conversion conversion;
 
     public ItemSettings() {
-        this.creativeTab = new ResourceLocation("minecraft:building_blocks");
+        this.creativeTab = ResourceLocation.withDefaultNamespace("building_blocks");
 
-        this.maxStackSize = 64;
-
-        this.durability = 5;
-
-        this.rarity = "common";
-        this.fireproof = false;
-
-        this.isFuel = false;
-        this.fuelDuration = 10;
-
-        this.hasEnchantmentGlint = false;
-        this.isEnchantable = false;
+        this.hasEnchantmentGlint = TriState.DEFAULT;
         this.enchantability = 5;
-
-        this.canPlaceBlock = false;
-
-        this.wearable = false;
-
-        this.dyeable = false;
         this.defaultColor = 16579836;
-
-        this.customRenderMode = false;
     }
 
-    /**
-     * Returns the base item settings.
-     * @return An Optional<ItemSettings> object.
-     */
-    public ItemSettings getBaseItemSettings() {
-        if (baseItemSettings instanceof ResourceLocation resourceLocation) {
-            return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
-        } else if (baseItemSettings instanceof  String s) {
-            ResourceLocation location = ResourceLocation.tryParse(s);
-            return ContentRegistries.ITEM_SETTINGS.get(location);
-        } else if (baseItemSettings instanceof ItemSettings itemSettings1) {
-            return itemSettings1;
-        } else {
-            return this;
+    // This getter will handle the different possible types of 'itemSettings'
+    public ItemSettings getParentSettings() {
+		switch (baseItemSettings) {
+			case Map<?, ?> propertiesMap -> {
+				System.out.println(STR."Map: \{propertiesMap}");
+				return constructItemSettingsFromMap(propertiesMap);
+			}
+			case JsonObject jsonObject -> {
+				System.out.println(STR."Json Object: \{jsonObject.getAsString()}");
+				return null;
+			}
+			case String s -> {
+				System.out.println(STR."String: \{s}");
+				return getItemSettingsFromReference(s);
+			}
+			case ItemSettings itemSettings1 -> {
+				return itemSettings1;
+			}
+			case null, default -> {
+				return handleUnknownItemSettingsType();
+			}
+		}
+    }
+
+    private ItemSettings constructItemSettingsFromMap(Map<?, ?> propertiesMap) {
+//		System.out.println("Map: " + propertiesMap);
+        ItemSettings settings = new ItemSettings();
+        if (propertiesMap.containsKey("parent")) {
+            settings.baseItemSettings = ContentRegistries.ITEM_SETTINGS.get(ResourceLocation.tryParse((String) propertiesMap.get("parent")));
         }
+        return settings; // Replace with actual construction logic
+    }
+
+    private ItemSettings getItemSettingsFromReference(String reference) {
+        ResourceLocation location = ResourceLocation.tryParse(reference);
+        if (location != null) {
+            return ContentRegistries.ITEM_SETTINGS.getValue(location);
+        } else {
+            System.out.println(STR."Invalid Reference: \{reference}");
+            return handleInvalidReference(reference);
+        }
+    }
+
+    private ItemSettings handleUnknownItemSettingsType() {
+//		System.out.println("Unknown Item Settings Type");
+        return new ItemSettings(); // Replace with actual error handling logic
+    }
+
+    private ItemSettings handleInvalidReference(String reference) {
+//		System.out.println("Invalid reference: " + reference);
+        return new ItemSettings(); // Replace with actual error handling logic
     }
 
     public ResourceKey<CreativeModeTab> getItemGroup() {
         return ResourceKey.create(Registries.CREATIVE_MODE_TAB, creativeTab);
-    }
-
-    /**
-     * This class represents the conversion settings for an item.
-     */
-    public static class Conversion {
-        private List<ResourceLocation> from;
-        private ResourceLocation to;
-
-        public List<ResourceLocation> getFrom() {
-            return from;
-        }
-
-        public ResourceLocation getTo() {
-            return to;
-        }
     }
 }

@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
       "trident.AbstractArrowAccessor",
-	"trident.TridentEntityMixin"
+//	"trident.TridentEntityMixin"
   ],
   "client": [
 	"trident.client.ClientPlayNetworkHandlerMixin",

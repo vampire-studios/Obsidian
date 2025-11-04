@@ -1,11 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -14,8 +10,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-
-import java.util.List;
 
 public class EightDirectionBlockImpl extends Block {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 7);
@@ -34,17 +28,8 @@ public class EightDirectionBlockImpl extends Block {
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state) {
         return block.information.getBlockSettings().translucent;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.rendering != null && block.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : block.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
-        }
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {

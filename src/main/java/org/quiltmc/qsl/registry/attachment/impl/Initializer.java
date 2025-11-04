@@ -37,7 +37,7 @@ public final class Initializer implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("QuiltRegistryEntryAttachment");
 
 	public static ResourceLocation id(String path) {
-		return new ResourceLocation(NAMESPACE, path);
+		return ResourceLocation.fromNamespaceAndPath(NAMESPACE, path);
 	}
 
 	private static MinecraftServer server;

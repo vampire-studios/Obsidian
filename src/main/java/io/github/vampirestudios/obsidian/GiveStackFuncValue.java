@@ -16,7 +16,7 @@
 
 package io.github.vampirestudios.obsidian;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +24,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public final class GiveStackFuncValue extends FuncValue {
-	public static final ResourceLocation TYPE = new ResourceLocation("quilt", "give_stack");
-	public static final Codec<GiveStackFuncValue> CODEC = RecordCodecBuilder.create(instance ->
+	public static final ResourceLocation TYPE = ResourceLocation.fromNamespaceAndPath("quilt", "give_stack");
+	public static final MapCodec<GiveStackFuncValue> CODEC = RecordCodecBuilder.mapCodec(instance ->
 			instance.group(ItemStack.CODEC.fieldOf("stack").forGetter(gs -> gs.stack))
 					.apply(instance, GiveStackFuncValue::new));
 

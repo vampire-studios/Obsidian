@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.controls.KeyBindsList;
+import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
 import net.minecraft.network.chat.Component;
 import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
@@ -34,8 +36,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
+
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
@@ -43,11 +44,11 @@ import java.util.List;
 public abstract class KeyBindEntryMixin extends KeyBindsList.Entry implements KeyBindTooltipHolder {
 	@Shadow
 	@Final
-	private KeyMapping binding;
+	private KeyMapping key;
 
 	@Shadow
 	@Final
-	private Button editButton;
+	private Button changeButton;
 
 	@Unique
 	private List<InputConstants.Key> quilt$previousProtoChord;
@@ -75,16 +76,16 @@ public abstract class KeyBindEntryMixin extends KeyBindsList.Entry implements Ke
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void shortenText(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
+	private void shortenText(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
 		// TODO - Get client from the parent screen instead
 		Minecraft client = Minecraft.getInstance();
-		Component text = this.editButton.getMessage();
+		Component text = this.changeButton.getMessage();
 		int targetWidth = /*bl || bl2 ? 50 - 10 : */75 - 10;
 		if (client.font.width(text) > targetWidth) {
 			StringBuilder protoText = new StringBuilder(text.getString());
-			if (this.binding.getBoundChord() != null) {
+			if (this.key.getBoundChord() != null) {
 				protoText = new StringBuilder();
-				KeyChord chord = this.binding.getBoundChord();
+				KeyChord chord = this.key.getBoundChord();
 
 				for (InputConstants.Key key : chord.keys.keySet()) {
 					if (protoText.length() > 0) {
@@ -115,7 +116,7 @@ public abstract class KeyBindEntryMixin extends KeyBindsList.Entry implements Ke
 				protoText.append("...");
 			}
 
-			this.editButton.setMessage(Component.literal(protoText.toString()));
+			this.changeButton.setMessage(Component.literal(protoText.toString()));
 		}
 	}
 }

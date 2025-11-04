@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,40 +30,35 @@ public class AnimationManager implements SimpleResourceReloadListener<AnimationM
 	}
 
 	@Override
-	public CompletableFuture<AnimationLoader> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
-		return CompletableFuture.supplyAsync(() -> new AnimationLoader(manager, profiler), executor);
-	}
-
-	@Override
-	public CompletableFuture<Void> apply(AnimationLoader prepared, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
-		this.animations = prepared.getAnimations();
-		return CompletableFuture.runAsync(() -> {
-		});
-	}
-
-	@Override
 	public ResourceLocation getFabricId() {
-		return new ResourceLocation("obsidian", "animation_reloader");
+		return ResourceLocation.fromNamespaceAndPath("obsidian", "animation_reloader");
+	}
+
+	@Override
+	public CompletableFuture<AnimationLoader> load(ResourceManager manager, Executor executor) {
+		return CompletableFuture.supplyAsync(() -> new AnimationLoader(manager), executor);
+	}
+
+	@Override
+	public CompletableFuture<Void> apply(AnimationLoader data, ResourceManager manager, Executor executor) {
+		this.animations = data.getAnimations();
+		return CompletableFuture.runAsync(() -> {});
 	}
 
 	public static class AnimationLoader {
 		private final ResourceManager manager;
-		private final ProfilerFiller profiler;
 		private final Map<ResourceLocation, AnimationDefinition> animations = new HashMap<>();
 
-		public AnimationLoader(ResourceManager manager, ProfilerFiller profiler) {
+		public AnimationLoader(ResourceManager manager) {
 			this.manager = manager;
-			this.profiler = profiler;
 			loadAnimations();
 		}
 
 		private void loadAnimations() {
-			profiler.push("Load Animations");
 			Map<ResourceLocation, Resource> resources = manager.listResources("animations", id -> id.getPath().endsWith(".json"));
 			for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
 				addAnimation(entry.getKey(), entry.getValue());
 			}
-			profiler.pop();
 		}
 
 		private void addAnimation(ResourceLocation id, Resource resource) {
@@ -84,7 +78,7 @@ public class AnimationManager implements SimpleResourceReloadListener<AnimationM
 				return;
 			}
 
-			animations.put(new ResourceLocation(id.getNamespace(), id.getPath().substring("animations/".length())), result.result().get().getFirst());
+			animations.put(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath().substring("animations/".length())), result.result().get().getFirst());
 		}
 
 		public Map<ResourceLocation, AnimationDefinition> getAnimations() {

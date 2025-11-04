@@ -4,7 +4,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 
 import java.util.Map;
 
@@ -20,19 +20,21 @@ public class UseActions {
 	public String url;
 	public String command;
 
-	private static final Map<String, UseAnim> USE_ANIMATION_MAP = Map.of(
-			"none", UseAnim.NONE,
-			"eat", UseAnim.EAT,
-			"drink", UseAnim.DRINK,
-			"block", UseAnim.BLOCK,
-			"bow", UseAnim.BOW,
-			"spear", UseAnim.SPEAR,
-			"crossbow", UseAnim.CROSSBOW,
-			"spyglass", UseAnim.SPYGLASS
+	private static final Map<String, ItemUseAnimation> USE_ANIMATION_MAP = Map.of(
+			"none", ItemUseAnimation.NONE,
+			"eat", ItemUseAnimation.EAT,
+			"drink", ItemUseAnimation.DRINK,
+			"block", ItemUseAnimation.BLOCK,
+			"bow", ItemUseAnimation.BOW,
+			"spear", ItemUseAnimation.SPEAR,
+			"crossbow", ItemUseAnimation.CROSSBOW,
+			"spyglass", ItemUseAnimation.SPYGLASS,
+			"toot_horn", ItemUseAnimation.TOOT_HORN,
+			"brush", ItemUseAnimation.BRUSH
 	);
 
-	public UseAnim getUseAnimation() {
-		UseAnim useAnim = USE_ANIMATION_MAP.get(use_animation);
+	public ItemUseAnimation getUseAnimation() {
+		ItemUseAnimation useAnim = USE_ANIMATION_MAP.get(use_animation);
 		if (useAnim == null) {
 			throw new IllegalStateException("Unexpected value: " + use_animation);
 		}
@@ -60,12 +62,12 @@ public class UseActions {
 			Map.entry(GuiType.FURNACE, (syncId, gui_size, inventory, containerLevelAccess) -> MenuType.FURNACE.create(syncId, inventory))
 	);
 
-	public SimpleMenuProvider openGui(ContainerLevelAccess containerLevelAccess) {
+	public SimpleMenuProvider openGui(ContainerLevelAccess containerLevelAccess) throws IllegalStateException {
 		TriFunction<Integer, Integer, Inventory, AbstractContainerMenu, ContainerLevelAccess> menuCreator = GUI_TYPE_TO_MENU_MAP.get(guiType);
 		if (menuCreator == null) {
-			throw new IllegalStateException("Unexpected value: " + guiType);
+			throw new IllegalStateException(STR."Unexpected value: \{guiType}");
 		}
-		return new SimpleMenuProvider((syncId, inventory, playerx) -> menuCreator.apply(syncId, gui_size, playerx.getInventory(), containerLevelAccess), gui_title.getName("gui"));
+		return new SimpleMenuProvider((syncId, _, playerx) -> menuCreator.apply(syncId, gui_size, playerx.getInventory(), containerLevelAccess), gui_title.getName("gui"));
 	}
 
 	public enum GuiType {

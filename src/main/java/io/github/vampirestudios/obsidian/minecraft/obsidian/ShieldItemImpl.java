@@ -1,49 +1,60 @@
-/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShieldItem;
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ShieldItem;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.BlocksAttacks;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
-public class ShieldItemImpl extends FabricShieldItem {
+public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
 
-    public ShieldItem shieldItem;
+    public ShieldItem item;
 
-    public ShieldItemImpl(ShieldItem shieldItem, Settings settings) {
-        super(settings, shieldItem.cooldownTicks, shieldItem.information.enchantability, Registry.ITEM.get(shieldItem.repairItem));
-        this.shieldItem = shieldItem;
+    public ShieldItemImpl(ShieldItem shieldItem, Item.Properties settings) {
+        super(settings
+				.equippableUnswappable(EquipmentSlot.OFFHAND)
+				.repairable(BuiltInRegistries.ITEM.getValue(shieldItem.repairItem))
+				.component(
+						DataComponents.BLOCKS_ATTACKS,
+						new BlocksAttacks(
+								shieldItem.cooldownTicks,
+								1.0F,
+								List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)),
+								new BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
+								Optional.of(DamageTypeTags.BYPASSES_SHIELD),
+								Optional.of(BuiltInRegistries.SOUND_EVENT.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, shieldItem.blockSound))),
+								Optional.of(BuiltInRegistries.SOUND_EVENT.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, shieldItem.breakSound)))
+						)
+				)
+				.component(DataComponents.BREAK_SOUND, BuiltInRegistries.SOUND_EVENT.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, shieldItem.breakSound)))
+		);
+        this.item = shieldItem;
     }
 
-    @Override
-    public boolean hasGlint(ItemStack stack) {
-        return shieldItem.information.has_glint;
-    }
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
+	}
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return shieldItem.information.is_enchantable;
-    }
+	@Override
+	public Component getName(ItemStack itemStack) {
+		return item.information.name.getName("item");
+	}
 
-    @Override
-    public Text getName() {
-        return shieldItem.information.name.getName("item");
-    }
-
-    @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        if (shieldItem.display != null && shieldItem.display.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : shieldItem.display.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
-        }
+	@Override
+	public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
+		item.addLore(consumer);
     }
 }
-*/

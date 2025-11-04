@@ -14,5 +14,7 @@ public class HexToDecimalExample1 {
 		System.out.printf("Matrix - Java Int: %d, Hex Color: %s%n", 16715263, Integer.toHexString(16715263));
 
 		System.out.printf("Java Int: %d, Hex Color: %s%n", 816487, Integer.toHexString(816487));
+
+		System.out.printf("Something: %d, Hex Color: %s%n", 16646020, Integer.toHexString(16646020));
 	}
 }

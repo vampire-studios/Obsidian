@@ -22,9 +22,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.controls.KeyBindsScreen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.client.gui.screens.options.controls.KeyBindsScreen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
@@ -58,13 +58,13 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 		super(screen, gameOptions, text);
 	}
 
-	@Inject(at = @At("TAIL"), method = "init")
+	@Inject(at = @At("TAIL"), method = "<init>")
 	private void initializeProtoChord(CallbackInfo ci) {
 		this.quilt$focusedProtoChord = new ObjectArrayList<>();
 		this.quilt$initialMouseRelease = true;
 	}
 
-	@Inject(
+	/*@Inject(
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/Options;setKey(Lnet/minecraft/client/KeyMapping;Lcom/mojang/blaze3d/platform/InputConstants$Key;)V"
@@ -79,14 +79,14 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 		}
 
 		cir.setReturnValue(true);
-	}
+	}*/
 
 	@Inject(at = @At(value = "RETURN", ordinal = 1), method = "mouseClicked")
 	private void excludeFirstMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		this.quilt$initialMouseRelease = true;
 	}
 
-	@Inject(
+	/*@Inject(
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/Options;setKey(Lnet/minecraft/client/KeyMapping;Lcom/mojang/blaze3d/platform/InputConstants$Key;)V",
@@ -102,13 +102,13 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 		}
 
 		cir.setReturnValue(true);
-	}
+	}*/
 
 	@Override
 	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
 		if (this.selectedKey != null) {
 			if (quilt$focusedProtoChord.size() == 1) {
-				this.options.setKey(this.selectedKey, quilt$focusedProtoChord.get(0));
+//				this.options.setKey(this.selectedKey, quilt$focusedProtoChord.get(0));
 			} else if (quilt$focusedProtoChord.size() > 1) {
 				SortedMap<InputConstants.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
 				for (InputConstants.Key key : quilt$focusedProtoChord) {
@@ -134,7 +134,7 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 		// TODO - Don't duplicate code, have a common method
 		if (this.selectedKey != null && !this.quilt$initialMouseRelease) {
 			if (quilt$focusedProtoChord.size() == 1) {
-				this.options.setKey(this.selectedKey, quilt$focusedProtoChord.get(0));
+//				this.options.setKey(this.selectedKey, quilt$focusedProtoChord.get(0));
 			} else if (quilt$focusedProtoChord.size() > 1) {
 				SortedMap<InputConstants.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
 				for (InputConstants.Key key : quilt$focusedProtoChord) {

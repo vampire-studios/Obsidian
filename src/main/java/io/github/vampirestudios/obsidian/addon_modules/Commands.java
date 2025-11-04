@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.command.Command;
@@ -31,14 +31,14 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 public class Commands implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        Command.CommandNode command = Obsidian.GSON.fromJson(new FileReader(file), Command.CommandNode.class);
+        Command.CommandNode command = loadCommandFromFile(file);
         String tmpl = """
                 {
                   "name": "testing",
                   "aliases": [
                     "testing2"
                   ]
-                  "op_level": 2,
+                  "permission_level": 2,
                   "arguments": {
                     "target_pos" : {
                       "type": "block_pos",
@@ -74,11 +74,8 @@ public class Commands implements AddonModule {
             if (command == null || json.isEmpty()) return;
             String finalJson = json;
 
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
-                    command.name,
-                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-            if (command.name == null) command.name = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+            ResourceLocation identifier = getCommandIdentifier(command, id, file);
+            if (command.name == null) command.name = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             CommandRegistrationCallback.EVENT.register((dispatcher, context, environment) -> parseNodes(dispatcher, context, environment, finalJson));
             register(ContentRegistries.COMMANDS, "command", identifier, command);
@@ -87,17 +84,32 @@ public class Commands implements AddonModule {
         }
     }
 
+//    private void registerCommand(Command.CommandNode command, ResourceLocation identifier) {
+//        CommandRegistrationCallback.EVENT.register((dispatcher, context, environment) ->
+//                parseNodes(dispatcher, context, environment, command));
+//        register(ContentRegistries.COMMANDS, "command", identifier, command);
+//    }
+
+    private Command.CommandNode loadCommandFromFile(File file) throws IOException {
+        return BaseGson.GSON.fromJson(new FileReader(file), Command.CommandNode.class);
+    }
+
+    private ResourceLocation getCommandIdentifier(Command.CommandNode command, BasicAddonInfo id, File file) {
+        return Objects.requireNonNullElseGet(command.name,
+                () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "")));
+    }
+
     public static String readFileAsString(String file) throws IOException {
         return new String(Files.readAllBytes(Paths.get(file)));
     }
 
     @Override
     public String getType() {
-        return "commands";
+        return "command";
     }
 
     void parseNodes(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext, net.minecraft.commands.Commands.CommandSelection environment, String json) {
-        Command.CommandNode node = Obsidian.GSON.fromJson(json, Command.CommandNode.class);
+        Command.CommandNode node = BaseGson.GSON.fromJson(json, Command.CommandNode.class);
         if (node.dedicatedOnly) {
             if (environment.includeDedicated) {
                 LiteralArgumentBuilder<CommandSourceStack> root = net.minecraft.commands.Commands.literal(node.name.getPath());

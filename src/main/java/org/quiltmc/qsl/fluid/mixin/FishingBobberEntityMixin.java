@@ -17,7 +17,8 @@
 package org.quiltmc.qsl.fluid.mixin;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.quiltmc.qsl.fluid.impl.FishingBobberEntityExtensions;
@@ -65,8 +65,8 @@ public abstract class FishingBobberEntityMixin implements CustomFluidInteracting
 		return instance.getFluidState().is(quilt$canFishingBobberCatchIn());
 	}
 
-	@Redirect(method = "retrieve", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootDataManager;getLootTable(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/world/level/storage/loot/LootTable;"))
-	public LootTable changeLootTable(LootDataManager instance, ResourceLocation id) {
-		return ((FishingHook) (Object) this).level().getServer().getLootData().getLootTable(this.quilt$getFishingLootTable());
+	@Redirect(method = "retrieve", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/ReloadableServerRegistries$Holder;getLootTable(Lnet/minecraft/resources/ResourceKey;)Lnet/minecraft/world/level/storage/loot/LootTable;"))
+	public LootTable changeLootTable(ReloadableServerRegistries.Holder instance, ResourceKey<LootTable> resourceKey) {
+		return ((FishingHook) (Object) this).level().getServer().reloadableRegistries().getLootTable(this.quilt$getFishingLootTable());
 	}
 }

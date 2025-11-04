@@ -17,7 +17,7 @@
 package io.github.vampirestudios.obsidian;
 
 import com.google.common.collect.ImmutableMap;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,8 +27,8 @@ import java.util.Map;
 
 public abstract class FuncValue implements DispatchedType {
 	// in a real-world application, you'd probably use a Registry for this
-	public static final Map<ResourceLocation, Codec<? extends FuncValue>> CODECS = Util.make(() ->
-			ImmutableMap.<ResourceLocation, Codec<? extends FuncValue>>builder()
+	public static final Map<ResourceLocation, MapCodec<? extends FuncValue>> CODECS = Util.make(() ->
+			ImmutableMap.<ResourceLocation, MapCodec<? extends FuncValue>>builder()
 					.put(SendMessageFuncValue.TYPE, SendMessageFuncValue.CODEC)
 					.put(GiveStackFuncValue.TYPE, GiveStackFuncValue.CODEC)
 					.put(TestFuncValue.TYPE, TestFuncValue.CODEC)

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class CustomProperty extends Property<String> {
@@ -15,7 +16,7 @@ public class CustomProperty extends Property<String> {
     }
 
     @Override
-    public Collection<String> getPossibleValues() {
+    public List<String> getPossibleValues() {
         return allowedValues;
     }
 
@@ -27,6 +28,11 @@ public class CustomProperty extends Property<String> {
     @Override
     public Optional<String> getValue(String value) {
         return allowedValues.stream().filter(s -> s.equals(value)).findFirst();
+    }
+
+    @Override
+    public int getInternalIndex(String comparable) {
+        return 0;
     }
 
     public static CustomProperty create(String name, String... values) {

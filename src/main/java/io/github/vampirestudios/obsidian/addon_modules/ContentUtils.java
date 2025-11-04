@@ -16,7 +16,7 @@ public class ContentUtils {
 	}
 
 	public static BlockSetType getBlockSetType(ResourceLocation id) {
-		io.github.vampirestudios.obsidian.api.obsidian.block.BlockSetType blockSetType = ContentRegistries.BLOCK_SET_TYPES.get(id);
+		io.github.vampirestudios.obsidian.api.obsidian.block.BlockSetType blockSetType = ContentRegistries.BLOCK_SET_TYPES.getValue(id);
 		return new BlockSetType(blockSetType.id.getPath(), blockSetType.canOpenByHand,
 				blockSetType.canOpenByWindCharge,
 				blockSetType.canButtonBeActivatedByArrows,
@@ -34,7 +34,7 @@ public class ContentUtils {
 	}
 
 	public static WoodType getWoodType(ResourceLocation id) {
-		io.github.vampirestudios.obsidian.api.obsidian.block.WoodType woodType = ContentRegistries.WOOD_TYPES.get(id);
+		io.github.vampirestudios.obsidian.api.obsidian.block.WoodType woodType = ContentRegistries.WOOD_TYPES.getValue(id);
 		return new WoodType(woodType.id.getPath(), getBlockSetType(woodType.setType),
 				getSoundType(woodType.soundType),
 				getSoundType(woodType.hangingSignSoundType),
@@ -44,7 +44,7 @@ public class ContentUtils {
 	}
 
 	public static SoundType getSoundType(ResourceLocation id) {
-		CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.get(id);
+		CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.getValue(id);
 		return new SoundType(1.0f, 1.0f,
 				getSoundEvent(customSoundGroup.break_sound),
 				getSoundEvent(customSoundGroup.step_sound),
@@ -56,6 +56,6 @@ public class ContentUtils {
 
 	public static SoundEvent getSoundEvent(ResourceLocation sound) {
 		if (!BuiltInRegistries.SOUND_EVENT.containsKey(sound)) return null;
-		else return BuiltInRegistries.SOUND_EVENT.get(sound);
+		else return BuiltInRegistries.SOUND_EVENT.getValue(sound);
 	}
 }

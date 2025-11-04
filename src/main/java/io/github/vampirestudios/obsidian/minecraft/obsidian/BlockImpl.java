@@ -1,98 +1,144 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.google.common.collect.Maps;
-import io.github.vampirestudios.obsidian.api.events.FlexEventContext;
 import io.github.vampirestudios.obsidian.api.events.FlexEventHandler;
-import io.github.vampirestudios.obsidian.api.events.FlexEventResult;
-import io.github.vampirestudios.obsidian.api.events.IEventRunner;
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.registry.properties.ListProperty;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class BlockImpl extends Block implements IEventRunner {
+public class BlockImpl extends Block {
 
     public final io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
     private final Map<String, FlexEventHandler> eventHandlers = Maps.newHashMap();
+    private static final Map<String, ListProperty> CUSTOM_PROPERTIES = Maps.newHashMap();
 
     public BlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
         super(settings);
         this.block = block;
-//        initializeFlex(propertyDefaultValues);
+
+        registerProperties();
+        registerDefaultState();
     }
 
+    private void registerProperties() {
+        if (block.information.properties != null) {
+            block.information.properties.forEach((key, value) -> {
+                List<String> values = Arrays.asList(value); // Ensure it's treated as a list
+                ListProperty property = ListProperty.create(key, values);
+                CUSTOM_PROPERTIES.put(key, property);
+            });
+        }
+    }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void initializeFlex(Map<Property<?>, Comparable<?>> propertyDefaultValues) {
-        if (propertyDefaultValues.size() > 0) {
-            BlockState def = getStateDefinition().any();
-            for (Map.Entry<Property<?>, Comparable<?>> entry : propertyDefaultValues.entrySet()) {
-                Property prop = entry.getKey();
-                Comparable value = entry.getValue();
-                def = def.setValue(prop, value);
+    private void registerDefaultState() {
+        BlockState state = this.stateDefinition.any();
+        for (Map.Entry<String, ListProperty> entry : CUSTOM_PROPERTIES.entrySet()) {
+            ListProperty property = entry.getValue();
+            String defaultValue = block.information.defaultValue.get(entry.getKey());
+            if (defaultValue != null && property.getPossibleValues().contains(defaultValue)) {
+                state = state.setValue(property, defaultValue);
             }
-
-            registerDefaultState(def);
         }
+        this.registerDefaultState(state);
     }
 
     @Override
-    public void spawnAfterBreak(BlockState state, ServerLevel world, BlockPos pos, ItemStack stack, boolean dropExperience) {
-        super.spawnAfterBreak(state, world, pos, stack, dropExperience);
-        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) == 0) {
-            if (block.dropInformation != null) this.popExperience(world, pos, block.dropInformation.xpDropAmount);
-        }
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        if (!CUSTOM_PROPERTIES.isEmpty()) CUSTOM_PROPERTIES.forEach((_, property) -> builder.add(property));
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        return runEvent("use", FlexEventContext.of(level, pos, state)
-                .withHand(player, hand)
-                .withRayTrace(hit), () -> FlexEventResult.of(super.use(state, level, pos, player, hand, hit))).result();
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState state = super.getStateForPlacement(ctx);
+        if (!CUSTOM_PROPERTIES.isEmpty()) {
+            for (Map.Entry<String, ListProperty> entry : CUSTOM_PROPERTIES.entrySet()) {
+                String propertyName = entry.getKey();
+                ListProperty property = entry.getValue();
+
+                String value = resolvePlacementProperty(propertyName, ctx, property);
+                if (value != null && property.getPossibleValues().contains(value)) {
+                    state = state.setValue(property, value);
+                }
+            }
+        }
+        return state;
+    }
+
+    // Dynamically resolve property values
+    private String resolvePlacementProperty(String propertyName, BlockPlaceContext ctx, ListProperty property) {
+        if (propertyName.equals("placement")) {
+            Direction direction = ctx.getClickedFace();
+            Direction.Axis axis = direction.getAxis();
+            return axis == Direction.Axis.Y ? "floor" : "wall";
+        }
+        // Add more dynamic resolution logic for other properties here if needed
+        return property.getPossibleValues().getFirst(); // Default to the first value
+    }
+
+    @Override
+    protected void spawnAfterBreak(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
+        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
+        if (dropExperience) {
+            if (block.dropInformation != null) this.popExperience(level, pos, block.dropInformation.xpDropAmount);
+        }
     }
 
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+        float defaultValue = super.getShadeBrightness(state, world, pos);
+        if (block.information.getBlockSettings() != null) {
+            if (block.information.getBlockSettings().getParentSettings() != null) {
+                return !block.information.getBlockSettings().getParentSettings().translucent ? 0.2F : 1.0F;
+            } else {
+                return !block.information.getBlockSettings().translucent ? 0.2F : 1.0F;
+            }
+        } else {
+            return defaultValue;
+        }
     }
 
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
-    }
-
-    @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.lore != null && block.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : block.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
+        boolean defaultValue = super.isCollisionShapeFullBlock(state, world, pos);
+        if (block.information.getBlockSettings() != null) {
+            if (block.information.getBlockSettings().getParentSettings() != null) {
+                return !block.information.getBlockSettings().getParentSettings().translucent;
+            } else {
+                return !block.information.getBlockSettings().translucent;
             }
+        } else {
+            return defaultValue;
+        }
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(BlockState state) {
+        boolean defaultValue = super.propagatesSkylightDown(state);
+        if (block.information.getBlockSettings() != null) {
+            if (block.information.getBlockSettings().getParentSettings() != null) {
+                return block.information.getBlockSettings().getParentSettings().translucent;
+            } else {
+                return block.information.getBlockSettings().translucent;
+            }
+        } else {
+            return defaultValue;
         }
     }
 
@@ -138,16 +184,5 @@ public class BlockImpl extends Block implements IEventRunner {
         } else {
             return Shapes.block();
         }
-    }
-
-    @Override
-    public void addEventHandler(String eventName, FlexEventHandler eventHandler) {
-        eventHandlers.put(eventName, eventHandler);
-    }
-
-    @Nullable
-    @Override
-    public FlexEventHandler getEventHandler(String eventName) {
-        return eventHandlers.get(eventName);
     }
 }

@@ -8,8 +8,8 @@ public class FoodInformation {
     public ResourceLocation returnItem;
     public ResourceLocation foodComponent;
     public boolean drinkable;
-    public ResourceLocation drinkSound = new ResourceLocation("entity.generic.drink");
-    public ResourceLocation eatSound = new ResourceLocation("entity.generic.eat");
+    public ResourceLocation drinkSound = ResourceLocation.withDefaultNamespace("entity.generic.drink");
+    public ResourceLocation eatSound = ResourceLocation.withDefaultNamespace("entity.generic.eat");
     public int use_time;
 
 }

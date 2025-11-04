@@ -17,8 +17,6 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import com.mojang.serialization.Codec;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashBigSet;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -31,10 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 @ApiStatus.Internal
 public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntryAttachment<R, V> {
@@ -47,19 +43,14 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Event<TagValueAdded<R, V>> tagValueAddedEvent;
 	protected final Event<ValueRemoved<R>> valueRemovedEvent;
 	protected final Event<TagValueRemoved<R>> tagValueRemovedEvent;
-	protected final Predicate<R> validator;
-
-	protected final Map<R, R> mirrors;
-	protected final Map<TagKey<R>, TagKey<R>> tagMirrors;
 
 	public RegistryEntryAttachmentImpl(Registry<R> registry, ResourceLocation id, Class<V> valueClass, Codec<V> codec,
-			Side side, Predicate<R> validator) {
+									   Side side) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
 		this.codec = codec;
 		this.side = side;
-		this.validator = validator;
 
 		this.valueAddedEvent = EventFactory.createArrayBacked(ValueAdded.class, listeners -> (entry, value) -> {
 			for (var listener : listeners) {
@@ -81,9 +72,6 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 				listener.onTagValueRemoved(tag);
 			}
 		});
-
-		this.mirrors = new Reference2ReferenceOpenHashMap<>();
-		this.tagMirrors = new Object2ObjectOpenHashMap<>();
 	}
 
 	@Override
@@ -119,12 +107,6 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		entry = this.unreflect(entry);
-
-		if (!this.validator.test(entry)/* || FabricTagProvider.reverseLookup(this.entryFilter()).stream().anyMatch(holder -> holder.value().equals(entry))*/) {
-			return null;
-		}
-
 		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
 		if (value != null) {
 			return value;
@@ -138,23 +120,6 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		return this.getDefaultValue(entry);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected @Nullable V getTagValue(TagKey<R> key) {
-		if (this.side == Side.CLIENT) {
-			ClientSideGuard.assertAccessAllowed();
-		}
-
-		key = this.unreflect(key);
-
-		V value = (V) RegistryEntryAttachmentHolder.getData(this.registry).valueTagTable.get(this, key);
-		if (value != null) {
-			return value;
-		}
-
-		value = (V) RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTagTable.get(this, key);
-		return value;
-	}
-
 	@Override
 	public Set<R> keySet() {
 		if (this.side == Side.CLIENT) {
@@ -164,9 +129,6 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		Set<R> set = new ReferenceOpenHashBigSet<>();
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
-		set.removeIf(Predicate.not(this.validator));
-
-		this.registry.getTagOrEmpty(this.entryFilter()).forEach(holder -> set.remove(holder.value()));
 		return set;
 	}
 
@@ -217,44 +179,22 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			throw new IllegalArgumentException("Entry hasn't been registered");
 		}
 
-		if (!this.validator.test(entry)) {
-			throw new IllegalArgumentException(String.format("Entry %s does not pass validation for REA %s", this.registry.getId(entry), this.id));
-		}
-
 		CodecUtils.assertValid(this.codec, value);
-
-		final var holder = RegistryEntryAttachmentHolder.getBuiltin(this.registry);
-		holder.putValue(this, entry, value, BuiltinRegistryEntryAttachmentHolder.FLAG_NONE);
-
-		if (holder.mirrorTable.remove(this, entry) != null) {
-			this.rebuildMirrorMaps();
-		}
-
+		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value,
+				BuiltinRegistryEntryAttachmentHolder.FLAG_NONE);
 		this.valueAddedEvent.invoker().onValueAdded(entry, value);
 	}
 
 	@Override
-	public void put(TagKey<R> tag, V value) {
+	public void put(TagKey<R> entry, V value) {
 		CodecUtils.assertValid(this.codec, value);
-
-		final var holder = RegistryEntryAttachmentHolder.getBuiltin(this.registry);
-		holder.putValue(this, tag, value);
-
-		if (holder.mirrorTagTable.remove(this, tag) != null) {
-			this.rebuildMirrorMaps();
-		}
-
-		this.tagValueAddedEvent.invoker().onTagValueAdded(tag, value);
+		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
+		this.tagValueAddedEvent.invoker().onTagValueAdded(entry, value);
 	}
 
 	@Override
 	public boolean remove(R entry) {
-		final var holder = RegistryEntryAttachmentHolder.getBuiltin(this.registry);
-		if (holder.removeValue(this, entry)) {
-			if (holder.mirrorTable.remove(this, entry) != null) {
-				this.rebuildMirrorMaps();
-			}
-
+		if (RegistryEntryAttachmentHolder.getBuiltin(this.registry).removeValue(this, entry)) {
 			this.valueRemovedEvent.invoker().onValueRemoved(entry);
 			return true;
 		}
@@ -264,64 +204,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public boolean remove(TagKey<R> tag) {
-		final var holder = RegistryEntryAttachmentHolder.getBuiltin(this.registry);
-		if (holder.removeValue(this, tag)) {
-			if (holder.mirrorTagTable.remove(this, tag) != null) {
-				this.rebuildMirrorMaps();
-			}
-
+		if (RegistryEntryAttachmentHolder.getBuiltin(this.registry).removeValue(this, tag)) {
 			this.tagValueRemovedEvent.invoker().onTagValueRemoved(tag);
 			return true;
 		}
 
 		return false;
-	}
-
-	@Override
-	public Predicate<R> entryValidator() {
-		return this.validator;
-	}
-
-	@Override
-	public void mirror(R target, R source) {
-		RegistryEntryAttachmentHolder.getBuiltin(this.registry).mirrorTable.put(this, target, source);
-		this.rebuildMirrorMaps();
-		this.valueAddedEvent.invoker().onValueAdded(target, getNullable(target));
-	}
-
-	@Override
-	public void mirror(TagKey<R> target, TagKey<R> source) {
-		RegistryEntryAttachmentHolder.getBuiltin(this.registry).mirrorTagTable.put(this, target, source);
-		this.rebuildMirrorMaps();
-		this.tagValueAddedEvent.invoker().onTagValueAdded(target, getTagValue(target));
-
-	}
-
-	public void rebuildMirrorMaps() {
-		// TODO check for mirror loops (one -> two, two -> one)
-		this.mirrors.clear();
-		this.mirrors.putAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).mirrorTable.row(this));
-		this.mirrors.putAll(RegistryEntryAttachmentHolder.getData(this.registry).mirrorTable.row(this));
-
-		this.tagMirrors.clear();
-		this.tagMirrors.putAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).mirrorTagTable.row(this));
-		this.tagMirrors.putAll(RegistryEntryAttachmentHolder.getData(this.registry).mirrorTagTable.row(this));
-	}
-
-	public R unreflect(R entry) {
-		while (this.mirrors.containsKey(entry)) {
-			entry = this.mirrors.get(entry);
-		}
-
-		return entry;
-	}
-
-	public TagKey<R> unreflect(TagKey<R> tag) {
-		while (this.tagMirrors.containsKey(tag)) {
-			tag = this.tagMirrors.get(tag);
-		}
-
-		return tag;
 	}
 
 	@Override
@@ -380,10 +268,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			return this.keyIt.hasNext();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Entry<R, V> next() {
 			R key = this.keyIt.next();
-			return new Entry<>(key, getNullable(key));
+			V value = (V) this.dataHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
+			if (value == null) {
+				value = (V) this.builtinHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
+			}
+
+			return new Entry<>(key, value);
 		}
 	}
 
@@ -402,10 +296,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			return this.keyIt.hasNext();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public TagEntry<R, V> next() {
 			TagKey<R> key = this.keyIt.next();
-			return new TagEntry<>(key, getTagValue(key));
+			V value = (V) this.dataHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
+			if (value == null) {
+				value = (V) this.builtinHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
+			}
+
+			return new TagEntry<>(key, value);
 		}
 	}
 }

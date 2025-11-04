@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -57,10 +58,10 @@ public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends Entit
             matrixStack.translate(0.0D, 0.0D, 0.125D);
             this.getParentModel().copyPropertiesTo(this.elytraEntityModel);
             this.elytraEntityModel.setupAnim(livingEntity, f, g, j, k, l);
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(identifier4), false, itemStack.hasFoil());
-            this.elytraEntityModel.renderToBuffer(matrixStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(identifier4), itemStack.hasFoil());
+            this.elytraEntityModel.renderToBuffer(matrixStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
             matrixStack.popPose();
         }
     }
 
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CustomDyeableItem;
@@ -33,7 +34,7 @@ public class BlockItemInject {
                             info.setReturnValue(false);
                         }
 
-                        CompoundTag compoundTag2 = blockEntity.saveWithoutMetadata();
+                        CompoundTag compoundTag2 = blockEntity.saveWithoutMetadata(world.registryAccess());
                         CompoundTag compoundTag3 = compoundTag2.copy();
                         compoundTag2.merge(compoundTag);
                         if (!compoundTag2.contains("color") || compoundTag2.getInt("color") == 0) {
@@ -44,7 +45,7 @@ public class BlockItemInject {
                         compoundTag2.putInt("y", pos.getY());
                         compoundTag2.putInt("z", pos.getZ());
                         if (!compoundTag2.equals(compoundTag3)) {
-                            blockEntity.load(compoundTag2);
+                            blockEntity.loadWithComponents(compoundTag2);
                             blockEntity.setChanged();
                             info.setReturnValue(true);
                         }
@@ -57,3 +58,4 @@ public class BlockItemInject {
 
     }
 }
+*/

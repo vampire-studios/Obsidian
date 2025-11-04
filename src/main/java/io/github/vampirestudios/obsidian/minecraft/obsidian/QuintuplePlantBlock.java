@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -15,23 +14,24 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+
 import java.util.ArrayList;
 
 /**
  * A three-tall plant block
  * @author ShadewEnder redgalaxysw@gmail.com
  */
-public class QuintuplePlantBlock extends BushBlock {
+public class QuintuplePlantBlock extends VegetationBlock {
     public static final EnumProperty<QuadrupleBlockPart> PART = CProperties.QUADRUPLE_BLOCK_PART;
-    private static final MapCodec<BushBlock> CODEC = simpleCodec(QuintuplePlantBlock::new);
+    private static final MapCodec<VegetationBlock> CODEC = simpleCodec(QuintuplePlantBlock::new);
 
     @Override
-    public MapCodec<? extends BushBlock> codec() {
+    public MapCodec<? extends VegetationBlock> codec() {
         return CODEC;
     }
 
@@ -40,7 +40,7 @@ public class QuintuplePlantBlock extends BushBlock {
         this.registerDefaultState(this.stateDefinition.any().setValue(PART, QuadrupleBlockPart.LOWER));
     }
 
-    @Override
+    /*@Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
         QuadrupleBlockPart part = state.getValue(PART);
         if (direction == Direction.UP && part != QuadrupleBlockPart.UPPER) {
@@ -52,12 +52,12 @@ public class QuintuplePlantBlock extends BushBlock {
         }
 
         return super.updateShape(state, direction, newState, world, pos, posFrom);
-    }
+    }*/
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockPos blockPos = ctx.getClickedPos();
-        return blockPos.getY() < ctx.getLevel().getMaxBuildHeight() - 3 &&
+        return blockPos.getY() < ctx.getLevel().getMaxY() - 3 &&
                 ctx.getLevel().getBlockState(blockPos.above(1)).canBeReplaced(ctx) &&
                 ctx.getLevel().getBlockState(blockPos.above(2)).canBeReplaced(ctx) &&
                 ctx.getLevel().getBlockState(blockPos.above(3)).canBeReplaced(ctx)

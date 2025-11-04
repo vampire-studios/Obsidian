@@ -1,23 +1,18 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets_temp;
 
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import io.github.vampirestudios.obsidian.client.ARRPGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.client.renderer.CustomRenderModeItemRenderer;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.entity.LivingEntity;
 
 public class ArmorInitThread implements Runnable {
     private final ArmorItem armor;
-    private HumanoidModel<LivingEntity> armorModel;
+    private HumanoidModel<PlayerRenderState> armorModel;
     private final RuntimeResourcePack resourcePack;
 
     public ArmorInitThread(RuntimeResourcePack resourcePack, ArmorItem item) {
@@ -35,32 +30,23 @@ public class ArmorInitThread implements Runnable {
             ));
 
         if (armor.information.getItemSettings().renderModeModels != null && armor.information.getItemSettings().customRenderMode) {
-            ResourceLocation normalModel;
-            if (armor.rendering != null) {
-                if(armor.rendering.model != null)
-                    normalModel = armor.rendering.model.parent;
-                else if (armor.rendering.itemModel != null)
-                    normalModel = armor.rendering.itemModel.parent;
-                else normalModel = armor.information.name.id;
-            } else normalModel = armor.information.name.id;
-            CustomRenderModeItemRenderer customRenderModeItemRenderer = new CustomRenderModeItemRenderer(armor.information.name.id,
-                    normalModel);
-            ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(customRenderModeItemRenderer);
-            BuiltinItemRendererRegistry.INSTANCE.register(BuiltInRegistries.ITEM.get(armor.information.name.id), customRenderModeItemRenderer);
+//            CustomRenderModeItemRenderer customRenderModeItemRenderer = getCustomRenderModeItemRenderer();
+//            ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(customRenderModeItemRenderer);
+//            BuiltinItemRendererRegistry.INSTANCE.register(BuiltInRegistries.ITEM.getValue(armor.information.name.id), customRenderModeItemRenderer);
         }
         if (armor.rendering != null && armor.rendering.model != null) {
             if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(armor.information.name.id, "item/")) != null) return;
             ARRPGenerationHelper.generateItemModel(resourcePack, armor.information.name.id, armor.rendering.model.parent, armor.rendering.model.textures);
         }
-        if (armor.rendering != null && armor.rendering.itemModel != null) {
+        if (armor.rendering != null && armor.rendering.getItemModel().isPresent()) {
             if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(armor.information.name.id, "item/")) != null) return;
-            ARRPGenerationHelper.generateItemModel(resourcePack, armor.information.name.id, armor.rendering.itemModel.parent, armor.rendering.itemModel.textures);
+            ARRPGenerationHelper.generateItemModel(resourcePack, armor.information.name.id, armor.rendering.getItemModel().get().getParent(), armor.rendering.getItemModel().get().getTextures());
         }
         if (armor.lore != null) {
-            for (TooltipInformation lore : armor.lore) {
-                if (lore.text.textType != null && lore.text.textType.equals("translatable")) {
-                    lore.text.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                            armor.information.name.id.getNamespace(), languageId, lore.text.text, name
+            for (SpecialText lore : armor.getLore()) {
+                if (lore.textType != null && lore.textType.equals("translatable")) {
+                    lore.translations.forEach((languageId, name) -> ClientInit.addTranslation(
+                            armor.information.name.id.getNamespace(), languageId, lore.text, name
                     ));
                 }
             }

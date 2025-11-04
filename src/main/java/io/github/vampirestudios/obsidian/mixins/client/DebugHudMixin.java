@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.mixins.client;
 
+import com.mojang.blaze3d.systems.GpuDevice;
 import io.github.vampirestudios.obsidian.Obsidian;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
@@ -17,18 +18,17 @@ import java.util.List;
 public abstract class DebugHudMixin {
 	@Inject(method = "getSystemInformation", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
 			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void quilt$addTestAttachment(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
-										List<String> list, BlockPos blockPos, BlockState blockState) {
+	public void quilt$addTestAttachment(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o, GpuDevice gpuDevice, List<String> list, BlockPos blockPos, BlockState blockState) {
 		Boolean value = Obsidian.BASED.getNullable(blockState.getBlock());
 		String valueStr;
 		if (value == null) {
-			valueStr = ChatFormatting.BLUE + "unset";
+			valueStr = STR."\{ChatFormatting.BLUE}unset";
 		} else if (value) {
-			valueStr = ChatFormatting.GREEN + "yes";
+			valueStr = STR."\{ChatFormatting.GREEN}yes";
 		} else {
-			valueStr = ChatFormatting.RED + "no";
+			valueStr = STR."\{ChatFormatting.RED}no";
 		}
 
-		list.add("[Quilt] based: " + valueStr);
+		list.add(STR."[Quilt] based: \{valueStr}");
 	}
 }

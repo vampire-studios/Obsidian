@@ -1,20 +1,18 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class FoodItemImpl extends Item {
 
@@ -35,13 +33,13 @@ public class FoodItemImpl extends Item {
 
         if (stack.isEmpty()) {
             if (item.food_information.returnItem != null) {
-                return new ItemStack(BuiltInRegistries.ITEM.get(item.food_information.returnItem));
+                return new ItemStack(BuiltInRegistries.ITEM.getValue(item.food_information.returnItem));
             } else {
                 return ItemStack.EMPTY;
             }
         } else {
             if (user instanceof Player playerEntity && !((Player)user).getAbilities().instabuild) {
-                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(item.food_information.returnItem));
+                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(item.food_information.returnItem));
                 if (!playerEntity.getInventory().add(itemStack)) {
                     playerEntity.drop(itemStack, false);
                 }
@@ -52,57 +50,22 @@ public class FoodItemImpl extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack) {
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return item.food_information.use_time;
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return item.food_information.drinkable ? UseAnim.DRINK : UseAnim.EAT;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return item.food_information.drinkable ? ItemUseAnimation.DRINK : ItemUseAnimation.EAT;
     }
 
     @Override
-    public SoundEvent getDrinkingSound() {
-        return BuiltInRegistries.SOUND_EVENT.get(item.food_information.drinkSound);
-    }
-
-    @Override
-    public SoundEvent getEatingSound() {
-        return BuiltInRegistries.SOUND_EVENT.get(item.food_information.eatSound);
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
         return ItemUtils.startUsingInstantly(world, user, hand);
     }
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint;
+        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
     }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return item.information.getItemSettings().isEnchantable;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return item.information.getItemSettings().enchantability;
-    }
-
-    @Override
-    public Component getDescription() {
-        return item.information.name.getName("item");
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.lore != null) {
-            for (TooltipInformation tooltipInformation : item.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
-        }
-    }
-
 }

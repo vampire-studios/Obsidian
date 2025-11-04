@@ -20,7 +20,6 @@ public class Particle {
             case "TERRAIN_SHEET" -> ParticleRenderType.TERRAIN_SHEET;
             case "PARTICLE_SHEET_OPAQUE" -> ParticleRenderType.PARTICLE_SHEET_OPAQUE;
             case "PARTICLE_SHEET_TRANSLUCENT" -> ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
-            case "PARTICLE_SHEET_LIT" -> ParticleRenderType.PARTICLE_SHEET_LIT;
             case "CUSTOM" -> ParticleRenderType.CUSTOM;
             default -> ParticleRenderType.NO_RENDER;
         };

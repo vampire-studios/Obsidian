@@ -9,6 +9,7 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
@@ -303,7 +304,7 @@ public final class ModifyTradesEvents {
             ItemStack emeralds = new ItemStack(Items.EMERALD, this.emeralds);
             ItemStack item = new ItemStack(this.item.get(), this.itemCount);
 
-            return new MerchantOffer(this.sellToVillager ? item : emeralds, this.sellToVillager ? emeralds : item, this.maxUses, this.xpGain, this.priceMultiplier);
+            return new MerchantOffer(new ItemCost(this.sellToVillager ? item.getItem() : emeralds.getItem(), this.sellToVillager ? this.itemCount : this.emeralds), this.sellToVillager ? emeralds : item, this.maxUses, this.xpGain, this.priceMultiplier);
         }
     }
 }

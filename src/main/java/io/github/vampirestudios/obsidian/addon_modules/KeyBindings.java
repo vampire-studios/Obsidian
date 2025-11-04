@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -20,14 +21,14 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*
 public class KeyBindings implements AddonModule {
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        KeyBinding keyBinding = Obsidian.GSON.fromJson(new FileReader(file), KeyBinding.class);
+        KeyBinding keyBinding = BaseGson.GSON.fromJson(new FileReader(file), KeyBinding.class);
         try {
             if (keyBinding == null) return;
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     keyBinding.id,
-                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (keyBinding.id == null) keyBinding.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+            if (keyBinding.id == null) keyBinding.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             KeyBindingRegistryImpl.registerKeyBinding(new KeybindingImpl(keyBinding));
             register(ContentRegistries.KEY_BINDINGS, "key_binding", identifier, keyBinding);
         } catch (Exception e) {

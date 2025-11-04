@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -34,4 +35,4 @@ public class BakedModelFeatureRenderer<T extends LivingEntity, M extends EntityM
 		BakedModelRenderer.renderBakedModel(model, vertices, poseStack.last(), packedLight);
 		poseStack.popPose();
 	}
-}
+}*/

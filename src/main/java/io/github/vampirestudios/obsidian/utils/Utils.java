@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.utils;
 
+import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
-import io.github.cottonmc.jankson.JanksonFactory;
 import io.github.vampirestudios.obsidian.*;
 import io.github.vampirestudios.obsidian.configPack.*;
 import net.fabricmc.loader.api.FabricLoader;
@@ -12,8 +12,11 @@ import net.fabricmc.loader.api.metadata.ContactInformation;
 import net.fabricmc.loader.api.metadata.ModEnvironment;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.metadata.DependencyOverrides;
+import net.fabricmc.loader.impl.metadata.ModMetadataParser;
 import net.fabricmc.loader.impl.metadata.ParseMetadataException;
 import net.fabricmc.loader.impl.metadata.VersionOverrides;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
@@ -28,10 +31,13 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Utils {
+    public static String elementsDirPath(ResourceKey<? extends Registry<?>> resourceKey) {
+        return resourceKey.location().getPath();
+    }
 
     public static void registerAddon(File legacyInfoFile, File newInfoFile, Optional<File> fabricModJson) throws SyntaxError, IOException {
         if (legacyInfoFile.exists()) {
-            LegacyObsidianAddonInfo obsidianAddonInfo = Obsidian.GSON.fromJson(new FileReader(legacyInfoFile), LegacyObsidianAddonInfo.class);
+            LegacyObsidianAddonInfo obsidianAddonInfo = BaseGson.GSON.fromJson(new FileReader(legacyInfoFile), LegacyObsidianAddonInfo.class);
             LegacyObsidianAddon obsidianAddon = new LegacyObsidianAddon(obsidianAddonInfo, legacyInfoFile);
             if (obsidianAddonInfo.addonVersion != ObsidianAddonLoader.SCHEMA_VERSION) {
                 Obsidian.LOGGER.info("Found incompatible obsidian addon: {} with a version of {}", obsidianAddonInfo.displayName, obsidianAddonInfo.addonVersion);
@@ -88,8 +94,8 @@ public class Utils {
             }
         }
         if (newInfoFile.exists()) {
-            JsonObject jsonObject = JanksonFactory.builder().build().load(newInfoFile);
-            ObsidianAddonInfo obsidianAddonInfo = JanksonFactory.builder().build().fromJson(jsonObject, ObsidianAddonInfo.class);
+            JsonObject jsonObject = Jankson.builder().build().load(newInfoFile);
+            ObsidianAddonInfo obsidianAddonInfo = Jankson.builder().build().fromJson(jsonObject, ObsidianAddonInfo.class);
             ObsidianAddon obsidianAddon = new ObsidianAddon(obsidianAddonInfo, newInfoFile);
             if (obsidianAddonInfo.version != ObsidianAddonLoader.SCHEMA_VERSION) {
                 Obsidian.LOGGER.info("Found incompatible obsidian addon: {} with a version of {}", obsidianAddonInfo.addon.name, obsidianAddonInfo.version);
@@ -164,15 +170,15 @@ public class Utils {
     }*/
 
     public static ResourceLocation appendToPath(ResourceLocation identifier, String suffix) {
-        return new ResourceLocation(identifier.getNamespace(), identifier.getPath() + suffix);
+        return ResourceLocation.fromNamespaceAndPath(identifier.getNamespace(), identifier.getPath() + suffix);
     }
 
     public static ResourceLocation prependToPath(ResourceLocation identifier, String prefix) {
-        return new ResourceLocation(identifier.getNamespace(), prefix + identifier.getPath());
+        return ResourceLocation.fromNamespaceAndPath(identifier.getNamespace(), prefix + identifier.getPath());
     }
 
     public static ResourceLocation appendAndPrependToPath(ResourceLocation identifier, String prefix, String suffix) {
-        return new ResourceLocation(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
+        return ResourceLocation.fromNamespaceAndPath(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
     }
 
     public static <T> T[] stripNulls(T[] arr) {

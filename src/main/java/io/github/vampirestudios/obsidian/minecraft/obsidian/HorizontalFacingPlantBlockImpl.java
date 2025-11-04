@@ -6,22 +6,22 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class HorizontalFacingPlantBlockImpl extends BushBlock {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+public class HorizontalFacingPlantBlockImpl extends VegetationBlock {
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     private final Block block;
-    private static final MapCodec<BushBlock> CODEC = simpleCodec(HorizontalFacingPlantBlockImpl::new);
+    private static final MapCodec<VegetationBlock> CODEC = simpleCodec(HorizontalFacingPlantBlockImpl::new);
 
     @Override
-    protected MapCodec<? extends BushBlock> codec() {
+    protected MapCodec<? extends VegetationBlock> codec() {
         return CODEC;
     }
 
@@ -46,8 +46,8 @@ public class HorizontalFacingPlantBlockImpl extends BushBlock {
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
+    public boolean propagatesSkylightDown(BlockState state) {
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext context) {

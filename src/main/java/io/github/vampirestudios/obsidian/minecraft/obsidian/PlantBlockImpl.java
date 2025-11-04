@@ -4,16 +4,16 @@ import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class PlantBlockImpl extends BushBlock {
+public class PlantBlockImpl extends VegetationBlock {
 
     private final Block block;
-	private static final MapCodec<BushBlock> CODEC = simpleCodec(PlantBlockImpl::new);
+	private static final MapCodec<VegetationBlock> CODEC = simpleCodec(PlantBlockImpl::new);
 
 	@Override
-	public MapCodec<? extends BushBlock> codec() {
+	public MapCodec<? extends VegetationBlock> codec() {
 		return CODEC;
 	}
 
@@ -38,8 +38,8 @@ public class PlantBlockImpl extends BushBlock {
 	}
 
 	@Override
-	public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-		return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
+	public boolean propagatesSkylightDown(BlockState state) {
+		return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
 	}
 
 	@Override
@@ -48,6 +48,6 @@ public class PlantBlockImpl extends BushBlock {
 			return floor.isOf(block1);
 		}
 		return false;*/
-		return !floor.isAir() && !floor.isSolidRender(world, pos);
+		return !floor.isAir() && !floor.isSolidRender();
 	}
 }

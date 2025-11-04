@@ -1,15 +1,17 @@
 [versions]
-    minecraft = '1.20.4'
-    quilt_mappings = "1.20.4+build.2"
-    fabric-loader = "0.15.3"
-    parchment = "2023.12.10"
+    minecraft = '1.21.8'
+    quilt_mappings = "1.21.8+build.1"
+    fabric-loader = "0.16.14"
+    parchment = "2025.07.20"
 
-    fabric = "0.92.0+1.20.4"
+    fabric = "0.130.0+1.21.8"
 
-    vampirelib = "7.0.1+build.1-23w17a"
-    owo-lib = '0.12.0+1.20.3'
-    cct = "3.2.0+1.20.4"
-#    libzoomer = '6c0c9d119d'
+    vampirelib = "7.2.0+build.1-1.21.5"
+    owo-lib = '0.12.21+1.21.6'
+    cct = '3.3.0+1.21'
+    nc = '3.6.6'
+    jackson = '2.14.0'
+    accessories = '1.2.15-beta+1.21.4'
 
 [libraries]
     minecraft = { module = 'com.mojang:minecraft', version.ref = 'minecraft' }

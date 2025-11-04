@@ -1,42 +1,41 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "io.github.vampirestudios.obsidian.mixins",
-    "compatibilityLevel": "JAVA_16",
-    "injectors": {
-        "defaultRequire": 1
-    },
-    "mixins": [
-        "BlockItemInject",
-        "BlockMixin",
-        "CraftingScreenHandlerMixin",
-        "DilationAccessor",
-        "EnchantmentHelperMixin",
-        "EnchantmentMixin",
-        "ItemGroupMixin",
-        "ItemStackMixin",
-        "LoomScreenHandlerMixin",
-        "MappedRegistryMixin",
-        "MinecraftServerMixin",
-        "ModelCuboidDataAccessor",
-        "ModelPartDataAccessor",
-        "PointOfInterestTypesAccessor",
-        "ProjectileUtilMixin",
-        "TextureDimensionsAccessor",
-        "TexturedModelDataAccessor",
-        "WorldLoaderMixin"
-    ],
-    "client": [
-        "BlockElementDeserializerMixin",
-        "BlockElementMixin",
-        "OptionsMixin",
-        "client.CreativeInventoryScreenMixin",
-        "client.DebugHudMixin",
-        "client.EntityModelLoaderMixin",
-        "client.EntityRenderDispatcherMixin",
-        "client.EntityRendererFactoryContextMixin",
-        "client.ModelLoaderMixin",
-        "client.PlayerEntityRendererMixin",
-        "client.ReloadableResourceManagerImplMixin"
-    ]
+	"required": true,
+	"minVersion": "0.8",
+	"package": "io.github.vampirestudios.obsidian.mixins",
+	"compatibilityLevel": "JAVA_16",
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"mixins": [
+		"ArmorHeadSlotMixin",
+		"BlockMixin",
+		"CraftingScreenHandlerMixin",
+		"DilationAccessor",
+		"ItemEntityMixin",
+		"LoomScreenHandlerMixin",
+		"MappedRegistryMixin",
+		"MinecraftServerMixin",
+		"ModelCuboidDataAccessor",
+		"ModelPartDataAccessor",
+		"PlayerEntityMixin",
+		"PointOfInterestTypesAccessor",
+		"ProjectileUtilMixin",
+		"ReloadableServerResourcesMixin",
+		"ScreenHandlerMixin",
+		"TextureDimensionsAccessor",
+		"TexturedModelDataAccessor",
+		"WorldLoaderMixin"
+	],
+	"client": [
+		"BlockElementDeserializerMixin",
+		"BlockElementMixin",
+		"OptionsMixin",
+		"client.AbstractContainerScreenMixin",
+		"client.DebugHudMixin",
+		"client.EntityModelLoaderMixin",
+		"client.EntityRenderDispatcherMixin",
+		"client.EntityRendererFactoryContextMixin",
+		"client.PlayerEntityRendererMixin",
+		"client.ReloadableResourceManagerImplMixin"
+	]
 }

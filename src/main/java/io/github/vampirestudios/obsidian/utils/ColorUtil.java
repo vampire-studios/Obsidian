@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.utils;
 
 import io.github.vampirestudios.obsidian.Obsidian;
-import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
 import net.minecraft.util.Mth;
 
 public class ColorUtil {
@@ -181,8 +180,8 @@ public class ColorUtil {
 		return HSBtoRGB(FLOAT_BUFFER[0], FLOAT_BUFFER[1], FLOAT_BUFFER[2]);
 	}
 
-	public static int applyTint(int color, int tint) {
-		return colorBrigtness(ColorHelper.multiplyColor(color, tint), 1.5F);
-	}
+//	public static int applyTint(int color, int tint) {
+//		return colorBrigtness(ColorHelper.multiplyColor(color, tint), 1.5F);
+//	}
 
 }

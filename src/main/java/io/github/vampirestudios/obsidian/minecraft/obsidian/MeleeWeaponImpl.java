@@ -1,57 +1,92 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.EventActionHandler;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
-public class MeleeWeaponImpl extends SwordItem {
+public class MeleeWeaponImpl extends Item {
 
     public WeaponItem item;
 
-    public MeleeWeaponImpl(WeaponItem item, Tier material, int attackDamage, float attackSpeed, Properties settings) {
-        super(material, attackDamage, attackSpeed, settings);
+    public MeleeWeaponImpl(WeaponItem item, ToolMaterial toolMaterial, float attackDamage, float attackSpeed, Properties settings) {
+        super(settings.sword(toolMaterial, attackDamage, attackSpeed));
         this.item = item;
     }
 
-    @Override
-    public boolean canBeDepleted() {
-        return item.damageable;
-    }
+//    @Override
+//    public boolean canBeDepleted() {
+//        return item.damageable;
+//    }
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint;
+        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return item.information.getItemSettings().isEnchantable;
+    public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, TooltipFlag context) {
+        item.addLore(tooltip);
     }
 
     @Override
-    public int getEnchantmentValue() {
-        return item.information.getItemSettings().enchantability;
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        if (!(attacker instanceof Player player)) return;
+        EventActionHandler.handleHurtEnemy(target, player, item);
     }
 
     @Override
-    public Component getDescription() {
-        return item.information.name.getName("item");
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.lore != null) {
-            for (TooltipInformation tooltipInformation : item.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
+        if (!(livingEntity instanceof Player player)) {
+            super.onUseTick(level, livingEntity, stack, remainingUseDuration);
+            return;
         }
+        EventActionHandler.handleOnUseTick(player, item);
+        super.onUseTick(level, livingEntity, stack, remainingUseDuration);
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        EventActionHandler.handleOnUseOn(context, item);
+        return super.useOn(context);
+    }
+
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+        if (!(livingEntity instanceof Player player)) return super.finishUsingItem(stack, level, livingEntity);
+        EventActionHandler.handleOnFinishUsing(player, item);
+        return super.finishUsingItem(stack, level, livingEntity);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack itemStack, ServerLevel serverLevel, Entity entity, @Nullable EquipmentSlot equipmentSlot) {
+        if (!(entity instanceof Player player)) {
+            super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
+            return;
+        }
+        EventActionHandler.handleOnInventoryTick(player, item);
+        super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
+    }
+
+    @Override
+    public void onCraftedBy(ItemStack itemStack, Player player) {
+        EventActionHandler.handleOnItemCrafted(player, item);
+        super.onCraftedBy(itemStack, player);
     }
 
 }

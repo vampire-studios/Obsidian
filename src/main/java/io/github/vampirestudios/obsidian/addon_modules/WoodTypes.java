@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.WoodType;
@@ -23,15 +23,15 @@ public class WoodTypes implements AddonModule {
 
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		WoodType woodTypes = Obsidian.GSON.fromJson(new FileReader(file), WoodType.class);
+		WoodType woodTypes = BaseGson.GSON.fromJson(new FileReader(file), WoodType.class);
 		try {
 			if (woodTypes == null) return;
 
 			ResourceLocation identifier = Objects.requireNonNullElseGet(
 					woodTypes.id,
-					() -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (woodTypes.id == null) woodTypes.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+			if (woodTypes.id == null) woodTypes.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			registerSoundIfNotFound(woodTypes.soundType);
 			registerSoundIfNotFound(woodTypes.hangingSignSoundType);
@@ -52,7 +52,7 @@ public class WoodTypes implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "block/wood_types";
+		return "block/wood_type";
 	}
 
 }

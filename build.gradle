@@ -1,7 +1,8 @@
 plugins {
-	id 'fabric-loom' version '1.2-SNAPSHOT'
-	id 'io.github.juuxel.loom-quiltflower' version '1.9.+'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 	id 'maven-publish'
+	id ("org.jetbrains.kotlin.jvm") version "2.0.20"
+//	id ("dev.lambdaurora.mcdev") version "1.1.+"
 }
 
 archivesBaseName = project.archives_base_name
@@ -24,7 +25,6 @@ repositories {
 	maven { url = 'https://maven.ryanliptak.com/' }
 	maven { url = 'https://maven.wispforest.io' }
 	maven { url = 'https://maven.shedaniel.me' }
-	maven { url = 'https://maven.siphalor.de' }
 	maven { url = 'https://mvn.devos.one/releases/' }
 	maven { url = 'https://mvn.devos.one/snapshots/' }
 	maven { url = 'https://jitpack.io' }
@@ -37,27 +37,36 @@ repositories {
 		}
 	}
 	maven { url = "https://maven.parchmentmc.net/" }
-	maven { url = "https://ueaj.dev/maven" }
-	maven { url = "https://raw.githubusercontent.com/SolidBlock-cn/mvn-repo/main" }
 	maven {
 		url "https://maven.firstdarkdev.xyz/snapshots"
 	}
+	maven {
+		name = "sonatype-oss-snapshots1"
+		url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+		mavenContent { snapshotsOnly() }
+	}
+	maven { url 'https://maven.nucleoid.xyz' }
+	maven {
+		name = "Gegy"
+		url = uri("https://maven.gegy.dev/releases/")
+	}
+	maven { url = 'https://maven.siphalor.de' }
 }
 
 loom {
 	accessWidenerPath = file("src/main/resources/obsidian.accesswidener")
 }
 
-quiltflower {
-	addToRuntimeClasspath.set(true)
-}
-
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.91.2+1.20.4")
-		force("net.fabricmc:fabric-loader:0.15.1")
-		force("com.terraformersmc:modmenu:9.0.0-pre.1")
+		force("net.fabricmc.fabric-api:fabric-api:0.130.0+1.21.8")
+		force("net.fabricmc:fabric-loader:0.16.14")
+		force("com.terraformersmc:modmenu:15.0.0-beta.3")
 	}
+}
+
+kotlin {
+	jvmToolchain(17)
 }
 
 dependencies {
@@ -69,30 +78,31 @@ dependencies {
 
 	minecraft libs.minecraft
 	mappings loom.layered {
-		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
-//		it.mappings("net.fabricmc:yarn:${libs.versions.fabric.mappings.get()}:v2")
-		it.parchment("org.parchmentmc.data:parchment-1.20.2:${libs.versions.parchment.get()}@zip")
 		it.officialMojangMappings()
+		parchment("org.parchmentmc.data:parchment-1.21.8:${libs.versions.parchment.get()}@zip")
+//		it.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2")
 	}
 
 	modImplementation libs.fabric.loader
 
 	modImplementation libs.fabric.api
 
-	modImplementation (libs.vampirelib) {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
-	include(libs.vampirelib) {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
+//	modImplementation (libs.vampirelib) {
+//		noFapi
+//		noFLoader
+//		noCottonMC
+//		noQuiltMC
+//	}
+//	include(libs.vampirelib) {
+//		noFapi
+//		noFLoader
+//		noCottonMC
+//		noQuiltMC
+//	}
 
-	modImplementation include("io.github.cottonmc:Jankson-Fabric:5.0.1+j1.2.2")
+	modRuntimeOnly("com.terraformersmc:modmenu:15.0.0-beta.3")
+
+	modImplementation include("io.github.cottonmc:Jankson-Fabric:10.0.0+j1.2.3")
 
 	modImplementation (libs.owo.lib) {
 		noFapi
@@ -107,60 +117,81 @@ dependencies {
 		noQuiltMC
 	}
 
-	modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
+//	modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
+//		noFapi
+//		noFLoader
+//		noCottonMC
+//		noQuiltMC
+//	}
+//	modImplementation("io.wispforest:accessories-fabric:${libs.versions.accessories.get()}") {
+//		noFapi
+//		noFLoader
+//		noCottonMC
+//		noQuiltMC
+//	}
 
-	modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:3.3.1+1.20.4"
+	modImplementation "dev.isxander:yet-another-config-lib:3.7.1+1.21.6-fabric"
 
 	implementation group: 'com.amihaiemil.web', name: 'eo-yaml', version: '6.0.1'
-	implementation 'com.electronwill.night-config:core:3.6.6'
-	implementation 'com.electronwill.night-config:toml:3.6.6'
-	implementation 'com.electronwill.night-config:yaml:3.6.6'
-	implementation 'com.electronwill.night-config:hocon:3.6.6'
+	implementation "com.electronwill.night-config:core:${libs.versions.nc.get()}"
+	implementation "com.electronwill.night-config:toml:${libs.versions.nc.get()}"
+	implementation "com.electronwill.night-config:yaml:${libs.versions.nc.get()}"
+	implementation "com.electronwill.night-config:hocon:${libs.versions.nc.get()}"
 
 	implementation 'org.snakeyaml:snakeyaml-engine:2.4'
 	implementation 'org.hjson:hjson:3.0.0'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.0'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.14.0'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.14.0'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
+	implementation "com.fasterxml.jackson.core:jackson-databind:${libs.versions.jackson.get()}"
+	implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${libs.versions.jackson.get()}"
+	implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:${libs.versions.jackson.get()}"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:${libs.versions.jackson.get()}"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${libs.versions.jackson.get()}"
 
-	modApi("dev.latvian.mods:rhino-fabric:1902.2.2-build.269")
+//	modApi("dev.latvian.mods:rhino-fabric:1902.2.2-build.269")
 
-	modImplementation("net.devtech:arrp:0.6.5.0")
+	modImplementation("io.github.vampirestudios:arrp:0.9.11")
 
-	modImplementation include("maven.modrinth:fractal-lib:ebzJnrWP")
+//	modImplementation include("maven.modrinth:fractal-lib:g80DsnQB")
+//	modImplementation include("maven.modrinth:libzoomer:g0CRXD8R")
+//	modRuntimeOnly("maven.modrinth:component-view:cfLWQXUF")
+//	modRuntimeOnly("maven.modrinth:tooltipfix:B2L4LeMV")
 
 	modImplementation "com.ptsmods:devlogin:3.3"
 
-//	modImplementation include("maven.modrinth:dpu:1.0.7")
-
 	implementation "com.typesafe:config:1.4.2"
 
-//	modImplementation "com.github.StellarWind22:Fabric-Shield-Lib:v1.7.2-1.20.4"
+	include(modImplementation("eu.pb4:sgui:1.10.2+1.21.8"))
+//	modImplementation("net.kyori:adventure-api:4.17.0")
+//	modImplementation("net.kyori:adventure-text-minimessage:4.17.0")
+//	modImplementation("net.kyori:adventure-platform-fabric:6.1.0") // for Minecraft 1.21-1.21.1
+	modImplementation(include("eu.pb4:placeholder-api:2.7.1+1.21.6"))
+
+//	modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:v1.7.2-1.21.1"
+
+	modImplementation("com.github.Chocohead:Fabric-ASM:v2.3") {
+		exclude (group: "net.fabricmc.fabric-api")
+	}
+	include "com.github.Chocohead:Fabric-ASM:v2.3"
+
+	modImplementation "maven.modrinth:midnightlib:1.5.7-fabric"
+	include "maven.modrinth:midnightlib:1.5.7-fabric"
 }
 
 processResources {
 	inputs.property 'version', version
 
 	filesMatching('fabric.mod.json') {
-		expand 'version': version
+		expand inputs.properties
 	}
 }
 
 java {
 	withSourcesJar()
 	withJavadocJar()
-	toolchain.languageVersion = JavaLanguageVersion.of(17)
+	toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 21
 	it.options.encoding = 'UTF-8'
 }
 

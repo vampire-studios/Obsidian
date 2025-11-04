@@ -5,5 +5,9 @@ pluginManagement {
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://maven.quiltmc.org/repository/release" }
         maven { url "https://server.bbkr.space/artifactory/libs-release/" }
+//        maven {
+//            name = "Gegy"
+//            url = uri("https://maven.gegy.dev/releases/")
+//        }
     }
 }

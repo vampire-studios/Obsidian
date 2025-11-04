@@ -1,12 +1,15 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import blue.endless.jankson.annotation.SerializedName;
+import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemSettings;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import net.minecraft.resources.ResourceLocation;
 
-public class ItemInformation extends ItemSettings {
+import java.util.Map;
+
+public class ItemInformation {
 	public NameInformation name;
 
 	@SerializedName("item_properties")
@@ -17,16 +20,54 @@ public class ItemInformation extends ItemSettings {
 	@com.google.gson.annotations.SerializedName("item_type")
 	public String itemType;
 
+	// This getter will handle the different possible types of 'itemSettings'
 	public ItemSettings getItemSettings() {
-		if (itemSettings instanceof ResourceLocation resourceLocation) {
-			return ContentRegistries.ITEM_SETTINGS.get(resourceLocation);
-		} else if (itemSettings instanceof  String s) {
-			ResourceLocation location = ResourceLocation.tryParse(s);
-			return ContentRegistries.ITEM_SETTINGS.get(location);
-		} else if (itemSettings instanceof ItemSettings itemSettings1) {
-			return itemSettings1;
-		} else {
-			return this;
+		switch (itemSettings) {
+			case Map<?, ?> propertiesMap -> {
+				return constructItemSettingsFromMap(propertiesMap);
+			}
+			case JsonObject jsonObject -> {
+				System.out.println(STR."Json Object: \{jsonObject.getAsString()}");
+				return null;
+			}
+			case String s -> {
+				return getItemSettingsFromReference(s);
+			}
+			case ItemSettings itemSettings1 -> {
+				return itemSettings1;
+			}
+			case null, default -> {
+				return handleUnknownItemSettingsType();
+			}
 		}
+	}
+
+	private ItemSettings constructItemSettingsFromMap(Map<?, ?> propertiesMap) {
+//		System.out.println("Map: " + propertiesMap);
+		ItemSettings settings = new ItemSettings();
+		if (propertiesMap.containsKey("parent")) {
+			settings.baseItemSettings = ContentRegistries.ITEM_SETTINGS.get(ResourceLocation.tryParse((String) propertiesMap.get("parent")));
+		}
+		return settings; // Replace with actual construction logic
+	}
+
+	private ItemSettings getItemSettingsFromReference(String reference) {
+		ResourceLocation location = ResourceLocation.tryParse(reference);
+		if (location != null) {
+			return ContentRegistries.ITEM_SETTINGS.getValue(location);
+		} else {
+			System.out.println(STR."Invalid Reference: \{reference}");
+			return handleInvalidReference(reference);
+		}
+	}
+
+	private ItemSettings handleUnknownItemSettingsType() {
+//		System.out.println("Unknown Item Settings Type");
+		return new ItemSettings(); // Replace with actual error handling logic
+	}
+
+	private ItemSettings handleInvalidReference(String reference) {
+//		System.out.println("Invalid reference: " + reference);
+		return new ItemSettings(); // Replace with actual error handling logic
 	}
 }

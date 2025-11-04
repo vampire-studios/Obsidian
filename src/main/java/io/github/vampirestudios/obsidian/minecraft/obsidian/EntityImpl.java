@@ -18,6 +18,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 
@@ -90,8 +91,8 @@ public class EntityImpl extends PathfinderMob {
         }
         assert temptBehaviourComponent != null;
         List<ItemStack> temptItems = new ArrayList<>();
-        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item)))));
-        this.goalSelector.addGoal(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.of(temptItems.stream()), temptBehaviourComponent.can_be_scared));
+        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(item)))));
+        this.goalSelector.addGoal(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.of((ItemLike) temptItems.stream()), temptBehaviourComponent.can_be_scared));
 
         RandomLookAroundBehaviourComponent randomLookAroundBehaviourComponent = null;
         c = components.get("minecraft:behaviour.random_look_around");

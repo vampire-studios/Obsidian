@@ -14,11 +14,13 @@ public class SubItemGroupInitThread implements Runnable {
 
     @Override
     public void run() {
-        CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.get(itemGroup.targetGroup);
+        CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(itemGroup.targetGroup);
         assert tab != null;
-        itemGroup.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                itemGroup.name.id.getNamespace(), languageId,
-                tab.getDisplayName().getString() + "." + itemGroup.name.id.getPath(), name
-        ));
+        if (itemGroup.name != null && itemGroup.name.translations != null) {
+            itemGroup.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
+                    itemGroup.name.id.getNamespace(), languageId,
+					STR."\{tab.getDisplayName().getString()}.\{itemGroup.name.id.getPath()}", name
+            ));
+        }
     }
 }

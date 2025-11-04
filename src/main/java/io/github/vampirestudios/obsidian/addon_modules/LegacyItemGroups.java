@@ -1,10 +1,12 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.SyntaxError;
-import io.github.cottonmc.jankson.JanksonFactory;
-import io.github.vampirestudios.obsidian.Obsidian;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
@@ -24,12 +26,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,22 +42,20 @@ public class LegacyItemGroups implements AddonModule {
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError, DeserializationException {
         io.github.vampirestudios.obsidian.api.obsidian.ItemGroup itemGroup;
         if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
-            itemGroup = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
+            itemGroup = BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
         } else {
             ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addon.getConfigPackInfo();
             if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
-                itemGroup = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
+                itemGroup = BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
-                JsonObject jsonObject = JanksonFactory.builder().build().load(file);
-                itemGroup = JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
+                JsonObject jsonObject = Jankson.builder().build().load(file);
+                itemGroup = Jankson.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
-                Yaml yaml = new Yaml();
-                InputStream inputStream = this.getClass()
-                        .getClassLoader()
-                        .getResourceAsStream(file.getPath());
-                itemGroup = yaml.load(inputStream);
+                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+                mapper.findAndRegisterModules();
+                itemGroup = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
             } else if (addonInfo.format == ObsidianAddonInfo.Format.HJSON) {
-                itemGroup = Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
+                itemGroup = BaseGson.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.ItemGroup.class);
             } else {
                 itemGroup = null;
             }
@@ -67,63 +65,57 @@ public class LegacyItemGroups implements AddonModule {
 
             ResourceLocation identifier = Objects.requireNonNullElseGet(
                     itemGroup.name.id,
-                    () -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "").replaceAll(".yml", ""))
             );
-            if (itemGroup.name.id == null) itemGroup.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+            if (itemGroup.name.id == null) itemGroup.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             CreativeModeTab itemGroup1 = FabricItemGroup.builder()
-                    .icon(() -> new ItemStack(BuiltInRegistries.ITEM.get(itemGroup.icon)))
+                    .icon(() -> new ItemStack(BuiltInRegistries.ITEM.getValue(itemGroup.icon)))
                     .title(Component.translatable("itemGroup." + itemGroup.name.id.getNamespace() + "." + itemGroup.name.id.getPath()))
                     .displayItems((displayContext, entries) -> {
                         if (itemGroup.tags != null) {
                             for (Map.Entry<String, ResourceLocation> tag : itemGroup.tags.entrySet()) {
                                 if (tag.getKey().equals("block")) {
                                     TagKey<Block> blockTagKey = TagKey.create(net.minecraft.core.registries.Registries.BLOCK, tag.getValue());
-                                    entries.accept(BuiltInRegistries.BLOCK.get(blockTagKey.location()));
+                                    entries.accept(BuiltInRegistries.BLOCK.getValue(blockTagKey.location()));
                                 }
                                 if (tag.getKey().equals("item")) {
                                     TagKey<Item> blockTagKey = TagKey.create(net.minecraft.core.registries.Registries.ITEM, tag.getValue());
-                                    entries.accept(BuiltInRegistries.ITEM.get(blockTagKey.location()));
+                                    entries.accept(BuiltInRegistries.ITEM.getValue(blockTagKey.location()));
                                 }
                             }
                         }
                         if (itemGroup.items != null) {
                             for (ResourceLocation item : itemGroup.items) {
-                                entries.accept(BuiltInRegistries.ITEM.get(item));
+                                entries.accept(BuiltInRegistries.ITEM.getValue(item));
                             }
                         }
                         if (itemGroup.blocks != null) {
                             for (ResourceLocation block : itemGroup.blocks) {
-                                entries.accept(BuiltInRegistries.BLOCK.get(block));
+                                entries.accept(BuiltInRegistries.BLOCK.getValue(block));
                             }
                         }
                         if (itemGroup.opItems != null && displayContext.hasPermissions()) {
                             for (ResourceLocation item : itemGroup.opItems) {
-                                entries.accept(BuiltInRegistries.ITEM.get(item));
+                                entries.accept(BuiltInRegistries.ITEM.getValue(item));
                             }
                         }
                         if (itemGroup.opBlocks != null && displayContext.hasPermissions()) {
                             for (ResourceLocation block : itemGroup.opBlocks) {
-                                entries.accept(BuiltInRegistries.BLOCK.get(block));
+                                entries.accept(BuiltInRegistries.BLOCK.getValue(block));
                             }
                         }
                         if (itemGroup.featureSetItems != null) {
                             for (Map.Entry<String, ResourceLocation> entry : itemGroup.featureSetItems.entrySet()) {
                                 if (entry.getKey().equals("vanilla") && displayContext.enabledFeatures().contains(FeatureFlags.VANILLA)) {
-                                    entries.accept(BuiltInRegistries.ITEM.get(entry.getValue()));
-                                }
-                                if (entry.getKey().equals("bundle") && displayContext.enabledFeatures().contains(FeatureFlags.BUNDLE)) {
-                                    entries.accept(BuiltInRegistries.ITEM.get(entry.getValue()));
+                                    entries.accept(BuiltInRegistries.ITEM.getValue(entry.getValue()));
                                 }
                             }
                         }
                         if (itemGroup.featureSetBlocks != null) {
                             for (Map.Entry<String, ResourceLocation> entry : itemGroup.featureSetBlocks.entrySet()) {
                                 if (entry.getKey().equals("vanilla") && displayContext.enabledFeatures().contains(FeatureFlags.VANILLA)) {
-                                    entries.accept(BuiltInRegistries.BLOCK.get(entry.getValue()));
-                                }
-                                if (entry.getKey().equals("bundle") && displayContext.enabledFeatures().contains(FeatureFlags.BUNDLE)) {
-                                    entries.accept(BuiltInRegistries.BLOCK.get(entry.getValue()));
+                                    entries.accept(BuiltInRegistries.BLOCK.getValue(entry.getValue()));
                                 }
                             }
                         }
@@ -138,7 +130,7 @@ public class LegacyItemGroups implements AddonModule {
 
     @Override
     public String getType() {
-        return "item_groups";
+        return "item_group";
     }
 
 }

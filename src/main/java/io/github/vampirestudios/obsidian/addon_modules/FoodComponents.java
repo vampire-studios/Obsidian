@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodComponent;
@@ -23,15 +23,15 @@ public class FoodComponents implements AddonModule {
 
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		FoodComponent foodComponent = Obsidian.GSON.fromJson(new FileReader(file), FoodComponent.class);
+		FoodComponent foodComponent = BaseGson.GSON.fromJson(new FileReader(file), FoodComponent.class);
 		try {
 			if (foodComponent == null) return;
 
 			ResourceLocation identifier = Objects.requireNonNullElseGet(
 					foodComponent.id,
-					() -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (foodComponent.id == null) foodComponent.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+			if (foodComponent.id == null) foodComponent.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			net.minecraft.world.food.FoodProperties foodComponent1 = foodComponent.getBuilder().build();
 			Registry.register(Registries.FOODS, identifier, foodComponent1);
@@ -43,7 +43,7 @@ public class FoodComponents implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "items/food/food_components";
+		return "item/food/food_component";
 	}
 
 }

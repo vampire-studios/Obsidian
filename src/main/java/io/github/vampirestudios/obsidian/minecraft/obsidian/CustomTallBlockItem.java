@@ -2,7 +2,6 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -28,30 +27,8 @@ public class CustomTallBlockItem extends BlockItem {
     }
 
     @Override
-    public ItemStack getDefaultInstance() {
-        ItemStack stack = super.getDefaultInstance();
-        block.information.getRemovedTooltipSections().forEach(stack::hideTooltipPart);
-        return stack;
-    }
-
-    @Override
     public boolean isFoil(ItemStack stack) {
-        return block.information.getItemSettings().hasEnchantmentGlint;
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return block.information.getItemSettings().isEnchantable;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return block.information.getItemSettings().enchantability;
-    }
-
-    @Override
-    public Component getDescription() {
-        return block.information.name.getName("block");
+        return block.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
     }
 
 }

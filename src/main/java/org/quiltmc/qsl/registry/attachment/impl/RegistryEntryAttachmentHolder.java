@@ -103,8 +103,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(RegistryEntryAttachmentImpl<R, V> attachment, R entry) {
-		// Check for a direct value in valueTable
-		V value = (V) this.valueTable.get(attachment, attachment.unreflect(entry));
+		V value = (V) this.valueTable.get(attachment, entry); // Check for a direct value in valueTable
 		if (value == null) { // If there is no value, check the valueTagTable
 			Map<TagKey<R>, Object> row = this.valueTagTable.row(attachment);
 			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
@@ -118,7 +117,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 									tagValue.getKey().location());
 						}
 
-						value = (V) this.valueTagTable.get(attachment, attachment.unreflect(tagValue.getKey()));
+						value = (V) tagValue.getValue();
 					}
 				}
 			}

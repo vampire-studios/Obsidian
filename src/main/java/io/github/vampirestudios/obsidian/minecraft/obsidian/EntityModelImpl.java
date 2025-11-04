@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,8 +19,8 @@ public class EntityModelImpl extends HierarchicalModel<EntityImpl> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-        part.render(matrices, vertices, light, overlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+        part.render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 
     @Override
@@ -35,3 +36,4 @@ public class EntityModelImpl extends HierarchicalModel<EntityImpl> {
     }
 
 }
+*/

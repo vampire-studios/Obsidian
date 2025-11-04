@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -23,15 +24,15 @@ public class BlockSoundGroups implements AddonModule {
 
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		CustomSoundGroup customSoundGroup = Obsidian.GSON.fromJson(new FileReader(file), CustomSoundGroup.class);
+		CustomSoundGroup customSoundGroup = BaseGson.GSON.fromJson(new FileReader(file), CustomSoundGroup.class);
 		try {
 			if (customSoundGroup == null) return;
 
 			ResourceLocation identifier = Objects.requireNonNullElseGet(
 					customSoundGroup.id,
-					() -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (customSoundGroup.id == null) customSoundGroup.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+			if (customSoundGroup.id == null) customSoundGroup.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			registerSoundIfNotFound(customSoundGroup.break_sound);
 			registerSoundIfNotFound(customSoundGroup.step_sound);
@@ -51,7 +52,7 @@ public class BlockSoundGroups implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "block/sound_groups";
+		return "block/sound_group";
 	}
 
 }

@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.BlockSetType;
@@ -23,15 +23,15 @@ public class BlockSetTypes implements AddonModule {
 
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		BlockSetType blockSetType = Obsidian.GSON.fromJson(new FileReader(file), BlockSetType.class);
+		BlockSetType blockSetType = BaseGson.GSON.fromJson(new FileReader(file), BlockSetType.class);
 		try {
 			if (blockSetType == null) return;
 
 			ResourceLocation identifier = Objects.requireNonNullElseGet(
 					blockSetType.id,
-					() -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (blockSetType.id == null) blockSetType.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+			if (blockSetType.id == null) blockSetType.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			registerSoundIfNotFound(blockSetType.soundType);
 			registerSoundIfNotFound(blockSetType.doorClose);

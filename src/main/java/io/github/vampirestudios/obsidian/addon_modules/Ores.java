@@ -1,12 +1,12 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
+import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.github.cottonmc.jankson.JanksonFactory;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
@@ -14,13 +14,13 @@ import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
@@ -38,14 +38,14 @@ public class Ores implements AddonModule {
 		io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
 		if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
-			block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+			block = BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 		} else {
 			ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addon.getConfigPackInfo();
 			if (addonInfo.format == ObsidianAddonInfo.Format.JSON) {
-				block = Obsidian.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+				block = BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 			} else if (addonInfo.format == ObsidianAddonInfo.Format.JSON5) {
-				JsonObject jsonObject = JanksonFactory.builder().build().load(file);
-				block = JanksonFactory.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+				JsonObject jsonObject = Jankson.builder().build().load(file);
+				block = Jankson.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 			} else if (addonInfo.format == ObsidianAddonInfo.Format.YAML) {
 				ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 				mapper.findAndRegisterModules();
@@ -55,7 +55,7 @@ public class Ores implements AddonModule {
 				mapper.findAndRegisterModules();
 				block = mapper.readValue(file, io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 			} else if (addonInfo.format == ObsidianAddonInfo.Format.HJSON) {
-				block = Obsidian.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
+				block = BaseGson.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
 			} else {
 				block = null;
 			}
@@ -71,19 +71,21 @@ public class Ores implements AddonModule {
 				if (block.information.name.id != null) {
 					blockId = block.information.name.id;
 				} else {
-					blockId = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
-					block.information.name.id = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+					blockId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+					block.information.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 				}
 			}
 
-			FabricBlockSettings blockSettings;
+			BlockBehaviour.Properties blockSettings;
 
 			if (block.information.parentBlock != null) {
-				blockSettings = FabricBlockSettings.copyOf(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(block.information.parentBlock));
+				blockSettings = BlockBehaviour.Properties.ofLegacyCopy(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(block.information.parentBlock))
+						.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
 			} else {
-				blockSettings = FabricBlockSettings.of();
+				blockSettings = BlockBehaviour.Properties.of().setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
 			}
 
+			blockSettings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
 			if (block.information.getBlockSettings() != null) {
 				blockSettings.destroyTime(block.information.getBlockSettings().hardness).explosionResistance(block.information.getBlockSettings().resistance)
 						.sound(block.information.getBlockSettings().getBlockSoundGroup())
@@ -99,7 +101,8 @@ public class Ores implements AddonModule {
 				if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
 			}
 
-			FabricItemSettings settings = new FabricItemSettings();
+			Item.Properties settings = new Item.Properties();
+			settings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, blockId));
 			if (block.information.getItemSettings() != null) {
 				settings.stacksTo(block.information.getItemSettings().maxStackSize);
 				settings.rarity(Rarity.valueOf(block.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
@@ -107,8 +110,8 @@ public class Ores implements AddonModule {
 					settings.durability(block.information.getItemSettings().durability);
 //				if (!block.information.getItemSettings().wearableSlot.isEmpty() && !block.information.getItemSettings().wearableSlot.isBlank())
 //					settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.getItemSettings().wearableSlot.toLowerCase(Locale.ROOT)));
-				if (block.food_information != null)
-					settings.food(Registries.FOODS.get(block.food_information.foodComponent));
+//				if (block.food_information != null)
+//					settings.food(Registries.FOODS.get(block.food_information.foodComponent));
 				if (block.information.getItemSettings().fireproof) settings.fireResistant();
 			}
 
@@ -134,7 +137,7 @@ public class Ores implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "block/ores";
+		return "block/ore";
 	}
 
 }

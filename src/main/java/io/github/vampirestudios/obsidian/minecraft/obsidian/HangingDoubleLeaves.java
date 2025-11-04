@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -45,7 +46,7 @@ public class HangingDoubleLeaves extends Block {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, Orientation orientation, boolean notify) {
         if (state == defaultBlockState().setValue(HALF, DoubleBlockHalf.UPPER)) {
             if (world.getBlockState(pos.above()) == Blocks.AIR.defaultBlockState()) {
                 world.removeBlock(pos, false);

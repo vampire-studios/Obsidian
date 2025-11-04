@@ -8,10 +8,10 @@ public class Const {
 	public static final String MOD_VERSION = "0.8.0-alpha";
 
 	public static ResourceLocation id(String path) {
-		return new ResourceLocation(MOD_ID, path);
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	public static ResourceLocation vanillaId(String path) {
-		return new ResourceLocation(path);
+		return ResourceLocation.withDefaultNamespace(path);
 	}
 }

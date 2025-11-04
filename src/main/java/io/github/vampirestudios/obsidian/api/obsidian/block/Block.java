@@ -5,26 +5,28 @@ import com.electronwill.nightconfig.core.conversion.Path;
 import io.github.vampirestudios.obsidian.api.bedrock.Description;
 import io.github.vampirestudios.obsidian.api.obsidian.DisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.PaintingTableInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 public class Block {
-
-    /*public static final MapCodec<Block> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            Description.CODEC.fieldOf("description").forGetter(block -> block.description),
-            Codec.STRING.fieldOf("block_type").forGetter(block -> block.block_type),
-
-    ).apply(instance, Block::new));*/
-
     public Description description;
     public String block_type = "block";
     public BlockInformation information;
+    public Blocks[] blocks;
+    public Behaviour behaviour;
+
     public DisplayInformation rendering;
     @SerializedName("drop_information")
     @com.google.gson.annotations.SerializedName("drop_information")
@@ -43,32 +45,23 @@ public class Block {
     public MultiBlockInformation multi_block_information;
     public ResourceLocation placable_feature;
 
-    public TooltipInformation[] lore = new TooltipInformation[0];
+    @SerializedName("painting_table_information")
+    @com.google.gson.annotations.SerializedName("painting_table_information")
+    public PaintingTableInformation paintingTableInformation;
 
-    public Block(Description description, String block_type, BlockInformation information, DisplayInformation rendering, DropInformation dropInformation, AdditionalBlockInformation additional_information, Functions functions, OreInformation ore_information, FoodInformation food_information, CampfireProperties campfire_properties, List<ResourceLocation> can_plant_on, ResourceLocation particle_type, Growable growable, OxidizableProperties oxidizable_properties, boolean is_multi_block, MultiBlockInformation multi_block_information, ResourceLocation placable_feature, TooltipInformation[] lore) {
-        this.description = description;
-        this.block_type = block_type;
-        this.information = information;
-        this.rendering = rendering;
-        this.dropInformation = dropInformation;
-        this.additional_information = additional_information;
-        this.functions = functions;
-        this.ore_information = ore_information;
-        this.food_information = food_information;
-        this.campfire_properties = campfire_properties;
-        this.can_plant_on = can_plant_on;
-        this.particle_type = particle_type;
-        this.growable = growable;
-        this.oxidizable_properties = oxidizable_properties;
-        this.is_multi_block = is_multi_block;
-        this.multi_block_information = multi_block_information;
-        this.placable_feature = placable_feature;
-        this.lore = lore;
+    public List<SpecialText> lore = new ArrayList<>();
+
+    public void addLore(Consumer<Component> tooltip) {
+        if (lore != null && !lore.isEmpty()) {
+            for (SpecialText text : lore) {
+                tooltip.accept(text.getName());
+            }
+        }
     }
 
     public List<net.minecraft.world.level.block.Block> getSupportableBlocks() {
         List<net.minecraft.world.level.block.Block> blocks2 = new ArrayList<>();
-        can_plant_on.forEach(identifier -> blocks2.add(BuiltInRegistries.BLOCK.get(identifier)));
+        can_plant_on.forEach(identifier -> blocks2.add(BuiltInRegistries.BLOCK.getValue(identifier)));
         return blocks2;
     }
 
@@ -77,6 +70,7 @@ public class Block {
     }
 
     public enum BlockType {
+        PAINTING_TABLE,
         BLOCK,
         HORIZONTAL_DIRECTIONAL,
         DIRECTIONAL,
@@ -167,6 +161,126 @@ public class Block {
             public String type;
             public String[] values;
             public int min = 0, max = 1;
+        }
+    }
+
+
+
+    public static class Blocks {
+        public Vec3 origin;
+        public Vec3 size;
+        public ResourceLocation block;
+    }
+
+    public static class Behaviour {
+        public Repeater repeater;
+        public PowerSource power_source;
+        public Placement placement;
+        public boolean glowing;
+        public boolean rotate;
+        public boolean rotateSmooth;
+
+        public Container container;
+        public Lock lock;
+        public List<Seat> seat;
+        public List<Showcase> showcase;
+
+        public static class Repeater {
+            public int delay = 0;
+            public int loss = 0;
+        }
+
+        public static class PowerSource {
+            public int value = 15;
+        }
+
+        public static class Container {
+            /**
+             * The name displayed in the container UI
+             */
+            public Component name;
+
+            /**
+             * The size of the container, has to be 5 slots or a multiple of 9, up to 6 rows of 9 slots.
+             */
+            public int size = 9;
+
+            /**
+             * Indicates whether the container's contents should be cleared when no player is viewing the inventory.
+             */
+            public boolean purge = false;
+
+            /**
+             * The name of the animation to play when the container is opened (if applicable).
+             */
+            public String openAnimation;
+
+            /**
+             * The name of the animation to play when the container is closed (if applicable).
+             */
+            public String closeAnimation;
+        }
+
+        public static class Placement {
+            public boolean floor;
+            public boolean wall;
+            public boolean ceiling;
+        }
+
+        public static class Lock {
+            /**
+             * The identifier of the key required to unlock.
+             */
+            public ResourceLocation key = null;
+
+            /**
+             * Determines whether the key should be consumed upon unlocking.
+             */
+            public boolean consumeKey = false;
+
+            /**
+             * Specifies whether the lock util should be discarded after unlocking.
+             */
+            public boolean discard = false;
+
+            /**
+             * Name of the animation to play upon successful unlocking (if applicable).
+             */
+            public String unlockAnimation = null;
+
+            /**
+             * Command to execute when the lock is successfully unlocked (if specified).
+             * The command can be overwritten using NBT, the path for the command is Lock.Command in the block entities' NBT
+             * `formats modify @e[entitySpecifier] Lock.Command set value "say hello"`
+             */
+            public String command = null;
+        }
+
+        public static class Seat {
+            /**
+             * The player seating offset
+             */
+            public Vector3f offset = new Vector3f();
+
+            /**
+             * The rotation direction of the seat
+             */
+            public float direction = 0;
+        }
+
+        public static class Showcase {
+            public Vector3f offset;
+            public Vector3f scale;
+            public Quaternionf rotation;
+            public Type type;
+            public List<ResourceLocation> filterItems;
+            public List<ResourceLocation> filterTags;
+
+            public static enum Type {
+                BLOCK,
+                ITEM,
+                DYNAMIC
+            }
         }
     }
 }

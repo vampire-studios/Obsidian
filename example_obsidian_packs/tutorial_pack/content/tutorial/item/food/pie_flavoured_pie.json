@@ -16,14 +16,6 @@
     "hunger": 69,
     "saturation_modifier": "supernatural"
   },
-  "rendering": {
-    "item_model": {
-      "parent": "item/generated",
-      "textures": {
-        "layer0": "tutorial:item/pie_flavored_pie"
-      }
-    }
-  },
   "lore": [
     {
       "text": {
@@ -33,5 +25,13 @@
         "formatting": []
       }
     }
-  ]
+  ],
+  "rendering": {
+    "item_model": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "tutorial:item/pie_flavored_pie"
+      }
+    }
+  }
 }

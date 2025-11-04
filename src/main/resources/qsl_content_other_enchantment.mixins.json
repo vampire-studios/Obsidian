@@ -3,9 +3,9 @@
   "package": "org.quiltmc.qsl.enchantment.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-	"EnchantmentHelperMixin",
-	"EnchantmentScreenHandlerMixin",
-	"WeightedAbsentMixin"
+//	"EnchantmentHelperMixin",
+	"EnchantmentScreenHandlerMixin"
+//	"WeightedAbsentMixin"
   ],
   "client": [
   ],

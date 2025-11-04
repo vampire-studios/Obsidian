@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- human-readable name -->
+  <key>name</key>
+  <string>Obsidian DSL</string>
+
+  <!-- the root scope -->
+  <key>scopeName</key>
+  <string>source.obsidian</string>
+
+  <!-- file extensions -->
+  <key>fileTypes</key>
+  <array>
+    <string>obs</string>
+  </array>
+
+  <!-- top-level patterns -->
+  <key>patterns</key>
+  <array>
+    <!-- line comments -->
+    <dict>
+      <key>name</key>
+      <string>comment.line.double-slash.obsidian</string>
+      <key>match</key>
+      <string>//.*$</string>
+    </dict>
+
+    <!-- keywords -->
+    <dict>
+      <key>name</key>
+      <string>keyword.control.obsidian</string>
+      <key>match</key>
+      <string>\b(?:on|if|elif|else|loop|while|drop|give|set|add|push|remove|named|with|lore|custom model data|wait|broadcast|console)\b</string>
+    </dict>
+
+    <!-- operators -->
+    <dict>
+      <key>name</key>
+      <string>keyword.operator.obsidian</string>
+      <key>match</key>
+      <string>==|!=|>=|<=|>|<|\+|\-|\*|/|%</string>
+    </dict>
+
+    <!-- numbers -->
+    <dict>
+      <key>name</key>
+      <string>constant.numeric.integer.obsidian</string>
+      <key>match</key>
+      <string>\b\d+\b</string>
+    </dict>
+
+    <!-- double-quoted strings -->
+    <dict>
+      <key>name</key>
+      <string>string.quoted.double.obsidian</string>
+      <key>begin</key>
+      <string>"</string>
+      <key>end</key>
+      <string>"</string>
+      <key>patterns</key>
+      <array>
+        <dict>
+          <key>name</key>
+          <string>constant.character.escape.obsidian</string>
+          <key>match</key>
+          <string>\\.</string>
+        </dict>
+      </array>
+    </dict>
+
+    <!-- square brackets -->
+    <dict>
+      <key>name</key>
+      <string>punctuation.section.brackets.obsidian</string>
+      <key>begin</key>
+      <string>\[</string>
+      <key>end</key>
+      <string>\]</string>
+    </dict>
+
+    <!-- curly braces -->
+    <dict>
+      <key>name</key>
+      <string>punctuation.section.braces.obsidian</string>
+      <key>begin</key>
+      <string>\{</string>
+      <key>end</key>
+      <string>\}</string>
+    </dict>
+  </array>
+
+  <!-- no external repository needed -->
+  <key>repository</key>
+  <dict/>
+
+  <!-- random UUID (optional) -->
+  <key>uuid</key>
+  <string>3F2504E0-4F89-11D3-9A0C-0305E82C3301</string>
+</dict>
+</plist>

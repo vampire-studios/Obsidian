@@ -1,13 +1,9 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import com.mojang.serialization.MapCodec;
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -20,8 +16,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class FacingBlockImpl extends DirectionalBlock {
 
@@ -55,22 +49,13 @@ public class FacingBlockImpl extends DirectionalBlock {
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
+    public boolean propagatesSkylightDown(BlockState state) {
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
     }
 
     @Override
     public void stepOn(Level world, BlockPos pos, BlockState state, Entity entity) {
         super.stepOn(world, pos, state, entity);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.rendering != null && block.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : block.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
-        }
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {

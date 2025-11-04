@@ -14,8 +14,8 @@ public class CrossbowItemImpl extends CrossbowItem {
 		this.rangedWeaponItem = rangedWeaponItem;
 	}
 
-	@Override
-	public boolean canBeDepleted() {
-		return rangedWeaponItem.damageable;
-	}
+//	@Override
+//	public boolean canBeDepleted() {
+//		return rangedWeaponItem.damageable;
+//	}
 }

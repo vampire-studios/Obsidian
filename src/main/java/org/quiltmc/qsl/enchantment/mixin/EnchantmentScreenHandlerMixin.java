@@ -1,6 +1,8 @@
 package org.quiltmc.qsl.enchantment.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.IdMap;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -42,17 +44,17 @@ public abstract class EnchantmentScreenHandlerMixin extends AbstractContainerMen
 	}
 
 	@Inject(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;setSeed(J)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onContentChanged(ItemStack stack, Level world, BlockPos pos, CallbackInfo ci, int i) {
+	public void onContentChanged(ItemStack stack, Level world, BlockPos pos, CallbackInfo ci, IdMap idMap, int i) {
 		this.bookcases = i;
 	}
 
-	@Inject(method = "getEnchantmentList", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;selectEnchantment(Lnet/minecraft/util/RandomSource;Lnet/minecraft/world/item/ItemStack;IZ)Ljava/util/List;"))
-	private void setEnchantmentContext(ItemStack stack, int slot, int level, CallbackInfoReturnable<List<EnchantmentInstance>> callback) {
+	@Inject(method = "getEnchantmentList", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;selectEnchantment(Lnet/minecraft/util/RandomSource;Lnet/minecraft/world/item/ItemStack;ILjava/util/stream/Stream;)Ljava/util/List;"))
+	private void setEnchantmentContext(RegistryAccess registryAccess, ItemStack stack, int slot, int cost, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
 		this.access.execute((world, pos) -> EnchantmentGodClass.context.set(new EnchantmentContext(0, 0, this.bookcases, stack, world, this.player, pos, world.getBlockState(pos), world.getBlockEntity(pos))));
 	}
 
 	@Inject(method = "getEnchantmentList", at = @At("RETURN"))
-	private void clearEnchantmentContext(ItemStack stack, int slot, int level, CallbackInfoReturnable<List<EnchantmentInstance>> callback) {
+	private void clearEnchantmentContext(RegistryAccess registryAccess, ItemStack itemStack, int i, int j, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
 		EnchantmentGodClass.context.remove();
 	}
 }

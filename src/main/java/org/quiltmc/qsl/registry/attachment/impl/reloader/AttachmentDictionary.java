@@ -164,7 +164,7 @@ final class AttachmentDictionary<R, V> {
 					throw new JsonSyntaxException("Expected id or tag, got neither");
 				}
 
-				id = new ResourceLocation(idStr);
+				id = ResourceLocation.tryParse(idStr);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of '{}': syntax error",
 						i, resourceId);
@@ -212,7 +212,7 @@ final class AttachmentDictionary<R, V> {
 					idStr = idStr.substring(0, idStr.length() - 1);
 				}
 
-				id = new ResourceLocation(idStr);
+				id = ResourceLocation.tryParse(idStr);
 			} catch (ResourceLocationException e) {
 				LOGGER.error("Invalid identifier in values of '{}': '{}', ignoring",
 						resourceId, entry.getKey());
@@ -269,7 +269,7 @@ final class AttachmentDictionary<R, V> {
 		for (Map.Entry<String, JsonElement> entry : mirrors.entrySet()) {
 			ResourceLocation target;
 			try {
-				target = new ResourceLocation(entry.getKey());
+				target = ResourceLocation.tryParse(entry.getKey());
 			} catch (ResourceLocationException e) {
 				LOGGER.error("Invalid identifier in mirrors of {}: '{}', ignoring",
 						resourceId, entry.getKey());
@@ -284,7 +284,7 @@ final class AttachmentDictionary<R, V> {
 			if (entry.getValue() instanceof JsonPrimitive prim && prim.isString()) {
 				ResourceLocation source;
 				try {
-					source = new ResourceLocation(prim.getAsString());
+					source = ResourceLocation.parse(prim.getAsString());
 				} catch (ResourceLocationException e) {
 					LOGGER.error("Invalid mirror '{}' in {}: invalid source identifier, ignoring",
 							target, resourceId);

@@ -1,13 +1,13 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -17,12 +17,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.fluid.api.QuiltFluidBlock;
@@ -37,7 +39,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	public FluidImpl(io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid) {
 		LEVEL = IntegerProperty.create("level", 0, fluid.maxFluidLevel);
 		this.fluid = fluid;
-		this.fluidBlock = Registry.register(BuiltInRegistries.BLOCK, fluid.name.id, new QuiltFluidBlock(this, FabricBlockSettings.copyOf(Blocks.WATER)));
+		this.fluidBlock = Registry.register(BuiltInRegistries.BLOCK, fluid.name.id, new QuiltFluidBlock(this, BlockBehaviour.Properties.ofLegacyCopy(Blocks.WATER)));
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	}
 
 	@Override
-	protected boolean canConvertToSource(Level world) {
+	protected boolean canConvertToSource(ServerLevel serverLevel) {
 		return this.fluid.canBeInfinite;
 	}
 
@@ -166,29 +168,29 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Nullable
 	@Override
 	public SoundEvent getSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
-		return BuiltInRegistries.SOUND_EVENT.get(this.fluid.splashSound);
+		return BuiltInRegistries.SOUND_EVENT.getValue(this.fluid.splashSound);
 	}
 
 	@Nullable
 	@Override
 	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3 splashPos, RandomSource random) {
-		return BuiltInRegistries.SOUND_EVENT.get(this.fluid.highSpeedSplashSound);
+		return BuiltInRegistries.SOUND_EVENT.getValue(this.fluid.highSpeedSplashSound);
 	}
 
 	@Nullable
 	@Override
 	public ParticleOptions getSplashParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
-		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(this.fluid.splashParticle);
+		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.getValue(this.fluid.splashParticle);
 	}
 
 	@Nullable
 	@Override
 	public ParticleOptions getBubbleParticle(Entity splashing, Vec3 splashPos, RandomSource random) {
-		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(this.fluid.bubbleParticle);
+		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.getValue(this.fluid.bubbleParticle);
 	}
 
 	@Override
-	public ResourceLocation getFishingLootTable() {
+	public ResourceKey<LootTable> getFishingLootTable() {
 		return this.fluid.fishingLootTable;
 	}
 
@@ -200,7 +202,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Nullable
 	@Override
 	protected ParticleOptions getDripParticle() {
-		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(this.fluid.particleType);
+		return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.getValue(this.fluid.particleType);
 	}
 
 	@Override

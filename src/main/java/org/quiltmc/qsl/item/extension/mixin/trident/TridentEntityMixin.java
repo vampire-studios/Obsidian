@@ -1,3 +1,4 @@
+/*
 package org.quiltmc.qsl.item.extension.mixin.trident;
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -25,9 +26,9 @@ public abstract class TridentEntityMixin extends Entity {
     public void sendTridentStackBeforeSpawnPacket(CallbackInfoReturnable<Packet<?>> cir) {
         if ((Object) this instanceof ThrownTrident trident) {
             FriendlyByteBuf passedData = PacketByteBufs.create();
-            passedData.writeItem(((AbstractArrowAccessor) trident).getPickupItemStack());
+            passedData.wr(((AbstractArrowAccessor) trident).getPickupItemStack());
             this.level().getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity ->
                     ServerPlayNetworking.send(serverPlayerEntity, TridentClientModInitializer.TRIDENT_SPAWN_PACKET_ID, passedData));
         }
     }
-}
+}*/

@@ -21,6 +21,7 @@
   "entrypoints": {
     "main": [
       "io.github.vampirestudios.obsidian.Obsidian",
+      "io.github.vampirestudios.obsidian.DispatchedAttachmentTest",
       "org.quiltmc.qsl.registry.attachment.impl.Initializer",
       "org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesImpl"
     ],
@@ -31,7 +32,6 @@
     ]
   },
   "mixins": [
-    "fabric-item-api-v1-elytra.mixins.json",
     "fabric-resource-conditions-v1.mixins.json",
     "obsidian.mixins.json",
     "quilt_item_extensions.mixins.json",
@@ -44,8 +44,7 @@
 
   "depends": {
     "fabricloader": ">=0.12.12",
-    "fabric": "*",
-    "vampirelib": "*"
+    "fabric": "*"
   },
   "custom": {
     "loom:injected_interfaces": {
@@ -59,21 +58,6 @@
         "org/quiltmc/qsl/key/binds/api/ChordedKeyBind",
         "org/quiltmc/qsl/key/binds/api/QuiltKeyBind",
         "org/quiltmc/qsl/key/binds/api/ToggleableKeyBind"
-      ],
-      "net/minecraft/class_1887": [
-        "io/github/vampirestudios/obsidian/api/IForgeEnchantment"
-      ],
-      "net/minecraft/class_1890": [
-        "io/github/vampirestudios/obsidian/api/IForgeEnchantmentHelper"
-      ],
-      "net/minecraft/class_1792": [
-        "io/github/vampirestudios/obsidian/api/IForgeItem"
-      ],
-      "net/minecraft/class_1799": [
-        "io/github/vampirestudios/obsidian/api/IForgeItemStack"
-      ],
-      "net/minecraft/class_1761": [
-        "io/github/vampirestudios/obsidian/api/IForgeItemGroup"
       ]
     }
   }

@@ -17,8 +17,9 @@
 package org.quiltmc.qsl.fluid.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
@@ -30,9 +31,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.LavaFluid;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
-import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -145,7 +145,7 @@ public abstract class LavaFluidMixin extends FlowingFluid implements QuiltFlowab
 	}
 
 	@Override
-	public GameEvent getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
+	public Holder.Reference<GameEvent> getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return null;
 	}
 
@@ -158,10 +158,10 @@ public abstract class LavaFluidMixin extends FlowingFluid implements QuiltFlowab
 	@Override
 	public void onSplash(Level world, Vec3 pos, Entity splashing, RandomSource random) {}
 
-	@Override
+	/*@Override
 	public FluidEnchantmentHelper customEnchantmentEffects(Vec3 movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
-	}
+	}*/
 
 	@Override
 	public boolean canBoatSwimOn() {
@@ -179,7 +179,7 @@ public abstract class LavaFluidMixin extends FlowingFluid implements QuiltFlowab
 	}
 
 	@Override
-	public ResourceLocation getFishingLootTable() {
-		return BuiltInLootTables.EMPTY;
+	public ResourceKey<LootTable> getFishingLootTable() {
+		return null;
 	}
 }

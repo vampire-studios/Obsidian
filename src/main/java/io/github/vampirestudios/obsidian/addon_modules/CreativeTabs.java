@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.CreativeTab;
@@ -33,8 +34,8 @@ public class CreativeTabs implements AddonModule {
 
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        JsonObject jsonObject = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
-        ResourceLocation identifier = new ResourceLocation(id.modId(), id.addonPath());
+        JsonObject jsonObject = BaseGson.GSON.fromJson(new FileReader(file), JsonObject.class);
+        ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
         try {
             DataResult<Pair<CreativeTab, JsonElement>> result = CreativeTab.CODEC.decode(JsonOps.INSTANCE, jsonObject);
@@ -46,7 +47,7 @@ public class CreativeTabs implements AddonModule {
             if (result.result().isPresent()) {
                 CreativeTab creativeTab = result.result().get().getFirst();
                 CreativeModeTab itemGroup1 = FabricItemGroup.builder()
-                        .icon(() -> new ItemStack(creativeTab.icon))
+                        .icon(() -> new ItemStack(BuiltInRegistries.ITEM.getValue(creativeTab.icon)))
                         .displayItems((featureSet, entries) -> {
                             for (Holder<Item> item : creativeTab.items) {
                                 if (item.isBound()) {
@@ -56,8 +57,8 @@ public class CreativeTabs implements AddonModule {
                         })
                         .title(Component.translatable(String.format("itemGroup.%s.%s", identifier.getNamespace(), identifier.getPath())))
                         .build();
-                creativeTab.texture.ifPresent(itemGroup1::setBackgroundImage);
-                Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(id.modId(), id.addonPath()), itemGroup1);
+//                creativeTab.texture.ifPresent(itemGroup1::setBackgroundImage);
+                Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, identifier, itemGroup1);
                 ObsidianAddonLoader.register(ContentRegistries.CREATIVE_TABS, "creative_tab", identifier, creativeTab);
             }
         } catch (Exception e) {
@@ -67,7 +68,7 @@ public class CreativeTabs implements AddonModule {
 
     @Override
     public String getType() {
-        return "creative_tabs";
+        return "creative_tab";
     }
 
 }

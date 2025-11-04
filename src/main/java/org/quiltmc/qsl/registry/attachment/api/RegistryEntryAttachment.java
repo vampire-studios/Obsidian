@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.attachment.api;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +34,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Represents an arbitrary value attached to a registry entry.
@@ -85,7 +85,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @return a builder
 	 */
 	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, ResourceLocation id,
-			Class<V> valueClass, Function<ResourceLocation, Codec<? extends V>> codec) {
+																		 Class<V> valueClass, Function<ResourceLocation, MapCodec<? extends V>> codec) {
 		return builder(registry, id, valueClass, ResourceLocation.CODEC.dispatch(V::getType, codec));
 	}
 
@@ -351,46 +351,6 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	boolean remove(TagKey<R> tag);
 
 	/**
-	 * Mirrors the value associated with the source entry to the target entry.
-	 * <p>
-	 * This mirror mapping persists across reloads and {@link #put(Object, Object)}s!
-	 *
-	 * @param target the target entry to mirror the value onto
-	 * @param source the source entry to mirror the value from
-	 */
-	void mirror(R target, R source);
-
-	/**
-	 * Mirrors the value associated with the source tag to the target tag.
-	 * <p>
-	 * This mirror mapping persists across reloads and {@link #put(TagKey, Object)}s!
-	 *
-	 * @param target the target tag to mirror the value onto
-	 * @param source the source tag to mirror the value from
-	 */
-	void mirror(TagKey<R> target, TagKey<R> source);
-
-	/**
-	 * The entry validation can prevent entries from being shown in the attachment.
-	 * This can be used to prevent values that are not supported by the attachment, such as blocks without
-	 * the AXIS property for log stripping.
-	 *
-	 * @return the associated entry validator.
-	 */
-	Predicate<R> entryValidator();
-
-	/**
-	 * This tag, at "[namespace]:filter/[path]" will filter entries from being shown in the attachment.
-	 * This can be used to prevent values that are not supported by the attachment, such as items that are
-	 * not burnable from acting as furnace fuels.
-	 *
-	 * @return the {@link TagKey} that filters the entry.
-	 */
-	default TagKey<R> entryFilter() {
-		return TagKey.create(this.registry().key(), this.id().withPath(s -> "filter/" + s));
-	}
-
-	/**
 	 * {@return this attachment's "value associated with entry" event}
 	 */
 	Event<ValueAdded<R, V>> valueAddedEvent();
@@ -547,8 +507,6 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		private @Nullable V defaultValue;
 		private @Nullable DefaultValueProvider<R, V> defaultValueProvider;
 
-		private Predicate<R> validator = o -> true;
-
 		private Builder(Registry<R> registry, ResourceLocation id, Class<V> valueClass, Codec<V> codec) {
 			this.registry = registry;
 			this.id = id;
@@ -607,19 +565,6 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		}
 
 		/**
-		 * Sets the registry entry validator for the attachment.
-		 *
-		 * @see RegistryEntryAttachment#entryValidator()
-		 *
-		 * @param validator the entry validator
-		 * @return this builder
-		 */
-		public Builder<R, V> validator(Predicate<R> validator) {
-			this.validator = validator;
-			return this;
-		}
-
-		/**
 		 * Builds a new attachment.
 		 *
 		 * @return new attachment
@@ -628,10 +573,10 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 			RegistryEntryAttachment<R, V> attachment;
 			if (this.defaultValueProvider == null) {
 				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValue, this.validator);
+						this.codec, this.side, this.defaultValue);
 			} else {
 				attachment = new ComputedDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValueProvider, this.validator);
+						this.codec, this.side, this.defaultValueProvider);
 			}
 			RegistryEntryAttachmentHolder.registerAttachment(this.registry, attachment);
 			return attachment;

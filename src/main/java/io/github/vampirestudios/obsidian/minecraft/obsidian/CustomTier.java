@@ -1,10 +1,20 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 
-public class CustomTier implements Tier {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CustomTier implements ToolMaterial {
 
     public io.github.vampirestudios.obsidian.api.obsidian.item.Tier tier;
 
@@ -28,8 +38,8 @@ public class CustomTier implements Tier {
     }
 
     @Override
-    public int getLevel() {
-        return tier.miningLevel;
+    public TagKey<Block> getIncorrectBlocksForDrops() {
+        return TagKey.create(Registries.BLOCK, tier.incorrectBlocksForDrops);
     }
 
     @Override
@@ -39,7 +49,16 @@ public class CustomTier implements Tier {
 
     @Override
     public Ingredient getRepairIngredient() {
-        return Ingredient.of(BuiltInRegistries.ITEM.get(tier.repairItem));
+        List<ItemStack> ingredients = new ArrayList<>();
+        tier.repairItem.forEach(resourceLocation -> {
+            Item item = BuiltInRegistries.ITEM.get(resourceLocation);
+            ingredients.add(new ItemStack(item));
+        });
+        return Ingredient.of(ingredients.toArray(new ItemStack[0]));
     }
 
-}
+    public Tool createToolProperties(TagKey<Block> block) {
+        return new Tool(List.of(Tool.Rule.deniesDrops(this.getIncorrectBlocksForDrops()), Tool.Rule.minesAndDrops(block, this.getSpeed())), 1.0F, 1);
+    }
+
+}*/

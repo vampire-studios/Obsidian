@@ -76,8 +76,8 @@ public class Codecs {
 
         public static final Codec<PartPose> MODEL_TRANSFORM = RecordCodecBuilder.create((instance) ->
                 instance.group(
-                        VECTOR3F_CODEC.optionalFieldOf("origin", new Vector3f()).forGetter(obj -> new Vector3f(obj.x, obj.y, obj.z)),
-                        VECTOR3F_CODEC.optionalFieldOf("rotation", new Vector3f()).forGetter(obj -> new Vector3f(obj.xRot, obj.yRot, obj.zRot))
+                        VECTOR3F_CODEC.optionalFieldOf("origin", new Vector3f()).forGetter(obj -> new Vector3f(obj.x(), obj.y(), obj.z())),
+                        VECTOR3F_CODEC.optionalFieldOf("rotation", new Vector3f()).forGetter(obj -> new Vector3f(obj.xRot(), obj.yRot(), obj.z()))
                 ).apply(instance, (origin, rot) -> PartPose.offsetAndRotation(origin.x(), origin.y(), origin.z(), rot.x(), rot.y(), rot.z()))
         );
 

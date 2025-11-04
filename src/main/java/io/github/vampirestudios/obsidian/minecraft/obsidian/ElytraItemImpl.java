@@ -1,38 +1,23 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
-import net.fabricmc.fabric.api.item.v1.elytra.FabricElytraExtensions;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ElytraItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantable;
 
-public class ElytraItemImpl extends ElytraItem implements FabricElytraExtensions {
+public class ElytraItemImpl extends net.minecraft.world.item.Item {
 
     private final Item item;
 
     public ElytraItemImpl(Item item, Properties settings) {
-        super(settings);
+        super(settings.component(DataComponents.GLIDER, Unit.INSTANCE)
+                .component(DataComponents.ENCHANTABLE, new Enchantable(item.information.getItemSettings().enchantability)));
         this.item = item;
     }
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint;
+        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
     }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return item.information.getItemSettings().isEnchantable;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return item.information.getItemSettings().enchantability;
-    }
-
-    @Override
-    public Component getDescription() {
-        return item.information.name.getName("item");
-    }
-
 }

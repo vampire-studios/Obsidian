@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api;
 
 import java.util.List;
@@ -68,4 +69,4 @@ public class EventConfig {
 
         // Getters and Setters
     }
-}
+}*/

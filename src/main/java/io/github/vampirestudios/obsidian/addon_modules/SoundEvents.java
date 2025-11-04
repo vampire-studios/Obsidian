@@ -16,6 +16,6 @@ public class SoundEvents implements AddonModule {
 
     @Override
     public String getType() {
-        return "sound_events";
+        return "sound_event";
     }
 }

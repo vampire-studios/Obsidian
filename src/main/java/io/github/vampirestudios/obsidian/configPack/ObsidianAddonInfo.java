@@ -26,6 +26,7 @@ public class ObsidianAddonInfo extends BaseAddonInfo {
         public List<String> authors;
         public boolean has_assets = false;
         public String license = "";
+        public String format = "obsidian";
 
         public List<Person> getAuthors() {
             List<Person> authors = new ArrayList<>();

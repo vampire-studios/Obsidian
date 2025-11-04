@@ -16,23 +16,23 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import io.github.vampirestudios.vampirelib.api.FriendlyByteBufs;
+import io.github.vampirestudios.obsidian.FriendlyByteBufs;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,7 +57,7 @@ public final class RegistryEntryAttachmentSync {
 	private RegistryEntryAttachmentSync() {
 	}
 
-	public static final ResourceLocation PACKET_ID = id("sync");
+	public static final CustomPacketPayload.Type<?> PACKET_ID = new CustomPacketPayload.Type<>(id("sync"));
 
 	private record NamespaceValuePair(String namespace, Set<AttachmentEntry> entries) {
 	}
@@ -78,7 +78,7 @@ public final class RegistryEntryAttachmentSync {
 		public static AttachmentEntry read(FriendlyByteBuf buf) {
 			String path = buf.readUtf();
 			boolean isTag = buf.readBoolean();
-			Tag value = buf.readNbt().get("value");
+			Tag value = ((CompoundTag)buf.readNbt(NbtAccounter.create(FriendlyByteBuf.DEFAULT_NBT_QUOTA))).get("value");
 
 			return new AttachmentEntry(path, isTag, value);
 		}
@@ -92,7 +92,7 @@ public final class RegistryEntryAttachmentSync {
 
 	@Environment(EnvType.CLIENT)
 	public static void registerClient() {
-		ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, RegistryEntryAttachmentSync::receiveSyncPacket);
+//		ClientPlayNetworking.registerGlobalReceiver(new CustomPacketPayload.Type<>(PACKET_ID), RegistryEntryAttachmentSync::receiveSyncPacket);
 	}
 
 	public static List<FriendlyByteBuf> createSyncPackets() {
@@ -129,7 +129,7 @@ public final class RegistryEntryAttachmentSync {
 			if (isPlayerLocal(player)) continue;
 
 			for (var buf : createSyncPackets()) {
-				ServerPlayNetworking.send(player, PACKET_ID, buf);
+//				ServerPlayNetworking.send(player, PACKET_ID, buf);
 			}
 		}
 	}
@@ -176,7 +176,7 @@ public final class RegistryEntryAttachmentSync {
 						encoded.computeIfAbsent(entryId.getNamespace(), id -> new HashSet<>()).add(
 								new AttachmentEntry(entryId.getPath(), false, attachment.codec()
 										.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
-										.getOrThrow(false, msg -> {
+										.getOrThrow(msg -> {
 											throw new IllegalStateException("Failed to encode value for attachment %s of registry entry %s: %s"
 													.formatted(attachment.id(), entryId, msg));
 										})
@@ -191,7 +191,7 @@ public final class RegistryEntryAttachmentSync {
 						encoded.computeIfAbsent(valueEntry.getKey().location().getNamespace(), id -> new HashSet<>()).add(
 								new AttachmentEntry(valueEntry.getKey().location().getPath(), true, attachment.codec()
 										.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
-										.getOrThrow(false, msg -> {
+										.getOrThrow(msg -> {
 											throw new IllegalStateException("Failed to encode value for attachment tag %s of registry %s: %s"
 													.formatted(attachment.id(), valueEntry.getKey().location(), msg));
 										})));
@@ -212,7 +212,7 @@ public final class RegistryEntryAttachmentSync {
 		if (isPlayerLocal(handler.getPlayer())) return;
 
 		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
-			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
+//			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
 		}
 	}
 
@@ -237,7 +237,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 
 		client.execute(() -> {
-			var registry = (Registry<Object>) BuiltInRegistries.REGISTRY.get(registryId);
+			var registry = (Registry<Object>) BuiltInRegistries.REGISTRY.getValue(registryId);
 			if (registry == null) {
 				throw new IllegalStateException("Unknown registry %s".formatted(registryId));
 			}
@@ -252,7 +252,7 @@ public final class RegistryEntryAttachmentSync {
 			holder.valueTagTable.row(attachment).clear();
 
 			for (AttachmentEntry attachmentEntry : attachments) {
-				var entryId = new ResourceLocation(namespace, attachmentEntry.path);
+				var entryId = ResourceLocation.fromNamespaceAndPath(namespace, attachmentEntry.path);
 
 				var registryObject = registry.get(entryId);
 				if (registryObject == null) {
@@ -261,7 +261,7 @@ public final class RegistryEntryAttachmentSync {
 
 				var parsedValue = attachment.codec()
 						.parse(NbtOps.INSTANCE, attachmentEntry.value)
-						.getOrThrow(false, msg -> {
+						.getOrThrow(msg -> {
 							throw new IllegalStateException("Failed to decode value for attachment %s of registry entry %s: %s"
 									.formatted(attachment.id(), entryId, msg));
 						});

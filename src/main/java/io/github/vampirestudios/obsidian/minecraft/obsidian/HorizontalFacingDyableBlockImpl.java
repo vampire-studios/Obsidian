@@ -1,13 +1,12 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.EntityBlock;
@@ -16,18 +15,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl implements EntityBlock {
-    public HorizontalFacingDyableBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
+    private final ResourceLocation id;
+
+    public HorizontalFacingDyableBlockImpl(ResourceLocation id, io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
         super(block, settings);
+        this.id = id;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DyableBlockEntity(block, pos, state);
+        return new DyableBlockEntity(id, pos, state);
     }
 
     @Override
@@ -36,12 +36,12 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl i
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state) {
-        ItemStack stack = super.getCloneItemStack(world, pos, state);
+    protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean bl) {
+        ItemStack stack = super.getCloneItemStack(world, pos, state, bl);
         if (stack.getItem() instanceof CustomDyeableItem item) {
             BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof DyableBlockEntity dyeableBlockEntity) {
-                item.setColor(stack, dyeableBlockEntity.getDyeColor());
+                stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeableBlockEntity.getDyeColor()));
             }
         }
         return stack;
@@ -52,22 +52,13 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl i
         super.setPlacedBy(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
-            int hue = itemStack.getOrCreateTagElement("display").getInt("color");
+            int hue = itemStack.get(DataComponents.DYED_COLOR).rgb();
             if (hue != 0) {
-                dyableBlockEntity.setDyeColor(itemStack.getOrCreateTagElement("display").getInt("color"));
+                dyableBlockEntity.setDyeColor(hue);
             } else {
                 dyableBlockEntity.setDyeColor(block.additional_information.defaultColor);
             }
         }
 
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, BlockGetter world, List<Component> tooltip, TooltipFlag options) {
-        if (block.lore != null && block.lore.length != 0) {
-            for (TooltipInformation tooltipInformation : block.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
-        }
     }
 }

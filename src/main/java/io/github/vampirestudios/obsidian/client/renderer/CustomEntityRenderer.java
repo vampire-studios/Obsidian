@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -48,4 +49,4 @@ public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<En
         matrixStack.scale(g, g, g);
     }
 
-}
+}*/

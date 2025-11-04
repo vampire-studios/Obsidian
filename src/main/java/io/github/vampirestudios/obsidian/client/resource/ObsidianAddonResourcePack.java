@@ -1,27 +1,25 @@
 package io.github.vampirestudios.obsidian.client.resource;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
-import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.IoSupplier;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.Set;
 
-public class ObsidianAddonResourcePack implements PackResources {
+public class ObsidianAddonResourcePack extends AbstractPackResources {
     private final PackResources virtualPack;
     private final IAddonPack addonPack;
 
     public ObsidianAddonResourcePack(IAddonPack addonPack) {
-        this.addonPack = addonPack;
+		super(addonPack.getResourcePack().location());
+		this.addonPack = addonPack;
         this.virtualPack = addonPack.getVirtualResourcePack();
     }
 
@@ -51,19 +49,6 @@ public class ObsidianAddonResourcePack implements PackResources {
     @Override
     public Set<String> getNamespaces(@NotNull PackType var1) {
         return virtualPack.getNamespaces(var1);
-    }
-
-    @Override
-    public <T> T getMetadataSection(MetadataSectionSerializer<T> metadataReader) {
-        JsonObject object = new JsonObject();
-        if (metadataReader.getMetadataSectionName().equals("pack")) {
-            object.addProperty("description", "Default pack for config packs.");
-            object.addProperty("pack_format", SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES));
-        }
-        if (metadataReader.getMetadataSectionName().equals("filter")) {
-            object.add("block", new JsonArray());
-        }
-        return metadataReader.fromJson(object);
     }
 
     @Override

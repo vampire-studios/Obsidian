@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.block.content.registry.api.enchanting;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -29,12 +30,12 @@ import net.minecraft.world.level.block.state.BlockState;
  * @param value the boost level
  */
 public record ConstantBooster(float value) implements EnchantingBooster {
-	public static final Codec<ConstantBooster> CODEC = RecordCodecBuilder.create(instance ->
+	public static final MapCodec<ConstantBooster> CODEC = RecordCodecBuilder.mapCodec(instance ->
 			instance.group(
 					Codec.FLOAT.fieldOf("value").forGetter(ConstantBooster::value)
 			).apply(instance, ConstantBooster::new)
 	);
-	public static EnchantingBoosterType TYPE = EnchantingBoosters.register(new ResourceLocation("quilt", "constant"), CODEC);
+	public static EnchantingBoosterType TYPE = EnchantingBoosters.register(ResourceLocation.fromNamespaceAndPath("quilt", "constant"), CODEC);
 
 	@Override
 	public float getEnchantingBoost(Level world, BlockState state, BlockPos pos) {

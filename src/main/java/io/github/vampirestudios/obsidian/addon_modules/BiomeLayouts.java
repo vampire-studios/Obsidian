@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.biomeLayouts.BiomeLayout;
@@ -16,7 +16,7 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.f
 public class BiomeLayouts implements AddonModule {
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		BiomeLayout biomeLayout = Obsidian.GSON.fromJson(new FileReader(file), BiomeLayout.class);
+		BiomeLayout biomeLayout = BaseGson.GSON.fromJson(new FileReader(file), BiomeLayout.class);
 		try {
 			if (biomeLayout == null) return;
 			/*BiomeProviders.register(new BiomeProvider(new Identifier(id.getModId(), "custom_biomes"), 3) {
@@ -90,6 +90,6 @@ public class BiomeLayouts implements AddonModule {
 
 	@Override
 	public String getType() {
-		return "biome_layouts";
+		return "biome_layout";
 	}
 }

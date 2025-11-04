@@ -18,9 +18,10 @@ package org.quiltmc.qsl.fluid.api;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
@@ -32,11 +33,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -62,7 +63,7 @@ public interface QuiltFlowableFluidExtensions {
 	int WATER_FOG_COLOR = -1;
 	int LAVA_FOG_COLOR = 0x991900;
 
-	ResourceLocation WATER_FISHING_LOOT_TABLE = BuiltInLootTables.FISHING;
+	ResourceKey<LootTable> WATER_FISHING_LOOT_TABLE = BuiltInLootTables.FISHING;
 
 	/**
 	 * The color of this fluid.
@@ -145,10 +146,10 @@ public interface QuiltFlowableFluidExtensions {
 		return !canExtinguish(state, affected);
 	}
 
-	default int getNextAirSubmerged(int air, LivingEntity entity, RandomSource random) {
-		int i = EnchantmentHelper.getRespiration(entity);
+	/*default int getNextAirSubmerged(int air, LivingEntity entity, RandomSource random) {
+		int i = EnchantmentHelper.getRe(entity);
 		return i > 0 && random.nextInt(i + 1) > 0 ? air : air - 1;
-	}
+	}*/
 
 	/**
 	 * Density in kilograms per cubic meter
@@ -251,11 +252,11 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	@Nullable
-	default GameEvent getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
+	default Holder.Reference<GameEvent> getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return GameEvent.SPLASH;
 	}
 
-	default ResourceLocation getFishingLootTable() {
+	default ResourceKey<LootTable> getFishingLootTable() {
 		return WATER_FISHING_LOOT_TABLE;
 	}
 
@@ -266,9 +267,9 @@ public interface QuiltFlowableFluidExtensions {
 	// Overriding of any methods below this comment is generally unnecessary,
 	// and only made available to cover as many cases as possible.
 	default void spawnSplashParticles(Entity splashing, Vec3 splashPos, RandomSource random) {
-		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width * 20.0f; ++i) {
-			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
-			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
+		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width() * 20.0f; ++i) {
+			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width();
+			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width();
 			int yFloor = Mth.floor(splashing.getY());
 			ParticleOptions particle = getSplashParticle(splashing, splashPos, random);
 			if (particle != null) {
@@ -286,9 +287,9 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	default void spawnBubbleParticles(Entity splashing, Vec3 splashPos, RandomSource random) {
-		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width * 20.0f; ++i) {
-			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
-			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
+		for (int i = 0; i < 1.0f + splashing.getDimensions(splashing.getPose()).width() * 20.0f; ++i) {
+			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width();
+			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width();
 			int yFloor = Mth.floor(splashing.getY());
 			ParticleOptions particle = getBubbleParticle(splashing, splashPos, random);
 			if (particle != null) {
@@ -327,7 +328,7 @@ public interface QuiltFlowableFluidExtensions {
 		spawnBubbleParticles(splashing, pos, random);
 		spawnSplashParticles(splashing, pos, random);
 
-		GameEvent splash = getSplashGameEvent(splashing, pos, random);
+		Holder.Reference<GameEvent> splash = getSplashGameEvent(splashing, pos, random);
 		if (splash != null) {
 			splashing.gameEvent(splash);
 		}
@@ -338,7 +339,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @return a Helper class which contains the calculated horizontalViscosity and speed. The class contains two fields, which are both floats.
 	 */
-	default FluidEnchantmentHelper customEnchantmentEffects(Vec3 movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
+	/*default FluidEnchantmentHelper customEnchantmentEffects(Vec3 movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		float depthStriderLevel = EnchantmentHelper.getDepthStrider(entity);
 		if (depthStriderLevel > 3.0f) {
 			depthStriderLevel = 3.0f;
@@ -354,13 +355,13 @@ public interface QuiltFlowableFluidExtensions {
 		}
 
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
-	}
+	}*/
 
 	default void doDrownEffects(FluidState state, LivingEntity drowning, RandomSource random) {
 		boolean isPlayer = drowning instanceof Player;
 		boolean invincible = isPlayer && ((Player) drowning).getAbilities().invulnerable;
 		if (!drowning.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(drowning) && !invincible) {
-			drowning.setAirSupply(getNextAirSubmerged(drowning.getAirSupply(), drowning, random));
+//			drowning.setAirSupply(getNextAirSubmerged(drowning.getAirSupply(), drowning, random));
 			// if out of air
 			if (drowning.getAirSupply() == -20) {
 				drowning.setAirSupply(0);

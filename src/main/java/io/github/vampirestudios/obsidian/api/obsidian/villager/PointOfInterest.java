@@ -1,11 +1,12 @@
 package io.github.vampirestudios.obsidian.api.obsidian.villager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class PointOfInterest {
 
@@ -16,7 +17,7 @@ public class PointOfInterest {
 
     public Set<BlockState> getBlocks() {
         List<BlockState> blocks2 = new ArrayList<>();
-        blocks.forEach(identifier -> blocks2.add(BuiltInRegistries.BLOCK.get(identifier).defaultBlockState()));
+        blocks.forEach(identifier -> blocks2.add(BuiltInRegistries.BLOCK.getValue(identifier).defaultBlockState()));
         return Set.copyOf(blocks2);
     }
 

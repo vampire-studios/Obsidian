@@ -1,9 +1,12 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
 public class DisplayInformation {
 
+    @SerializedName("block_model")
+    @blue.endless.jankson.annotation.SerializedName("block_model")
     public TextureAndModelInformation blockModel;
     @Deprecated public TextureAndModelInformation model;
     public TextureAndModelInformation hangingModel;
@@ -16,8 +19,12 @@ public class DisplayInformation {
     public TextureAndModelInformation doorTopHingeModel;
     public TextureAndModelInformation onModel;
     public TextureAndModelInformation offModel;
+    @SerializedName("item_model")
+    @blue.endless.jankson.annotation.SerializedName("item_model")
     public TextureAndModelInformation itemModel;
     public TextureAndModelInformation stickyPiston;
+    @SerializedName("block_state")
+    @blue.endless.jankson.annotation.SerializedName("block_state")
     public BlockProperty blockState;
 
     public static class Property {

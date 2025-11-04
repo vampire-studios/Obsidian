@@ -6,13 +6,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Function3;
 import io.github.vampirestudios.obsidian.registry.Registries;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 
@@ -25,7 +23,7 @@ import java.util.function.Function;
 public abstract class PropertyType {
     public static Property<?> deserialize(String name, JsonObject data) {
         String key = GsonHelper.getAsString(data, "type");
-        PropertyType prop = Registries.PROPERTY_TYPES.get(new ResourceLocation(key));
+        PropertyType prop = Registries.PROPERTY_TYPES.getValue(ResourceLocation.withDefaultNamespace(key));
         if (prop == null)
             throw new IllegalStateException("Property type not found " + key);
         return prop.read(name, data);
@@ -137,7 +135,7 @@ public abstract class PropertyType {
         }
     }
 
-    public static class DirectionType extends PropertyType {
+    /*public static class DirectionType extends PropertyType {
         @Override
         public boolean handles(Property<?> property) {
             return property instanceof BooleanProperty;
@@ -152,7 +150,7 @@ public abstract class PropertyType {
                     String val = e.getAsJsonPrimitive().getAsString();
                     valid_values.add(Direction.byName(val));
                 }
-                return DirectionProperty.create(name, valid_values);
+                return BlockStateProperties.FACING.(name, valid_values);
             }
             return DirectionProperty.create(name);
         }
@@ -167,7 +165,7 @@ public abstract class PropertyType {
                 data.add("values", list);
             }
         }
-    }
+    }*/
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static class EnumType extends PropertyType {

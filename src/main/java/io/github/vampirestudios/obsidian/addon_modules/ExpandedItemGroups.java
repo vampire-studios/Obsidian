@@ -1,32 +1,19 @@
+/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.JsonObject;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.TabbedGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import io.wispforest.owo.itemgroup.OwoItemGroup;
-import io.wispforest.owo.itemgroup.gui.ItemGroupButton;
-import io.wispforest.owo.itemgroup.gui.ItemGroupTab;
-import io.wispforest.owo.itemgroup.json.WrapperGroup;
-import io.wispforest.owo.moddata.ModDataConsumer;
-import io.wispforest.owo.moddata.ModDataLoader;
-import io.wispforest.owo.util.pond.OwoItemExtensions;
-import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -35,27 +22,28 @@ public class ExpandedItemGroups implements AddonModule {
 
     @Override
     public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        TabbedGroup itemGroup = Obsidian.GSON.fromJson(new FileReader(file), TabbedGroup.class);
-        JsonObject jsonObject = Obsidian.GSON.fromJson(new FileReader(file), JsonObject.class);
+        TabbedGroup itemGroup = BaseGson.GSON.fromJson(new FileReader(file), TabbedGroup.class);
+        JsonObject jsonObject = BaseGson.GSON.fromJson(new FileReader(file), JsonObject.class);
 
         try {
             if (itemGroup == null) return;
 
-            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
-            groupTabLoader.acceptParsedFile(null, jsonObject);
-            ModDataLoader.load(groupTabLoader);
-            register(io.github.vampirestudios.obsidian.registry.Registries.EXPANDED_ITEM_GROUPS, "tabbed_group", new ResourceLocation(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
+//            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
+//            groupTabLoader.acceptParsedFile(null, jsonObject);
+//            ModDataLoader.load(groupTabLoader);
+            register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", ResourceLocation.fromNamespaceAndPath(id.modId(), STR."tabbed_\{itemGroup.targetGroup}"), itemGroup);
         } catch (Exception e) {
-            failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
+            failedRegistering("tabbed_group", STR."tabbed_\{itemGroup.targetGroup}", e);
         }
     }
 
     @Override
     public String getType() {
-        return "item_groups/expanded";
+        return "creative_tab/expanded";
     }
 
-    public static class ExpandedTabs implements ModDataConsumer {
+    */
+/*public static class ExpandedTabs implements ModDataConsumer {
         private static TabbedGroup tabbedGroup;
 
         public static final ExpandedTabs INSTANCE = new ExpandedTabs(null);
@@ -144,6 +132,8 @@ public class ExpandedItemGroups implements AddonModule {
         static {
             RegistryEntryAddedCallback.event(BuiltInRegistries.CREATIVE_MODE_TAB).register((rawId, id, group) -> ExpandedTabs.onGroupCreated(group));
         }
-    }
+    }*//*
+
 
 }
+*/

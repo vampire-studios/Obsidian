@@ -1,41 +1,44 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.resources.ResourceLocation;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Objects;
-import net.minecraft.resources.ResourceLocation;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class ArmorMaterials implements AddonModule {
 
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		ArmorMaterial armorMaterial = Obsidian.GSON.fromJson(new FileReader(file), ArmorMaterial.class);
+		ArmorMaterial armorMaterial = BaseGson.GSON.fromJson(new FileReader(file), ArmorMaterial.class);
 		try {
 			if (armorMaterial == null) return;
-			ResourceLocation identifier = Objects.requireNonNullElseGet(
-					armorMaterial.name,
-					() -> new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""))
-			);
-			if (armorMaterial.name == null) armorMaterial.name = new ResourceLocation(id.modId(), file.getName().replaceAll(".json", ""));
+			ResourceLocation identifier = getResourceLocation(armorMaterial, id, file);
 			register(ContentRegistries.ARMOR_MATERIALS, "armor_material", identifier, armorMaterial);
 		} catch (Exception e) {
 			failedRegistering("armor_material", file.getName(), e);
 		}
 	}
 
+	private ResourceLocation getResourceLocation(ArmorMaterial armorMaterial, BasicAddonInfo id, File file) {
+		ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
+		armorMaterial.name = identifier;
+		return identifier;
+	}
+
 	@Override
 	public String getType() {
-		return "items/armor/materials";
+		return "item/armor/material";
 	}
 
 }

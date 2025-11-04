@@ -3,12 +3,11 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -16,14 +15,14 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
-public class WaterloggablePlantBlockImpl extends BushBlock implements SimpleWaterloggedBlock {
+public class WaterloggablePlantBlockImpl extends VegetationBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private final Block block;
-    private static final MapCodec<BushBlock> CODEC = simpleCodec(WaterloggablePlantBlockImpl::new);
+    private static final MapCodec<VegetationBlock> CODEC = simpleCodec(WaterloggablePlantBlockImpl::new);
 
     @Override
-    public MapCodec<? extends BushBlock> codec() {
+    public MapCodec<? extends VegetationBlock> codec() {
         return CODEC;
     }
 
@@ -49,8 +48,8 @@ public class WaterloggablePlantBlockImpl extends BushBlock implements SimpleWate
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
+    public boolean propagatesSkylightDown(BlockState state) {
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
     }
 
     @Override
@@ -66,13 +65,13 @@ public class WaterloggablePlantBlockImpl extends BushBlock implements SimpleWate
         return this.defaultBlockState().setValue(WATERLOGGED, bl);
     }
 
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    /*public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
         if (state.getValue(WATERLOGGED)) {
             world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
 
         return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
-    }
+    }*/
 
 	/*@Override
 	protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {

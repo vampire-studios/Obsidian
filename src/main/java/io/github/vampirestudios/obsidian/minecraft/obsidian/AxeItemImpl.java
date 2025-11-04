@@ -1,56 +1,26 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import io.github.vampirestudios.obsidian.api.obsidian.TooltipInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ToolItem;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-
-import java.util.List;
+import net.minecraft.world.item.ToolMaterial;
 
 public class AxeItemImpl extends AxeItem {
 
     public ToolItem item;
 
-    public AxeItemImpl(ToolItem item, Tier material, int attackDamage, float attackSpeed, Properties settings) {
-        super(material, attackDamage, attackSpeed, settings);
+    public AxeItemImpl(ToolItem item, ToolMaterial material, Properties settings) {
+        super(material, 1, 1, settings);
         this.item = item;
     }
 
-    @Override
-    public boolean canBeDepleted() {
-        return item.damageable;
-    }
+//    @Override
+//    public boolean canBeDepleted() {
+//        return item.damageable;
+//    }
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint;
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return item.information.getItemSettings().isEnchantable;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return item.information.getItemSettings().enchantability;
-    }
-
-    @Override
-    public Component getDescription() {
-        return item.information.name.getName("item");
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
-        if (item.lore != null) {
-            for (TooltipInformation tooltipInformation : item.lore) {
-                tooltip.add(tooltipInformation.getTextType("tooltip"));
-            }
-        }
+        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
     }
 }

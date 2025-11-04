@@ -1,12 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+
+import java.util.Arrays;
+import java.util.Locale;
 
 public class UI {
 	public String type;
@@ -23,7 +22,7 @@ public class UI {
 	public Inset margin;
 	public Inset padding;
 
-	public List<Component> components = new ArrayList<>();
+//	public List<Component> components = new ArrayList<>();
 
 	public Sizing sizing(JsonObject jsonObject, String type) {
 		if(GsonHelper.isStringValue(jsonObject, type)) {

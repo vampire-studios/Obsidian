@@ -130,7 +130,7 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	public static float calculateBookshelfCount(Level world, BlockPos pos) {
 		float count = 0;
 
-		for (BlockPos offset : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
+		for (BlockPos offset : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
 			if (world.isEmptyBlock(pos.offset(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
 				var blockPos = pos.offset(offset);
 				var state = world.getBlockState(blockPos);

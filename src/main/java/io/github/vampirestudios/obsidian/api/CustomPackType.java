@@ -2,7 +2,6 @@
 package io.github.vampirestudios.obsidian.api;
 
 import dev.gigaherz.jsonthings.JsonThings;
-import io.github.vampirestudios.vampirelib.api.datagen.ExistingFileHelper;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

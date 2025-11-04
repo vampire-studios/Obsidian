@@ -29,7 +29,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,12 +50,12 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 	}
 
 	@Override
-	public CompletableFuture<ModelLoader> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
-		return CompletableFuture.supplyAsync(() -> new ModelLoader(manager, profiler), executor);
+	public CompletableFuture<ModelLoader> load(ResourceManager manager, Executor executor) {
+		return CompletableFuture.supplyAsync(() -> new ModelLoader(manager), executor);
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(ModelLoader prepared, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+	public CompletableFuture<Void> apply(ModelLoader prepared, ResourceManager manager, Executor executor) {
 		this.modelData = prepared.getModelData();
 		return CompletableFuture.runAsync(() -> {
 		});
@@ -64,29 +63,25 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 
 	@Override
 	public ResourceLocation getFabricId() {
-		return new ResourceLocation("quilt_entity_models", "entity_model_reloader");
+		return ResourceLocation.fromNamespaceAndPath("quilt_entity_models", "entity_model_reloader");
 	}
 
 	public static class ModelLoader {
 		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("entity/model/(\\w*)/(\\w*)\\.json");
 
 		private final ResourceManager manager;
-		private final ProfilerFiller profiler;
 		private final Map<ModelLayerLocation, LayerDefinition> modelData = new HashMap<>();
 
-		public ModelLoader(ResourceManager manager, ProfilerFiller profiler) {
+		public ModelLoader(ResourceManager manager) {
 			this.manager = manager;
-			this.profiler = profiler;
 			loadAnimations();
 		}
 
 		private void loadAnimations() {
-			profiler.push("Load Entity Models");
 			Map<ResourceLocation, Resource> resources = manager.listResources("model/entity", id -> id.getPath().endsWith(".json"));
 			for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
 				addModel(entry.getKey(), entry.getValue());
 			}
-			profiler.pop();
 		}
 
 		private void addModel(ResourceLocation id, Resource resource) {
@@ -115,7 +110,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 			String path = matcher.group(1);
 			String name = matcher.group(2);
 
-			ResourceLocation modelID = new ResourceLocation(id.getNamespace(), path);
+			ResourceLocation modelID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), path);
 			modelData.put(new ModelLayerLocation(modelID, name), result.result().get().getFirst());
 		}
 

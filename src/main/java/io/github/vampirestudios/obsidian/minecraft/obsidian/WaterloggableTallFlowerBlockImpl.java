@@ -60,8 +60,8 @@ public class WaterloggableTallFlowerBlockImpl extends DoublePlantBlock implement
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state, world, pos);
+    public boolean propagatesSkylightDown(BlockState state) {
+        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
     }
 
     public IntegerProperty getAgeProperty() {
@@ -89,7 +89,7 @@ public class WaterloggableTallFlowerBlockImpl extends DoublePlantBlock implement
         BlockPos blockPos = ctx.getClickedPos();
         Level world = ctx.getLevel();
         boolean bl = world.getFluidState(blockPos).getType() == Fluids.WATER;
-        return blockPos.getY() < world.getMaxBuildHeight() - 1 && world.getBlockState(blockPos.above()).setValue(WATERLOGGED, bl).canBeReplaced(ctx) ? super.getStateForPlacement(ctx) : null;
+        return blockPos.getY() < world.getMaxY() - 1 && world.getBlockState(blockPos.above()).setValue(WATERLOGGED, bl).canBeReplaced(ctx) ? super.getStateForPlacement(ctx) : null;
     }
 
     public int getMaxAge() {

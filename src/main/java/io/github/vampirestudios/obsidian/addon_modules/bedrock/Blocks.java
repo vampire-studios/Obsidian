@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.addon_modules.bedrock;
 
 import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.bedrock.block.BaseBlock;
 import io.github.vampirestudios.obsidian.api.bedrock.block.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
@@ -11,10 +11,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpande
 import io.github.vampirestudios.obsidian.minecraft.bedrock.BlockImpl;
 import io.github.vampirestudios.obsidian.registry.BedrockContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,21 +28,21 @@ public class Blocks implements AddonModule {
 
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError, DeserializationException {
-		BaseBlock baseBlock = Obsidian.GSON.fromJson(new FileReader(file), BaseBlock.class);
+		BaseBlock baseBlock = BaseGson.GSON.fromJson(new FileReader(file), BaseBlock.class);
 		try {
 			if (baseBlock == null) return;
 
-			FabricBlockSettings blockSettings;
+			BlockBehaviour.Properties blockSettings;
 
 			Component component = baseBlock.block.components;
 
 			if (component != null) {
-				blockSettings = FabricBlockSettings.of()
+				blockSettings = BlockBehaviour.Properties.of()
 						.strength(component.destroy_time, component.explosion_resistance)
-						.luminance(component.light_emission)
-						.slipperiness(component.friction);
+						.lightLevel(state -> component.light_emission)
+						.friction(component.friction);
 			} else {
-				blockSettings = FabricBlockSettings.of();
+				blockSettings = BlockBehaviour.Properties.of();
 			}
 
 			RegistryHelperBlockExpanded expanded = (RegistryHelperBlockExpanded) REGISTRY_HELPER.blocks();

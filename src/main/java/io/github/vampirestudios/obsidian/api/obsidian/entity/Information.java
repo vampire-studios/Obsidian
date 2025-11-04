@@ -1,17 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.entity;
 
-import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityModelImpl;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.minecraft.client.model.*;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.Optional;
 
 public class Information {
 
@@ -19,14 +8,14 @@ public class Information {
     public String name;
     public boolean spawnable;
     public boolean summonable;
-    public ResourceLocation vanilla_entity_type = new ResourceLocation("minecraft:pig");
+    public ResourceLocation vanilla_entity_type = ResourceLocation.withDefaultNamespace("pig");
     public boolean custom_model;
     public ResourceLocation textureLocation;
     public ResourceLocation entityModelPath;
 
     public SpawnEgg spawn_egg;
 
-    public EntityModel<EntityImpl> getNewEntityModel(EntityRendererProvider.Context context) {
+    /*public EntityModel<EntityImpl> getNewEntityModel(EntityRendererProvider.Context context) {
         EntityModel<EntityImpl> entityModel;
         Optional<io.github.vampirestudios.obsidian.api.obsidian.EntityModel> model = ContentRegistries.ENTITY_MODELS.getOptional(entityModelPath);
         if(model.isPresent()) {
@@ -50,23 +39,23 @@ public class Information {
             case "minecraft:skeleton" -> new SkeletonModel(context.bakeLayer(ModelLayers.SKELETON));
             default -> new CowModel<>(context.bakeLayer(ModelLayers.COW));
         };
-    }
+    }*/
 
     public ResourceLocation getEntityTexture() {
         if (custom_model) {
             return textureLocation;
         } else {
             return switch (vanilla_entity_type.toString()) {
-                case "minecraft:pig" -> new ResourceLocation("textures/entity/pig/pig.png");
-                case "minecraft:villager" -> new ResourceLocation("textures/entity/villager/villager.png");
-                case "minecraft:chicken" -> new ResourceLocation("textures/entity/chicken.png");
-                case "minecraft:bear" -> new ResourceLocation("textures/entity/bear/polarbear.png");
-                case "minecraft:squid" -> new ResourceLocation("textures/entity/squid.png");
-                case "minecraft:zombie" -> new ResourceLocation("textures/entity/zombie/zombie.png");
-                case "minecraft:skeleton" -> new ResourceLocation("textures/entity/skeleton/skeleton.png");
-                case "minecraft:fox" -> new ResourceLocation("textures/entity/fox/fox.png");
-                case "minecraft:horse" -> new ResourceLocation("textures/entity/horse/horse_black.png");
-                default -> new ResourceLocation("textures/entity/cow/cow.png");
+                case "minecraft:pig" -> ResourceLocation.withDefaultNamespace("textures/entity/pig/pig.png");
+                case "minecraft:villager" -> ResourceLocation.withDefaultNamespace("textures/entity/villager/villager.png");
+                case "minecraft:chicken" -> ResourceLocation.withDefaultNamespace("textures/entity/chicken.png");
+                case "minecraft:bear" -> ResourceLocation.withDefaultNamespace("textures/entity/bear/polarbear.png");
+                case "minecraft:squid" -> ResourceLocation.withDefaultNamespace("textures/entity/squid.png");
+                case "minecraft:zombie" -> ResourceLocation.withDefaultNamespace("textures/entity/zombie/zombie.png");
+                case "minecraft:skeleton" -> ResourceLocation.withDefaultNamespace("textures/entity/skeleton/skeleton.png");
+                case "minecraft:fox" -> ResourceLocation.withDefaultNamespace("textures/entity/fox/fox.png");
+                case "minecraft:horse" -> ResourceLocation.withDefaultNamespace("textures/entity/horse/horse_black.png");
+                default -> ResourceLocation.withDefaultNamespace("textures/entity/cow/cow.png");
             };
         }
     }

@@ -11,8 +11,6 @@ import net.minecraft.commands.arguments.item.FunctionArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemPredicateArgument;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.TestClassNameArgument;
-import net.minecraft.gametest.framework.TestFunctionArgument;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
@@ -30,6 +28,7 @@ public class Command {
     public class CommandNode extends Node {
         public ResourceLocation name;
         public boolean dedicatedOnly = false;
+        public String[] executes;
     }
     
     public class ArgumentNode extends Node {
@@ -44,7 +43,7 @@ public class Command {
             argumentTypeMap.put("brigadier:string", StringArgumentType.string());
             argumentTypeMap.put("brigadier:word", StringArgumentType.word());
             argumentTypeMap.put("brigadier:greedy", StringArgumentType.greedyString());
-            argumentTypeMap.put("component", ComponentArgument.textComponent());
+            argumentTypeMap.put("component", ComponentArgument.textComponent(commandBuildContext));
             argumentTypeMap.put("message", MessageArgument.message());
 
             argumentTypeMap.put("brigadier:bool", BoolArgumentType.bool());
@@ -163,8 +162,8 @@ public class Command {
             argumentTypeMap.put("time", TimeArgument.time());
 
             //Game Tests
-            argumentTypeMap.put("test_class", TestClassNameArgument.testClassName());
-            argumentTypeMap.put("test_argument", TestFunctionArgument.testFunctionArgument());
+//            argumentTypeMap.put("test_class", TestClassNameArgument.testClassName());
+//            argumentTypeMap.put("test_argument", TestFunctionArgument.testFunctionArgument());
 
             //Misc
             argumentTypeMap.put("particle_effect", ParticleArgument.particle(commandBuildContext));

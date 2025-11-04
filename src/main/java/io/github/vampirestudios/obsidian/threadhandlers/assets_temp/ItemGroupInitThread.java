@@ -14,7 +14,7 @@ public class ItemGroupInitThread implements Runnable {
     public void run() {
         itemGroup.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                 itemGroup.name.id.getNamespace(), languageId,
-                "itemGroup." + itemGroup.name.id.getNamespace() + "." + itemGroup.name.id.getPath(), name
+                STR."itemGroup.\{itemGroup.name.id.getNamespace()}" + "." + itemGroup.name.id.getPath(), name
         ));
     }
 }

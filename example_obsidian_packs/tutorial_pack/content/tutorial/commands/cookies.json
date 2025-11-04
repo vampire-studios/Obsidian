@@ -1,5 +1,5 @@
 {
-    "op_level": 2,
+    "permission_level": 2,
     "arguments": {
         "amount" : {
             "type": "integer",
