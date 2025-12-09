@@ -66,9 +66,9 @@ public class Registries {
 
         ADDON_MODULE_REGISTRY = new MappedRegistry<>(ResourceKey.createRegistryKey(Const.id("addon_modules")), Lifecycle.stable(), false);
         SUB_ITEM_GROUPS = new MappedRegistry<>(SUB_ITEM_GROUPS_REGISTRY, Lifecycle.stable(), false);
-        ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(AnimationDefinition.class, Const.vanillaId("animation_definitions")).buildAndRegister();
-        ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(AnimationChannel.Interpolation.class, Const.vanillaId("animation_channel_interpolations")).buildAndRegister();
-        ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(AnimationChannel.Target.class, Const.vanillaId("animation_channel_targets")).buildAndRegister();
+//        ANIMATION_DEFINITIONS = FabricRegistryBuilder.createSimple(AnimationDefinition.class, Const.vanillaId("animation_definitions")).buildAndRegister();
+//        ANIMATION_CHANNEL_INTERPOLATIONS = FabricRegistryBuilder.createSimple(AnimationChannel.Interpolation.class, Const.vanillaId("animation_channel_interpolations")).buildAndRegister();
+//        ANIMATION_CHANNEL_TARGETS = FabricRegistryBuilder.createSimple(AnimationChannel.Target.class, Const.vanillaId("animation_channel_targets")).buildAndRegister();
         BLOCK_SET_TYPES = FabricRegistryBuilder.createSimple(BlockSetType.class, Const.vanillaId("block_set_types")).buildAndRegister();
         WOOD_TYPES = FabricRegistryBuilder.createSimple(WoodType.class, Const.vanillaId("wood_types")).buildAndRegister();
     }

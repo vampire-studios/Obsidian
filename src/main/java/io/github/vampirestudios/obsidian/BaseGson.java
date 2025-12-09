@@ -21,7 +21,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Brightness;
 import net.minecraft.util.valueproviders.FloatProviderType;
@@ -50,7 +50,7 @@ public class BaseGson {
     public static final Gson GSON = new GsonBuilder()
             .disableHtmlEscaping().setPrettyPrinting().setLenient()
             .enableComplexMapKeySerialization()
-            .registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter())
+            .registerTypeAdapter(Identifier.class, new ResourceLocationTypeAdapter())
             .registerTypeAdapter(TriState.class, new TriStateAdapter())
             .registerTypeAdapter(IntArray.class, new IntArrayTypeAdapter())
             .registerTypeAdapter(DataComponentPatch.class, new DataComponentPatchDeserializer())
@@ -86,7 +86,7 @@ public class BaseGson {
             if (jsonElement.isJsonObject()) {
                 return ItemStack.CODEC.decode(RegistryOps.create(JsonOps.INSTANCE, GLOBAL_REGISTRIES), jsonElement).result().orElse(Pair.of(ItemStack.EMPTY, null)).getFirst();
             } else {
-                return BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(jsonElement.getAsString())).getDefaultInstance();
+                return BuiltInRegistries.ITEM.getValue(Identifier.tryParse(jsonElement.getAsString())).getDefaultInstance();
             }
         }
 
@@ -104,7 +104,7 @@ public class BaseGson {
         @Override
         public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if (json.isJsonPrimitive()) {
-                return this.registry.getValue(ResourceLocation.tryParse(json.getAsString()));
+                return this.registry.getValue(Identifier.tryParse(json.getAsString()));
             }
             return null;
         }

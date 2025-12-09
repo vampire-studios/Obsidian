@@ -4,7 +4,7 @@ import io.github.vampirestudios.obsidian.utils.ColorUtil;
 import io.github.vampirestudios.obsidian.utils.CustomList;
 import io.github.vampirestudios.obsidian.utils.IntArray;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 
 import java.util.List;
@@ -107,7 +107,7 @@ public class PaintingTableInformation {
 	}
 
 	public static class Item {
-		public ResourceLocation item;
+		public Identifier item;
 		public String name;
 		public List<String> lore;
 

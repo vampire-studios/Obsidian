@@ -1,12 +1,12 @@
 package io.github.vampirestudios.obsidian.api.crucible;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CrucibleSkill {
-    public ResourceLocation id;
+    public Identifier id;
 
     public int Cooldown;
     public List<String> Skills;

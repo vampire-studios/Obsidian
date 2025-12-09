@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ToolMaterial;
 
 import java.util.Locale;
@@ -14,7 +14,7 @@ public class WeaponItem extends Item {
 
     public ToolMaterial getTier() {
 		switch (material) {
-			case ResourceLocation resourceLocation -> {
+			case Identifier resourceLocation -> {
 				if (resourceLocation.getNamespace().contains("minecraft")) {
 					String path = resourceLocation.getPath().toUpperCase(Locale.ROOT);
 					return switch (path) {
@@ -29,7 +29,7 @@ public class WeaponItem extends Item {
 				return ContentRegistries.TOOL_MATERIALS.getValue(resourceLocation);
 			}
 			case String s -> {
-				ResourceLocation location = ResourceLocation.tryParse(s);
+				Identifier location = Identifier.tryParse(s);
 				assert location != null;
 				if (location.getNamespace().contains("minecraft")) {
 					String path = location.getPath().toUpperCase(Locale.ROOT);

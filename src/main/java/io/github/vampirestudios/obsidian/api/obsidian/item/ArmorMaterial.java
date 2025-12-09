@@ -2,8 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.JsonObject;
-import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.equipment.ArmorType;
 
@@ -12,15 +11,15 @@ import java.util.Map;
 
 public class ArmorMaterial {
 
-    public ResourceLocation name;
+    public Identifier name;
     public int enchantability;
-    @JsonProperty("equip_sound") public ResourceLocation equipSound;
-    @JsonProperty("repair_item") public ResourceLocation repairItem;
+    @JsonProperty("equip_sound") public Identifier equipSound;
+    @JsonProperty("repair_item") public Identifier repairItem;
     public float toughness;
     public float knockback_resistance;
-    public ResourceLocation repair_tag;
+    public Identifier repair_tag;
     public Object durability;
-    public Map<ArmorType, Integer> defense = Util.make(new EnumMap<>(ArmorType.class), (map) -> {
+    public Map<ArmorType, Integer> defense = net.minecraft.util.Util.make(new EnumMap<>(ArmorType.class), (map) -> {
         map.put(ArmorType.BOOTS, 1);
         map.put(ArmorType.LEGGINGS, 2);
         map.put(ArmorType.CHESTPLATE, 3);
@@ -45,10 +44,10 @@ public class ArmorMaterial {
         }
     }
 
-    public ResourceLocation texturePath;
-    public ResourceLocation texture1;
-    public ResourceLocation texture2;
-    public ResourceLocation customArmorModel;
+    public Identifier texturePath;
+    public Identifier texture1;
+    public Identifier texture2;
+    public Identifier customArmorModel;
 
     public static class Durability {
         public int helmetDurability;

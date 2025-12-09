@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -21,7 +21,7 @@ public class OreInformation {
 
     public String test_type = "tag";
     public TargetState target_state;
-    public ResourceLocation[] biomes;
+    public Identifier[] biomes;
     public boolean triangleRange = false;
     public int plateau = 0;
     public String spawnPredicate = "built_in";
@@ -108,8 +108,8 @@ public class OreInformation {
     }
 
     protected static class TargetState {
-        public ResourceLocation block;
-        public ResourceLocation tag = ResourceLocation.withDefaultNamespace("base_stone_overworld");
+        public Identifier block;
+        public Identifier tag = Identifier.withDefaultNamespace("base_stone_overworld");
 //        public Map<String, String> properties;
         public float probability;
     }

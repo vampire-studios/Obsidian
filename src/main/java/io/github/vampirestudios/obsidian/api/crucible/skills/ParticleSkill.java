@@ -5,7 +5,7 @@ import io.github.vampirestudios.obsidian.api.crucible.SkillTrigger;
 import io.github.vampirestudios.obsidian.api.crucible.targets.SkillTarget;
 import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +52,7 @@ public class ParticleSkill extends Skill {
                          boolean exactOffsets, Vec3 forwardOffset, Vec3 sideOffset) {
         super(skillId, target, trigger);
 
-        ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(ResourceLocation.parse(particleTypeName));
+        ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.parse(particleTypeName));
         if (particleType == null) {
             throw new IllegalArgumentException("Unknown particle type: " + particleTypeName);
         }
@@ -105,7 +105,7 @@ public class ParticleSkill extends Skill {
                 return new BlockParticleOption((ParticleType<BlockParticleOption>) particleType, block.defaultBlockState());
             }
             if (particleType == ParticleTypes.ITEM && item.isPresent()) {
-                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(this.item.get())));
+                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(this.item.get())));
                 return new ItemParticleOption(ParticleTypes.ITEM, itemStack);
             }
             return (ParticleOptions) particleType;
@@ -125,7 +125,7 @@ public class ParticleSkill extends Skill {
 
     // Helper method to retrieve Block from registry, with error handling
     private Block getBlockFromRegistry(String blockId) {
-        ResourceLocation blockResource = ResourceLocation.tryParse(blockId);
+        Identifier blockResource = Identifier.tryParse(blockId);
         if (blockResource == null) {
             throw new IllegalArgumentException("Invalid block ID format: " + blockId);
         }

@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -37,13 +37,13 @@ public class Block {
     public OreInformation ore_information;
     public FoodInformation food_information;
     public CampfireProperties campfire_properties;
-    public List<ResourceLocation> can_plant_on = new ArrayList<>();
-    public ResourceLocation particle_type;
+    public List<Identifier> can_plant_on = new ArrayList<>();
+    public Identifier particle_type;
     public Growable growable;
     public OxidizableProperties oxidizable_properties;
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
-    public ResourceLocation placable_feature;
+    public Identifier placable_feature;
 
     @SerializedName("painting_table_information")
     @com.google.gson.annotations.SerializedName("painting_table_information")
@@ -169,7 +169,7 @@ public class Block {
     public static class Blocks {
         public Vec3 origin;
         public Vec3 size;
-        public ResourceLocation block;
+        public Identifier block;
     }
 
     public static class Behaviour {
@@ -231,7 +231,7 @@ public class Block {
             /**
              * The identifier of the key required to unlock.
              */
-            public ResourceLocation key = null;
+            public Identifier key = null;
 
             /**
              * Determines whether the key should be consumed upon unlocking.
@@ -273,8 +273,8 @@ public class Block {
             public Vector3f scale;
             public Quaternionf rotation;
             public Type type;
-            public List<ResourceLocation> filterItems;
-            public List<ResourceLocation> filterTags;
+            public List<Identifier> filterItems;
+            public List<Identifier> filterTags;
 
             public static enum Type {
                 BLOCK,

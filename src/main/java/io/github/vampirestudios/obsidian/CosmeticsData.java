@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class CosmeticsData {
 
         String itemId = parts[0].toLowerCase();
 
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.withDefaultNamespace(itemId)));
+        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(itemId)));
         if(parts.length > 1) {
 //            int itemCMD = Integer.parseInt(parts[1]);
 //            CompoundTag itemStackNbtData = new CompoundTag();

@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -139,7 +139,7 @@ public class ScriptManager {
 					String blockId = BuiltInRegistries.BLOCK
 							.getKey(state.getBlock()).toString();
 					String toolId = player.getMainHandItem().getItem()
-							.builtInRegistryHolder().key().location().toString();
+							.builtInRegistryHolder().key().identifier().toString();
 					runScripts("block break", player, world, pos, Map.of(
 							"block", blockId,
 							"tool", toolId,
@@ -177,7 +177,7 @@ public class ScriptManager {
 					UseItemCallback.EVENT.register((player, world, hand) -> {
 						if (!world.isClientSide() && world instanceof ServerLevel w) {
 							if (player.getItemInHand(hand).getItem()
-									== BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(itemId))) {
+									== BuiltInRegistries.ITEM.getValue(Identifier.tryParse(itemId))) {
 								runScripts(evt, player, w, null);
 							}
 						}
@@ -488,7 +488,7 @@ public class ScriptManager {
 				case "max air supply", "max-air-supply" -> String.valueOf(player.getMaxAirSupply());
 				case "hunger" -> String.valueOf(player.getFoodData().getFoodLevel());
 				case "saturation" -> String.valueOf(player.getFoodData().getSaturationLevel());
-				case "dimension" -> player.level().dimension().location().toString();
+				case "dimension" -> player.level().dimension().identifier().toString();
 				case "world" -> player.level().getServer().getWorldData().getLevelName();
 				default -> token;
 			};

@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemSettings;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Map;
 
@@ -46,13 +46,13 @@ public class ItemInformation {
 //		System.out.println("Map: " + propertiesMap);
 		ItemSettings settings = new ItemSettings();
 		if (propertiesMap.containsKey("parent")) {
-			settings.baseItemSettings = ContentRegistries.ITEM_SETTINGS.get(ResourceLocation.tryParse((String) propertiesMap.get("parent")));
+			settings.baseItemSettings = ContentRegistries.ITEM_SETTINGS.get(Identifier.tryParse((String) propertiesMap.get("parent")));
 		}
 		return settings; // Replace with actual construction logic
 	}
 
 	private ItemSettings getItemSettingsFromReference(String reference) {
-		ResourceLocation location = ResourceLocation.tryParse(reference);
+		Identifier location = Identifier.tryParse(reference);
 		if (location != null) {
 			return ContentRegistries.ITEM_SETTINGS.getValue(location);
 		} else {

@@ -1,17 +1,14 @@
 [versions]
-    minecraft = '1.21.8'
-    quilt_mappings = "1.21.8+build.1"
-    fabric-loader = "0.16.14"
-    parchment = "2025.07.20"
+    minecraft = '1.21.11-rc2'
+    fabric-loader = "0.18.1"
+    parchment = "2025.10.12"
 
-    fabric = "0.130.0+1.21.8"
+    fabric = "0.139.4+1.21.11"
 
     vampirelib = "7.2.0+build.1-1.21.5"
     owo-lib = '0.12.21+1.21.6'
-    cct = '3.3.0+1.21'
     nc = '3.6.6'
     jackson = '2.14.0'
-    accessories = '1.2.15-beta+1.21.4'
 
 [libraries]
     minecraft = { module = 'com.mojang:minecraft', version.ref = 'minecraft' }
@@ -22,4 +19,3 @@
     vampirelib = { module = 'io.github.vampirestudios:VampireLib-Fabric', version.ref = 'vampirelib' }
     owo-lib = { module = 'io.wispforest:owo-lib', version.ref = 'owo-lib' }
     owo-sentinel = { module = 'io.wispforest:owo-sentinel', version.ref = 'owo-lib' }
-#    libzoomer = { module = 'com.github.EnnuiL:LibZoomer', version.ref = 'libzoomer' }

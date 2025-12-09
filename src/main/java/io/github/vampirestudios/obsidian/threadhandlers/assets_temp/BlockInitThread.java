@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,7 +38,7 @@ public class BlockInitThread implements Runnable {
         return entity != null ? ((DyableBlockEntity) entity).getDyeColor() : block.additional_information.defaultColor;
     }
 
-    public static void translation(Map<String, String> translated, ResourceLocation blockId, String unTranslatedType, String translatedType) {
+    public static void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {
         translated.forEach((languageId, name) -> ClientInit.addTranslation(
                 blockId.getNamespace(), languageId,
                 "block." + blockId.getNamespace() + "." + blockId.getPath() + unTranslatedType, name + translatedType
@@ -50,7 +50,7 @@ public class BlockInitThread implements Runnable {
         try {
             net.minecraft.world.level.block.Block block1 = BuiltInRegistries.BLOCK.getValue(block.information.name.id);
             NameInformation nameInformation = block.information.name;
-            ResourceLocation blockId = nameInformation.id;
+            Identifier blockId = nameInformation.id;
             Map<String, String> translated = nameInformation.translations;
             BlockRenderLayerMap.putBlock(block1, ChunkSectionLayer.CUTOUT);
             if (translated != null) {
@@ -270,7 +270,7 @@ public class BlockInitThread implements Runnable {
         }
     }
 
-    private void generateBlockState(Block block, RuntimeResourcePack resourcePack, ResourceLocation blockId) {
+    private void generateBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
         if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
             ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, block.rendering.blockState.model);
         } else {
@@ -278,7 +278,7 @@ public class BlockInitThread implements Runnable {
         }
     }
 
-    private void generatePillarBlockState(Block block, RuntimeResourcePack resourcePack, ResourceLocation blockId) {
+    private void generatePillarBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
         if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
             ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, block.rendering.blockState.model);
         } else {
@@ -286,7 +286,7 @@ public class BlockInitThread implements Runnable {
         }
     }
 
-    private void generateHorizontalFacingBlockState(Block block, RuntimeResourcePack resourcePack, ResourceLocation blockId) {
+    private void generateHorizontalFacingBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
         if (block.rendering.blockState != null) {
             if (block.rendering.blockState.model != null) {
                 ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, block.rendering.blockState.model);
@@ -300,7 +300,7 @@ public class BlockInitThread implements Runnable {
         }
     }
 
-    private void generateFacingBlockState(Block block, RuntimeResourcePack resourcePack, ResourceLocation blockId) {
+    private void generateFacingBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
         if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
             ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, block.rendering.blockState.model);
         } else {

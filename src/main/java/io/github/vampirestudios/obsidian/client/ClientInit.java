@@ -14,6 +14,7 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.DynamicContainer;
 import io.github.vampirestudios.obsidian.minecraft.JsonGui;
+import io.github.vampirestudios.obsidian.network.ContentPackSyncNetworking;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.*;
@@ -29,7 +30,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
 
 import java.nio.file.Path;
@@ -56,6 +57,8 @@ public class ClientInit implements ClientModInitializer {
     public void onInitializeClient() {
         Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().name()));
 
+        ContentPackSyncNetworking.registerClientReceivers();
+
         EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String id;
@@ -71,7 +74,7 @@ public class ClientInit implements ClientModInitializer {
                     ClientCommandManager.argument("gui", ResourceLocationArgument.id())
                         .suggests(new GuiSuggestionProvider())
                         .executes(context -> {
-                            ResourceLocation gui = context.getArgument("gui", ResourceLocation.class);
+                            Identifier gui = context.getArgument("gui", Identifier.class);
                             if (ContentRegistries.GUIS.containsKey(gui)) {
                                 FabricClientCommandSource commandSource = context.getSource();
                                 GUI gui1 = ContentRegistries.GUIS.getValue(gui);
@@ -129,7 +132,7 @@ public class ClientInit implements ClientModInitializer {
                 translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
                     JLang lang = JLang.lang();
                     translations.forEach(lang::entry);
-                    resourcePack.addLang(ResourceLocation.fromNamespaceAndPath(modId, languageId), lang);
+                    resourcePack.addLang(Identifier.fromNamespaceAndPath(modId, languageId), lang);
                 }));
                 RRPCallback.AFTER_VANILLA.register(a -> a.add(resourcePack));
                 resourcePack.dumpDirect(Path.of("rrp.debug"));

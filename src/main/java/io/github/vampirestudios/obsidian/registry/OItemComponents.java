@@ -7,7 +7,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3f;
 
@@ -15,9 +15,9 @@ import java.util.function.UnaryOperator;
 
 public class OItemComponents {
 
-	public static final DataComponentType<ResourceLocation> CREATIVE_TAB = register("creative_tab", builder -> builder
-			.persistent(ResourceLocation.CODEC)
-			.networkSynchronized(ResourceLocation.STREAM_CODEC)
+	public static final DataComponentType<Identifier> CREATIVE_TAB = register("creative_tab", builder -> builder
+			.persistent(Identifier.CODEC)
+			.networkSynchronized(Identifier.STREAM_CODEC)
 	);
 	public static final DataComponentType<Wearable> WEARABLE = register("wearable", builder -> builder
 			.persistent(Wearable.CODEC)

@@ -1,9 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import com.google.gson.annotations.SerializedName;
-import java.util.Objects;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
+
+import java.util.Objects;
 
 public class Functions {
     public Function random_tick;
@@ -17,16 +18,16 @@ public class Functions {
     public Function random_display_tick;
 
     public static class OptionalShiftFunction {
-        public ResourceLocation function_file;
+        public Identifier function_file;
         public boolean requires_sneaking = false;
         public Predicate predicate;
     }
 
     public static class Function {
-        public ResourceLocation function_file;
+        public Identifier function_file;
         public Predicate predicate = new Predicate();
         public FunctionType functionType = FunctionType.NONE;
-        public ResourceLocation item;
+        public Identifier item;
 
         public enum FunctionType {
             NONE,

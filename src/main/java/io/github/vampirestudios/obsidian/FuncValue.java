@@ -19,7 +19,7 @@ package io.github.vampirestudios.obsidian;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.quiltmc.qsl.registry.attachment.api.DispatchedType;
 
@@ -27,22 +27,22 @@ import java.util.Map;
 
 public abstract class FuncValue implements DispatchedType {
 	// in a real-world application, you'd probably use a Registry for this
-	public static final Map<ResourceLocation, MapCodec<? extends FuncValue>> CODECS = Util.make(() ->
-			ImmutableMap.<ResourceLocation, MapCodec<? extends FuncValue>>builder()
+	public static final Map<Identifier, MapCodec<? extends FuncValue>> CODECS = Util.make(() ->
+			ImmutableMap.<Identifier, MapCodec<? extends FuncValue>>builder()
 					.put(SendMessageFuncValue.TYPE, SendMessageFuncValue.CODEC)
 					.put(GiveStackFuncValue.TYPE, GiveStackFuncValue.CODEC)
 					.put(TestFuncValue.TYPE, TestFuncValue.CODEC)
 					.build()
 	);
 
-	protected final ResourceLocation type;
+	protected final Identifier type;
 
-	protected FuncValue(ResourceLocation type) {
+	protected FuncValue(Identifier type) {
 		this.type = type;
 	}
 
 	@Override
-	public final ResourceLocation getType() {
+	public final Identifier getType() {
 		return this.type;
 	}
 

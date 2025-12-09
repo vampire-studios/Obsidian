@@ -1,17 +1,17 @@
 package io.github.vampirestudios.obsidian;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Const {
 	public static final String MOD_ID = "obsidian";
 	public static final String MOD_NAME = "Obsidian";
 	public static final String MOD_VERSION = "0.8.0-alpha";
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 
-	public static ResourceLocation vanillaId(String path) {
-		return ResourceLocation.withDefaultNamespace(path);
+	public static Identifier vanillaId(String path) {
+		return Identifier.withDefaultNamespace(path);
 	}
 }

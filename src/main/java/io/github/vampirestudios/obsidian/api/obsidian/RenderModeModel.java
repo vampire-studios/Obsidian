@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
 public class RenderModeModel {
-    public ResourceLocation model;
+    public Identifier model;
     public List<String> modes;
 }

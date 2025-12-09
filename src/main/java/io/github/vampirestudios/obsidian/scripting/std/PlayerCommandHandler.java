@@ -12,7 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -64,7 +64,7 @@ public class PlayerCommandHandler implements CommandHandler {
                 case "effect" -> applyEffect(player, segment, vars);
                 case "removeEffect" -> {
                     String id = ScriptUtils.getStringArg(segment, 0, vars);
-                    var opt = BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(id));
+                    var opt = BuiltInRegistries.MOB_EFFECT.get(Identifier.parse(id));
                     boolean removed = opt.map(player::removeEffect).orElse(false);
                     vars.put("_last", removed);
                 }
@@ -98,7 +98,7 @@ public class PlayerCommandHandler implements CommandHandler {
                     String op   = ScriptUtils.getStringArg(segment, 1, vars);     // "setBase"|"addMod"|"removeMod"
                     double val  = ScriptUtils.getNumberArg(segment, 2, vars);
 
-                    var holder = BuiltInRegistries.ATTRIBUTE.get(ResourceLocation.parse(attr))
+                    var holder = BuiltInRegistries.ATTRIBUTE.get(Identifier.parse(attr))
                             .orElseThrow(() -> new IllegalArgumentException("Unknown attribute " + attr));
                     var inst = player.getAttribute(holder);
                     if (inst == null) throw new IllegalArgumentException("No instance for " + attr);
@@ -106,9 +106,9 @@ public class PlayerCommandHandler implements CommandHandler {
                     switch (op) {
                         case "setBase" -> inst.setBaseValue(val);
                         case "addMod"  -> inst.addPermanentModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(
-                                ResourceLocation.parse(attr), val,
+                                Identifier.parse(attr), val,
                                 net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE));
-                        case "removeMod" -> inst.removeModifier(ResourceLocation.parse(attr));
+                        case "removeMod" -> inst.removeModifier(Identifier.parse(attr));
                         default -> throw new IllegalArgumentException("Bad op " + op);
                     }
                 }
@@ -207,7 +207,7 @@ public class PlayerCommandHandler implements CommandHandler {
         for (Map.Entry<?,?> e : map.entrySet()) {
             String key = e.getKey().toString();                 // e.g. "minecraft:item_name"
             Object val = e.getValue();
-            var holder = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(key))
+            var holder = BuiltInRegistries.DATA_COMPONENT_TYPE.get(Identifier.parse(key))
                     .orElseThrow(() -> new IllegalArgumentException("Unknown component: " + key));
             var type = holder.value();
             JsonElement json = ScriptUtils.toJsonElement(val);
@@ -243,7 +243,7 @@ public class PlayerCommandHandler implements CommandHandler {
             return;
         }
         Holder<MobEffect> effect = BuiltInRegistries.MOB_EFFECT
-                .get(ResourceLocation.parse(ScriptUtils.getStringArg(segment, 0, vars)))
+                .get(Identifier.parse(ScriptUtils.getStringArg(segment, 0, vars)))
                 .orElseThrow(() ->
                         new IllegalArgumentException(STR."Unknown effect: \{ScriptUtils.getStringArg(segment, 0, vars)}")
                 );
@@ -261,7 +261,7 @@ public class PlayerCommandHandler implements CommandHandler {
             LOGGER.warn("sound requires sound ID, volume, and pitch");
             return;
         }
-        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(ScriptUtils.getStringArg(segment, 0, vars)));
+        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(ScriptUtils.getStringArg(segment, 0, vars)));
         if (sound == null) {
             LOGGER.warn("Unknown sound: {}", ScriptUtils.getStringArg(segment, 0, vars));
             return;
@@ -281,7 +281,7 @@ public class PlayerCommandHandler implements CommandHandler {
         String first = ScriptUtils.getStringArg(segment, 0, vars);
 
         if (first.contains(":")) { // looks like a dimension id
-            level = player.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(first)));
+            level = player.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, Identifier.parse(first)));
             if (level == null) { LOGGER.warn("Unknown dimension: {}", first); return; }
             idx = 1;
         }

@@ -17,7 +17,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -70,7 +70,7 @@ public class NexoItem {
 	/**
 	 * The unique identifier for the item.
 	 */
-	public ResourceLocation id;
+	public Identifier id;
 	/**
 	 * The display name of the item.
 	 */
@@ -98,21 +98,35 @@ public class NexoItem {
 	@JsonProperty("cooldown_ticks")
 	public int cooldownTicks;
 	@JsonProperty("repair_item")
-	public ResourceLocation repairItem = ResourceLocation.withDefaultNamespace("air");
+	public Identifier repairItem = Identifier.withDefaultNamespace("air");
 	@JsonProperty("block_sound")
-	public ResourceLocation blockSound = ResourceLocation.withDefaultNamespace("item.shield.block");
+	public Identifier blockSound = Identifier.withDefaultNamespace("item.shield.block");
 	@JsonProperty("break_sound")
-	public ResourceLocation breakSound = ResourceLocation.withDefaultNamespace("item.shield.break");
+	public Identifier breakSound = Identifier.withDefaultNamespace("item.shield.break");
 
 	public Component getName(Item item) {
-		String name = isNameNotNull(displayName) ? displayName : isNameNotNull(itemName) ? itemName : "A";
-		if (item.components().has(DataComponents.ITEM_NAME))
-			return TagParser.QUICK_TEXT_WITH_STF.parseNode(item.components().getOrDefault(DataComponents.ITEM_NAME, Component.literal("A")).getString()).toText();
+		// If the item already has a custom ITEM_NAME component, use that
+		if (item.components().has(DataComponents.ITEM_NAME)) {
+			Component existing = item.components()
+					.getOrDefault(DataComponents.ITEM_NAME, Component.literal("A"));
+			return TagParser.QUICK_TEXT_WITH_STF.parseNode(existing.getString()).toText();
+		}
+
+		// Otherwise, fall back to displayName, then itemName, then "A"
+		String name;
+		if (isNameNotNull(displayName)) {
+			name = displayName;
+		} else if (isNameNotNull(itemName)) {
+			name = itemName;
+		} else {
+			name = "A";
+		}
+
 		return TagParser.QUICK_TEXT_WITH_STF.parseNode(name).toText();
 	}
 
 	private boolean isNameNotNull(String name) {
-		return name != null && !name.isEmpty() && !name.isBlank();
+		return name != null && !name.isBlank();
 	}
 
 	public Item getItem(Item.Properties properties) {
@@ -325,26 +339,26 @@ public class NexoItem {
 	}
 
 	public static class Pack {
-		public ResourceLocation id;
+		public Identifier id;
 		public boolean generate_model = false;
-		public ResourceLocation parent_model;
+		public Identifier parent_model;
 		public int custom_model_data;
 		public Object textures;
-		public ResourceLocation texture;
-		public ResourceLocation model;
-		public List<ResourceLocation> pulling_models;
-		public List<ResourceLocation> damaged_models;
-		public ResourceLocation blocking_model;
-		public ResourceLocation charged_model;
-		public ResourceLocation firework_model;
-		public ResourceLocation cast_model;
+		public Identifier texture;
+		public Identifier model;
+		public List<Identifier> pulling_models;
+		public List<Identifier> damaged_models;
+		public Identifier blocking_model;
+		public Identifier charged_model;
+		public Identifier firework_model;
+		public Identifier cast_model;
 
-		public Map<String, ResourceLocation> getTextures() {
-			Map<String, ResourceLocation> texturesMap = new HashMap<>();
+		public Map<String, Identifier> getTextures() {
+			Map<String, Identifier> texturesMap = new HashMap<>();
 			if (textures instanceof List<?> list) {
 				handleTextureList(texturesMap, list.stream().map(o -> o instanceof String s ? s : null).toList());
 			} else if (textures instanceof Map<?, ?>) {
-				handleTextureMap(texturesMap, (Map<String, ResourceLocation>) textures);
+				handleTextureMap(texturesMap, (Map<String, Identifier>) textures);
 			} else {
 				if(generate_model) {
 					LOGGER.info(id);
@@ -355,7 +369,7 @@ public class NexoItem {
 			return texturesMap;
 		}
 
-		private void handleTextureList(Map<String, ResourceLocation> texturesMap, List<String> textureList) {
+		private void handleTextureList(Map<String, Identifier> texturesMap, List<String> textureList) {
 			if (textureList == null || textureList.isEmpty()) {
 				throw new IllegalArgumentException("Texture list cannot be null or empty");
 			}
@@ -366,29 +380,29 @@ public class NexoItem {
 			if (modelName.equals("item/generated") || modelName.startsWith("item")) {
 				// Handle item model textures
 				for (int i = 0; i < textureList.size(); i++) {
-					texturesMap.put("layer" + i, ResourceLocation.fromNamespaceAndPath(id.getNamespace(), textureList.get(i)));
+					texturesMap.put("layer" + i, Identifier.fromNamespaceAndPath(id.getNamespace(), textureList.get(i)));
 				}
 			} else if (modelName.equals("block/cube_all")) {
 				// Handle block model textures where all sides are the same
 				if (!textureList.isEmpty()) {
-					texturesMap.put("all", ResourceLocation.fromNamespaceAndPath(id.getNamespace(), textureList.get(0)));
+					texturesMap.put("all", Identifier.fromNamespaceAndPath(id.getNamespace(), textureList.get(0)));
 				}
 			} else {
 				// Default case for other models
 				for (int i = 0; i < textureList.size(); i++) {
-					texturesMap.put("texture" + i, ResourceLocation.fromNamespaceAndPath(id.getNamespace(), textureList.get(i)));
+					texturesMap.put("texture" + i, Identifier.fromNamespaceAndPath(id.getNamespace(), textureList.get(i)));
 				}
 			}
 		}
 
-		private void handleTextureMap(Map<String, ResourceLocation> texturesMap, Map<String, ResourceLocation> textureMap) {
+		private void handleTextureMap(Map<String, Identifier> texturesMap, Map<String, Identifier> textureMap) {
 			if (textureMap == null || textureMap.isEmpty()) {
 				throw new IllegalArgumentException("Texture map cannot be null or empty");
 			}
 
-			for (Map.Entry<String, ResourceLocation> entry : textureMap.entrySet()) {
+			for (Map.Entry<String, Identifier> entry : textureMap.entrySet()) {
 				String key = entry.getKey();
-				ResourceLocation value = entry.getValue();
+				Identifier value = entry.getValue();
 				texturesMap.put(key, value);
 			}
 		}
@@ -424,11 +438,11 @@ public class NexoItem {
 		public Bow bow;
 
 		public static class BlockSounds {
-			public ResourceLocation place_sound;
-			public ResourceLocation break_sound;
-			public ResourceLocation hit_sound;
-			public ResourceLocation step_sound;
-			public ResourceLocation fall_sound;
+			public Identifier place_sound;
+			public Identifier break_sound;
+			public Identifier hit_sound;
+			public Identifier step_sound;
+			public Identifier fall_sound;
 
 			public SoundType getSoundType() {
 				SoundEvent place = BuiltInRegistries.SOUND_EVENT.getValue(place_sound);
@@ -454,7 +468,7 @@ public class NexoItem {
 		public static class Lights {
 			public boolean toggleable;
 			public String toggled_model;
-			public ResourceLocation toggled_item_model;
+			public Identifier toggled_item_model;
 			public List<Light> lights = new ArrayList<>();
 
 			// Jackson will call this with the raw strings from YAML
@@ -525,8 +539,8 @@ public class NexoItem {
 
 		public static class Armor {
 			public String type;
-			public ResourceLocation material;
-			public ResourceLocation texture;
+			public Identifier material;
+			public Identifier texture;
 			public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial armor_material;
 		}
 
@@ -574,8 +588,8 @@ public class NexoItem {
 				public String type;          // e.g. STORAGE
 				public int rows;
 				public String title;
-				public ResourceLocation open_sound;
-				public ResourceLocation close_sound;
+				public Identifier open_sound;
+				public Identifier close_sound;
 			}
 
 			public static class Connectable {
@@ -594,7 +608,7 @@ public class NexoItem {
 
 				public class ConnectableMechanic {
 					private final ConnectableItemType type = ConnectableItemType.DEFAULT_TYPE;
-					private final ResourceLocation def, straight, left, right, inner, outer;
+					private final Identifier def, straight, left, right, inner, outer;
 
 					private final Supplier<ItemBuilder> defaultItem = () -> {
 						if (type == ConnectableItemType.ITEM_MODEL) {
@@ -642,7 +656,7 @@ public class NexoItem {
 						);
 					}
 
-					private ItemBuilder buildDisplayItem(ResourceLocation key, String suffix) {
+					private ItemBuilder buildDisplayItem(Identifier key, String suffix) {
 						if (type == ConnectableItemType.ITEM_MODEL) {
 							if (key != null) {
 								return new ItemBuilder(Material.LEATHER_HORSE_ARMOR).setItemModel(key);
@@ -807,7 +821,7 @@ public class NexoItem {
 				public int natural_growth_time;
 				public boolean grows_from_bonemeal;
 				public int bonemeal_growth_speedup;
-				public ResourceLocation grow_sound;
+				public Identifier grow_sound;
 				public int min_light_level;
 				public boolean requires_water_source;
 				public String schematic;
@@ -825,7 +839,7 @@ public class NexoItem {
 
 		public static class Equipable {
 			public String slot;
-			public ResourceLocation sound;
+			public Identifier sound;
 		}
 
 		public static class Dyeable {
@@ -856,7 +870,7 @@ public class NexoItem {
 
 			public static class Animation {
 				public String type;
-				public ResourceLocation file;
+				public Identifier file;
 			}
 		}
 
@@ -881,7 +895,7 @@ public class NexoItem {
 						case "give_effect": {
 							if (!(entity instanceof LivingEntity livingEntity)) break;
 							livingEntity.addEffect(new MobEffectInstance(
-									Holder.direct(BuiltInRegistries.MOB_EFFECT.getValue((ResourceLocation) parameters.get("effect"))),
+									Holder.direct(BuiltInRegistries.MOB_EFFECT.getValue((Identifier) parameters.get("effect"))),
 									(int) parameters.getOrDefault("duration", 20) / 20,
 									(int) parameters.getOrDefault("amplifier", 0),
 									(boolean) parameters.getOrDefault("ambient", false),
@@ -905,7 +919,7 @@ public class NexoItem {
 			public List<AttributeModifierData> modifiers;
 
 			public static class AttributeModifierData {
-				public ResourceLocation attributeName; // The name of the attribute, e.g., "generic.max_health"
+				public Identifier attributeName; // The name of the attribute, e.g., "generic.max_health"
 				public double amount;
 				public String operation; // "ADDITION", "MULTIPLY_BASE", "MULTIPLY_TOTAL"
 				public String slot; // "mainhand", "offhand", "head", "chest", "legs", "feet", or "any"
@@ -941,7 +955,7 @@ public class NexoItem {
 					if (attribute != null) {
 						Holder<Attribute> attributeHolder = Holder.direct(attribute);
 						AttributeModifier.Operation operation = modifierData.getOperation();
-						ResourceLocation name = modifierData.attributeName;
+						Identifier name = modifierData.attributeName;
 						double amount = modifierData.amount;
 
 						AttributeModifier attributeModifier = new AttributeModifier(name, amount, operation);
@@ -1322,7 +1336,7 @@ public class NexoItem {
 				double defaultGravity = 0.08;  // Default gravity value for Minecraft
 				double modifierValue = validatedGravityFactor - defaultGravity;
 
-				AttributeModifier gravityModifier = new AttributeModifier(ResourceLocation.fromNamespaceAndPath("obsidian", "custom_gravity"), modifierValue, AttributeModifier.Operation.ADD_VALUE);
+				AttributeModifier gravityModifier = new AttributeModifier(Identifier.fromNamespaceAndPath("obsidian", "custom_gravity"), modifierValue, AttributeModifier.Operation.ADD_VALUE);
 
 				applyModifierWithTimeout(entity, gravityModifier, duration);
 			}
@@ -1458,25 +1472,22 @@ public class NexoItem {
 			public ResourceKey<Level> targetDimension;
 
 			public void travelToDimension(ServerPlayer player) {
-				ServerLevel targetWorld = player.getServer().getLevel(targetDimension);
-				if (targetWorld != null) {
-					player.teleport(TeleportTransition.missingRespawnBlock(targetWorld, player, TeleportTransition.PLAY_PORTAL_SOUND));
-				}
+				player.teleport(TeleportTransition.missingRespawnBlock(player, TeleportTransition.PLAY_PORTAL_SOUND));
 			}
 		}
 
 		public static class SetBonus {
 			public String setName;
 			public List<MobEffectInstance> bonusEffects;
-			public Map<EquipmentSlot, ResourceLocation> requiredItems;
+			public Map<EquipmentSlot, Identifier> requiredItems;
 
 			private boolean bonusApplied = false;
 
 			public void checkAndApplyBonus(Player player) {
 				boolean hasFullSet = true;
-				for (Map.Entry<EquipmentSlot, ResourceLocation> entry : requiredItems.entrySet()) {
+				for (Map.Entry<EquipmentSlot, Identifier> entry : requiredItems.entrySet()) {
 					EquipmentSlot slot = entry.getKey();
-					ResourceLocation requiredItemId = entry.getValue();
+					Identifier requiredItemId = entry.getValue();
 					ItemStack equippedItem = player.getItemBySlot(slot);
 
 					if (!isMatchingItem(equippedItem, requiredItemId)) {
@@ -1494,12 +1505,12 @@ public class NexoItem {
 				}
 			}
 
-			private boolean isMatchingItem(ItemStack itemStack, ResourceLocation requiredItemId) {
+			private boolean isMatchingItem(ItemStack itemStack, Identifier requiredItemId) {
 				if (itemStack.isEmpty()) {
 					return false;
 				}
 				Item item = itemStack.getItem();
-				ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
+				Identifier itemId = BuiltInRegistries.ITEM.getKey(item);
 				return requiredItemId.equals(itemId);
 			}
 
@@ -1522,7 +1533,7 @@ public class NexoItem {
 				requiredItems = new HashMap<>();
 				for (Map.Entry<String, String> entry : itemsMap.entrySet()) {
 					EquipmentSlot slot = getEquipmentSlotFromString(entry.getKey());
-					ResourceLocation itemId = ResourceLocation.parse(entry.getValue());
+					Identifier itemId = Identifier.parse(entry.getValue());
 					requiredItems.put(slot, itemId);
 				}
 			}
@@ -1556,7 +1567,7 @@ public class NexoItem {
 			public Map<String, Double> biomeModifiers; // e.g., {"desert": 1.2, "forest": 0.8}
 
 			public double getEnvironmentalModifier(Level world, BlockPos pos) {
-				String biomeName = world.getBiome(pos).unwrapKey().get().location().getPath();
+				String biomeName = world.getBiome(pos).unwrapKey().get().identifier().getPath();
 				return biomeModifiers.getOrDefault(biomeName, 1.0);
 			}
 		}
@@ -1628,7 +1639,7 @@ public class NexoItem {
 		}
 
 		public static class Trident {
-			public ResourceLocation thrown_item_model;
+			public Identifier thrown_item_model;
 			public String thrown_item;
 			public ItemDisplayContext transform = ItemDisplayContext.NONE;
 			public Vec2 rotation = new Vec2(0, 0);

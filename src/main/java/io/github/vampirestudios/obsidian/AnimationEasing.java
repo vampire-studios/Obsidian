@@ -1,20 +1,20 @@
 package io.github.vampirestudios.obsidian;
 
-import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.MathHelper;
+import net.minecraft.client.animation.AnimationChannel;
+import net.minecraft.client.animation.Keyframe;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Vector3f;
 
 import java.util.function.Function;
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.Keyframe;
 
 public class AnimationEasing {
 
 	public static AnimationChannel.Interpolation interpolation(EasingCategories easingCategory, Type type) {
 		EasingTypes easing = easingCategory.getEasingType(type);
-		return Obsidian.registerInRegistryVanilla(Registries.ANIMATION_CHANNEL_INTERPOLATIONS, easing.getName(),
-				(vector3f, f, keyframes, i, j, g) -> easing(vector3f, easing.apply(f), keyframes, i, j, g));
+//		return Obsidian.registerInRegistryVanilla(Registries.ANIMATION_CHANNEL_INTERPOLATIONS, easing.getName(),
+//				(vector3f, f, keyframes, i, j, g) -> easing(vector3f, easing.apply(f), keyframes, i, j, g));
+		return (vector3f, f, keyframes, i, j, g) -> easing(vector3f, easing.apply(f), keyframes, i, j, g);
 	}
 
 	public static Vector3f easing(Vector3f vec3f, float f, Keyframe[] keyframes, int i, int j, float g) {

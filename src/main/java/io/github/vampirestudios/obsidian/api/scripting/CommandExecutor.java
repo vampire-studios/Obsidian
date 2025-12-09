@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
@@ -67,7 +67,7 @@ public class CommandExecutor {
                 }
 
                 // create the ItemStack
-                ResourceLocation rl = ResourceLocation.tryParse(itemId);
+                Identifier rl = Identifier.tryParse(itemId);
                 ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.getValue(rl), count);
 
                 // apply name
@@ -98,7 +98,7 @@ public class CommandExecutor {
             case "broadcast" -> {
                 // broadcast "<msg>"
                 String msg1 = stripQuotes(line.substring(9)).trim();
-                player.getServer().getPlayerList().broadcastSystemMessage(Component.literal(msg1), false);
+                player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(msg1), false);
             }
             case "console" -> {
                 // console "<cmd>"

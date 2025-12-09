@@ -1,24 +1,24 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Map;
 
 public class BlockProperty {
 
-    public Map<String, ResourceLocation> models;
-    public ResourceLocation model;
-    public ResourceLocation stickyModel;
-    public ResourceLocation hangingModel;
-    public ResourceLocation trapdoorBottomModel;
-    public ResourceLocation trapdoorOpenModel;
-    public ResourceLocation trapdoorTopModel;
-    public ResourceLocation doorBottomModel;
-    public ResourceLocation doorBottomHingeModel;
-    public ResourceLocation doorTopModel;
-    public ResourceLocation doorTopHingeModel;
-    public ResourceLocation onModel;
-    public ResourceLocation offModel;
-    public ResourceLocation itemModel;
+    public Map<String, Identifier> models;
+    public Identifier model;
+    public Identifier stickyModel;
+    public Identifier hangingModel;
+    public Identifier trapdoorBottomModel;
+    public Identifier trapdoorOpenModel;
+    public Identifier trapdoorTopModel;
+    public Identifier doorBottomModel;
+    public Identifier doorBottomHingeModel;
+    public Identifier doorTopModel;
+    public Identifier doorTopHingeModel;
+    public Identifier onModel;
+    public Identifier offModel;
+    public Identifier itemModel;
 
 }

@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import blue.endless.jankson.annotation.SerializedName;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +21,8 @@ public class ItemDisplayInformation {
 
     public Object testModel;
     public boolean generateModel = true;
-    public Map<String, ResourceLocation> textures;
-    public ResourceLocation parentModel;
+    public Map<String, Identifier> textures;
+    public Identifier parentModel;
 
     @SerializedName("item_model")
     @com.google.gson.annotations.SerializedName("item_model")
@@ -31,7 +31,7 @@ public class ItemDisplayInformation {
     public Optional<TextureAndModelInformation> getItemModel() {
         if (itemModel instanceof TextureAndModelInformation info) {
             return Optional.of(info);
-        } else if(itemModel instanceof ResourceLocation resourceLocation) {
+        } else if(itemModel instanceof Identifier resourceLocation) {
             return Optional.of(new TextureAndModelInformation(resourceLocation));
         } else if (itemModel instanceof Map<?, ?> modelMap) {
 			TextureAndModelInformation textureAndModelInformation = new TextureAndModelInformation();
@@ -39,7 +39,7 @@ public class ItemDisplayInformation {
             if (modelMap.containsKey("parent")) {
                 Object parent = modelMap.get("parent");
                 if (parent instanceof String) {
-                    textureAndModelInformation.setParent(ResourceLocation.tryParse((String) parent));
+                    textureAndModelInformation.setParent(Identifier.tryParse((String) parent));
                 }
             }
 
@@ -52,7 +52,7 @@ public class ItemDisplayInformation {
             return Optional.of(textureAndModelInformation);
         } else if (itemModel instanceof String s) {
             try {
-                return Optional.of(new TextureAndModelInformation(ResourceLocation.tryParse(s)));
+                return Optional.of(new TextureAndModelInformation(Identifier.tryParse(s)));
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
@@ -61,16 +61,16 @@ public class ItemDisplayInformation {
     }
 
     // Helper method to parse textures
-    private Map<String, ResourceLocation> parseTextures(Map<?, ?> texturesMap) {
-        Map<String, ResourceLocation> textures = new HashMap<>();
+    private Map<String, Identifier> parseTextures(Map<?, ?> texturesMap) {
+        Map<String, Identifier> textures = new HashMap<>();
         for (Map.Entry<?, ?> entry : texturesMap.entrySet()) {
             if (entry.getKey() instanceof String key && entry.getValue() instanceof String value) {
-                ResourceLocation parsedLocation = ResourceLocation.tryParse(value);
+                Identifier parsedLocation = Identifier.tryParse(value);
                 if (parsedLocation != null) {
                     textures.put(key, parsedLocation);
                 }
             }
-            if (entry.getKey() instanceof String key && entry.getValue() instanceof ResourceLocation id) {
+            if (entry.getKey() instanceof String key && entry.getValue() instanceof Identifier id) {
                 if (id != null) {
                     textures.put(key, id);
                 }
@@ -84,7 +84,7 @@ public class ItemDisplayInformation {
             return info;
         } else if (blockingModel instanceof String s) {
             TextureAndModelInformation textureAndModelInformation = new TextureAndModelInformation();
-            textureAndModelInformation.parent = ResourceLocation.tryParse(s);
+            textureAndModelInformation.parent = Identifier.tryParse(s);
             return textureAndModelInformation;
         } else {
             return null;
@@ -96,7 +96,7 @@ public class ItemDisplayInformation {
             return info;
         } else if (testModel instanceof String s) {
             TextureAndModelInformation textureAndModelInformation = new TextureAndModelInformation();
-            textureAndModelInformation.parent = ResourceLocation.tryParse(s);
+            textureAndModelInformation.parent = Identifier.tryParse(s);
             return textureAndModelInformation;
         } else {
             return null;

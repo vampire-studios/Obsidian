@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.registry.components.Conversion;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class ItemSettings {
     // Basic Info
     @SerializedName("item_group")
     @com.google.gson.annotations.SerializedName("item_group")
-    public ResourceLocation creativeTab;
+    public Identifier creativeTab;
 
     @SerializedName("max_stack_size")
     @com.google.gson.annotations.SerializedName("max_stack_size")
@@ -40,7 +40,7 @@ public class ItemSettings {
         public int duration = 10;
         @SerializedName("return_item")
         @com.google.gson.annotations.SerializedName("return_item")
-        public ResourceLocation returnItem;
+        public Identifier returnItem;
     }
 
     // Fuel
@@ -65,7 +65,7 @@ public class ItemSettings {
 
     // Block Placing
     @SerializedName("can_place_block") public boolean canPlaceBlock;
-    @SerializedName("placable_block") public ResourceLocation placableBlock;
+    @SerializedName("placable_block") public Identifier placableBlock;
 
     // Wearable
     public boolean wearable;
@@ -103,7 +103,7 @@ public class ItemSettings {
     public Conversion conversion;
 
     public ItemSettings() {
-        this.creativeTab = ResourceLocation.withDefaultNamespace("building_blocks");
+        this.creativeTab = Identifier.withDefaultNamespace("building_blocks");
 
         this.hasEnchantmentGlint = TriState.DEFAULT;
         this.enchantability = 5;
@@ -138,13 +138,13 @@ public class ItemSettings {
 //		System.out.println("Map: " + propertiesMap);
         ItemSettings settings = new ItemSettings();
         if (propertiesMap.containsKey("parent")) {
-            settings.baseItemSettings = ContentRegistries.ITEM_SETTINGS.get(ResourceLocation.tryParse((String) propertiesMap.get("parent")));
+            settings.baseItemSettings = ContentRegistries.ITEM_SETTINGS.get(Identifier.tryParse((String) propertiesMap.get("parent")));
         }
         return settings; // Replace with actual construction logic
     }
 
     private ItemSettings getItemSettingsFromReference(String reference) {
-        ResourceLocation location = ResourceLocation.tryParse(reference);
+        Identifier location = Identifier.tryParse(reference);
         if (location != null) {
             return ContentRegistries.ITEM_SETTINGS.getValue(location);
         } else {

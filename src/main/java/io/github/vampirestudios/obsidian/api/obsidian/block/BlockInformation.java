@@ -6,7 +6,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.BlockSettings;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemSettings;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.Map;
@@ -24,17 +24,17 @@ public class BlockInformation {
     @SerializedName("block_set_type")
     @com.google.gson.annotations.SerializedName("block_set_type")
     @Path("block_set_type")
-    public ResourceLocation blockSetType;
+    public Identifier blockSetType;
 
     @SerializedName("wood_type")
     @com.google.gson.annotations.SerializedName("wood_type")
     @Path("wood_type")
-    public ResourceLocation woodType;
+    public Identifier woodType;
 
     @SerializedName("parent_block")
     @com.google.gson.annotations.SerializedName("parent_block")
     @Path("parent_block")
-    public ResourceLocation parentBlock;
+    public Identifier parentBlock;
 
     @SerializedName("collision_shape")
     @com.google.gson.annotations.SerializedName("collision_shape")
@@ -60,11 +60,11 @@ public class BlockInformation {
 
     public BlockSettings getBlockSettings() {
 		switch (blockSettings) {
-			case ResourceLocation resourceLocation -> {
+			case Identifier resourceLocation -> {
 				return ContentRegistries.BLOCK_SETTINGS.getValue(resourceLocation);
 			}
 			case String s -> {
-				ResourceLocation location = ResourceLocation.tryParse(s);
+				Identifier location = Identifier.tryParse(s);
 				return ContentRegistries.BLOCK_SETTINGS.getValue(location);
 			}
 			case BlockSettings blockSettings1 -> {
@@ -83,11 +83,11 @@ public class BlockInformation {
 
     public ItemSettings getItemSettings() {
 		switch (itemSettings) {
-			case ResourceLocation resourceLocation -> {
+			case Identifier resourceLocation -> {
 				return ContentRegistries.ITEM_SETTINGS.getValue(resourceLocation);
 			}
 			case String s -> {
-				ResourceLocation location = ResourceLocation.tryParse(s);
+				Identifier location = Identifier.tryParse(s);
 				return ContentRegistries.ITEM_SETTINGS.getValue(location);
 			}
 			case ItemSettings itemSettings1 -> {

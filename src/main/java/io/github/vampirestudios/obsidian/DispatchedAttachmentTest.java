@@ -24,7 +24,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 public class DispatchedAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, FuncValue> MODULAR_FUNCTION = RegistryEntryAttachment.dispatchedBuilder(
 			BuiltInRegistries.ITEM,
-			ResourceLocation.fromNamespaceAndPath("quilt", "modular_function"),
+			Identifier.fromNamespaceAndPath("quilt", "modular_function"),
 			FuncValue.class, FuncValue.CODECS::get
 	).build();
 
@@ -89,14 +89,14 @@ public class DispatchedAttachmentTest implements ModInitializer {
 	public static final ModularFunctionItem ITEM_6 = register1("modular_item_6");
 
 	private static <V1> ModularFunctionItem register(String name) {
-		var id = ResourceLocation.fromNamespaceAndPath("quilt", name);
+		var id = Identifier.fromNamespaceAndPath("quilt", name);
 		return RegistryExtensions.register(BuiltInRegistries.ITEM, id, new ModularFunctionItem(new Item.Properties()
 				.setId(ResourceKey.create(Registries.ITEM, id))
 		), DispatchedAttachmentTest.MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!"));
 	}
 
 	private static ModularFunctionItem register1(String name) {
-		var id = ResourceLocation.fromNamespaceAndPath("quilt", name);
+		var id = Identifier.fromNamespaceAndPath("quilt", name);
 		return Registry.register(BuiltInRegistries.ITEM, id, new ModularFunctionItem(new Item.Properties()
 				.setId(ResourceKey.create(Registries.ITEM, id))
 		));
@@ -104,7 +104,7 @@ public class DispatchedAttachmentTest implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		MODULAR_FUNCTION.put(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("quilt", "modular_tag_1")),
+		MODULAR_FUNCTION.put(TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("quilt", "modular_tag_1")),
 				new SendMessageFuncValue("Built-in value via tag!"));
 
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(context -> {

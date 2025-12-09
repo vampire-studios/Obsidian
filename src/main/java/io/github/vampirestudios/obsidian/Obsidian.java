@@ -27,7 +27,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -69,10 +69,10 @@ public class Obsidian implements ModInitializer {
 	public static final ResourceKey<? extends Registry<EquipmentAsset>> ROOT_ID = ResourceKey.createRegistryKey(Obsidian.id("obsidian_equipment_asset"));
 
 	public static final RegistryEntryAttachment<net.minecraft.world.level.block.Block, Boolean> BASED =
-			RegistryEntryAttachment.boolBuilder(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath("quilt", "based"))
+			RegistryEntryAttachment.boolBuilder(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath("quilt", "based"))
 					.side(RegistryEntryAttachment.Side.CLIENT).build();
 
-	public static ResourceLocation id(String path) {
+	public static Identifier id(String path) {
 		return Const.id(path);
 	}
 

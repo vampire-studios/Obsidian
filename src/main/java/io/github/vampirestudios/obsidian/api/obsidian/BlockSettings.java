@@ -6,7 +6,7 @@ import io.github.vampirestudios.obsidian.api.MapColors;
 import io.github.vampirestudios.obsidian.api.VanillaSoundEvents;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
@@ -22,7 +22,7 @@ public class BlockSettings {
 
     @SerializedName("sound_group")
     @com.google.gson.annotations.SerializedName("sound_group")
-    public Object soundGroup = ResourceLocation.withDefaultNamespace("stone");
+    public Object soundGroup = Identifier.withDefaultNamespace("stone");
 
     public boolean collidable = true;
     public float hardness = 3.0F;
@@ -30,7 +30,7 @@ public class BlockSettings {
     public boolean randomTicks = false;
     public boolean instant_break = false;
     public float slipperiness = 0.6F;
-    public ResourceLocation drop = ResourceLocation.withDefaultNamespace("stone");
+    public Identifier drop = Identifier.withDefaultNamespace("stone");
     public float velocity_modifier = 1.0F;
     public float jump_velocity_modifier = 1.0F;
     public int luminance = 0;
@@ -57,7 +57,7 @@ public class BlockSettings {
 
     public SoundType getBlockSoundGroup() {
 		switch (soundGroup) {
-			case ResourceLocation resourceLocation -> {
+			case Identifier resourceLocation -> {
 				if (!resourceLocation.getNamespace().equals("minecraft")) {
 					CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.getValue(resourceLocation);
 					assert customSoundGroup != null;
@@ -67,7 +67,7 @@ public class BlockSettings {
 				}
 			}
 			case String s -> {
-				ResourceLocation location = ResourceLocation.tryParse(s);
+				Identifier location = Identifier.tryParse(s);
 				assert location != null;
 				if (!location.getNamespace().equals("minecraft")) {
 					CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.getValue(location);
@@ -124,13 +124,13 @@ public class BlockSettings {
 //		System.out.println("Map: " + propertiesMap);
         BlockSettings settings = new BlockSettings();
         if (propertiesMap.containsKey("parent")) {
-            settings.baseBlockSettings = ContentRegistries.BLOCK_SETTINGS.get(ResourceLocation.tryParse((String) propertiesMap.get("parent")));
+            settings.baseBlockSettings = ContentRegistries.BLOCK_SETTINGS.get(Identifier.tryParse((String) propertiesMap.get("parent")));
         }
         return settings; // Replace with actual construction logic
     }
 
     private BlockSettings getBlockSettingsFromReference(String reference) {
-        ResourceLocation location = ResourceLocation.tryParse(reference);
+        Identifier location = Identifier.tryParse(reference);
         if (location != null) {
             return ContentRegistries.BLOCK_SETTINGS.getValue(location);
         } else {

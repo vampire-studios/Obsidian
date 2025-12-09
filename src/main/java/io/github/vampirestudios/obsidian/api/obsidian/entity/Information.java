@@ -1,17 +1,17 @@
 package io.github.vampirestudios.obsidian.api.obsidian.entity;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Information {
 
-    public ResourceLocation identifier;
+    public Identifier identifier;
     public String name;
     public boolean spawnable;
     public boolean summonable;
-    public ResourceLocation vanilla_entity_type = ResourceLocation.withDefaultNamespace("pig");
+    public Identifier vanilla_entity_type = Identifier.withDefaultNamespace("pig");
     public boolean custom_model;
-    public ResourceLocation textureLocation;
-    public ResourceLocation entityModelPath;
+    public Identifier textureLocation;
+    public Identifier entityModelPath;
 
     public SpawnEgg spawn_egg;
 
@@ -41,21 +41,21 @@ public class Information {
         };
     }*/
 
-    public ResourceLocation getEntityTexture() {
+    public Identifier getEntityTexture() {
         if (custom_model) {
             return textureLocation;
         } else {
             return switch (vanilla_entity_type.toString()) {
-                case "minecraft:pig" -> ResourceLocation.withDefaultNamespace("textures/entity/pig/pig.png");
-                case "minecraft:villager" -> ResourceLocation.withDefaultNamespace("textures/entity/villager/villager.png");
-                case "minecraft:chicken" -> ResourceLocation.withDefaultNamespace("textures/entity/chicken.png");
-                case "minecraft:bear" -> ResourceLocation.withDefaultNamespace("textures/entity/bear/polarbear.png");
-                case "minecraft:squid" -> ResourceLocation.withDefaultNamespace("textures/entity/squid.png");
-                case "minecraft:zombie" -> ResourceLocation.withDefaultNamespace("textures/entity/zombie/zombie.png");
-                case "minecraft:skeleton" -> ResourceLocation.withDefaultNamespace("textures/entity/skeleton/skeleton.png");
-                case "minecraft:fox" -> ResourceLocation.withDefaultNamespace("textures/entity/fox/fox.png");
-                case "minecraft:horse" -> ResourceLocation.withDefaultNamespace("textures/entity/horse/horse_black.png");
-                default -> ResourceLocation.withDefaultNamespace("textures/entity/cow/cow.png");
+                case "minecraft:pig" -> Identifier.withDefaultNamespace("textures/entity/pig/pig.png");
+                case "minecraft:villager" -> Identifier.withDefaultNamespace("textures/entity/villager/villager.png");
+                case "minecraft:chicken" -> Identifier.withDefaultNamespace("textures/entity/chicken.png");
+                case "minecraft:bear" -> Identifier.withDefaultNamespace("textures/entity/bear/polarbear.png");
+                case "minecraft:squid" -> Identifier.withDefaultNamespace("textures/entity/squid.png");
+                case "minecraft:zombie" -> Identifier.withDefaultNamespace("textures/entity/zombie/zombie.png");
+                case "minecraft:skeleton" -> Identifier.withDefaultNamespace("textures/entity/skeleton/skeleton.png");
+                case "minecraft:fox" -> Identifier.withDefaultNamespace("textures/entity/fox/fox.png");
+                case "minecraft:horse" -> Identifier.withDefaultNamespace("textures/entity/horse/horse_black.png");
+                default -> Identifier.withDefaultNamespace("textures/entity/cow/cow.png");
             };
         }
     }

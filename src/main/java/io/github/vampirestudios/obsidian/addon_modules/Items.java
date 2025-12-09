@@ -29,7 +29,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -61,7 +61,7 @@ public class Items implements AddonModule {
 		if (item == null) return;
 
 		try {
-			ResourceLocation identifier = getResourceLocation(item, id, file);
+			Identifier identifier = getResourceLocation(item, id, file);
 			Item.Properties settings = createItemProperties(item).setId(ResourceKey.create(Registries.ITEM, identifier));
 			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 			ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(item);
@@ -70,7 +70,7 @@ public class Items implements AddonModule {
 
 			Item registeredItem = registerItem(expanded, item, identifier, settings, creativeTab);
 
-			System.out.println(STR."Item: \{registeredItem.components()}");
+//			System.out.println(STR."Item: \{registeredItem.components()}");
 
 //			if (item.information.getItemSettings().fuel != null) {
 //				FuelRegistry.INSTANCE.add(registeredItem, item.information.getItemSettings().fuel.duration);
@@ -107,8 +107,8 @@ public class Items implements AddonModule {
 		return item;
 	}
 
-	private ResourceLocation getResourceLocation(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, BasicAddonInfo id, File file) {
-		ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
+	private Identifier getResourceLocation(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, BasicAddonInfo id, File file) {
+		Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
 		item.information.name.id = identifier;
 		return identifier;
 	}
@@ -138,7 +138,7 @@ public class Items implements AddonModule {
 				}
 			}
 
-			System.out.println(STR."JSON: \{item.components.toString()}");
+//			System.out.println(STR."JSON: \{item.components.toString()}");
 		}
 
 		/*if (item.information.getItemSettings().fireproof) {
@@ -155,7 +155,7 @@ public class Items implements AddonModule {
 		// Check for OItemComponents.CREATIVE_TAB first
 		if (item.components != null && item.components.get(OItemComponents.CREATIVE_TAB) != null &&
 				item.components.get(OItemComponents.CREATIVE_TAB).isPresent()) {
-			ResourceLocation tabLocation = (ResourceLocation) Objects.requireNonNull(item.components.get(OItemComponents.CREATIVE_TAB)).orElseThrow();
+			Identifier tabLocation = (Identifier) Objects.requireNonNull(item.components.get(OItemComponents.CREATIVE_TAB)).orElseThrow();
 			creativeTab = ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabLocation);
 		} else if (item.information.getItemSettings().getItemGroup() != null) {
 			creativeTab = item.information.getItemSettings().getItemGroup();
@@ -198,7 +198,7 @@ public class Items implements AddonModule {
         });*/
 	}
 
-	private Item registerItem(RegistryHelperItemExpanded expanded, io.github.vampirestudios.obsidian.api.obsidian.item.Item item, ResourceLocation identifier,
+	private Item registerItem(RegistryHelperItemExpanded expanded, io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Identifier identifier,
 							  Item.Properties settings, ResourceKey<CreativeModeTab> creativeTab) {
 		Item registeredItem;
 		if (item.information.getItemSettings().canPlaceBlock) {
@@ -254,7 +254,7 @@ public class Items implements AddonModule {
 		return item.information.getItemSettings().dyeable || item.information.getItemSettings().getParentSettings().dyeable;
 	}
 
-	private Item registerWearableItem(RegistryHelperItemExpanded expanded, io.github.vampirestudios.obsidian.api.obsidian.item.Item item, ResourceLocation identifier,
+	private Item registerWearableItem(RegistryHelperItemExpanded expanded, io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Identifier identifier,
 									  Item.Properties settings, ResourceKey<CreativeModeTab> creativeTab) {
 		if (item.information.getItemSettings().wearableSlot != null && !item.information.getItemSettings().wearableSlot.isEmpty()) {
 			settings.component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.byName(item.information.getItemSettings().wearableSlot)).build());

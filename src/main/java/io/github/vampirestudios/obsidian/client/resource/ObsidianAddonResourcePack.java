@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.client.resource;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -33,7 +33,7 @@ public class ObsidianAddonResourcePack extends AbstractPackResources {
     }
 
     @Override
-    public IoSupplier<InputStream> getResource(@NotNull PackType var1, @NotNull ResourceLocation var2) {
+    public IoSupplier<InputStream> getResource(@NotNull PackType var1, @NotNull Identifier var2) {
         try {
             return virtualPack.getResource(var1, var2);
         } catch (Throwable throwable) {

@@ -13,7 +13,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -49,7 +49,7 @@ public record RegistryHelper(String modId) {
 
 	public <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(FabricBlockEntityTypeBuilder.Factory<T> blockEntityType, Class<? extends Block> block, String name) {
 		FabricBlockEntityTypeBuilder<T> builder = FabricBlockEntityTypeBuilder.create(blockEntityType, collectBlocks(block));
-		return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(this.modId, name), builder.build());
+		return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Identifier.fromNamespaceAndPath(this.modId, name), builder.build());
 	}
 
 	public <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(FabricBlockEntityTypeBuilder<T> builder, String name) {
@@ -57,11 +57,11 @@ public record RegistryHelper(String modId) {
 	}
 
 	public <T extends Entity> EntityType<T> registerEntity(FabricEntityTypeBuilder<T> builder, String name) {
-		return (EntityType) this.register(BuiltInRegistries.ENTITY_TYPE, name, builder.build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(this.modId(), name))));
+		return (EntityType) this.register(BuiltInRegistries.ENTITY_TYPE, name, builder.build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(this.modId(), name))));
 	}
 
 	public SoundEvent createSoundEvent(String name) {
-		return this.register(BuiltInRegistries.SOUND_EVENT, name, SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(this.modId, name)));
+		return this.register(BuiltInRegistries.SOUND_EVENT, name, SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(this.modId, name)));
 	}
 
 	public SoundEvent registerSoundEvent(SoundEvent soundEvent, String name) {

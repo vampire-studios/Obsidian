@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.ItemDisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -19,7 +19,7 @@ public class Item {
     public UseActions useActions;
     public DataComponentPatch components;
     public List<Object> lore = new ArrayList<>();
-    public Map<ResourceLocation, ResourceLocation> drops = new HashMap<>();
+    public Map<Identifier, Identifier> drops = new HashMap<>();
     public Map<String, List<Map<String, Object>>> events = new HashMap<>();
 
     @SerializedName("menu_config")

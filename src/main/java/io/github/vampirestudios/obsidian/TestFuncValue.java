@@ -19,12 +19,12 @@ package io.github.vampirestudios.obsidian;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public final class TestFuncValue extends FuncValue {
-	public static final ResourceLocation TYPE = ResourceLocation.fromNamespaceAndPath("quilt", "test");
+	public static final Identifier TYPE = ResourceLocation.fromNamespaceAndPath("quilt", "test");
 	public static final MapCodec<TestFuncValue> CODEC = RecordCodecBuilder.mapCodec(instance ->
 			instance.group(ItemStack.CODEC.fieldOf("stack").forGetter(gs -> gs.stack))
 					.apply(instance, TestFuncValue::new));

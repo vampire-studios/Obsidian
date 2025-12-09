@@ -17,6 +17,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.scripting.ScriptManager;
 import io.github.vampirestudios.obsidian.api.scripting.ScriptParser;
 import io.github.vampirestudios.obsidian.api.scripting.ScriptParser.ParamDef;
+import io.github.vampirestudios.obsidian.network.ContentPackSyncManager;
+import io.github.vampirestudios.obsidian.network.ContentPackSyncNetworking;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
@@ -31,7 +33,7 @@ import net.minecraft.commands.arguments.coordinates.*;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
@@ -103,6 +105,7 @@ public class ObsidianAddonLoader {
 	}
 
 	public static void loadObsidianAddons() {
+		ContentPackSyncManager.reset();
 		for (File file : Objects.requireNonNull(OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
 			// Load Packs
 			register(file, "addon.info.pack", "addon.info.json5");
@@ -122,20 +125,30 @@ public class ObsidianAddonLoader {
 			String folderName;
 			String id;
 			String format;
+			String version;
 			if (pack.getConfigPackInfo() instanceof LegacyObsidianAddonInfo legacyObsidianAddonInfo) {
 				name = legacyObsidianAddonInfo.displayName;
 				folderName = legacyObsidianAddonInfo.folderName;
 				id = legacyObsidianAddonInfo.namespace;
 				format = "obsidian";
+				if (legacyObsidianAddonInfo.version != null && !legacyObsidianAddonInfo.version.isEmpty()) {
+					version = legacyObsidianAddonInfo.version;
+				} else {
+					version = String.valueOf(legacyObsidianAddonInfo.addonVersion);
+				}
 			} else {
 				ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) pack.getConfigPackInfo();
 				name = addonInfo.addon.name;
 				folderName = addonInfo.addon.folderName;
 				id = addonInfo.addon.id;
 				format = addonInfo.addon.format;
+				version = addonInfo.addon.version != null ? addonInfo.addon.version : "";
 			}
 
 			Obsidian.LOGGER.info(" - {}", name);
+
+			Path packRoot = Path.of(OBSIDIAN_ADDON_DIRECTORY.getPath(), folderName);
+			ContentPackSyncManager.registerPack(id, version, format, folderName, packRoot);
 
 			String path = OBSIDIAN_ADDON_DIRECTORY.getPath() + "/" + folderName + "/content/" + id;
 			REGISTRY_HELPER = RegistryHelper.createRegistryHelper(id);
@@ -154,7 +167,6 @@ public class ObsidianAddonLoader {
 			} catch (IOException _) {
 			}
 
-			Path packRoot = Path.of(OBSIDIAN_ADDON_DIRECTORY.getPath(), folderName);
 			Path scriptsRoot = packRoot.resolve("scripts");
 			if (java.nio.file.Files.isDirectory(scriptsRoot)) {
 				var runtime = new io.github.vampirestudios.obsidian.scripting.std.ObsPackRuntime(scriptsRoot);
@@ -174,6 +186,7 @@ public class ObsidianAddonLoader {
 		}
 
 		registerCommands();
+		ContentPackSyncNetworking.initializeServerHandlers();
 		// Register all custom commands
 		CommandRegistrationCallback.EVENT.register((disp, _, _) -> {
 			// for each pack-manager pair
@@ -228,12 +241,12 @@ public class ObsidianAddonLoader {
 									}
 									case PLAYER -> {
 										var p = EntityArgument.getPlayer(ctx, name);
-										yield p.getGameProfile().getName();
+										yield p.getGameProfile().name();
 									}
 									case PLAYERS -> {
 										var pls = EntityArgument.getPlayers(ctx, name);
 										yield pls.stream()
-												.map(p2 -> p2.getGameProfile().getName())
+												.map(p2 -> p2.getGameProfile().name())
 												.collect(Collectors.joining(","));
 									}
 									case GAME_MODE -> GameModeArgument.getGameMode(ctx, name).getName();
@@ -348,7 +361,6 @@ public class ObsidianAddonLoader {
 										return 1;
 									})
 							)
-							// /obsidian reload  (reload all)
 							.executes(ctx -> {
 								int total = managers.values().stream()
 										.mapToInt(m -> {
@@ -374,6 +386,16 @@ public class ObsidianAddonLoader {
 								return 1;
 							})
 					)
+					.then(Commands.literal("sync")
+							.executes(ctx -> {
+								boolean dispatched = ContentPackSyncNetworking.broadcastManifest(ctx.getSource().getServer());
+								if (!dispatched) {
+									ctx.getSource().sendFailure(Component.literal("§cNo Obsidian content packs are loaded to sync."));
+									return 0;
+								}
+								ctx.getSource().sendSuccess(() -> Component.literal("§aSent active Obsidian content packs to connected players."), false);
+								return 1;
+							}))
 			);
 		});
 	}
@@ -420,7 +442,7 @@ public class ObsidianAddonLoader {
 		}
 	}
 
-	public static <T> T register(Registry<T> list, String type, ResourceLocation name, T idk) {
+	public static <T> T register(Registry<T> list, String type, Identifier name, T idk) {
 		if (type != null && !type.isEmpty())
 			Obsidian.LOGGER.info("Registered {} {}.", type, name);
 		if (list.get(name).isPresent()) return list.getValue(name);
@@ -428,25 +450,25 @@ public class ObsidianAddonLoader {
 	}
 
 	public static void failedRegistering(String type, String name, Exception e) {
-		failedRegistering(type, ResourceLocation.tryParse(name), e);
+		failedRegistering(type, Identifier.tryParse(name), e);
 	}
 
-	public static void failedRegistering(String type, ResourceLocation name, Exception e) {
+	public static void failedRegistering(String type, Identifier name, Exception e) {
 		Obsidian.LOGGER.error("Failed to register {} {}.", type, name);
 		Obsidian.LOGGER.error(e.getMessage(), e);
 	}
 
-	public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, ResourceKey<net.minecraft.world.item.CreativeModeTab> tab) {
+	public net.minecraft.world.level.block.Block register(Identifier name, net.minecraft.world.level.block.Block block, ResourceKey<net.minecraft.world.item.CreativeModeTab> tab) {
 		Block block1 = register(name, block, new net.minecraft.world.item.Item.Properties());
 		ItemGroupEvents.modifyEntriesEvent(tab).register(entries -> entries.accept(block1));
 		return block1;
 	}
 
-	public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, net.minecraft.world.item.Item.Properties properties) {
+	public net.minecraft.world.level.block.Block register(Identifier name, net.minecraft.world.level.block.Block block, net.minecraft.world.item.Item.Properties properties) {
 		return register(name, block, new BlockItem(block, properties));
 	}
 
-	public net.minecraft.world.level.block.Block register(ResourceLocation name, net.minecraft.world.level.block.Block block, BlockItem item) {
+	public net.minecraft.world.level.block.Block register(Identifier name, net.minecraft.world.level.block.Block block, BlockItem item) {
 		Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK, name, block);
 		Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, name, item);
 		return block;

@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block.events;
 
 import io.github.vampirestudios.obsidian.api.obsidian.block.Event;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class SetBlock extends Event {
-    public ResourceLocation block;
+    public Identifier block;
 }

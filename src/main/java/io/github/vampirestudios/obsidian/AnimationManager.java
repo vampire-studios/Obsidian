@@ -12,7 +12,7 @@ import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.AnimationDefinition.Builder;
 import net.minecraft.client.animation.Keyframe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -24,7 +24,7 @@ public class AnimationManager extends SimpleJsonResourceReloadListener<JsonEleme
     private static final AnimationDefinition FALLBACK_ANIMATION = AnimationDefinition.Builder.withLength(0.0f).build();
     private static final Gson GSON = new GsonBuilder().create();
 
-    private Map<ResourceLocation, AnimationDefinition> animations;
+    private Map<Identifier, AnimationDefinition> animations;
 
     public AnimationManager() {
         super(GSON, "entity_animations");
@@ -32,7 +32,7 @@ public class AnimationManager extends SimpleJsonResourceReloadListener<JsonEleme
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected void apply(Map<Identifier, JsonElement> data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         ImmutableMap.Builder<ResourceLocation, AnimationDefinition> registry = new ImmutableMap.Builder<>();
         data.forEach((resourceLocation, jsonElement) -> {
             try {

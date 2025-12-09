@@ -25,7 +25,7 @@ import io.github.vampirestudios.obsidian.animation.Codecs;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -62,8 +62,8 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 	}
 
 	@Override
-	public ResourceLocation getFabricId() {
-		return ResourceLocation.fromNamespaceAndPath("quilt_entity_models", "entity_model_reloader");
+	public Identifier getFabricId() {
+		return Identifier.fromNamespaceAndPath("quilt_entity_models", "entity_model_reloader");
 	}
 
 	public static class ModelLoader {
@@ -78,13 +78,13 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 		}
 
 		private void loadAnimations() {
-			Map<ResourceLocation, Resource> resources = manager.listResources("model/entity", id -> id.getPath().endsWith(".json"));
-			for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
+			Map<Identifier, Resource> resources = manager.listResources("model/entity", id -> id.getPath().endsWith(".json"));
+			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
 				addModel(entry.getKey(), entry.getValue());
 			}
 		}
 
-		private void addModel(ResourceLocation id, Resource resource) {
+		private void addModel(Identifier id, Resource resource) {
 			BufferedReader reader;
 			try {
 				reader = resource.openAsReader();
@@ -110,7 +110,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloadListener<Dy
 			String path = matcher.group(1);
 			String name = matcher.group(2);
 
-			ResourceLocation modelID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), path);
+			Identifier modelID = Identifier.fromNamespaceAndPath(id.getNamespace(), path);
 			modelData.put(new ModelLayerLocation(modelID, name), result.result().get().getFirst());
 		}
 

@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class DisplayInformation {
 
@@ -28,7 +28,7 @@ public class DisplayInformation {
     public BlockProperty blockState;
 
     public static class Property {
-        public ResourceLocation model;
+        public Identifier model;
         public int x;
         public int y;
         public int z;

@@ -8,7 +8,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatType;
 import net.minecraft.util.valueproviders.FloatProviderType;
@@ -78,8 +78,8 @@ public class JanksonFactory {
 				.registerSerializer(BlockState.class, BlockAndItemSerializers::saveBlockState);
 
 		builder
-				.registerDeserializer(String.class, ResourceLocation.class, (s, m) -> ResourceLocation.parse(s))
-				.registerSerializer(ResourceLocation.class, (i,m)->new JsonPrimitive(i.toString()))
+				.registerDeserializer(String.class, Identifier.class, (s, m) -> Identifier.parse(s))
+				.registerSerializer(Identifier.class, (i,m)->new JsonPrimitive(i.toString()))
 		;
 
 		//All the things you could potentially specify with just a registry ID
@@ -149,12 +149,12 @@ public class JanksonFactory {
 	}
 
 	private static <T> T lookupDeserialize(String s, Registry<T> registry) {
-		return registry.getValue(ResourceLocation.tryParse(s));
+		return registry.getValue(Identifier.tryParse(s));
 	}
 
 	private static <T, U extends T> JsonElement lookupSerialize(T t, Registry<U> registry) {
 		@SuppressWarnings("unchecked") //Widening cast happening because of generic type parameters in the registry class
-		ResourceLocation id = registry.getKey((U) t);
+		Identifier id = registry.getKey((U) t);
 		if (id == null) return JsonNull.INSTANCE;
 		return new JsonPrimitive(id.toString());
 	}

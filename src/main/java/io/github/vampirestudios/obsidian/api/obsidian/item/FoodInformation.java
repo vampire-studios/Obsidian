@@ -1,15 +1,15 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FoodInformation {
 
     public int fullness = 0;
-    public ResourceLocation returnItem;
-    public ResourceLocation foodComponent;
+    public Identifier returnItem;
+    public Identifier foodComponent;
     public boolean drinkable;
-    public ResourceLocation drinkSound = ResourceLocation.withDefaultNamespace("entity.generic.drink");
-    public ResourceLocation eatSound = ResourceLocation.withDefaultNamespace("entity.generic.eat");
+    public Identifier drinkSound = Identifier.withDefaultNamespace("entity.generic.drink");
+    public Identifier eatSound = Identifier.withDefaultNamespace("entity.generic.eat");
     public int use_time;
 
 }

@@ -1,16 +1,16 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import java.util.Map;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ItemGroup {
     public NameInformation name;
-    public ResourceLocation icon;
-    public Map<String, ResourceLocation> tags;
-    public ResourceLocation[] blocks;
-    public ResourceLocation[] items;
-    public ResourceLocation[] opBlocks;
-    public ResourceLocation[] opItems;
-    public Map<String, ResourceLocation> featureSetItems;
-    public Map<String, ResourceLocation> featureSetBlocks;
+    public Identifier icon;
+    public Map<String, Identifier> tags;
+    public Identifier[] blocks;
+    public Identifier[] items;
+    public Identifier[] opBlocks;
+    public Identifier[] opItems;
+    public Map<String, Identifier> featureSetItems;
+    public Map<String, Identifier> featureSetBlocks;
 }

@@ -20,7 +20,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.SimpleStringDeserializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,7 +35,7 @@ public class BedrockAddonLoader {
 
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Obsidian: Bedrock"));
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(ResourceLocation.class, (SimpleStringDeserializer<?>) ResourceLocation::parse)
+            .registerTypeAdapter(Identifier.class, (SimpleStringDeserializer<?>) Identifier::parse)
             .setPrettyPrinting().create();
     public static final File BEDROCK_ADDON_DIRECTORY = new File(FabricLoader.getInstance().getGameDir().toFile(), "bedrock_addons");
     public static final Map<IBedrockAddon, String> BEDROCK_ADDONS = new HashMap<>();
@@ -186,7 +186,7 @@ public class BedrockAddonLoader {
 //        }
     }
 
-    public static <T> T register(Registry<T> list, String type, ResourceLocation name, T idk) {
+    public static <T> T register(Registry<T> list, String type, Identifier name, T idk) {
         Obsidian.BEDROCK_LOGGER.info("Registered {} {}.", type, name);
         if (list.get(name) != null) return list.getValue(name);
         else return Registry.register(list, name, idk);

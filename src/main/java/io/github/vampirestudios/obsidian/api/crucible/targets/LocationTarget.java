@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.api.crucible.targets;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 
@@ -103,7 +103,7 @@ public abstract class LocationTarget extends SkillTarget<Vec3> {
 					}
 					break;
 				case '*':
-					ResourceKey<Block> tagKey = ResourceKey.create(Registries.BLOCK, ResourceLocation.parse(wantType.toLowerCase().substring(1)));
+					ResourceKey<Block> tagKey = ResourceKey.create(Registries.BLOCK, Identifier.parse(wantType.toLowerCase().substring(1)));
 					return mat.defaultBlockState().is(tagKey);
 				case '@':
 					if (mat.toString().startsWith(wantType.substring(1))) {
@@ -111,7 +111,7 @@ public abstract class LocationTarget extends SkillTarget<Vec3> {
 					}
 					break;
 				default:
-					if (mat == BuiltInRegistries.BLOCK.getValue(ResourceLocation.parse(wantType.toLowerCase(Locale.ROOT)))) {
+					if (mat == BuiltInRegistries.BLOCK.getValue(Identifier.parse(wantType.toLowerCase(Locale.ROOT)))) {
 						return true;
 					}
 			}
