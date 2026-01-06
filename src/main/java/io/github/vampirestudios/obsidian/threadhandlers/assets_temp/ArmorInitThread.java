@@ -7,12 +7,12 @@ import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.server.packs.PackType;
 
 public class ArmorInitThread implements Runnable {
     private final ArmorItem armor;
-    private HumanoidModel<PlayerRenderState> armorModel;
+    private HumanoidModel<AvatarRenderState> armorModel;
     private final RuntimeResourcePack resourcePack;
 
     public ArmorInitThread(RuntimeResourcePack resourcePack, ArmorItem item) {
@@ -82,7 +82,7 @@ public class ArmorInitThread implements Runnable {
                         armorModel.leftLeg.visible = true;
                     }
                 }
-                ResourceLocation texture;
+                Identifier texture;
                 if (slot == EquipmentSlot.LEGS) texture = armor.material.texture2;
                 else texture = armor.material.texture1;
                 ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, armorModel, texture);

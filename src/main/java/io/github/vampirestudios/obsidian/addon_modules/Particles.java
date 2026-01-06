@@ -5,17 +5,15 @@ import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.particle.Particle;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.ParticleImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,14 +30,14 @@ public class Particles implements AddonModule {
         Particle particle = BaseGson.GSON.fromJson(new FileReader(file), Particle.class);
         try {
             if (particle == null) return;
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     particle.id,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (particle.id == null) particle.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (particle.id == null) particle.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             SimpleParticleType particleType = Registry.register(BuiltInRegistries.PARTICLE_TYPE, identifier,
                     FabricParticleTypes.simple(false));
-            ParticleFactoryRegistry.getInstance().register(particleType, provider -> new ParticleImpl.Factory(particle, provider));
+//            ParticleFactoryRegistry.getInstance().register(particleType, provider -> new ParticleImpl.Factory(particle, provider));
             register(ContentRegistries.PARTICLES, "particle", identifier, particle);
         } catch (Exception e) {
             failedRegistering("particle", file.getName(), e);

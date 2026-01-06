@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemSettings;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,7 +23,7 @@ public class ItemProperties implements AddonModule {
 		ItemSettings blockSettings = BaseGson.GSON.fromJson(new FileReader(file), ItemSettings.class);
 		try {
 			if (blockSettings == null) return;
-			ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 			register(ContentRegistries.ITEM_SETTINGS, "item_properties", identifier, blockSettings);
 		} catch (Exception e) {
 			failedRegistering("item_properties", file.getName(), e);

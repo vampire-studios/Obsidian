@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FoodComponent {
 
-	public ResourceLocation id;
+	public Identifier id;
 	public int hunger = 4;
 	public float saturation = 8.0F;
 	public boolean can_always_eat = false;

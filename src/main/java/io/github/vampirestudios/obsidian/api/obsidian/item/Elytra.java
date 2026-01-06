@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Elytra extends Item {
-    public ResourceLocation texture;
+    public Identifier texture;
 }

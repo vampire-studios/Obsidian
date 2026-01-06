@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -18,7 +18,7 @@ public class DyableBlockEntity extends BlockEntity {
 
     public int dyeColor;
 
-    public DyableBlockEntity(ResourceLocation id, BlockPos pos, BlockState state) {
+    public DyableBlockEntity(Identifier id, BlockPos pos, BlockState state) {
         super(BuiltInRegistries.BLOCK_ENTITY_TYPE.getValue(Utils.appendToPath(id, "_be")), pos, state);
         this.dyeColor = 0xFFFFFFFF;
     }
@@ -27,7 +27,7 @@ public class DyableBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         this.setDyeColor(input.getIntOr("color", -1));
-        if (this.hasLevel() && this.level.isClientSide) this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(),
+        if (this.hasLevel() && this.level.isClientSide()) this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
     }
 

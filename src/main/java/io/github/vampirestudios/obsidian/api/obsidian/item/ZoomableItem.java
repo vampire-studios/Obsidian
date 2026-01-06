@@ -11,7 +11,7 @@ import io.github.ennuil.libzoomer.api.modifiers.ZoomDivisorMouseModifier;
 import io.github.ennuil.libzoomer.api.overlays.SpyglassZoomOverlay;
 import io.github.ennuil.libzoomer.api.transitions.InstantTransitionMode;
 import io.github.ennuil.libzoomer.api.transitions.SmoothTransitionMode;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ZoomableItem extends Item {
 
@@ -20,7 +20,7 @@ public class ZoomableItem extends Item {
     public static class ZoomInformation {
         public float zoom_length;
         public boolean instant_zoom;
-        public ResourceLocation zoomOverlay;
+        public Identifier zoomOverlay;
         public String modifier;
 
         public TransitionMode getTransitionMode() {

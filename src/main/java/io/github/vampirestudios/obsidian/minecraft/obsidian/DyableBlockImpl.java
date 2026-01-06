@@ -5,7 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.functions.CommandFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -27,13 +27,13 @@ public class DyableBlockImpl extends BaseEntityBlock {
     public static final MapCodec<DyableBlockImpl> CODEC = simpleCodec(DyableBlockImpl::new);
 
     public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
-    private ResourceLocation id;
+    private Identifier id;
 
     public DyableBlockImpl(Properties properties) {
         super(properties);
     }
 
-    public DyableBlockImpl(ResourceLocation id, io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
+    public DyableBlockImpl(Identifier id, io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
         super(settings);
         this.id = id;
         this.block = block;
@@ -113,7 +113,7 @@ public class DyableBlockImpl extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
-        if (!world.isClientSide && block.functions.random_display_tick.predicate.matches()) {
+        if (!world.isClientSide() && block.functions.random_display_tick.predicate.matches()) {
             Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.random_display_tick.function_file);
             function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
         }

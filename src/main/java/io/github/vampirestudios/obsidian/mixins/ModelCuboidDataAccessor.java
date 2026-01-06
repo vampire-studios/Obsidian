@@ -5,7 +5,7 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -38,10 +38,10 @@ public interface ModelCuboidDataAccessor {
 	String getComment();
 
 	@Accessor
-	Vector3f getOrigin();
+	Vector3fc getOrigin();
 
 	@Accessor
-	Vector3f getDimensions();
+	Vector3fc getDimensions();
 
 	@Accessor
 	CubeDeformation getGrow();

@@ -6,10 +6,10 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ProgressBar extends AbstractWidget {
-    private final ResourceLocation progressTexture;
+    private final Identifier progressTexture;
     private double progress;  // Progress is a value between 0.0 (empty) and 1.0 (full)
 
     public ProgressBar(GUI.Widget widget) {

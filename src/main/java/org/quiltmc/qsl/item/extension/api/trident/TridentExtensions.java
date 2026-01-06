@@ -1,9 +1,9 @@
 package org.quiltmc.qsl.item.extension.api.trident;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface TridentExtensions {
     boolean useVanillaRenderer();
-    ResourceLocation getRenderTexture();
+    Identifier getRenderTexture();
 
 }

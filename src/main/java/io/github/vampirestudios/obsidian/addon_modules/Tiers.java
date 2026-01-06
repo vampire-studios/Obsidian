@@ -8,7 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.Tier;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ToolMaterial;
 
@@ -26,7 +26,7 @@ public class Tiers implements AddonModule {
 		Tier tier = BaseGson.GSON.fromJson(new FileReader(file), Tier.class);
 		try {
 			if (tier == null) return;
-			ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			// Create the ToolMaterial instance
 			ToolMaterial toolMaterial = new ToolMaterial(

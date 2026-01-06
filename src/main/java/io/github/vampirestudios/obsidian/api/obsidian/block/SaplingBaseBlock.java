@@ -35,7 +35,7 @@ public class SaplingBaseBlock extends VegetationBlock implements BonemealableBlo
 	}
 
     public SaplingBaseBlock(Block block) {
-        super(BlockBehaviour.Properties.of().noCollission().randomTicks().instabreak().sound(SoundType.GRASS));
+        super(BlockBehaviour.Properties.of().noCollision().randomTicks().instabreak().sound(SoundType.GRASS));
 		this.block = block;
 		this.registerDefaultState(this.stateDefinition.any().setValue(STAGE, 0));
     }

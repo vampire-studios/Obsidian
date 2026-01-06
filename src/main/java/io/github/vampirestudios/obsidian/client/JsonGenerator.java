@@ -4,18 +4,18 @@ import com.google.gson.JsonElement;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class JsonGenerator {
 	private final Logger console;
-	private final Map<ResourceLocation, JsonElement> map;
+	private final Map<Identifier, JsonElement> map;
 
-	public JsonGenerator(Logger c, Map<ResourceLocation, JsonElement> m) {
+	public JsonGenerator(Logger c, Map<Identifier, JsonElement> m) {
 		console = c;
 		map = m;
 	}
 
-	public void json(ResourceLocation id, JsonElement json) {
+	public void json(Identifier id, JsonElement json) {
 		map.put(id, json);
 		console.info("Generated " + id + ": " + json);
 	}

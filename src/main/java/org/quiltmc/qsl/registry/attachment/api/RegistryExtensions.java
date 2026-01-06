@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.registry.attachment.api;
 
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Extensions for working with {@link Registry}s.
@@ -36,7 +36,7 @@ public final class RegistryExtensions {
 	 * @param <V1>     type of the attached value
 	 * @return the newly registered entry
 	 */
-	public static <R, T extends R, V1> T register(Registry<R> registry, ResourceLocation id, T entry,
+	public static <R, T extends R, V1> T register(Registry<R> registry, Identifier id, T entry,
 												  RegistryEntryAttachment<R, V1> attach1, V1 value1) {
 		Registry.register(registry, id, entry);
 		attach1.put(entry, value1);
@@ -59,7 +59,7 @@ public final class RegistryExtensions {
 	 * @param <V2>     type of the second attached value
 	 * @return the newly registered entry
 	 */
-	public static <R, T extends R, V1, V2> T register(Registry<R> registry, ResourceLocation id, T entry,
+	public static <R, T extends R, V1, V2> T register(Registry<R> registry, Identifier id, T entry,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1,
 			RegistryEntryAttachment<R, V2> attach2, V2 value2) {
 		Registry.register(registry, id, entry);
@@ -87,7 +87,7 @@ public final class RegistryExtensions {
 	 * @param <V3>     type of the third attached value
 	 * @return the newly registered entry
 	 */
-	public static <R, T extends R, V1, V2, V3> T register(Registry<R> registry, ResourceLocation id, T entry,
+	public static <R, T extends R, V1, V2, V3> T register(Registry<R> registry, Identifier id, T entry,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1,
 			RegistryEntryAttachment<R, V2> attach2, V2 value2,
 			RegistryEntryAttachment<R, V3> attach3, V3 value3) {
@@ -120,7 +120,7 @@ public final class RegistryExtensions {
 	 * @param <V4>     type of the fourth attached value
 	 * @return the newly registered entry
 	 */
-	public static <R, T extends R, V1, V2, V3, V4> T register(Registry<R> registry, ResourceLocation id, T entry,
+	public static <R, T extends R, V1, V2, V3, V4> T register(Registry<R> registry, Identifier id, T entry,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1,
 			RegistryEntryAttachment<R, V2> attach2, V2 value2,
 			RegistryEntryAttachment<R, V3> attach3, V3 value3,

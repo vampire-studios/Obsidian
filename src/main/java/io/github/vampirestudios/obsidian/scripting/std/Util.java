@@ -37,7 +37,7 @@ final class Util {
 			Object v = vars.get(key);
 			if (v == null && key.endsWith(".name")) {
 				Object base = vars.get(key.substring(0, key.length()-5));
-				if (base instanceof net.minecraft.server.level.ServerPlayer sp) v = sp.getGameProfile().getName();
+				if (base instanceof net.minecraft.server.level.ServerPlayer sp) v = sp.getGameProfile().name();
 			}
 			out.append(v == null ? "" : v.toString());
 			i = b+1;

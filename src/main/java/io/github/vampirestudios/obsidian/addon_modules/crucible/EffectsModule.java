@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,8 +50,8 @@ public class EffectsModule implements AddonModule {
                     continue;
                 }
 
-                // Set the ResourceLocation for the effect
-                ResourceLocation effectId = ResourceLocation.fromNamespaceAndPath(id.modId(), effectName.toLowerCase(Locale.ROOT));
+                // Set the Identifier for the effect
+                Identifier effectId = Identifier.fromNamespaceAndPath(id.modId(), effectName.toLowerCase(Locale.ROOT));
                 effect.setId(effectId);
 
                 // Register the effect in the registry

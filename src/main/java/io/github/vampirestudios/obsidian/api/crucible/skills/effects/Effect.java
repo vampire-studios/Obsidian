@@ -1,16 +1,16 @@
 package io.github.vampirestudios.obsidian.api.crucible.skills.effects;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 public abstract class Effect {
-    private ResourceLocation id;
+    private Identifier id;
 
-    public void setId(ResourceLocation id) {
+    public void setId(Identifier id) {
         this.id = id;
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id;
     }
 

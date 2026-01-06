@@ -22,7 +22,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 
@@ -30,21 +30,21 @@ import java.util.Optional;
  * The class responsible for managing {@link EnchantingBooster}s.
  */
 public class EnchantingBoosters {
-	private static final BiMap<ResourceLocation, EnchantingBoosterType> TYPES = HashBiMap.create();
+	private static final BiMap<Identifier, EnchantingBoosterType> TYPES = HashBiMap.create();
 
 	/**
 	 * The codec for {@link EnchantingBoosterType}s.
 	 */
-	public static Codec<EnchantingBoosterType> TYPE_CODEC = ResourceLocation.CODEC.flatXmap(id -> {
+	public static Codec<EnchantingBoosterType> TYPE_CODEC = Identifier.CODEC.flatXmap(id -> {
 		EnchantingBoosterType type = TYPES.get(id);
 		return type != null ? DataResult.success(type) : DataResult.error(() -> STR."Unknown enchanting booster type: \{id}");
 	}, type -> {
-		ResourceLocation identifier = TYPES.inverse().get(type);
+		Identifier identifier = TYPES.inverse().get(type);
 		return identifier != null ? DataResult.success(identifier) : DataResult.error(() -> "Unknown enchanting booster type");
 	});
 
-	private static final Codec<Either<Either<Float, ResourceLocation>, EnchantingBooster>> EITHER_CODEC = Codec.either(
-			Codec.either(Codec.FLOAT, ResourceLocation.CODEC),
+	private static final Codec<Either<Either<Float, Identifier>, EnchantingBooster>> EITHER_CODEC = Codec.either(
+			Codec.either(Codec.FLOAT, Identifier.CODEC),
 			TYPE_CODEC.dispatch(EnchantingBooster::getType, EnchantingBoosterType::codec)
 	);
 	/**
@@ -83,7 +83,7 @@ public class EnchantingBoosters {
 	 * @param codec the codec for the booster
 	 * @return the type for the booster
 	 */
-	public static EnchantingBoosterType register(ResourceLocation id, MapCodec<? extends EnchantingBooster> codec) {
+	public static EnchantingBoosterType register(Identifier id, MapCodec<? extends EnchantingBooster> codec) {
 		var type = new EnchantingBoosterType(codec, Optional.empty());
 		return register(id, type);
 	}
@@ -95,7 +95,7 @@ public class EnchantingBoosters {
 	 * @param type the type for the booster
 	 * @return {@code type}
 	 */
-	public static EnchantingBoosterType register(ResourceLocation id, EnchantingBoosterType type) {
+	public static EnchantingBoosterType register(Identifier id, EnchantingBoosterType type) {
 		if (TYPES.containsKey(id)) {
 			throw new IllegalArgumentException(STR."\{id} already used as name");
 		} else if (TYPES.containsValue(type)) {

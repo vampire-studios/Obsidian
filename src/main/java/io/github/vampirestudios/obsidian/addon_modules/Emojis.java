@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.emoji.Emoji;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -24,11 +24,11 @@ public class Emojis implements AddonModule {
         try {
             if (emoji == null) return;
 
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     emoji.name,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (emoji.name == null) emoji.name = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (emoji.name == null) emoji.name = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 //            EmojiType.emojiCodes.add(new EmojiCode(emoji.code, emoji.emoji));
             register(ContentRegistries.EMOJIS, "emoji", identifier, emoji);

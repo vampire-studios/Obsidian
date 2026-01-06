@@ -28,13 +28,12 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.equipment.Equippable;
@@ -61,7 +60,7 @@ public class Items implements AddonModule {
 		if (item == null) return;
 
 		try {
-			Identifier identifier = getResourceLocation(item, id, file);
+			Identifier identifier = getIdentifier(item, id, file);
 			Item.Properties settings = createItemProperties(item).setId(ResourceKey.create(Registries.ITEM, identifier));
 			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 			ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(item);
@@ -107,7 +106,7 @@ public class Items implements AddonModule {
 		return item;
 	}
 
-	private Identifier getResourceLocation(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, BasicAddonInfo id, File file) {
+	private Identifier getIdentifier(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, BasicAddonInfo id, File file) {
 		Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
 		item.information.name.id = identifier;
 		return identifier;
@@ -181,7 +180,7 @@ public class Items implements AddonModule {
 					// Create an ItemStack for the item to be dropped
 					ItemStack dropStack = new ItemStack(shearDrops.get(entity.getType()), 1);
 					entity.spawnAtLocation((ServerLevel) level, dropStack);
-					player.getItemInHand(hand).hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+					player.getItemInHand(hand).hurtAndBreak(1, player, hand.asEquipmentSlot());
 					return InteractionResult.SUCCESS;
 				}
 				return InteractionResult.PASS;

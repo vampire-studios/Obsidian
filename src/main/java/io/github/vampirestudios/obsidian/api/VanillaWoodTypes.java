@@ -3,31 +3,31 @@ package io.github.vampirestudios.obsidian.api;
 import com.google.common.collect.ImmutableMap;
 import io.github.vampirestudios.obsidian.addon_modules.ContentUtils;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
 import java.util.Map;
 
 public class VanillaWoodTypes {
-    public static final Map<ResourceLocation, WoodType> SOUND_TYPES = ImmutableMap.<ResourceLocation, WoodType>builder()
-            .put(ResourceLocation.withDefaultNamespace("oak"), WoodType.OAK)
-            .put(ResourceLocation.withDefaultNamespace("spruce"), WoodType.SPRUCE)
-            .put(ResourceLocation.withDefaultNamespace("birch"), WoodType.BIRCH)
-            .put(ResourceLocation.withDefaultNamespace("acacia"), WoodType.ACACIA)
-            .put(ResourceLocation.withDefaultNamespace("cherry"), WoodType.CHERRY)
-            .put(ResourceLocation.withDefaultNamespace("jungle"), WoodType.JUNGLE)
-            .put(ResourceLocation.withDefaultNamespace("dark_oak"), WoodType.DARK_OAK)
-            .put(ResourceLocation.withDefaultNamespace("crimson"), WoodType.CRIMSON)
-            .put(ResourceLocation.withDefaultNamespace("warped"), WoodType.WARPED)
-            .put(ResourceLocation.withDefaultNamespace("mangrove"), WoodType.MANGROVE)
-            .put(ResourceLocation.withDefaultNamespace("bamboo"), WoodType.BAMBOO)
+    public static final Map<Identifier, WoodType> SOUND_TYPES = ImmutableMap.<Identifier, WoodType>builder()
+            .put(Identifier.withDefaultNamespace("oak"), WoodType.OAK)
+            .put(Identifier.withDefaultNamespace("spruce"), WoodType.SPRUCE)
+            .put(Identifier.withDefaultNamespace("birch"), WoodType.BIRCH)
+            .put(Identifier.withDefaultNamespace("acacia"), WoodType.ACACIA)
+            .put(Identifier.withDefaultNamespace("cherry"), WoodType.CHERRY)
+            .put(Identifier.withDefaultNamespace("jungle"), WoodType.JUNGLE)
+            .put(Identifier.withDefaultNamespace("dark_oak"), WoodType.DARK_OAK)
+            .put(Identifier.withDefaultNamespace("crimson"), WoodType.CRIMSON)
+            .put(Identifier.withDefaultNamespace("warped"), WoodType.WARPED)
+            .put(Identifier.withDefaultNamespace("mangrove"), WoodType.MANGROVE)
+            .put(Identifier.withDefaultNamespace("bamboo"), WoodType.BAMBOO)
             .build();
 
     public static void init() {
         /* nothing to do */
     }
 
-    public static WoodType get(ResourceLocation woodType) {
+    public static WoodType get(Identifier woodType) {
         WoodType woodType1 = SOUND_TYPES.get(woodType);
         if (WoodType.values().toList().contains(woodType1)) {
             return woodType1;

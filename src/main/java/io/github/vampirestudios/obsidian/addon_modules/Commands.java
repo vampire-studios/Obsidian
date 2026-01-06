@@ -15,7 +15,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.File;
@@ -74,8 +74,8 @@ public class Commands implements AddonModule {
             if (command == null || json.isEmpty()) return;
             String finalJson = json;
 
-            ResourceLocation identifier = getCommandIdentifier(command, id, file);
-            if (command.name == null) command.name = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier identifier = getCommandIdentifier(command, id, file);
+            if (command.name == null) command.name = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             CommandRegistrationCallback.EVENT.register((dispatcher, context, environment) -> parseNodes(dispatcher, context, environment, finalJson));
             register(ContentRegistries.COMMANDS, "command", identifier, command);
@@ -84,7 +84,7 @@ public class Commands implements AddonModule {
         }
     }
 
-//    private void registerCommand(Command.CommandNode command, ResourceLocation identifier) {
+//    private void registerCommand(Command.CommandNode command, Identifier identifier) {
 //        CommandRegistrationCallback.EVENT.register((dispatcher, context, environment) ->
 //                parseNodes(dispatcher, context, environment, command));
 //        register(ContentRegistries.COMMANDS, "command", identifier, command);
@@ -94,9 +94,9 @@ public class Commands implements AddonModule {
         return BaseGson.GSON.fromJson(new FileReader(file), Command.CommandNode.class);
     }
 
-    private ResourceLocation getCommandIdentifier(Command.CommandNode command, BasicAddonInfo id, File file) {
+    private Identifier getCommandIdentifier(Command.CommandNode command, BasicAddonInfo id, File file) {
         return Objects.requireNonNullElseGet(command.name,
-                () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "")));
+                () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "")));
     }
 
     public static String readFileAsString(String file) throws IOException {
@@ -157,7 +157,7 @@ public class Commands implements AddonModule {
             node.literals.forEach((_name, _node) -> parse(parent, buildContext, environment, _node, _name, args));
         }
         if (node.op_level != null) {
-            parent.requires((ctx) -> ctx.hasPermission(node.op_level));
+            parent.requires(net.minecraft.commands.Commands.hasPermission(node.getPermissionFromInt()));
         }
         if (node.executes != null) {
             parent.executes((ctx) -> {
@@ -170,7 +170,7 @@ public class Commands implements AddonModule {
 
                 for (String command : node.executes) {
                     String formatted = sub.replace(command);
-                    CommandSourceStack source = ctx.getSource().withPermission(node.op_level);
+                    CommandSourceStack source = ctx.getSource().withPermission(node.getPermissionSetFromInt());
                     source.getServer().getCommands()
                             .getDispatcher().execute(formatted, source);
                 }

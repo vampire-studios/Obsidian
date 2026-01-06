@@ -18,10 +18,10 @@ package io.github.vampirestudios.obsidian;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -39,7 +39,7 @@ public final class ResourceLoaderEvents {
 	/**
 	 * An event indicating the start of the reloading of data packs on a Minecraft server.
 	 * <p>
-	 * This event should not be used to load resources, use {@link ResourceManagerHelper#registerReloadListener(IdentifiableResourceReloadListener)} instead.
+	 * This event should not be used to load resources, use {@link net.fabricmc.fabric.api.resource.v1.ResourceLoader#registerReloader(Identifier, PreparableReloadListener)}instead.
 	 */
 	public static final Event<StartDataPackReload> START_DATA_PACK_RELOAD = EventFactory.createArrayBacked(StartDataPackReload.class,
 			callbacks -> context -> {
@@ -51,7 +51,7 @@ public final class ResourceLoaderEvents {
 	/**
 	 * An event indicating the end of the reloading of data packs on a Minecraft server.
 	 * <p>
-	 * This event should not be used to load resources, use {@link ResourceManagerHelper#registerReloadListener(IdentifiableResourceReloadListener)} instead.
+	 * This event should not be used to load resources, use {@link net.fabricmc.fabric.api.resource.v1.ResourceLoader#registerReloader(Identifier, PreparableReloadListener)} instead.
 	 */
 	public static final Event<EndDataPackReload> END_DATA_PACK_RELOAD = EventFactory.createArrayBacked(EndDataPackReload.class,
 			callbacks -> context -> {

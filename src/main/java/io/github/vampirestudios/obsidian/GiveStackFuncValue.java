@@ -24,7 +24,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public final class GiveStackFuncValue extends FuncValue {
-	public static final Identifier TYPE = ResourceLocation.fromNamespaceAndPath("quilt", "give_stack");
+	public static final Identifier TYPE = Identifier.fromNamespaceAndPath("quilt", "give_stack");
 	public static final MapCodec<GiveStackFuncValue> CODEC = RecordCodecBuilder.mapCodec(instance ->
 			instance.group(ItemStack.CODEC.fieldOf("stack").forGetter(gs -> gs.stack))
 					.apply(instance, GiveStackFuncValue::new));

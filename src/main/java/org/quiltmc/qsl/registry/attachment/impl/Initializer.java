@@ -18,7 +18,7 @@ package org.quiltmc.qsl.registry.attachment.impl;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.ApiStatus;
@@ -36,8 +36,8 @@ public final class Initializer implements ModInitializer {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("QuiltRegistryEntryAttachment");
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(NAMESPACE, path);
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(NAMESPACE, path);
 	}
 
 	private static MinecraftServer server;

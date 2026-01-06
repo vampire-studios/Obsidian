@@ -20,7 +20,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -35,7 +35,7 @@ public record ConstantBooster(float value) implements EnchantingBooster {
 					Codec.FLOAT.fieldOf("value").forGetter(ConstantBooster::value)
 			).apply(instance, ConstantBooster::new)
 	);
-	public static EnchantingBoosterType TYPE = EnchantingBoosters.register(ResourceLocation.fromNamespaceAndPath("quilt", "constant"), CODEC);
+	public static EnchantingBoosterType TYPE = EnchantingBoosters.register(Identifier.fromNamespaceAndPath("quilt", "constant"), CODEC);
 
 	@Override
 	public float getEnchantingBoost(Level world, BlockState state, BlockPos pos) {

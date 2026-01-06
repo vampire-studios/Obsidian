@@ -10,8 +10,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -31,9 +31,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class EventActionHandler {
 
@@ -61,15 +64,15 @@ public class EventActionHandler {
 
             boolean shouldExecute = false;
             if (actionConfig.containsKey("blocks")) {
-                List<ResourceLocation> blocks = ((List<String>) actionConfig.get("blocks")).stream()
-                        .map(ResourceLocation::tryParse).toList();
+                List<Identifier> blocks = ((List<String>) actionConfig.get("blocks")).stream()
+                        .map(Identifier::tryParse).toList();
                 shouldExecute = blocks.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()));
             }
 
             if (actionConfig.containsKey("tags")) {
                 List<String> tags = (List<String>) actionConfig.get("tags");
                 for (String tag : tags) {
-                    if (state.is(TagKey.create(Registries.BLOCK, ResourceLocation.tryParse(tag)))) {
+                    if (state.is(TagKey.create(Registries.BLOCK, Identifier.tryParse(tag)))) {
                         shouldExecute = true;
                         break;
                     }
@@ -119,9 +122,9 @@ public class EventActionHandler {
                     executeMiningInRadius(miningEntity, pos, radius);
                 }
                 if (minecraftItem.getDefaultInstance().has(OItemComponents.MINING_AREA)) {
-                    Vector3f vector3f = stack.get(OItemComponents.MINING_AREA);
+                    Vector3fc vector3f = stack.get(OItemComponents.MINING_AREA);
 					assert vector3f != null;
-					executeMiningInArea(miningEntity, pos, (int) vector3f.x, (int) vector3f.y, (int) vector3f.z);
+					executeMiningInArea(miningEntity, pos, (int) vector3f.x(), (int) vector3f.y(), (int) vector3f.z());
                 }
 
                 handleEventActions(miningEntity, null, action, actionConfig);
@@ -261,7 +264,7 @@ public class EventActionHandler {
         int duration = ((Number) actionConfig.get("duration")).intValue();
         int amplifier = ((Number) actionConfig.get("amplifier")).intValue();
         player.addEffect(new MobEffectInstance(
-                BuiltInRegistries.MOB_EFFECT.getOrThrow(ResourceKey.create(Registries.MOB_EFFECT, ResourceLocation.parse(effect))),
+                BuiltInRegistries.MOB_EFFECT.getOrThrow(ResourceKey.create(Registries.MOB_EFFECT, Identifier.parse(effect))),
                 duration,
                 amplifier
         ));
@@ -274,7 +277,7 @@ public class EventActionHandler {
 
     private static void playSoundAction(Player player, Map<String, Object> actionConfig) {
         String soundId = (String) actionConfig.get("sound");
-        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.tryParse(soundId));
+        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.tryParse(soundId));
         float volume = ((Number) actionConfig.get("volume")).floatValue();
         float pitch = ((Number) actionConfig.get("pitch")).floatValue();
         player.level().playSound(player, player.getX(), player.getY(), player.getZ(), soundEvent, SoundSource.PLAYERS, volume, pitch);
@@ -292,7 +295,7 @@ public class EventActionHandler {
         // Note: ParticleRegistry should be defined to handle custom particles
         for (int i = 0; i < count; i++) {
             player.level().addParticle((ParticleOptions) BuiltInRegistries.PARTICLE_TYPE.getOrThrow(ResourceKey.create(Registries.PARTICLE_TYPE,
-                            ResourceLocation.parse(particleId)
+                            Identifier.parse(particleId)
             )), player.getX() + offsetX + i, player.getY() + offsetY + i, player.getZ() + offsetZ + i,
                     speedX + i, speedY + i, speedZ + i
             );
@@ -301,7 +304,7 @@ public class EventActionHandler {
 
     private static void modifyAttributeAction(Player player, Map<String, Object> actionConfig) {
         // Example: modify speed attribute
-        ResourceLocation name = ResourceLocation.tryParse((String) actionConfig.get("id"));
+        Identifier name = Identifier.tryParse((String) actionConfig.get("id"));
         String attribute = (String) actionConfig.get("attribute");
         double amount = ((Number) actionConfig.get("amount")).doubleValue();
         AttributeModifier.Operation operation = switch (((String) actionConfig.get("operation"))) {
@@ -310,14 +313,14 @@ public class EventActionHandler {
             case "add_multiplied_total" -> AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
 			default -> throw new IllegalStateException(STR."Unexpected value: \{actionConfig.get("operation")}");
 		};
-        player.getAttribute(BuiltInRegistries.ATTRIBUTE.getOrThrow(ResourceKey.create(Registries.ATTRIBUTE, ResourceLocation.parse(attribute))))
+        player.getAttribute(BuiltInRegistries.ATTRIBUTE.getOrThrow(ResourceKey.create(Registries.ATTRIBUTE, Identifier.parse(attribute))))
                 .addOrUpdateTransientModifier(new AttributeModifier(name, amount, operation));
     }
 
     private static void executeCommandAction(Player player, Map<String, Object> actionConfig) {
         if (player instanceof ServerPlayer serverPlayer) {
             String command = (String) actionConfig.get("command");
-            serverPlayer.getServer().getCommands().performPrefixedCommand(serverPlayer.createCommandSourceStack(), command);
+            serverPlayer.level().getServer().getCommands().performPrefixedCommand(serverPlayer.createCommandSourceStack(), command);
         }
     }
 
@@ -347,7 +350,7 @@ public class EventActionHandler {
         BlockState state = level.getBlockState(pos);
 
         Optional<Block> optionalBlock = Optional.ofNullable((String) actionConfig.get("block"))
-                .map(id -> BuiltInRegistries.BLOCK.getValue(ResourceLocation.tryParse(id)));
+                .map(id -> BuiltInRegistries.BLOCK.getValue(Identifier.tryParse(id)));
         Block block = optionalBlock.orElse(null);
 
         if (block == null || state.is(block)) {
@@ -377,7 +380,7 @@ public class EventActionHandler {
             return;
         }
 
-        ItemStack newItem = new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(newItemId)));
+        ItemStack newItem = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.tryParse(newItemId)));
 
         if (playEffects) {
             if (level.isClientSide()) {
@@ -403,7 +406,7 @@ public class EventActionHandler {
 
     private static void spawnParticles(Level level, BlockPos pos, ItemStack stack, Map<String, Object> actionConfig) {
         ItemStack particleItem = Optional.ofNullable((String) actionConfig.get("particle_item"))
-                .map(id -> new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(id))))
+                .map(id -> new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(id))))
                 .orElse(stack);
         int count = ((Number) actionConfig.getOrDefault("max_particle_count", DEFAULT_PARTICLE_COUNT)).intValue();
         ParticleUtils.spawnParticlesOnBlockFaces(level, pos, new ItemParticleOption(ParticleTypes.ITEM, particleItem), UniformInt.of(1, count));
@@ -411,7 +414,7 @@ public class EventActionHandler {
 
     private static void playSound(Level level, BlockPos pos, Map<String, Object> actionConfig) {
         SoundEvent soundEvent = Optional.ofNullable((String) actionConfig.get("sound"))
-                .map(id -> BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(id)))
+                .map(id -> BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(id)))
                 .orElse(SoundEvents.GRINDSTONE_USE);
         float volume = ((Number) actionConfig.getOrDefault("sound_volume", DEFAULT_SOUND_VOLUME)).floatValue();
         float pitch = ((Number) actionConfig.getOrDefault("sound_pitch", DEFAULT_SOUND_PITCH)).floatValue();
@@ -428,7 +431,7 @@ public class EventActionHandler {
     private static void applyCustomDurability(ItemStack stack, Player player, InteractionHand hand, Map<String, Object> actionConfig) {
         int durabilityLoss = ((Number) actionConfig.getOrDefault("durability_loss", 0)).intValue();
         if (durabilityLoss > 0 && stack.has(DataComponents.DAMAGE) || stack.has(DataComponents.MAX_DAMAGE)) {
-            stack.hurtAndBreak(durabilityLoss, player, LivingEntity.getSlotForHand(hand));
+            stack.hurtAndBreak(durabilityLoss, player, hand.asEquipmentSlot());
         }
     }
 
@@ -460,7 +463,7 @@ public class EventActionHandler {
     /*private static void unlockRecipeAction(Player player, Map<String, Object> actionConfig) {
         if (player instanceof ServerPlayer serverPlayer) {
             String recipeId = (String) actionConfig.get("recipe");
-            Recipe<?> recipe = serverPlayer.server.getRecipeManager().getRecipe(ResourceLocation.tryParse(recipeId)).orElse(null);
+            Recipe<?> recipe = serverPlayer.server.getRecipeManager().getRecipe(Identifier.tryParse(recipeId)).orElse(null);
             if (recipe != null) {
                 serverPlayer.awardRecipes(List.of(recipe));
             }

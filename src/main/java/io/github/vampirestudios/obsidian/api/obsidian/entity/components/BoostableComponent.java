@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.entity.components;
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class BoostableComponent extends Component {
 
@@ -13,8 +13,8 @@ public class BoostableComponent extends Component {
     public static class BoostItem {
 
         public int damage;
-        public ResourceLocation item;
-        public ResourceLocation replace_items;
+        public Identifier item;
+        public Identifier replace_items;
 
     }
 

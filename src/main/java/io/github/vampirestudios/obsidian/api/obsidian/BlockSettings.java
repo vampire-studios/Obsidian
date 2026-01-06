@@ -57,13 +57,13 @@ public class BlockSettings {
 
     public SoundType getBlockSoundGroup() {
 		switch (soundGroup) {
-			case Identifier resourceLocation -> {
-				if (!resourceLocation.getNamespace().equals("minecraft")) {
-					CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.getValue(resourceLocation);
+			case Identifier Identifier -> {
+				if (!Identifier.getNamespace().equals("minecraft")) {
+					CustomSoundGroup customSoundGroup = ContentRegistries.BLOCK_SOUND_GROUPS.getValue(Identifier);
 					assert customSoundGroup != null;
 					return createSoundType(customSoundGroup);
 				} else {
-					return VanillaSoundEvents.get(resourceLocation);
+					return VanillaSoundEvents.get(Identifier);
 				}
 			}
 			case String s -> {

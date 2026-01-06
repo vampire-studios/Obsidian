@@ -35,10 +35,10 @@ public class RecipeManagerMixin {
 		/*profilerFiller.push("Fabric: check recipe conditions");
 		int skippedRecipes = 0;
 
-		Iterator<Map.Entry<ResourceLocation, JsonElement>> it = recipeMap.values();
+		Iterator<Map.Entry<Identifier, JsonElement>> it = recipeMap.values();
 
 		while (it.hasNext()) {
-			Map.Entry<ResourceLocation, JsonElement> entry = it.next();
+			Map.Entry<Identifier, JsonElement> entry = it.next();
 			JsonElement recipeData = entry.getValue();
 
 			try {

@@ -8,7 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 
 import java.io.File;
@@ -27,16 +27,16 @@ public class SubItemGroups implements AddonModule {
             if (itemGroup == null) return;
             CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(itemGroup.targetGroup);
 
-            ResourceLocation tabId;
+            Identifier tabId;
             if (itemGroup.name != null) {
                 if (itemGroup.name.id != null) {
                     tabId = itemGroup.name.id;
                 } else {
-                    tabId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+                    tabId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
                     itemGroup.name.id = tabId;
                 }
             } else {
-                tabId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+                tabId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
                 NameInformation nameInformation = new NameInformation();
                 nameInformation.id = tabId;
                 itemGroup.name = nameInformation;
@@ -59,7 +59,7 @@ public class SubItemGroups implements AddonModule {
 //            }
 //            builder.entries((displayContext, entries) -> {
 //                if (itemGroup.tags != null) {
-//                    for (Map.Entry<String, ResourceLocation> tag : itemGroup.tags.entrySet()) {
+//                    for (Map.Entry<String, Identifier> tag : itemGroup.tags.entrySet()) {
 //                        if (tag.getKey().equals("block")) {
 //                            TagKey<Block> blockTagKey = TagKey.create(net.minecraft.core.registries.Registries.BLOCK, tag.getValue());
 //                            entries.accept(BuiltInRegistries.BLOCK.getValue(blockTagKey.location()));
@@ -71,7 +71,7 @@ public class SubItemGroups implements AddonModule {
 //                    }
 //                }
 //                if (itemGroup.items != null) {
-//                    for (ResourceLocation item : itemGroup.items) {
+//                    for (Identifier item : itemGroup.items) {
 //                        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.getValue(item));
 //                        if (stack.getCount() != 1) {
 //                            System.out.println(item);
@@ -81,22 +81,22 @@ public class SubItemGroups implements AddonModule {
 //                    }
 //                }
 //                if (itemGroup.blocks != null) {
-//                    for (ResourceLocation block : itemGroup.blocks) {
+//                    for (Identifier block : itemGroup.blocks) {
 //                        entries.accept(BuiltInRegistries.BLOCK.getValue(block));
 //                    }
 //                }
 //                if (itemGroup.opItems != null && displayContext.hasPermissions()) {
-//                    for (ResourceLocation item : itemGroup.opItems) {
+//                    for (Identifier item : itemGroup.opItems) {
 //                        entries.accept(BuiltInRegistries.ITEM.getValue(item));
 //                    }
 //                }
 //                if (itemGroup.opBlocks != null && displayContext.hasPermissions()) {
-//                    for (ResourceLocation block : itemGroup.opBlocks) {
+//                    for (Identifier block : itemGroup.opBlocks) {
 //                        entries.accept(BuiltInRegistries.BLOCK.getValue(block));
 //                    }
 //                }
 //                if (itemGroup.featureSetItems != null) {
-//                    for (Map.Entry<String, ResourceLocation> entry : itemGroup.featureSetItems.entrySet()) {
+//                    for (Map.Entry<String, Identifier> entry : itemGroup.featureSetItems.entrySet()) {
 //                        if (entry.getKey().equals("vanilla") && displayContext.enabledFeatures().contains(FeatureFlags.VANILLA)) {
 //                            entries.accept(BuiltInRegistries.ITEM.getValue(entry.getValue()));
 //                        }
@@ -106,7 +106,7 @@ public class SubItemGroups implements AddonModule {
 //                    }
 //                }
 //                if (itemGroup.featureSetBlocks != null) {
-//                    for (Map.Entry<String, ResourceLocation> entry : itemGroup.featureSetBlocks.entrySet()) {
+//                    for (Map.Entry<String, Identifier> entry : itemGroup.featureSetBlocks.entrySet()) {
 //                        if (entry.getKey().equals("vanilla") && displayContext.enabledFeatures().contains(FeatureFlags.VANILLA)) {
 //                            entries.accept(BuiltInRegistries.BLOCK.getValue(entry.getValue()));
 //                        }

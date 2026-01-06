@@ -21,11 +21,11 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 public final class SendMessageFuncValue extends FuncValue {
-	public static final ResourceLocation TYPE = ResourceLocation.fromNamespaceAndPath("quilt", "send_message");
+	public static final Identifier TYPE = Identifier.fromNamespaceAndPath("quilt", "send_message");
 	public static final MapCodec<SendMessageFuncValue> CODEC = RecordCodecBuilder.mapCodec(instance ->
 			instance.group(Codec.STRING.fieldOf("message").forGetter(sm -> sm.message))
 					.apply(instance, SendMessageFuncValue::new));

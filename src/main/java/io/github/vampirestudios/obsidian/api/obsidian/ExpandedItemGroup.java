@@ -1,19 +1,19 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ExpandedItemGroup {
 
-    public ResourceLocation target_group;
+    public Identifier target_group;
     public Tab[] tabs;
     public TabButton[] buttons;
 
     static class Tab {
 //        public String iconType;
 //        public IconTextureInformation iconInformation;
-        public ResourceLocation icon;
+        public Identifier icon;
         public String name;
-        public ResourceLocation tag;
+        public Identifier tag;
 
 //        public Icon icon() {
 //            if (iconType.equals("item")) {
@@ -28,7 +28,7 @@ public class ExpandedItemGroup {
     static class TabButton {
 //        public String iconType;
 //        public IconTextureInformation iconInformation;
-        public ResourceLocation icon;
+        public Identifier icon;
         public String name;
 
 //        public Icon icon() {
@@ -42,7 +42,7 @@ public class ExpandedItemGroup {
     }
 
     static class IconTextureInformation {
-        public ResourceLocation texture;
+        public Identifier texture;
         public int u;
         public int v;
         public int textureHeight;

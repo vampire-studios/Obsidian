@@ -1,11 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.particle;
 
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Particle {
 
-    public ResourceLocation id;
+    public Identifier id;
     public String sheet_type = "NO_RENDER";
     public boolean always_spawn = true;
     public boolean collides_with_world = false;
@@ -15,14 +14,14 @@ public class Particle {
     public float size = 1.0F;
     public int max_age = 1;
 
-    public ParticleRenderType getType() {
-        return switch (sheet_type) {
-            case "TERRAIN_SHEET" -> ParticleRenderType.TERRAIN_SHEET;
-            case "PARTICLE_SHEET_OPAQUE" -> ParticleRenderType.PARTICLE_SHEET_OPAQUE;
-            case "PARTICLE_SHEET_TRANSLUCENT" -> ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
-            case "CUSTOM" -> ParticleRenderType.CUSTOM;
-            default -> ParticleRenderType.NO_RENDER;
-        };
-    }
+//    public ParticleRenderType getType() {
+//        return switch (sheet_type) {
+//            case "TERRAIN_SHEET" -> ParticleRenderType;
+//            case "PARTICLE_SHEET_OPAQUE" -> ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+//            case "PARTICLE_SHEET_TRANSLUCENT" -> ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+//            case "CUSTOM" -> ParticleRenderType.CUSTOM;
+//            default -> ParticleRenderType.NO_RENDER;
+//        };
+//    }
 
 }

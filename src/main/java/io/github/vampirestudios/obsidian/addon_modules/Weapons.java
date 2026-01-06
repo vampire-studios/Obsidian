@@ -11,7 +11,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ToolMaterial;
@@ -33,11 +33,11 @@ public class Weapons implements AddonModule {
         try {
             if (weapon == null) return;
 
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     weapon.information.name.id,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (weapon.information.name.id == null) weapon.information.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (weapon.information.name.id == null) weapon.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             Item.Properties settings = new Item.Properties().stacksTo(weapon.information.getItemSettings().maxStackSize)
                     .rarity(Rarity.valueOf(weapon.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)))

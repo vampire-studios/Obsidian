@@ -12,7 +12,7 @@ public abstract class MappedRegistryRegisterMixin {
 /** Redirect the internal "check not frozen" guard to always pass. *//*
 
     @Redirect(
-        method = "register(Lnet/minecraft/resources/ResourceKey;Ljava/lang/Object;Lnet/minecraft/resources/ResourceLocation;)Ljava/lang/Object;",
+        method = "register(Lnet/minecraft/resources/ResourceKey;Ljava/lang/Object;Lnet/minecraft/resources/Identifier;)Ljava/lang/Object;",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/core/MappedRegistry;checkRegistryFrozen(Ljava/lang/Object;)V")
     )
     private void yourmod$skipFrozenCheck(Object self, Object value) {

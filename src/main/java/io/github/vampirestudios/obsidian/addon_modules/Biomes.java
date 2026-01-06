@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.world.Biome;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -24,11 +24,11 @@ public class Biomes implements AddonModule {
         try {
             if (biome == null) return;
 
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     biome.id,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (biome.id == null) biome.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (biome.id == null) biome.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             register(ContentRegistries.BIOMES, "biome", identifier, biome);
         } catch (Exception e) {

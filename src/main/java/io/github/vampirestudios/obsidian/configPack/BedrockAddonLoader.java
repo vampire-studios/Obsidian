@@ -193,10 +193,10 @@ public class BedrockAddonLoader {
     }
 
     public static void failedRegistering(String type, String name, Exception e) {
-        failedRegistering(type, ResourceLocation.tryParse(name), e);
+        failedRegistering(type, Identifier.tryParse(name), e);
     }
 
-    public static void failedRegistering(String type, ResourceLocation name, Exception e) {
+    public static void failedRegistering(String type, Identifier name, Exception e) {
         Obsidian.BEDROCK_LOGGER.error("Failed to register {} {}.", type, name);
         Obsidian.BEDROCK_LOGGER.error(e.getMessage(), e);
     }

@@ -4,8 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-public record KeyframeHolder(InterpolationType interpolation, Vector3f transformation) {
+public record KeyframeHolder(InterpolationType interpolation, Vector3fc transformation) {
 
     public static final Codec<KeyframeHolder> CODEC = RecordCodecBuilder.create(instance -> {
         var interpolation = InterpolationType.CODEC.fieldOf("interpolation").forGetter(KeyframeHolder::interpolation);
@@ -14,7 +15,7 @@ public record KeyframeHolder(InterpolationType interpolation, Vector3f transform
         return instance.group(interpolation, transformation).apply(instance, KeyframeHolder::new);
     });
 
-    public KeyframeHolder(InterpolationType interpolation, Vector3f transformation) {
+    public KeyframeHolder(InterpolationType interpolation, Vector3fc transformation) {
         this.interpolation = interpolation;
         this.transformation = transformation;
     }

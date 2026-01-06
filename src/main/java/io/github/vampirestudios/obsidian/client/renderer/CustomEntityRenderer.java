@@ -8,7 +8,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<EntityImpl>> {
@@ -21,7 +21,7 @@ public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<En
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityImpl entityImpl) {
+    public Identifier getTextureLocation(EntityImpl entityImpl) {
         return entity.information.getEntityTexture();
     }
 
@@ -33,7 +33,7 @@ public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<En
     @Nullable
     @Override
     protected RenderType getRenderType(EntityImpl entity, boolean showBody, boolean translucent, boolean showOutline) {
-        ResourceLocation identifier = this.getTextureLocation(entity);
+        Identifier identifier = this.getTextureLocation(entity);
         if (translucent) {
             return RenderType.itemEntityTranslucentCull(identifier);
         } else if (showBody) {

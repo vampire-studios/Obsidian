@@ -81,7 +81,7 @@ public class BedFurnitureBlock extends FurnitureBlock {
             return InteractionResult.SUCCESS;
         }
 
-        if (world.isClientSide) {
+        if (world.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 

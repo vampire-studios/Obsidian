@@ -1,7 +1,7 @@
 /*
 package io.github.vampirestudios.obsidian.api.nexo;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
 
@@ -9,7 +9,7 @@ public class NexoItemBuilder {
   private final NexoItem item = new NexoItem();
 
   public static NexoItemBuilder create(String key) {
-    item.id = new ResourceLocation(MY_MOD_ID, key);
+    item.id = new Identifier(MY_MOD_ID, key);
     return new NexoItemBuilder();
   }
 
@@ -47,7 +47,7 @@ public class NexoItemBuilder {
     private final NexoItem.Pack p = new NexoItem.Pack();
 
     public PackBuilder model(String loc) {
-      p.model = ResourceLocation.parse(loc);
+      p.model = Identifier.parse(loc);
       return this;
     }
 
@@ -56,7 +56,7 @@ public class NexoItemBuilder {
       return this;
     }
 
-    public NexoItem.Pack build(ResourceLocation id) {
+    public NexoItem.Pack build(Identifier id) {
       p.id = id;
       return p;
     }
@@ -102,8 +102,8 @@ public class NexoItemBuilder {
 
     public FurnitureBuilder blockSounds(String place, String brk) {
       var bs = new NexoItem.Mechanics.BlockSounds();
-      bs.place_sound = ResourceLocation.of(place);
-      bs.break_sound = ResourceLocation.of(brk);
+      bs.place_sound = Identifier.of(place);
+      bs.break_sound = Identifier.of(brk);
       f.block_sounds = bs;
       return this;
     }

@@ -8,9 +8,10 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.UserBanListEntry;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -107,7 +108,7 @@ public class BeamSkill extends Skill {
         Component reasonComponent = Component.literal(banReason);
 
         player.connection.disconnect(reasonComponent);
-        player.getServer().getPlayerList().getBans().add(new UserBanListEntry(player.getGameProfile(), null, "Server Admin", null, banReason));
+        player.level().getServer().getPlayerList().getBans().add(new UserBanListEntry(new NameAndId(player.getGameProfile()), null, "Server Admin", null, banReason));
     }
 
     private void applyEffectToTarget(LivingEntity target) {
@@ -158,11 +159,11 @@ public class BeamSkill extends Skill {
     }
 
     private ItemStack createBeamItem(String itemId, Optional<Integer> modelData, Optional<Integer> beamColor) {
-        ResourceLocation resourceLocation = ResourceLocation.tryParse(itemId);
-        if (resourceLocation == null) {
+        Identifier identifier = Identifier.tryParse(itemId);
+        if (identifier == null) {
             throw new IllegalArgumentException("Invalid item ID: " + itemId);
         }
-        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.getValue(resourceLocation));
+        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.getValue(identifier));
         modelData.ifPresent(value -> stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(), List.of(value))));
         beamColor.ifPresent(color -> stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color)));
         return stack;

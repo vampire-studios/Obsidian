@@ -6,7 +6,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -66,6 +66,6 @@ public final class ObsSuggest {
 	// Overload using registry key constants (less verbose)
 	private static Collection<String> registryIds(CommandContext<CommandSourceStack> ctx, net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>> key) {
 		return ctx.getSource().getServer().registryAccess()
-				.lookupOrThrow(key).keySet().stream().map(ResourceLocation::toString).toList();
+				.lookupOrThrow(key).keySet().stream().map(Identifier::toString).toList();
 	}
 }

@@ -6,7 +6,7 @@ import io.github.vampirestudios.obsidian.scripting.std.ObsPackRuntime;
 import io.github.vampirestudios.obsidian.scripting.std.PlayerCommandHandler;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -59,7 +59,7 @@ public final class GuiBridge {
 		if (slot < 0 || slot >= gui.getSize()) throw new IllegalArgumentException("slot OOB: " + slot);
 		if (count < 1 || count > 64) count = Math.max(1, Math.min(64, count));
 
-		var key = ResourceLocation.parse(itemId);
+		var key = Identifier.parse(itemId);
 		if (!BuiltInRegistries.ITEM.containsKey(key))
 			throw new IllegalArgumentException("Unknown item: " + itemId);
 		Item item = BuiltInRegistries.ITEM.getValue(key);

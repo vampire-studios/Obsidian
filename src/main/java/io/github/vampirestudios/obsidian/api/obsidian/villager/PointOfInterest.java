@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.villager;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.Set;
 
 public class PointOfInterest {
 
-    public ResourceLocation id;
+    public Identifier id;
     public int ticket_count;
     public int search_distance;
-    public List<ResourceLocation> blocks;
+    public List<Identifier> blocks;
 
     public Set<BlockState> getBlocks() {
         List<BlockState> blocks2 = new ArrayList<>();

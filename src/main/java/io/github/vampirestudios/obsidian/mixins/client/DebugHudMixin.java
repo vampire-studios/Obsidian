@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins.client;
 
 import com.mojang.blaze3d.systems.GpuDevice;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Mixin(DebugScreenOverlay.class)
 public abstract class DebugHudMixin {
-	@Inject(method = "getSystemInformation", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
+	@Inject(method = "getSs", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
 			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void quilt$addTestAttachment(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o, GpuDevice gpuDevice, List<String> list, BlockPos blockPos, BlockState blockState) {
 		Boolean value = Obsidian.BASED.getNullable(blockState.getBlock());
@@ -31,4 +32,4 @@ public abstract class DebugHudMixin {
 
 		list.add(STR."[Quilt] based: \{valueStr}");
 	}
-}
+}*/

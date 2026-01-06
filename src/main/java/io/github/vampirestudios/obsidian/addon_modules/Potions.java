@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectInstance;
 
 import java.io.File;
@@ -27,11 +27,11 @@ public class Potions implements AddonModule {
         Potion potion = BaseGson.GSON.fromJson(new FileReader(file), Potion.class);
         try {
             if (potion == null) return;
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     potion.name,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (potion.name == null) potion.name = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (potion.name == null) potion.name = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             Registry.register(BuiltInRegistries.POTION, identifier, new net.minecraft.world.item.alchemy.Potion(
                     identifier.getPath(),
                     new MobEffectInstance(Holder.direct(potion.getEffectType()), potion.getEffects().duration * 20, potion.getEffects().amplifier)

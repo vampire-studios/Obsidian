@@ -14,7 +14,7 @@ public class CustomArmorItem extends ItemImpl {
 
     @Override
     public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int slot) {
-        if (!world.isClientSide && entity instanceof Player player) {
+        if (!world.isClientSide() && entity instanceof Player player) {
             if (item.mechanics != null && item.mechanics.set_bonus != null) {
                 item.mechanics.set_bonus.checkAndApplyBonus(player);
             }

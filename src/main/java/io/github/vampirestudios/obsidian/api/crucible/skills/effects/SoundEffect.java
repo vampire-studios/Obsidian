@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.crucible.skills.effects;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,8 +12,8 @@ public class SoundEffect extends Effect {
     private final float pitch;
 
     public SoundEffect(String soundName, float volume, float pitch) {
-        // Look up the sound event in the BuiltInRegistries using ResourceLocation
-        this.sound = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(soundName));
+        // Look up the sound event in the BuiltInRegistries using Identifier
+        this.sound = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(soundName));
 
         if (this.sound == null) {
             throw new IllegalArgumentException("Unknown sound: " + soundName);

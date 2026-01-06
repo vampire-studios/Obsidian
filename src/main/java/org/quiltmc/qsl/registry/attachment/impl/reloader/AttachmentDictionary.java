@@ -21,9 +21,9 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -37,7 +37,7 @@ final class AttachmentDictionary<R, V> {
 	private final Registry<R> registry;
 	private final RegistryEntryAttachment<R, V> attachment;
 	private final Map<ValueTarget, Object> map;
-	private final Map<ResourceLocation, ResourceLocation> mirrors, tagMirrors;
+	private final Map<Identifier, Identifier> mirrors, tagMirrors;
 
 	AttachmentDictionary(Registry<R> registry, RegistryEntryAttachment<R, V> attachment) {
 		this.registry = registry;
@@ -47,11 +47,11 @@ final class AttachmentDictionary<R, V> {
 		this.tagMirrors = new Object2ObjectOpenHashMap<>();
 	}
 
-	public void put(ResourceLocation id, Object value) {
+	public void put(Identifier id, Object value) {
 		this.map.put(new ValueTarget(id, ValueTarget.Type.ENTRY), value);
 	}
 
-	public void putTag(ResourceLocation id, Object value) {
+	public void putTag(Identifier id, Object value) {
 		this.map.put(new ValueTarget(id, ValueTarget.Type.TAG), value);
 	}
 
@@ -67,15 +67,15 @@ final class AttachmentDictionary<R, V> {
 		return this.map;
 	}
 
-	public Map<ResourceLocation, ResourceLocation> getMirrors() {
+	public Map<Identifier, Identifier> getMirrors() {
 		return mirrors;
 	}
 
-	public Map<ResourceLocation, ResourceLocation> getTagMirrors() {
+	public Map<Identifier, Identifier> getTagMirrors() {
 		return tagMirrors;
 	}
 
-	public void processResource(ResourceLocation resourceId, Resource resource) {
+	public void processResource(Identifier resourceId, Resource resource) {
 		try {
 			boolean replace;
 			JsonElement values;
@@ -136,7 +136,7 @@ final class AttachmentDictionary<R, V> {
 		}
 	}
 
-	private void handleArray(ResourceLocation resourceId, JsonArray values) {
+	private void handleArray(Identifier resourceId, JsonArray values) {
 		for (int i = 0; i < values.size(); i++) {
 			JsonElement entry = values.get(i);
 
@@ -147,7 +147,7 @@ final class AttachmentDictionary<R, V> {
 			}
 
 			JsonObject entryO = entry.getAsJsonObject();
-			ResourceLocation id;
+			Identifier id;
 			boolean isTag = false;
 			JsonElement value;
 			final boolean required = GsonHelper.getAsBoolean(entryO, "required", true); // For arrays the ? syntax is not handled.
@@ -164,13 +164,13 @@ final class AttachmentDictionary<R, V> {
 					throw new JsonSyntaxException("Expected id or tag, got neither");
 				}
 
-				id = ResourceLocation.tryParse(idStr);
+				id = Identifier.tryParse(idStr);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of '{}': syntax error",
 						i, resourceId);
 				LOGGER.error("", e);
 				continue;
-			} catch (ResourceLocationException e) {
+			} catch (IdentifierException e) {
 				LOGGER.error("Invalid element at index {} in values of '{}': invalid identifier",
 						i, resourceId);
 				LOGGER.error("", e);
@@ -193,9 +193,9 @@ final class AttachmentDictionary<R, V> {
 		}
 	}
 
-	private void handleObject(ResourceLocation resourceId, JsonObject values) {
+	private void handleObject(Identifier resourceId, JsonObject values) {
 		for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
-			ResourceLocation id;
+			Identifier id;
 			boolean isTag = false;
 			boolean required = true;
 
@@ -212,8 +212,8 @@ final class AttachmentDictionary<R, V> {
 					idStr = idStr.substring(0, idStr.length() - 1);
 				}
 
-				id = ResourceLocation.tryParse(idStr);
-			} catch (ResourceLocationException e) {
+				id = Identifier.tryParse(idStr);
+			} catch (IdentifierException e) {
 				LOGGER.error("Invalid identifier in values of '{}': '{}', ignoring",
 						resourceId, entry.getKey());
 				LOGGER.error("", e);
@@ -224,7 +224,7 @@ final class AttachmentDictionary<R, V> {
 		}
 	}
 
-	private void handleEntry(ResourceLocation resourceId, ResourceLocation keyId, boolean isTag, boolean required, JsonElement value) {
+	private void handleEntry(Identifier resourceId, Identifier keyId, boolean isTag, boolean required, JsonElement value) {
 		if (isTag) {
 			if (!required) {
 				LOGGER.warn("Tag entry {} in '{}' is redundantly marked as optional (all tag entries are optional)",
@@ -264,13 +264,13 @@ final class AttachmentDictionary<R, V> {
 		}
 	}
 
-	private void handleMirrors(Map<ResourceLocation, ResourceLocation> map, ResourceLocation resourceId, JsonObject mirrors,
+	private void handleMirrors(Map<Identifier, Identifier> map, Identifier resourceId, JsonObject mirrors,
 							   boolean checkRegistry) {
 		for (Map.Entry<String, JsonElement> entry : mirrors.entrySet()) {
-			ResourceLocation target;
+			Identifier target;
 			try {
-				target = ResourceLocation.tryParse(entry.getKey());
-			} catch (ResourceLocationException e) {
+				target = Identifier.tryParse(entry.getKey());
+			} catch (IdentifierException e) {
 				LOGGER.error("Invalid identifier in mirrors of {}: '{}', ignoring",
 						resourceId, entry.getKey());
 				LOGGER.error("", e);
@@ -282,10 +282,10 @@ final class AttachmentDictionary<R, V> {
 			}
 
 			if (entry.getValue() instanceof JsonPrimitive prim && prim.isString()) {
-				ResourceLocation source;
+				Identifier source;
 				try {
-					source = ResourceLocation.parse(prim.getAsString());
-				} catch (ResourceLocationException e) {
+					source = Identifier.parse(prim.getAsString());
+				} catch (IdentifierException e) {
 					LOGGER.error("Invalid mirror '{}' in {}: invalid source identifier, ignoring",
 							target, resourceId);
 					LOGGER.error("", e);
@@ -309,7 +309,7 @@ final class AttachmentDictionary<R, V> {
 		}
 	}
 
-	public record ValueTarget(ResourceLocation id, Type type) {
+	public record ValueTarget(Identifier id, Type type) {
 		enum Type {
 			ENTRY, TAG;
 		}

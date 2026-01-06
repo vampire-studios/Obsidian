@@ -3,20 +3,20 @@ package io.github.vampirestudios.obsidian.api;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public class StackContext {
-    public final ResourceLocation item;
+    public final Identifier item;
     public CompoundTag tag = null;
     public int count = 1;
 
     private Item theItem;
 
-    public StackContext(@Nullable ResourceLocation item) {
+    public StackContext(@Nullable Identifier item) {
         this.item = item;
     }
 

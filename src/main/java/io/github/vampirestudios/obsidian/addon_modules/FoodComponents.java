@@ -9,7 +9,7 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -27,11 +27,11 @@ public class FoodComponents implements AddonModule {
 		try {
 			if (foodComponent == null) return;
 
-			ResourceLocation identifier = Objects.requireNonNullElseGet(
+			Identifier identifier = Objects.requireNonNullElseGet(
 					foodComponent.id,
-					() -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (foodComponent.id == null) foodComponent.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			if (foodComponent.id == null) foodComponent.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			net.minecraft.world.food.FoodProperties foodComponent1 = foodComponent.getBuilder().build();
 			Registry.register(Registries.FOODS, identifier, foodComponent1);

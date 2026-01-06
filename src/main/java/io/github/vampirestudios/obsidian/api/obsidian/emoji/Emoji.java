@@ -1,9 +1,9 @@
 package io.github.vampirestudios.obsidian.api.obsidian.emoji;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Emoji {
-	public ResourceLocation name;
+	public Identifier name;
 	public String code;
 	public String emoji;
 }

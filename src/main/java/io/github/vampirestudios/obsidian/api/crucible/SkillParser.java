@@ -9,7 +9,7 @@ import io.github.vampirestudios.obsidian.api.crucible.skills.effects.Effect;
 import io.github.vampirestudios.obsidian.api.crucible.skills.effects.EffectFactory;
 import io.github.vampirestudios.obsidian.api.crucible.targets.SkillTarget;
 import io.github.vampirestudios.obsidian.api.crucible.targets.TargetFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.phys.Vec3;
 
@@ -410,7 +410,7 @@ public class SkillParser {
 
 			case "skill":
 				String triggeredSkillId = entry.getSkillParameters().get("s");
-				Skill triggeredSkill = SkillManager.getInstance().getSkillById(ResourceLocation.fromNamespaceAndPath(modId, triggeredSkillId.toLowerCase(Locale.ROOT)));
+				Skill triggeredSkill = SkillManager.getInstance().getSkillById(Identifier.fromNamespaceAndPath(modId, triggeredSkillId.toLowerCase(Locale.ROOT)));
 
 				if (triggeredSkill == null) {
 					System.err.println("No valid skill found for SkillSkill: " + triggeredSkillId.toLowerCase(Locale.ROOT));

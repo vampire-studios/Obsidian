@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.villager.VillagerBiomeType;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,11 +23,11 @@ public class VillagerBiomeTypes implements AddonModule {
         VillagerBiomeType villagerBiomeType = BaseGson.GSON.fromJson(new FileReader(file), VillagerBiomeType.class);
         try {
             if (villagerBiomeType == null) return;
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     villagerBiomeType.name.id,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (villagerBiomeType.name.id == null) villagerBiomeType.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (villagerBiomeType.name.id == null) villagerBiomeType.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 //            VillagerType villagerType = VillagerTypeHelper.register(identifier);
 //            villagerBiomeType.biomes.forEach(biome -> {
 //                VillagerTypeHelper.addVillagerTypeToBiome(registryKey, villagerType);

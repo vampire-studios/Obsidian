@@ -76,7 +76,7 @@ public class PlayerCommandHandler implements CommandHandler {
                 case "level" -> player.giveExperienceLevels((int) ScriptUtils.getNumberArg(segment, 0, vars));
                 case "gamemode" -> setGameMode(player, ScriptUtils.getStringArg(segment, 0, vars));
                 case "inventory" -> handleInventory(player, segments.subList(1, segments.size()), vars);
-                case "name" -> vars.put("_last", player.getGameProfile().getName());
+                case "name" -> vars.put("_last", player.getGameProfile().name());
                 case "setHealth" -> setHealth(player, segment, vars);
                 case "addTag" -> addTag(player, ScriptUtils.getStringArg(segment, 0, vars));
                 case "removeTag" -> removeTag(player, ScriptUtils.getStringArg(segment, 0, vars));
@@ -281,7 +281,7 @@ public class PlayerCommandHandler implements CommandHandler {
         String first = ScriptUtils.getStringArg(segment, 0, vars);
 
         if (first.contains(":")) { // looks like a dimension id
-            level = player.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, Identifier.parse(first)));
+            level = player.level().getServer().getLevel(ResourceKey.create(Registries.DIMENSION, Identifier.parse(first)));
             if (level == null) { LOGGER.warn("Unknown dimension: {}", first); return; }
             idx = 1;
         }

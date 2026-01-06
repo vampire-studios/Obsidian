@@ -1,17 +1,17 @@
 package io.github.vampirestudios.obsidian.api.obsidian.biomeLayouts;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class BiomeLayout {
 
-	public ResourceLocation regionName;
+	public Identifier regionName;
 	public BiomeInformation[] biomes;
 	public DimensionType dimensionType = DimensionType.OVERWORLD;
 
 	public static class BiomeInformation {
-		public ResourceLocation name;
+		public Identifier name;
 		public BiomeSpawnType type;
-		public ResourceLocation similarBiomeName;
+		public Identifier similarBiomeName;
 		public MultiNoise multiNoise;
 
 		public enum BiomeSpawnType {

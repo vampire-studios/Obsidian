@@ -20,7 +20,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.EntityRegistryBuilder;
 import io.github.vampirestudios.obsidian.utils.EntityUtils;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -47,7 +47,7 @@ public class Entities implements AddonModule {
             entity.components = new HashMap<>();
             JsonObject components = GsonHelper.getAsJsonObject(entityJson, "components");
             for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
-                ResourceLocation identifier = ResourceLocation.tryParse(entry.getKey());
+                Identifier identifier = Identifier.tryParse(entry.getKey());
                 Class<? extends Component> componentClass = Registries.ENTITY_COMPONENTS.getOptional(identifier).orElseThrow(() ->
                         new JsonParseException("Unknown component \"" + entry.getKey() + "\" defined in entity json"));
 
@@ -83,11 +83,11 @@ public class Entities implements AddonModule {
             BreathableComponent finalBreathableComponent = breathableComponent;
             assert finalHealthComponent != null;
 
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     entity.information.identifier,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (entity.information.identifier == null) entity.information.identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (entity.information.identifier == null) entity.information.identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(identifier)
                     .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value, finalBreathableComponent))

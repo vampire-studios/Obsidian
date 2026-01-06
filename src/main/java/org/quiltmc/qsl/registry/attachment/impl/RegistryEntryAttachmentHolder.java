@@ -24,7 +24,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -43,17 +43,17 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		getInternals(registry).quilt$registerAttachment(attachment);
 	}
 
-	public static <R> @Nullable RegistryEntryAttachment<R, ?> getAttachment(Registry<R> registry, ResourceLocation id) {
+	public static <R> @Nullable RegistryEntryAttachment<R, ?> getAttachment(Registry<R> registry, Identifier id) {
 		return getInternals(registry).quilt$getAttachment(id);
 	}
 
-	public static <R> Set<Map.Entry<ResourceLocation, RegistryEntryAttachment<R, ?>>> getAttachmentEntries(Registry<R> registry) {
+	public static <R> Set<Map.Entry<Identifier, RegistryEntryAttachment<R, ?>>> getAttachmentEntries(Registry<R> registry) {
 		return getInternals(registry).quilt$getAttachmentEntries();
 	}
 
 	/// impl for RegistryAttachment.get
 	@SuppressWarnings("unchecked")
-	public static <R, V> @Nullable RegistryEntryAttachment<R, V> getAttachment(Registry<R> registry, ResourceLocation id, Class<V> valueClass) {
+	public static <R, V> @Nullable RegistryEntryAttachment<R, V> getAttachment(Registry<R> registry, Identifier id, Class<V> valueClass) {
 		var attachment = getAttachment(registry, id);
 		if (attachment == null) {
 			return null;
@@ -62,7 +62,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		if (attachment.valueClass() != valueClass) {
 			throw new IllegalArgumentException(("Found attachment with ID \"%s\" for registry \"%s\", "
 					+ "but it has wrong value class (expected %s, got %s)")
-					.formatted(id, registry.key().location(), valueClass, attachment.valueClass()));
+					.formatted(id, registry.key().identifier(), valueClass, attachment.valueClass()));
 		}
 
 		return (RegistryEntryAttachment<R, V>) attachment;
@@ -112,7 +112,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 						if (value != null) { // Warn if two values pointing to the same entry are found.
 							Initializer.LOGGER.warn("Entry {} for registry {} already has attachment {} defined. Overriding with value from tag {}.",
 									attachment.registry().getId(entry),
-									attachment.registry().key().location(),
+									attachment.registry().key().identifier(),
 									attachment.id(),
 									tagValue.getKey().location());
 						}

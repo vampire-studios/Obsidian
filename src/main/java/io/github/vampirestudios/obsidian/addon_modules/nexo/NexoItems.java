@@ -22,7 +22,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.SoundType;
@@ -76,7 +76,7 @@ public class NexoItems implements AddonModule {
 		// 2) Standard YAML -> Java deserialization
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(DataComponentPatch.class, new JacksonDataComponentPatchDeserializer());
-		module.addDeserializer(ResourceLocation.class, new JacksonResourceLocationDeserializer());
+		module.addDeserializer(Identifier.class, new JacksonIdentifierDeserializer());
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		mapper.registerModule(module);
 		mapper.findAndRegisterModules();
@@ -92,7 +92,7 @@ public class NexoItems implements AddonModule {
 				NexoItem nexoItem = entry.getValue();
 				if (nexoItem == null) continue;
 
-				ResourceLocation itemId = ResourceLocation.fromNamespaceAndPath(id.modId(), key);
+				Identifier itemId = Identifier.fromNamespaceAndPath(id.modId(), key);
 				nexoItem.id = itemId;
 				nexoItem.pack.id = itemId;
 
@@ -157,7 +157,7 @@ public class NexoItems implements AddonModule {
 						if (!nexoItem.excludeFromInventory) {
 							ResourceKey<CreativeModeTab> tab = ResourceKey.create(
 									Registries.CREATIVE_MODE_TAB,
-									ResourceLocation.fromNamespaceAndPath(id.modId(), "items")
+									Identifier.fromNamespaceAndPath(id.modId(), "items")
 							);
 							ItemGroupEvents.modifyEntriesEvent(tab)
 									.register(e -> e.accept(item));

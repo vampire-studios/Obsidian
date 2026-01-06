@@ -7,7 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.github.vampirestudios.obsidian.addon_modules.DataComponentPatchDeserializer;
 import io.github.vampirestudios.obsidian.api.obsidian.IntArrayTypeAdapter;
-import io.github.vampirestudios.obsidian.api.obsidian.ResourceLocationTypeAdapter;
+import io.github.vampirestudios.obsidian.api.obsidian.IdentifierTypeAdapter;
 import io.github.vampirestudios.obsidian.api.obsidian.TriStateAdapter;
 import io.github.vampirestudios.obsidian.utils.IntArray;
 import net.fabricmc.fabric.api.util.TriState;
@@ -50,7 +50,7 @@ public class BaseGson {
     public static final Gson GSON = new GsonBuilder()
             .disableHtmlEscaping().setPrettyPrinting().setLenient()
             .enableComplexMapKeySerialization()
-            .registerTypeAdapter(Identifier.class, new ResourceLocationTypeAdapter())
+            .registerTypeAdapter(Identifier.class, new IdentifierTypeAdapter())
             .registerTypeAdapter(TriState.class, new TriStateAdapter())
             .registerTypeAdapter(IntArray.class, new IntArrayTypeAdapter())
             .registerTypeAdapter(DataComponentPatch.class, new DataComponentPatchDeserializer())

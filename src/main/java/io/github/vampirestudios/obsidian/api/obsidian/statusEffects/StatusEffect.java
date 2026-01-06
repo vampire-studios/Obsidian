@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.statusEffects;
 
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectCategory;
 
 import java.util.List;
@@ -28,8 +28,8 @@ public class StatusEffect {
     }
 
     public static class EffectAttributes {
-        public ResourceLocation attribute;
-        public ResourceLocation name;
+        public Identifier attribute;
+        public Identifier name;
         public double amount;
         public String operation;
     }

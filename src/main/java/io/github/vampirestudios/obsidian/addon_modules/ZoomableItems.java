@@ -8,7 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ZoomableItem;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -24,11 +24,11 @@ public class ZoomableItems implements AddonModule {
         try {
             if (zoomableItem == null) return;
 
-			ResourceLocation identifier = Objects.requireNonNullElseGet(
+			Identifier identifier = Objects.requireNonNullElseGet(
                     zoomableItem.information.name.id,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (zoomableItem.information.name.id == null) zoomableItem.information.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (zoomableItem.information.name.id == null) zoomableItem.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 

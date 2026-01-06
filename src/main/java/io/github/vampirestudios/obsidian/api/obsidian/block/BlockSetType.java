@@ -1,11 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class BlockSetType {
 
-    public ResourceLocation id;
+    public Identifier id;
 
     @SerializedName("can_open_by_hand")
     @blue.endless.jankson.annotation.SerializedName("can_open_by_hand")
@@ -25,39 +25,39 @@ public class BlockSetType {
 
     @SerializedName("sound_type")
     @blue.endless.jankson.annotation.SerializedName("sound_type")
-    public ResourceLocation soundType;
+    public Identifier soundType;
 
     @SerializedName("door_close")
     @blue.endless.jankson.annotation.SerializedName("door_close")
-    public ResourceLocation doorClose;
+    public Identifier doorClose;
 
     @SerializedName("door_open")
     @blue.endless.jankson.annotation.SerializedName("door_open")
-    public ResourceLocation doorOpen;
+    public Identifier doorOpen;
 
     @SerializedName("trapdoor_close")
     @blue.endless.jankson.annotation.SerializedName("trapdoor_close")
-    public ResourceLocation trapdoorClose;
+    public Identifier trapdoorClose;
 
     @SerializedName("trapdoor_open")
     @blue.endless.jankson.annotation.SerializedName("trapdoor_open")
-    public ResourceLocation trapdoorOpen;
+    public Identifier trapdoorOpen;
 
     @SerializedName("pressure_plate_click_off")
     @blue.endless.jankson.annotation.SerializedName("pressure_plate_click_off")
-    public ResourceLocation pressurePlateClickOff;
+    public Identifier pressurePlateClickOff;
 
     @SerializedName("pressure_plate_click_on")
     @blue.endless.jankson.annotation.SerializedName("pressure_plate_click_on")
-    public ResourceLocation pressurePlateClickOn;
+    public Identifier pressurePlateClickOn;
 
     @SerializedName("button_click_off")
     @blue.endless.jankson.annotation.SerializedName("button_click_off")
-    public ResourceLocation buttonClickOff;
+    public Identifier buttonClickOff;
 
     @SerializedName("button_click_on")
     @blue.endless.jankson.annotation.SerializedName("button_click_on")
-    public ResourceLocation buttonClickOn;
+    public Identifier buttonClickOn;
 
     public net.minecraft.world.level.block.state.properties.BlockSetType.PressurePlateSensitivity getPressurePlateSensitivity() {
         return net.minecraft.world.level.block.state.properties.BlockSetType.PressurePlateSensitivity.valueOf(pressurePlateSensitivity);

@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.scripting.std;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -69,7 +69,7 @@ public class EntitiesCommandHandler implements CommandHandler {
 
 	private BlockPos center(ServerLevel lvl, Map<String, Object> vars) {
 		ServerPlayer s = contextPlayer(vars);
-		return s != null ? s.blockPosition() : lvl.getSharedSpawnPos();
+		return s != null ? s.blockPosition() : lvl.getRespawnData().pos();
 	}
 
 	private Entity source(Map<String, Object> vars) {
@@ -77,7 +77,7 @@ public class EntitiesCommandHandler implements CommandHandler {
 	}
 
 	private ServerLevel world(MinecraftServer srv, String id) {
-		var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, ResourceLocation.parse(id));
+		var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, Identifier.parse(id));
 		var lvl = srv.getLevel(key);
 		return lvl != null ? lvl : srv.overworld();
 	}

@@ -5,16 +5,17 @@ import io.github.vampirestudios.obsidian.utils.KeyNotFoundException;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,12 +25,12 @@ public class Utils
 {
     public static TagKey<Item> itemTag(String pName)
     {
-        return TagKey.create(Registries.ITEM, ResourceLocation.tryParse(pName));
+        return TagKey.create(Registries.ITEM, Identifier.tryParse(pName));
     }
 
     public static TagKey<Block> blockTag(String pName)
     {
-        return TagKey.create(Registries.BLOCK, ResourceLocation.tryParse(pName));
+        return TagKey.create(Registries.BLOCK, Identifier.tryParse(pName));
     }
 
     public static <T extends Comparable<T>> T getPropertyValue(Property<T> prop, String value)
@@ -38,7 +39,7 @@ public class Utils
         return propValue.orElseThrow(() -> new KeyNotFoundException("Value " + value + " for property " + prop.getName() + " not found in the allowed values."));
     }
 
-    @Nonnull
+    @NonNull
     public static <T> T orElse(@Nullable T val, T def)
     {
         return val != null ? val : def;
@@ -49,17 +50,17 @@ public class Utils
         return val != null ? val : def.get();
     }
 
-    public static Item getItemOrCrash(ResourceLocation which)
+    public static Item getItemOrCrash(Identifier which)
     {
         return getOrCrash(BuiltInRegistries.ITEM, which);
     }
 
-    public static Block getBlockOrCrash(ResourceLocation which)
+    public static Block getBlockOrCrash(Identifier which)
     {
         return getOrCrash(BuiltInRegistries.BLOCK, which);
     }
 
-    public static <T> T getOrCrash(Registry<T> registry, ResourceLocation name)
+    public static <T> T getOrCrash(Registry<T> registry, Identifier name)
     {
         T t = (T) registry.get(name);
         if (t == null)
@@ -67,7 +68,7 @@ public class Utils
         return t;
     }
 
-    public static <T> T getOrElse(Registry<T> registry, ResourceLocation name, T fallback)
+    public static <T> T getOrElse(Registry<T> registry, Identifier name, T fallback)
     {
         if (!registry.containsKey(name))
             return fallback;
@@ -102,7 +103,7 @@ public class Utils
         throw new IllegalArgumentException("Invalid armor type '" + name + "'");
     }
 
-    public MutableComponent withFont(MutableComponent component, ResourceLocation font)
+    public MutableComponent withFont(MutableComponent component, FontDescription font)
     {
         return component.withStyle(style -> style.withFont(font));
     }

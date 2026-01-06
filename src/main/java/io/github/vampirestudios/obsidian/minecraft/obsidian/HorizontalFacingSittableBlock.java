@@ -31,7 +31,7 @@ public class HorizontalFacingSittableBlock extends HorizontalFacingBlockImpl {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             Entity entity = null;
             List<SeatEntity> entities = level.getEntities(Obsidian.SEAT, new AABB(pos), chair -> true);
             if(entities.isEmpty()) {

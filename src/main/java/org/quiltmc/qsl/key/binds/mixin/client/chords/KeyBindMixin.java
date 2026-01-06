@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.KeyMapping;
@@ -33,9 +35,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -91,17 +91,16 @@ public class KeyBindMixin implements ChordedKeyBind {
 
 	@Inject(
 			at = @At(
-				value = "INVOKE",
-				target = "Lcom/mojang/blaze3d/platform/InputConstants$Key;getType()Lcom/mojang/blaze3d/platform/InputConstants$Type;"
+					value = "INVOKE",
+					target = "Lcom/mojang/blaze3d/platform/InputConstants$Key;getValue()I"
 			),
 			method = "setAll",
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	private static void updateChordsToo(CallbackInfo ci, Iterator<?> iterator, KeyMapping keyBind) {
+	private static void updateChordsToo(CallbackInfo ci, @Local KeyMapping keyBind) {
 		KeyChord chord = ((KeyBindMixin) (Object) keyBind).quilt$boundChord;
 		if (chord != null) {
-			long window = Minecraft.getInstance().getWindow().getWindow();
+			Window window = Minecraft.getInstance().getWindow();
 			for (InputConstants.Key key : chord.keys.keySet()) {
 				if (key.getType() == InputConstants.Type.KEYSYM) {
 					chord.keys.put(key, InputConstants.isKeyDown(window, key.getValue()));

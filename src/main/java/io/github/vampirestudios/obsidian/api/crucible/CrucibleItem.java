@@ -1,11 +1,11 @@
 package io.github.vampirestudios.obsidian.api.crucible;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
 public class CrucibleItem {
-    public ResourceLocation id;
+    public Identifier id;
 
     public String Id;
     public String Display;

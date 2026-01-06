@@ -43,7 +43,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.EquipmentAsset;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.apache.logging.log4j.LogManager;
@@ -84,17 +84,17 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(registry, Const.id(name), idk);
 	}
 
-	public static <T> void registerInRegistry(Registry<T> registry, ResourceLocation name, T idk) {
+	public static <T> void registerInRegistry(Registry<T> registry, Identifier name, T idk) {
 		Registry.register(registry, name, idk);
 	}
 
 	private static <T> T lookupDeserialize(String s, Registry<T> registry) {
-		return registry.getValue(ResourceLocation.tryParse(s));
+		return registry.getValue(Identifier.tryParse(s));
 	}
 
 	private static <T, U extends T> JsonElement lookupSerialize(T t, Registry<U> registry) {
 		@SuppressWarnings("unchecked") //Widening cast happening because of generic type parameters in the registry class
-		ResourceLocation id = registry.getKey((U) t);
+		Identifier id = registry.getKey((U) t);
 		if (id == null) return JsonNull.INSTANCE;
 		return new JsonPrimitive(id.toString());
 	}
@@ -246,7 +246,7 @@ public class Obsidian implements ModInitializer {
 							if (convertibleBlock.getDroppedItem() != null) {
 								ItemStack newStack = new ItemStack(convertibleBlock.getDroppedItem());
 								if (!newStack.isEmpty() && world instanceof ServerLevel serverLevel &&
-										serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+										serverLevel.getGameRules().get(GameRules.BLOCK_DROPS)) {
 									ItemEntity itemEntity = new ItemEntity(world, hitResult.getBlockPos().getX() + 0.5,
 											hitResult.getBlockPos().getY() + 0.5,
 											hitResult.getBlockPos().getZ() + 0.5,
@@ -273,7 +273,7 @@ public class Obsidian implements ModInitializer {
 						if (convertibleBlock.getDroppedItem() != null) {
 							ItemStack newStack = new ItemStack(convertibleBlock.getDroppedItem());
 							if (!newStack.isEmpty() && world instanceof ServerLevel serverLevel &&
-									serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+									serverLevel.getGameRules().get(GameRules.BLOCK_DROPS)) {
 								ItemEntity itemEntity = new ItemEntity(world, hitResult.getBlockPos().getX() + 0.5,
 										hitResult.getBlockPos().getY() + 0.5,
 										hitResult.getBlockPos().getZ() + 0.5, newStack);

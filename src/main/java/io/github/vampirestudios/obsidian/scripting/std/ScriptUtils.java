@@ -4,7 +4,7 @@ import com.google.gson.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -164,7 +164,7 @@ public final class ScriptUtils {
 	}
 
 	public static Block getBlock(String id) {
-		ResourceLocation loc = ResourceLocation.tryParse(id);
+		Identifier loc = Identifier.tryParse(id);
 		if (loc == null) {
 			throw new IllegalArgumentException(STR."Invalid block ID: \{id}");
 		}
@@ -172,7 +172,7 @@ public final class ScriptUtils {
 	}
 
 	public static Item getItem(String id) {
-		ResourceLocation loc = ResourceLocation.tryParse(id);
+		Identifier loc = Identifier.tryParse(id);
 		if (loc == null) {
 			throw new IllegalArgumentException(STR."Invalid item ID: \{id}");
 		}
@@ -185,7 +185,7 @@ public final class ScriptUtils {
 	}
 
 	public static ParticleOptions getParticleOptions(String particleId, CallChain.Segment segment, Map<String, Object> vars) {
-		ResourceLocation loc = ResourceLocation.tryParse(particleId);
+		Identifier loc = Identifier.tryParse(particleId);
 		if (loc == null) {
 			throw new IllegalArgumentException("Invalid particle ID: " + particleId);
 		}
@@ -334,11 +334,11 @@ public final class ScriptUtils {
 		try { return Double.parseDouble(lit.trim()); } catch (Exception e) { return 0.0; }
 	}
 
-	// Accepts "#ns:id" or "ns:id"; returns ResourceLocation
-	public static ResourceLocation rlFromHash(String s) {
+	// Accepts "#ns:id" or "ns:id"; returns Identifier
+	public static Identifier rlFromHash(String s) {
 		String t = s.trim();
 		if (t.startsWith("#")) t = t.substring(1).trim();
-		return ResourceLocation.parse(t);
+		return Identifier.parse(t);
 	}
 
 	public static boolean isStringLike(Object arg, Map<String, Object> vars) {

@@ -22,6 +22,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -61,7 +62,7 @@ public abstract class LavaFluidMixin extends FlowingFluid implements QuiltFlowab
 
 	@Override
 	public float getPushStrength(FluidState state, Entity effected) {
-		return effected.level().dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+		return effected.level().dimensionType().attributes().contains(EnvironmentAttributes.FAST_LAVA) ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 	}
 
 	@Override

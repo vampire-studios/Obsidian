@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.crucible.conditions;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 
@@ -106,11 +106,11 @@ public class ConditionFactory {
     public static MobEffect parsePotionEffect(String effectName) {
         // Parse or find the MobEffect by name
         // Replace with actual lookup in your registry.
-        return BuiltInRegistries.MOB_EFFECT.getValue(ResourceLocation.parse(effectName.toLowerCase(Locale.ROOT)));
+        return BuiltInRegistries.MOB_EFFECT.getValue(Identifier.parse(effectName.toLowerCase(Locale.ROOT)));
     }
 
     private static EntityType<?> parseEntityType(String typeName) {
         // Replace with actual lookup in your registry or entity type mapping.
-        return BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.parse(typeName.toLowerCase(Locale.ROOT)));
+        return BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(typeName.toLowerCase(Locale.ROOT)));
     }
 }

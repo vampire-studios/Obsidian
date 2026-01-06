@@ -9,15 +9,15 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.joml.Vector3f;
 
 import java.util.List;
 
 public class EntityModel {
 
-    public ResourceLocation name;
-    public ResourceLocation animation;
+    public Identifier name;
+    public Identifier animation;
     public Bone[] bones;
     public int textureWidth;
     public int textureHeight;

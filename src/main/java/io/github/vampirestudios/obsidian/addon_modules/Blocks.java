@@ -26,7 +26,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -58,7 +58,7 @@ public class Blocks implements AddonModule {
         try {
             if (block == null) return;
 
-            ResourceLocation blockId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier blockId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             block.information.name.id = blockId;
 
             BlockBehaviour.Properties blockSettings;
@@ -83,7 +83,7 @@ public class Blocks implements AddonModule {
                         .jumpFactor(block.information.getBlockSettings().jump_velocity_modifier);
                 if (block.information.getBlockSettings().randomTicks) blockSettings.randomTicks();
                 if (block.information.getBlockSettings().instant_break) blockSettings.instabreak();
-                if (!block.information.getBlockSettings().collidable) blockSettings.noCollission();
+                if (!block.information.getBlockSettings().collidable) blockSettings.noCollision();
                 if (block.information.getBlockSettings().translucent) blockSettings.noOcclusion();
                 if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
             }
@@ -188,7 +188,7 @@ public class Blocks implements AddonModule {
                     case LOG -> expanded.registerLog(block, blockSettings, blockId.getPath(), MapColor.STONE, MapColor.STONE, settings);
                     case STEM -> expanded.registerNetherStemBlock(block, blockId.getPath(), MapColor.STONE, settings);
                     case OXIDIZING_BLOCK -> {
-                        List<ResourceLocation> names = new ArrayList<>();
+                        List<Identifier> names = new ArrayList<>();
                         block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
                             if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
                         }));
@@ -197,7 +197,7 @@ public class Blocks implements AddonModule {
                     case PLANT -> {
                         if (block.additional_information != null) {
                             if (block.additional_information.waterloggable) {
-                                expanded.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollission().instabreak()), block,
+                                expanded.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().instabreak()), block,
                                         blockId.getPath(), settings);
                             }
                         } else {
@@ -206,7 +206,7 @@ public class Blocks implements AddonModule {
                     }
                     case ROTATED_PILLAR -> expanded.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                     case HORIZONTAL_FACING_PLANT -> expanded.registerBlock(new HorizontalFacingPlantBlockImpl(block,
-                                    blockSettings.noCollission().instabreak()), block, blockId.getPath(), settings);
+                                    blockSettings.noCollision().instabreak()), block, blockId.getPath(), settings);
                     case SAPLING -> expanded.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
                     case TORCH -> expanded.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
                     case BEEHIVE -> {
@@ -222,17 +222,17 @@ public class Blocks implements AddonModule {
                     case DOUBLE_PLANT -> {
                         if (block.additional_information != null) {
                             if (block.additional_information.waterloggable) {
-                                expanded.registerDoubleBlock(new WaterloggableTallFlowerBlockImpl(block, blockSettings.noCollission().instabreak()),
+                                expanded.registerDoubleBlock(new WaterloggableTallFlowerBlockImpl(block, blockSettings.noCollision().instabreak()),
                                         block, blockId.getPath(), settings);
                             }
                         } else {
                             expanded.registerDoubleBlock(new TallFlowerBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
                         }
                     }
-                    case HORIZONTAL_FACING_DOUBLE_PLANT -> expanded.registerDoubleBlock(new TallFlowerBlock(blockSettings.noCollission().instabreak()),
+                    case HORIZONTAL_FACING_DOUBLE_PLANT -> expanded.registerDoubleBlock(new TallFlowerBlock(blockSettings.noCollision().instabreak()),
                             block, blockId.getPath(), settings);
                     case HANGING_DOUBLE_LEAVES ->
-                            expanded.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollission().instabreak()), block,
+                            expanded.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().instabreak()), block,
                                     blockId.getPath(), settings);
                     case LANTERN -> expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
                     case CHAIN -> expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
@@ -268,7 +268,7 @@ public class Blocks implements AddonModule {
 
             if (block.additional_information != null) {
                 AdditionalBlockInformation additionalInformation = block.additional_information;
-                ResourceLocation identifier = getIdentifier(additionalInformation, blockId);
+                Identifier identifier = getIdentifier(additionalInformation, blockId);
                 registerBlocksIfNeeded(additionalInformation, identifier, block, blockSettings, id, settings, expanded);
             }
 
@@ -277,7 +277,7 @@ public class Blocks implements AddonModule {
             }
 
             if (block.getBlockType() == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                List<ResourceLocation> names = new ArrayList<>();
+                List<Identifier> names = new ArrayList<>();
                 block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
                     if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
                 }));
@@ -290,7 +290,7 @@ public class Blocks implements AddonModule {
             }
         } catch (Exception e) {
             if (block.getBlockType() == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                List<ResourceLocation> names = new ArrayList<>();
+                List<Identifier> names = new ArrayList<>();
                 block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
                     if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
                 }));
@@ -332,13 +332,13 @@ public class Blocks implements AddonModule {
         return BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
     }
 
-    private ResourceLocation getIdentifier(AdditionalBlockInformation info, ResourceLocation defaultId) {
+    private Identifier getIdentifier(AdditionalBlockInformation info, Identifier defaultId) {
         return !info.extraBlocksName.isEmpty()
-                ? ResourceLocation.fromNamespaceAndPath(defaultId.getNamespace(), info.extraBlocksName)
+                ? Identifier.fromNamespaceAndPath(defaultId.getNamespace(), info.extraBlocksName)
                 : defaultId;
     }
 
-    private void registerBlocksIfNeeded(AdditionalBlockInformation info, ResourceLocation identifier,
+    private void registerBlocksIfNeeded(AdditionalBlockInformation info, Identifier identifier,
                                         io.github.vampirestudios.obsidian.api.obsidian.block.Block block, BlockBehaviour.Properties blockSettings,
                                         BasicAddonInfo id, Item.Properties settings, RegistryHelperBlockExpanded expanded) {
         SoundType soundType = determineSoundType(info);
@@ -347,12 +347,12 @@ public class Blocks implements AddonModule {
                     Utils.appendToPath(identifier, "_slab").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
         }
         if (info.stairs) {
-            expanded.registerBlock(new StairsImpl(block, blockSettings), block, ResourceLocation.fromNamespaceAndPath(id.modId(),
+            expanded.registerBlock(new StairsImpl(block, blockSettings), block, Identifier.fromNamespaceAndPath(id.modId(),
                     identifier.getPath() + "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS);
         }
         if (info.fence) {
             expanded.registerBlock(new FenceImpl(block, blockSettings), block,
-                    ResourceLocation.fromNamespaceAndPath(id.modId(), identifier.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
+                    Identifier.fromNamespaceAndPath(id.modId(), identifier.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
         }
         if (info.fenceGate) {
             expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),
@@ -382,7 +382,7 @@ public class Blocks implements AddonModule {
     }
 
     private SoundType determineSoundType(AdditionalBlockInformation info) {
-        return info.overworldLike ? SoundType.OVERWORLD : info.netherLike ? SoundType.NETHER : SoundType.BAMBOO;
+        return info.overworldLike ? SoundType.OVERWORLD : (info.netherLike ? SoundType.NETHER : SoundType.BAMBOO);
     }
 
     @Override
@@ -400,7 +400,7 @@ public class Blocks implements AddonModule {
         } else if (soundType == SoundType.CHERRY) {
             return WoodType.CHERRY;
         } else {
-            return null;
+            return WoodType.ACACIA;
         }
     }
 

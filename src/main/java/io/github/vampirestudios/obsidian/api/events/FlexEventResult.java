@@ -2,9 +2,9 @@ package io.github.vampirestudios.obsidian.api.events;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public record FlexEventResult(InteractionResult result, @Nullable Object object)
@@ -14,7 +14,7 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
         return new FlexEventResult(InteractionResult.SUCCESS, null);
     }
 
-    public static FlexEventResult success(@Nonnull Object resultState)
+    public static FlexEventResult success(@NotNull Object resultState)
     {
         return new FlexEventResult(InteractionResult.SUCCESS, resultState);
     }
@@ -24,7 +24,7 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
         return new FlexEventResult(InteractionResult.CONSUME, null);
     }
 
-    public static FlexEventResult consume(@Nonnull Object resultState)
+    public static FlexEventResult consume(@NotNull Object resultState)
     {
         return new FlexEventResult(InteractionResult.CONSUME, resultState);
     }
@@ -34,7 +34,7 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
         return new FlexEventResult(InteractionResult.CONSUME, null);
     }
 
-    public static FlexEventResult consumePartial(@Nonnull Object resultState)
+    public static FlexEventResult consumePartial(@NotNull Object resultState)
     {
         return new FlexEventResult(InteractionResult.CONSUME, resultState);
     }
@@ -44,7 +44,7 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
         return new FlexEventResult(InteractionResult.PASS, null);
     }
 
-    public static FlexEventResult pass(@Nonnull Object resultState)
+    public static FlexEventResult pass(@NotNull Object resultState)
     {
         return new FlexEventResult(InteractionResult.PASS, resultState);
     }
@@ -54,7 +54,7 @@ public record FlexEventResult(InteractionResult result, @Nullable Object object)
         return new FlexEventResult(InteractionResult.FAIL, null);
     }
 
-    public static FlexEventResult fail(@Nonnull Object resultState)
+    public static FlexEventResult fail(@NotNull Object resultState)
     {
         return new FlexEventResult(InteractionResult.FAIL, resultState);
     }

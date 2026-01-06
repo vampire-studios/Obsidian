@@ -5,6 +5,7 @@ import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.Keyframe;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.function.Function;
 
@@ -18,8 +19,8 @@ public class AnimationEasing {
 	}
 
 	public static Vector3f easing(Vector3f vec3f, float f, Keyframe[] keyframes, int i, int j, float g) {
-		Vector3f vector3f2 = keyframes[i].target();
-		Vector3f vector3f3 = keyframes[j].target();
+		Vector3fc vector3f2 = keyframes[i].preTarget();
+		Vector3fc vector3f3 = keyframes[j].postTarget();
 		vec3f.set(
 				net.minecraft.util.Mth.lerp(f, vector3f2.x(), vector3f3.x()) * g,
 				net.minecraft.util.Mth.lerp(f, vector3f2.y(), vector3f3.y()) * g,

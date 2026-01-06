@@ -2,13 +2,13 @@ package io.github.vampirestudios.obsidian.api.obsidian.entity.components.behavio
 
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class PanicBehaviourComponent extends Component {
 
     public int priority;
     public List<String> damage_sources;
-    public ResourceLocation panic_sound;
+    public Identifier panic_sound;
     public SoundInterval sound_interval;
     public boolean force = false;
     public boolean ignore_mob_damage = false;

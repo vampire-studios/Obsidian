@@ -7,7 +7,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -23,15 +23,15 @@ import java.util.concurrent.Executor;
 
 public class AnimationManager implements SimpleResourceReloadListener<AnimationManager.AnimationLoader> {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Obsidian Animation Manager");
-	private Map<ResourceLocation, AnimationDefinition> animations;
+	private Map<Identifier, AnimationDefinition> animations;
 
-	public AnimationDefinition getAnimation(ResourceLocation id) {
+	public AnimationDefinition getAnimation(Identifier id) {
 		return animations.get(id);
 	}
 
 	@Override
-	public ResourceLocation getFabricId() {
-		return ResourceLocation.fromNamespaceAndPath("obsidian", "animation_reloader");
+	public Identifier getFabricId() {
+		return Identifier.fromNamespaceAndPath("obsidian", "animation_reloader");
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class AnimationManager implements SimpleResourceReloadListener<AnimationM
 
 	public static class AnimationLoader {
 		private final ResourceManager manager;
-		private final Map<ResourceLocation, AnimationDefinition> animations = new HashMap<>();
+		private final Map<Identifier, AnimationDefinition> animations = new HashMap<>();
 
 		public AnimationLoader(ResourceManager manager) {
 			this.manager = manager;
@@ -55,13 +55,13 @@ public class AnimationManager implements SimpleResourceReloadListener<AnimationM
 		}
 
 		private void loadAnimations() {
-			Map<ResourceLocation, Resource> resources = manager.listResources("animations", id -> id.getPath().endsWith(".json"));
-			for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
+			Map<Identifier, Resource> resources = manager.listResources("animations", id -> id.getPath().endsWith(".json"));
+			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
 				addAnimation(entry.getKey(), entry.getValue());
 			}
 		}
 
-		private void addAnimation(ResourceLocation id, Resource resource) {
+		private void addAnimation(Identifier id, Resource resource) {
 			BufferedReader reader;
 			try {
 				reader = resource.openAsReader();
@@ -78,10 +78,10 @@ public class AnimationManager implements SimpleResourceReloadListener<AnimationM
 				return;
 			}
 
-			animations.put(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath().substring("animations/".length())), result.result().get().getFirst());
+			animations.put(Identifier.fromNamespaceAndPath(id.getNamespace(), id.getPath().substring("animations/".length())), result.result().get().getFirst());
 		}
 
-		public Map<ResourceLocation, AnimationDefinition> getAnimations() {
+		public Map<Identifier, AnimationDefinition> getAnimations() {
 			return animations;
 		}
 	}

@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.api.obsidian.command;
 import com.mojang.brigadier.arguments.*;
 import io.github.vampirestudios.obsidian.minecraft.ModIdArgument;
 import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.*;
 import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
@@ -11,7 +12,10 @@ import net.minecraft.commands.arguments.item.FunctionArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemPredicateArgument;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.permissions.PermissionCheck;
+import net.minecraft.server.permissions.PermissionSet;
+import net.minecraft.server.permissions.Permissions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,10 +27,32 @@ public class Command {
         public String[] executes;
         public String[] aliases;
         public Integer op_level;
+
+        public PermissionCheck getPermissionFromInt() {
+            return switch(op_level) {
+                case 0 -> Commands.LEVEL_ALL;
+                case 1 -> Commands.LEVEL_MODERATORS;
+                case 2 -> Commands.LEVEL_GAMEMASTERS;
+                case 3 -> Commands.LEVEL_ADMINS;
+                case 4 -> Commands.LEVEL_OWNERS;
+                default -> throw new IllegalStateException(STR."Unexpected value: \{op_level}");
+            };
+        }
+
+        public PermissionSet getPermissionSetFromInt() {
+            return switch(op_level) {
+                case 0 -> permission -> permission == Permissions.COMMANDS_ENTITY_SELECTORS;
+                case 1 -> permission -> permission == Permissions.COMMANDS_MODERATOR;
+                case 2 ->permission -> permission == Permissions.COMMANDS_GAMEMASTER;
+                case 3 -> permission -> permission == Permissions.COMMANDS_ADMIN;
+                case 4 -> permission -> permission == Permissions.COMMANDS_OWNER;
+                default -> throw new IllegalStateException(STR."Unexpected value: \{op_level}");
+            };
+        }
     }
     
     public class CommandNode extends Node {
-        public ResourceLocation name;
+        public Identifier name;
         public boolean dedicatedOnly = false;
         public String[] executes;
     }
@@ -137,7 +163,7 @@ public class Command {
             argumentTypeMap.put("resource_or_tag_key_feature", ResourceOrTagKeyArgument.resourceOrTagKey(Registries.FEATURE));
             argumentTypeMap.put("resource_or_tag_key_structure", ResourceOrTagKeyArgument.resourceOrTagKey(Registries.STRUCTURE));
 
-            argumentTypeMap.put("resource_location", ResourceLocationArgument.id());
+            argumentTypeMap.put("resource_location", IdentifierArgument.id());
 
             //Scoreboard Stuff
             argumentTypeMap.put("objective", ObjectiveArgument.objective());

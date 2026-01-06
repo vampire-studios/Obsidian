@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class CustomMaterial {
 
-    public ResourceLocation id;
+    public Identifier id;
 
     public boolean blocks_movement;
     public boolean burnable;

@@ -31,8 +31,8 @@ public class ItemDisplayInformation {
     public Optional<TextureAndModelInformation> getItemModel() {
         if (itemModel instanceof TextureAndModelInformation info) {
             return Optional.of(info);
-        } else if(itemModel instanceof Identifier resourceLocation) {
-            return Optional.of(new TextureAndModelInformation(resourceLocation));
+        } else if(itemModel instanceof Identifier Identifier) {
+            return Optional.of(new TextureAndModelInformation(Identifier));
         } else if (itemModel instanceof Map<?, ?> modelMap) {
 			TextureAndModelInformation textureAndModelInformation = new TextureAndModelInformation();
 

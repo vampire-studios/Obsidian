@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 //Based from ee3's code
@@ -42,8 +42,8 @@ public class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeser
                 }
             }
 
-            if (name != null && BuiltInRegistries.ITEM.get(new ResourceLocation(name)) != null) {
-                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(name)), stackSize);
+            if (name != null && BuiltInRegistries.ITEM.get(new Identifier(name)) != null) {
+                ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new Identifier(name)), stackSize);
                 itemStack.setTag(tagCompound);
                 return itemStack;
             }

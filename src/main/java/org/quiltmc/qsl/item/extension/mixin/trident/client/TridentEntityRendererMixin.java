@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(ThrownTridentRenderer.class)
 public class TridentEntityRendererMixin {
 //    @Inject(method = "getTex", at = @At(value = "HEAD"), cancellable = true)
-//    public void getTextureMixin(ThrownTrident entity, CallbackInfoReturnable<ResourceLocation> cir) {
+//    public void getTextureMixin(ThrownTrident entity, CallbackInfoReturnable<Identifier> cir) {
 //        if(((AbstractArrowAccessor) entity).getPickupItemStack().getItem() instanceof TridentExtensions tridentItem) {
 //            cir.setReturnValue(tridentItem.getRenderTexture());
 //        }

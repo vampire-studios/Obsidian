@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.api.events;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
+
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 

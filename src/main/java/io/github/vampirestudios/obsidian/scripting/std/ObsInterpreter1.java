@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -80,7 +80,7 @@ public final class ObsInterpreter1 {
 						.matcher(line);
 				if (m.matches()) {
 					ServerPlayer p = (ServerPlayer) vars.get(m.group(1));
-					Item item = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(m.group(2)));
+					Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(m.group(2)));
 					int count = Integer.parseInt(m.group(3));
 					if (p != null && item != null)
 						p.getInventory().placeItemBackInInventory(new ItemStack(item, clamp(count, 1, 64)));
@@ -111,7 +111,7 @@ public final class ObsInterpreter1 {
 			if (match(line, "^([A-Za-z_][A-Za-z0-9_]*)\\.effect\\(\"([^\"]+)\",\\s*(\\d+)(?:,\\s*(\\d+))?\\);$")) {
 				var m = M(line);
 				ServerPlayer p = (ServerPlayer) vars.get(m.group(1));
-				Holder<MobEffect> eff = BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(m.group(2))).orElseThrow();
+				Holder<MobEffect> eff = BuiltInRegistries.MOB_EFFECT.get(Identifier.parse(m.group(2))).orElseThrow();
 				int secs = Integer.parseInt(m.group(3));
 				int amp = gInt(m, 4, 0);
 				if (p != null && eff != null)
@@ -123,7 +123,7 @@ public final class ObsInterpreter1 {
 			if (match(line, "^([A-Za-z_][A-Za-z0-9_]*)\\.sound\\(\"([^\"]+)\",\\s*([0-9.]+),\\s*([0-9.]+)\\);$")) {
 				var m = M(line);
 				ServerPlayer p = (ServerPlayer) vars.get(m.group(1));
-				SoundEvent se = BuiltInRegistries.SOUND_EVENT.getValue(ResourceLocation.parse(m.group(2)));
+				SoundEvent se = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(m.group(2)));
 				float vol = Float.parseFloat(m.group(3)), pit = Float.parseFloat(m.group(4));
 				if (p != null && se != null)
 					p.level().playSound(null, p.blockPosition(), se, SoundSource.PLAYERS, vol, pit);
@@ -192,7 +192,7 @@ public final class ObsInterpreter1 {
 				var m = java.util.regex.Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\.inventory\\.has\\(\"([^\"]+)\",\\s*(\\d+)\\);$").matcher(line);
 				if (m.find()) {
 					var p=(ServerPlayer)vars.get(m.group(1)); if (p!=null) {
-						var item=BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(m.group(2)));
+						var item=BuiltInRegistries.ITEM.getValue(Identifier.parse(m.group(2)));
 						int need=Integer.parseInt(m.group(3));
 						int have=0; for (var s : p.getInventory().getNonEquipmentItems()) if (s.getItem()==item) have+=s.getCount();
 						System.out.println("[OBS] inventory.has = " + (have>=need));
@@ -325,7 +325,7 @@ public final class ObsInterpreter1 {
 				var m = java.util.regex.Pattern.compile("^world\\.particle\\(\"([^\"]+)\",\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*(\\d+)\\);$").matcher(line);
 //				if (m.find()) {
 //					var lvl = server.overworld();
-//					var type = BuiltInRegistries.PARTICLE_TYPE.getValue(ResourceLocation.parse(m.group(1)));
+//					var type = BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.parse(m.group(1)));
 //					if (type != null) lvl.sendParticles(type,
 //							Double.parseDouble(m.group(2)), Double.parseDouble(m.group(3)), Double.parseDouble(m.group(4)),
 //							Integer.parseInt(m.group(9)),
@@ -368,7 +368,7 @@ public final class ObsInterpreter1 {
 		if (predicate.startsWith("biome.is(")) {
 			String id = insideString(predicate);
 			var key = ctxPlayer.level().getBiome(ctxPlayer.blockPosition()).unwrapKey().orElse(null);
-			return key != null && key.location().toString().equals(id);
+			return key != null && key.identifier().toString().equals(id);
 		}
 		if (predicate.startsWith("player.itemInHand.is(")) {
 			String id = insideString(predicate);
@@ -409,7 +409,7 @@ public final class ObsInterpreter1 {
 			Object v = vars.get(key);
 			if (v == null && key.endsWith(".name")) {
 				Object base = vars.get(key.substring(0, key.length() - 5));
-				if (base instanceof ServerPlayer sp) v = sp.getGameProfile().getName();
+				if (base instanceof ServerPlayer sp) v = sp.getGameProfile().name();
 			}
 			m.appendReplacement(out, Matcher.quoteReplacement(String.valueOf(v)));
 		}
@@ -423,7 +423,7 @@ public final class ObsInterpreter1 {
 	}
 
 	private static ServerLevel world(MinecraftServer srv, String id) {
-		var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, net.minecraft.resources.ResourceLocation.parse(id));
+		var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, net.minecraft.resources.Identifier.parse(id));
 		var lvl = srv.getLevel(key);
 		return lvl != null ? lvl : srv.overworld();
 	}
@@ -500,6 +500,6 @@ public final class ObsInterpreter1 {
 		if (s instanceof ServerPlayer sp) return sp.blockPosition();
 		Object p = vars.get("player");
 		if (p instanceof ServerPlayer sp2) return sp2.blockPosition();
-		return lvl.getSharedSpawnPos();
+		return lvl.getRespawnData().pos();
 	}
 }

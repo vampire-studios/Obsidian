@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.crucible;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SkillManager {
     // A map to store skills by their unique ID
-    private final Map<ResourceLocation, Skill> skillRegistry = new ConcurrentHashMap<>();
+    private final Map<Identifier, Skill> skillRegistry = new ConcurrentHashMap<>();
 
     // Singleton instance for easy access
     private static final SkillManager INSTANCE = new SkillManager();
@@ -27,7 +27,7 @@ public class SkillManager {
      * @param skillId The unique identifier for the skill.
      * @param skill The skill instance to be registered.
      */
-    public void registerSkill(ResourceLocation skillId, Skill skill) {
+    public void registerSkill(Identifier skillId, Skill skill) {
         if (skillRegistry.containsKey(skillId)) {
             throw new IllegalArgumentException(STR."Skill ID already registered: \{skillId}");
         }
@@ -40,7 +40,7 @@ public class SkillManager {
      * @param skillId The unique identifier for the skill.
      * @return The skill instance if found, or null if no skill is registered with that ID.
      */
-    public Skill getSkillById(ResourceLocation skillId) {
+    public Skill getSkillById(Identifier skillId) {
         return skillRegistry.get(skillId);
     }
 

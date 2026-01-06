@@ -7,7 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,15 +22,15 @@ public class Guis implements AddonModule {
         GUI gui = BaseGson.GSON.fromJson(new FileReader(file), GUI.class);
         try {
             if (gui == null) return;
-            ResourceLocation fileId;
+            Identifier fileId;
             if (gui.id != null) fileId = gui.id;
             else {
-                fileId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+                fileId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
                 gui.id = fileId;
             }
             register(ContentRegistries.GUIS, "gui", fileId, gui);
         } catch (Exception e) {
-            failedRegistering("gui", ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "")), e);
+            failedRegistering("gui", Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "")), e);
         }
     }
 

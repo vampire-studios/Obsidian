@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.components.behaviou
 import io.github.vampirestudios.obsidian.api.obsidian.entity.components.movement.BasicMovementComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -32,7 +32,7 @@ public class EntityImpl extends PathfinderMob {
     private final float health;
     private final Map<String, Component> components;
     private final BreathableComponent breathableComponent;
-    public final Map<AnimationState, ResourceLocation> animationStates = new HashMap<>();
+    public final Map<AnimationState, Identifier> animationStates = new HashMap<>();
 
     public EntityImpl(EntityType<EntityImpl> type, Level world, Entity entity, float health, BreathableComponent breathableComponent) {
         super(type, world);
@@ -91,7 +91,7 @@ public class EntityImpl extends PathfinderMob {
         }
         assert temptBehaviourComponent != null;
         List<ItemStack> temptItems = new ArrayList<>();
-        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(item)))));
+        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.tryParse(item)))));
         this.goalSelector.addGoal(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.of((ItemLike) temptItems.stream()), temptBehaviourComponent.can_be_scared));
 
         RandomLookAroundBehaviourComponent randomLookAroundBehaviourComponent = null;

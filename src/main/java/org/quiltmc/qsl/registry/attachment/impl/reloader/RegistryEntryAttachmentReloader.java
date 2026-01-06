@@ -21,7 +21,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -54,11 +54,11 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	static final Logger LOGGER = LogUtils.getLogger();
-	private static final ResourceLocation ID_DATA = ResourceLocation.fromNamespaceAndPath(Initializer.NAMESPACE, "data");
-	private static final ResourceLocation ID_ASSETS = ResourceLocation.fromNamespaceAndPath(Initializer.NAMESPACE, "assets");
+	private static final Identifier ID_DATA = Identifier.fromNamespaceAndPath(Initializer.NAMESPACE, "data");
+	private static final Identifier ID_ASSETS = Identifier.fromNamespaceAndPath(Initializer.NAMESPACE, "assets");
 
 	private final PackType source;
-	private final ResourceLocation id;
+	private final Identifier id;
 
 	private RegistryEntryAttachmentReloader(PackType source) {
 		if (source == PackType.CLIENT_RESOURCES) {
@@ -73,7 +73,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public @NotNull ResourceLocation getFabricId() {
+	public @NotNull Identifier getFabricId() {
 		return this.id;
 	}
 
@@ -83,10 +83,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
 			for (var entry : BuiltInRegistries.REGISTRY.entrySet()) {
-				ResourceLocation registryId = entry.getKey().location();
+				Identifier registryId = entry.getKey().identifier();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
 
-				Map<ResourceLocation, List<Resource>> resources = manager.listResourceStacks("attachments/" + path,
+				Map<Identifier, List<Resource>> resources = manager.listResourceStacks("attachments/" + path,
 						s -> s.getPath().endsWith(".json"));
 				if (resources.isEmpty()) {
 					continue;
@@ -102,9 +102,9 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 	private void processResources(
 			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
-			Map<ResourceLocation, List<Resource>> resources, Registry<?> registry) {
+			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
 		for (var entry : resources.entrySet()) {
-			ResourceLocation attachmentId = this.getAttachmentId(entry.getKey());
+			Identifier attachmentId = this.getAttachmentId(entry.getKey());
 			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
 			if (attachment == null) {
 				LOGGER.warn("Unknown attachment {} (from {})", attachmentId, entry);
@@ -140,14 +140,14 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	// "<namespace>:attachments/<path>/<file_name>.json" becomes "<namespace>:<file_name>"
-	private ResourceLocation getAttachmentId(ResourceLocation jsonId) {
+	private Identifier getAttachmentId(Identifier jsonId) {
 		String path = jsonId.getPath();
 		int lastSlash = path.lastIndexOf('/');
 		path = path.substring(lastSlash + 1);
 
 		int lastDot = path.lastIndexOf('.');
 		path = path.substring(0, lastDot);
-		return ResourceLocation.fromNamespaceAndPath(jsonId.getNamespace(), path);
+		return Identifier.fromNamespaceAndPath(jsonId.getNamespace(), path);
 	}
 
 	protected final class LoadedData {

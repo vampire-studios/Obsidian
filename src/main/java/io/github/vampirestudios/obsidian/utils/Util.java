@@ -192,7 +192,7 @@ public class Util {
     public static ItemEntity spawnAtLocation(Level level, Vec3 pos, ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return null;
-        } else if (level.isClientSide) {
+        } else if (level.isClientSide()) {
             return null;
         } else {
             ItemEntity itemEntity = new ItemEntity(level, pos.x(), pos.y(), pos.z(), itemStack);

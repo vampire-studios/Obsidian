@@ -21,7 +21,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.ApiStatus;
@@ -53,7 +53,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <V>        attached value type
 	 * @return the attachment, or empty if the attachment was not found
 	 */
-	static <R, V> Optional<RegistryEntryAttachment<R, V>> get(Registry<R> registry, ResourceLocation id, Class<V> valueClass) {
+	static <R, V> Optional<RegistryEntryAttachment<R, V>> get(Registry<R> registry, Identifier id, Class<V> valueClass) {
 		return Optional.ofNullable(RegistryEntryAttachmentHolder.getAttachment(registry, id, valueClass));
 	}
 
@@ -68,7 +68,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param codec      attached value codec
 	 * @return a builder
 	 */
-	static <R, V> Builder<R, V> builder(Registry<R> registry, ResourceLocation id, Class<V> valueClass, Codec<V> codec) {
+	static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
 		return new Builder<>(registry, id, valueClass, codec);
 	}
 
@@ -84,9 +84,9 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <V>        attached value type
 	 * @return a builder
 	 */
-	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, ResourceLocation id,
-																		 Class<V> valueClass, Function<ResourceLocation, MapCodec<? extends V>> codec) {
-		return builder(registry, id, valueClass, ResourceLocation.CODEC.dispatch(V::getType, codec));
+	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
+																		 Class<V> valueClass, Function<Identifier, MapCodec<? extends V>> codec) {
+		return builder(registry, id, valueClass, Identifier.CODEC.dispatch(V::getType, codec));
 	}
 
 	/**
@@ -97,7 +97,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Boolean> boolBuilder(Registry<R> registry, ResourceLocation id) {
+	static <R> Builder<R, Boolean> boolBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Boolean.class, Codec.BOOL);
 	}
 
@@ -109,7 +109,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Integer> intBuilder(Registry<R> registry, ResourceLocation id) {
+	static <R> Builder<R, Integer> intBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Integer.class, Codec.INT);
 	}
 
@@ -124,7 +124,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Integer> intRangeBuilder(Registry<R> registry, ResourceLocation id, int min, int max) {
+	static <R> Builder<R, Integer> intRangeBuilder(Registry<R> registry, Identifier id, int min, int max) {
 		return builder(registry, id, Integer.class, Codec.intRange(min, max));
 	}
 
@@ -136,7 +136,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Long> longBuilder(Registry<R> registry, ResourceLocation id) {
+	static <R> Builder<R, Long> longBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Long.class, Codec.LONG);
 	}
 
@@ -151,7 +151,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Long> longRangeBuilder(Registry<R> registry, ResourceLocation id, long min, long max) {
+	static <R> Builder<R, Long> longRangeBuilder(Registry<R> registry, Identifier id, long min, long max) {
 		// Codec.longRange(long, long) doesn't exist for some reason
 		// implement it ourselves
 		final Function<Long, DataResult<Long>> checker = Codec.checkRange(min, max);
@@ -166,7 +166,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Float> floatBuilder(Registry<R> registry, ResourceLocation id) {
+	static <R> Builder<R, Float> floatBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Float.class, Codec.FLOAT);
 	}
 
@@ -181,7 +181,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Float> floatRangeBuilder(Registry<R> registry, ResourceLocation id, float min, float max) {
+	static <R> Builder<R, Float> floatRangeBuilder(Registry<R> registry, Identifier id, float min, float max) {
 		return builder(registry, id, Float.class, Codec.floatRange(min, max));
 	}
 
@@ -193,7 +193,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Double> doubleBuilder(Registry<R> registry, ResourceLocation id) {
+	static <R> Builder<R, Double> doubleBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Double.class, Codec.DOUBLE);
 	}
 
@@ -208,7 +208,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, Double> doubleRangeBuilder(Registry<R> registry, ResourceLocation id, double min, double max) {
+	static <R> Builder<R, Double> doubleRangeBuilder(Registry<R> registry, Identifier id, double min, double max) {
 		return builder(registry, id, Double.class, Codec.doubleRange(min, max));
 	}
 
@@ -220,7 +220,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
-	static <R> Builder<R, String> stringBuilder(Registry<R> registry, ResourceLocation id) {
+	static <R> Builder<R, String> stringBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, String.class, Codec.STRING);
 	}
 
@@ -236,7 +236,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 *
 	 * @return the attachment identifier
 	 */
-	ResourceLocation id();
+	Identifier id();
 
 	/**
 	 * Gets the base class of this attachment's values.
@@ -499,7 +499,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 */
 	final class Builder<R, V> {
 		private final Registry<R> registry;
-		private final ResourceLocation id;
+		private final Identifier id;
 		private final Class<V> valueClass;
 		private final Codec<V> codec;
 
@@ -507,7 +507,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		private @Nullable V defaultValue;
 		private @Nullable DefaultValueProvider<R, V> defaultValueProvider;
 
-		private Builder(Registry<R> registry, ResourceLocation id, Class<V> valueClass, Codec<V> codec) {
+		private Builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
 			this.registry = registry;
 			this.id = id;
 			this.valueClass = valueClass;
@@ -516,7 +516,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 
 			if (RegistryEntryAttachmentHolder.getAttachment(registry, id) != null) {
 				throw new IllegalStateException("Attachment with ID '%s' is already registered for registry %s!"
-						.formatted(id, registry.key().location()));
+						.formatted(id, registry.key().identifier()));
 			}
 		}
 

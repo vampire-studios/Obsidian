@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 
@@ -57,9 +57,9 @@ public final class TooltipAPI {
         public String kind() { return "bar"; }
     }
 
-    public record IconEl(ResourceLocation sprite, String text) implements Element {
+    public record IconEl(Identifier sprite, String text) implements Element {
         static final Codec<IconEl> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ResourceLocation.CODEC.fieldOf("sprite").forGetter(IconEl::sprite),
+            Identifier.CODEC.fieldOf("sprite").forGetter(IconEl::sprite),
             Codec.STRING.optionalFieldOf("text", "").forGetter(IconEl::text)
         ).apply(i, IconEl::new));
         public String kind() { return "icon"; }

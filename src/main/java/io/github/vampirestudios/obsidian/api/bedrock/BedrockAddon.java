@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.api.bedrock;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PathPackResources;
@@ -29,7 +29,7 @@ public class BedrockAddon implements IBedrockAddon {
     }
 
     @Override
-    public ResourceLocation getIdentifier() {
+    public Identifier getIdentifier() {
         return manifestFile.header.identifier;
     }
 

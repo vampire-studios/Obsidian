@@ -128,7 +128,7 @@ public class FurnitureBlock extends Block {
 	protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
 		super.onPlace(state, level, pos, oldState, movedByPiston);
 
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 //			// 2) spawn static seats from mech.seats offsets
 //			if (mech.seats != null) {
 //				for (String s : mech.seats) {
@@ -151,7 +151,7 @@ public class FurnitureBlock extends Block {
 	@Override
 	protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (mech != null && mech.seats != null) {
-			if (!level.isClientSide) {
+			if (!level.isClientSide()) {
 				Entity entity = null;
 				List<SeatEntity> entities = level.getEntities(Obsidian.SEAT, new AABB(pos), chair -> true);
 				if(entities.isEmpty()) {

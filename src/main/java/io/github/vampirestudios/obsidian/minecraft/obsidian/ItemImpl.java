@@ -1,13 +1,13 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.EventActionHandler;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -59,7 +59,7 @@ public class ItemImpl extends Item {
 //                default -> mode.equals(ItemDisplayContext.valueOf(renderMode));
 //            };
 //            if (matchesMode)
-//                return Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(renderModeModel.model, renderMode));
+//                return Minecraft.getInstance().getModelManager().getModel(new ModelIdentifier(renderModeModel.model, renderMode));
 //        }
 //        return original;
 //    }

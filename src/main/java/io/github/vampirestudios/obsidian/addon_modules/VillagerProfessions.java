@@ -11,7 +11,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 
 import java.io.File;
@@ -28,11 +28,11 @@ public class VillagerProfessions implements AddonModule {
         VillagerProfession villagerProfession = BaseGson.GSON.fromJson(new FileReader(file), VillagerProfession.class);
         try {
             if (villagerProfession == null) return;
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     villagerProfession.name.id,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (villagerProfession.name.id == null) villagerProfession.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (villagerProfession.name.id == null) villagerProfession.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             ResourceKey<PoiType> registryKey = ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, villagerProfession.poi.id);
             PointOfInterestTypesAccessor.callRegister(
                     BuiltInRegistries.POINT_OF_INTEREST_TYPE,

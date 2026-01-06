@@ -9,7 +9,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
 import java.io.File;
@@ -28,11 +28,11 @@ public class BlockSoundGroups implements AddonModule {
 		try {
 			if (customSoundGroup == null) return;
 
-			ResourceLocation identifier = Objects.requireNonNullElseGet(
+			Identifier identifier = Objects.requireNonNullElseGet(
 					customSoundGroup.id,
-					() -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
 			);
-			if (customSoundGroup.id == null) customSoundGroup.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			if (customSoundGroup.id == null) customSoundGroup.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			registerSoundIfNotFound(customSoundGroup.break_sound);
 			registerSoundIfNotFound(customSoundGroup.step_sound);
@@ -46,7 +46,7 @@ public class BlockSoundGroups implements AddonModule {
 		}
 	}
 
-	private void registerSoundIfNotFound(ResourceLocation sound) {
+	private void registerSoundIfNotFound(Identifier sound) {
 		if (!BuiltInRegistries.SOUND_EVENT.containsKey(sound)) Obsidian.registerInRegistry(BuiltInRegistries.SOUND_EVENT, sound, SoundEvent.createVariableRangeEvent(sound));
 	}
 

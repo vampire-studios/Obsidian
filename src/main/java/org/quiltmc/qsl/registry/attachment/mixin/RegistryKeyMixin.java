@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.registry.attachment.mixin;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.impl.BuiltinRegistryEntryAttachmentHolder;
@@ -33,7 +33,7 @@ import java.util.Set;
 @Mixin(ResourceKey.class)
 public abstract class RegistryKeyMixin<R> implements QuiltRegistryInternals<R> {
 	@Unique
-	private final Map<ResourceLocation, RegistryEntryAttachment<R, ?>> quilt$attachments = new HashMap<>();
+	private final Map<Identifier, RegistryEntryAttachment<R, ?>> quilt$attachments = new HashMap<>();
 	@Unique
 	private BuiltinRegistryEntryAttachmentHolder<R> quilt$builtinAttachmentHolder;
 	@Unique
@@ -45,12 +45,12 @@ public abstract class RegistryKeyMixin<R> implements QuiltRegistryInternals<R> {
 	}
 
 	@Override
-	public @Nullable RegistryEntryAttachment<R, ?> quilt$getAttachment(ResourceLocation id) {
+	public @Nullable RegistryEntryAttachment<R, ?> quilt$getAttachment(Identifier id) {
 		return this.quilt$attachments.get(id);
 	}
 
 	@Override
-	public Set<Map.Entry<ResourceLocation, RegistryEntryAttachment<R, ?>>> quilt$getAttachmentEntries() {
+	public Set<Map.Entry<Identifier, RegistryEntryAttachment<R, ?>>> quilt$getAttachmentEntries() {
 		return this.quilt$attachments.entrySet();
 	}
 

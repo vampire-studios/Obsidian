@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 
 import java.util.Arrays;
@@ -11,7 +11,7 @@ public class UI {
 	public String type;
 	public String orientation;
 
-	public ResourceLocation id;
+	public Identifier id;
 
 //	@SerializedName("horizontal_alignment") public HorizontalAlignment horizontalAlignment;
 //	@SerializedName("vertical_alignment") public VerticalAlignment verticalAlignment;
@@ -67,7 +67,7 @@ public class UI {
 	public static class Surface {
 		public SurfaceType type;
 
-		public ResourceLocation texture;
+		public Identifier texture;
 		public int textureWidth;
 		public int textureHeight;
 
@@ -95,7 +95,7 @@ public class UI {
 				default -> throw new IllegalStateException("Unexpected value: " + Arrays.toString(Surface.SurfaceType.values()));
 			};
 
-			if (GsonHelper.isStringValue(jsonObject, "texture")) surface.texture = ResourceLocation.tryParse(GsonHelper.getAsString(jsonObject, "texture"));
+			if (GsonHelper.isStringValue(jsonObject, "texture")) surface.texture = Identifier.tryParse(GsonHelper.getAsString(jsonObject, "texture"));
 
 			if (GsonHelper.isNumberValue(jsonObject, "textureWidth")) surface.textureWidth = GsonHelper.getAsInt(jsonObject, "textureWidth");
 			if (GsonHelper.isNumberValue(jsonObject, "textureHeight")) surface.textureHeight = GsonHelper.getAsInt(jsonObject, "textureHeight");

@@ -4,16 +4,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 
-public class JacksonResourceLocationDeserializer extends JsonDeserializer<ResourceLocation> {
+public class JacksonIdentifierDeserializer extends JsonDeserializer<Identifier> {
 
     @Override
-    public ResourceLocation deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public Identifier deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        String resourceLocationString = node.asText();
-        return ResourceLocation.tryParse(resourceLocationString);
+        String IdentifierString = node.asText();
+        return Identifier.tryParse(IdentifierString);
     }
 }

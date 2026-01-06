@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
@@ -16,9 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl implements EntityBlock {
-    private final ResourceLocation id;
+    private final Identifier id;
 
-    public HorizontalFacingDyableBlockImpl(ResourceLocation id, io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
+    public HorizontalFacingDyableBlockImpl(Identifier id, io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
         super(block, settings);
         this.id = id;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));

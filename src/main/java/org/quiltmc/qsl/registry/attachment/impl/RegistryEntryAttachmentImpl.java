@@ -21,7 +21,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashBigSet;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ import java.util.Set;
 @ApiStatus.Internal
 public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntryAttachment<R, V> {
 	protected final Registry<R> registry;
-	protected final ResourceLocation id;
+	protected final Identifier id;
 	protected final Class<V> valueClass;
 	protected final Codec<V> codec;
 	protected final Side side;
@@ -44,7 +44,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Event<ValueRemoved<R>> valueRemovedEvent;
 	protected final Event<TagValueRemoved<R>> tagValueRemovedEvent;
 
-	public RegistryEntryAttachmentImpl(Registry<R> registry, ResourceLocation id, Class<V> valueClass, Codec<V> codec,
+	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
 									   Side side) {
 		this.registry = registry;
 		this.id = id;
@@ -80,7 +80,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	}
 
 	@Override
-	public ResourceLocation id() {
+	public Identifier id() {
 		return this.id;
 	}
 

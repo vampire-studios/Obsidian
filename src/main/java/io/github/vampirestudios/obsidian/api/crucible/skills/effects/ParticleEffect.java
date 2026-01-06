@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.api.crucible.skills.effects;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -24,7 +24,7 @@ public class ParticleEffect extends Effect {
     private final List<Keyframe> keyframes;
 
     public ParticleEffect(String particleTypeName, String pattern, int count, double speed, Vec3 offset, int interval, int duration, Optional<Integer> color, List<Keyframe> keyframes) {
-        ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(ResourceLocation.parse(particleTypeName));
+        ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.parse(particleTypeName));
         if (particleType == null) {
             throw new IllegalArgumentException("Unknown particle type: " + particleTypeName);
         }

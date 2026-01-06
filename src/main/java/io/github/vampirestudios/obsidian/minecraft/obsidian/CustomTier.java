@@ -50,8 +50,8 @@ public class CustomTier implements ToolMaterial {
     @Override
     public Ingredient getRepairIngredient() {
         List<ItemStack> ingredients = new ArrayList<>();
-        tier.repairItem.forEach(resourceLocation -> {
-            Item item = BuiltInRegistries.ITEM.get(resourceLocation);
+        tier.repairItem.forEach(Identifier -> {
+            Item item = BuiltInRegistries.ITEM.get(Identifier);
             ingredients.add(new ItemStack(item));
         });
         return Ingredient.of(ingredients.toArray(new ItemStack[0]));

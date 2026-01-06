@@ -79,7 +79,7 @@ public class Registries {
 
     private static <T> Registry<T> makeRegistry(ResourceKey<Registry<T>> key) {
         MappedRegistry<T> registry = new MappedRegistry<>(key, Lifecycle.stable(), false);
-        return Registry.register(OBSIDIAN_REGISTRIES, key.location().toString(), registry);
+        return Registry.register(OBSIDIAN_REGISTRIES, key.identifier().toString(), registry);
     }
 
     private static void registerProperties() {
@@ -185,12 +185,12 @@ public class Registries {
         Registry.register(PROPERTIES, "vertical_direction", BlockStateProperties.VERTICAL_DIRECTION);
         Registry.register(PROPERTIES, "dripstone_thickness", BlockStateProperties.DRIPSTONE_THICKNESS);
         Registry.register(PROPERTIES, "sculk_sensor_phase", BlockStateProperties.SCULK_SENSOR_PHASE);
-        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_0_occupied", BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED);
-        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_1_occupied", BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED);
-        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_2_occupied", BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED);
-        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_3_occupied", BlockStateProperties.CHISELED_BOOKSHELF_SLOT_3_OCCUPIED);
-        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_4_occupied", BlockStateProperties.CHISELED_BOOKSHELF_SLOT_4_OCCUPIED);
-        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_5_occupied", BlockStateProperties.CHISELED_BOOKSHELF_SLOT_5_OCCUPIED);
+        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_0_occupied", BlockStateProperties.SLOT_0_OCCUPIED);
+        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_1_occupied", BlockStateProperties.SLOT_1_OCCUPIED);
+        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_2_occupied", BlockStateProperties.SLOT_2_OCCUPIED);
+        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_3_occupied", BlockStateProperties.SLOT_3_OCCUPIED);
+        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_4_occupied", BlockStateProperties.SLOT_4_OCCUPIED);
+        Registry.register(PROPERTIES, "chiseled_bookshelf_slot_5_occupied", BlockStateProperties.SLOT_5_OCCUPIED);
         Registry.register(PROPERTIES, "dusted", BlockStateProperties.DUSTED);
         Registry.register(PROPERTIES, "cracked", BlockStateProperties.CRACKED);
         Registry.register(PROPERTIES, "crafting", BlockStateProperties.CRAFTING);

@@ -14,9 +14,9 @@ public class WeaponItem extends Item {
 
     public ToolMaterial getTier() {
 		switch (material) {
-			case Identifier resourceLocation -> {
-				if (resourceLocation.getNamespace().contains("minecraft")) {
-					String path = resourceLocation.getPath().toUpperCase(Locale.ROOT);
+			case Identifier Identifier -> {
+				if (Identifier.getNamespace().contains("minecraft")) {
+					String path = Identifier.getPath().toUpperCase(Locale.ROOT);
 					return switch (path) {
 						case "WOOD" -> ToolMaterial.WOOD;
 						case "STONE" -> ToolMaterial.STONE;
@@ -26,7 +26,7 @@ public class WeaponItem extends Item {
 						default -> throw new IllegalStateException(STR."Unexpected value: \{path}");
 					};
 				}
-				return ContentRegistries.TOOL_MATERIALS.getValue(resourceLocation);
+				return ContentRegistries.TOOL_MATERIALS.getValue(Identifier);
 			}
 			case String s -> {
 				Identifier location = Identifier.tryParse(s);

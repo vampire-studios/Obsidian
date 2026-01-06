@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.api;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public class TabbedGroup {
@@ -12,7 +12,7 @@ public class TabbedGroup {
 	public Tab[] tabs;
 	public Button[] buttons;
 	public int stackHeight = 4;
-	public ResourceLocation customTexture = null;
+	public Identifier customTexture = null;
 	public boolean displayTabNamesAsTitle = true;
 
 	public static class Button {
@@ -26,8 +26,8 @@ public class TabbedGroup {
 	public static class Tab {
 		public Icon icon;
 		public String name;
-		public ResourceLocation contentTag;
-		public ResourceLocation texture;
+		public Identifier contentTag;
+		public Identifier texture;
 	}
 
 	public static class Icon {
@@ -37,11 +37,11 @@ public class TabbedGroup {
 		public static class IconProperties {}
 
 		public static class Item extends IconProperties {
-			public ResourceLocation item;
+			public Identifier item;
 		}
 
 		public static class Texture extends IconProperties {
-			public ResourceLocation texture;
+			public Identifier texture;
 			public int u, v;
 			public int textureWidth, textureHeight;
 		}

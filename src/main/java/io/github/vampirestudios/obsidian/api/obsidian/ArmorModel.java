@@ -8,14 +8,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.joml.Vector3f;
 
 import java.util.List;
 
 public class ArmorModel {
 
-    public ResourceLocation name;
+    public Identifier name;
     public Bone[] bones;
     public Vec2i textureSize = Vec2i.ZERO.copy();
 

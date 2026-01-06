@@ -27,6 +27,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -39,8 +40,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface QuiltFlowableFluidExtensions {
 
@@ -104,7 +104,7 @@ public interface QuiltFlowableFluidExtensions {
 	 */
 	default float getPushStrength(FluidState state, Entity affected) {
 		if(state.is(FluidTags.LAVA)) {
-			return affected.level().dimensionType().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+			return affected.level().dimensionType().attributes().contains(EnvironmentAttributes.FAST_LAVA) ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 		}
 		return WATER_PUSH_STRENGTH;
 	}
@@ -251,8 +251,7 @@ public interface QuiltFlowableFluidExtensions {
 		return ParticleTypes.BUBBLE;
 	}
 
-	@Nullable
-	default Holder.Reference<GameEvent> getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
+	default Holder.@Nullable Reference<GameEvent> getSplashGameEvent(Entity splashing, Vec3 splashPos, RandomSource random) {
 		return GameEvent.SPLASH;
 	}
 
@@ -387,7 +386,7 @@ public interface QuiltFlowableFluidExtensions {
 		}
 
 		// dismount vehicles that can't swim (horses)
-		if (!drowning.level().isClientSide && drowning.isPassenger() && drowning.getVehicle() != null && !drowning.getVehicle().dismountsUnderwater()) {
+		if (!drowning.level().isClientSide() && drowning.isPassenger() && drowning.getVehicle() != null && !drowning.getVehicle().dismountsUnderwater()) {
 			drowning.stopRiding();
 		}
 	}

@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.scripting.std;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -408,11 +408,11 @@ public final class ObsInterpreter {
 		if (s.startsWith("biome.is(")) {
 			String id = insideString(s);
 			var key = p.level().getBiome(p.blockPosition()).unwrapKey().orElse(null);
-			return key != null && key.location().toString().equals(id);
+			return key != null && key.identifier().toString().equals(id);
 		}
 		if (s.startsWith("dimension.is(")) {
 			String id = insideString(s);
-			var dim = p.level().dimension().location().toString();
+			var dim = p.level().dimension().identifier().toString();
 			return dim.equals(id);
 		}
 		if (s.startsWith("player.itemInHand.is(")) {
@@ -426,7 +426,7 @@ public final class ObsInterpreter {
 			String id = args.get(0);
 			int need = (args.size() >= 2) ? (int) ScriptUtils.parseDouble(args.get(1)) : 1;
 			int have = 0;
-			var wanted = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).orElse(null);
+			var wanted = BuiltInRegistries.ITEM.get(Identifier.parse(id)).orElse(null);
 			if (wanted == null) return false;
 			for (var stack : p.getInventory().getNonEquipmentItems())
 				if (stack.getItem() == wanted.value()) have += stack.getCount();
@@ -492,7 +492,7 @@ public final class ObsInterpreter {
 			String obj = a.get(0);
 			String op = a.get(1);
 			double rhs = ScriptUtils.parseDouble(a.get(2));
-			var sb = p.getScoreboard();
+			var sb = p.level().getScoreboard();
 			var objective = sb.getObjective(obj);
 			if (objective == null) return false;
 			int val = sb.getOrCreatePlayerScore(p, objective).get();

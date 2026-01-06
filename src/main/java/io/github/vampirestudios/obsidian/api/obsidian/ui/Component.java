@@ -5,13 +5,13 @@ import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
 import java.util.Locale;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 
 public class Component {
 	public String type;
-	public ResourceLocation texture;
-	public ResourceLocation textureAtlas;
+	public Identifier texture;
+	public Identifier textureAtlas;
 	public Object text;
 	public int width;
 	public int height;
@@ -24,8 +24,8 @@ public class Component {
 //	public ButtonWidget.PressAction onPress;
 	public String textBoxText;
 	public CompoundTag nbt;
-	public ResourceLocation entityType;
-	public ResourceLocation item;
+	public Identifier entityType;
+	public Identifier item;
 	public int count = 1;
 	public double minSliderValue, maxSliderValue;
 

@@ -1,13 +1,13 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class WoodType {
-    public ResourceLocation id;
+    public Identifier id;
 
-    public ResourceLocation setType;
-    public ResourceLocation soundType;
-    public ResourceLocation hangingSignSoundType;
-    public ResourceLocation fenceGateClose;
-    public ResourceLocation fenceGateOpen;
+    public Identifier setType;
+    public Identifier soundType;
+    public Identifier hangingSignSoundType;
+    public Identifier fenceGateClose;
+    public Identifier fenceGateOpen;
 }

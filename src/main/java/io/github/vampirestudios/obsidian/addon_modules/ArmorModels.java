@@ -6,7 +6,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.ArmorModel;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,11 +22,11 @@ public class ArmorModels implements AddonModule {
         ArmorModel entityModel = BaseGson.GSON.fromJson(new FileReader(file), ArmorModel.class);
         try {
             if (entityModel == null) return;
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     entityModel.name,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (entityModel.name == null) entityModel.name = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (entityModel.name == null) entityModel.name = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             register(ContentRegistries.ARMOR_MODELS, "armor_model", identifier, entityModel);
         } catch (Exception e) {
             failedRegistering("armor_model", file.getName(), e);

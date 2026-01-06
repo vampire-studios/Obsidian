@@ -83,7 +83,9 @@ public final class ContentPackSyncClient {
                                         Files.createDirectories(resolved);
                                 } else {
                                         Files.createDirectories(resolved.getParent());
-                                        Files.copy(zis, resolved, StandardCopyOption.REPLACE_EXISTING);
+                                        if (!resolved.toString().contains(".git")) {
+                                                Files.copy(zis, resolved, StandardCopyOption.REPLACE_EXISTING);
+                                        }
                                 }
                         }
                 }

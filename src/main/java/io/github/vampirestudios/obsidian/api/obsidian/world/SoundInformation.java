@@ -1,11 +1,11 @@
 package io.github.vampirestudios.obsidian.api.obsidian.world;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class SoundInformation {
 
-    public ResourceLocation additionsSound;
-    public ResourceLocation loopSound;
-    public ResourceLocation moodSound;
+    public Identifier additionsSound;
+    public Identifier loopSound;
+    public Identifier moodSound;
 
 }

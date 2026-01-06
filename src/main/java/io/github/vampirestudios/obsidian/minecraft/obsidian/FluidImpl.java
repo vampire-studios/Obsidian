@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.BucketItem;
@@ -90,7 +91,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Override
 	public float getPushStrength(FluidState state, Entity affected) {
 		return this.fluid.pushStrengthChangesWhenWarm
-				? affected.level().dimensionType().ultraWarm() ? this.fluid.pushStrengthUltrawarm : this.fluid.pushStrength
+				? affected.level().dimensionType().attributes().contains(EnvironmentAttributes.FAST_LAVA) ? this.fluid.pushStrengthUltrawarm : this.fluid.pushStrength
 				: this.fluid.pushStrength;
 	}
 
@@ -102,7 +103,7 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Override
 	protected int getSlopeFindDistance(LevelReader worldView) {
 		return this.fluid.flowSpeedChangesWhenWarm
-				? worldView.dimensionType().ultraWarm() ? this.fluid.flowSpeedUltrawarm : this.fluid.flowSpeed
+				? worldView.dimensionType().attributes().contains(EnvironmentAttributes.FAST_LAVA) ? this.fluid.flowSpeedUltrawarm : this.fluid.flowSpeed
 				: this.fluid.flowSpeed;
 	}
 
@@ -114,14 +115,14 @@ public abstract class FluidImpl extends QuiltFluid {
 	@Override
 	protected int getDropOff(LevelReader worldView) {
 		return this.fluid.levelDecreasePerBlockChangesWhenWarm
-				? worldView.dimensionType().ultraWarm() ? this.fluid.levelDecreasePerBlockUltrawarm : this.fluid.levelDecreasePerBlock
+				? worldView.dimensionType().attributes().contains(EnvironmentAttributes.FAST_LAVA) ? this.fluid.levelDecreasePerBlockUltrawarm : this.fluid.levelDecreasePerBlock
 				: this.fluid.levelDecreasePerBlock;
 	}
 
 	@Override
 	public int getTickDelay(LevelReader worldView) {
 		return this.fluid.tickRateChangesWhenWarm
-				? worldView.dimensionType().ultraWarm() ? this.fluid.tickRateUltrawarm : this.fluid.tickRate
+				? worldView.dimensionType().attributes().contains(EnvironmentAttributes.FAST_LAVA) ? this.fluid.tickRateUltrawarm : this.fluid.tickRate
 				: this.fluid.tickRate;
 	}
 

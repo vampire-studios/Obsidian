@@ -15,7 +15,7 @@ import net.devtech.arrp.json.iteminfo.model.special.JModelShield;
 import net.devtech.arrp.json.iteminfo.model.special.JModelSpecial;
 import net.devtech.arrp.json.iteminfo.model.special.JModelTrident;
 import net.devtech.arrp.json.iteminfo.property.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
 import java.util.Set;
@@ -53,7 +53,7 @@ public class OraxenItemInitThread implements Runnable {
 				// writes to assets/<ns>/models/equipment/<prefix>.json
 				resourcePack.addEquipmentModel(
 						body,
-						ResourceLocation.fromNamespaceAndPath(ns, prefix)
+						Identifier.fromNamespaceAndPath(ns, prefix)
 				);
 
 				// 2) elytra wings
@@ -67,12 +67,12 @@ public class OraxenItemInitThread implements Runnable {
 				// writes to assets/<ns>/models/equipment/<prefix>_elytra.json
 				resourcePack.addEquipmentModel(
 						wings,
-						ResourceLocation.fromNamespaceAndPath(ns, STR."\{prefix}_elytra")
+						Identifier.fromNamespaceAndPath(ns, STR."\{prefix}_elytra")
 				);
 			}
 		}
 
-		ResourceLocation id = item.id;
+		Identifier id = item.id;
 		if (item.pack == null) return;
 
 		if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(id, "item/")) != null) return;
@@ -177,11 +177,11 @@ public class OraxenItemInitThread implements Runnable {
 		}
 
 		itemInfo.model(model);
-		resourcePack.addItemModelInfo(itemInfo, id);
+//		resourcePack.addItemModelInfo(itemInfo, id);
 
 		if (item.mechanics != null && item.mechanics.furniture != null) {
-			ResourceLocation furnitureModel = item.pack.model != null ? item.pack.model : id;
-			ResourceLocation lidId = (
+			Identifier furnitureModel = item.pack.model != null ? item.pack.model : id;
+			Identifier lidId = (
 					item.mechanics.furniture.lights != null &&
 							item.mechanics.furniture.lights.toggled_item_model != null
 			) ? item.mechanics.furniture.lights.toggled_item_model : furnitureModel;

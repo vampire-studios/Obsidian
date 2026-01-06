@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Function3;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -23,7 +23,7 @@ import java.util.function.Function;
 public abstract class PropertyType {
     public static Property<?> deserialize(String name, JsonObject data) {
         String key = GsonHelper.getAsString(data, "type");
-        PropertyType prop = Registries.PROPERTY_TYPES.getValue(ResourceLocation.withDefaultNamespace(key));
+        PropertyType prop = Registries.PROPERTY_TYPES.getValue(Identifier.withDefaultNamespace(key));
         if (prop == null)
             throw new IllegalStateException("Property type not found " + key);
         return prop.read(name, data);
@@ -31,7 +31,7 @@ public abstract class PropertyType {
 
     public static JsonObject serialize(Property<?> property) {
         for (Map.Entry<ResourceKey<PropertyType>, PropertyType> entry : Registries.PROPERTY_TYPES.entrySet()) {
-            String key = entry.getKey().location().toString();
+            String key = entry.getKey().identifier().toString();
             PropertyType prop = entry.getValue();
             if (prop.handles(property)) {
                 JsonObject data = new JsonObject();

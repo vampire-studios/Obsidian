@@ -17,7 +17,7 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -64,15 +64,15 @@ public class Ores implements AddonModule {
 		try {
 			if (block == null) return;
 
-			ResourceLocation blockId;
+			Identifier blockId;
 			if (block.description != null) {
 				blockId = block.description.identifier;
 			} else {
 				if (block.information.name.id != null) {
 					blockId = block.information.name.id;
 				} else {
-					blockId = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-					block.information.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+					blockId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+					block.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 				}
 			}
 
@@ -96,7 +96,7 @@ public class Ores implements AddonModule {
 						.jumpFactor(block.information.getBlockSettings().jump_velocity_modifier);
 				if (block.information.getBlockSettings().randomTicks) blockSettings.randomTicks();
 				if (block.information.getBlockSettings().instant_break) blockSettings.instabreak();
-				if (!block.information.getBlockSettings().collidable) blockSettings.noCollission();
+				if (!block.information.getBlockSettings().collidable) blockSettings.noCollision();
 				if (block.information.getBlockSettings().translucent) blockSettings.noOcclusion();
 				if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
 			}

@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ArrowItem;
 
 /**

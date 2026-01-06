@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,10 +32,10 @@ public class FuelSources implements AddonModule {
                 if (fileName.contains("remove_")) fileName.replace("remove_", "");
                 /*if (fileName.contains("item")) {
                     fileName.replace("_item.json", "");
-                    FuelRegistryEvents.BUILD.register((builder, _) -> builder.remove(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(fileName))));
+                    FuelRegistryEvents.BUILD.register((builder, _) -> builder.remove(BuiltInRegistries.ITEM.getValue(Identifier.parse(fileName))));
                 } else {
                     fileName.replace("_tag.json", "");
-                    FuelRegistryEvents.BUILD.register((builder, _) -> builder.remove(TagKey.create(Registries.ITEM, ResourceLocation.parse(fileName))));
+                    FuelRegistryEvents.BUILD.register((builder, _) -> builder.remove(TagKey.create(Registries.ITEM, Identifier.parse(fileName))));
                 }*/
             } else {
                 if (fuelSource.burn_time > 0) {
@@ -54,7 +54,7 @@ public class FuelSources implements AddonModule {
                     FuelRegistryEvents.BUILD.register((builder, _) -> builder.remove(fuelSource.getTag()));
                 }
             }
-            register(ContentRegistries.FUEL_SOURCES, "fuel_source", ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", "")), fuelSource);
+            register(ContentRegistries.FUEL_SOURCES, "fuel_source", Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", "")), fuelSource);
         } catch (Exception e) {
             failedRegistering("fuel_source", file.getName(), e);
         }

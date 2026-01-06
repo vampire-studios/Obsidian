@@ -12,7 +12,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -31,12 +31,12 @@ public class Elytras implements AddonModule {
 		Elytra item = BaseGson.GSON.fromJson(new FileReader(file), Elytra.class);
 		try {
 			if (item == null) return;
-			ResourceLocation identifier = Objects.requireNonNullElseGet(
+			Identifier identifier = Objects.requireNonNullElseGet(
 					item.information.name.id,
-					() -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
 			);
 			if (item.information.name.id == null)
-				item.information.name.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+				item.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
 			Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new ElytraItemImpl(item, new Item.Properties()
 					.component(

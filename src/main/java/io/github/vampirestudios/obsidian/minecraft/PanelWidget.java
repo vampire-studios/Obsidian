@@ -6,7 +6,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +18,14 @@ public class PanelWidget extends AbstractWidget {
     private final int spacing;
     private GridLayout layout;
     private GridLayout.RowHelper rowHelper;
-    private ResourceLocation texture;
+    private Identifier texture;
 
     public PanelWidget(int x, int y, int width, int height, int spacing) {
         super(x, y, width, height, null);
         this.spacing = spacing;
     }
 
-    public void setTexture(ResourceLocation texture) {
+    public void setTexture(Identifier texture) {
         this.texture = texture;
     }
 

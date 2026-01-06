@@ -5,7 +5,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.vampirestudios.obsidian.mixins.*;
-import net.minecraft.Util;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Util;
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
@@ -19,6 +20,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.core.Direction;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.*;
 
@@ -32,7 +34,8 @@ public class Codecs {
     public static final class Animations {
         public static final Codec<Keyframe> KEYFRAME = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.floatRange(0, Float.MAX_VALUE).fieldOf("timestamp").forGetter(Keyframe::timestamp),
-                net.minecraft.util.ExtraCodecs.VECTOR3F.fieldOf("transformation").forGetter(Keyframe::target),
+                net.minecraft.util.ExtraCodecs.VECTOR3F.fieldOf("pre_transformation").forGetter(Keyframe::preTarget),
+                net.minecraft.util.ExtraCodecs.VECTOR3F.fieldOf("post_transformation").forGetter(Keyframe::postTarget),
                 Codec.STRING.flatXmap(
                         s -> AnimationUtils.getInterpolatorFromName(s).map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Unknown interpolator: " + s)),
                         i -> AnimationUtils.getNameForInterpolator(i).map(DataResult::success).orElse(DataResult.error(() -> "Unknown interpolator"))
@@ -95,7 +98,7 @@ public class Codecs {
                 (vec) -> ImmutableList.of(vec.u(), vec.v())
         );
 
-        private static CubeDefinition createCuboidData(Optional<String> name, Vector3f offset, Vector3f dimensions, CubeDeformation dilation, boolean mirror, UVPair uv, UVPair uvSize, Set<Direction> directionSet) {
+        private static CubeDefinition createCuboidData(Optional<String> name, Vector3fc offset, Vector3fc dimensions, CubeDeformation dilation, boolean mirror, UVPair uv, UVPair uvSize, Set<Direction> directionSet) {
             return ModelCuboidDataAccessor.createModelCuboidData(name.orElse(null), uv.u(), uv.v(), offset.x(), offset.y(), offset.z(), dimensions.x(), dimensions.y(), dimensions.z(), dilation, mirror, uvSize.u(), uvSize.v(), directionSet);
         }
 
@@ -104,8 +107,8 @@ public class Codecs {
         public static final Codec<CubeDefinition> MODEL_CUBOID_DATA = RecordCodecBuilder.create((instance) ->
                 instance.group(
                         Codec.STRING.optionalFieldOf("name").forGetter(obj -> Optional.ofNullable(((ModelCuboidDataAccessor) (Object) obj).getComment())),
-                        VECTOR3F_CODEC.fieldOf("offset").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getOrigin()),
-                        VECTOR3F_CODEC.fieldOf("dimensions").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getDimensions()),
+                        ExtraCodecs.VECTOR3F.fieldOf("offset").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getOrigin()),
+                        ExtraCodecs.VECTOR3F.fieldOf("dimensions").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getDimensions()),
                         DILATION.optionalFieldOf("dilation", CubeDeformation.NONE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getGrow()),
                         Codec.BOOL.optionalFieldOf("mirror", false).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).isMirror()),
                         VECTOR2F.fieldOf("uv").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).getTexCoord()),

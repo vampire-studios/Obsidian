@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.KeybindingImpl;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,11 +24,11 @@ public class KeyBindings implements AddonModule {
         KeyBinding keyBinding = BaseGson.GSON.fromJson(new FileReader(file), KeyBinding.class);
         try {
             if (keyBinding == null) return;
-            ResourceLocation identifier = Objects.requireNonNullElseGet(
+            Identifier identifier = Objects.requireNonNullElseGet(
                     keyBinding.id,
-                    () -> ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
-            if (keyBinding.id == null) keyBinding.id = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (keyBinding.id == null) keyBinding.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             KeyBindingRegistryImpl.registerKeyBinding(new KeybindingImpl(keyBinding));
             register(ContentRegistries.KEY_BINDINGS, "key_binding", identifier, keyBinding);
         } catch (Exception e) {

@@ -1,12 +1,13 @@
 package io.github.vampirestudios.obsidian.api.obsidian.potion;
 
-import java.util.Arrays;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectCategory;
+
+import java.util.Arrays;
 
 public class EffectInstance {
 
-    public ResourceLocation name;
+    public Identifier name;
     public int duration;
     public int amplifier;
     public String effect_type;

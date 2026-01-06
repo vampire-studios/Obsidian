@@ -84,7 +84,7 @@ public class TripleCeilingPlantBlock extends VegetationBlock {
 
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             if (player.isCreative()) {
                 TripleCeilingPlantBlock.onBreakInCreative(world, pos, state, player);
             } else {

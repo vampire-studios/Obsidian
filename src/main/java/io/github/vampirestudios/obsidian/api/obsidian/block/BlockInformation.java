@@ -60,8 +60,8 @@ public class BlockInformation {
 
     public BlockSettings getBlockSettings() {
 		switch (blockSettings) {
-			case Identifier resourceLocation -> {
-				return ContentRegistries.BLOCK_SETTINGS.getValue(resourceLocation);
+			case Identifier Identifier -> {
+				return ContentRegistries.BLOCK_SETTINGS.getValue(Identifier);
 			}
 			case String s -> {
 				Identifier location = Identifier.tryParse(s);
@@ -83,8 +83,8 @@ public class BlockInformation {
 
     public ItemSettings getItemSettings() {
 		switch (itemSettings) {
-			case Identifier resourceLocation -> {
-				return ContentRegistries.ITEM_SETTINGS.getValue(resourceLocation);
+			case Identifier Identifier -> {
+				return ContentRegistries.ITEM_SETTINGS.getValue(Identifier);
 			}
 			case String s -> {
 				Identifier location = Identifier.tryParse(s);

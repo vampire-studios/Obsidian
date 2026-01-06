@@ -19,7 +19,7 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.attachment.api.DefaultValueProvider;
@@ -31,7 +31,7 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 
     private final @NotNull DefaultValueProvider<R, V> defaultValueProvider;
 
-    public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, ResourceLocation id, Class<V> valueClass,
+    public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
                                                       Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider) {
         super(registry, id, valueClass, codec, side);
         this.defaultValueProvider = defaultValueProvider;

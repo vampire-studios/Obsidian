@@ -33,20 +33,20 @@ public class AnimationManager extends SimpleJsonResourceReloadListener<JsonEleme
 
     @Override
     protected void apply(Map<Identifier, JsonElement> data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        ImmutableMap.Builder<ResourceLocation, AnimationDefinition> registry = new ImmutableMap.Builder<>();
-        data.forEach((resourceLocation, jsonElement) -> {
+        ImmutableMap.Builder<Identifier, AnimationDefinition> registry = new ImmutableMap.Builder<>();
+        data.forEach((Identifier, jsonElement) -> {
             try {
                 AnimationHolder animationHolder = AnimationHolder.CODEC.parse(JsonOps.INSTANCE, jsonElement).getOrThrow(JsonParseException::new);
-                registry.put(resourceLocation, this.createAnimation(animationHolder));
+                registry.put(Identifier, this.createAnimation(animationHolder));
             }
             catch (Exception exception) {
-                Obsidian.LOGGER.error("Failed to parse custom animation {}: {}", resourceLocation, exception);
+                Obsidian.LOGGER.error("Failed to parse custom animation {}: {}", Identifier, exception);
             }
         });
         this.animations = registry.buildOrThrow();
     }
 
-    public AnimationDefinition getAnimation(ResourceLocation id) {
+    public AnimationDefinition getAnimation(Identifier id) {
         if (this.animations.containsKey(id)) {
             return this.animations.get(id);
         }
@@ -74,7 +74,7 @@ public class AnimationManager extends SimpleJsonResourceReloadListener<JsonEleme
         return builder.build();
     }
 
-    public ResourceLocation getFabricId() {
+    public Identifier getFabricId() {
         return Obsidian.id("animation_manager");
     }
 }*/

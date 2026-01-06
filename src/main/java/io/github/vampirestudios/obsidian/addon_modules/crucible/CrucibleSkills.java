@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class CrucibleSkills implements AddonModule {
 						Skill skill = SkillParser.createSkillFromEntry(skillEntry);
 						if (skill != null) {
 							crucibleSkill.internalSkills.add(skill);
-							skillManager.registerSkill(ResourceLocation.fromNamespaceAndPath(id.modId(), skillName.toLowerCase(Locale.ROOT)), skill);
+							skillManager.registerSkill(Identifier.fromNamespaceAndPath(id.modId(), skillName.toLowerCase(Locale.ROOT)), skill);
 						} else {
 							System.err.println(STR."Failed to create Skill from SkillEntry for skillString: \{skillString}");
 						}
@@ -54,7 +54,7 @@ public class CrucibleSkills implements AddonModule {
 					}
 				}
 
-				crucibleSkill.id = ResourceLocation.fromNamespaceAndPath(id.modId(), skillName.toLowerCase(Locale.ROOT));
+				crucibleSkill.id = Identifier.fromNamespaceAndPath(id.modId(), skillName.toLowerCase(Locale.ROOT));
 
 				register(ContentRegistries.CRUCIBLE_SKILLS, "crucible_skill", crucibleSkill.id, crucibleSkill);
 			}

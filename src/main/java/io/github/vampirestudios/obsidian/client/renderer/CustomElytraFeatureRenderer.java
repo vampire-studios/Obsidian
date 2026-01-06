@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelPart;
@@ -40,7 +40,7 @@ public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends Entit
     public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l) {
         ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
         if (itemStack.getItem() instanceof ElytraItem) {
-            ResourceLocation identifier4;
+            Identifier identifier4;
             if (livingEntity instanceof AbstractClientPlayer abstractClientPlayer) {
                 PlayerSkin playerSkin = abstractClientPlayer.getSkin();
                 if (playerSkin.elytraTexture() != null) {

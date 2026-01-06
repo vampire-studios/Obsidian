@@ -29,7 +29,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
 
@@ -71,7 +71,7 @@ public class ClientInit implements ClientModInitializer {
 
             ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> dispatcher.register(
                 ClientCommandManager.literal("opengui").then(
-                    ClientCommandManager.argument("gui", ResourceLocationArgument.id())
+                    ClientCommandManager.argument("gui", IdentifierArgument.id())
                         .suggests(new GuiSuggestionProvider())
                         .executes(context -> {
                             Identifier gui = context.getArgument("gui", Identifier.class);

@@ -2,7 +2,7 @@ package org.quiltmc.qsl.block.content.registry.api.enchanting;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.Optional;
 
 public record EnchantingBlockStateBooster() implements EnchantingBooster {
-    public static EnchantingBoosterType TYPE = EnchantingBoosters.register(ResourceLocation.fromNamespaceAndPath("quilt", "block_state_booster"),
+    public static EnchantingBoosterType TYPE = EnchantingBoosters.register(Identifier.fromNamespaceAndPath("quilt", "block_state_booster"),
             new EnchantingBoosterType(MapCodec.unit(EnchantingBlockStateBooster::new), Optional.of(new EnchantingBlockStateBooster())));
 
     @Override

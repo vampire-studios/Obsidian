@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ToolMaterial;
 
 import java.util.Locale;
@@ -13,9 +13,9 @@ public class ToolItem extends Item {
 
 	public ToolMaterial getToolMaterial() {
 		switch (material) {
-			case ResourceLocation resourceLocation -> {
-				if (resourceLocation.getNamespace().contains("minecraft")) {
-					String path = resourceLocation.getPath().toUpperCase(Locale.ROOT);
+			case Identifier Identifier -> {
+				if (Identifier.getNamespace().contains("minecraft")) {
+					String path = Identifier.getPath().toUpperCase(Locale.ROOT);
 					return switch (path) {
 						case "WOOD" -> ToolMaterial.WOOD;
 						case "STONE" -> ToolMaterial.STONE;
@@ -26,10 +26,10 @@ public class ToolItem extends Item {
 						default -> throw new IllegalStateException(STR."Unexpected value: \{path}");
 					};
 				}
-				return ContentRegistries.TOOL_MATERIALS.getValue(resourceLocation);
+				return ContentRegistries.TOOL_MATERIALS.getValue(Identifier);
 			}
 			case String s -> {
-				ResourceLocation location = ResourceLocation.tryParse(s);
+				Identifier location = Identifier.tryParse(s);
 				if (location.getNamespace().contains("minecraft")) {
 					String path = location.getPath().toUpperCase(Locale.ROOT);
 					return switch (path) {

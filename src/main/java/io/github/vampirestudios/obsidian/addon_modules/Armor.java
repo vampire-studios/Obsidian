@@ -22,7 +22,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -74,11 +74,11 @@ public class Armor implements AddonModule {
         try {
             if (armor == null) return;
 
-            ResourceLocation identifier;
+            Identifier identifier;
             if (armor.information.name.id != null) {
                 identifier = armor.information.name.id;
             } else {
-                identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+                identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
                 armor.information.name.id = identifier;
             }
 

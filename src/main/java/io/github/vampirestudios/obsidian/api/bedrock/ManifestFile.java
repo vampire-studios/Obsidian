@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.bedrock;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ManifestFile extends BaseInformation {
 
@@ -15,7 +15,7 @@ public class ManifestFile extends BaseInformation {
         public boolean lock_template_options;
         public int[] min_engine_version = new int[3];
         public String name;
-        public ResourceLocation identifier;
+        public Identifier identifier;
         public String uuid;
         public int[] version = new int[3];
     }

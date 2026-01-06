@@ -27,7 +27,9 @@ public final class ContentPackSyncNetworking {
                         if (ContentPackSyncManager.isEmpty()) {
                                 return;
                         }
-                        sendManifest(handler.player);
+                        if (!server.isDedicatedServer()) {
+                                sendManifest(handler.player);
+                        }
                 });
         }
 

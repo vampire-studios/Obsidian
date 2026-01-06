@@ -5,10 +5,12 @@ import io.github.vampirestudios.obsidian.animation.HasAnimationManager;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MapRenderer;
+import net.minecraft.client.renderer.PlayerSkinRenderCache;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.resources.model.AtlasManager;
 import net.minecraft.client.resources.model.EquipmentAssetManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,7 +25,7 @@ public class EntityRendererFactoryContextMixin implements HasAnimationManager {
 	private AnimationManager quilt$animationManager;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void createAnimationManager(EntityRenderDispatcher entityRenderDispatcher, ItemModelResolver itemModelResolver, MapRenderer mapRenderer, BlockRenderDispatcher blockRenderDispatcher, ResourceManager resourceManager, EntityModelSet entityModelSet, EquipmentAssetManager equipmentAssetManager, Font font, CallbackInfo ci) {
+	private void createAnimationManager(EntityRenderDispatcher entityRenderDispatcher, ItemModelResolver itemModelResolver, MapRenderer mapRenderer, BlockRenderDispatcher blockRenderDispatcher, ResourceManager resourceManager, EntityModelSet entityModelSet, EquipmentAssetManager equipmentAssetManager, AtlasManager atlasManager, Font font, PlayerSkinRenderCache playerSkinRenderCache, CallbackInfo ci) {
 		this.quilt$animationManager = entityRenderDispatcher.getAnimationManager();
 	}
 	@Override

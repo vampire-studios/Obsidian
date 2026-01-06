@@ -9,7 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.function.UnaryOperator;
 
@@ -27,7 +27,7 @@ public class OItemComponents {
 			.persistent(ExtraCodecs.POSITIVE_INT)
 			.networkSynchronized(ByteBufCodecs.VAR_INT)
 	);
-	public static final DataComponentType<Vector3f> MINING_AREA = register("mining_area", builder -> builder
+	public static final DataComponentType<Vector3fc> MINING_AREA = register("mining_area", builder -> builder
 			.persistent(ExtraCodecs.VECTOR3F)
 			.networkSynchronized(ByteBufCodecs.VECTOR3F)
 	);
@@ -40,10 +40,22 @@ public class OItemComponents {
 			.networkSynchronized(BundleInteraction.STREAM_CODEC)
 	);
 	public static final DataComponentType<BundleContents> BUNDLE_CONTENTS = register(
-			"bundle_contents", builder -> builder.persistent(BundleContents.CODEC).networkSynchronized(BundleContents.STREAM_CODEC).cacheEncoding()
+			"bundle_contents", builder -> builder.persistent(BundleContents.CODEC).networkSynchronized(BundleContents.STREAM_CODEC)
 	);
 	public static final DataComponentType<BundleBarColors> BUNDLE_BAR_COLORS = register(
-			"bundle_bar_colors", builder -> builder.persistent(BundleBarColors.CODEC).networkSynchronized(BundleBarColors.STREAM_CODEC).cacheEncoding()
+			"bundle_bar_colors", builder -> builder.persistent(BundleBarColors.CODEC).networkSynchronized(BundleBarColors.STREAM_CODEC)
+	);
+	public static final DataComponentType<ScopeComponent> SCOPE = register(
+			"scope", builder -> builder.persistent(ScopeComponent.CODEC).networkSynchronized(ScopeComponent.STREAM_CODEC)
+	);
+	public static final DataComponentType<ThrowableComponent> THROWABLE = register(
+			"throwable", builder -> builder.persistent(ThrowableComponent.CODEC).networkSynchronized(ThrowableComponent.STREAM_CODEC)
+	);
+	public static final DataComponentType<ShooterComponent> SHOOTER = register(
+			"shooter", builder -> builder.persistent(ShooterComponent.CODEC).networkSynchronized(ShooterComponent.STREAM_CODEC)
+	);
+	public static final DataComponentType<ChargeComponent> CHARGE = register(
+			"charge", builder -> builder.persistent(ChargeComponent.CODEC).networkSynchronized(ChargeComponent.STREAM_CODEC)
 	);
 //	public static final DataComponentType<CustomMenuComponent> CUSTOM_MENU = register(
 //			"custom_menu", builder -> builder.persistent(CustomMenuComponent.CODEC).networkSynchronized(CustomMenuComponent.STREAM_CODEC)

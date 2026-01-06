@@ -7,6 +7,9 @@ import io.github.vampirestudios.obsidian.client.ToggleButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -85,7 +88,7 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
         if (widget.editBox.multiLine)
 			if (widget.editBox.fitting)
 				this.addRenderableWidget(new FittingMultiLineTextWidget(x, y, width, height, placeholder, this.font)
-						.setColor(widget.editBox.defaultTextColor)
+//						.setColor(widget.editBox.defaultTextColor)
 				);
 			else this.addRenderableWidget(MultiLineEditBox.builder().setPlaceholder(placeholder).build(this.font, width, height, text));
         else {
@@ -99,35 +102,35 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
 		}
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
+	@Override
+	public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
+		return super.mouseClicked(mouseButtonEvent, bl);
+	}
 
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return super.mouseReleased(mouseX, mouseY, button);
-    }
+	@Override
+	public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
+		return super.mouseReleased(mouseButtonEvent);
+	}
 
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-    }
+	@Override
+	public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
+		return super.mouseDragged(mouseButtonEvent, d, e);
+	}
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
-    @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return super.keyReleased(keyCode, scanCode, modifiers);
-    }
+	@Override
+	public boolean keyReleased(KeyEvent keyEvent) {
+		return super.keyReleased(keyEvent);
+	}
 
-    @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        return super.charTyped(codePoint, modifiers);
-    }
+	@Override
+	public boolean charTyped(CharacterEvent characterEvent) {
+		return super.charTyped(characterEvent);
+	}
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {

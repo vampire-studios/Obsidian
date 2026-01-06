@@ -1,7 +1,7 @@
 package io.github.vampirestudios.obsidian.api.obsidian.world;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Structure {
-	public ResourceLocation id;
+	public Identifier id;
 }

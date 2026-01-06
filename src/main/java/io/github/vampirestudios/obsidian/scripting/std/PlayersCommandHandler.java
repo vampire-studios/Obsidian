@@ -33,7 +33,7 @@ public class PlayersCommandHandler implements CommandHandler {
 				}
 				case "onlineNames" -> {
 					String s = server.getPlayerList().getPlayers().stream()
-							.map(p -> p.getGameProfile().getName())
+							.map(p -> p.getGameProfile().name())
 							.collect(java.util.stream.Collectors.joining(", "));
 					vars.put("_last", s);
 				}
@@ -122,7 +122,7 @@ public class PlayersCommandHandler implements CommandHandler {
 
 	private ServerPlayer findByName(MinecraftServer server, String name) {
 		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-			if (p.getGameProfile().getName().equalsIgnoreCase(name)) return p;
+			if (p.getGameProfile().name().equalsIgnoreCase(name)) return p;
 		}
 		return null;
 	}

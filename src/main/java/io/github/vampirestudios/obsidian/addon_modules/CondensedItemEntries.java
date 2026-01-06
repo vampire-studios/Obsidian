@@ -61,7 +61,7 @@ public class CondensedItemEntries implements AddonModule {
 //                if (condensedEntry.specificCreativeTab)
 //                    builder.addToItemGroup(BuiltInRegistries.CREATIVE_MODE_TAB.get(condensedEntry.targetGroup));
 //            }
-//            register(ContentRegistries.CONDENSED_ITEM_ENTRIES, "condensed_item", new ResourceLocation(id.modId(), "condensed_" + condensedEntry.base.getPath() + "_entry"), condensedEntry);
+//            register(ContentRegistries.CONDENSED_ITEM_ENTRIES, "condensed_item", new Identifier(id.modId(), "condensed_" + condensedEntry.base.getPath() + "_entry"), condensedEntry);
         } catch (Exception e) {
             failedRegistering("condensed_item", "condensed_" + condensedEntry.base.getPath() + "_entry", e);
         }

@@ -10,7 +10,7 @@ import io.github.vampirestudios.obsidian.utils.parse.function.JsonObjectConsumer
 import io.github.vampirestudios.obsidian.utils.parse.value.*;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import it.unimi.dsi.fastutil.floats.FloatConsumer;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.util.GsonHelper;
 
 import java.util.ArrayList;

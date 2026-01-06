@@ -43,7 +43,7 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -72,7 +72,7 @@ public final class DumpBuiltinAttachmentsCommand {
 
 	private static void register0(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(literal("dump_builtin_attachments")
-				.then(argument("registry", ResourceLocationArgument.id())
+				.then(argument("registry", IdentifierArgument.id())
 						.requires(src -> src.hasPermissionLevel(4))
 						.executes(DumpBuiltinAttachmentsCommand::execute))
 		);
@@ -92,7 +92,7 @@ public final class DumpBuiltinAttachmentsCommand {
 			new SimpleCommandExceptionType(Component.literal("Uncaught exception occurred, check logs"));
 
 	private static int execute(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-		var registryId = ResourceLocationArgument.getId(ctx, "registry");
+		var registryId = IdentifierArgument.getId(ctx, "registry");
 		var registry = BuiltInRegistries.REGISTRY.get(registryId);
 		if (registry == null) {
 			throw UNKNOWN_REGISTRY_EXCEPTION.create(registryId);

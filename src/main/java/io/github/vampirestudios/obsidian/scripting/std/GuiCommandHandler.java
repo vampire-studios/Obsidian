@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.scripting.std;
 import io.github.vampirestudios.obsidian.client.GuiBridge;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
@@ -106,7 +106,7 @@ public class GuiCommandHandler implements CommandHandler {
                     if (gui == null || gui.getPlayer() != player) return;
                     if (slot < 0 || slot >= gui.getSize()) throw new IllegalArgumentException("slot OOB: " + slot);
 
-                    var key = ResourceLocation.parse(itm);
+                    var key = Identifier.parse(itm);
                     var item = BuiltInRegistries.ITEM.getValue(key);
                     if (item == null) throw new IllegalArgumentException("Unknown item: " + itm);
 

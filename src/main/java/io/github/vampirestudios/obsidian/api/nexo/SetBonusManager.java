@@ -12,7 +12,7 @@ public class SetBonusManager {
     }
 
     public void tick(Level world) {
-        if (world.isClientSide) {
+        if (world.isClientSide()) {
             return;
         }
 

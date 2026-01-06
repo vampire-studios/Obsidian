@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.SoundType;
 
 public class CustomLadderBlock extends LadderBlock {
     public CustomLadderBlock() {
-        super(Properties.of().strength(0.4F).sound(SoundType.LADDER).noCollission());
+        super(Properties.of().strength(0.4F).sound(SoundType.LADDER).noCollision());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 }

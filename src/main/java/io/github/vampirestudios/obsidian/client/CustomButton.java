@@ -9,9 +9,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomButton extends Button {
@@ -33,7 +31,7 @@ public class CustomButton extends Button {
 	}
 
 	@Override
-	protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+	protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		Minecraft minecraft = Minecraft.getInstance();
 //		guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
 //		RenderSystem.enableBlend();
@@ -41,7 +39,7 @@ public class CustomButton extends Button {
 		guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, widgetSprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
 //		guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 		int i = this.active ? widget.activeColor : widget.defaultTextColor;
-		this.renderString(guiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
+		this.renderDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
 	}
 
 	@Environment(EnvType.CLIENT)

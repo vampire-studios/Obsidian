@@ -19,13 +19,13 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends RegistryEntryAttachmentImpl<R, V> {
     private final @Nullable V defaultValue;
 
-    public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, ResourceLocation id, Class<V> valueClass,
+    public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
                                                       Codec<V> codec, Side side, @Nullable V defaultValue) {
         super(registry, id, valueClass, codec, side);
 

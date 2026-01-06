@@ -11,7 +11,7 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
@@ -31,11 +31,11 @@ public class Shields implements AddonModule {
         try {
             if(shieldItem == null) return;
 
-            ResourceLocation identifier;
+            Identifier identifier;
             if (shieldItem.information.name != null && shieldItem.information.name.id != null) {
                 identifier = shieldItem.information.name.id;
             } else {
-                identifier = ResourceLocation.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+                identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
                 shieldItem.information.name.id = identifier;
             }
 

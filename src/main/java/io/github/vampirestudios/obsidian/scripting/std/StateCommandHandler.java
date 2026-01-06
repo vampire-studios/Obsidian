@@ -43,9 +43,9 @@ public class StateCommandHandler implements CommandHandler {
 		// try UUID
 		try { java.util.UUID.fromString(s); return STORE.player(s); } catch (Exception ignored) {}
 		// fallback by name (online only)
-		MinecraftServer srv = ((ServerPlayer)vars.get("sender")).getServer();
+		MinecraftServer srv = ((ServerPlayer)vars.get("sender")).level().getServer();
 		for (var p : srv.getPlayerList().getPlayers())
-			if (p.getGameProfile().getName().equalsIgnoreCase(s))
+			if (p.getGameProfile().name().equalsIgnoreCase(s))
 				return STORE.player(p.getUUID().toString());
 		// as last resort: sender
 		var me = (ServerPlayer) vars.get("sender");

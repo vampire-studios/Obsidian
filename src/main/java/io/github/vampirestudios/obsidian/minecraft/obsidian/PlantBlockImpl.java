@@ -23,7 +23,7 @@ public class PlantBlockImpl extends VegetationBlock {
 	}
 
     public PlantBlockImpl(Block block, Properties settings) {
-        super(settings.noCollission().instabreak());
+        super(settings.noCollision().instabreak());
         this.block = block;
     }
 

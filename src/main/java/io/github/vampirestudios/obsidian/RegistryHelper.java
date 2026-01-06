@@ -69,7 +69,7 @@ public record RegistryHelper(String modId) {
 	}
 
 	private <T> T register(Registry<T> registry, String name, T object) {
-		return Registry.register(registry, ResourceLocation.fromNamespaceAndPath(this.modId(), name), object);
+		return Registry.register(registry, Identifier.fromNamespaceAndPath(this.modId(), name), object);
 	}
 
 	public static class Blocks {
@@ -144,8 +144,8 @@ public record RegistryHelper(String modId) {
 
 		@SafeVarargs
 		public final Block registerBlock(Block block, String name, Block parentBlock, ResourceKey<CreativeModeTab>... itemGroups) {
-			Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(this.modId, name), block);
-			Item item = Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
+			Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
+			Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
 
 			for (ResourceKey<CreativeModeTab> itemGroup : itemGroups) {
 				ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.addAfter(parentBlock, item));
@@ -156,8 +156,8 @@ public record RegistryHelper(String modId) {
 
 		@SafeVarargs
 		public final Block registerBlockWood(Block block, String name, Block parentBlock, ResourceKey<CreativeModeTab>... itemGroups) {
-			Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(this.modId, name), block);
-			Item item = Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
+			Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
+			Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
 
 			for (ResourceKey<CreativeModeTab> itemGroup : itemGroups) {
 				ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.addBefore(parentBlock, item));
@@ -167,8 +167,8 @@ public record RegistryHelper(String modId) {
 		}
 
 		public Block registerBlock(Block block, String name, Map<ItemLike, ResourceKey<CreativeModeTab>> itemGroups) {
-			Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(this.modId, name), block);
-			Item item = Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
+			Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
+			Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
 			itemGroups.forEach((block1, creativeModeTab) -> ItemGroupEvents.modifyEntriesEvent(creativeModeTab).register((entries) -> entries.addAfter(block1, item)));
 			return block;
 		}
@@ -187,7 +187,7 @@ public record RegistryHelper(String modId) {
 		}
 
 		protected <T> T register(Registry<T> registry, String name, T object) {
-			return Registry.register(registry, ResourceLocation.fromNamespaceAndPath(this.modId, name), object);
+			return Registry.register(registry, Identifier.fromNamespaceAndPath(this.modId, name), object);
 		}
 
 		protected <T> T register(Registry<T> registry, ResourceKey<T> name, T object) {
@@ -207,7 +207,7 @@ public record RegistryHelper(String modId) {
 		}
 
 		public Item registerItem(String name, Function<Item.Properties, Item> function, Item.Properties properties, ResourceKey<CreativeModeTab> creativeModeTab) {
-			Item item = function.apply(properties.setId(ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(this.modId, name))));
+			Item item = function.apply(properties.setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name))));
 			if (item instanceof BlockItem blockItem) {
 				blockItem.registerBlocks(Item.BY_BLOCK, item);
 			}
@@ -215,7 +215,7 @@ public record RegistryHelper(String modId) {
 		}
 
 		public Item registerItem(String name, Function<Item.Properties, Item> function, Item.Properties properties, ResourceKey<CreativeModeTab> creativeModeTab, Item vanillaItem) {
-			Item item = function.apply(properties.setId(ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(this.modId, name))));
+			Item item = function.apply(properties.setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name))));
 			if (item instanceof BlockItem blockItem) {
 				blockItem.registerBlocks(Item.BY_BLOCK, item);
 			}
@@ -259,7 +259,7 @@ public record RegistryHelper(String modId) {
 		}
 
 		private <T> T register(Registry<T> registry, String name, T object) {
-			return Registry.register(registry, ResourceLocation.fromNamespaceAndPath(this.modId, name), object);
+			return Registry.register(registry, Identifier.fromNamespaceAndPath(this.modId, name), object);
 		}
 	}
 }

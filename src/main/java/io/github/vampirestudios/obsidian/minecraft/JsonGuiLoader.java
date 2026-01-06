@@ -12,7 +12,7 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class JsonGuiLoader {
     public static AbstractWidget loadWidget(JsonObject json) {
@@ -55,7 +55,7 @@ public class JsonGuiLoader {
 
         if (json.has("background")) {
             String bgTex = json.get("background").getAsString();
-            panel.setTexture(ResourceLocation.parse(bgTex));
+            panel.setTexture(Identifier.parse(bgTex));
         }
 
         if (json.has("layout")) {

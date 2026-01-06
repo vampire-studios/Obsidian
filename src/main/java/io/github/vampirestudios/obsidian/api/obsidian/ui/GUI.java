@@ -1,12 +1,12 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class GUI {
-    public ResourceLocation id;
+    public Identifier id;
 
-    public ResourceLocation texture;
+    public Identifier texture;
     public String title;
     public Widget[] widgets;
     public Slot[] slots;
@@ -23,7 +23,7 @@ public class GUI {
         public String buttonType;
         public boolean hasText;
         public WidgetSprites widgetSprites = new WidgetSprites(
-                ResourceLocation.withDefaultNamespace("widget/button"), ResourceLocation.withDefaultNamespace("widget/button_disabled"), ResourceLocation.withDefaultNamespace("widget/button_highlighted")
+                Identifier.withDefaultNamespace("widget/button"), Identifier.withDefaultNamespace("widget/button_disabled"), Identifier.withDefaultNamespace("widget/button_highlighted")
         );
         public EditBoxOptions editBox;
         public ProgressBar progressBar;
@@ -45,7 +45,7 @@ public class GUI {
         }
 
         public static class ProgressBar {
-            public ResourceLocation texture;
+            public Identifier texture;
             public Orientation orientation;
 
             public enum Orientation {

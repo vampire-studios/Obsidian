@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -29,9 +29,9 @@ import java.util.Set;
 public interface QuiltRegistryInternals<R> {
 	void quilt$registerAttachment(RegistryEntryAttachment<R, ?> attachment);
 
-	@Nullable RegistryEntryAttachment<R, ?> quilt$getAttachment(ResourceLocation id);
+	@Nullable RegistryEntryAttachment<R, ?> quilt$getAttachment(Identifier id);
 
-	Set<Map.Entry<ResourceLocation, RegistryEntryAttachment<R, ?>>> quilt$getAttachmentEntries();
+	Set<Map.Entry<Identifier, RegistryEntryAttachment<R, ?>>> quilt$getAttachmentEntries();
 
 	BuiltinRegistryEntryAttachmentHolder<R> quilt$getBuiltinAttachmentHolder();
 

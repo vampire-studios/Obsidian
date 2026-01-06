@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -30,6 +30,6 @@ public class SoundSkill extends Skill {
     @Override
     public void applyEffect(LivingEntity caster, LivingEntity target) {
         BlockPos pos = target.blockPosition(); // Get the block position of the target
-        target.level().playSound(null, pos, BuiltInRegistries.SOUND_EVENT.getValueOrThrow(ResourceKey.create(Registries.SOUND_EVENT, ResourceLocation.parse(sound))), SoundSource.valueOf(soundSource.toUpperCase(Locale.ROOT)), volume, pitch);
+        target.level().playSound(null, pos, BuiltInRegistries.SOUND_EVENT.getValueOrThrow(ResourceKey.create(Registries.SOUND_EVENT, Identifier.parse(sound))), SoundSource.valueOf(soundSource.toUpperCase(Locale.ROOT)), volume, pitch);
     }
 }

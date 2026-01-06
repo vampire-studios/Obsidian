@@ -33,7 +33,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -62,7 +62,7 @@ public final class RegistryEntryAttachmentSync {
 	private record NamespaceValuePair(String namespace, Set<AttachmentEntry> entries) {
 	}
 
-	private record CacheEntry(ResourceLocation registryId, Set<NamespaceValuePair> namespacesToValues) {
+	private record CacheEntry(Identifier registryId, Set<NamespaceValuePair> namespacesToValues) {
 	}
 
 	private record AttachmentEntry(String path, boolean isTag, Tag value) {
@@ -78,13 +78,13 @@ public final class RegistryEntryAttachmentSync {
 		public static AttachmentEntry read(FriendlyByteBuf buf) {
 			String path = buf.readUtf();
 			boolean isTag = buf.readBoolean();
-			Tag value = ((CompoundTag)buf.readNbt(NbtAccounter.create(FriendlyByteBuf.DEFAULT_NBT_QUOTA))).get("value");
+			Tag value = ((CompoundTag)buf.readNbt(NbtAccounter.create(256))).get("value");
 
 			return new AttachmentEntry(path, isTag, value);
 		}
 	}
 
-	public static final Map<ResourceLocation, CacheEntry> ENCODED_VALUES_CACHE = new Object2ReferenceOpenHashMap<>();
+	public static final Map<Identifier, CacheEntry> ENCODED_VALUES_CACHE = new Object2ReferenceOpenHashMap<>();
 
 	public static void register() {
 		ServerPlayConnectionEvents.JOIN.register(RegistryEntryAttachmentSync::syncAttachmentsToPlayer);
@@ -103,8 +103,8 @@ public final class RegistryEntryAttachmentSync {
 			for (var valueMap : entry.getValue().namespacesToValues()) {
 				var buf = FriendlyByteBufs.create();
 				buf.writeByte(PACKET_VERSION);
-				buf.writeResourceLocation(entry.getValue().registryId());
-				buf.writeResourceLocation(entry.getKey());
+				buf.writeIdentifier(entry.getValue().registryId());
+				buf.writeIdentifier(entry.getKey());
 				buf.writeUtf(valueMap.namespace());
 				buf.writeInt(valueMap.entries().size());
 				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
@@ -203,7 +203,7 @@ public final class RegistryEntryAttachmentSync {
 					valueMaps.add(new NamespaceValuePair(namespaceEntry.getKey(), namespaceEntry.getValue()));
 				}
 
-				ENCODED_VALUES_CACHE.put(attachment.id(), new CacheEntry(attachment.registry().key().location(), valueMaps));
+				ENCODED_VALUES_CACHE.put(attachment.id(), new CacheEntry(attachment.registry().key().identifier(), valueMaps));
 			}
 		}
 	}
@@ -224,8 +224,8 @@ public final class RegistryEntryAttachmentSync {
 			throw new UnsupportedOperationException("Unable to read RegistryEntryAttachmentSync packet. Please install the same version of QSL as the server you play on");
 		}
 
-		var registryId = buf.readResourceLocation();
-		var attachmentId = buf.readResourceLocation();
+		var registryId = buf.readIdentifier();
+		var attachmentId = buf.readIdentifier();
 		var namespace = buf.readUtf();
 
 		var size = buf.readInt();
@@ -252,7 +252,7 @@ public final class RegistryEntryAttachmentSync {
 			holder.valueTagTable.row(attachment).clear();
 
 			for (AttachmentEntry attachmentEntry : attachments) {
-				var entryId = ResourceLocation.fromNamespaceAndPath(namespace, attachmentEntry.path);
+				var entryId = Identifier.fromNamespaceAndPath(namespace, attachmentEntry.path);
 
 				var registryObject = registry.get(entryId);
 				if (registryObject == null) {

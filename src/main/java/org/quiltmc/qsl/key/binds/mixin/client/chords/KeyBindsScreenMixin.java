@@ -19,7 +19,9 @@ package org.quiltmc.qsl.key.binds.mixin.client.chords;
 import com.mojang.blaze3d.platform.InputConstants;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.Util;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.util.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.screens.Screen;
@@ -82,7 +84,7 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 	}*/
 
 	@Inject(at = @At(value = "RETURN", ordinal = 1), method = "mouseClicked")
-	private void excludeFirstMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+	private void excludeFirstMouseClick(MouseButtonEvent mouseButtonEvent, boolean bl, CallbackInfoReturnable<Boolean> cir) {
 		this.quilt$initialMouseRelease = true;
 	}
 
@@ -105,7 +107,7 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 	}*/
 
 	@Override
-	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+	public boolean keyReleased(KeyEvent keyEvent) {
 		if (this.selectedKey != null) {
 			if (quilt$focusedProtoChord.size() == 1) {
 //				this.options.setKey(this.selectedKey, quilt$focusedProtoChord.get(0));
@@ -125,12 +127,12 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 			KeyMapping.resetMapping();
 			return true;
 		} else {
-			return super.keyReleased(keyCode, scanCode, modifiers);
+			return super.keyReleased(keyEvent);
 		}
 	}
 
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+	public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
 		// TODO - Don't duplicate code, have a common method
 		if (this.selectedKey != null && !this.quilt$initialMouseRelease) {
 			if (quilt$focusedProtoChord.size() == 1) {
@@ -152,7 +154,7 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 			return true;
 		} else {
 			this.quilt$initialMouseRelease = false;
-			return super.mouseReleased(mouseX, mouseY, button);
+			return super.mouseReleased(mouseButtonEvent);
 		}
 	}
 }

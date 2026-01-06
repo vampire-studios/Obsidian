@@ -4,7 +4,7 @@ import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -25,7 +25,7 @@ import java.util.List;
 public class HorizontalFacingSittableAndDyableBlock extends HorizontalFacingDyableBlockImpl {
     public static final BooleanProperty OCCUPIED = BlockStateProperties.OCCUPIED;
 
-    public HorizontalFacingSittableAndDyableBlock(ResourceLocation id, Block block, Properties settings) {
+    public HorizontalFacingSittableAndDyableBlock(Identifier id, Block block, Properties settings) {
         super(id, block, settings);
         this.registerDefaultState(this.defaultBlockState().setValue(OCCUPIED, false).setValue(FACING, Direction.NORTH));
     }
@@ -37,7 +37,7 @@ public class HorizontalFacingSittableAndDyableBlock extends HorizontalFacingDyab
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             Entity entity = null;
             List<SeatEntity> entities = level.getEntities(Obsidian.SEAT, new AABB(pos), chair -> true);
             if(entities.isEmpty()) {

@@ -9,7 +9,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -31,7 +31,7 @@ public class ExpandedItemGroups implements AddonModule {
 //            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
 //            groupTabLoader.acceptParsedFile(null, jsonObject);
 //            ModDataLoader.load(groupTabLoader);
-            register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", ResourceLocation.fromNamespaceAndPath(id.modId(), STR."tabbed_\{itemGroup.targetGroup}"), itemGroup);
+            register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", Identifier.fromNamespaceAndPath(id.modId(), STR."tabbed_\{itemGroup.targetGroup}"), itemGroup);
         } catch (Exception e) {
             failedRegistering("tabbed_group", STR."tabbed_\{itemGroup.targetGroup}", e);
         }
@@ -47,7 +47,7 @@ public class ExpandedItemGroups implements AddonModule {
         private static TabbedGroup tabbedGroup;
 
         public static final ExpandedTabs INSTANCE = new ExpandedTabs(null);
-        private static final Map<ResourceLocation, JsonObject> BUFFERED_GROUPS = new HashMap<>();
+        private static final Map<Identifier, JsonObject> BUFFERED_GROUPS = new HashMap<>();
 
         public ExpandedTabs(TabbedGroup tabbedGroupIn) {
             tabbedGroup = tabbedGroupIn;
@@ -66,11 +66,11 @@ public class ExpandedItemGroups implements AddonModule {
         }
 
         @Override
-        public void acceptParsedFile(ResourceLocation id, JsonObject json) {
+        public void acceptParsedFile(Identifier id, JsonObject json) {
             var tabs = new ArrayList<ItemGroupTab>();
             var buttons = new ArrayList<ItemGroupButton>();
 
-            var targetGroupId = ResourceLocation.tryParse(tabbedGroup.targetGroup);
+            var targetGroupId = Identifier.tryParse(tabbedGroup.targetGroup);
 
             CreativeModeTab searchGroup = null;
             for (CreativeModeTab group : CreativeModeTabs.allTabs()) {
@@ -104,7 +104,7 @@ public class ExpandedItemGroups implements AddonModule {
 
             for (CreativeModeTab group : CreativeModeTabs.allTabs()) {
                 if (!BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group).toString().equals(tabbedGroup.targetGroup)) continue;
-                final var wrapperGroup = new WrapperGroup(group, ResourceLocation.tryParse(tabbedGroup.targetGroup), tabs, buttons);
+                final var wrapperGroup = new WrapperGroup(group, Identifier.tryParse(tabbedGroup.targetGroup), tabs, buttons);
                 wrapperGroup.initialize();
 
                 BuiltInRegistries.ITEM.stream()

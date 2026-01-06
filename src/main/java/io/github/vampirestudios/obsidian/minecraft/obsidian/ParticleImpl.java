@@ -1,10 +1,11 @@
+/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 
-public class ParticleImpl extends TextureSheetParticle {
+public class ParticleImpl extends TextureAt {
 
     private final io.github.vampirestudios.obsidian.api.obsidian.particle.Particle particle;
 
@@ -16,7 +17,9 @@ public class ParticleImpl extends TextureSheetParticle {
         this.gCol = particle.green_color;
         this.bCol = particle.blue_color;
         this.lifetime = particle.max_age;
-        this.quadSize *= /*this.random.nextFloat() * 0.4F + 0.7F*/particle.size;
+        this.quadSize *= */
+/*this.random.nextFloat() * 0.4F + 0.7F*//*
+particle.size;
         this.setSize(0.01F, 0.01F);
     }
 
@@ -36,3 +39,4 @@ public class ParticleImpl extends TextureSheetParticle {
     }
 
 }
+*/

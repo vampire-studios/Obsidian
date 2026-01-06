@@ -17,12 +17,12 @@
 package org.quiltmc.qsl.registry.attachment.api;
 
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Function;
 
 /**
- * Utility interface used for {@link RegistryEntryAttachment#dispatchedBuilder(Registry, ResourceLocation, Class, Function)}.
+ * Utility interface used for {@link RegistryEntryAttachment#dispatchedBuilder(Registry, Identifier, Class, Function)}.
  * <p>
  * This allows for polymorphic attachment types!<br>
  * For example, say you have this interface:
@@ -53,5 +53,5 @@ public interface DispatchedType {
 	 *
 	 * @return type identifier
 	 */
-	ResourceLocation getType();
+	Identifier getType();
 }

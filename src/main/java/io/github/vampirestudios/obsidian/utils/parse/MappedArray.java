@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.utils.parse;
 import io.github.vampirestudios.obsidian.utils.parse.function.IntObjBiConsumer;
 import io.github.vampirestudios.obsidian.utils.parse.value.MappedArrayValue;
 import io.github.vampirestudios.obsidian.utils.parse.value.MappedValue;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;

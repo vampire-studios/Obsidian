@@ -6,14 +6,14 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.EntityType.EntityFactory;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.SpawnEggItem;
 
 public class EntityRegistryBuilder<E extends Entity> {
-    private static ResourceLocation name;
+    private static Identifier name;
     private EntityFactory<E> entityFactory;
     private MobCategory category;
     private int trackingDistance;
@@ -26,7 +26,7 @@ public class EntityRegistryBuilder<E extends Entity> {
     private boolean summonable;
     private EntityDimensions dimensions;
 
-    public static <E extends Entity> EntityRegistryBuilder<E> createBuilder(ResourceLocation nameIn) {
+    public static <E extends Entity> EntityRegistryBuilder<E> createBuilder(Identifier nameIn) {
         name = nameIn;
         return new EntityRegistryBuilder<>();
     }
@@ -95,7 +95,7 @@ public class EntityRegistryBuilder<E extends Entity> {
         }
 
         if (this.hasEgg) {
-            RegistryHelper.createRegistryHelper(name.getNamespace()).items().registerItem(String.format("%s_spawn_egg", name.getPath()), new SpawnEggItem((EntityType<? extends Mob>) entityType, new Properties()));
+            RegistryHelper.createRegistryHelper(name.getNamespace()).items().registerItem(String.format("%s_spawn_egg", name.getPath()), new SpawnEggItem(new Properties().spawnEgg(entityType)));
         }
 
         return entityType;

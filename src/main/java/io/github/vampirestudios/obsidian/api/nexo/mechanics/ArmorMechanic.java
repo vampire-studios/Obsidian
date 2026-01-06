@@ -6,7 +6,7 @@ import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -18,8 +18,8 @@ import java.util.Locale;
 
 public class ArmorMechanic implements ItemMechanic {
 	public String type;
-	public ResourceLocation material;
-	public ResourceLocation texture;
+	public Identifier material;
+	public Identifier texture;
 	public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial armor_material;
 
 	@Override

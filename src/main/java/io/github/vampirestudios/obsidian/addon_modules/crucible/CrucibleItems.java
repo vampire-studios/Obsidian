@@ -15,7 +15,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
@@ -70,7 +70,7 @@ public class CrucibleItems implements AddonModule {
 						skillManager.triggerSkills(SkillTrigger.ON_BLOCK_BREAK, new SkillContext(player, null, pos))
 				);
 
-				crucibleItem.id = ResourceLocation.fromNamespaceAndPath(id.modId(), itemName.toLowerCase(Locale.ROOT));
+				crucibleItem.id = Identifier.fromNamespaceAndPath(id.modId(), itemName.toLowerCase(Locale.ROOT));
 
 				RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 
