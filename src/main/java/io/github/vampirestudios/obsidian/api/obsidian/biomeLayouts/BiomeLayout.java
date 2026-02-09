@@ -22,7 +22,8 @@ public class BiomeLayout {
 
 	public enum DimensionType {
 		OVERWORLD,
-		NETHER
+		NETHER,
+		END
 	}
 
 }

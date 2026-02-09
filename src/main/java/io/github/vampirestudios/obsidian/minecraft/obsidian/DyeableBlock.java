@@ -188,12 +188,7 @@ public class DyeableBlock extends BaseEntityBlock {
         super.setPlacedBy(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
-            int hue = itemStack.get(DataComponents.DYED_COLOR).rgb();
-            if (hue != 0) {
-                dyableBlockEntity.setDyeColor(hue);
-            } else {
-                dyableBlockEntity.setDyeColor(block.additional_information.defaultColor);
-            }
+            dyableBlockEntity.setDyeColor(DyedItemColor.getOrDefault(itemStack, block.additional_information.defaultColor));
         }
 
     }

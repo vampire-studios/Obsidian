@@ -186,7 +186,7 @@ public class ObsidianAddonLoader {
 		}
 
 		registerCommands();
-		ContentPackSyncNetworking.initializeServerHandlers();
+//		ContentPackSyncNetworking.initializeServerHandlers();
 		// Register all custom commands
 		CommandRegistrationCallback.EVENT.register((disp, _, _) -> {
 			// for each pack-manager pair

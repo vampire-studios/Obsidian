@@ -14,7 +14,6 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.DynamicContainer;
 import io.github.vampirestudios.obsidian.minecraft.JsonGui;
-import io.github.vampirestudios.obsidian.network.ContentPackSyncNetworking;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.*;
@@ -57,7 +56,7 @@ public class ClientInit implements ClientModInitializer {
     public void onInitializeClient() {
         Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().name()));
 
-        ContentPackSyncNetworking.registerClientReceivers();
+//        ContentPackSyncNetworking.registerClientReceivers();
 
         EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {

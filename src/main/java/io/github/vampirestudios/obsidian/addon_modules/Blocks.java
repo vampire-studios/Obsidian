@@ -13,6 +13,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType;
 import io.github.vampirestudios.obsidian.api.obsidian.block.SaplingBaseBlock;
 import io.github.vampirestudios.obsidian.block.PaintingTableBlock;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
@@ -25,14 +26,14 @@ import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -50,254 +51,364 @@ import java.util.Locale;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class Blocks implements AddonModule {
-
     @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
+    public void init(IAddonPack addon, File file, BasicAddonInfo modInfo) throws IOException, SyntaxError {
         io.github.vampirestudios.obsidian.api.obsidian.block.Block block = getBlock(addon, file);
+        if (block == null) return;
+
+        Identifier blockId = Identifier.fromNamespaceAndPath(modInfo.modId(), file.getName().replace(".json", ""));
+        block.information.name.id = blockId;
+
+        BlockBehaviour.Properties blockProps = createBlockProperties(block);
+        Item.Properties itemProps = createItemProperties(block);
+
+        RegistryHelperBlockExpanded registry = new RegistryHelperBlockExpanded(modInfo.modId());
 
         try {
-            if (block == null) return;
-
-            Identifier blockId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-            block.information.name.id = blockId;
-
-            BlockBehaviour.Properties blockSettings;
-
-            if (block.information.parentBlock != null) {
-                blockSettings = BlockBehaviour.Properties.ofLegacyCopy(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(block.information.parentBlock));
-            } else {
-                blockSettings = BlockBehaviour.Properties.of();
-            }
-
-            blockSettings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
-            if (block.information.getBlockSettings() != null) {
-                blockSettings.destroyTime(block.information.getBlockSettings().hardness)
-                        .explosionResistance(block.information.getBlockSettings().resistance)
-                        .mapColor(block.information.getBlockSettings().getMapColor())
-                        .pushReaction(block.information.getBlockSettings().getPushReaction())
-                        .sound(block.information.getBlockSettings().getBlockSoundGroup())
-                        .friction(block.information.getBlockSettings().slipperiness)
-                        .emissiveRendering((_, _, _) -> block.information.getBlockSettings().is_emissive)
-                        .lightLevel(_ -> block.information.getBlockSettings().luminance)
-                        .speedFactor(block.information.getBlockSettings().velocity_modifier)
-                        .jumpFactor(block.information.getBlockSettings().jump_velocity_modifier);
-                if (block.information.getBlockSettings().randomTicks) blockSettings.randomTicks();
-                if (block.information.getBlockSettings().instant_break) blockSettings.instabreak();
-                if (!block.information.getBlockSettings().collidable) blockSettings.noCollision();
-                if (block.information.getBlockSettings().translucent) blockSettings.noOcclusion();
-                if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
-            }
-
-            Item.Properties settings = new Item.Properties();
-            settings.useBlockDescriptionPrefix();
-            settings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, blockId));
-            if (block.information.getItemSettings() != null) {
-                settings.stacksTo(block.information.getItemSettings().maxStackSize);
-                settings.rarity(Rarity.valueOf(block.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
-                if (block.information.getItemSettings().durability != 0)
-                    settings.durability(block.information.getItemSettings().durability);
-//                if (!block.information.getItemSettings().wearableSlot.isEmpty() && !block.information.getItemSettings().wearableSlot.isBlank())
-//                    settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.getItemSettings().wearableSlot.toLowerCase(Locale.ROOT)));
-                if (block.food_information != null)
-                    settings.food(Registries.FOODS.getValue(block.food_information.foodComponent));
-                if (block.information.getItemSettings().fireproof) settings.fireResistant();
-            }
-
-            RegistryHelperBlockExpanded expanded = new RegistryHelperBlockExpanded(id.modId());
-
-            if (block.additional_information != null) {
-                if (block.additional_information.path) {
-                    expanded.registerBlock(new PathBlockImpl(blockSettings, block), block, blockId.getPath(), settings);
-                } else if (block.additional_information.lantern) {
-                    expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
-                } else if (block.additional_information.barrel) {
-                    expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
-                } else if (block.additional_information.leaves) {
-                    expanded.registerLeavesBlock(block, blockId.getPath(), settings);
-                } else if (block.additional_information.chains) {
-                    expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
-                } else if (block.additional_information.cake_like) {
-                    expanded.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
-                }
-            }
-
-            if (block.getBlockType() != null) {
-                switch (block.getBlockType()) {
-                    case PAINTING_TABLE -> {
-                        Block block1 = expanded.registerBlock(new PaintingTableBlock(block, blockSettings), block, blockId.getPath(), settings);
-                        OBE.PAINTING_TABLE.addSupportedBlock(block1);
-                    }
-                    case BLOCK, WOOD -> {
-                        if (block.additional_information != null && block.additional_information.dyable) {
-                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(blockId, block, blockSettings));
-                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
-                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
-                                    registeredBlock
-                            ), blockId.getPath() + "_be");
-                        } else
-                            expanded.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    }
-                    case HORIZONTAL_DIRECTIONAL -> {
-                        if (block.additional_information != null && block.additional_information.dyable && block.additional_information.sittable) {
-                            Block registeredBlock = expanded.registerBlockWithoutItem(
-                                    blockId.getPath(),
-                                    new HorizontalFacingSittableAndDyableBlock(blockId, block, blockSettings)
-                            );
-                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
-                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
-                                    registeredBlock
-                            ), blockId.getPath() + "_be");
-                        } else if (block.additional_information != null && block.additional_information.dyable) {
-                            Block registeredBlock = expanded.registerBlockWithoutItem(
-                                    blockId.getPath(),
-                                    new HorizontalFacingDyableBlockImpl(blockId, block, blockSettings)
-                            );
-                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
-                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
-                                    registeredBlock
-                            ), blockId.getPath() + "_be");
-                        } else if (block.additional_information != null && block.additional_information.sittable) {
-                            Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new HorizontalFacingSittableBlock(block,
-                                    blockSettings));
-                            expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                            REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
-                                    (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState),
-                                    registeredBlock
-                            ), blockId.getPath() + "_be");
-                        } else expanded.registerBlock(new HorizontalFacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    }
-                    case DIRECTIONAL -> expanded.registerBlock(new FacingBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    case BED -> expanded.registerBlock(new BedBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    case CAMPFIRE -> expanded.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, blockId.getPath(), settings);
-                    case STAIRS -> expanded.registerBlock(new StairsImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    case SLAB -> expanded.registerBlock(new SlabImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    case FENCE -> expanded.registerBlock(new FenceImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    case FENCE_GATE ->
-                            expanded.registerBlock(new FenceGateImpl(block, blockSettings, VanillaWoodTypes.get(block.information.woodType)), block,
-                                    blockId.getPath(), settings);
-                    case CAKE -> expanded.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), settings);
-                    case TRAPDOOR ->
-                            expanded.registerBlock(new TrapDoorBlock(VanillaBlockSetTypes.get(block.information.blockSetType), blockSettings), block,
-                                    blockId.getPath(), settings);
-                    case DOOR ->
-                            expanded.registerBlock(new DoorBlock(VanillaBlockSetTypes.get(block.information.blockSetType), blockSettings), block,
-                                    blockId.getPath(), settings);
-                    case LOG -> expanded.registerLog(block, blockSettings, blockId.getPath(), MapColor.STONE, MapColor.STONE, settings);
-                    case STEM -> expanded.registerNetherStemBlock(block, blockId.getPath(), MapColor.STONE, settings);
-                    case OXIDIZING_BLOCK -> {
-                        List<Identifier> names = new ArrayList<>();
-                        block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
-                            if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
-                        }));
-                        names.forEach(identifier -> expanded.registerBlock(new BlockImpl(block, blockSettings), block, identifier.getPath(), settings));
-                    }
-                    case PLANT -> {
-                        if (block.additional_information != null) {
-                            if (block.additional_information.waterloggable) {
-                                expanded.registerBlock(new WaterloggablePlantBlockImpl(block, blockSettings.noCollision().instabreak()), block,
-                                        blockId.getPath(), settings);
-                            }
-                        } else {
-                            expanded.registerBlock(new PlantBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        }
-                    }
-                    case ROTATED_PILLAR -> expanded.registerBlock(new PillarBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    case HORIZONTAL_FACING_PLANT -> expanded.registerBlock(new HorizontalFacingPlantBlockImpl(block,
-                                    blockSettings.noCollision().instabreak()), block, blockId.getPath(), settings);
-                    case SAPLING -> expanded.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), settings);
-                    case TORCH -> expanded.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), settings);
-                    case BEEHIVE -> {
-                        Block beeHive = expanded.registerBlock(new BeehiveBlock(blockSettings), block, blockId.getPath(), settings);
-                        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beeHive),
-                                blockId.getPath() + "_beehive_be");
-                    }
-                    case LEAVES -> expanded.registerLeavesBlock(block, blockId.getPath(), settings);
-                    case LADDER -> expanded.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), settings);
-                    case PATH -> expanded.registerBlock(new PathBlockImpl(blockSettings, block), block, blockId.getPath(), settings);
-                    case BUTTON -> expanded.registerBlock(new ButtonBlock(VanillaBlockSetTypes.get(block.information.blockSetType),
-                            block.information.wooden_button ? 30 : 20, blockSettings), block, blockId.getPath(), settings);
-                    case DOUBLE_PLANT -> {
-                        if (block.additional_information != null) {
-                            if (block.additional_information.waterloggable) {
-                                expanded.registerDoubleBlock(new WaterloggableTallFlowerBlockImpl(block, blockSettings.noCollision().instabreak()),
-                                        block, blockId.getPath(), settings);
-                            }
-                        } else {
-                            expanded.registerDoubleBlock(new TallFlowerBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                        }
-                    }
-                    case HORIZONTAL_FACING_DOUBLE_PLANT -> expanded.registerDoubleBlock(new TallFlowerBlock(blockSettings.noCollision().instabreak()),
-                            block, blockId.getPath(), settings);
-                    case HANGING_DOUBLE_LEAVES ->
-                            expanded.registerHangingTallBlock(new HangingDoubleLeaves(blockSettings.noCollision().instabreak()), block,
-                                    blockId.getPath(), settings);
-                    case LANTERN -> expanded.registerBlock(new LanternBlock(blockSettings), block, blockId.getPath(), settings);
-                    case CHAIN -> expanded.registerBlock(new ChainBlock(blockSettings), block, blockId.getPath(), settings);
-                    case PANE -> expanded.registerBlock(new PaneBlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-                    case DYEABLE -> {
-                        Block registeredBlock = expanded.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(blockId, block, blockSettings));
-                        expanded.registerDyeableItem(new CustomDyeableItem(block, registeredBlock, settings), blockId.getPath());
-                        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>)
-                                        (blockPos, blockState) -> new DyableBlockEntity(blockId, blockPos, blockState), registeredBlock),
-                                blockId.getPath() + "_be");
-                    }
-                    case LOOM -> expanded.registerBlock(new LoomBlock(blockSettings), block, blockId.getPath(), settings);
-                    case CRAFTING_TABLE -> expanded.registerBlock(new CraftingTableBlock(blockSettings), block, blockId.getPath(), settings);
-                    case FURNACE -> {
-                        Block furnace = expanded.registerBlock(new FurnaceBlock(blockSettings), block, blockId.getPath(), settings);
-                        BlockEntityType.FURNACE.addSupportedBlock(furnace);
-                    }
-                    case BLAST_FURNACE -> {
-                        Block blastFurnace = expanded.registerBlock(new BlastFurnaceBlock(blockSettings), block, blockId.getPath(), settings);
-                        BlockEntityType.BLAST_FURNACE.addSupportedBlock(blastFurnace);
-                    }
-                    case SMOKER -> {
-                        Block smoker = expanded.registerBlock(new SmokerBlock(blockSettings), block, blockId.getPath(), settings);
-                        BlockEntityType.SMOKER.addSupportedBlock(smoker);
-                    }
-                    case BARREL -> {
-                        Block barrel = expanded.registerBlock(new BarrelBlock(blockSettings), block, blockId.getPath(), settings);
-                        BlockEntityType.BARREL.addSupportedBlock(barrel);
-                    }
-                    case CARPET -> expanded.registerBlock(new CarpetBlock(blockSettings), block, blockId.getPath(), settings);
-                }
-            }
-
-            if (block.additional_information != null) {
-                AdditionalBlockInformation additionalInformation = block.additional_information;
-                Identifier identifier = getIdentifier(additionalInformation, blockId);
-                registerBlocksIfNeeded(additionalInformation, identifier, block, blockSettings, id, settings, expanded);
-            }
+            registerSpecificBlockType(block, blockId, blockProps, itemProps, registry);
+            registerAdditionalFeatures(block, blockId, blockProps, itemProps, modInfo, registry);
 
             if (!addon.getConfigPackInfo().hasData) {
                 new BlockInitThread(block);
             }
 
-            if (block.getBlockType() == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                List<Identifier> names = new ArrayList<>();
-                block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
-                    if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
-                }));
-                names.forEach(identifier -> {
-                    if (ContentRegistries.BLOCKS.get(identifier) != null)
-                        register(ContentRegistries.BLOCKS, "block", identifier, block);
-                });
-            } else {
-                register(ContentRegistries.BLOCKS, "block", blockId, block);
-            }
+            registerToContentRegistries(block, blockId);
+
         } catch (Exception e) {
-            if (block.getBlockType() == io.github.vampirestudios.obsidian.api.obsidian.block.Block.BlockType.OXIDIZING_BLOCK) {
-                List<Identifier> names = new ArrayList<>();
-                block.oxidizable_properties.stages.forEach(oxidationStage -> oxidationStage.blocks.forEach(variantBlock -> {
-                    if (!names.contains(variantBlock.name.id)) names.add(variantBlock.name.id);
-                }));
-                names.forEach(identifier -> failedRegistering("block", identifier.toString(), e));
+            if (block.getBlockType() == BlockType.OXIDIZING_BLOCK) {
+                getOxidationStageIds(block).forEach(id -> failedRegistering("block", id.toString(), e));
             } else {
                 failedRegistering("block", file.getName(), e);
             }
+        }
+    }
+
+    private BlockBehaviour.Properties createBlockProperties(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        BlockBehaviour.Properties props = block.information.parentBlock != null
+                ? BlockBehaviour.Properties.ofLegacyCopy(BuiltInRegistries.BLOCK.getValue(block.information.parentBlock))
+                : BlockBehaviour.Properties.of();
+
+        props.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, block.information.name.id));
+
+        if (block.information.getBlockSettings() != null) {
+            var settings = block.information.getBlockSettings();
+            props.destroyTime(settings.hardness)
+                    .explosionResistance(settings.resistance)
+                    .mapColor(settings.getMapColor())
+                    .pushReaction(settings.getPushReaction())
+                    .sound(settings.getBlockSoundGroup())
+                    .friction(settings.slipperiness)
+                    .emissiveRendering((state, level, pos) -> settings.is_emissive)
+                    .lightLevel(state -> settings.luminance)
+                    .speedFactor(settings.velocity_modifier)
+                    .jumpFactor(settings.jump_velocity_modifier)
+                    .noOcclusion();
+
+            if (settings.randomTicks) props.randomTicks();
+            if (settings.instant_break) props.instabreak();
+            if (!settings.collidable) props.noCollision();
+//            if (settings.translucent) props.noOcclusion();
+            if (settings.dynamic_boundaries) props.dynamicShape();
+        }
+
+        return props;
+    }
+
+    private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        Item.Properties props = new Item.Properties()
+                .useBlockDescriptionPrefix()
+                .setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, block.information.name.id));
+
+        if (block.information.getItemSettings() != null) {
+            var itemSettings = block.information.getItemSettings();
+            props.stacksTo(itemSettings.maxStackSize)
+                    .rarity(Rarity.valueOf(itemSettings.rarity.toUpperCase(Locale.ROOT)));
+
+            if (itemSettings.durability != 0) props.durability(itemSettings.durability);
+            if (itemSettings.fireproof) props.fireResistant();
+        }
+
+        if (block.food_information != null) {
+            props.food(Registries.FOODS.getValue(block.food_information.foodComponent));
+        }
+
+        return props;
+    }
+
+    private void registerSpecificBlockType(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                           Identifier blockId,
+                                           BlockBehaviour.Properties blockProps,
+                                           Item.Properties itemProps,
+                                           RegistryHelperBlockExpanded registry) {
+        BlockType type = block.getBlockType();
+        if (type == null) {
+            // Default handling for additional_information flags
+            handleAdditionalInformationFlags(block, blockId, blockProps, itemProps, registry);
+            return;
+        }
+
+        switch (type) {
+            case PAINTING_TABLE -> {
+                Block paintingTable = registry.registerBlock(new PaintingTableBlock(block, blockProps), block, blockId.getPath(), itemProps);
+                OBE.PAINTING_TABLE.addSupportedBlock(paintingTable);
+            }
+            case BLOCK, WOOD -> {
+                if (isDyable(block)) {
+                    registerDyableBlock(blockId, block, blockProps, itemProps, registry);
+                } else {
+                    registry.registerBlock(new BlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+                }
+            }
+            case HORIZONTAL_DIRECTIONAL -> {
+                boolean dyable = isDyable(block);
+                boolean sittable = isSittable(block);
+
+                if (dyable && sittable) {
+                    registerDyableAndSittableHorizontalBlock(blockId, block, blockProps, itemProps, registry);
+                } else if (dyable) {
+                    registerDyableHorizontalBlock(blockId, block, blockProps, itemProps, registry);
+                } else if (sittable) {
+                    registerSittableHorizontalBlock(blockId, block, blockProps, itemProps, registry);
+                } else {
+                    registry.registerBlock(new HorizontalFacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+                }
+            }
+            case DIRECTIONAL -> registry.registerBlock(new FacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case BED -> registry.registerBlock(new BedBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case CAMPFIRE -> registry.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, blockId.getPath(), itemProps);
+            case STAIRS -> registry.registerBlock(new StairsImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case SLAB -> registry.registerBlock(new SlabImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case FENCE -> registry.registerBlock(new FenceImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case FENCE_GATE -> registry.registerBlock(new FenceGateImpl(block, blockProps, VanillaWoodTypes.get(block.information.woodType)),
+                    block, blockId.getPath(), itemProps);
+            case CAKE -> registry.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), itemProps);
+            case TRAPDOOR -> registry.registerBlock(new TrapDoorBlock(VanillaBlockSetTypes.get(block.information.blockSetType), blockProps),
+                    block, blockId.getPath(), itemProps);
+            case DOOR -> registry.registerBlock(new DoorBlock(VanillaBlockSetTypes.get(block.information.blockSetType), blockProps),
+                    block, blockId.getPath(), itemProps);
+            case LOG -> registry.registerLog(block, blockProps, blockId.getPath(), MapColor.STONE, MapColor.STONE, itemProps);
+            case STEM -> registry.registerNetherStemBlock(block, blockId.getPath(), MapColor.STONE, itemProps);
+            case OXIDIZING_BLOCK -> getOxidationStageIds(block).forEach(id ->
+                    registry.registerBlock(new BlockImpl(block, blockProps), block, id.getPath(), itemProps));
+            case PLANT -> {
+                if (isWaterloggable(block)) {
+                    registry.registerBlock(new WaterloggablePlantBlockImpl(block, blockProps.noCollision().instabreak()),
+                            block, blockId.getPath(), itemProps);
+                } else {
+                    registry.registerBlock(new PlantBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+                }
+            }
+            case ROTATED_PILLAR -> registry.registerBlock(new PillarBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case HORIZONTAL_FACING_PLANT -> registry.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockProps.noCollision().instabreak()),
+                    block, blockId.getPath(), itemProps);
+            case SAPLING -> registry.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), itemProps);
+            case TORCH -> registry.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), itemProps);
+            case BEEHIVE -> {
+                Block beehive = registry.registerBlock(new BeehiveBlock(blockProps), block, blockId.getPath(), itemProps);
+                REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beehive),
+                        blockId.getPath() + "_beehive_be");
+            }
+            case LEAVES -> registry.registerLeavesBlock(block, blockId.getPath(), itemProps);
+            case LADDER -> registry.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), itemProps);
+            case PATH -> registry.registerBlock(new PathBlockImpl(blockProps, block), block, blockId.getPath(), itemProps);
+            case BUTTON -> registry.registerBlock(new ButtonBlock(VanillaBlockSetTypes.get(block.information.blockSetType),
+                    block.information.wooden_button ? 30 : 20, blockProps), block, blockId.getPath(), itemProps);
+            case DOUBLE_PLANT -> {
+                if (isWaterloggable(block)) {
+                    registry.registerDoubleBlock(new WaterloggableTallFlowerBlockImpl(block, blockProps.noCollision().instabreak()),
+                            block, blockId.getPath(), itemProps);
+                } else {
+                    registry.registerDoubleBlock(new TallFlowerBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+                }
+            }
+            case HORIZONTAL_FACING_DOUBLE_PLANT -> registry.registerDoubleBlock(new TallFlowerBlock(blockProps.noCollision().instabreak()),
+                    block, blockId.getPath(), itemProps);
+            case HANGING_DOUBLE_LEAVES -> registry.registerHangingTallBlock(new HangingDoubleLeaves(blockProps.noCollision().instabreak()),
+                    block, blockId.getPath(), itemProps);
+            case LANTERN -> registry.registerBlock(new LanternBlock(blockProps), block, blockId.getPath(), itemProps);
+            case CHAIN -> registry.registerBlock(new ChainBlock(blockProps), block, blockId.getPath(), itemProps);
+            case PANE -> registry.registerBlock(new PaneBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case DYEABLE -> registerDyableBlock(blockId, block, blockProps, itemProps, registry);
+            case LOOM -> registry.registerBlock(new LoomBlock(blockProps), block, blockId.getPath(), itemProps);
+            case CRAFTING_TABLE -> registry.registerBlock(new CraftingTableBlock(blockProps), block, blockId.getPath(), itemProps);
+            case FURNACE -> {
+                Block furnace = registry.registerBlock(new FurnaceBlock(blockProps), block, blockId.getPath(), itemProps);
+                BlockEntityType.FURNACE.addSupportedBlock(furnace);
+            }
+            case BLAST_FURNACE -> {
+                Block blast = registry.registerBlock(new BlastFurnaceBlock(blockProps), block, blockId.getPath(), itemProps);
+                BlockEntityType.BLAST_FURNACE.addSupportedBlock(blast);
+            }
+            case SMOKER -> {
+                Block smoker = registry.registerBlock(new SmokerBlock(blockProps), block, blockId.getPath(), itemProps);
+                BlockEntityType.SMOKER.addSupportedBlock(smoker);
+            }
+            case BARREL -> {
+                Block barrel = registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps);
+                BlockEntityType.BARREL.addSupportedBlock(barrel);
+            }
+            case CARPET -> registry.registerBlock(new CarpetBlock(blockProps), block, blockId.getPath(), itemProps);
+        }
+    }
+
+    private void handleAdditionalInformationFlags(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                                  Identifier blockId,
+                                                  BlockBehaviour.Properties blockProps,
+                                                  Item.Properties itemProps,
+                                                  RegistryHelperBlockExpanded registry) {
+        if (block.additional_information == null) return;
+
+        var info = block.additional_information;
+        if (info.path) registry.registerBlock(new PathBlockImpl(blockProps, block), block, blockId.getPath(), itemProps);
+        else if (info.lantern) registry.registerBlock(new LanternBlock(blockProps), block, blockId.getPath(), itemProps);
+        else if (info.barrel) registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps);
+        else if (info.leaves) registry.registerLeavesBlock(block, blockId.getPath(), itemProps);
+        else if (info.chains) registry.registerBlock(new ChainBlock(blockProps), block, blockId.getPath(), itemProps);
+        else if (info.cake_like) registry.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), itemProps);
+    }
+
+    private void registerAdditionalFeatures(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                             Identifier baseId,
+                                             BlockBehaviour.Properties blockProps,
+                                             Item.Properties itemProps,
+                                             BasicAddonInfo modInfo,
+                                             RegistryHelperBlockExpanded registry) {
+        if (block.additional_information == null) return;
+
+        Identifier id = getExtraBlockIdentifier(block.additional_information, baseId);
+        registerExtraVariants(block, blockProps, itemProps, modInfo, registry, id);
+    }
+
+    private void registerExtraVariants(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                       BlockBehaviour.Properties blockProps,
+                                       Item.Properties itemProps,
+                                       BasicAddonInfo modInfo,
+                                       RegistryHelperBlockExpanded registry,
+                                       Identifier baseId) {
+        var info = block.additional_information;
+        net.minecraft.world.level.block.state.properties.WoodType woodType = getWoodTypeForSounds(info);
+
+        if (info.slab) {
+            registry.registerBlock(new SlabImpl(block, blockProps), block,
+                    Utils.appendToPath(baseId, "_slab").getPath(), CreativeModeTabs.BUILDING_BLOCKS, itemProps);
+        }
+        if (info.stairs) {
+            registry.registerBlock(new StairsImpl(block, blockProps), block,
+                    Utils.appendToPath(baseId, "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS, itemProps);
+        }
+        if (info.fence) {
+            registry.registerBlock(new FenceImpl(block, blockProps), block,
+                    Utils.appendToPath(baseId, "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, itemProps);
+        }
+        if (info.fenceGate) {
+            registry.registerBlock(new FenceGateImpl(block, blockProps, woodType),
+                    block, Utils.appendToPath(baseId, "_fence_gate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, itemProps);
+        }
+        if (info.walls) {
+            registry.registerBlock(new WallImpl(block, blockProps), block,
+                    Utils.appendToPath(baseId, "_wall").getPath(), CreativeModeTabs.BUILDING_BLOCKS, itemProps);
+        }
+        if (info.pressurePlate) {
+            registry.registerBlock(new PressurePlateBlock(woodType.setType(), blockProps), block,
+                    Utils.appendToPath(baseId, "_pressure_plate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, itemProps);
+        }
+        if (info.button) {
+            registry.registerBlock(new ButtonBlock(woodType.setType(), 30, blockProps), block,
+                    Utils.appendToPath(baseId, "_button").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, itemProps);
+        }
+        if (info.door) {
+            registry.registerBlock(new DoorBlock(woodType.setType(), blockProps), block,
+                    Utils.appendToPath(baseId, "_door").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, itemProps);
+        }
+        if (info.trapdoor) {
+            registry.registerBlock(new TrapDoorBlock(woodType.setType(), blockProps), block,
+                    Utils.appendToPath(baseId, "_trapdoor").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, itemProps);
+        }
+    }
+
+    private net.minecraft.world.level.block.state.properties.WoodType getWoodTypeForSounds(AdditionalBlockInformation info) {
+        if (info.overworldLike) return WoodType.ACACIA;
+        if (info.netherLike) return WoodType.CRIMSON;
+        if (info.bambooLike) return WoodType.BAMBOO; // assuming you have a flag; adjust if needed
+        return WoodType.CHERRY;
+    }
+
+    private Identifier getExtraBlockIdentifier(AdditionalBlockInformation info, Identifier defaultId) {
+        return info.extraBlocksName.isBlank()
+                ? defaultId
+                : Identifier.fromNamespaceAndPath(defaultId.getNamespace(), info.extraBlocksName);
+    }
+
+    private boolean isDyable(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        return block.additional_information != null && block.additional_information.dyable;
+    }
+
+    private boolean isSittable(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        return block.additional_information != null && block.additional_information.sittable;
+    }
+
+    private boolean isWaterloggable(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        return block.additional_information != null && block.additional_information.waterloggable;
+    }
+
+    private void registerDyableBlock(Identifier blockId, io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                     BlockBehaviour.Properties props, Item.Properties itemProps,
+                                     RegistryHelperBlockExpanded registry) {
+        Block registered = registry.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(blockId, block, props));
+        registry.registerDyeableItem(new CustomDyeableItem(block, registered, itemProps), blockId.getPath());
+        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
+                        (pos, state) -> new DyableBlockEntity(blockId, pos, state), registered),
+                blockId.getPath() + "_be");
+    }
+
+    private void registerDyableHorizontalBlock(Identifier blockId, io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                               BlockBehaviour.Properties props, Item.Properties itemProps,
+                                               RegistryHelperBlockExpanded registry) {
+        Block registered = registry.registerBlockWithoutItem(blockId.getPath(),
+                new HorizontalFacingDyableBlockImpl(blockId, block, props));
+        registry.registerDyeableItem(new CustomDyeableItem(block, registered, itemProps), blockId.getPath());
+        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
+                        (pos, state) -> new DyableBlockEntity(blockId, pos, state), registered),
+                blockId.getPath() + "_be");
+    }
+
+    private void registerSittableHorizontalBlock(Identifier blockId, io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                                 BlockBehaviour.Properties props, Item.Properties itemProps,
+                                                 RegistryHelperBlockExpanded registry) {
+        Block registered = registry.registerBlockWithoutItem(blockId.getPath(),
+                new HorizontalFacingSittableBlock(block, props));
+        registry.registerItem(new CustomBlockItem(block, registered, itemProps), blockId.getPath()); // or use appropriate item registration
+    }
+
+    private void registerDyableAndSittableHorizontalBlock(Identifier blockId, io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+                                                          BlockBehaviour.Properties props, Item.Properties itemProps,
+                                                          RegistryHelperBlockExpanded registry) {
+        Block registered = registry.registerBlockWithoutItem(blockId.getPath(),
+                new HorizontalFacingSittableAndDyableBlock(blockId, block, props));
+        registry.registerDyeableItem(new CustomDyeableItem(block, registered, itemProps), blockId.getPath());
+        REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
+                        (pos, state) -> new DyableBlockEntity(blockId, pos, state), registered),
+                blockId.getPath() + "_be");
+    }
+
+    private List<Identifier> getOxidationStageIds(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        List<Identifier> ids = new ArrayList<>();
+        block.oxidizable_properties.stages.forEach(stage ->
+                stage.blocks.forEach(varBlock -> {
+                    if (!ids.contains(varBlock.name.id)) ids.add(varBlock.name.id);
+                }));
+        return ids;
+    }
+
+    private void registerToContentRegistries(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Identifier blockId) {
+        if (block.getBlockType() == BlockType.OXIDIZING_BLOCK) {
+            getOxidationStageIds(block).forEach(id -> {
+                if (ContentRegistries.BLOCKS.get(id) != null) {
+                    register(ContentRegistries.BLOCKS, "block", id, block);
+                }
+            });
+        } else {
+            register(ContentRegistries.BLOCKS, "block", blockId, block);
         }
     }
 

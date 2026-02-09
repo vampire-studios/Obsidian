@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version '1.14-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom-remap' version '1.15-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -56,8 +56,8 @@ loom {
 
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.139.4+1.21.11")
-		force("net.fabricmc:fabric-loader:0.18.1")
+		force("net.fabricmc.fabric-api:fabric-api:0.141.3+1.21.11")
+		force("net.fabricmc:fabric-loader:0.18.4")
 		force("com.terraformersmc:modmenu:17.0.0-alpha.1")
 	}
 }
@@ -78,35 +78,24 @@ dependencies {
 
 	modImplementation libs.fabric.api
 
-//	modImplementation (libs.vampirelib) {
-//		noFapi
-//		noFLoader
-//		noCottonMC
-//		noQuiltMC
-//	}
-//	include(libs.vampirelib) {
-//		noFapi
-//		noFLoader
-//		noCottonMC
-//		noQuiltMC
-//	}
+	modRuntimeOnly("com.terraformersmc:modmenu:17.0.0-beta.2")
 
-	modRuntimeOnly("com.terraformersmc:modmenu:17.0.0-alpha.1")
+	modImplementation("com.terraformersmc:biolith-fabric:3.5.0-beta.3")
 
-	modImplementation include("io.github.cottonmc:Jankson-Fabric:10.0.0+j1.2.3")
+	modImplementation include("io.github.cottonmc:Jankson-Fabric:11.0.0+j1.2.3")
 
-//	modImplementation (libs.owo.lib) {
-//		noFapi
-//		noFLoader
-//		noCottonMC
-//		noQuiltMC
-//	}
-//	include (libs.owo.sentinel) {
-//		noFapi
-//		noFLoader
-//		noCottonMC
-//		noQuiltMC
-//	}
+	modImplementation (libs.owo.lib) {
+		noFapi
+		noFLoader
+		noCottonMC
+		noQuiltMC
+	}
+	include (libs.owo.sentinel) {
+		noFapi
+		noFLoader
+		noCottonMC
+		noQuiltMC
+	}
 
 //	modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
 //		noFapi
@@ -121,14 +110,14 @@ dependencies {
 //		noQuiltMC
 //	}
 
-//	modImplementation "dev.isxander:yet-another-config-lib:3.8.1+1.21.11-fabric"
+	modImplementation "dev.isxander:yet-another-config-lib:3.8.2+1.21.11-fabric"
 
 	implementation "com.electronwill.night-config:core:${libs.versions.nc.get()}"
 	implementation "com.electronwill.night-config:toml:${libs.versions.nc.get()}"
 	implementation "com.electronwill.night-config:yaml:${libs.versions.nc.get()}"
 	implementation "com.electronwill.night-config:hocon:${libs.versions.nc.get()}"
 
-	implementation 'org.hjson:hjson:3.0.0'
+	implementation 'org.hjson:hjson:3.0.1'
 	implementation "com.fasterxml.jackson.core:jackson-databind:${libs.versions.jackson.get()}"
 	implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${libs.versions.jackson.get()}"
 	implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:${libs.versions.jackson.get()}"
@@ -139,8 +128,8 @@ dependencies {
 
 	modImplementation "com.ptsmods:devlogin:3.3"
 
-	include(modImplementation("eu.pb4:sgui:1.11.0+1.21.9"))
-	modImplementation(include("eu.pb4:placeholder-api:2.8.1+1.21.10"))
+	include(modImplementation("eu.pb4:sgui:1.12.0+1.21.11"))
+	modImplementation(include("eu.pb4:placeholder-api:2.8.2+1.21.10"))
 
 	modImplementation("com.github.Chocohead:Fabric-ASM:v2.3") {
 		exclude (group: "net.fabricmc.fabric-api")

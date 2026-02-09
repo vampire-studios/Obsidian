@@ -59,21 +59,15 @@ public class BlockInformation {
     public Object blockSettings;
 
     public BlockSettings getBlockSettings() {
-		switch (blockSettings) {
-			case Identifier Identifier -> {
-				return ContentRegistries.BLOCK_SETTINGS.getValue(Identifier);
-			}
+		return switch (blockSettings) {
+			case Identifier Identifier -> ContentRegistries.BLOCK_SETTINGS.getValue(Identifier);
 			case String s -> {
 				Identifier location = Identifier.tryParse(s);
-				return ContentRegistries.BLOCK_SETTINGS.getValue(location);
+				yield ContentRegistries.BLOCK_SETTINGS.getValue(location);
 			}
-			case BlockSettings blockSettings1 -> {
-                return blockSettings1;
-			}
-			case null, default -> {
-				return null;
-			}
-		}
+			case BlockSettings blockSettings1 -> blockSettings1;
+			case null, default -> new BlockSettings();
+		};
     }
 
     @SerializedName("item_properties")
@@ -82,21 +76,15 @@ public class BlockInformation {
     public Object itemSettings;
 
     public ItemSettings getItemSettings() {
-		switch (itemSettings) {
-			case Identifier Identifier -> {
-				return ContentRegistries.ITEM_SETTINGS.getValue(Identifier);
-			}
+		return switch (itemSettings) {
+			case Identifier Identifier -> ContentRegistries.ITEM_SETTINGS.getValue(Identifier);
 			case String s -> {
 				Identifier location = Identifier.tryParse(s);
-				return ContentRegistries.ITEM_SETTINGS.getValue(location);
+				yield ContentRegistries.ITEM_SETTINGS.getValue(location);
 			}
-			case ItemSettings itemSettings1 -> {
-				return itemSettings1;
-			}
-			case null, default -> {
-				return new ItemSettings();
-			}
-		}
+			case ItemSettings itemSettings1 -> itemSettings1;
+			case null, default -> new ItemSettings();
+		};
     }
 
 	public Map<String, String[]> properties;
