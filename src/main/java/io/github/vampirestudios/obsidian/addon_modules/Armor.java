@@ -21,13 +21,12 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -82,34 +81,52 @@ public class Armor implements AddonModule {
                 armor.information.name.id = identifier;
             }
 
-            ArmorMaterial material;
-            if (armor.armorMaterial != null && ContentRegistries.ARMOR_MATERIALS.containsKey(armor.armorMaterial)) {
-                material = ContentRegistries.ARMOR_MATERIALS.getValue(armor.armorMaterial);
-            } else {
-				material = null;
-			}
-			assert material != null;
-			assert armor.armorMaterial != null;
+            net.minecraft.world.item.equipment.ArmorMaterial vanillaArmorMaterial;
+            if (armor.template == ArmorItem.ArmorTemplate.CUSTOM) {
+                ArmorMaterial material;
+                if (armor.materialId != null && ContentRegistries.ARMOR_MATERIALS.containsKey(armor.materialId)) {
+                    material = ContentRegistries.ARMOR_MATERIALS.getValue(armor.materialId);
+                } else {
+                    material = null;
+                }
+                assert material != null;
+                assert armor.materialId != null;
 
-            ResourceKey<EquipmentAsset> equipmentAsset = ResourceKey.create(ROOT_ID, armor.armorMaterial);
-            net.minecraft.world.item.equipment.ArmorMaterial customArmorMaterial = new net.minecraft.world.item.equipment.ArmorMaterial(
-                    material.getDurability(/*armor.getEquipmentSlot()*/EquipmentSlot.HEAD),
-                    material.defense,
-                    material.enchantability,
-                    SoundEvents.ARMOR_EQUIP_LEATHER,
-                    material.toughness,
-                    material.knockback_resistance,
-                    TagKey.create(Registries.ITEM, material.repair_tag),
-                    equipmentAsset
-            );
+                ResourceKey<EquipmentAsset> equipmentAsset = ResourceKey.create(ROOT_ID, armor.materialId);
+                vanillaArmorMaterial = new net.minecraft.world.item.equipment.ArmorMaterial(
+                        material.durability,
+                        material.defense,
+                        material.enchantability,
+                        material.getEquipSound(),
+                        material.toughness,
+                        material.knockback_resistance,
+                        TagKey.create(Registries.ITEM, material.repair_tag),
+                        equipmentAsset
+                );
+            } else {
+                vanillaArmorMaterial = armor.getTemplateMaterial();
+            }
 
             Item item;
             Item.Properties settings = new Item.Properties()
                     .stacksTo(armor.information.getItemSettings().maxStackSize)
-                    .rarity(Rarity.valueOf(armor.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)))
-                    .setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
-            if (armor.information.getItemSettings().dyeable) item = new DyeableArmorItemImpl(customArmorMaterial, armor, settings);
-            else item = new ArmorItemImpl(customArmorMaterial, armor, settings);
+                    .rarity(Rarity.valueOf(armor.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
+
+            if (armor.armor_type == ArmorItem.Type.HUMANOID)
+                settings.humanoidArmor(vanillaArmorMaterial, ArmorType.valueOf(armor.slot.toUpperCase(Locale.ROOT)));
+            if (armor.armor_type == ArmorItem.Type.WOLF)
+                settings.wolfArmor(vanillaArmorMaterial);
+            if (armor.armor_type == ArmorItem.Type.HORSE)
+                settings.horseArmor(vanillaArmorMaterial);
+            if (armor.armor_type == ArmorItem.Type.NAUTILUS)
+                settings.nautilusArmor(vanillaArmorMaterial);
+
+            settings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
+
+            if (armor.information.getItemSettings().dyeable)
+                item = new DyeableArmorItemImpl(armor, settings);
+            else
+                item = new ArmorItemImpl(armor, settings);
             REGISTRY_HELPER.items().registerItem(identifier.getPath(), item);
             ItemGroupEvents.modifyEntriesEvent(armor.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
 

@@ -8,6 +8,9 @@ import io.github.vampirestudios.obsidian.addon_modules.crucible.CrucibleItems;
 import io.github.vampirestudios.obsidian.addon_modules.crucible.CrucibleSkills;
 import io.github.vampirestudios.obsidian.addon_modules.crucible.EffectsModule;
 import io.github.vampirestudios.obsidian.addon_modules.nexo.NexoItems;
+import io.github.vampirestudios.obsidian.api.crucible.CrucibleEvents;
+import io.github.vampirestudios.obsidian.api.crucible.CrucibleFabricHooks;
+import io.github.vampirestudios.obsidian.api.crucible.SkillManager;
 import io.github.vampirestudios.obsidian.api.crucible.skills.effects.AnimationManager;
 import io.github.vampirestudios.obsidian.api.obsidian.block.AdditionalBlockInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
@@ -124,6 +127,10 @@ public class Obsidian implements ModInitializer {
 		new BaseGson();
 		OMenus.init();
 
+		SkillManager manager = SkillManager.getInstance();
+		CrucibleEvents.bootstrap(manager);
+		CrucibleFabricHooks.install();
+
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_group", new LegacyItemGroups());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "creative_tab", new CreativeTabs());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_sound_groups", new BlockSoundGroups());
@@ -140,6 +147,7 @@ public class Obsidian implements ModInitializer {
 			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "armor_models", new ArmorModels());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "armor", new Armor());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "elytra", new Elytras());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "cosmetic", new Cosmetics());
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "emojis", new Emojis());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item", new Items());

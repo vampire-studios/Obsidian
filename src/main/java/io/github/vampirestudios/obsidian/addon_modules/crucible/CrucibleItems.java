@@ -12,12 +12,13 @@ import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded
 import io.github.vampirestudios.obsidian.minecraft.crucible.ItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,8 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.f
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class CrucibleItems implements AddonModule {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CrucibleItems.class);
+
 	@Override
 	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError, DeserializationException {
 		if (!Objects.equals(id.format(), "crucible_like")) return;
@@ -41,34 +44,31 @@ public class CrucibleItems implements AddonModule {
 			for (Map.Entry<String, CrucibleItem> entry : items.entrySet()) {
 				String itemName = entry.getKey();
 				CrucibleItem crucibleItem = entry.getValue();
-				if (crucibleItem == null) return;
+				if (crucibleItem == null) {
+					LOGGER.warn("Null crucible item for key '{}' in file '{}'", itemName, file.getName());
+					continue;
+				}
 
 				SkillManager skillManager = SkillManager.getInstance();
 				SkillParser.setModId(id.modId());
 
 				if (crucibleItem.Skills != null) {
+					crucibleItem.internalSkills = new ArrayList<>();
+
 					for (String skillString : crucibleItem.Skills) {
 						SkillEntry skillEntry = SkillParser.parseSkillString(skillString);
-						if (skillEntry != null) {
-							Skill skill = SkillParser.createSkillFromEntry(skillEntry);
-							if (skill != null) {
-								crucibleItem.internalSkills = new ArrayList<>();
-								crucibleItem.internalSkills.add(skill);
-								skillManager.registerSkill(skill);
-							} else {
-								System.err.println(STR."Failed to create Skill from SkillEntry for skillString: \{skillString}");
-							}
-						} else {
-							System.err.println(STR."Failed to parse skillString: \{skillString}");
-						}
+						if (skillEntry == null) continue;
+
+						Skill skill = SkillParser.createSkillFromEntry(skillEntry);
+						if (skill == null) continue;
+
+						// Mark these as HELD_ITEM skills
+						skill.scope(SkillScope.HELD_ITEM);
+
+						crucibleItem.internalSkills.add(skill);
+						skillManager.registerSkill(skill);
 					}
-
-					crucibleItem.Skills.forEach(s -> System.out.println("AAA: " + s));
 				}
-
-				PlayerBlockBreakEvents.AFTER.register((_, player, pos, _, _) ->
-						skillManager.triggerSkills(SkillTrigger.ON_BLOCK_BREAK, new SkillContext(player, null, pos))
-				);
 
 				crucibleItem.id = Identifier.fromNamespaceAndPath(id.modId(), itemName.toLowerCase(Locale.ROOT));
 
@@ -77,7 +77,7 @@ public class CrucibleItems implements AddonModule {
 				Item.Properties itemProperties = new Item.Properties();
 				itemProperties.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, crucibleItem.id));
 
-				Item item = expanded.registerItem(itemName, new ItemImpl(crucibleItem, skillManager, itemProperties));
+				Item item = expanded.registerItem(itemName, new ItemImpl(crucibleItem, itemProperties));
 				ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> entries.accept(item));
 
 				register(ContentRegistries.CRUCIBLE_ITEMS, "crucible_item", crucibleItem.id, crucibleItem);

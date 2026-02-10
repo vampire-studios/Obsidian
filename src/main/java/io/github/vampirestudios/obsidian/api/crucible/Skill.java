@@ -22,6 +22,7 @@ public abstract class Skill {
     protected Map<String, Object> runtimeParameters = new HashMap<>(); // Parameters passed at runtime
     int repeat = 1; // Default to 1, meaning it runs once if not specified
     int repeatInterval = 0; // Default to 0, meaning no interval if not specified
+    public SkillScope scope = SkillScope.GLOBAL;
 
     public Skill() {}
 
@@ -122,4 +123,6 @@ public abstract class Skill {
     public void setRepeatInterval(int repeatInterval) {
         this.repeatInterval = repeatInterval;
     }
+
+    public Skill scope(SkillScope s) { this.scope = s; return this; }
 }

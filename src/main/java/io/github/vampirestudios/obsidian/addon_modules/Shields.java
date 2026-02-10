@@ -32,7 +32,7 @@ public class Shields implements AddonModule {
             if(shieldItem == null) return;
 
             Identifier identifier;
-            if (shieldItem.information.name != null && shieldItem.information.name.id != null) {
+            if (shieldItem.information.name.id != null) {
                 identifier = shieldItem.information.name.id;
             } else {
                 identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
@@ -53,7 +53,7 @@ public class Shields implements AddonModule {
 
             RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 
-            expanded.registerItem(identifier.getPath(), new ShieldItemImpl(shieldItem, new Item.Properties()),
+            expanded.registerItem(identifier.getPath(), new ShieldItemImpl(shieldItem, settings),
                     shieldItem.information.getItemSettings().getItemGroup()
             );
             register(ContentRegistries.SHIELDS, "shield", identifier, shieldItem);

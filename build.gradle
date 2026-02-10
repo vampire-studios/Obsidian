@@ -124,7 +124,7 @@ dependencies {
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:${libs.versions.jackson.get()}"
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${libs.versions.jackson.get()}"
 
-	modImplementation("net.vampirestudios:arrp:0.11.0+build.11")
+	modImplementation("net.vampirestudios:arrp:0.12.1+build.2")
 
 	modImplementation "com.ptsmods:devlogin:3.3"
 

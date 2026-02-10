@@ -7,6 +7,7 @@ An addon supports a set of file types for defining different things.
 ### Formats with their own JSON/JSON5/HJSON/TOML/YAML files
 
 * [Items](./formats/Items.md)
+    * [Item Types](./formats/ItemTypes.md)
     * [Item Tiers](./formats/ItemTiers.md)
     * [Armor Materials](./formats/ArmorMaterials.md)
     * [Food Definitions](./formats/Food.md)

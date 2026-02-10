@@ -113,3 +113,25 @@ A block that has the properties of a wooden trapdoor, including waterlogging.
 Default render layer: cutout. Also defaults to not solid.
 
 Default blockstate properties: open, half, powered, waterlogged
+
+## Additional block types
+
+Obsidian supports a larger set of block types that map to vanilla-style behaviors. These are declared in the `block_type` field and handled by the corresponding implementations in the mod code.
+
+Common additional types include:
+
+* `painting_table`
+* `campfire`
+* `bed`
+* `log`, `stem`, `wood`
+* `oxidizing_block`
+* `plant`, `horizontal_facing_plant`, `sapling`, `double_plant`, `horizontal_facing_double_plant`, `hanging_double_leaves`
+* `torch`, `lantern`, `chain`
+* `ladder`, `path`, `carpet`, `pane`
+* `button`, `pressure_plate`
+* `door` (uses `block_set_type`)
+* `beehive`
+* `dyeable`
+* `loom`, `grindstone`, `crafting_table`, `piston`, `noteblock`, `jukebox`, `smoker`, `furnace`, `blast_furnace`, `lectern`, `fletching_table`, `barrel`, `composter`, `rails`, `cartography_table`
+
+If a block type depends on `block_set_type`, `wood_type`, or other settings, those must be provided in the block's `information` section. Refer to the [Blocks](./Blocks.md) format page and the code for details on each type.

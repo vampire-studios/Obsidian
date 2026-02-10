@@ -197,7 +197,7 @@ public class NexoItem {
 
 				ResourceKey<EquipmentAsset> equipmentAsset = ResourceKey.create(Obsidian.ROOT_ID, nexoItem.mechanics.armor.material);
 				ArmorMaterial customArmorMaterial = new ArmorMaterial(
-						material.getDurability(nexoItem.getEquipmentSlot()),
+						material.durability,
 						material.defense,
 						material.enchantability,
 						SoundEvents.ARMOR_EQUIP_LEATHER,
@@ -824,10 +824,15 @@ public class NexoItem {
 				public Identifier grow_sound;
 				public int min_light_level;
 				public boolean requires_water_source;
-				public String schematic;
+				public Schemetic schematic;
 				public boolean replace_blocks;
 				public boolean copy_biomes;
 				public boolean copy_entities;
+
+				public static class Schemetic {
+					public String schem;
+					public float chance;
+				}
 			}
 		}
 

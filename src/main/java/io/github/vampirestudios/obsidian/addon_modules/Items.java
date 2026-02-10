@@ -24,6 +24,7 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -67,13 +68,7 @@ public class Items implements AddonModule {
 
 			registerEvents(item);
 
-			Item registeredItem = registerItem(expanded, item, identifier, settings, creativeTab);
-
-//			System.out.println(STR."Item: \{registeredItem.components()}");
-
-//			if (item.information.getItemSettings().fuel != null) {
-//				FuelRegistry.INSTANCE.add(registeredItem, item.information.getItemSettings().fuel.duration);
-//			}
+			registerItem(expanded, item, identifier, settings, creativeTab);
 
 			register(ContentRegistries.ITEMS, "item", identifier, item);
 		} catch (Exception e) {
@@ -112,41 +107,26 @@ public class Items implements AddonModule {
 		return identifier;
 	}
 
-	private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-		Item.Properties settings = new Item.Properties();
-
-		if (item.components != null) {
-			for (Map.Entry<DataComponentType<?>, Optional<?>> entry : item.components.entrySet()) {
-				entry.getValue().ifPresent(value -> settings.component((DataComponentType) entry.getKey(), value));
-			}
-
-			Optional<?> maxStackSizeComponent = item.components.get(DataComponents.MAX_STACK_SIZE);
-			if (maxStackSizeComponent == null || maxStackSizeComponent.isEmpty()) {
-				settings.stacksTo(item.information.getItemSettings().maxStackSize);
-			}
-
-			Optional<?> rarityComponent = item.components.get(DataComponents.RARITY);
-			if (rarityComponent == null || rarityComponent.isEmpty()) {
-				settings.rarity(Rarity.valueOf(item.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
-			}
-
-			Optional<?> maxDamageComponent = item.components.get(DataComponents.MAX_DAMAGE);
-			if (maxDamageComponent == null || maxDamageComponent.isEmpty()) {
-				if (item.information.getItemSettings().durability != 0 && item.information.getItemSettings().maxStackSize == 1) {
-					settings.durability(item.information.getItemSettings().durability);
-				}
-			}
-
-//			System.out.println(STR."JSON: \{item.components.toString()}");
+	@SuppressWarnings("unchecked")
+	private static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
+		for (var e : map.entrySet()) {
+			var type = (DataComponentType<T>) e.getKey();
+			var opt  = (Optional<T>) e.getValue();
+			opt.ifPresent(v -> props.component(type, v));
 		}
-
-		/*if (item.information.getItemSettings().fireproof) {
-			settings.fireResistant();
-		}*/
-
-		return settings;
 	}
 
+	private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
+		Item.Properties props = new Item.Properties();
+
+		var comps = item.components;
+		if (comps == null) {
+			return props;
+		}
+
+		applyAllComponents(props, comps);
+		return props;
+	}
 
 	private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
 		ResourceKey<CreativeModeTab> creativeTab;

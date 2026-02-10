@@ -44,7 +44,7 @@ public class ArmorMechanic implements ItemMechanic {
 		ResourceKey<EquipmentAsset> assetKey =
 				ResourceKey.create(Obsidian.ROOT_ID, mech.material);
 		ArmorMaterial vanillaMat = new ArmorMaterial(
-				matSrc.getDurability(item.getEquipmentSlot()),
+				matSrc.durability,
 				matSrc.defense,
 				matSrc.enchantability,
 				SoundEvents.ARMOR_EQUIP_LEATHER,

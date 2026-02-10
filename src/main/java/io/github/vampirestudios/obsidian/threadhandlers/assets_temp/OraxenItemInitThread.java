@@ -41,14 +41,13 @@ public class OraxenItemInitThread implements Runnable {
 			String prefix = item.id.getPath().replaceAll("(.+?)_.*", "$1");
 
 			if (GENERATED.add(prefix)) {
-				// 1) body/legs/wolf/horse/llama
-				JEquipmentModel body = JEquipmentModel.builder()
-						.addLayer(LayerType.HUMANOID, JLayer.builder(STR."\{ns}:" + prefix).build())
-						.addLayer(LayerType.HUMANOID_LEGGINGS, JLayer.builder(STR."\{ns}:" + prefix).build())
-						.addLayer(LayerType.WOLF_BODY, JLayer.builder(STR."\{ns}:" + prefix).build())
-						.addLayer(LayerType.HORSE_BODY, JLayer.builder(STR."\{ns}:" + prefix).build())
-						.addLayer(LayerType.LLAMA_BODY, JLayer.builder(STR."\{ns}:" + prefix).build())
-						.build();
+				Identifier id = Identifier.fromNamespaceAndPath(ns, prefix);
+				JEquipmentModel body = JEquipmentModel.model()
+						.addLayer(LayerType.HUMANOID, JLayer.layer().texture(id))
+						.addLayer(LayerType.HUMANOID_LEGGINGS, JLayer.layer().texture(id))
+						.addLayer(LayerType.WOLF_BODY, JLayer.layer().texture(id))
+						.addLayer(LayerType.HORSE_BODY, JLayer.layer().texture(id))
+						.addLayer(LayerType.LLAMA_BODY, JLayer.layer().texture(id));
 
 				// writes to assets/<ns>/models/equipment/<prefix>.json
 				resourcePack.addEquipmentModel(
@@ -57,18 +56,14 @@ public class OraxenItemInitThread implements Runnable {
 				);
 
 				// 2) elytra wings
-				JEquipmentModel wings = JEquipmentModel.builder()
+				JEquipmentModel wings = JEquipmentModel.model()
 						.addLayer("wings",
-								JLayer.builder(STR."\{STR."\{ns}:" + prefix}_elytra")
+								JLayer.layer().texture(id.withSuffix("_elytra"))
 										.usePlayerTexture(true)
-										.build()
-						).build();
+						);
 
 				// writes to assets/<ns>/models/equipment/<prefix>_elytra.json
-				resourcePack.addEquipmentModel(
-						wings,
-						Identifier.fromNamespaceAndPath(ns, STR."\{prefix}_elytra")
-				);
+				resourcePack.addEquipmentModel(wings, id.withSuffix("_elytra"));
 			}
 		}
 

@@ -9,6 +9,71 @@ E.g.
 /things/examplepack/item/cheese_stick.json
 ```
 
+## Obsidian format (current)
+
+Modern Obsidian item definitions use the `information`, `components`, and `type` fields shown below.
+
+```json
+{
+  "type": "SHEARS",
+  "information": {
+    "name": {
+        "translations": {
+            "en_us": "Cheese Shears"
+        }
+    },
+    "item_properties": "examplepack:cheese_item"
+  },
+  "components": {
+    "minecraft:max_stack_size": 1,
+    "minecraft:rarity": "rare"
+  },
+  "lore": [
+    "Sharp!",
+    "<gray>Very sharp!"
+  ],
+  "events": {
+    "on_use": [
+      { "command": "say hi" }
+    ]
+  }
+}
+```
+
+### "type"
+
+Defines the extra behavior for the item (bundle, custom menu, custom shears, etc.).
+
+See the available item types in the [Item Types](./ItemTypes.md) page.
+
+### "information"
+
+Defines naming and item settings.
+
+* `name`: a [NameInformation] object for display text and translations.
+* `item_properties`: either a settings object or a reference to a registered item settings entry.
+* `item_type`: optional string used for item categorization (used by render logic).
+
+### "components"
+
+Data component patch to apply to the item. This uses the vanilla data component format.
+
+### "lore"
+
+Defines lore entries displayed in tooltips. Each entry can be a string or a text component object.
+
+### "drops"
+
+For `SHEARS` items, maps entity identifiers to dropped item identifiers when used.
+
+### "events"
+
+Defines event action lists keyed by event name.
+
+## Legacy format (1.19)
+
+The legacy format is still documented below for older packs or legacy loaders.
+
 ## Basic structure of the JSON file
 
 ```json
