@@ -9,6 +9,8 @@ public class TextureAndModelInformation {
     public Map<String, Identifier> textures;
     public Identifier parent;
 
+    public boolean inlineGenerated = false;
+
     public TextureAndModelInformation(Identifier parent) {
         this.parent = parent;
     }
@@ -30,5 +32,17 @@ public class TextureAndModelInformation {
 
     public void setParent(Identifier parent) {
         this.parent = parent;
+    }
+
+    public boolean isInlineGenerated() {
+        return inlineGenerated;
+    }
+
+    public void setInlineGenerated(boolean inlineGenerated) {
+        this.inlineGenerated = inlineGenerated;
+    }
+
+    public boolean isEmpty() {
+        return parent == null && (textures == null || textures.isEmpty());
     }
 }

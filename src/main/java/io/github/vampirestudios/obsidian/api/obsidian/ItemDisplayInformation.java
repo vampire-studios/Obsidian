@@ -47,122 +47,166 @@ public class ItemDisplayInformation {
 	@com.google.gson.annotations.SerializedName("arrow_model")
 	public JsonElement arrowModel; // crossbow (optional; if absent, chargedModel is used)
 
-	private static TextureAndModelInformation parseModel(JsonElement e) {
+	// Pick a sensible default if inline object omits base model id.
+	// If you prefer handheld or something else, change here.
+	private static final Identifier DEFAULT_INLINE_PARENT = Identifier.parse("minecraft:item/generated");
+
+	private static TextureAndModelInformation parseModel(JsonElement e, String fieldName) {
 		if (e == null || e.isJsonNull()) return null;
 
+		// String => direct reference (non-generated)
 		if (e.isJsonPrimitive()) {
 			JsonPrimitive p = e.getAsJsonPrimitive();
-			if (!p.isString()) throw new IllegalArgumentException("Model must be a string Identifier or an object");
+			if (!p.isString()) {
+				throw new IllegalArgumentException("Field '" + fieldName + "' must be a string Identifier or an object");
+			}
 			TextureAndModelInformation info = new TextureAndModelInformation();
 			info.parent = Identifier.parse(p.getAsString()); // fail fast
+			info.inlineGenerated = false;
 			return info;
 		}
 
-		if (!e.isJsonObject()) throw new IllegalArgumentException("Model must be a string Identifier or an object");
+		if (!e.isJsonObject()) {
+			throw new IllegalArgumentException("Field '" + fieldName + "' must be a string Identifier or an object");
+		}
 
+		// Object => inline-generated model (written to item/<id> by your generator)
 		JsonObject o = e.getAsJsonObject();
 		TextureAndModelInformation info = new TextureAndModelInformation();
+		info.inlineGenerated = true;
 
-		Identifier parent = readIdentifier(o, "parent");
-		if (parent == null) parent = readIdentifier(o, "model");
-		if (parent == null) parent = readIdentifier(o, "id");
+		// Accept ONLY these aliases for base model id.
+		// Removed "id" alias (conflicts with your legacy/optional item id cleanup).
+		Identifier parent = readIdentifier(o, "parent", fieldName);
+		if (parent == null) parent = readIdentifier(o, "model", fieldName);
+
+		info.textures = readTextures(o, "textures", fieldName);
+
+		// Enforce meaning:
+		// - If user provided textures but no base model => default base parent
+		// - If user provided neither => object is meaningless => throw
+		if (parent == null) {
+			if (info.textures != null && !info.textures.isEmpty()) {
+				parent = DEFAULT_INLINE_PARENT;
+			} else {
+				throw new IllegalArgumentException(
+						"Field '" + fieldName + "' object must contain 'parent'/'model' and/or a non-empty 'textures' object"
+				);
+			}
+		}
+
 		info.parent = parent;
-
-		info.textures = readTextures(o, "textures");
 		return info;
 	}
 
-	private static TextureAndModelInformation[] parseModelArray(JsonElement e) {
+	private static TextureAndModelInformation[] parseModelArray(JsonElement e, String fieldName) {
 		if (e == null || e.isJsonNull()) return null;
-		if (!e.isJsonArray()) throw new IllegalArgumentException("Model array must be a JSON array");
+		if (!e.isJsonArray()) throw new IllegalArgumentException("Field '" + fieldName + "' must be a JSON array");
 
 		var arr = e.getAsJsonArray();
 		TextureAndModelInformation[] out = new TextureAndModelInformation[arr.size()];
 		for (int i = 0; i < arr.size(); i++) {
-			out[i] = parseModel(arr.get(i));
+			JsonElement el = arr.get(i);
+			if (el == null || el.isJsonNull()) {
+				throw new IllegalArgumentException("Field '" + fieldName + "' contains null at index " + i);
+			}
+			out[i] = parseModel(el, fieldName + "[" + i + "]");
 		}
 		return out;
 	}
 
-	private static Identifier readIdentifier(JsonObject o, String key) {
+	private static Identifier readIdentifier(JsonObject o, String key, String fieldName) {
 		if (!o.has(key) || o.get(key).isJsonNull()) return null;
 		JsonElement e = o.get(key);
-		if (!e.isJsonPrimitive() || !e.getAsJsonPrimitive().isString())
-			throw new IllegalArgumentException("Field '" + key + "' must be a string Identifier");
+		if (!e.isJsonPrimitive() || !e.getAsJsonPrimitive().isString()) {
+			throw new IllegalArgumentException(
+					"Field '" + fieldName + "." + key + "' must be a string Identifier"
+			);
+		}
 		return Identifier.parse(e.getAsString());
 	}
 
-	private static Map<String, Identifier> readTextures(JsonObject o, String key) {
+	private static Map<String, Identifier> readTextures(JsonObject o, String key, String fieldName) {
 		if (!o.has(key) || o.get(key).isJsonNull()) return null;
 		JsonElement e = o.get(key);
-		if (!e.isJsonObject()) throw new IllegalArgumentException("Field '" + key + "' must be an object");
+		if (!e.isJsonObject()) {
+			throw new IllegalArgumentException(
+					"Field '" + fieldName + "." + key + "' must be an object"
+			);
+		}
 		JsonObject texObj = e.getAsJsonObject();
 
 		Map<String, Identifier> out = new LinkedHashMap<>();
 		for (var entry : texObj.entrySet()) {
 			JsonElement val = entry.getValue();
 			if (val == null || val.isJsonNull()) continue;
-			if (!val.isJsonPrimitive() || !val.getAsJsonPrimitive().isString())
-				throw new IllegalArgumentException("Texture '" + entry.getKey() + "' must be a string Identifier");
+			if (!val.isJsonPrimitive() || !val.getAsJsonPrimitive().isString()) {
+				throw new IllegalArgumentException(
+						"Texture '" + fieldName + "." + key + "." + entry.getKey() + "' must be a string Identifier"
+				);
+			}
 			out.put(entry.getKey(), Identifier.parse(val.getAsString()));
 		}
 		return out;
 	}
 
 	public TextureAndModelInformation getItemModel() {
-		return parseModel(itemModel);
+		return parseModel(itemModel, "item_model");
 	}
 
 	public TextureAndModelInformation getBlockingModel() {
-		return parseModel(blockingModel);
+		return parseModel(blockingModel, "blocking_model");
 	}
 
 	public boolean hasItemModelObject() {
-		return itemModel != null && itemModel.isJsonObject();
+		return itemModel != null && !itemModel.isJsonNull() && itemModel.isJsonObject();
 	}
 
 	public boolean hasItemModelString() {
-		return itemModel != null && itemModel.isJsonPrimitive() && itemModel.getAsJsonPrimitive().isString();
+		return itemModel != null && !itemModel.isJsonNull() && itemModel.isJsonPrimitive() && itemModel.getAsJsonPrimitive().isString();
 	}
 
 	public TextureAndModelInformation getCastModel() {
-		return parseModel(castModel);
+		return parseModel(castModel, "cast_model");
 	}
 
 	public TextureAndModelInformation getThrowingModel() {
-		return parseModel(throwingModel);
+		return parseModel(throwingModel, "throwing_model");
 	}
 
 	public TextureAndModelInformation getArrowModel() {
-		return parseModel(arrowModel);
+		return parseModel(arrowModel, "arrow_model");
 	}
 
 	public TextureAndModelInformation[] getPullingModels() {
-		return parseModelArray(pullingModels);
+		return parseModelArray(pullingModels, "pulling_models");
 	}
 
 	public TextureAndModelInformation getChargedModel() {
-		return parseModel(chargedModel);
+		return parseModel(chargedModel, "charged_model");
 	}
 
 	public TextureAndModelInformation getFireworkModel() {
-		return parseModel(fireworkModel);
+		return parseModel(fireworkModel, "firework_model");
 	}
 
 	public boolean hasBlockingModelObject() {
-		return blockingModel != null && blockingModel.isJsonObject();
+		return blockingModel != null && !blockingModel.isJsonNull() && blockingModel.isJsonObject();
 	}
 
 	public boolean hasCastModelObject() {
-		return castModel != null && castModel.isJsonObject();
+		return castModel != null && !castModel.isJsonNull() && castModel.isJsonObject();
 	}
 
 	public boolean hasThrowingModelObject() {
-		return throwingModel != null && throwingModel.isJsonObject();
+		return throwingModel != null && !throwingModel.isJsonNull() && throwingModel.isJsonObject();
 	}
 
 	public boolean hasPullingModels() {
-		return pullingModels != null && pullingModels.isJsonArray() && pullingModels.getAsJsonArray().size() > 0;
+		return pullingModels != null
+				&& !pullingModels.isJsonNull()
+				&& pullingModels.isJsonArray()
+				&& pullingModels.getAsJsonArray().size() > 0;
 	}
 
 	public boolean hasChargedModel() {
@@ -175,15 +219,16 @@ public class ItemDisplayInformation {
 
 	public Identifier resolveItemDefinitionModelId(Identifier itemId) {
 		Identifier generatedId = Utils.prependToPath(itemId, "item/");
+
 		if (itemModel != null && !itemModel.isJsonNull()) {
 			if (hasItemModelString()) return Identifier.parse(itemModel.getAsString());
 			return generatedId; // object => generated model at item/<id>
 		}
+
 		return generatedId;
 	}
 
 	public Identifier variantModelId(Identifier itemId, String suffix) {
-		// item/<path> + suffix
 		Identifier base = Utils.prependToPath(itemId, "item/");
 		return base.withSuffix(suffix);
 	}
