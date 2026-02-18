@@ -5,15 +5,12 @@ import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
-import io.github.vampirestudios.obsidian.api.obsidian.RenderModeModel;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Cosmetic;
-import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -54,8 +51,6 @@ public class Cosmetics implements AddonModule {
 					.setId(ResourceKey.create(Registries.ITEM, identifier));
 			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 			ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(cosmetic);
-
-			registerRenderModeModels(cosmetic);
 
 			Item registeredItem;
 			if (isWearable(cosmetic)) {
@@ -115,20 +110,6 @@ public class Cosmetics implements AddonModule {
 			creativeTab = net.minecraft.world.item.CreativeModeTabs.BUILDING_BLOCKS;
 		}
 		return creativeTab;
-	}
-
-	private void registerRenderModeModels(Cosmetic cosmetic) {
-		if (cosmetic.information.getItemSettings().renderModeModels != null) {
-			for (RenderModeModel renderModeModel : cosmetic.information.getItemSettings().renderModeModels) {
-				if (!renderModeModel.modes.isEmpty()) {
-					for (String mode : renderModeModel.modes) {
-						ClientInit.customModels.add(new ModelLayerLocation(renderModeModel.model, mode));
-					}
-				} else {
-					ClientInit.customModels.add(new ModelLayerLocation(renderModeModel.model, "inventory"));
-				}
-			}
-		}
 	}
 
 	private boolean isWearable(Cosmetic cosmetic) {

@@ -3,11 +3,10 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 import blue.endless.jankson.annotation.SerializedName;
 import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.components.Conversion;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 
 import java.util.List;
@@ -99,8 +98,6 @@ public class ItemSettings {
     @SerializedName("render_mode_models")
     @com.google.gson.annotations.SerializedName("render_mode_models")
     public List<RenderModeModel> renderModeModels;
-
-    public Conversion conversion;
 
     public ItemSettings() {
         this.creativeTab = Identifier.withDefaultNamespace("building_blocks");

@@ -7,8 +7,10 @@ import io.github.vampirestudios.obsidian.api.crucible.skills.effects.Effect;
 import io.github.vampirestudios.obsidian.api.crucible.skills.effects.EffectFactory;
 import io.github.vampirestudios.obsidian.api.crucible.targets.SkillTarget;
 import io.github.vampirestudios.obsidian.api.crucible.targets.TargetFactory;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
@@ -20,6 +22,7 @@ import static io.github.vampirestudios.obsidian.api.crucible.skills.effects.Part
 
 public class SkillParser {
 
+	private static final String SKILL_TYPE_KEY = "__skillType";
 	private static volatile String modId;
 
 	public static void setModId(String modId1) {
@@ -129,7 +132,7 @@ public class SkillParser {
 
 		String rawSkillType = skillMatcher.group(1);
 		String resolvedSkillType = aliasMap.getOrDefault(rawSkillType.toLowerCase(Locale.ROOT), rawSkillType.toLowerCase(Locale.ROOT));
-		skillEntry.getSkillParameters().put("type", resolvedSkillType);
+		skillEntry.getSkillParameters().put(SKILL_TYPE_KEY, resolvedSkillType);
 
 		String paramsStr = skillMatcher.group(2);
 		if (paramsStr != null && !paramsStr.isBlank()) {
@@ -232,7 +235,7 @@ public class SkillParser {
 	public static Skill createSkillFromEntry(SkillEntry entry) {
 		if (entry == null) return null;
 
-		String type = entry.getSkillParameters().get("type");
+		String type = entry.getSkillParameters().get(SKILL_TYPE_KEY);
 		String skillId = entry.getSkillParameters().get("s"); // optional for some actions
 
 		if (type == null) {
@@ -282,27 +285,28 @@ public class SkillParser {
 	}
 
 	private static Skill handleOtherSkillTypes(SkillEntry entry, String skillId, SkillTarget<?> target, SkillTrigger trigger) {
-		String type = entry.getSkillParameters().get("type");
+		Map<String, String> params = entry.getSkillParameters();
+		String type = params.get(SKILL_TYPE_KEY);
 
 		return switch (type) {
 			case "sound" -> {
-				String sound = entry.getSkillParameters().get("s");
-				String soundSource = entry.getSkillParameters().getOrDefault("ss", "master");
-				float volume = Float.parseFloat(entry.getSkillParameters().getOrDefault("volume", "1.0"));
-				float pitch = Float.parseFloat(entry.getSkillParameters().getOrDefault("pitch", "1.0"));
+				String sound = params.get("s");
+				String soundSource = params.getOrDefault("ss", "master");
+				float volume = Float.parseFloat(params.getOrDefault("volume", "1.0"));
+				float pitch = Float.parseFloat(params.getOrDefault("pitch", "1.0"));
 				yield new SoundSkill(skillId, target, trigger, sound, soundSource, pitch, volume);
 			}
 
 			case "setitemmodel" -> {
 				// accept m or modelData
-				String md = entry.getSkillParameters().getOrDefault("modelData", entry.getSkillParameters().get("m"));
+				String md = params.getOrDefault("modelData", params.get("m"));
 				if (md == null) md = "0";
 				int customModelData = Integer.parseInt(md);
 				yield new SetCustomModelDataSkill(skillId, target, trigger, customModelData);
 			}
 
 			case "skill" -> {
-				String triggeredSkillId = entry.getSkillParameters().get("s");
+				String triggeredSkillId = params.get("s");
 				if (triggeredSkillId == null) {
 					System.err.println("skill{...} missing s=");
 					yield null;
@@ -318,20 +322,20 @@ public class SkillParser {
 
 			case "heal" -> {
 				// YAML uses a= for heal amount
-				String amt = entry.getSkillParameters().getOrDefault("amount", entry.getSkillParameters().get("a"));
+				String amt = params.getOrDefault("amount", params.get("a"));
 				float healAmount = Float.parseFloat(amt);
 				yield new HealSkill(skillId, target, trigger, healAmount);
 			}
 
 			case "potion" -> {
-				MobEffect effectType = parsePotionEffect(entry.getSkillParameters().get("type"));
-				int duration = Integer.parseInt(entry.getSkillParameters().getOrDefault("duration", "0"));
+				MobEffect effectType = parsePotionEffect(params.getOrDefault("type", params.get("effect")));
+				int duration = Integer.parseInt(params.getOrDefault("duration", "0"));
 
 				// YAML often uses level + hasParticles
-				int amplifier = Integer.parseInt(entry.getSkillParameters().getOrDefault("amplifier",
-						entry.getSkillParameters().getOrDefault("level", "0")));
-				boolean showParticles = Boolean.parseBoolean(entry.getSkillParameters().getOrDefault("showParticles",
-						entry.getSkillParameters().getOrDefault("hasParticles", "true")));
+				int amplifier = Integer.parseInt(params.getOrDefault("amplifier",
+						params.getOrDefault("level", "0")));
+				boolean showParticles = Boolean.parseBoolean(params.getOrDefault("showParticles",
+						params.getOrDefault("hasParticles", "true")));
 
 				yield new PotionSkill(skillId, target, trigger, effectType, duration, amplifier, showParticles);
 			}
@@ -340,11 +344,130 @@ public class SkillParser {
 
 			case "particleline" -> parseParticleLineSkill(entry, skillId, target, trigger);
 
+			case "teleport" -> {
+				double maxDistance = Double.parseDouble(params.getOrDefault("maxDistance", params.getOrDefault("distance", "16")));
+				boolean random = Boolean.parseBoolean(params.getOrDefault("random", "false"));
+				yield new TeleportSkill(skillId, target, trigger, maxDistance, random);
+			}
+
+			case "summon" -> {
+				EntityType<?> entityType = parseEntityType(params.getOrDefault("entity", params.get("typeId")));
+				if (entityType == null) {
+					System.err.println("summon{...} missing or invalid entity=");
+					yield null;
+				}
+				int summonDuration = Integer.parseInt(params.getOrDefault("duration", "0"));
+				yield new SummonSkill(skillId, target, trigger, entityType, summonDuration);
+			}
+
+			case "projectile" -> {
+				EntityType<?> projectileType = parseEntityType(params.getOrDefault("projectile", params.get("entity")));
+				if (projectileType == null) {
+					System.err.println("projectile{...} missing or invalid projectile=");
+					yield null;
+				}
+				float speed = Float.parseFloat(params.getOrDefault("speed", "1.0"));
+				yield new ProjectileSkill(skillId, target, trigger, projectileType, speed, parseInlineEffects(params));
+			}
+
+			case "beam" -> {
+				double distance = Double.parseDouble(params.getOrDefault("distance", "20"));
+				Optional<Integer> beamColor = parseOptionalColor(params.get("color"));
+				Optional<String> item = Optional.ofNullable(params.get("item"));
+				Optional<Integer> modelData = parseOptionalInt(params.get("modelData"));
+				Optional<String> action = Optional.ofNullable(params.get("action"));
+				Optional<String> reason = Optional.ofNullable(params.get("reason"));
+				Optional<Float> amount = parseOptionalFloat(params.get("amount"));
+				yield new BeamSkill(skillId, target, trigger, distance, beamColor, item, modelData, action, reason, amount);
+			}
+
+			case "enderbeam" -> {
+				int duration = Integer.parseInt(params.getOrDefault("duration", "20"));
+				double yOffset = Double.parseDouble(params.getOrDefault("yOffset", "0"));
+				yield new EnderBeamSkill(skillId, target, trigger, duration, yOffset);
+			}
+
+			case "channeling" -> {
+				int duration = Integer.parseInt(params.getOrDefault("duration", "20"));
+				yield new ChannelingSkill(skillId, target, trigger, duration, parseInlineEffects(params));
+			}
+
+			case "aoe" -> {
+				double radius = Double.parseDouble(params.getOrDefault("radius", "3.0"));
+				yield new AoESkill(skillId, target, trigger, radius, parseInlineEffects(params));
+			}
+
+			case "trap" -> {
+				double activationRadius = Double.parseDouble(params.getOrDefault("radius", "2.0"));
+				int trapLifetime = Integer.parseInt(params.getOrDefault("duration", "10"));
+				yield new TrapSkill(skillId, target, trigger, activationRadius, parseInlineEffects(params), trapLifetime);
+			}
+
+			case "aura" -> {
+				String auraId = params.getOrDefault("aura", skillId != null ? skillId : "aura");
+				double radius = Double.parseDouble(params.getOrDefault("radius", "3.0"));
+				int duration = Integer.parseInt(params.getOrDefault("duration", "100"));
+				int tickInterval = Integer.parseInt(params.getOrDefault("tickInterval", "20"));
+				boolean affectsCaster = Boolean.parseBoolean(params.getOrDefault("affectsCaster", "false"));
+				yield new AuraSkill(skillId, target, trigger, auraId, radius, duration, tickInterval, parseConditions(entry.getConditions()), parseInlineEffects(params), affectsCaster);
+			}
+
+			case "setvariable", "setvar" -> {
+				String variable = params.getOrDefault("name", params.get("var"));
+				String value = params.getOrDefault("value", params.get("v"));
+				if (variable == null || value == null) {
+					System.err.println("setvariable{...} missing name/var or value");
+					yield null;
+				}
+				yield new SetVariableSkill(skillId, target, trigger, variable, value);
+			}
+
+			case "unsetvariable", "unsetvar" -> {
+				String variable = params.getOrDefault("name", params.get("var"));
+				if (variable == null) {
+					System.err.println("unsetvariable{...} missing name/var");
+					yield null;
+				}
+				yield new VariableUnsetSkill(skillId, target, trigger, variable);
+			}
+
 			default -> {
 				System.err.println("Unknown skill type: " + type);
 				yield null;
 			}
 		};
+	}
+
+	private static EntityType<?> parseEntityType(String entityId) {
+		if (entityId == null || entityId.isBlank()) return null;
+		Identifier id = Identifier.tryParse(entityId);
+		if (id == null) return null;
+		return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
+	}
+
+	private static Optional<Integer> parseOptionalInt(String value) {
+		if (value == null || value.isBlank()) return Optional.empty();
+		return Optional.of(Integer.parseInt(value));
+	}
+
+	private static Optional<Float> parseOptionalFloat(String value) {
+		if (value == null || value.isBlank()) return Optional.empty();
+		return Optional.of(Float.parseFloat(value));
+	}
+
+	private static Optional<Integer> parseOptionalColor(String value) {
+		if (value == null || value.isBlank()) return Optional.empty();
+		return Optional.of(parseColor(value));
+	}
+
+	private static List<Effect> parseInlineEffects(Map<String, String> params) {
+		String effectsRaw = params.getOrDefault("effects", params.get("e"));
+		if (effectsRaw == null || effectsRaw.isBlank()) return List.of();
+		List<String> effectLines = Arrays.stream(effectsRaw.split("[;|]"))
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.toList();
+		return parseEffects(effectLines);
 	}
 
 	// ---- Particle parsing helpers (kept from you, but fixed some key alias usage) ----

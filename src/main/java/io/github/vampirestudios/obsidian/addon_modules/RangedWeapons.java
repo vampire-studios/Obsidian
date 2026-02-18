@@ -4,14 +4,18 @@ import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BowItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CrossbowItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 
@@ -21,7 +25,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class RangedWeapons implements AddonModule {
     @Override
@@ -34,18 +39,25 @@ public class RangedWeapons implements AddonModule {
                     rangedWeapon.information.name.id,
                     () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
+            RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 
-            Item.Properties settings = new Item.Properties().stacksTo(rangedWeapon.information.getItemSettings().maxStackSize)
+            Item.Properties settings = new Item.Properties()
+                    .stacksTo(rangedWeapon.information.getItemSettings().maxStackSize)
                     .rarity(Rarity.valueOf(rangedWeapon.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)))
-                    .setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
+                    .setId(ResourceKey.create(Registries.ITEM, identifier));
 
-            Item item = null;
+            if (rangedWeapon.components != null) {
+                Items.applyAllComponents(settings, rangedWeapon.components); // or duplicate helper locally
+            }
+
+            ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(rangedWeapon);
+
             switch (rangedWeapon.weapon_type) {
                 case "bow" -> {
-                    item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new BowItemImpl(rangedWeapon, settings));
+                    expanded.registerItem(identifier.getPath(), new BowItemImpl(rangedWeapon, settings), creativeTab);
                 }
                 case "crossbow" ->  {
-                    item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new CrossbowItemImpl(rangedWeapon, settings));
+                    expanded.registerItem(identifier.getPath(), new CrossbowItemImpl(rangedWeapon, settings), creativeTab);
                 }
                 /*case "trident" -> {
                     Item item = RegistryUtils.registerItem(new TridentItemImpl(rangedWeapon, settings), identifier);
@@ -53,12 +65,28 @@ public class RangedWeapons implements AddonModule {
                             entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
                 }*/
             }
-            Item finalItem = item;
-            ItemGroupEvents.modifyEntriesEvent(rangedWeapon.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(finalItem));
             register(ContentRegistries.RANGED_WEAPONS, "ranged_weapon", identifier, rangedWeapon);
         } catch (Exception e) {
             failedRegistering("ranged_weapon", file.getName(), e);
         }
+    }
+
+    private ResourceKey<CreativeModeTab> getCreativeTab(RangedWeaponItem item) {
+        ResourceKey<CreativeModeTab> creativeTab;
+
+        // Check for OItemComponents.CREATIVE_TAB first
+        if (item.components != null && item.components.get(OItemComponents.CREATIVE_TAB) != null &&
+                item.components.get(OItemComponents.CREATIVE_TAB).isPresent()) {
+            Identifier tabLocation = (Identifier) Objects.requireNonNull(item.components.get(OItemComponents.CREATIVE_TAB)).orElseThrow();
+            creativeTab = ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabLocation);
+        } else if (item.information.getItemSettings().getItemGroup() != null) {
+            creativeTab = item.information.getItemSettings().getItemGroup();
+        } else if (item.information.getItemSettings().getParentSettings().getItemGroup() != null) {
+            creativeTab = item.information.getItemSettings().getParentSettings().getItemGroup();
+        } else {
+            creativeTab = CreativeModeTabs.BUILDING_BLOCKS;
+        }
+        return creativeTab;
     }
 
     @Override

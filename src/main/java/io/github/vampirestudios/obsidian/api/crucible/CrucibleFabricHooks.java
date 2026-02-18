@@ -47,13 +47,13 @@ public final class CrucibleFabricHooks {
             if (world.isClientSide()) return InteractionResult.PASS;
             if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
 
-            CrucibleEvents.fire(SkillTrigger.USE,
-                    SkillContext.builder(sp)
-                            .level(sp.level())
-                            .hand(hand)
-                            .stack(sp.getItemInHand(hand))
-                            .build()
-            );
+//            CrucibleEvents.fire(SkillTrigger.USE,
+//                    SkillContext.builder(sp)
+//                            .level(sp.level())
+//                            .hand(hand)
+//                            .stack(sp.getItemInHand(hand))
+//                            .build()
+//            );
             return InteractionResult.PASS;
         });
 

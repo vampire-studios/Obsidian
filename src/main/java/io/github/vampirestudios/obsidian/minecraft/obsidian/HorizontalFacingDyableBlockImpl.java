@@ -24,7 +24,7 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl i
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DyableBlockEntity(id, pos, state);
+        return new DyeableBlockEntity(id, pos, state);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl i
         ItemStack stack = super.getCloneItemStack(world, pos, state, bl);
         if (stack.getItem() instanceof CustomDyeableItem) {
             BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof DyableBlockEntity dyeableBlockEntity) {
+            if (entity instanceof DyeableBlockEntity dyeableBlockEntity) {
                 stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeableBlockEntity.getDyeColor()));
             }
         }
@@ -43,8 +43,8 @@ public class HorizontalFacingDyableBlockImpl extends HorizontalFacingBlockImpl i
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.setPlacedBy(world, pos, state, placer, itemStack);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
-            dyableBlockEntity.setDyeColor(DyedItemColor.getOrDefault(itemStack, block.additional_information.defaultColor));
+        if (blockEntity instanceof DyeableBlockEntity dyeableBlockEntity) {
+            dyeableBlockEntity.setDyeColor(DyedItemColor.getOrDefault(itemStack, block.additional_information.defaultColor));
         }
 
     }

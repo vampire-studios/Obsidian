@@ -49,11 +49,6 @@ public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
 	}
 
 	@Override
-	public Component getName(ItemStack itemStack) {
-		return item.information.name.getName("item");
-	}
-
-	@Override
 	public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
 		item.addLore(consumer);
     }

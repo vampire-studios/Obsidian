@@ -27,13 +27,14 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class ClientInit implements ClientModInitializer {
 
@@ -42,7 +43,6 @@ public class ClientInit implements ClientModInitializer {
      * <code>Map< AddonID, Map< LanguageID, Map< TranslationKey, Translation > > ></code>
      */
     public static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
-    public static final List<ModelLayerLocation> customModels = new ArrayList<>();
 
     public static void addTranslation( String addonId, String languageId, String translationKey, String translation ) {
         synchronized (translationMap) {
@@ -108,6 +108,9 @@ public class ClientInit implements ClientModInitializer {
                     if (item.information.name.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (WeaponItem item : ContentRegistries.WEAPONS)
+                    if (item.information.name.id.getNamespace().equals(id))
+                        new ItemInitThread(resourcePack, item).run();
+                for (RangedWeaponItem item : ContentRegistries.RANGED_WEAPONS)
                     if (item.information.name.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (ShieldItem item : ContentRegistries.SHIELDS)

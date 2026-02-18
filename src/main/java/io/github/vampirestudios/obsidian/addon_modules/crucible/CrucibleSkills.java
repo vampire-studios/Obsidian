@@ -5,9 +5,10 @@ import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.github.vampirestudios.obsidian.api.crucible.*;
-import io.github.vampirestudios.obsidian.api.crucible.skills.SequenceSkill;
-import io.github.vampirestudios.obsidian.api.crucible.targets.entity.SelfTarget;
+import io.github.vampirestudios.obsidian.api.crucible.CrucibleSkill;
+import io.github.vampirestudios.obsidian.api.crucible.Skill;
+import io.github.vampirestudios.obsidian.api.crucible.SkillEntry;
+import io.github.vampirestudios.obsidian.api.crucible.SkillParser;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
@@ -55,9 +56,8 @@ public class CrucibleSkills implements AddonModule {
 					if (s != null) steps.add(s);
 				}
 
-				Skill wrapper = new SequenceSkill(crucibleSkill.id.toString(), new SelfTarget(), SkillTrigger.USE, steps);
-				// set wrapper conditions from crucibleSkill.Conditions/TargetConditions/TriggerConditions
-				SkillManager.getInstance().registerSkill(crucibleSkill.id, wrapper);
+//				Skill wrapper = new SequenceSkill(crucibleSkill.id.toString(), new SelfTarget(), SkillTrigger.USE, steps);
+//				SkillManager.getInstance().registerSkill(crucibleSkill.id, wrapper);
 
 				register(ContentRegistries.CRUCIBLE_SKILLS, "crucible_skill", crucibleSkill.id, crucibleSkill);
 			}

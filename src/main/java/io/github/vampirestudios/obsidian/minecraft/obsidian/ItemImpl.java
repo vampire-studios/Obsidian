@@ -112,9 +112,9 @@ public class ItemImpl extends Item {
 
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
-        if (item.information.getItemSettings().conversion != null) {
-            if(item.information.getItemSettings().conversion.from().contains(BuiltInRegistries.ITEM.getKey(slot.getItem().getItem()))) {
-                Item toItem = BuiltInRegistries.ITEM.getValue(item.information.getItemSettings().conversion.to());
+        if (item.information.conversion != null) {
+            if(item.information.conversion.from().contains(BuiltInRegistries.ITEM.getKey(slot.getItem().getItem()))) {
+                Item toItem = BuiltInRegistries.ITEM.getValue(item.information.conversion.to());
                 ItemStack toStack = toItem.getDefaultInstance();
                 toStack.transmuteCopy(slot.getItem().getItem(), slot.getItem().getCount());
                 slot.set(toStack);

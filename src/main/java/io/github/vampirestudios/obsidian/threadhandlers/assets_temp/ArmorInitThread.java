@@ -1,18 +1,25 @@
 package io.github.vampirestudios.obsidian.threadhandlers.assets_temp;
 
+import io.github.vampirestudios.obsidian.api.obsidian.RenderModeModel;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import io.github.vampirestudios.obsidian.client.ARRPGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.devtech.arrp.json.iteminfo.JItemInfo;
+import net.devtech.arrp.json.iteminfo.model.JItemModel;
+import net.devtech.arrp.json.iteminfo.model.JModelBasic;
+import net.devtech.arrp.json.iteminfo.model.JModelSelect;
+import net.devtech.arrp.json.iteminfo.model.JSelectCase;
+import net.devtech.arrp.json.iteminfo.property.JPropertyDisplayContext;
+import net.devtech.arrp.json.iteminfo.tint.JTintDye;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
 public class ArmorInitThread implements Runnable {
     private final ArmorItem armor;
-    private HumanoidModel<AvatarRenderState> armorModel;
     private final RuntimeResourcePack resourcePack;
 
     public ArmorInitThread(RuntimeResourcePack resourcePack, ArmorItem item) {
@@ -29,18 +36,41 @@ public class ArmorInitThread implements Runnable {
                     name
             ));
 
-        if (armor.information.getItemSettings().renderModeModels != null && armor.information.getItemSettings().customRenderMode) {
-//            CustomRenderModeItemRenderer customRenderModeItemRenderer = getCustomRenderModeItemRenderer();
-//            ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(customRenderModeItemRenderer);
-//            BuiltinItemRendererRegistry.INSTANCE.register(BuiltInRegistries.ITEM.getValue(armor.information.name.id), customRenderModeItemRenderer);
+        JItemInfo itemInfo = new JItemInfo();
+
+        var itemId = armor.information.name.id;
+
+        Identifier defModelId = armor.rendering != null
+                ? armor.rendering.resolveItemDefinitionModelId(itemId)
+                : Utils.prependToPath(itemId, "item/");
+
+        JModelBasic fallbackModel = JModelBasic.model(defModelId.toString());
+        JItemModel model = fallbackModel;
+        if (armor.information != null && armor.information.getItemSettings() != null &&
+                armor.information.getItemSettings().renderModeModels != null &&
+                armor.information.getItemSettings().customRenderMode) {
+            JModelSelect select = new JModelSelect().property(JPropertyDisplayContext.displayContext());
+            for (RenderModeModel renderModeModel : armor.information.getItemSettings().renderModeModels) {
+                JSelectCase caseX = JSelectCase.of(
+                        renderModeModel.modes,
+                        JItemModel.model(renderModeModel.model.toString())
+                );
+                select.addCase(caseX);
+            }
+            select.fallback(fallbackModel);
+            model = select;
         }
-        if (armor.rendering != null && armor.rendering.model != null) {
-            if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(armor.information.name.id, "item/")) != null) return;
-            ARRPGenerationHelper.generateItemModel(resourcePack, armor.information.name.id, armor.rendering.model.parent, armor.rendering.model.textures);
+        if (armor.information.getItemSettings().dyeable) {
+            model.tint(new JTintDye(armor.information.getItemSettings().defaultColor));
         }
-        if (armor.rendering != null && armor.rendering.getItemModel().isPresent()) {
-            if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(armor.information.name.id, "item/")) != null) return;
-            ARRPGenerationHelper.generateItemModel(resourcePack, armor.information.name.id, armor.rendering.getItemModel().get().getParent(), armor.rendering.getItemModel().get().getTextures());
+        if (armor.rendering != null) {
+            boolean hasOutItemModel =
+                    resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(itemId, "item/")) != null;
+
+            if (!hasOutItemModel && armor.rendering.hasItemModelObject()) {
+                var info = armor.rendering.getItemModel();
+                ARRPGenerationHelper.generateItemModel(resourcePack, itemId, info.parent, info.textures);
+            }
         }
         if (armor.lore != null) {
             for (SpecialText lore : armor.getLore()) {
@@ -51,63 +81,12 @@ public class ArmorInitThread implements Runnable {
                 }
             }
         }
-        /*if (ArmorRendererRegistryImpl.get(BuiltInRegistries.ITEM.get(armor.information.name.id)) == null ) {
-            ArmorRenderer.register((matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
-                boolean slim = false;
-                if (entity instanceof AbstractClientPlayer player) {
-                    slim = player.getModelName().equals("slim");
-                }
-                if (armorModel == null) {
-                    armorModel = new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(slim ? ModelLayers.PLAYER_SLIM_OUTER_ARMOR : ModelLayers.PLAYER_OUTER_ARMOR));
-                }
-//                contextModel.setAttributes(armorModel);
-                armorModel.setAllVisible(false);
-                switch (slot) {
-                    case HEAD -> {
-                        armorModel.head.visible = true;
-                        armorModel.hat.visible = true;
-                    }
-                    case CHEST -> {
-                        armorModel.body.visible = true;
-                        armorModel.rightArm.visible = true;
-                        armorModel.leftArm.visible = true;
-                    }
-                    case LEGS -> {
-                        armorModel.body.visible = true;
-                        armorModel.rightLeg.visible = true;
-                        armorModel.leftLeg.visible = true;
-                    }
-                    case FEET -> {
-                        armorModel.rightLeg.visible = true;
-                        armorModel.leftLeg.visible = true;
-                    }
-                }
-                Identifier texture;
-                if (slot == EquipmentSlot.LEGS) texture = armor.material.texture2;
-                else texture = armor.material.texture1;
-                ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, armorModel, texture);
-            }, BuiltInRegistries.ITEM.get(armor.information.name.id));
-        }*/
+        boolean hasItemModelComponent = armor.components != null && armor.components.get(DataComponents.ITEM_MODEL) != null;
+        boolean dyeable = armor.information.getItemSettings().dyeable;
 
-//        ArmorRenderer.register((matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
-//            Optional<ArmorModel> model = ContentRegistries.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
-//            if (model.isPresent()) {
-//                BipedEntityModel<LivingEntity> entityModel = new ArmorModelImpl<>(model.get());
-//                contextModel.setAttributes(entityModel);
-//                ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, entityModel, armor.material.texture1);
-//            }
-//        }, Registries.ITEM.get(armor.information.name.id));
-
-//        ArmorRenderingRegistry.registerModel((entity, stack, slot, defaultModel) -> {
-//            BipedEntityModel<LivingEntity> entityModel;
-//            Optional<ArmorModel> model = ObsidianAddonLoader.ARMOR_MODELS.getOrEmpty(armor.material.customArmorModel);
-//            if(model.isPresent()) {
-//                entityModel = new ArmorModelImpl<>(model.get());
-//            } else {
-//                entityModel = defaultModel;
-//            }
-//            return entityModel;
-//        }, );
-//        ArmorRenderingRegistry.registerTexture((entity, stack, slot, secondLayer, suffix, defaultTexture) -> armor.material.texture, Registry.ITEM.get(armor.information.name.id));
+        if (!hasItemModelComponent || dyeable) {
+            itemInfo.model(model);
+            resourcePack.addItemModelInfo(itemInfo, itemId);
+        }
     }
 }

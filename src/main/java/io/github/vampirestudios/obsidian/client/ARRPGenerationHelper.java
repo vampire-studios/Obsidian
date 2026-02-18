@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.JBlockModel;
@@ -8,6 +9,7 @@ import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.blockstate.JVariant;
 import net.devtech.arrp.json.iteminfo.JItemInfo;
 import net.devtech.arrp.json.iteminfo.model.JModelBasic;
+import net.devtech.arrp.json.iteminfo.tint.JTint;
 import net.devtech.arrp.json.loot.JCondition;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JOverride;
@@ -61,18 +63,8 @@ public class ARRPGenerationHelper {
         JModel hangingModel = JModel.model(parentHanging);
         JTextures textures2 = JModel.textures();
         if (texturesHanging != null)
-            texturesHanging.forEach((s, location) -> textures1.var(s, location.toString()));
+            texturesHanging.forEach((s, location) -> textures2.var(s, location.toString()));
         clientResourcePackBuilder.addModel(hangingModel.textures(textures2), Utils.appendToPath(name, "_hanging"));
-    }
-
-    public static void generatePillarBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name) {
-        Identifier modelPath = Utils.prependToPath(name, "block/");
-        JState model = JState.state(
-                variant().put("axis=y", JState.model(modelPath)),
-                variant().put("axis=x", JState.model(modelPath).x(90).y(90)),
-                variant().put("axis=z", JState.model(modelPath).x(90))
-        );
-        clientResourcePackBuilder.addBlockState(model, name);
     }
 
     public static void generatePillarBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId) {
@@ -84,50 +76,12 @@ public class ARRPGenerationHelper {
         clientResourcePackBuilder.addBlockState(model, name);
     }
 
-    public static void generateHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name) {
-        Identifier modelPath = Utils.prependToPath(name, "block/");
-        JState model = JState.state(new JVariant()
-            .put("facing=north", JState.model(modelPath))
-            .put("facing=south", JState.model(modelPath).y(180))
-            .put("facing=east", JState.model(modelPath).y(90))
-            .put("facing=west", JState.model(modelPath).y(270))
-        );
-        clientResourcePackBuilder.addBlockState(model, name);
-    }
-
     public static void generateHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId) {
         JState model = JState.state(new JVariant()
             .put("facing=north", JState.model(modelId))
             .put("facing=south", JState.model(modelId).y(180))
             .put("facing=east", JState.model(modelId).y(90))
             .put("facing=west", JState.model(modelId).y(270))
-        );
-        clientResourcePackBuilder.addBlockState(model, name);
-    }
-
-    public static void generateHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId, Identifier extraStateModelId, String extraState) {
-        JState model = JState.state(new JVariant()
-                .put("facing=north", JState.model(modelId))
-                .put("facing=south", JState.model(modelId).y(180))
-                .put("facing=east", JState.model(modelId).y(90))
-                .put("facing=west", JState.model(modelId).y(270))
-                .put(STR."facing=north,\{extraState}", JState.model(extraStateModelId))
-                .put(STR."facing=south,\{extraState}", JState.model(extraStateModelId).y(180))
-                .put(STR."facing=east,\{extraState}", JState.model(extraStateModelId).y(90))
-                .put(STR."facing=west,\{extraState}", JState.model(extraStateModelId).y(270))
-        );
-//        clientResourcePackBuilder.addBlockState(model, name);
-    }
-
-    public static void generateFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name) {
-        Identifier modelPath = Utils.prependToPath(name, "block/");
-        JState model = JState.state(
-                variant().put("facing=north", JState.model(modelPath).x(90)),
-                variant().put("facing=south", JState.model(modelPath).y(180).x(90)),
-                variant().put("facing=east", JState.model(modelPath).y(90).x(90)),
-                variant().put("facing=west", JState.model(modelPath).y(270).x(90)),
-                variant().put("facing=up", JState.model(modelPath)),
-                variant().put("facing=down", JState.model(modelPath).x(180))
         );
         clientResourcePackBuilder.addBlockState(model, name);
     }
@@ -177,8 +131,8 @@ public class ARRPGenerationHelper {
 
     public static void generateModel(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures) {
         JModel itemModel = JModel.model(parent);
-        if (textures != null)
-            textures.forEach((s, location) -> itemModel.textures(JModel.textures().var(s, location.toString())));
+        JTextures tex = JModel.textures();
+        if (textures != null) textures.forEach((k,v) -> tex.var(k, v.toString()));
         clientResourcePackBuilder.addModel(itemModel, Utils.prependToPath(name, "block/"));
     }
 
@@ -204,26 +158,23 @@ public class ARRPGenerationHelper {
         clientResourcePackBuilder.addModel(model.textures(textures1), Utils.prependToPath(name, "block/"));
     }
 
-    public static void generateBlockItemModel(RuntimeResourcePack clientResourcePackBuilder, Identifier name) {
-        clientResourcePackBuilder.addModel(JModel.model(Utils.prependToPath(name, "block/")), Utils.prependToPath(name, "item/"));
+    public static void generateItemModel(RuntimeResourcePack pack, Identifier name, Identifier parent, Map<String, Identifier> textures) {
+        if (name == null) return;
+        generateItemModel1(pack, Utils.prependToPath(name, "item/"), parent, textures);
     }
 
-    public static void generateBlockItemModel(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId) {
-        clientResourcePackBuilder.addModel(JModel.model(Utils.prependToPath(modelId, "block/")), Utils.prependToPath(name, "item/"));
+    public static void generateItemModel1(RuntimeResourcePack pack, Identifier modelId, Identifier parent, Map<String, Identifier> textures) {
+        if (modelId == null || parent == null) return;
 
-    }
-
-    public static void generateBlockItemModel1(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId) {
-        clientResourcePackBuilder.addModel(JModel.model(modelId), Utils.prependToPath(name, "item/"));
-    }
-
-    public static void generateItemModel(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures) {
-        if (name == null || parent == null) return;
         JModel itemModel = JModel.model(parent);
-        JTextures textures1 = JModel.textures();
-        if (textures != null)
-            textures.forEach((s, location) -> textures1.var(s, location.toString()));
-        clientResourcePackBuilder.addModel(itemModel.textures(textures1), Utils.prependToPath(name, "item/"));
+        JTextures tex = JModel.textures();
+        if (textures != null) {
+            textures.forEach((k, v) -> tex.var(k, v.toString()));
+        }
+
+        // modelId is a FULL model identifier like "<ns>:item/foo_blocking" OR "<ns>:item/foo"
+        // pack.addModel expects the *model identifier* (no "item/" prefix added here)
+        pack.addModel(itemModel.textures(tex), modelId);
     }
 
     public static void generateItemModel(NexoItem item, RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures) {
@@ -314,9 +265,15 @@ public class ARRPGenerationHelper {
         pack.addItemModelInfo(itemInfo, name);
     }
 
-    public static void generateBasicItemDefinition(RuntimeResourcePack pack, Identifier name, Identifier model) {
-        JItemInfo itemInfo = new JItemInfo()
-                .model(JModelBasic.model(model.toString()));
+    public static void generateBasicItemDefinition(RuntimeResourcePack pack, Block block, Identifier name, Identifier directModelId) {
+        JItemInfo itemInfo = new JItemInfo();
+        var itemModel = JModelBasic.model(directModelId.toString());
+
+        if (block.additional_information != null && block.additional_information.dyable) {
+            itemModel.tint(JTint.dye(block.additional_information.defaultColor));
+        }
+
+        itemInfo.model(itemModel);
         pack.addItemModelInfo(itemInfo, name);
     }
 

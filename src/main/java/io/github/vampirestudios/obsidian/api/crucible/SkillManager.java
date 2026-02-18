@@ -69,7 +69,7 @@ public class SkillManager {
     private void executeSkill(Skill skill, SkillContext ctx) {
         // conditions
         if (ctx.hasTarget()) {
-            if (!skill.evaluateConditions(ctx.caster, ctx.target)) return;
+//            if (!skill.evaluateConditions(ctx.caster, ctx.target)) return;
             skill.applyEffect(ctx.caster, ctx.target);
             return;
         }

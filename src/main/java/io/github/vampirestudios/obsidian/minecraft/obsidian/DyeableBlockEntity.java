@@ -14,11 +14,11 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
-public class DyableBlockEntity extends BlockEntity {
+public class DyeableBlockEntity extends BlockEntity {
 
-    public int dyeColor;
+    private int dyeColor;
 
-    public DyableBlockEntity(Identifier id, BlockPos pos, BlockState state) {
+    public DyeableBlockEntity(Identifier id, BlockPos pos, BlockState state) {
         super(BuiltInRegistries.BLOCK_ENTITY_TYPE.getValue(Utils.appendToPath(id, "_be")), pos, state);
         this.dyeColor = 0xFFFFFFFF;
     }
@@ -28,7 +28,7 @@ public class DyableBlockEntity extends BlockEntity {
         super.loadAdditional(input);
         this.setDyeColor(input.getIntOr("color", -1));
         if (this.hasLevel() && this.level.isClientSide()) this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(),
-                net.minecraft.world.level.block.Block.UPDATE_ALL);
+                net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
     }
 
     @Override
@@ -46,17 +46,27 @@ public class DyableBlockEntity extends BlockEntity {
         return this.dyeColor;
     }
 
-    public void setColorAndSync(int color) {
-        setDyeColor(color);
-    }
+    public void setDyeColor(int color) {
+        if (this.dyeColor == color) return;
 
-    public void setDyeColor(int dyeColor) {
-        this.dyeColor = dyeColor;
+        this.dyeColor = color;
+        this.setChanged();
+
+        if (this.level != null) {
+            this.level.sendBlockUpdated(
+                    this.worldPosition,
+                    this.getBlockState(),
+                    this.getBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_CLIENTS
+            );
+        }
     }
 
     public int getNewDyeColor(int color1In, int color2In) {
-        int[] color1 = ColorUtil.toIntArray(color2In);
-        int[] color2 = ColorUtil.toIntArray(color1In);
+        float t = Minecraft.getInstance().getFps(); // if available in your version
+        t = net.minecraft.util.Mth.clamp(t, 0.0F, 1.0F);
+        int[] color1 = ColorUtil.toIntArray(color1In);
+        int[] color2 = ColorUtil.toIntArray(color2In);
         double delta = Minecraft.getInstance().getFrameTimeNs();
         int r = MathHelper.floor(net.minecraft.util.Mth.lerp(delta, color1[0], color2[0]));
         int g = MathHelper.floor(net.minecraft.util.Mth.lerp(delta, color1[1], color2[1]));

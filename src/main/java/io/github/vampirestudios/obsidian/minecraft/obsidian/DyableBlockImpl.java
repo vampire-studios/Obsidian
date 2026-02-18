@@ -123,8 +123,8 @@ public class DyableBlockImpl extends BaseEntityBlock {
     protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean bl) {
         var stack = new ItemStack(this);
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if(blockEntity instanceof DyableBlockEntity dyableBlockEntity) {
-            stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dyableBlockEntity.getDyeColor()));
+        if(blockEntity instanceof DyeableBlockEntity dyeableBlockEntity) {
+            stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeableBlockEntity.getDyeColor()));
         }
         return stack;
     }
@@ -132,8 +132,8 @@ public class DyableBlockImpl extends BaseEntityBlock {
     public int getColor(BlockState blockState, BlockAndTintGetter blockRenderView, BlockPos blockPos, int tintIndex) {
         if (tintIndex == 0 && blockRenderView != null) {
             BlockEntity blockEntity = blockRenderView.getBlockEntity(blockPos);
-            if (blockEntity instanceof DyableBlockEntity) {
-                return ((DyableBlockEntity) blockEntity).getDyeColor();
+            if (blockEntity instanceof DyeableBlockEntity) {
+                return ((DyeableBlockEntity) blockEntity).getDyeColor();
             }
         }
         return 0;
@@ -152,7 +152,7 @@ public class DyableBlockImpl extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DyableBlockEntity(this.id, pos, state);
+        return new DyeableBlockEntity(this.id, pos, state);
     }
 
 }

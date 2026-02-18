@@ -357,7 +357,7 @@ public class Blocks implements AddonModule {
         Block registered = registry.registerBlockWithoutItem(blockId.getPath(), new DyeableBlock(blockId, block, props));
         registry.registerDyeableItem(new CustomDyeableItem(block, registered, itemProps), blockId.getPath());
         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
-                        (pos, state) -> new DyableBlockEntity(blockId, pos, state), registered),
+                        (pos, state) -> new DyeableBlockEntity(blockId, pos, state), registered),
                 blockId.getPath() + "_be");
     }
 
@@ -368,7 +368,7 @@ public class Blocks implements AddonModule {
                 new HorizontalFacingDyableBlockImpl(blockId, block, props));
         registry.registerDyeableItem(new CustomDyeableItem(block, registered, itemProps), blockId.getPath());
         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
-                        (pos, state) -> new DyableBlockEntity(blockId, pos, state), registered),
+                        (pos, state) -> new DyeableBlockEntity(blockId, pos, state), registered),
                 blockId.getPath() + "_be");
     }
 
@@ -387,7 +387,7 @@ public class Blocks implements AddonModule {
                 new HorizontalFacingSittableAndDyableBlock(blockId, block, props));
         registry.registerDyeableItem(new CustomDyeableItem(block, registered, itemProps), blockId.getPath());
         REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(
-                        (pos, state) -> new DyableBlockEntity(blockId, pos, state), registered),
+                        (pos, state) -> new DyeableBlockEntity(blockId, pos, state), registered),
                 blockId.getPath() + "_be");
     }
 

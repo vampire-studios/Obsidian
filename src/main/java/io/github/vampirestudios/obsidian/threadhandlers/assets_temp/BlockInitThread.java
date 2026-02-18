@@ -6,10 +6,9 @@ import io.github.vampirestudios.obsidian.api.obsidian.TextureAndModelInformation
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.client.ARRPGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.DyableBlockEntity;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableBlockEntity;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.json.models.JModel;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -21,7 +20,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class BlockInitThread implements Runnable {
 
@@ -34,8 +32,9 @@ public class BlockInitThread implements Runnable {
     }
 
     public static int getBlockEntityColor(Block block, BlockGetter view, BlockPos pos) {
-        BlockEntity entity = view.getBlockEntity(pos);
-        return entity != null ? ((DyableBlockEntity) entity).getDyeColor() : block.additional_information.defaultColor;
+        BlockEntity be = view.getBlockEntity(pos);
+        if (be instanceof DyeableBlockEntity dye) return dye.getDyeColor();
+        return block.additional_information.defaultColor;
     }
 
     public static void translation(Map<String, String> translated, Identifier blockId, String unTranslatedType, String translatedType) {
@@ -94,17 +93,16 @@ public class BlockInitThread implements Runnable {
                         case OXIDIZING_BLOCK -> {
                             for (Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                                 for (Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                    if (variantBlock.display.blockState.model != null) {
-                                        ARRPGenerationHelper.generateBasicBlockState(resourcePack, variantBlock.name.id,
-                                                variantBlock.display.blockModel.parent);
-                                    } else {
-                                        if (variantBlock.display.blockModel != null)
-                                            ARRPGenerationHelper.generateBasicBlockState(resourcePack, variantBlock.name.id,
-                                                    variantBlock.display.blockModel.parent);
-                                        else
-                                            ARRPGenerationHelper.generateBasicBlockState(resourcePack, variantBlock.name.id,
-                                                    block.rendering.blockState.model);
+                                    Identifier outModelId = Utils.prependToPath(variantBlock.name.id, "block/");
+
+                                    // if block_model was given as a string, use it directly
+                                    if (variantBlock.display.blockModel != null
+                                            && variantBlock.display.blockModel.isJsonPrimitive()
+                                            && variantBlock.display.blockModel.getAsJsonPrimitive().isString()) {
+                                        outModelId = Identifier.parse(variantBlock.display.blockModel.getAsString());
                                     }
+
+                                    ARRPGenerationHelper.generateBasicBlockState(resourcePack, variantBlock.name.id, outModelId);
                                 }
                             }
                         }
@@ -119,15 +117,16 @@ public class BlockInitThread implements Runnable {
 						default -> generateBlockState(block, resourcePack, blockId);
 					}
                 }
-                if (block.rendering.blockModel != null) {
-                    TextureAndModelInformation textureAndModelInformation = block.rendering.blockModel;
+                if (block.rendering.getBlockModel() != null) {
+                    TextureAndModelInformation textureAndModelInformation = block.rendering.getBlockModel();
                     if (block.getBlockType() != null) {
                         switch (block.getBlockType()) {
                             case OXIDIZING_BLOCK:
                                 for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                        textureAndModelInformation = variantBlock.display.blockModel;
-                                        ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
+                                        textureAndModelInformation = variantBlock.display.getBlockModel();
+                                        ARRPGenerationHelper.generateBlockModel(resourcePack, variantBlock.name.id,
+                                                textureAndModelInformation.parent, textureAndModelInformation.textures);
                                     }
                                 }
                                 break;
@@ -138,7 +137,7 @@ public class BlockInitThread implements Runnable {
                             default:
                                 if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
-                                    return;
+                                    break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
@@ -147,25 +146,25 @@ public class BlockInitThread implements Runnable {
                         ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                     }
                 }
-                if (block.rendering.model != null) {
-                    TextureAndModelInformation textureAndModelInformation = block.rendering.model;
+                if (block.rendering.getModel() != null) {
+                    TextureAndModelInformation textureAndModelInformation = block.rendering.getModel();
                     if (block.additional_information != null) {
                         if (block.additional_information.slab) {
                             ARRPGenerationHelper.generateSlabBlockState(resourcePack, Utils.appendToPath(blockId, "_slab"), blockId);
 //                            ArtificeGenerationHelper.generateSlabBlockModels(resourcePack, Utils.appendToPath(blockId, "_slab"), textureAndModelInformation.textures);
-                            ARRPGenerationHelper.generateBlockItemModel(resourcePack, Utils.appendToPath(blockId, "_slab"), Utils.appendToPath(blockId, "_slab"));
+//                            ARRPGenerationHelper.generateBlockItemModel(resourcePack, Utils.appendToPath(blockId, "_slab"), Utils.appendToPath(blockId, "_slab"));
                         }
 
                         if (block.additional_information.stairs) {
 //                            ARRPGenerationHelper.generateStairsBlockState(resourcePack, Utils.appendToPath(blockId, "_stairs"));
 //                            ArtificeGenerationHelper.generateStairsBlockModels(resourcePack, Utils.appendToPath(blockId, "_stairs"), textureAndModelInformation.textures);
-                            ARRPGenerationHelper.generateBlockItemModel(resourcePack, Utils.appendToPath(blockId, "_stairs"), Utils.appendToPath(blockId, "_stairs"));
+//                            ARRPGenerationHelper.generateBlockItemModel(resourcePack, Utils.appendToPath(blockId, "_stairs"), Utils.appendToPath(blockId, "_stairs"));
                         }
 
                         if (block.additional_information.walls) {
 //                            ARRPGenerationHelper.generateWallBlockState(resourcePack, Utils.appendToPath(blockId, "_wall"));
 //                            ArtificeGenerationHelper.generateWallBlockModels(resourcePack, Utils.appendToPath(blockId, "_wall"), textureAndModelInformation.textures);
-                            ARRPGenerationHelper.generateBlockItemModel(resourcePack, Utils.appendToPath(blockId, "_wall"), Utils.appendToPath(blockId, "_wall_inventory"));
+//                            ARRPGenerationHelper.generateBlockItemModel(resourcePack, Utils.appendToPath(blockId, "_wall"), Utils.appendToPath(blockId, "_wall_inventory"));
                         }
                     }
 
@@ -174,7 +173,7 @@ public class BlockInitThread implements Runnable {
                             case OXIDIZING_BLOCK:
                                 for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage oxidationStage : block.oxidizable_properties.stages) {
                                     for (io.github.vampirestudios.obsidian.api.obsidian.block.Block.OxidizableProperties.OxidationStage.VariantBlock variantBlock : oxidationStage.blocks) {
-                                        textureAndModelInformation = variantBlock.display.model;
+                                        textureAndModelInformation = variantBlock.display.getModel();
                                         ARRPGenerationHelper.generateBasicBlockState(resourcePack, Utils.prependToPath(variantBlock.name.id, "block/"));
                                         ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                     }
@@ -188,7 +187,7 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
-                                    return;
+                                    break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
@@ -196,7 +195,7 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
-                                    return;
+                                    break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
@@ -204,7 +203,7 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
-                                    return;
+                                    break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
@@ -212,26 +211,21 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
                                 if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
                                     System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
-                                    return;
+                                    break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                         }
                     }
-                    ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, blockId, Utils.prependToPath(blockId, "item/"));
+//                    ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, block, blockId, Utils.prependToPath(blockId, "block/"));
                 }
 
-                if (block.rendering.itemModel != null) {
-                    TextureAndModelInformation textureAndModelInformation = block.rendering.itemModel;
-                    JModel itemModel = JModel.model(textureAndModelInformation.parent);
-                    if (textureAndModelInformation.textures != null)
-                        textureAndModelInformation.textures.forEach((s, location) -> itemModel.textures(JModel.textures().var(s, location.toString())));
-                    resourcePack.addModel(itemModel, blockId);
-                    ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, blockId, Utils.prependToPath(blockId, "item/"));
-                } else {
-                    ARRPGenerationHelper.generateBlockItemModel1(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
-                    ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, blockId, Utils.prependToPath(blockId, "item/"));
+                Identifier directModelId = block.rendering.resolveItemDefinitionModelId(blockId);
+                if (block.rendering.itemModel != null && block.rendering.itemModel.isJsonObject()) {
+                    TextureAndModelInformation itemInfo = block.rendering.getItemModel();
+                    ARRPGenerationHelper.generateItemModel(resourcePack, blockId, itemInfo.parent, itemInfo.textures);
                 }
+                ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, block, blockId, directModelId);
             }
             if (block.additional_information != null && translated != null) {
                 if (block.additional_information.slab) {
@@ -251,19 +245,14 @@ public class BlockInitThread implements Runnable {
                 }
             }
 
-            if (block.additional_information != null && block.additional_information.dyable) {
+            boolean dyable = block.additional_information != null && block.additional_information.dyable;
+            dyable |= block.getBlockType() == Block.BlockType.DYEABLE;
+            if (dyable) {
                 net.minecraft.world.level.block.Block registeredBlock = BuiltInRegistries.BLOCK.getValue(nameInformation.id);
-                ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        getBlockEntityColor(block, Objects.requireNonNull(world), pos), registeredBlock);
-//                ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.has(DataComponents.DYED_COLOR) ?
-//                        stack.get(DataComponents.DYED_COLOR).rgb() : block.additional_information.defaultColor, registeredBlock.asItem());
-            }
-            if (block.getBlockType() != null && block.getBlockType() == Block.BlockType.DYEABLE) {
-                net.minecraft.world.level.block.Block registeredBlock = BuiltInRegistries.BLOCK.getValue(nameInformation.id);
-                ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        getBlockEntityColor(block, Objects.requireNonNull(world), pos), registeredBlock);
-//                ColorProviderRegistry.ITEM.register((stack, tintIndex) -> stack.has(DataComponents.DYED_COLOR) ?
-//                        stack.get(DataComponents.DYED_COLOR).rgb() : block.additional_information.defaultColor, registeredBlock.asItem());
+                ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> {
+                    if (world == null || pos == null) return block.additional_information.defaultColor;
+                    return getBlockEntityColor(block, world, pos);
+                }, registeredBlock);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -271,41 +260,55 @@ public class BlockInitThread implements Runnable {
     }
 
     private void generateBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
-        if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
-            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, block.rendering.blockState.model);
-        } else {
-            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
+        Identifier outModelId = Utils.prependToPath(blockId, "block/");
+
+        // if block_model was given as a string, use it directly
+        if (block.rendering.blockModel != null
+                && block.rendering.blockModel.isJsonPrimitive()
+                && block.rendering.blockModel.getAsJsonPrimitive().isString()) {
+            outModelId = Identifier.parse(block.rendering.blockModel.getAsString());
         }
+
+        ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, outModelId);
     }
 
     private void generatePillarBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
-        if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
-            ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, block.rendering.blockState.model);
-        } else {
-            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
+        Identifier outModelId = Utils.prependToPath(blockId, "block/");
+
+        // if block_model was given as a string, use it directly
+        if (block.rendering.blockModel != null
+                && block.rendering.blockModel.isJsonPrimitive()
+                && block.rendering.blockModel.getAsJsonPrimitive().isString()) {
+            outModelId = Identifier.parse(block.rendering.blockModel.getAsString());
         }
+
+        ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, outModelId);
     }
 
     private void generateHorizontalFacingBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
-        if (block.rendering.blockState != null) {
-            if (block.rendering.blockState.model != null) {
-                ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, block.rendering.blockState.model);
-            } else if (block.rendering.blockState.models != null) {
-                block.rendering.blockState.models.forEach((s, model) -> {
-                    ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, block.rendering.blockState.model, model, s);
-                });
-            }
-        } else {
-            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
+        Identifier outModelId = Utils.prependToPath(blockId, "block/");
+
+        // if block_model was given as a string, use it directly
+        if (block.rendering.blockModel != null
+                && block.rendering.blockModel.isJsonPrimitive()
+                && block.rendering.blockModel.getAsJsonPrimitive().isString()) {
+            outModelId = Identifier.parse(block.rendering.blockModel.getAsString());
         }
+
+        ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, outModelId);
     }
 
     private void generateFacingBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
-        if (block.rendering.blockState != null && block.rendering.blockState.model != null) {
-            ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, block.rendering.blockState.model);
-        } else {
-            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
+        Identifier outModelId = Utils.prependToPath(blockId, "block/");
+
+        // if block_model was given as a string, use it directly
+        if (block.rendering.blockModel != null
+                && block.rendering.blockModel.isJsonPrimitive()
+                && block.rendering.blockModel.getAsJsonPrimitive().isString()) {
+            outModelId = Identifier.parse(block.rendering.blockModel.getAsString());
         }
+
+        ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, outModelId);
     }
 
 }

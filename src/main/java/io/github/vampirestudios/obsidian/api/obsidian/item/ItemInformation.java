@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemSettings;
 import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.components.Conversion;
 import net.minecraft.resources.Identifier;
 
 import java.util.Map;
@@ -19,6 +20,8 @@ public class ItemInformation {
 	@SerializedName("item_type")
 	@com.google.gson.annotations.SerializedName("item_type")
 	public String itemType;
+
+	public Conversion conversion;
 
 	// This getter will handle the different possible types of 'itemSettings'
 	public ItemSettings getItemSettings() {

@@ -10,8 +10,6 @@ import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
-import io.github.vampirestudios.obsidian.api.obsidian.RenderModeModel;
-import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.CustomMenuItem;
@@ -23,10 +21,8 @@ import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -34,17 +30,20 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.item.equipment.Equippable;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
@@ -108,7 +107,7 @@ public class Items implements AddonModule {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
+	static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
 		for (var e : map.entrySet()) {
 			var type = (DataComponentType<T>) e.getKey();
 			var opt  = (Optional<T>) e.getValue();
@@ -166,15 +165,6 @@ public class Items implements AddonModule {
 				return InteractionResult.PASS;
 			});
 		}
-        /*UseItemCallback.EVENT.register((player, _, hand) -> {
-            ItemStack itemStack = player.getItemInHand(hand);
-            if (itemStack.getItem() instanceof ItemImpl item1) {
-                if (item1.item != item) return InteractionResultHolder.fail(itemStack);
-                item1.item.getEventActions("on_use");
-                return InteractionResultHolder.success(itemStack);
-            }
-            return InteractionResultHolder.pass(itemStack);
-        });*/
 	}
 
 	private Item registerItem(RegistryHelperItemExpanded expanded, io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Identifier identifier,
@@ -183,74 +173,15 @@ public class Items implements AddonModule {
 		if (item.information.getItemSettings().canPlaceBlock) {
 			registeredItem = expanded.registerItem(identifier, new BlockItemImpl(item, BuiltInRegistries.BLOCK.getValue(item.information.getItemSettings().placableBlock), settings), creativeTab);
 		} else {
-			registerRenderModeModels(item);
-			if (isWearable(item)) {
-				registeredItem = registerWearableItem(expanded, item, identifier, settings, creativeTab);
+			if (item.type == io.github.vampirestudios.obsidian.api.obsidian.item.Item.ItemType.BUNDLE) {
+				registeredItem = expanded.registerItem(identifier.getPath(), new BundleItem(item, settings), creativeTab);
+			} else if (item.type == io.github.vampirestudios.obsidian.api.obsidian.item.Item.ItemType.CUSTOM_MENU) {
+				registeredItem = expanded.registerItem(identifier.getPath(), new CustomMenuItem(item, settings), creativeTab);
 			} else {
-				if (isDyeable(item)) {
-					int defaultDyeableColor = 0xFFFFFF;
-					if (item.information.getItemSettings().defaultColor != 0) {
-						defaultDyeableColor = item.information.getItemSettings().getDefaultColor();
-					} else if (item.information.getItemSettings().getParentSettings().defaultColor != 0) {
-						defaultDyeableColor = item.information.getItemSettings().getParentSettings().getDefaultColor();
-					}
-					settings.component(DataComponents.DYED_COLOR, new DyedItemColor(defaultDyeableColor));
-				}
-				if (item.type == io.github.vampirestudios.obsidian.api.obsidian.item.Item.ItemType.BUNDLE) {
-					registeredItem = expanded.registerItem(identifier.getPath(), new BundleItem(item, settings), creativeTab);
-				} else if (item.type == io.github.vampirestudios.obsidian.api.obsidian.item.Item.ItemType.CUSTOM_MENU) {
-					registeredItem = expanded.registerItem(identifier.getPath(), new CustomMenuItem(item, settings), creativeTab);
-				} else {
-					registeredItem = expanded.registerItem(identifier.getPath(), new ItemImpl(item, settings), creativeTab);
-				}
+				registeredItem = expanded.registerItem(identifier.getPath(), new ItemImpl(item, settings), creativeTab);
 			}
 		}
 		return registeredItem;
-	}
-
-	private void registerRenderModeModels(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-		if (item.information.getItemSettings().renderModeModels != null) {
-			for (RenderModeModel renderModeModel : item.information.getItemSettings().renderModeModels) {
-				if (!renderModeModel.modes.isEmpty()) {
-					for (String mode : renderModeModel.modes) {
-						ClientInit.customModels.add(new ModelLayerLocation(renderModeModel.model, mode));
-					}
-				} else {
-					ClientInit.customModels.add(new ModelLayerLocation(renderModeModel.model, "inventory"));
-				}
-			}
-		}
-	}
-
-	private boolean isWearable(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-		return (item.information.getItemSettings().wearable
-				|| item.information.getItemSettings().getParentSettings().wearable
-		) && (item.information.getItemSettings().maxStackSize <= 1
-				|| item.information.getItemSettings().getParentSettings().maxStackSize <= 1);
-	}
-
-	private boolean isDyeable(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-		return item.information.getItemSettings().dyeable || item.information.getItemSettings().getParentSettings().dyeable;
-	}
-
-	private Item registerWearableItem(RegistryHelperItemExpanded expanded, io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Identifier identifier,
-									  Item.Properties settings, ResourceKey<CreativeModeTab> creativeTab) {
-		if (item.information.getItemSettings().wearableSlot != null && !item.information.getItemSettings().wearableSlot.isEmpty()) {
-			settings.component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.byName(item.information.getItemSettings().wearableSlot)).build());
-		} else if (item.information.getItemSettings().getParentSettings().wearableSlot != null && !item.information.getItemSettings().getParentSettings().wearableSlot.isEmpty()) {
-			settings.component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.byName(item.information.getItemSettings().getParentSettings().wearableSlot)).build());
-		}
-
-		if (isDyeable(item)) {
-			int defaultDyeableColor = 0xFFFFFF;
-			if (item.information.getItemSettings().defaultColor != 0) {
-				defaultDyeableColor = item.information.getItemSettings().getDefaultColor();
-			} else if (item.information.getItemSettings().getParentSettings().defaultColor != 0) {
-				defaultDyeableColor = item.information.getItemSettings().getParentSettings().getDefaultColor();
-			}
-			settings.component(DataComponents.DYED_COLOR, new DyedItemColor(defaultDyeableColor));
-		}
-		return expanded.registerItem(identifier.getPath(), new ItemImpl(item, settings), creativeTab);
 	}
 
 	@Override
