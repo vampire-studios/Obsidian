@@ -21,14 +21,18 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OBE;
+import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -47,6 +51,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -60,13 +65,13 @@ public class Blocks implements AddonModule {
         block.information.name.id = blockId;
 
         BlockBehaviour.Properties blockProps = createBlockProperties(block);
-        Item.Properties itemProps = createItemProperties(block);
-
+        Item.Properties itemProps = createItemProperties(block).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, blockId));
+        ResourceKey<CreativeModeTab> tab = getCreativeTab(block);
         RegistryHelperBlockExpanded registry = new RegistryHelperBlockExpanded(modInfo.modId());
 
         try {
-            registerSpecificBlockType(block, blockId, blockProps, itemProps, registry);
-            registerAdditionalFeatures(block, blockId, blockProps, itemProps, modInfo, registry);
+            registerSpecificBlockType(block, blockId, blockProps, itemProps, registry, tab);
+            registerAdditionalFeatures(block, blockId, blockProps, itemProps, registry);
 
             if (!addon.getConfigPackInfo().hasData) {
                 new BlockInitThread(block);
@@ -116,47 +121,99 @@ public class Blocks implements AddonModule {
 
     private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
         Item.Properties props = new Item.Properties()
-                .useBlockDescriptionPrefix()
-                .setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, block.information.name.id));
+                .useBlockDescriptionPrefix();
 
+        // --------------------------------------------------
+        // 1. Legacy / JSON item settings (base defaults)
+        // --------------------------------------------------
         if (block.information.getItemSettings() != null) {
-            var itemSettings = block.information.getItemSettings();
-            props.stacksTo(itemSettings.maxStackSize)
-                    .rarity(Rarity.valueOf(itemSettings.rarity.toUpperCase(Locale.ROOT)));
+            var settings = block.information.getItemSettings();
 
-            if (itemSettings.durability != 0) props.durability(itemSettings.durability);
-            if (itemSettings.fireproof) props.fireResistant();
+            props.stacksTo(settings.maxStackSize)
+                    .rarity(Rarity.valueOf(settings.rarity.toUpperCase(Locale.ROOT)));
+
+            if (settings.durability != 0) {
+                props.durability(settings.durability);
+            }
+
+            if (settings.fireproof) {
+                props.fireResistant();
+            }
         }
 
+        // --------------------------------------------------
+        // 2. Food definition
+        // --------------------------------------------------
         if (block.food_information != null) {
             props.food(Registries.FOODS.getValue(block.food_information.foodComponent));
         }
 
+        // --------------------------------------------------
+        // 3. Apply DataComponents LAST (override layer)
+        // --------------------------------------------------
+        if (block.components != null) {
+            applyAllComponents(props, block.components);
+        }
+
         return props;
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
+        for (var e : map.entrySet()) {
+            var type = (DataComponentType<T>) e.getKey();
+            var opt  = (Optional<T>) e.getValue();
+            opt.ifPresent(v -> props.component(type, v));
+        }
+    }
+
+    private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        // 1) Components override everything
+        var comps = block.components;
+        if (comps != null) {
+            var opt = comps.get(OItemComponents.CREATIVE_TAB); // Optional<Identifier> (based on your usage)
+            if (opt != null && opt.isPresent()) {
+                Identifier id = opt.get();
+                return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, id);
+            }
+        }
+
+        // 2) Then item settings
+        var settings = block.information.getItemSettings();
+        if (settings != null) {
+            var group = settings.getItemGroup();
+            if (group != null) return group;
+
+            var parent = settings.getParentSettings();
+            if (parent != null && parent.getItemGroup() != null) return parent.getItemGroup();
+        }
+
+        // 3) Fallback
+        return CreativeModeTabs.BUILDING_BLOCKS;
     }
 
     private void registerSpecificBlockType(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
                                            Identifier blockId,
                                            BlockBehaviour.Properties blockProps,
                                            Item.Properties itemProps,
-                                           RegistryHelperBlockExpanded registry) {
+                                           RegistryHelperBlockExpanded registry,
+                                           ResourceKey<CreativeModeTab> itemGroup) {
         BlockType type = block.getBlockType();
         if (type == null) {
-            // Default handling for additional_information flags
-            handleAdditionalInformationFlags(block, blockId, blockProps, itemProps, registry);
+            handleAdditionalInformationFlags(block, blockId, blockProps, itemProps, registry, itemGroup);
             return;
         }
 
         switch (type) {
             case PAINTING_TABLE -> {
-                Block paintingTable = registry.registerBlock(new PaintingTableBlock(block, blockProps), block, blockId.getPath(), itemProps);
+                Block paintingTable = registry.registerBlock(new PaintingTableBlock(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 OBE.PAINTING_TABLE.addSupportedBlock(paintingTable);
             }
             case BLOCK, WOOD -> {
                 if (isDyable(block)) {
                     registerDyableBlock(blockId, block, blockProps, itemProps, registry);
                 } else {
-                    registry.registerBlock(new BlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+                    registry.registerBlock(new BlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 }
             }
             case HORIZONTAL_DIRECTIONAL -> {
@@ -170,49 +227,49 @@ public class Blocks implements AddonModule {
                 } else if (sittable) {
                     registerSittableHorizontalBlock(blockId, block, blockProps, itemProps, registry);
                 } else {
-                    registry.registerBlock(new HorizontalFacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+                    registry.registerBlock(new HorizontalFacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 }
             }
-            case DIRECTIONAL -> registry.registerBlock(new FacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
-            case BED -> registry.registerBlock(new BedBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
-            case CAMPFIRE -> registry.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, blockId.getPath(), itemProps);
-            case STAIRS -> registry.registerBlock(new StairsImpl(block, blockProps), block, blockId.getPath(), itemProps);
-            case SLAB -> registry.registerBlock(new SlabImpl(block, blockProps), block, blockId.getPath(), itemProps);
-            case FENCE -> registry.registerBlock(new FenceImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case DIRECTIONAL -> registry.registerBlock(new FacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
+            case BED -> registry.registerBlock(new BedBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
+            case CAMPFIRE -> registry.registerBlock(new CampfireBlockImpl(block.campfire_properties), block, blockId.getPath(), itemProps, itemGroup);
+            case STAIRS -> registry.registerBlock(new StairsImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
+            case SLAB -> registry.registerBlock(new SlabImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
+            case FENCE -> registry.registerBlock(new FenceImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
             case FENCE_GATE -> registry.registerBlock(new FenceGateImpl(block, blockProps, VanillaWoodTypes.get(block.information.woodType)),
-                    block, blockId.getPath(), itemProps);
-            case CAKE -> registry.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), itemProps);
+                    block, blockId.getPath(), itemProps, itemGroup);
+            case CAKE -> registry.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), itemProps, itemGroup);
             case TRAPDOOR -> registry.registerBlock(new TrapDoorBlock(VanillaBlockSetTypes.get(block.information.blockSetType), blockProps),
-                    block, blockId.getPath(), itemProps);
+                    block, blockId.getPath(), itemProps, itemGroup);
             case DOOR -> registry.registerBlock(new DoorBlock(VanillaBlockSetTypes.get(block.information.blockSetType), blockProps),
-                    block, blockId.getPath(), itemProps);
+                    block, blockId.getPath(), itemProps, itemGroup);
             case LOG -> registry.registerLog(block, blockProps, blockId.getPath(), MapColor.STONE, MapColor.STONE, itemProps);
             case STEM -> registry.registerNetherStemBlock(block, blockId.getPath(), MapColor.STONE, itemProps);
             case OXIDIZING_BLOCK -> getOxidationStageIds(block).forEach(id ->
-                    registry.registerBlock(new BlockImpl(block, blockProps), block, id.getPath(), itemProps));
+                    registry.registerBlock(new BlockImpl(block, blockProps), block, id.getPath(), itemProps, itemGroup));
             case PLANT -> {
                 if (isWaterloggable(block)) {
                     registry.registerBlock(new WaterloggablePlantBlockImpl(block, blockProps.noCollision().instabreak()),
-                            block, blockId.getPath(), itemProps);
+                            block, blockId.getPath(), itemProps, itemGroup);
                 } else {
-                    registry.registerBlock(new PlantBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+                    registry.registerBlock(new PlantBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 }
             }
-            case ROTATED_PILLAR -> registry.registerBlock(new PillarBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case ROTATED_PILLAR -> registry.registerBlock(new PillarBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
             case HORIZONTAL_FACING_PLANT -> registry.registerBlock(new HorizontalFacingPlantBlockImpl(block, blockProps.noCollision().instabreak()),
-                    block, blockId.getPath(), itemProps);
-            case SAPLING -> registry.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), itemProps);
-            case TORCH -> registry.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), itemProps);
+                    block, blockId.getPath(), itemProps, itemGroup);
+            case SAPLING -> registry.registerBlock(new SaplingBaseBlock(block), block, blockId.getPath(), itemProps, itemGroup);
+            case TORCH -> registry.registerBlock(new TorchBaseBlock(), block, blockId.getPath(), itemProps, itemGroup);
             case BEEHIVE -> {
-                Block beehive = registry.registerBlock(new BeehiveBlock(blockProps), block, blockId.getPath(), itemProps);
+                Block beehive = registry.registerBlock(new BeehiveBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 REGISTRY_HELPER.registerBlockEntity(FabricBlockEntityTypeBuilder.create(BeehiveBlockEntity::new, beehive),
                         blockId.getPath() + "_beehive_be");
             }
             case LEAVES -> registry.registerLeavesBlock(block, blockId.getPath(), itemProps);
-            case LADDER -> registry.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), itemProps);
-            case PATH -> registry.registerBlock(new PathBlockImpl(blockProps, block), block, blockId.getPath(), itemProps);
+            case LADDER -> registry.registerBlock(new CustomLadderBlock(), block, blockId.getPath(), itemProps, itemGroup);
+            case PATH -> registry.registerBlock(new PathBlockImpl(blockProps, block), block, blockId.getPath(), itemProps, itemGroup);
             case BUTTON -> registry.registerBlock(new ButtonBlock(VanillaBlockSetTypes.get(block.information.blockSetType),
-                    block.information.wooden_button ? 30 : 20, blockProps), block, blockId.getPath(), itemProps);
+                    block.information.wooden_button ? 30 : 20, blockProps), block, blockId.getPath(), itemProps, itemGroup);
             case DOUBLE_PLANT -> {
                 if (isWaterloggable(block)) {
                     registry.registerDoubleBlock(new WaterloggableTallFlowerBlockImpl(block, blockProps.noCollision().instabreak()),
@@ -225,29 +282,29 @@ public class Blocks implements AddonModule {
                     block, blockId.getPath(), itemProps);
             case HANGING_DOUBLE_LEAVES -> registry.registerHangingTallBlock(new HangingDoubleLeaves(blockProps.noCollision().instabreak()),
                     block, blockId.getPath(), itemProps);
-            case LANTERN -> registry.registerBlock(new LanternBlock(blockProps), block, blockId.getPath(), itemProps);
-            case CHAIN -> registry.registerBlock(new ChainBlock(blockProps), block, blockId.getPath(), itemProps);
-            case PANE -> registry.registerBlock(new PaneBlockImpl(block, blockProps), block, blockId.getPath(), itemProps);
+            case LANTERN -> registry.registerBlock(new LanternBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
+            case CHAIN -> registry.registerBlock(new ChainBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
+            case PANE -> registry.registerBlock(new PaneBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
             case DYEABLE -> registerDyableBlock(blockId, block, blockProps, itemProps, registry);
-            case LOOM -> registry.registerBlock(new LoomBlock(blockProps), block, blockId.getPath(), itemProps);
-            case CRAFTING_TABLE -> registry.registerBlock(new CraftingTableBlock(blockProps), block, blockId.getPath(), itemProps);
+            case LOOM -> registry.registerBlock(new LoomBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
+            case CRAFTING_TABLE -> registry.registerBlock(new CraftingTableBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
             case FURNACE -> {
-                Block furnace = registry.registerBlock(new FurnaceBlock(blockProps), block, blockId.getPath(), itemProps);
+                Block furnace = registry.registerBlock(new FurnaceBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 BlockEntityType.FURNACE.addSupportedBlock(furnace);
             }
             case BLAST_FURNACE -> {
-                Block blast = registry.registerBlock(new BlastFurnaceBlock(blockProps), block, blockId.getPath(), itemProps);
+                Block blast = registry.registerBlock(new BlastFurnaceBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 BlockEntityType.BLAST_FURNACE.addSupportedBlock(blast);
             }
             case SMOKER -> {
-                Block smoker = registry.registerBlock(new SmokerBlock(blockProps), block, blockId.getPath(), itemProps);
+                Block smoker = registry.registerBlock(new SmokerBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 BlockEntityType.SMOKER.addSupportedBlock(smoker);
             }
             case BARREL -> {
-                Block barrel = registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps);
+                Block barrel = registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 BlockEntityType.BARREL.addSupportedBlock(barrel);
             }
-            case CARPET -> registry.registerBlock(new CarpetBlock(blockProps), block, blockId.getPath(), itemProps);
+            case CARPET -> registry.registerBlock(new CarpetBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
         }
     }
 
@@ -255,34 +312,33 @@ public class Blocks implements AddonModule {
                                                   Identifier blockId,
                                                   BlockBehaviour.Properties blockProps,
                                                   Item.Properties itemProps,
-                                                  RegistryHelperBlockExpanded registry) {
+                                                  RegistryHelperBlockExpanded registry,
+                                                  ResourceKey<CreativeModeTab> itemGroup) {
         if (block.additional_information == null) return;
 
         var info = block.additional_information;
-        if (info.path) registry.registerBlock(new PathBlockImpl(blockProps, block), block, blockId.getPath(), itemProps);
-        else if (info.lantern) registry.registerBlock(new LanternBlock(blockProps), block, blockId.getPath(), itemProps);
-        else if (info.barrel) registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps);
+        if (info.path) registry.registerBlock(new PathBlockImpl(blockProps, block), block, blockId.getPath(), itemProps, itemGroup);
+        else if (info.lantern) registry.registerBlock(new LanternBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
+        else if (info.barrel) registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
         else if (info.leaves) registry.registerLeavesBlock(block, blockId.getPath(), itemProps);
-        else if (info.chains) registry.registerBlock(new ChainBlock(blockProps), block, blockId.getPath(), itemProps);
-        else if (info.cake_like) registry.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), itemProps);
+        else if (info.chains) registry.registerBlock(new ChainBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
+        else if (info.cake_like) registry.registerBlock(new CakeBlockImpl(block), block, blockId.getPath(), itemProps, itemGroup);
     }
 
     private void registerAdditionalFeatures(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
                                              Identifier baseId,
                                              BlockBehaviour.Properties blockProps,
                                              Item.Properties itemProps,
-                                             BasicAddonInfo modInfo,
                                              RegistryHelperBlockExpanded registry) {
         if (block.additional_information == null) return;
 
         Identifier id = getExtraBlockIdentifier(block.additional_information, baseId);
-        registerExtraVariants(block, blockProps, itemProps, modInfo, registry, id);
+        registerExtraVariants(block, blockProps, itemProps, registry, id);
     }
 
     private void registerExtraVariants(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
                                        BlockBehaviour.Properties blockProps,
                                        Item.Properties itemProps,
-                                       BasicAddonInfo modInfo,
                                        RegistryHelperBlockExpanded registry,
                                        Identifier baseId) {
         var info = block.additional_information;
@@ -441,55 +497,6 @@ public class Blocks implements AddonModule {
 
     private io.github.vampirestudios.obsidian.api.obsidian.block.Block parseJsonBlock(File file) throws IOException {
         return BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.block.Block.class);
-    }
-
-    private Identifier getIdentifier(AdditionalBlockInformation info, Identifier defaultId) {
-        return !info.extraBlocksName.isEmpty()
-                ? Identifier.fromNamespaceAndPath(defaultId.getNamespace(), info.extraBlocksName)
-                : defaultId;
-    }
-
-    private void registerBlocksIfNeeded(AdditionalBlockInformation info, Identifier identifier,
-                                        io.github.vampirestudios.obsidian.api.obsidian.block.Block block, BlockBehaviour.Properties blockSettings,
-                                        BasicAddonInfo id, Item.Properties settings, RegistryHelperBlockExpanded expanded) {
-        SoundType soundType = determineSoundType(info);
-        if (info.slab) {
-            expanded.registerBlock(new SlabImpl(block, blockSettings), block,
-                    Utils.appendToPath(identifier, "_slab").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-        }
-        if (info.stairs) {
-            expanded.registerBlock(new StairsImpl(block, blockSettings), block, Identifier.fromNamespaceAndPath(id.modId(),
-                    identifier.getPath() + "_stairs").getPath(), CreativeModeTabs.BUILDING_BLOCKS);
-        }
-        if (info.fence) {
-            expanded.registerBlock(new FenceImpl(block, blockSettings), block,
-                    Identifier.fromNamespaceAndPath(id.modId(), identifier.getPath() + "_fence").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-        }
-        if (info.fenceGate) {
-            expanded.registerBlock(new FenceGateImpl(block, blockSettings, getWoodTypeSpecificSounds(soundType)),
-                    block, Utils.appendToPath(identifier, "_fence_gate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-        }
-        if (info.walls) {
-            expanded.registerBlock(new WallImpl(block, blockSettings), block,
-                    Utils.appendToPath(identifier, "_wall").getPath(), CreativeModeTabs.BUILDING_BLOCKS, settings);
-        }
-        if (info.pressurePlate) {
-            expanded.registerBlock(new PressurePlateBlock(getWoodTypeSpecificSounds(soundType).setType(), blockSettings), block,
-                    Utils.appendToPath(identifier, "_pressure_plate").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-        }
-        if (info.button) {
-            expanded.registerBlock(new ButtonBlock(getWoodTypeSpecificSounds(soundType).setType(), 30, blockSettings),
-                    block, Utils.appendToPath(identifier, "_button").getPath(),
-                    CreativeModeTabs.REDSTONE_BLOCKS, settings);
-        }
-        if (info.door) {
-            expanded.registerBlock(new DoorBlock(getWoodTypeSpecificSounds(soundType).setType(), blockSettings), block,
-                    Utils.appendToPath(identifier, "_door").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-        }
-        if (info.trapdoor) {
-            expanded.registerBlock(new TrapDoorBlock(getWoodTypeSpecificSounds(soundType).setType(), blockSettings),
-                    block, Utils.appendToPath(identifier, "_trapdoor").getPath(), CreativeModeTabs.REDSTONE_BLOCKS, settings);
-        }
     }
 
     private SoundType determineSoundType(AdditionalBlockInformation info) {

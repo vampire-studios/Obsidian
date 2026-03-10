@@ -4,22 +4,27 @@ import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.AxeItemImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.HoeItemImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.PickaxeItemImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.ShovelItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ToolMaterial;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,14 +45,9 @@ public class Tools implements AddonModule {
             if (tool.information.name.id == null) tool.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
 
             ToolMaterial material = tool.getToolMaterial();
-            Item.Properties settings = new Item.Properties().stacksTo(tool.information.getItemSettings().maxStackSize)
-                    .rarity(Rarity.valueOf(tool.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)))
-                    .setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
-            if (tool.components != null) {
-                for (Map.Entry<DataComponentType<?>, Optional<?>> dataComponentTypeOptionalEntry : tool.components.entrySet()) {
-                    settings.component((DataComponentType)dataComponentTypeOptionalEntry.getKey(), dataComponentTypeOptionalEntry.getValue().orElseThrow());
-                }
-            }
+
+            Item.Properties settings = createItemProperties(tool).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
+            ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(tool);
 
             Item item = null;
             switch (tool.tool_type) {
@@ -57,11 +57,50 @@ public class Tools implements AddonModule {
                 case "axe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new AxeItemImpl(tool, material, settings));
             }
             Item finalItem = item;
-            ItemGroupEvents.modifyEntriesEvent(tool.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(finalItem));
+            ItemGroupEvents.modifyEntriesEvent(creativeTab).register(entries -> entries.accept(finalItem));
             register(ContentRegistries.TOOLS, "tool", identifier, tool);
         } catch (Exception e) {
             failedRegistering("tool", file.getName(), e);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
+        for (var e : map.entrySet()) {
+            var type = (DataComponentType<T>) e.getKey();
+            var opt  = (Optional<T>) e.getValue();
+            opt.ifPresent(v -> props.component(type, v));
+        }
+    }
+
+    private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
+        Item.Properties props = new Item.Properties();
+
+        var comps = item.components;
+        if (comps == null) {
+            return props;
+        }
+
+        applyAllComponents(props, comps);
+        return props;
+    }
+
+    private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
+        ResourceKey<CreativeModeTab> creativeTab;
+
+        // Check for OItemComponents.CREATIVE_TAB first
+        if (item.components != null && item.components.get(OItemComponents.CREATIVE_TAB) != null &&
+                item.components.get(OItemComponents.CREATIVE_TAB).isPresent()) {
+            Identifier tabLocation = (Identifier) Objects.requireNonNull(item.components.get(OItemComponents.CREATIVE_TAB)).orElseThrow();
+            creativeTab = ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabLocation);
+        } else if (item.information.getItemSettings().getItemGroup() != null) {
+            creativeTab = item.information.getItemSettings().getItemGroup();
+        } else if (item.information.getItemSettings().getParentSettings().getItemGroup() != null) {
+            creativeTab = item.information.getItemSettings().getParentSettings().getItemGroup();
+        } else {
+            creativeTab = CreativeModeTabs.BUILDING_BLOCKS;
+        }
+        return creativeTab;
     }
 
     @Override

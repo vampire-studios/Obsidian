@@ -180,6 +180,15 @@ public class Obsidian implements ModInitializer {
 //		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 //			registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "huds", new Huds());
 
+		ObsidianAddonLoader.loadDefaultObsidianAddons();
+		ObsidianAddonLoader.loadObsidianAddons();
+
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "bedrock_blocks", new io.github.vampirestudios.obsidian.addon_modules.bedrock.Blocks());
+
+		BedrockAddonLoader.loadDefaultBedrockAddons();
+		BedrockAddonLoader.loadBedrockAddons();
+
+
 		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information.isConvertible) {
 				AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
@@ -230,15 +239,6 @@ public class Obsidian implements ModInitializer {
 				ConvertibleBlocksRegistry.registerConvertibleBlockPair(convertibleBlockPair);
 			}
 		}
-
-		ObsidianAddonLoader.loadDefaultObsidianAddons();
-		ObsidianAddonLoader.loadObsidianAddons();
-
-		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "bedrock_blocks", new io.github.vampirestudios.obsidian.addon_modules.bedrock.Blocks());
-
-		BedrockAddonLoader.loadDefaultBedrockAddons();
-		BedrockAddonLoader.loadBedrockAddons();
-
 
 		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
 			if (!world.isClientSide()) {

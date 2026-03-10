@@ -8,6 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.PaintingTableInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodInformation;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -34,6 +35,7 @@ public class Block {
     public DropInformation dropInformation;
     public AdditionalBlockInformation additional_information;
     public Functions functions;
+    public DataComponentPatch components;
     public OreInformation ore_information;
     public FoodInformation food_information;
     public CampfireProperties campfire_properties;

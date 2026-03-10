@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
+import blue.endless.jankson.annotation.SerializedName;
 import net.minecraft.resources.Identifier;
 
 public class AdditionalBlockInformation {
@@ -38,6 +39,8 @@ public class AdditionalBlockInformation {
     public int defaultColor = 16579836;
 
     public boolean sittable = false;
+    @SerializedName("is_convertible")
+    @com.google.gson.annotations.SerializedName("is_convertible")
     public boolean isConvertible = false;
     public Convertible convertible;
 
@@ -50,7 +53,11 @@ public class AdditionalBlockInformation {
         public Identifier dropped_item;
         public Identifier sound;
 
+        @SerializedName("conversion_item")
+        @com.google.gson.annotations.SerializedName("conversion_item")
         public ConversionItem conversionItem;
+        @SerializedName("reversal_item")
+        @com.google.gson.annotations.SerializedName("reversal_item")
         public ConversionItem reversalItem;
 
         public static class ConversionItem {

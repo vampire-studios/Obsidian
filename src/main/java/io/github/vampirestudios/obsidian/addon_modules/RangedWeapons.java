@@ -11,19 +11,20 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.CrossbowItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -41,15 +42,7 @@ public class RangedWeapons implements AddonModule {
             );
             RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 
-            Item.Properties settings = new Item.Properties()
-                    .stacksTo(rangedWeapon.information.getItemSettings().maxStackSize)
-                    .rarity(Rarity.valueOf(rangedWeapon.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)))
-                    .setId(ResourceKey.create(Registries.ITEM, identifier));
-
-            if (rangedWeapon.components != null) {
-                Items.applyAllComponents(settings, rangedWeapon.components); // or duplicate helper locally
-            }
-
+            Item.Properties settings = createItemProperties(rangedWeapon).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
             ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(rangedWeapon);
 
             switch (rangedWeapon.weapon_type) {
@@ -71,7 +64,28 @@ public class RangedWeapons implements AddonModule {
         }
     }
 
-    private ResourceKey<CreativeModeTab> getCreativeTab(RangedWeaponItem item) {
+    @SuppressWarnings("unchecked")
+    static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
+        for (var e : map.entrySet()) {
+            var type = (DataComponentType<T>) e.getKey();
+            var opt  = (Optional<T>) e.getValue();
+            opt.ifPresent(v -> props.component(type, v));
+        }
+    }
+
+    private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
+        Item.Properties props = new Item.Properties();
+
+        var comps = item.components;
+        if (comps == null) {
+            return props;
+        }
+
+        applyAllComponents(props, comps);
+        return props;
+    }
+
+    private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
         ResourceKey<CreativeModeTab> creativeTab;
 
         // Check for OItemComponents.CREATIVE_TAB first

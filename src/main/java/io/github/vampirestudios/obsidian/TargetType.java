@@ -9,7 +9,7 @@ import org.joml.Vector3f;
 import java.util.function.Function;
 
 public enum TargetType implements StringRepresentable {
-    POSITION("position", AnimationChannel.Targets.POSITION, vector3f -> KeyframeAnimations.posVec(vector3f.x, vector3f.y, vector3f.z)),
+    POSITION("towards", AnimationChannel.Targets.POSITION, vector3f -> KeyframeAnimations.posVec(vector3f.x, vector3f.y, vector3f.z)),
     ROTATION("rotation", AnimationChannel.Targets.ROTATION, vector3f -> KeyframeAnimations.degreeVec(vector3f.x, vector3f.y, vector3f.z)),
     SCALE("scale", AnimationChannel.Targets.SCALE, vector3f -> KeyframeAnimations.scaleVec(vector3f.x, vector3f.y, vector3f.z));
 

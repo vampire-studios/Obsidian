@@ -6,9 +6,10 @@ import com.mojang.math.Transformation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.github.vampirestudios.obsidian.addon_modules.DataComponentPatchDeserializer;
-import io.github.vampirestudios.obsidian.api.obsidian.IntArrayTypeAdapter;
 import io.github.vampirestudios.obsidian.api.obsidian.IdentifierTypeAdapter;
+import io.github.vampirestudios.obsidian.api.obsidian.IntArrayTypeAdapter;
 import io.github.vampirestudios.obsidian.api.obsidian.TriStateAdapter;
+import io.github.vampirestudios.obsidian.registry.components.actionPos.ActionPosition;
 import io.github.vampirestudios.obsidian.utils.IntArray;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.core.BlockPos;
@@ -20,8 +21,8 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Brightness;
 import net.minecraft.util.valueproviders.FloatProviderType;
@@ -78,6 +79,7 @@ public class BaseGson {
             .registerTypeAdapter(ParticleOptions.class, new CodecSerializer<>(ParticleTypes.CODEC))
             .registerTypeAdapter(Display.TextDisplay.Align.class, new CodecSerializer<>(Display.TextDisplay.Align.CODEC))
             .registerTypeAdapter(Brightness.class, new CodecSerializer<>(Brightness.CODEC))
+            .registerTypeAdapter(ActionPosition.class, new CodecSerializer<>(ActionPosition.CODEC))
             .create();
 
     private record ItemStackSerializer() implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {

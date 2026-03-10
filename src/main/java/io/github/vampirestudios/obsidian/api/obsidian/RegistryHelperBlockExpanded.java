@@ -48,6 +48,20 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 		ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.accept(item));
 	}
 
+	public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Properties settings, ResourceKey<CreativeModeTab> itemGroup) {
+		if (BuiltInRegistries.BLOCK.containsKey(Identifier.fromNamespaceAndPath(this.modId, name)))
+			block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
+		else block = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
+
+		if (block2.information.has_item) {
+			Item item;
+			if (BuiltInRegistries.ITEM.containsKey(Identifier.fromNamespaceAndPath(this.modId, name))) item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
+			else item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
+			ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.accept(item));
+		}
+		return block;
+	}
+
 	public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Properties settings) {
 		if (BuiltInRegistries.BLOCK.containsKey(Identifier.fromNamespaceAndPath(this.modId, name)))
 			block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(this.modId, name));

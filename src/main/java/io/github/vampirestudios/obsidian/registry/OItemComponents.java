@@ -2,6 +2,9 @@ package io.github.vampirestudios.obsidian.registry;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.minecraft.*;
+import io.github.vampirestudios.obsidian.registry.components.EnergyStorage;
+import io.github.vampirestudios.obsidian.registry.components.FluidContents;
+import io.github.vampirestudios.obsidian.registry.components.Attraction;
 import io.github.vampirestudios.obsidian.registry.components.Wearable;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -60,6 +63,15 @@ public class OItemComponents {
 //	public static final DataComponentType<CustomMenuComponent> CUSTOM_MENU = register(
 //			"custom_menu", builder -> builder.persistent(CustomMenuComponent.CODEC).networkSynchronized(CustomMenuComponent.STREAM_CODEC)
 //	);
+	public static final DataComponentType<FluidContents> FLUID_CONTENTS =
+		register("fluid_contents", builder -> builder.persistent(FluidContents.CODEC));
+
+	public static final DataComponentType<EnergyStorage> ENERGY =
+			register("energy", builder -> builder.persistent(EnergyStorage.CODEC));
+
+	public static final DataComponentType<Attraction> MAGNET =
+			register("magnet", builder -> builder.persistent(Attraction.CODEC));
+
 
 	public static void init() {}
 
