@@ -15,6 +15,8 @@ import net.devtech.arrp.json.iteminfo.model.special.JModelShield;
 import net.devtech.arrp.json.iteminfo.model.special.JModelSpecial;
 import net.devtech.arrp.json.iteminfo.model.special.JModelTrident;
 import net.devtech.arrp.json.iteminfo.property.*;
+import net.devtech.arrp.json.iteminfo.tint.JTintDye;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
@@ -83,96 +85,111 @@ public class OraxenItemInitThread implements Runnable {
 		}
 
 		JItemInfo itemInfo = new JItemInfo();
-		JItemModel model = JItemModel.model(Utils.prependToPath(id, "item/").toString());
+		String baseModelPath = Utils.prependToPath(id, "item/").toString();
+		JItemModel model = JItemModel.model(baseModelPath);
 		if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
-			JPropertyUsingItem usingItemProperty = new JPropertyUsingItem();
+			if (item.pack.model != null && item.pack.blocking_model != null) {
+				JItemModel shieldNestedModel = JModelShield.shield();
 
-			// Create the nested shield model
-			JItemModel shieldNestedModel = JModelShield.shield();
+				JModelSpecial onFalseModel = new JModelSpecial()
+						.base(item.pack.model.toString())
+						.model(shieldNestedModel);
 
-			// Create the on_false model (not blocking)
-			JModelSpecial onFalseModel = new JModelSpecial()
-					.base(item.pack.model.toString())
-					.model(shieldNestedModel);
+				JModelSpecial onTrueModel = new JModelSpecial()
+						.base(item.pack.blocking_model.toString())
+						.model(shieldNestedModel);
 
-			// Create the on_true model (blocking)
-			JModelSpecial onTrueModel = new JModelSpecial()
-					.base(item.pack.blocking_model.toString())
-					.model(shieldNestedModel);
-
-			model = JItemModel.condition()
-					.property(usingItemProperty)
-					.onFalse(onFalseModel)
-					.onTrue(onTrueModel);
+				model = JItemModel.condition()
+						.property(new JPropertyUsingItem())
+						.onFalse(onFalseModel)
+						.onTrue(onTrueModel);
+			}
 		} else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
-			if (item.pack.pulling_models != null) {
-				JModelCondition cond = JModelCondition.condition()
-						.property(JPropertyUseDuration.useDuration());
-
-				// range dispatch for pulling stages
+			if (item.pack.pulling_models != null && !item.pack.pulling_models.isEmpty()) {
 				JModelRangeDispatch dispatch = JModelRangeDispatch.rangeDispatch()
 						.property(JPropertyUseDuration.useDuration());
 				int stages = item.pack.pulling_models.size();
 				for (int i = 0; i < stages; i++) {
 					float threshold = (i + 1) / (float) stages;
-					dispatch.entry(
-							JRangeEntry.of(
-									threshold,
-									JItemModel.model(item.pack.pulling_models.get(i).toString())
-							)
-					);
+					dispatch.entry(JRangeEntry.of(threshold,
+							JItemModel.model(item.pack.pulling_models.get(i).toString())));
 				}
-				// fallback to unpulled model
-				dispatch.fallback(JItemModel.model(item.pack.model.toString()));
+				String unpulled = item.pack.model != null ? item.pack.model.toString() : baseModelPath;
+				dispatch.fallback(JItemModel.model(unpulled));
 
-				cond.onFalse(JItemModel.model(item.pack.model.toString()));
-				cond.onTrue(dispatch);
-				model = cond;
+				model = JModelCondition.condition()
+						.property(new JPropertyUsingItem())
+						.onFalse(JItemModel.model(unpulled))
+						.onTrue(dispatch);
 			}
 		} else if (item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
-			// Create the range dispatch model for pulling
-			JModelRangeDispatch pullingModel = JModelRangeDispatch.rangeDispatch()
-					.property(JPropertyCrossbowPull.crossbowPull());
+			if (item.pack.pulling_models != null && !item.pack.pulling_models.isEmpty()) {
+				JModelRangeDispatch pullingModel = JModelRangeDispatch.rangeDispatch()
+						.property(JPropertyCrossbowPull.crossbowPull());
+				int stages = item.pack.pulling_models.size();
+				for (int i = 0; i < stages; i++) {
+					float threshold = (float) (i + 1) / stages;
+					pullingModel.entry(JRangeEntry.of(threshold,
+							JItemModel.model(item.pack.pulling_models.get(i).toString())));
+				}
+				String baseModel = item.pack.model != null ? item.pack.model.toString() : baseModelPath;
+				pullingModel.fallback(JItemModel.model(baseModel));
 
-			// Number of pull stages
-			int stages = item.pack.pulling_models.size();
+				JModelSelect chargedSelectModel = JModelSelect.select()
+						.property(JPropertyChargeType.chargeType());
+				if (item.pack.charged_model != null)
+					chargedSelectModel.addCase(JSelectCase.of("arrow", JItemModel.model(item.pack.charged_model.toString())));
+				if (item.pack.firework_model != null)
+					chargedSelectModel.addCase(JSelectCase.of("rocket", JItemModel.model(item.pack.firework_model.toString())));
+				chargedSelectModel.fallback(JItemModel.model(baseModel));
 
-			// Generate thresholds and entries
-			for (int i = 0; i < stages; i++) {
-				float threshold = (float) (i + 1) / stages;
-				JRangeEntry entry = JRangeEntry.of(
-						threshold,
-						JItemModel.model(item.pack.pulling_models.get(i).toString())
-				);
-				pullingModel.entry(entry);
+				model = JModelCondition.condition()
+						.property(new JPropertyUsingItem())
+						.onTrue(pullingModel)
+						.onFalse(chargedSelectModel);
 			}
-			pullingModel.fallback(JItemModel.model(item.pack.model.toString()));
-
-			// Create the select model for the charged state
-			JModelSelect chargedSelectModel = JModelSelect.select()
-					.property(JPropertyChargeType.chargeType())
-					.addCase(JSelectCase.of("arrow", JItemModel.model(item.pack.charged_model.toString())))
-					.addCase(JSelectCase.of("rocket", JItemModel.model(item.pack.firework_model.toString())));
-			chargedSelectModel.fallback(JItemModel.model(item.pack.model.toString()));
-
-			// Create the condition model based on pulling
-			model = JModelCondition.condition()
-					.property(new JPropertyUsingItem())
-					.onTrue(pullingModel)
-					.onFalse(chargedSelectModel);
 		} else if (item.getItemType().equals(NexoItem.ItemType.FISHING_ROD)) {
-			model = JModelCondition.condition()
-					.property(JPropertyFishingRodCast.fishingRodCast())
-					.onFalse(JItemModel.model(item.pack.model.toString()))
-					.onTrue(JItemModel.model(item.pack.cast_model.toString()));
+			if (item.pack.cast_model != null) {
+				String uncast = item.pack.model != null ? item.pack.model.toString() : baseModelPath;
+				model = JModelCondition.condition()
+						.property(JPropertyFishingRodCast.fishingRodCast())
+						.onFalse(JItemModel.model(uncast))
+						.onTrue(JItemModel.model(item.pack.cast_model.toString()));
+			}
 		} else if (item.getItemType().equals(NexoItem.ItemType.TRIDENT)) {
-			model = JModelCondition.condition().property(new JPropertyUsingItem())
-					.onFalse(JModelTrident.trident().base(item.pack.model.toString()))
-					.onTrue(JModelTrident.trident().base(item.mechanics.trident.thrown_item_model.toString()));
+			if (item.mechanics != null && item.mechanics.trident != null
+					&& item.mechanics.trident.thrown_item_model != null && item.pack.model != null) {
+				model = JModelCondition.condition().property(new JPropertyUsingItem())
+						.onFalse(JModelTrident.trident().base(item.pack.model.toString()))
+						.onTrue(JModelTrident.trident().base(item.mechanics.trident.thrown_item_model.toString()));
+			}
 		}
 
-		itemInfo.model(model);
-//		resourcePack.addItemModelInfo(itemInfo, id);
+		// Damaged model stages (durability-based model swapping)
+		if (item.pack.damaged_models != null && !item.pack.damaged_models.isEmpty()) {
+			JModelRangeDispatch damageDispatch = (JModelRangeDispatch) JModelRangeDispatch.rangeDispatch()
+					.property(JPropertyDamage.of(false))
+					.fallback(model);
+			int stages = item.pack.damaged_models.size();
+			for (int i = 0; i < stages; i++) {
+				float threshold = (float) (i + 1) / stages;
+				damageDispatch.entry(JRangeEntry.of(threshold, JItemModel.model(item.pack.damaged_models.get(i).toString())));
+			}
+			model = damageDispatch;
+		}
+
+		// Dyeable tint
+		if (item.mechanics != null && item.mechanics.dyeable != null && item.mechanics.dyeable.enabled) {
+			model.tint(new JTintDye(item.mechanics.dyeable.getDefaultColor()));
+		}
+
+		boolean hasItemModelComponent = item.components != null
+				&& item.components.get(DataComponents.ITEM_MODEL) != null;
+
+		if (!hasItemModelComponent) {
+			itemInfo.model(model);
+			resourcePack.addItemModelInfo(itemInfo, id);
+		}
 
 		if (item.mechanics != null && item.mechanics.furniture != null) {
 			Identifier furnitureModel = item.pack.model != null ? item.pack.model : id;

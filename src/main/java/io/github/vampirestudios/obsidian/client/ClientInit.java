@@ -2,7 +2,6 @@ package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.Const;
 import io.github.vampirestudios.obsidian.Obsidian;
-import io.github.vampirestudios.obsidian.network.ContentPackSyncNetworking;
 import io.github.vampirestudios.obsidian.api.SubItemGroup;
 import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
@@ -57,7 +56,7 @@ public class ClientInit implements ClientModInitializer {
     public void onInitializeClient() {
         Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().name()));
 
-        ContentPackSyncNetworking.registerClientReceivers();
+//        ContentPackSyncNetworking.registerClientReceivers();
 
         EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
