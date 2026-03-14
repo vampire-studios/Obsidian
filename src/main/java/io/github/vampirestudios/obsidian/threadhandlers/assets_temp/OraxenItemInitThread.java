@@ -11,7 +11,6 @@ import net.devtech.arrp.json.equipmentinfo.JLayer;
 import net.devtech.arrp.json.equipmentinfo.LayerType;
 import net.devtech.arrp.json.iteminfo.JItemInfo;
 import net.devtech.arrp.json.iteminfo.model.*;
-import net.devtech.arrp.json.iteminfo.model.special.JModelShield;
 import net.devtech.arrp.json.iteminfo.model.special.JModelSpecial;
 import net.devtech.arrp.json.iteminfo.model.special.JModelTrident;
 import net.devtech.arrp.json.iteminfo.property.*;
@@ -89,15 +88,13 @@ public class OraxenItemInitThread implements Runnable {
 		JItemModel model = JItemModel.model(baseModelPath);
 		if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
 			if (item.pack.model != null && item.pack.blocking_model != null) {
-				JItemModel shieldNestedModel = JModelShield.shield();
+				// JModelSpecial.shield() returns a JModelShield with specialType="minecraft:shield"
+				// set properly in the codec. Using new JModelSpecial() leaves specialType null → NPE.
+				JModelSpecial onFalseModel = JModelSpecial.shield()
+						.base(item.pack.model.toString());
 
-				JModelSpecial onFalseModel = new JModelSpecial()
-						.base(item.pack.model.toString())
-						.model(shieldNestedModel);
-
-				JModelSpecial onTrueModel = new JModelSpecial()
-						.base(item.pack.blocking_model.toString())
-						.model(shieldNestedModel);
+				JModelSpecial onTrueModel = JModelSpecial.shield()
+						.base(item.pack.blocking_model.toString());
 
 				model = JItemModel.condition()
 						.property(new JPropertyUsingItem())
