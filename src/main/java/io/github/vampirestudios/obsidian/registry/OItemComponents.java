@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.registry;
 
 import io.github.vampirestudios.obsidian.Obsidian;
+import io.github.vampirestudios.obsidian.api.crucible.AugmentSocketData;
 import io.github.vampirestudios.obsidian.minecraft.*;
 import io.github.vampirestudios.obsidian.registry.components.EnergyStorage;
 import io.github.vampirestudios.obsidian.registry.components.FluidContents;
@@ -76,6 +77,11 @@ public class OItemComponents {
 	public static final DataComponentType<Attraction> MAGNET =
 			register("magnet", builder -> builder.persistent(Attraction.CODEC));
 
+	public static final DataComponentType<AugmentSocketData> AUGMENT_SOCKETS = register(
+			"augment_sockets", builder -> builder
+					.persistent(AugmentSocketData.CODEC)
+					.networkSynchronized(AugmentSocketData.STREAM_CODEC)
+	);
 
 	public static void init() {}
 

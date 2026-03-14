@@ -13,10 +13,11 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class CrucibleFabricHooks {
     private static boolean installed = false;
@@ -27,12 +28,15 @@ public final class CrucibleFabricHooks {
     // default: fire TIMER every 20 ticks (1s). You can later make this configurable.
     private static final int TIMER_PERIOD_TICKS = 20;
 
+    // Cached equipment snapshot per player UUID for change detection
+    private static final Map<UUID, EnumMap<EquipmentSlot, ItemStack>> LAST_EQUIPMENT = new HashMap<>();
+
 
     public static void install() {
         if (installed) return;
         installed = true;
 
-        // TICK (server): fire once per player per tick
+        // TICK (server): fire once per player per tick + detect equipment changes
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayer sp : server.getPlayerList().getPlayers()) {
                 CrucibleEvents.fire(SkillTrigger.TICK,
@@ -40,6 +44,7 @@ public final class CrucibleFabricHooks {
                                 .level(sp.level())
                                 .build()
                 );
+                checkEquipmentChange(sp);
             }
         });
 
@@ -220,5 +225,40 @@ public final class CrucibleFabricHooks {
                             .build()
             );
         });
+
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            UUID id = handler.getPlayer().getUUID();
+            LAST_EQUIPMENT.remove(id);
+            ItemSetManager.getInstance().clearPlayer(id);
+            AugmentManager.getInstance().clearPlayer(id);
+        });
+    }
+
+    private static void checkEquipmentChange(ServerPlayer player) {
+        EnumMap<EquipmentSlot, ItemStack> prev = LAST_EQUIPMENT.get(player.getUUID());
+        boolean changed = false;
+
+        if (prev == null) {
+            changed = true;
+        } else {
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                ItemStack current = player.getItemBySlot(slot);
+                ItemStack last = prev.get(slot);
+                if (!ItemStack.isSameItemSameComponents(current, last)) {
+                    changed = true;
+                    break;
+                }
+            }
+        }
+
+        if (changed) {
+            EnumMap<EquipmentSlot, ItemStack> snapshot = new EnumMap<>(EquipmentSlot.class);
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                snapshot.put(slot, player.getItemBySlot(slot).copy());
+            }
+            LAST_EQUIPMENT.put(player.getUUID(), snapshot);
+            ItemSetManager.getInstance().onEquipmentChange(player);
+            AugmentManager.getInstance().onEquipmentChange(player);
+        }
     }
 }

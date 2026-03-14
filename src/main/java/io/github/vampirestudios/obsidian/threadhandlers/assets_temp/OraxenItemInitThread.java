@@ -10,10 +10,12 @@ import net.devtech.arrp.json.equipmentinfo.JEquipmentModel;
 import net.devtech.arrp.json.equipmentinfo.JLayer;
 import net.devtech.arrp.json.equipmentinfo.LayerType;
 import net.devtech.arrp.json.iteminfo.JItemInfo;
-import net.devtech.arrp.json.iteminfo.model.*;
-import net.devtech.arrp.json.iteminfo.model.special.JModelSpecial;
-import net.devtech.arrp.json.iteminfo.model.special.JModelTrident;
-import net.devtech.arrp.json.iteminfo.property.*;
+import net.devtech.arrp.json.iteminfo.model.JItemModel;
+import net.devtech.arrp.json.iteminfo.model.JModelCondition;
+import net.devtech.arrp.json.iteminfo.model.JModelRangeDispatch;
+import net.devtech.arrp.json.iteminfo.model.JRangeEntry;
+import net.devtech.arrp.json.iteminfo.property.JPropertyDamage;
+import net.devtech.arrp.json.iteminfo.property.JPropertyUsingItem;
 import net.devtech.arrp.json.iteminfo.tint.JTintDye;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
@@ -22,7 +24,7 @@ import net.minecraft.server.packs.PackType;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static net.devtech.arrp.json.blockstate.JState.*;
+import static net.devtech.arrp.json.blockstate.JState.state;
 
 public class OraxenItemInitThread implements Runnable {
 	private static final Set<String> GENERATED = ConcurrentHashMap.newKeySet();
@@ -88,20 +90,14 @@ public class OraxenItemInitThread implements Runnable {
 		JItemModel model = JItemModel.model(baseModelPath);
 		if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
 			if (item.pack.model != null && item.pack.blocking_model != null) {
-				// JModelSpecial.shield() returns a JModelShield with specialType="minecraft:shield"
-				// set properly in the codec. Using new JModelSpecial() leaves specialType null → NPE.
-				JModelSpecial onFalseModel = JModelSpecial.shield()
-						.base(item.pack.model.toString());
+				JModelCondition blockingSelect = new JModelCondition().property(new JPropertyUsingItem());
+				JItemModel onFalseModel = JItemModel.model(item.pack.model.toString());
 
-				JModelSpecial onTrueModel = JModelSpecial.shield()
-						.base(item.pack.blocking_model.toString());
+				JItemModel onTrueModel = JItemModel.model(item.pack.blocking_model.toString());
 
-				model = JItemModel.condition()
-						.property(new JPropertyUsingItem())
-						.onFalse(onFalseModel)
-						.onTrue(onTrueModel);
+				model = blockingSelect.onFalse(onFalseModel).onTrue(onTrueModel);
 			}
-		} else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
+		}/* else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
 			if (item.pack.pulling_models != null && !item.pack.pulling_models.isEmpty()) {
 				JModelRangeDispatch dispatch = JModelRangeDispatch.rangeDispatch()
 						.property(JPropertyUseDuration.useDuration());
@@ -160,7 +156,7 @@ public class OraxenItemInitThread implements Runnable {
 						.onFalse(JModelTrident.trident().base(item.pack.model.toString()))
 						.onTrue(JModelTrident.trident().base(item.mechanics.trident.thrown_item_model.toString()));
 			}
-		}
+		}*/
 
 		// Damaged model stages (durability-based model swapping)
 		if (item.pack.damaged_models != null && !item.pack.damaged_models.isEmpty()) {

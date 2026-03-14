@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.registry;
 
-import io.github.vampirestudios.obsidian.api.crucible.CrucibleItem;
-import io.github.vampirestudios.obsidian.api.crucible.CrucibleSkill;
+import io.github.vampirestudios.obsidian.api.crucible.*;
 import io.github.vampirestudios.obsidian.api.crucible.skills.effects.Effect;
 import io.github.vampirestudios.obsidian.api.obsidian.*;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
@@ -42,6 +41,9 @@ public class ContentRegistries {
 	public static Registry<CrucibleItem> CRUCIBLE_ITEMS = FabricRegistryBuilder.createSimple(CrucibleItem.class, id("crucible_items")).buildAndRegister();
 	public static Registry<CrucibleSkill> CRUCIBLE_SKILLS = FabricRegistryBuilder.createSimple(SKILLS_KEY).buildAndRegister();
 	public static Registry<Effect> CRUCIBLE_EFFECTS = FabricRegistryBuilder.createSimple(Effect.class, id("crucible_effects")).buildAndRegister();
+	public static Registry<CrucibleItemSet> ITEM_SETS = FabricRegistryBuilder.createSimple(CrucibleItemSet.class, id("item_sets")).buildAndRegister();
+	public static Registry<CrucibleAugmentType> AUGMENT_TYPES = FabricRegistryBuilder.createSimple(CrucibleAugmentType.class, id("augment_types")).buildAndRegister();
+	public static Registry<CrucibleAugment> AUGMENTS = FabricRegistryBuilder.createSimple(CrucibleAugment.class, id("augments")).buildAndRegister();
 	public static Registry<FoodItem> FOODS = FabricRegistryBuilder.createSimple(FoodItem.class, id("foods")).buildAndRegister();
 	public static Registry<FoodComponent> FOOD_COMPONENTS = FabricRegistryBuilder.createSimple(FoodComponent.class, id("custom_food_components")).buildAndRegister();
 	public static Registry<CustomSoundGroup> BLOCK_SOUND_GROUPS = FabricRegistryBuilder.createSimple(CustomSoundGroup.class, id("block_sound_groups")).buildAndRegister();

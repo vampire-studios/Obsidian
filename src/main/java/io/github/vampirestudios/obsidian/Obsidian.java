@@ -4,7 +4,7 @@ import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonNull;
 import blue.endless.jankson.JsonPrimitive;
 import io.github.vampirestudios.obsidian.addon_modules.*;
-import io.github.vampirestudios.obsidian.addon_modules.crucible.CrucibleItems;
+import io.github.vampirestudios.obsidian.addon_modules.crucible.*;
 import io.github.vampirestudios.obsidian.addon_modules.crucible.CrucibleSkills;
 import io.github.vampirestudios.obsidian.addon_modules.crucible.EffectsModule;
 import io.github.vampirestudios.obsidian.addon_modules.nexo.NexoItems;
@@ -154,7 +154,9 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "oraxen_item", new NexoItems());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "crucible_skill", new CrucibleSkills());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "crucible_effect", new EffectsModule());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "augment_types", new AugmentTypes());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "crucible_item", new CrucibleItems());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_sets", new ItemSets());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "tool", new Tools());
 //		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "zoomable_items", new ZoomableItems());
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
