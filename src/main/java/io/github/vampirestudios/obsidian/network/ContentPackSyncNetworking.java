@@ -27,9 +27,7 @@ public final class ContentPackSyncNetworking {
                         if (ContentPackSyncManager.isEmpty()) {
                                 return;
                         }
-                        if (!server.isDedicatedServer()) {
-                                sendManifest(handler.player);
-                        }
+                        sendManifest(handler.player);
                 });
         }
 
@@ -60,8 +58,12 @@ public final class ContentPackSyncNetworking {
                 }
 
                 var entries = packs.stream()
-                        .map(pack -> new ContentPackManifestPayload.PackEntry(pack.id(), pack.version(), pack.format(),
-                                pack.folderName(), ContentPackSyncManager.createBundle(pack)))
+                        .map(pack -> {
+                                byte[] bundle = ContentPackSyncManager.createBundle(pack);
+                                String sha256 = ContentPackSyncManager.sha256Hex(bundle);
+                                return new ContentPackManifestPayload.PackEntry(pack.id(), pack.version(), pack.format(),
+                                        pack.folderName(), sha256, bundle);
+                        })
                         .toList();
 
                 if (entries.isEmpty()) {

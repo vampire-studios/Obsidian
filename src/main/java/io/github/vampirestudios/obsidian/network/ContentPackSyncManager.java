@@ -6,8 +6,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -41,6 +44,15 @@ public final class ContentPackSyncManager {
                 } catch (IOException e) {
                         Obsidian.LOGGER.error("Failed to bundle content pack '{}' for sync", pack.id(), e);
                         return new byte[0];
+                }
+        }
+
+        public static String sha256Hex(byte[] data) {
+                try {
+                        byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
+                        return HexFormat.of().formatHex(hash);
+                } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(e);
                 }
         }
 

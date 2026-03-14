@@ -66,6 +66,20 @@ public class SkillManager {
         }
     }
 
+    public void executeSkills(List<Skill> skills, SkillTrigger trigger, SkillContext ctx) {
+        for (Skill skill : skills) {
+            if (skill.trigger != trigger) continue;
+            if (skill.repeat <= 1) {
+                executeSkill(skill, ctx);
+            } else {
+                for (int i = 0; i < skill.repeat; i++) {
+                    int delay = i * skill.repeatInterval;
+                    SkillScheduler.scheduleSkillExecution(delay, () -> executeSkill(skill, ctx));
+                }
+            }
+        }
+    }
+
     private void executeSkill(Skill skill, SkillContext ctx) {
         // conditions
         if (ctx.hasTarget()) {

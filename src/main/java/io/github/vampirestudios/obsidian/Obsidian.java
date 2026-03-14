@@ -182,15 +182,15 @@ public class Obsidian implements ModInitializer {
 
 		ObsidianAddonLoader.loadDefaultObsidianAddons();
 		ObsidianAddonLoader.loadObsidianAddons();
+		ObsidianAddonLoader.loadServerObsidianAddons();
 
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "bedrock_blocks", new io.github.vampirestudios.obsidian.addon_modules.bedrock.Blocks());
 
 		BedrockAddonLoader.loadDefaultBedrockAddons();
 		BedrockAddonLoader.loadBedrockAddons();
 
-
 		for (Block block : ContentRegistries.BLOCKS) {
-			if (block.additional_information.isConvertible) {
+			if (block.additional_information != null && block.additional_information.isConvertible) {
 				AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
 				net.minecraft.world.level.block.Block parentBlock = BuiltInRegistries.BLOCK.getValue(convertible.parent_block);
 				net.minecraft.world.level.block.Block transformedBlock = BuiltInRegistries.BLOCK.getValue(convertible.transformed_block);

@@ -1,5 +1,8 @@
 package io.github.vampirestudios.obsidian.api.crucible;
 
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
@@ -30,6 +33,10 @@ public final class CrucibleEvents {
         ItemStack stack = base.caster.getItemInHand(hand);
         if (stack == null || stack.isEmpty()) return;
 
+        Identifier itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        CrucibleItem crucibleItem = itemId != null ? ContentRegistries.CRUCIBLE_ITEMS.getValue(itemId) : null;
+        if (crucibleItem == null || crucibleItem.internalSkills == null || crucibleItem.internalSkills.isEmpty()) return;
+
         SkillContext ctx = SkillContext.builder(base.caster)
                 .target(base.target)
                 .position(base.position)
@@ -39,6 +46,6 @@ public final class CrucibleEvents {
                 .projectile(base.projectile)
                 .build();
 
-        manager.triggerSkills(trigger, ctx, SkillScope.HELD_ITEM);
+        manager.executeSkills(crucibleItem.internalSkills, trigger, ctx);
     }
 }

@@ -5,7 +5,10 @@ import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.github.vampirestudios.obsidian.api.crucible.*;
+import io.github.vampirestudios.obsidian.api.crucible.CrucibleItem;
+import io.github.vampirestudios.obsidian.api.crucible.Skill;
+import io.github.vampirestudios.obsidian.api.crucible.SkillEntry;
+import io.github.vampirestudios.obsidian.api.crucible.SkillParser;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
@@ -49,7 +52,6 @@ public class CrucibleItems implements AddonModule {
 					continue;
 				}
 
-				SkillManager skillManager = SkillManager.getInstance();
 				SkillParser.setModId(id.modId());
 
 				if (crucibleItem.Skills != null) {
@@ -62,11 +64,7 @@ public class CrucibleItems implements AddonModule {
 						Skill skill = SkillParser.createSkillFromEntry(skillEntry);
 						if (skill == null) continue;
 
-						// Mark these as HELD_ITEM skills
-						skill.scope(SkillScope.HELD_ITEM);
-
 						crucibleItem.internalSkills.add(skill);
-						skillManager.registerSkill(skill);
 					}
 				}
 

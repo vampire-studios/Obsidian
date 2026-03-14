@@ -8,6 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded
 import io.github.vampirestudios.obsidian.api.obsidian.item.RangedWeaponItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BowItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.CrossbowItemImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.TridentItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
@@ -52,11 +53,9 @@ public class RangedWeapons implements AddonModule {
                 case "crossbow" ->  {
                     expanded.registerItem(identifier.getPath(), new CrossbowItemImpl(rangedWeapon, settings), creativeTab);
                 }
-                /*case "trident" -> {
-                    Item item = RegistryUtils.registerItem(new TridentItemImpl(rangedWeapon, settings), identifier);
-                    FabricModelPredicateProviderRegistry.register(item, new Identifier("throwing"), (stack, world, entity, seed) ->
-                            entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
-                }*/
+                case "trident" -> {
+                    expanded.registerItem(identifier.getPath(), new TridentItemImpl(rangedWeapon, settings), creativeTab);
+                }
             }
             register(ContentRegistries.RANGED_WEAPONS, "ranged_weapon", identifier, rangedWeapon);
         } catch (Exception e) {

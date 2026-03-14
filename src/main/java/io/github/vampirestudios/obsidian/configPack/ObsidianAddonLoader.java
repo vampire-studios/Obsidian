@@ -53,6 +53,7 @@ import java.util.zip.ZipFile;
 
 public class ObsidianAddonLoader {
 	public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve("obsidian_addons").toFile();
+	public static final File SERVER_OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve("server_obsidian_addons").toFile();
 	public static final Registry<IAddonPack> OBSIDIAN_ADDONS = FabricRegistryBuilder.createSimple(IAddonPack.class, Const.id("obsidian_addons")).buildAndRegister();
 	public static final int SCHEMA_VERSION = 5;
 	private static final Map<String, ScriptManager> managers = new HashMap<>();
@@ -62,6 +63,16 @@ public class ObsidianAddonLoader {
 	public static void loadDefaultObsidianAddons() {
 		if (!OBSIDIAN_ADDON_DIRECTORY.exists())
 			createObsidianAddonsFolder();
+		if (!SERVER_OBSIDIAN_ADDON_DIRECTORY.exists())
+			SERVER_OBSIDIAN_ADDON_DIRECTORY.mkdirs();
+	}
+
+	public static void loadServerObsidianAddons() {
+		File[] entries = SERVER_OBSIDIAN_ADDON_DIRECTORY.listFiles();
+		if (entries == null || entries.length == 0) return;
+		for (File hashDir : entries) {
+			register(hashDir, "addon.info.pack", "addon.info.json5");
+		}
 	}
 
 	public static void register(File file, String legacyFile, String newFile) {

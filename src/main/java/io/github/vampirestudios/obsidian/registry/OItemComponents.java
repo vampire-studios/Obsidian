@@ -51,6 +51,10 @@ public class OItemComponents {
 	public static final DataComponentType<ScopeComponent> SCOPE = register(
 			"scope", builder -> builder.persistent(ScopeComponent.CODEC).networkSynchronized(ScopeComponent.STREAM_CODEC)
 	);
+	public static final DataComponentType<TridentComponent> TRIDENT = register("trident", builder -> builder
+			.persistent(TridentComponent.CODEC)
+			.networkSynchronized(TridentComponent.STREAM_CODEC)
+	);
 	public static final DataComponentType<ThrowableComponent> THROWABLE = register(
 			"throwable", builder -> builder.persistent(ThrowableComponent.CODEC).networkSynchronized(ThrowableComponent.STREAM_CODEC)
 	);

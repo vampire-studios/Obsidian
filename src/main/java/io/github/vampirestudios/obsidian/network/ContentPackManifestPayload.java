@@ -31,6 +31,7 @@ public record ContentPackManifestPayload(int schema, List<PackEntry> packs) impl
                         buf.writeUtf(pack.version());
                         buf.writeUtf(pack.format());
                         buf.writeUtf(pack.folderName());
+                        buf.writeUtf(pack.sha256());
                         buf.writeByteArray(pack.bundle());
                 });
         }
@@ -44,12 +45,13 @@ public record ContentPackManifestPayload(int schema, List<PackEntry> packs) impl
                         String version = buf.readUtf();
                         String format = buf.readUtf();
                         String folderName = buf.readUtf();
+                        String sha256 = buf.readUtf();
                         byte[] bundle = buf.readByteArray();
-                        packs.add(new PackEntry(id, version, format, folderName, bundle));
+                        packs.add(new PackEntry(id, version, format, folderName, sha256, bundle));
                 }
                 return new ContentPackManifestPayload(schema, packs);
         }
 
-        public record PackEntry(String id, String version, String format, String folderName, byte[] bundle) {
+        public record PackEntry(String id, String version, String format, String folderName, String sha256, byte[] bundle) {
         }
 }

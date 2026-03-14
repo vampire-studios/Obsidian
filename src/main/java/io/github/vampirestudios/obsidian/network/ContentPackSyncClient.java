@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -35,34 +34,34 @@ public final class ContentPackSyncClient {
                                 payload.schema(), ObsidianAddonLoader.SCHEMA_VERSION);
                 }
 
-                Path addonsDir = FabricLoader.getInstance().getGameDir().resolve("obsidian_addons");
-                payload.packs().forEach(pack -> {
+                Path serverAddonsDir = FabricLoader.getInstance().getGameDir().resolve("server_obsidian_addons");
+                boolean anyNewPack = false;
+                for (var pack : payload.packs()) {
                         if (pack.bundle().length == 0) {
-                                return;
+                                continue;
                         }
-                        Path target = addonsDir.resolve(pack.folderName());
+                        // Use the SHA-256 hash as the folder name so the content is not
+                        // immediately browsable and we can skip re-extracting unchanged packs.
+                        Path target = serverAddonsDir.resolve(pack.sha256());
+                        if (Files.isDirectory(target)) {
+                                Obsidian.LOGGER.debug("Server pack '{}' already cached ({}), skipping", pack.id(), pack.sha256().substring(0, 8));
+                                continue;
+                        }
                         try {
-                                if (Files.exists(target)) {
-                                        try (var walk = Files.walk(target)) {
-                                                walk.sorted(Comparator.reverseOrder()).forEach(path -> {
-                                                        try {
-                                                                Files.deleteIfExists(path);
-                                                        } catch (IOException e) {
-                                                                Obsidian.LOGGER.error("Failed deleting '{}' during pack sync", path, e);
-                                                        }
-                                                });
-                                        }
-                                }
                                 unzip(pack.bundle(), target);
+                                anyNewPack = true;
+                                Obsidian.LOGGER.info("Cached server pack '{}' as {}", pack.id(), pack.sha256().substring(0, 8));
                         } catch (IOException e) {
                                 Obsidian.LOGGER.error("Failed writing synced content pack '{}'", pack.id(), e);
                         }
-                });
+                }
 
-                try {
-                        client.reloadResourcePacks().join();
-                } catch (Exception e) {
-                        Obsidian.LOGGER.error("Failed to reload resources after syncing content packs", e);
+                if (anyNewPack) {
+                        try {
+                                client.reloadResourcePacks().join();
+                        } catch (Exception e) {
+                                Obsidian.LOGGER.error("Failed to reload resources after syncing content packs", e);
+                        }
                 }
         }
 
