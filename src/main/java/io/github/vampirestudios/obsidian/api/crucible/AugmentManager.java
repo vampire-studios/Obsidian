@@ -51,7 +51,7 @@ public class AugmentManager {
             augment.Attributes.forEach((attrName, value) -> {
                 Identifier attrId = Identifier.tryParse(attrName);
                 if (attrId == null) return;
-                var attrOpt = BuiltInRegistries.ATTRIBUTE.getHolder(
+                var attrOpt = BuiltInRegistries.ATTRIBUTE.get(
                         net.minecraft.resources.ResourceKey.create(
                                 net.minecraft.core.registries.Registries.ATTRIBUTE, attrId));
                 attrOpt.ifPresent(attrHolder -> {
@@ -71,12 +71,12 @@ public class AugmentManager {
         List<ActiveModifier> mods = activeModifiers.remove(player.getUUID());
         if (mods == null) return;
         for (ActiveModifier mod : mods) {
-            var attrOpt = BuiltInRegistries.ATTRIBUTE.getHolder(
+            var attrOpt = BuiltInRegistries.ATTRIBUTE.get(
                     net.minecraft.resources.ResourceKey.create(
                             net.minecraft.core.registries.Registries.ATTRIBUTE, mod.attributeId()));
             attrOpt.ifPresent(attrHolder -> {
                 AttributeInstance inst = player.getAttribute(attrHolder);
-                if (inst != null) inst.removePermanentModifier(mod.modifierId());
+                if (inst != null) inst.removeModifier(mod.modifierId());
             });
         }
     }

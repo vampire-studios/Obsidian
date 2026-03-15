@@ -9,8 +9,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ItemSetManager {
     private static final ItemSetManager INSTANCE = new ItemSetManager();
@@ -79,7 +80,7 @@ public class ItemSetManager {
             bonus.Attributes.forEach((attrName, value) -> applyModifier(player, setKey, tier, attrName, value));
         }
         if (bonus.internalSkills != null) {
-            SkillContext ctx = SkillContext.builder(player).level(player.serverLevel()).build();
+            SkillContext ctx = SkillContext.builder(player).level(player.level()).build();
             SkillManager.getInstance().executeSkills(bonus.internalSkills, SkillTrigger.ARMOR_EQUIP, ctx);
         }
     }
@@ -90,7 +91,7 @@ public class ItemSetManager {
     }
 
     private void applyModifier(ServerPlayer player, String setKey, int tier, String attrName, double value) {
-        var attrOpt = BuiltInRegistries.ATTRIBUTE.getHolder(
+        var attrOpt = BuiltInRegistries.ATTRIBUTE.get(
                 net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ATTRIBUTE,
                         Identifier.tryParse(attrName)));
         attrOpt.ifPresent(attrHolder -> {
@@ -103,12 +104,12 @@ public class ItemSetManager {
     }
 
     private void removeModifier(ServerPlayer player, String setKey, int tier, String attrName) {
-        var attrOpt = BuiltInRegistries.ATTRIBUTE.getHolder(
+        var attrOpt = BuiltInRegistries.ATTRIBUTE.get(
                 net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ATTRIBUTE,
                         Identifier.tryParse(attrName)));
         attrOpt.ifPresent(attrHolder -> {
             AttributeInstance inst = player.getAttribute(attrHolder);
-            if (inst != null) inst.removePermanentModifier(modifierId(setKey, tier, attrName));
+            if (inst != null) inst.removeModifier(modifierId(setKey, tier, attrName));
         });
     }
 

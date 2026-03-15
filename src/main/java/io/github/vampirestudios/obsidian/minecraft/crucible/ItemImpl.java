@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -68,13 +68,13 @@ public class ItemImpl extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (hand != InteractionHand.MAIN_HAND) return super.use(level, player, hand);
 
         ItemStack mainStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         AugmentSocketData sockets = mainStack.get(OItemComponents.AUGMENT_SOCKETS);
         if (sockets == null) return super.use(level, player, hand);
-        if (level.isClientSide()) return InteractionResultHolder.success(mainStack);
+        if (level.isClientSide()) return InteractionResult.CONSUME;
 
         ItemStack offStack = player.getItemInHand(InteractionHand.OFF_HAND);
         if (offStack.isEmpty()) return super.use(level, player, hand);
@@ -94,11 +94,11 @@ public class ItemImpl extends Item {
         return super.use(level, player, hand);
     }
 
-    private InteractionResultHolder<ItemStack> handleSocket(Player player, ItemStack mainStack,
+    private InteractionResult handleSocket(Player player, ItemStack mainStack,
             AugmentSocketData sockets, ItemStack offStack, CrucibleItem offCrucible,
             CrucibleItem.AugmentationDef augDef) {
-        if (offCrucible.id == null) return InteractionResultHolder.fail(mainStack);
-        if (sockets.countFreeSlots(augDef.Type) == 0) return InteractionResultHolder.fail(mainStack);
+        if (offCrucible.id == null) return InteractionResult.FAIL;
+        if (sockets.countFreeSlots(augDef.Type) == 0) return InteractionResult.FAIL;
 
         AugmentSocketData updated = sockets.withAugmentAdded(augDef.Type, offCrucible.id.toString());
         mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
@@ -108,14 +108,14 @@ public class ItemImpl extends Item {
         if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
             AugmentManager.getInstance().onEquipmentChange(sp);
         }
-        return InteractionResultHolder.success(mainStack);
+        return InteractionResult.SUCCESS;
     }
 
-    private InteractionResultHolder<ItemStack> handleRemove(Player player, ItemStack mainStack,
+    private InteractionResult handleRemove(Player player, ItemStack mainStack,
             AugmentSocketData sockets, ItemStack offStack,
             CrucibleItem.AugmentationRemoverDef removerDef) {
         Optional<String> removedAugId = sockets.getLastAugmentId(removerDef.Type);
-        if (removedAugId.isEmpty()) return InteractionResultHolder.fail(mainStack);
+        if (removedAugId.isEmpty()) return InteractionResult.FAIL;
 
         AugmentSocketData updated = removerDef.DestroySocket
                 ? sockets.withSocketDestroyed(removerDef.Type)
@@ -127,7 +127,7 @@ public class ItemImpl extends Item {
         if (removerDef.ReturnAugment) {
             Identifier augId = Identifier.tryParse(removedAugId.get());
             if (augId != null) {
-                var itemHolder = BuiltInRegistries.ITEM.getHolder(
+                var itemHolder = BuiltInRegistries.ITEM.get(
                         net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, augId));
                 itemHolder.ifPresent(h -> {
                     ItemStack returnStack = new ItemStack(h.value());
@@ -141,10 +141,10 @@ public class ItemImpl extends Item {
         if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
             AugmentManager.getInstance().onEquipmentChange(sp);
         }
-        return InteractionResultHolder.success(mainStack);
+        return InteractionResult.SUCCESS;
     }
 
-    private InteractionResultHolder<ItemStack> handleUnlock(Player player, ItemStack mainStack,
+    private InteractionResult handleUnlock(Player player, ItemStack mainStack,
             AugmentSocketData sockets, ItemStack offStack,
             CrucibleItem.AugmentationSocketDef socketDef) {
         int existing = sockets.countTotalSlots(socketDef.Type);
@@ -153,22 +153,22 @@ public class ItemImpl extends Item {
         if (item.AugmentSlots != null) {
             for (CrucibleItem.AugmentSlotDef def : item.AugmentSlots) {
                 if (def.Type != null && def.Type.equalsIgnoreCase(socketDef.Type)) {
-                    if (existing >= def.MaxAmount) return InteractionResultHolder.fail(mainStack);
+                    if (existing >= def.MaxAmount) return InteractionResult.FAIL;
                     break;
                 }
             }
         }
         // Check the component's stored max (set at item creation)
-        if (existing >= sockets.getMaxSlots(socketDef.Type)) return InteractionResultHolder.fail(mainStack);
+        if (existing >= sockets.getMaxSlots(socketDef.Type)) return InteractionResult.FAIL;
         // Check the unlocker's own cap
-        if (existing >= socketDef.MaxSockets) return InteractionResultHolder.fail(mainStack);
+        if (existing >= socketDef.MaxSockets) return InteractionResult.FAIL;
 
         AugmentSocketData updated = sockets.withSlotAdded(socketDef.Type);
         mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
 
         if (!player.isCreative()) offStack.shrink(1);
 
-        return InteractionResultHolder.success(mainStack);
+        return InteractionResult.SUCCESS;
     }
 
     /** Looks up an augment type by raw type string (namespaced or path-only). */
@@ -180,7 +180,7 @@ public class ItemImpl extends Item {
         }
         String lower = rawType.toLowerCase(Locale.ROOT);
         for (var entry : ContentRegistries.AUGMENT_TYPES.entrySet()) {
-            if (entry.getKey().location().getPath().equals(lower)) {
+            if (entry.getKey().identifier().getPath().equals(lower)) {
                 return entry.getValue();
             }
         }
