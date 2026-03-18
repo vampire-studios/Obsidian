@@ -93,43 +93,43 @@ public class ClientInit implements ClientModInitializer {
             RuntimeResourcePack resourcePack = iAddonPack.getResourcePack();
             if (!iAddonPack.getConfigPackInfo().hasAssets) {
                 for (Block block : ContentRegistries.BLOCKS)
-                    if (block.information.name.id.getNamespace().equals(id))
+                    if (block.information.id.getNamespace().equals(id))
                         new BlockInitThread(resourcePack, block).run();
                 for (Block block : ContentRegistries.ORES)
-                    if (block.information.name.id.getNamespace().equals(id))
+                    if (block.information.id.getNamespace().equals(id))
                         new BlockInitThread(resourcePack, block).run();
                 for (Item item : ContentRegistries.ITEMS)
-                    if (item.information.name.id.getNamespace().equals(id))
+                    if (item.information.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (NexoItem item : ContentRegistries.NEXO_ITEMS)
                     if (item.id.getNamespace().equals(id))
                         new OraxenItemInitThread(resourcePack, item).run();
                 for (ToolItem item : ContentRegistries.TOOLS)
-                    if (item.information.name.id.getNamespace().equals(id))
+                    if (item.information.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (WeaponItem item : ContentRegistries.WEAPONS)
-                    if (item.information.name.id.getNamespace().equals(id))
+                    if (item.information.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (RangedWeaponItem item : ContentRegistries.RANGED_WEAPONS)
-                    if (item.information.name.id.getNamespace().equals(id))
+                    if (item.information.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (ShieldItem item : ContentRegistries.SHIELDS)
-                    if (item.information.name.id.getNamespace().equals(id))
+                    if (item.information.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (FoodItem foodItem : ContentRegistries.FOODS)
-                    if (foodItem.information.name.id.getNamespace().equals(id))
+                    if (foodItem.information.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, foodItem).run();
                 for (ArmorItem armor : ContentRegistries.ARMORS)
-                    if (armor.information.name.id.getNamespace().equals(id))
+                    if (armor.information.id.getNamespace().equals(id))
                         new ArmorInitThread(resourcePack, armor).run();
                 for (ItemGroup itemGroup : ContentRegistries.ITEM_GROUPS)
-                    if (itemGroup.name.id.getNamespace().equals(id))
+                    if (itemGroup.id.getNamespace().equals(id))
                         new ItemGroupInitThread(itemGroup).run();
                 for (SubItemGroup itemGroup : Registries.SUB_ITEM_GROUPS)
-                    if (itemGroup.name.id.getNamespace().equals(id))
+                    if (itemGroup.id.getNamespace().equals(id))
                         new SubItemGroupInitThread(itemGroup).run();
                 for (Elytra elytra : ContentRegistries.ELYTRAS)
-                    if (elytra.information.name.id.getNamespace().equals(id))
+                    if (elytra.information.id.getNamespace().equals(id))
                         new ElytraInitThread(elytra).run();
                 translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
                     JLang lang = JLang.lang();

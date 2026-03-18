@@ -33,13 +33,13 @@ public class ItemInitThread implements Runnable {
     public void run() {
         if (item.information.name.translations != null) {
             item.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                    item.information.name.id.getNamespace(), languageId,
-                    "item." + item.information.name.id.getNamespace() + "." + item.information.name.id.getPath(), name
+                    item.information.id.getNamespace(), languageId,
+                    "item." + item.information.id.getNamespace() + "." + item.information.id.getPath(), name
             ));
         }
         JItemInfo itemInfo = new JItemInfo();
 
-        var itemId = item.information.name.id;
+        var itemId = item.information.id;
 
         Identifier defModelId = item.rendering != null
                 ? item.rendering.resolveItemDefinitionModelId(itemId)
@@ -201,7 +201,7 @@ public class ItemInitThread implements Runnable {
             for (SpecialText lore : item.getLore()) {
                 if (lore.textType != null && lore.textType.equals("translatable")) {
                     lore.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                            item.information.name.id.getNamespace(), languageId, lore.text, name
+                            item.information.id.getNamespace(), languageId, lore.text, name
                     ));
                 }
             }

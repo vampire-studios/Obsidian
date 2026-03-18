@@ -15,7 +15,6 @@ import net.minecraft.resources.Identifier;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -26,11 +25,7 @@ public class StatusEffects implements AddonModule {
         StatusEffect statusEffect = BaseGson.GSON.fromJson(new FileReader(file), StatusEffect.class);
         try {
             if (statusEffect == null) return;
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    statusEffect.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-            if (statusEffect.name.id == null) statusEffect.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             Registry.register(BuiltInRegistries.MOB_EFFECT, identifier, new StatusEffectImpl(statusEffect));
             register(ContentRegistries.STATUS_EFFECTS, "status_effect", identifier, statusEffect);
         } catch (Exception e) {

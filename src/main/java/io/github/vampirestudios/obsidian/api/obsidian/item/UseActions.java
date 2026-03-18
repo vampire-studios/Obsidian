@@ -67,7 +67,7 @@ public class UseActions {
 		if (menuCreator == null) {
 			throw new IllegalStateException(STR."Unexpected value: \{guiType}");
 		}
-		return new SimpleMenuProvider((syncId, _, playerx) -> menuCreator.apply(syncId, gui_size, playerx.getInventory(), containerLevelAccess), gui_title.getName("gui"));
+		return new SimpleMenuProvider((syncId, _, playerx) -> menuCreator.apply(syncId, gui_size, playerx.getInventory(), containerLevelAccess), gui_title.getName("gui", null));
 	}
 
 	public enum GuiType {

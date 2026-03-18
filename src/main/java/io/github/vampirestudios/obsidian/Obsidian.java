@@ -195,7 +195,8 @@ public class Obsidian implements ModInitializer {
 		for (Block block : ContentRegistries.BLOCKS) {
 			if (block.additional_information != null && block.additional_information.isConvertible) {
 				AdditionalBlockInformation.Convertible convertible = block.additional_information.convertible;
-				net.minecraft.world.level.block.Block parentBlock = BuiltInRegistries.BLOCK.getValue(convertible.parent_block);
+				var parent = convertible.parent_block != null ? convertible.parent_block : block.information.id;
+				net.minecraft.world.level.block.Block parentBlock = BuiltInRegistries.BLOCK.getValue(parent);
 				net.minecraft.world.level.block.Block transformedBlock = BuiltInRegistries.BLOCK.getValue(convertible.transformed_block);
 				AdditionalBlockInformation.Convertible.ConversionItem conversionItem = convertible.conversionItem;
 				Item conversionItemItem;

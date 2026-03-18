@@ -77,23 +77,31 @@ public class ARRPGenerationHelper {
     }
 
     public static void generateHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId) {
+        generateHorizontalFacingBlockState(clientResourcePackBuilder, name, modelId, 0);
+    }
+
+    public static void generateHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId, int yOffset) {
         JState model = JState.state(new JVariant()
-            .put("facing=south", JState.model(modelId))
-            .put("facing=west", JState.model(modelId).y(90))
-            .put("facing=north", JState.model(modelId).y(180))
-            .put("facing=east", JState.model(modelId).y(270))
+            .put("facing=north", JState.model(modelId).y(Math.floorMod(yOffset,       360)))
+            .put("facing=south", JState.model(modelId).y(Math.floorMod(180 + yOffset, 360)))
+            .put("facing=east",  JState.model(modelId).y(Math.floorMod(90  + yOffset, 360)))
+            .put("facing=west",  JState.model(modelId).y(Math.floorMod(270 + yOffset, 360)))
         );
         clientResourcePackBuilder.addBlockState(model, name);
     }
 
     public static void generateFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId) {
+        generateFacingBlockState(clientResourcePackBuilder, name, modelId, 0);
+    }
+
+    public static void generateFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId, int yOffset) {
         JState model = JState.state(new JVariant()
-                .put("facing=north", JState.model(modelId).x(90))
-                .put("facing=south", JState.model(modelId).y(180).x(90))
-                .put("facing=east", JState.model(modelId).y(90).x(90))
-                .put("facing=west", JState.model(modelId).y(270).x(90))
-                .put("facing=up", JState.model(modelId))
-                .put("facing=down", JState.model(modelId).x(180))
+                .put("facing=north", JState.model(modelId).y(Math.floorMod(yOffset,       360)))
+                .put("facing=south", JState.model(modelId).y(Math.floorMod(180 + yOffset, 360)))
+                .put("facing=east",  JState.model(modelId).y(Math.floorMod(90  + yOffset, 360)))
+                .put("facing=west",  JState.model(modelId).y(Math.floorMod(270 + yOffset, 360)))
+                .put("facing=up",    JState.model(modelId).y(Math.floorMod(yOffset,       360)))
+                .put("facing=down",  JState.model(modelId).x(180).y(Math.floorMod(yOffset, 360)))
         );
         clientResourcePackBuilder.addBlockState(model, name);
     }

@@ -8,6 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.FluidImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.FluidState;
 
 import java.io.File;
@@ -25,6 +26,9 @@ public class Fluids implements AddonModule {
         try {
             if (fluid == null) return;
 
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            fluid.id = identifier;
+
             if (fluid.parent.equals(Fluid.ParentFluid.WATER)) fluid = fluid.waterLike();
             else if (fluid.parent.equals(Fluid.ParentFluid.LAVA)) fluid = fluid.lavaLike();
 
@@ -39,9 +43,9 @@ public class Fluids implements AddonModule {
                     return 0;
                 }
             };
-            register(ContentRegistries.FLUIDS, "fluid", fluid.name.id, fluid);
+            register(ContentRegistries.FLUIDS, "fluid", fluid.id, fluid);
         } catch (Exception e) {
-            failedRegistering("fluid", fluid.name.id.toString(), e);
+            failedRegistering("fluid", fluid.id.toString(), e);
         }
     }
 

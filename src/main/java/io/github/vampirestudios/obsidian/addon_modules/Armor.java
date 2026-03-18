@@ -73,13 +73,8 @@ public class Armor implements AddonModule {
         try {
             if (armor == null) return;
 
-            Identifier identifier;
-            if (armor.information.name.id != null) {
-                identifier = armor.information.name.id;
-            } else {
-                identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-                armor.information.name.id = identifier;
-            }
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            armor.information.id = identifier;
 
             net.minecraft.world.item.equipment.ArmorMaterial vanillaArmorMaterial;
             if (armor.armorTemplate == ArmorItem.ArmorTemplate.CUSTOM) {

@@ -62,7 +62,7 @@ public class Blocks implements AddonModule {
         if (block == null) return;
 
         Identifier blockId = Identifier.fromNamespaceAndPath(modInfo.modId(), file.getName().replace(".json", ""));
-        block.information.name.id = blockId;
+        block.information.id = blockId;
 
         BlockBehaviour.Properties blockProps = createBlockProperties(block);
         Item.Properties itemProps = createItemProperties(block).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, blockId));
@@ -93,7 +93,7 @@ public class Blocks implements AddonModule {
                 ? BlockBehaviour.Properties.ofLegacyCopy(BuiltInRegistries.BLOCK.getValue(block.information.parentBlock))
                 : BlockBehaviour.Properties.of();
 
-        props.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, block.information.name.id));
+        props.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, block.information.id));
 
         if (block.information.getBlockSettings() != null) {
             var settings = block.information.getBlockSettings();
@@ -464,7 +464,7 @@ public class Blocks implements AddonModule {
         List<Identifier> ids = new ArrayList<>();
         block.oxidizable_properties.stages.forEach(stage ->
                 stage.blocks.forEach(varBlock -> {
-                    if (!ids.contains(varBlock.name.id)) ids.add(varBlock.name.id);
+                    if (!ids.contains(varBlock.id)) ids.add(varBlock.id);
                 }));
         return ids;
     }

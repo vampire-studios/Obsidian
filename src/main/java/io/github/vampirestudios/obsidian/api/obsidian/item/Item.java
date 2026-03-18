@@ -19,6 +19,7 @@ public class Item {
     public ItemDisplayInformation rendering;
     public UseActions useActions;
     public DataComponentPatch components;
+    public boolean damageable = true;
     public List<Object> lore = new ArrayList<>();
     public Map<Identifier, Identifier> drops = new HashMap<>();
     public Map<String, List<Map<String, Object>>> events = new HashMap<>();

@@ -1,7 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
 import com.google.gson.*;
-import net.minecraft.resources.Identifier;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -55,10 +54,6 @@ public class NameInformationDeserializer implements JsonDeserializer<NameInforma
 
         if (obj.has("type") && obj.get("type").isJsonPrimitive()) {
             info.textType = obj.get("type").getAsString();
-        }
-
-        if (obj.has("id") && obj.get("id").isJsonPrimitive()) {
-            info.id = Identifier.tryParse(obj.get("id").getAsString());
         }
 
         // translations: accept either a string shorthand (en_us) or a full map

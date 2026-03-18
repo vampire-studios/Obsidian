@@ -39,13 +39,8 @@ public class Cosmetics implements AddonModule {
 		try {
 			if (cosmetic == null) return;
 
-			Identifier identifier = Objects.requireNonNullElseGet(
-					cosmetic.information.name.id,
-					() -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-			);
-			if (cosmetic.information.name.id == null) {
-				cosmetic.information.name.id = identifier;
-			}
+			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			cosmetic.information.id = identifier;
 
 			Item.Properties settings = createItemProperties(cosmetic)
 					.setId(ResourceKey.create(Registries.ITEM, identifier));

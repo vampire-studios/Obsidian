@@ -5,7 +5,9 @@ import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.MaceWeaponImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.MeleeWeaponImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.SpearItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,22 +38,28 @@ public class Weapons implements AddonModule {
         try {
             if (weapon == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    weapon.information.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-            if (weapon.information.name.id == null) weapon.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            weapon.information.id = identifier;
 
             Item.Properties settings = createItemProperties(weapon).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
             ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(weapon);
 
-            ToolMaterial material = weapon.getTier();
-            Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings));
+            Item weaponItem = getWeaponItem(weapon, settings);
+            Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), weaponItem);
             ItemGroupEvents.modifyEntriesEvent(creativeTab).register(entries -> entries.accept(registeredItem));
             register(ContentRegistries.WEAPONS, "weapon", identifier, weapon);
         } catch (Exception e) {
             failedRegistering("weapon", file.getName(), e);
         }
+    }
+
+    private static @NonNull Item getWeaponItem(WeaponItem weapon, Item.Properties settings) {
+        ToolMaterial material = weapon.getTier();
+		return switch (weapon.weapon_type) {
+			case SPEAR        -> new SpearItemImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings);
+			case MACE         -> new MaceWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings);
+			case SWORD, null  -> new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings);
+		};
     }
 
     @SuppressWarnings("unchecked")

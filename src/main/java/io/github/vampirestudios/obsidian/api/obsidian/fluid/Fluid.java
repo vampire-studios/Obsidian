@@ -16,6 +16,7 @@ public class Fluid {
 	public ParentFluid parent;
 
 	public NameInformation name;
+	public transient Identifier id;
 	public String fluidColor;
 	public String fluidFogColor;
 	public boolean allowSprintSwimming;

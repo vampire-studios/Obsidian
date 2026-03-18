@@ -16,9 +16,9 @@ public class ElytraInitThread implements Runnable {
     public void run() {
         if (elytra.information.name.translations != null) {
             elytra.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                    elytra.information.name.id.getNamespace(), languageId,
-                    "item." + elytra.information.name.id.getNamespace(),
-                    elytra.information.name.id.getPath()
+                    elytra.information.id.getNamespace(), languageId,
+                    "item." + elytra.information.id.getNamespace(),
+                    elytra.information.id.getPath()
             ));
         }
 
@@ -26,13 +26,13 @@ public class ElytraInitThread implements Runnable {
 //            ModelBuilder modelBuilder = new ModelBuilder()
 //                    .parent(elytra.display.model.parent);
 //            elytra.display.model.textures.forEach(modelBuilder::texture);
-//            clientResourcePackBuilder.addItemModel(elytra.information.name.id, modelBuilder);
+//            clientResourcePackBuilder.addItemModel(elytra.information.id, modelBuilder);
 //        }
         if (elytra.lore != null) {
             for (SpecialText lore : elytra.getLore()) {
                 if (lore.textType.equals("translatable")) {
                     lore.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                            elytra.information.name.id.getNamespace(), languageId,
+                            elytra.information.id.getNamespace(), languageId,
                             lore.text, name
                     ));
                 }

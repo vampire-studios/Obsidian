@@ -36,26 +36,18 @@ public class RangedWeapons implements AddonModule {
         RangedWeaponItem rangedWeapon = BaseGson.GSON.fromJson(new FileReader(file), RangedWeaponItem.class);
         try {
             if (rangedWeapon == null) return;
-            if (rangedWeapon.information.name.id == null) rangedWeapon.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    rangedWeapon.information.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            rangedWeapon.information.id = identifier;
             RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 
             Item.Properties settings = createItemProperties(rangedWeapon).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
             ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(rangedWeapon);
 
             switch (rangedWeapon.weapon_type) {
-                case "bow" -> {
-                    expanded.registerItem(identifier.getPath(), new BowItemImpl(rangedWeapon, settings), creativeTab);
-                }
-                case "crossbow" ->  {
-                    expanded.registerItem(identifier.getPath(), new CrossbowItemImpl(rangedWeapon, settings), creativeTab);
-                }
-                case "trident" -> {
-                    expanded.registerItem(identifier.getPath(), new TridentItemImpl(rangedWeapon, settings), creativeTab);
-                }
+                case BOW      -> expanded.registerItem(identifier.getPath(), new BowItemImpl(rangedWeapon, settings), creativeTab);
+                case CROSSBOW -> expanded.registerItem(identifier.getPath(), new CrossbowItemImpl(rangedWeapon, settings), creativeTab);
+                case TRIDENT  -> expanded.registerItem(identifier.getPath(), new TridentItemImpl(rangedWeapon, settings), creativeTab);
+                case null     -> failedRegistering("ranged_weapon", file.getName(), new IllegalArgumentException("weapon_type must be specified"));
             }
             register(ContentRegistries.RANGED_WEAPONS, "ranged_weapon", identifier, rangedWeapon);
         } catch (Exception e) {

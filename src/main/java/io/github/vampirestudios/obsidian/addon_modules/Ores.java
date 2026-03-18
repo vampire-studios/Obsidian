@@ -14,10 +14,17 @@ import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.registry.OItemComponents;
+import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -28,6 +35,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -64,66 +72,15 @@ public class Ores implements AddonModule {
 		try {
 			if (block == null) return;
 
-			Identifier blockId;
-			if (block.description != null) {
-				blockId = block.description.identifier;
-			} else {
-				if (block.information.name.id != null) {
-					blockId = block.information.name.id;
-				} else {
-					blockId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-					block.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-				}
-			}
+			Identifier blockId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
+			block.information.id = blockId;
 
-			BlockBehaviour.Properties blockSettings;
+			BlockBehaviour.Properties blockProps = createBlockProperties(block);
+			Item.Properties itemProps = createItemProperties(block).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, blockId));
+			ResourceKey<CreativeModeTab> tab = getCreativeTab(block);
+			RegistryHelperBlockExpanded registry = new RegistryHelperBlockExpanded(id.modId());
 
-			if (block.information.parentBlock != null) {
-				blockSettings = BlockBehaviour.Properties.ofLegacyCopy(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(block.information.parentBlock))
-						.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
-			} else {
-				blockSettings = BlockBehaviour.Properties.of().setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
-			}
-
-			blockSettings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, blockId));
-			if (block.information.getBlockSettings() != null) {
-				blockSettings.destroyTime(block.information.getBlockSettings().hardness).explosionResistance(block.information.getBlockSettings().resistance)
-						.sound(block.information.getBlockSettings().getBlockSoundGroup())
-						.friction(block.information.getBlockSettings().slipperiness)
-						.emissiveRendering((state, world, pos) -> block.information.getBlockSettings().is_emissive)
-						.lightLevel(blockState -> block.information.getBlockSettings().luminance)
-						.speedFactor(block.information.getBlockSettings().velocity_modifier)
-						.jumpFactor(block.information.getBlockSettings().jump_velocity_modifier);
-				if (block.information.getBlockSettings().randomTicks) blockSettings.randomTicks();
-				if (block.information.getBlockSettings().instant_break) blockSettings.instabreak();
-				if (!block.information.getBlockSettings().collidable) blockSettings.noCollision();
-				if (block.information.getBlockSettings().translucent) blockSettings.noOcclusion();
-				if (block.information.getBlockSettings().dynamic_boundaries) blockSettings.dynamicShape();
-			}
-
-			Item.Properties settings = new Item.Properties();
-			settings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, blockId));
-			if (block.information.getItemSettings() != null) {
-				settings.stacksTo(block.information.getItemSettings().maxStackSize);
-				settings.rarity(Rarity.valueOf(block.information.getItemSettings().rarity.toUpperCase(Locale.ROOT)));
-				if (block.information.getItemSettings().durability != 0)
-					settings.durability(block.information.getItemSettings().durability);
-//				if (!block.information.getItemSettings().wearableSlot.isEmpty() && !block.information.getItemSettings().wearableSlot.isBlank())
-//					settings.equipmentSlot(stack -> EquipmentSlot.byName(block.information.getItemSettings().wearableSlot.toLowerCase(Locale.ROOT)));
-//				if (block.food_information != null)
-//					settings.food(Registries.FOODS.get(block.food_information.foodComponent));
-				if (block.information.getItemSettings().fireproof) settings.fireResistant();
-			}
-
-			RegistryHelperBlockExpanded expanded = new RegistryHelperBlockExpanded(REGISTRY_HELPER.modId());
-
-			expanded.registerBlock(new BlockImpl(block, blockSettings), block, blockId.getPath(), settings);
-
-//			if (block.ore_information != null) {
-//				ResourceKey<PlacedFeature> key = ResourceKey.create(net.minecraft.core.registries.Registries.PLACED_FEATURE, Utils.appendToPath(blockId, "_ore_feature"));
-//				BiomeModifications.addFeature(block.ore_information.biomeSelector(), GenerationStep.Decoration.UNDERGROUND_ORES,
-//						key);
-//			}
+			registry.registerBlock(new BlockImpl(block, blockProps), block, blockId.getPath(), itemProps, tab);
 
 			if (!addon.getConfigPackInfo().hasData) {
 				new BlockInitThread(block);
@@ -133,6 +90,110 @@ public class Ores implements AddonModule {
 		} catch (Exception e) {
 			failedRegistering("ore", file.getName(), e);
 		}
+	}
+
+	private BlockBehaviour.Properties createBlockProperties(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+		BlockBehaviour.Properties props = block.information.parentBlock != null
+				? BlockBehaviour.Properties.ofLegacyCopy(BuiltInRegistries.BLOCK.getValue(block.information.parentBlock))
+				: BlockBehaviour.Properties.of();
+
+		props.setId(ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, block.information.id));
+
+		if (block.information.getBlockSettings() != null) {
+			var settings = block.information.getBlockSettings();
+			props.destroyTime(settings.hardness)
+					.explosionResistance(settings.resistance)
+					.mapColor(settings.getMapColor())
+					.pushReaction(settings.getPushReaction())
+					.sound(settings.getBlockSoundGroup())
+					.friction(settings.slipperiness)
+					.emissiveRendering((state, level, pos) -> settings.is_emissive)
+					.lightLevel(state -> settings.luminance)
+					.speedFactor(settings.velocity_modifier)
+					.jumpFactor(settings.jump_velocity_modifier)
+					.noOcclusion();
+
+			if (settings.randomTicks) props.randomTicks();
+			if (settings.instant_break) props.instabreak();
+			if (!settings.collidable) props.noCollision();
+//            if (settings.translucent) props.noOcclusion();
+			if (settings.dynamic_boundaries) props.dynamicShape();
+		}
+
+		return props;
+	}
+
+	private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+		Item.Properties props = new Item.Properties()
+				.useBlockDescriptionPrefix();
+
+		// --------------------------------------------------
+		// 1. Legacy / JSON item settings (base defaults)
+		// --------------------------------------------------
+		if (block.information.getItemSettings() != null) {
+			var settings = block.information.getItemSettings();
+
+			props.stacksTo(settings.maxStackSize)
+					.rarity(Rarity.valueOf(settings.rarity.toUpperCase(Locale.ROOT)));
+
+			if (settings.durability != 0) {
+				props.durability(settings.durability);
+			}
+
+			if (settings.fireproof) {
+				props.fireResistant();
+			}
+		}
+
+		// --------------------------------------------------
+		// 2. Food definition
+		// --------------------------------------------------
+		if (block.food_information != null) {
+			props.food(Registries.FOODS.getValue(block.food_information.foodComponent));
+		}
+
+		// --------------------------------------------------
+		// 3. Apply DataComponents LAST (override layer)
+		// --------------------------------------------------
+		if (block.components != null) {
+			applyAllComponents(props, block.components);
+		}
+
+		return props;
+	}
+
+	@SuppressWarnings("unchecked")
+	static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
+		for (var e : map.entrySet()) {
+			var type = (DataComponentType<T>) e.getKey();
+			var opt  = (Optional<T>) e.getValue();
+			opt.ifPresent(v -> props.component(type, v));
+		}
+	}
+
+	private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+		// 1) Components override everything
+		var comps = block.components;
+		if (comps != null) {
+			var opt = comps.get(OItemComponents.CREATIVE_TAB); // Optional<Identifier> (based on your usage)
+			if (opt != null && opt.isPresent()) {
+				Identifier id = opt.get();
+				return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, id);
+			}
+		}
+
+		// 2) Then item settings
+		var settings = block.information.getItemSettings();
+		if (settings != null) {
+			var group = settings.getItemGroup();
+			if (group != null) return group;
+
+			var parent = settings.getParentSettings();
+			if (parent != null && parent.getItemGroup() != null) return parent.getItemGroup();
+		}
+
+		// 3) Fallback
+		return CreativeModeTabs.BUILDING_BLOCKS;
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public class StairsImpl extends StairBlock {
     public Block block;
 
     public StairsImpl(Block block, Properties settings) {
-        super(BuiltInRegistries.BLOCK.getValue(block.information.name.id).defaultBlockState(), settings);
+        super(BuiltInRegistries.BLOCK.getValue(block.information.id).defaultBlockState(), settings);
         this.block = block;
     }
 

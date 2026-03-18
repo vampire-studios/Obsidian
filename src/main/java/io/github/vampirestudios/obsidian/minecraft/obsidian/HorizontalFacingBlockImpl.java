@@ -48,7 +48,7 @@ public class HorizontalFacingBlockImpl extends HorizontalDirectionalBlock {
 	@Override
 	@NullMarked
 	public @Nullable BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
-		return this.defaultBlockState().setValue(FACING, blockPlaceContext.getHorizontalDirection());
+		return this.defaultBlockState().setValue(FACING, blockPlaceContext.getHorizontalDirection().getOpposite());
 	}
 
 	@Override

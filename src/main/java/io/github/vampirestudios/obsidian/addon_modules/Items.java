@@ -107,7 +107,7 @@ public class Items implements AddonModule {
 
 	private Identifier getIdentifier(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, BasicAddonInfo id, File file) {
 		Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
-		item.information.name.id = identifier;
+		item.information.id = identifier;
 		return identifier;
 	}
 

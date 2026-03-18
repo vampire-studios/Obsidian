@@ -27,19 +27,10 @@ public class SubItemGroups implements AddonModule {
             if (itemGroup == null) return;
             CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(itemGroup.targetGroup);
 
-            Identifier tabId;
-            if (itemGroup.name != null) {
-                if (itemGroup.name.id != null) {
-                    tabId = itemGroup.name.id;
-                } else {
-                    tabId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-                    itemGroup.name.id = tabId;
-                }
-            } else {
-                tabId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-                NameInformation nameInformation = new NameInformation();
-                nameInformation.id = tabId;
-                itemGroup.name = nameInformation;
+            Identifier tabId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            itemGroup.id = tabId;
+            if (itemGroup.name == null) {
+                itemGroup.name = new NameInformation();
             }
 
 //            ItemSubGroup.Builder builder = new ItemSubGroup.Builder(tab, tabId, Component.literal(WordUtils.capitalizeFully(tabId.getPath())));

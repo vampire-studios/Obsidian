@@ -40,22 +40,22 @@ public abstract class FluidImpl extends QuiltFluid {
 	public FluidImpl(io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid) {
 		LEVEL = IntegerProperty.create("level", 0, fluid.maxFluidLevel);
 		this.fluid = fluid;
-		this.fluidBlock = Registry.register(BuiltInRegistries.BLOCK, fluid.name.id, new QuiltFluidBlock(this, BlockBehaviour.Properties.ofLegacyCopy(Blocks.WATER)));
+		this.fluidBlock = Registry.register(BuiltInRegistries.BLOCK, fluid.id, new QuiltFluidBlock(this, BlockBehaviour.Properties.ofLegacyCopy(Blocks.WATER)));
 	}
 
 	@Override
 	public Fluid getFlowing() {
-		return Registry.register(BuiltInRegistries.FLUID, Utils.appendToPath(this.fluid.name.id, "_flowing"), new Flowing(this.fluid));
+		return Registry.register(BuiltInRegistries.FLUID, Utils.appendToPath(this.fluid.id, "_flowing"), new Flowing(this.fluid));
 	}
 
 	@Override
 	public Fluid getSource() {
-		return Registry.register(BuiltInRegistries.FLUID, this.fluid.name.id, new Still(this.fluid));
+		return Registry.register(BuiltInRegistries.FLUID, this.fluid.id, new Still(this.fluid));
 	}
 
 	@Override
 	public Item getBucket() {
-		return Registry.register(BuiltInRegistries.ITEM, Utils.appendToPath(this.fluid.name.id, "_bucket"), new BucketItem(this, new Item.Properties()
+		return Registry.register(BuiltInRegistries.ITEM, Utils.appendToPath(this.fluid.id, "_bucket"), new BucketItem(this, new Item.Properties()
 				.stacksTo(1)));
 	}
 

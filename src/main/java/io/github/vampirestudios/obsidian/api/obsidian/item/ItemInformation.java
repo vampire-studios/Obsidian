@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class ItemInformation {
 	public NameInformation name;
+	public transient Identifier id;
 
 	@SerializedName("item_properties")
 	@com.google.gson.annotations.SerializedName("item_properties")

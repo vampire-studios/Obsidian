@@ -31,14 +31,14 @@ public class ArmorInitThread implements Runnable {
     public void run() {
         if (armor.information.name.translations != null)
             armor.information.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                    armor.information.name.id.getNamespace(), languageId,
-                    "item." + armor.information.name.id.getNamespace() + "." + armor.information.name.id.getPath(),
+                    armor.information.id.getNamespace(), languageId,
+                    "item." + armor.information.id.getNamespace() + "." + armor.information.id.getPath(),
                     name
             ));
 
         JItemInfo itemInfo = new JItemInfo();
 
-        var itemId = armor.information.name.id;
+        var itemId = armor.information.id;
 
         Identifier defModelId = armor.rendering != null
                 ? armor.rendering.resolveItemDefinitionModelId(itemId)
@@ -76,7 +76,7 @@ public class ArmorInitThread implements Runnable {
             for (SpecialText lore : armor.getLore()) {
                 if (lore.textType != null && lore.textType.equals("translatable")) {
                     lore.translations.forEach((languageId, name) -> ClientInit.addTranslation(
-                            armor.information.name.id.getNamespace(), languageId, lore.text, name
+                            armor.information.id.getNamespace(), languageId, lore.text, name
                     ));
                 }
             }

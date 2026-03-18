@@ -17,7 +17,6 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -28,11 +27,7 @@ public class VillagerProfessions implements AddonModule {
         VillagerProfession villagerProfession = BaseGson.GSON.fromJson(new FileReader(file), VillagerProfession.class);
         try {
             if (villagerProfession == null) return;
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    villagerProfession.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-            if (villagerProfession.name.id == null) villagerProfession.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             ResourceKey<PoiType> registryKey = ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, villagerProfession.poi.id);
             PointOfInterestTypesAccessor.callRegister(
                     BuiltInRegistries.POINT_OF_INTEREST_TYPE,

@@ -43,6 +43,15 @@ public class DisplayInformation {
     @blue.endless.jankson.annotation.SerializedName("block_state")
     public BlockProperty blockState;
 
+    /**
+     * Extra clockwise Y-rotation (in degrees, multiples of 90) applied to the model
+     * for all facing variants of HORIZONTAL_DIRECTIONAL and DIRECTIONAL blocks.
+     * Use 90 to rotate the model one step clockwise relative to the default orientation.
+     */
+    @SerializedName("model_rotation_offset")
+    @blue.endless.jankson.annotation.SerializedName("model_rotation_offset")
+    public int model_rotation_offset = 0;
+
     public TextureAndModelInformation getBlockModel() {
         return parseModel(blockModel);
     }

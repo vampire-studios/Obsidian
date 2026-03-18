@@ -37,25 +37,21 @@ public class Tools implements AddonModule {
         try {
             if (tool == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    tool.information.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-
-            if (tool.information.name.id == null) tool.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            tool.information.id = identifier;
 
             ToolMaterial material = tool.getToolMaterial();
 
             Item.Properties settings = createItemProperties(tool).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
             ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(tool);
 
-            Item item = null;
-            switch (tool.tool_type) {
-                case "pickaxe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new PickaxeItemImpl(tool, material, settings));
-                case "shovel" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new ShovelItemImpl(tool, material, settings));
-                case "hoe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new HoeItemImpl(tool, material, settings));
-                case "axe" -> item = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new AxeItemImpl(tool, material, settings));
-            }
+            if (tool.tool_type == null) throw new IllegalArgumentException("tool_type must be specified");
+            Item item = switch (tool.tool_type) {
+                case PICKAXE -> REGISTRY_HELPER.items().registerItem(identifier.getPath(), new PickaxeItemImpl(tool, material, settings));
+                case SHOVEL  -> REGISTRY_HELPER.items().registerItem(identifier.getPath(), new ShovelItemImpl(tool, material, settings));
+                case HOE     -> REGISTRY_HELPER.items().registerItem(identifier.getPath(), new HoeItemImpl(tool, material, settings));
+                case AXE     -> REGISTRY_HELPER.items().registerItem(identifier.getPath(), new AxeItemImpl(tool, material, settings));
+            };
             Item finalItem = item;
             ItemGroupEvents.modifyEntriesEvent(creativeTab).register(entries -> entries.accept(finalItem));
             register(ContentRegistries.TOOLS, "tool", identifier, tool);

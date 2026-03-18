@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class BlockInformation {
     public NameInformation name;
+    public transient Identifier id;
 
     @SerializedName("block_set_type")
     @com.google.gson.annotations.SerializedName("block_set_type")

@@ -8,8 +8,15 @@ import java.util.Locale;
 
 public class ToolItem extends Item {
 
+    public enum Type {
+        @com.google.gson.annotations.SerializedName("pickaxe") PICKAXE,
+        @com.google.gson.annotations.SerializedName("shovel")  SHOVEL,
+        @com.google.gson.annotations.SerializedName("hoe")     HOE,
+        @com.google.gson.annotations.SerializedName("axe")     AXE
+    }
+
     public Object material;
-    public String tool_type;
+    public Type tool_type;
 
 	public ToolMaterial getToolMaterial() {
 		switch (material) {
@@ -45,7 +52,7 @@ public class ToolItem extends Item {
 				return ContentRegistries.TOOL_MATERIALS.getValue(location);
 			}
 			case null, default -> {
-				System.out.printf("Tier is null for %s%n", this.information.name.id);
+				System.out.printf("Tier is null for %s%n", this.information.id);
 				return null;
 			}
 		}

@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -63,15 +62,12 @@ public class LegacyItemGroups implements AddonModule {
         try {
             if (itemGroup == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    itemGroup.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "").replaceAll(".yml", ""))
-            );
-            if (itemGroup.name.id == null) itemGroup.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "").replaceAll(".yml", ""));
+            itemGroup.id = identifier;
 
             CreativeModeTab itemGroup1 = FabricItemGroup.builder()
                     .icon(() -> new ItemStack(BuiltInRegistries.ITEM.getValue(itemGroup.icon)))
-                    .title(Component.translatable("itemGroup." + itemGroup.name.id.getNamespace() + "." + itemGroup.name.id.getPath()))
+                    .title(Component.translatable(STR."itemGroup.\{identifier.toLanguageKey()}"))
                     .displayItems((displayContext, entries) -> {
                         if (itemGroup.tags != null) {
                             for (Map.Entry<String, Identifier> tag : itemGroup.tags.entrySet()) {

@@ -61,11 +61,10 @@ public class TridentItemImpl extends ProjectileModifyingTridentItem implements T
     @Override
     public Identifier getRenderTexture() {
         if (rangedWeaponItem.information == null
-                || rangedWeaponItem.information.name == null
-                || rangedWeaponItem.information.name.id == null) {
+                || rangedWeaponItem.information.id == null) {
             return null;
         }
-        Identifier id = rangedWeaponItem.information.name.id;
+        Identifier id = rangedWeaponItem.information.id;
         return Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
     }
 }

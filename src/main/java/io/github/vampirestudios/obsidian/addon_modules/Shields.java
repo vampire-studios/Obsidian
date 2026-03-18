@@ -37,13 +37,8 @@ public class Shields implements AddonModule {
         try {
             if(shieldItem == null) return;
 
-            Identifier identifier;
-            if (shieldItem.information.name.id != null) {
-                identifier = shieldItem.information.name.id;
-            } else {
-                identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-                shieldItem.information.name.id = identifier;
-            }
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            shieldItem.information.id = identifier;
 
             Item.Properties settings = createItemProperties(shieldItem).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
             ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(shieldItem);

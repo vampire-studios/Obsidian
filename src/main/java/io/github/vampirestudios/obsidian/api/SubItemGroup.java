@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class SubItemGroup {
     public NameInformation name;
+    public transient Identifier id;
     @SerializedName("target_group")
     @blue.endless.jankson.annotation.SerializedName("target_group")
     public Identifier targetGroup;

@@ -140,6 +140,7 @@ public class Block {
             public static class VariantBlock {
                 public NameInformation name;
                 public DisplayInformation display;
+                public transient net.minecraft.resources.Identifier id;
             }
         }
     }

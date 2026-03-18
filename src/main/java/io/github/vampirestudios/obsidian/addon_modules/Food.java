@@ -42,11 +42,8 @@ public class Food implements AddonModule {
         try {
             if (foodItem == null) return;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    foodItem.information.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-            if (foodItem.information.name.id == null) foodItem.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            foodItem.information.id = identifier;
 
             Item.Properties settings = createItemProperties(foodItem).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
             ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(foodItem);
@@ -104,7 +101,7 @@ public class Food implements AddonModule {
         FoodItem foodItem = BaseGson.GSON.fromJson(new FileReader(file), FoodItem.class);
         try {
             if (foodItem == null) return;
-            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(foodItem.information.name.id);
+            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(foodItem.information.id);
 //            MealItemRegistry.instance().register(item, ((player, stack) -> foodItem.food_information.fullness));
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,7 +113,7 @@ public class Food implements AddonModule {
         /*FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
         try {
             if (foodItem == null) return;
-            Item item = Registry.ITEM.get(foodItem.information.name.id);
+            Item item = Registry.ITEM.get(foodItem.information.id);
         } catch (Exception e) {
             e.printStackTrace();
         }*/

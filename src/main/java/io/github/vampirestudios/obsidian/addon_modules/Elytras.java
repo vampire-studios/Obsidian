@@ -21,8 +21,6 @@ import net.minecraft.world.item.equipment.Equippable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Objects;
-
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class Elytras implements AddonModule {
@@ -31,12 +29,8 @@ public class Elytras implements AddonModule {
 		Elytra item = BaseGson.GSON.fromJson(new FileReader(file), Elytra.class);
 		try {
 			if (item == null) return;
-			Identifier identifier = Objects.requireNonNullElseGet(
-					item.information.name.id,
-					() -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-			);
-			if (item.information.name.id == null)
-				item.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			item.information.id = identifier;
 
 			Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), new ElytraItemImpl(item, new Item.Properties()
 					.component(

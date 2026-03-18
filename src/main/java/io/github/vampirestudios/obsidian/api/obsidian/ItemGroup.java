@@ -5,6 +5,7 @@ import net.minecraft.resources.Identifier;
 
 public class ItemGroup {
     public NameInformation name;
+    public transient Identifier id;
     public Identifier icon;
     public Map<String, Identifier> tags;
     public Identifier[] blocks;
