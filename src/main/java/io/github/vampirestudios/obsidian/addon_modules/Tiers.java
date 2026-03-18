@@ -35,7 +35,7 @@ public class Tiers implements AddonModule {
 					tier.miningSpeed,
 					tier.attackDamage,
 					tier.enchantability,
-					TagKey.create(Registries.ITEM, tier.repairItem.get(0))
+					TagKey.create(Registries.ITEM, tier.repairItem.getFirst())
 			);
 			register(ContentRegistries.TOOL_MATERIALS, null, identifier, toolMaterial);
 

@@ -78,10 +78,10 @@ public class ARRPGenerationHelper {
 
     public static void generateHorizontalFacingBlockState(RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier modelId) {
         JState model = JState.state(new JVariant()
-            .put("facing=north", JState.model(modelId))
-            .put("facing=south", JState.model(modelId).y(180))
-            .put("facing=east", JState.model(modelId).y(90))
-            .put("facing=west", JState.model(modelId).y(270))
+            .put("facing=south", JState.model(modelId))
+            .put("facing=west", JState.model(modelId).y(90))
+            .put("facing=north", JState.model(modelId).y(180))
+            .put("facing=east", JState.model(modelId).y(270))
         );
         clientResourcePackBuilder.addBlockState(model, name);
     }
@@ -244,6 +244,30 @@ public class ARRPGenerationHelper {
             }
         }
         clientResourcePackBuilder.addModel(itemModel, Utils.prependToPath(name, "item/"));
+    }
+
+    public static void generatePoweredBlockState(RuntimeResourcePack pack, Identifier name,
+                                                  Identifier unpoweredModelId, Identifier poweredModelId) {
+        JState state = JState.state(new JVariant()
+                .put("powered=false", JState.model(unpoweredModelId))
+                .put("powered=true", JState.model(poweredModelId))
+        );
+        pack.addBlockState(state, name);
+    }
+
+    public static void generatePoweredHorizontalFacingBlockState(RuntimeResourcePack pack, Identifier name,
+                                                                  Identifier unpoweredModelId, Identifier poweredModelId) {
+        JState state = JState.state(new JVariant()
+                .put("facing=south,powered=false", JState.model(unpoweredModelId))
+                .put("facing=west,powered=false", JState.model(unpoweredModelId).y(90))
+                .put("facing=north,powered=false", JState.model(unpoweredModelId).y(180))
+                .put("facing=east,powered=false", JState.model(unpoweredModelId).y(270))
+                .put("facing=south,powered=true", JState.model(poweredModelId))
+                .put("facing=west,powered=true", JState.model(poweredModelId).y(90))
+                .put("facing=north,powered=true", JState.model(poweredModelId).y(180))
+                .put("facing=east,powered=true", JState.model(poweredModelId).y(270))
+        );
+        pack.addBlockState(state, name);
     }
 
     public static void generateSlabBlockState(RuntimeResourcePack pack, Identifier name, Identifier doubleBlockName) {

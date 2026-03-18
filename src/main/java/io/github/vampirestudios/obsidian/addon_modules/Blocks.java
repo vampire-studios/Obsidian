@@ -212,6 +212,8 @@ public class Blocks implements AddonModule {
             case BLOCK, WOOD -> {
                 if (isDyable(block)) {
                     registerDyableBlock(blockId, block, blockProps, itemProps, registry);
+                } else if (isPowerable(block) || isToggleable(block)) {
+                    registry.registerBlock(new PowerableBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 } else {
                     registry.registerBlock(new BlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 }
@@ -219,6 +221,7 @@ public class Blocks implements AddonModule {
             case HORIZONTAL_DIRECTIONAL -> {
                 boolean dyable = isDyable(block);
                 boolean sittable = isSittable(block);
+                boolean powerable = isPowerable(block) || isToggleable(block);
 
                 if (dyable && sittable) {
                     registerDyableAndSittableHorizontalBlock(blockId, block, blockProps, itemProps, registry);
@@ -226,6 +229,8 @@ public class Blocks implements AddonModule {
                     registerDyableHorizontalBlock(blockId, block, blockProps, itemProps, registry);
                 } else if (sittable) {
                     registerSittableHorizontalBlock(blockId, block, blockProps, itemProps, registry);
+                } else if (powerable) {
+                    registry.registerBlock(new PowerableHorizontalFacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 } else {
                     registry.registerBlock(new HorizontalFacingBlockImpl(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
                 }
@@ -405,6 +410,14 @@ public class Blocks implements AddonModule {
 
     private boolean isWaterloggable(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
         return block.additional_information != null && block.additional_information.waterloggable;
+    }
+
+    private boolean isPowerable(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        return block.information != null && block.information.powerable;
+    }
+
+    private boolean isToggleable(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
+        return block.information != null && block.information.toggleable;
     }
 
     private void registerDyableBlock(Identifier blockId, io.github.vampirestudios.obsidian.api.obsidian.block.Block block,

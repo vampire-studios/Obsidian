@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -143,46 +143,58 @@ public class BlockImpl extends Block {
     }
 
     @Override
-    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        if (block.information.collisionShape != null) {
-            if(block.information.collisionShape.collisionType != null) {
-                return switch(block.information.collisionShape.collisionType) {
-                    case FULL_BLOCK -> Shapes.block();
-                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
-                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-                    case CUSTOM -> {
-                        float[] boundingBox = block.information.collisionShape.full_shape;
-                        yield box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
-                    }
-                    case NONE -> Shapes.empty();
-                };
-            } else {
-                return Shapes.block();
-            }
-        } else {
-            return Shapes.block();
-        }
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        VoxelShape resolved = resolveShape(block.information.collisionShape, block.information.shape, block.information.shapes);
+        return resolved != null ? resolved : Shapes.block();
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        if (block.information.outlineShape != null) {
-            if(block.information.outlineShape.collisionType != null) {
-                return switch(block.information.outlineShape.collisionType) {
-                    case FULL_BLOCK -> Shapes.block();
-                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
-                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-                    case CUSTOM -> {
-                        float[] boundingBox = block.information.outlineShape.full_shape;
-                        yield box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
-                    }
-                    case NONE -> Shapes.empty();
-                };
-            } else {
-                return Shapes.block();
-            }
-        } else {
-            return Shapes.block();
+    @NullMarked
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        VoxelShape resolved = resolveShape(block.information.outlineShape, block.information.shape, block.information.shapes);
+        return resolved != null ? resolved : Shapes.block();
+    }
+
+    @Override
+    @NullMarked
+    protected VoxelShape getOcclusionShape(BlockState state) {
+        // Use the actual block shape for AO/occlusion so non-full blocks
+        // don't darken the faces of blocks around them.
+        VoxelShape resolved = resolveShape(block.information.outlineShape, block.information.shape, block.information.shapes);
+        return resolved != null ? resolved : Shapes.block();
+    }
+
+    /**
+     * Resolves a VoxelShape from a BoundingBox, falling back to the multi-box shorthand,
+     * then the single-box shorthand.
+     */
+    private VoxelShape resolveShape(io.github.vampirestudios.obsidian.api.obsidian.block.BlockInformation.BoundingBox specific, float[] shorthand, float[][] shorthands) {
+        if (specific != null && specific.collisionType != null) {
+            return switch (specific.collisionType) {
+                case FULL_BLOCK -> Shapes.block();
+                case BOTTOM_SLAB -> box(0, 0, 0, 16, 8, 16);
+                case TOP_SLAB -> box(0, 8, 0, 16, 16, 16);
+                case CUSTOM -> {
+                    // Multi-box takes priority over single-box
+                    if (specific.full_shapes != null) yield createCompositeShape(specific.full_shapes);
+                    float[] s = specific.full_shape;
+                    yield box(s[0], s[1], s[2], s[3], s[4], s[5]);
+                }
+                case NONE -> Shapes.empty();
+            };
         }
+        // Multi-box shorthand takes priority over single-box shorthand
+        if (shorthands != null) return createCompositeShape(shorthands);
+        if (shorthand != null) return box(shorthand[0], shorthand[1], shorthand[2], shorthand[3], shorthand[4], shorthand[5]);
+        return null;
+    }
+
+    /** Combines multiple boxes into a single composite VoxelShape using Shapes.or(). */
+    private VoxelShape createCompositeShape(float[][] boxes) {
+        VoxelShape result = Shapes.empty();
+        for (float[] b : boxes) {
+            result = Shapes.or(result, box(b[0], b[1], b[2], b[3], b[4], b[5]));
+        }
+        return result;
     }
 }

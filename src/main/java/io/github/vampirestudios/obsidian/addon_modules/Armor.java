@@ -82,7 +82,7 @@ public class Armor implements AddonModule {
             }
 
             net.minecraft.world.item.equipment.ArmorMaterial vanillaArmorMaterial;
-            if (armor.template == ArmorItem.ArmorTemplate.CUSTOM) {
+            if (armor.armorTemplate == ArmorItem.ArmorTemplate.CUSTOM) {
                 ArmorMaterial material;
                 if (armor.materialId != null && ContentRegistries.ARMOR_MATERIALS.containsKey(armor.materialId)) {
                     material = ContentRegistries.ARMOR_MATERIALS.getValue(armor.materialId);

@@ -34,6 +34,11 @@ public class BlockSettings {
     public float velocity_modifier = 1.0F;
     public float jump_velocity_modifier = 1.0F;
     public int luminance = 0;
+
+    @SerializedName("powered_luminance")
+    @com.google.gson.annotations.SerializedName("powered_luminance")
+    public int poweredLuminance = -1;
+
     public boolean is_emissive = false;
     public boolean translucent = true;
     public boolean dynamic_boundaries = false;

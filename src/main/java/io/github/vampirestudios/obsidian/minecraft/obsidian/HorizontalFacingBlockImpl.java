@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 public class HorizontalFacingBlockImpl extends HorizontalDirectionalBlock {
 
@@ -46,125 +46,92 @@ public class HorizontalFacingBlockImpl extends HorizontalDirectionalBlock {
 	}
 
 	@Override
+	@NullMarked
 	public @Nullable BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
-		return this.defaultBlockState().setValue(FACING, blockPlaceContext.getHorizontalDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, blockPlaceContext.getHorizontalDirection());
 	}
 
 	@Override
+	@NullMarked
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		if (block.information.collisionShape != null) {
-			if (block.information.collisionShape.collisionType != null) {
-				return switch (block.information.collisionShape.collisionType) {
-					case FULL_BLOCK -> Shapes.block();
-					case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
-					case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-					case CUSTOM -> {
-						VoxelShape shape = createShape(block.information.collisionShape.full_shape);
-						VoxelShape northShape = createShape(block.information.collisionShape.north_shape);
-						VoxelShape southShape = createShape(block.information.collisionShape.south_shape);
-						VoxelShape eastShape = createShape(block.information.collisionShape.east_shape);
-						VoxelShape westShape = createShape(block.information.collisionShape.west_shape);
-						VoxelShape upShape = createShape(block.information.collisionShape.up_shape);
-						VoxelShape downShape = createShape(block.information.collisionShape.down_shape);
-						Direction direction = state.getValue(FACING);
-						switch (direction) {
-							case NORTH -> {
-								if (northShape != null) yield northShape;
-								else yield shape;
-							}
-							case SOUTH -> {
-								if (southShape != null) yield southShape;
-								else yield shape;
-							}
-							case EAST -> {
-								if (eastShape != null) yield eastShape;
-								else yield shape;
-							}
-							case WEST -> {
-								if (westShape != null) yield westShape;
-								else yield shape;
-							}
-							case DOWN -> {
-								if (downShape != null) yield downShape;
-								else yield shape;
-							}
-							case UP -> {
-								if (upShape != null) yield upShape;
-								else yield shape;
-							}
-							default -> {
-								yield shape;
-							}
-						}
-					}
-					case NONE -> Shapes.empty();
-				};
-			} else {
-				return Shapes.block();
-			}
-		} else {
-			return Shapes.block();
-		}
+		VoxelShape resolved = resolveShape(state, block.information.collisionShape, block.information.shape, block.information.shapes);
+		return resolved != null ? resolved : Shapes.block();
 	}
 
 	@Override
-	public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-		if (block.information.outlineShape != null) {
-			if (block.information.outlineShape.collisionType != null) {
-				return switch (block.information.outlineShape.collisionType) {
-					case FULL_BLOCK -> Shapes.block();
-					case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
-					case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-					case CUSTOM -> {
-						VoxelShape shape = createShape(block.information.outlineShape.full_shape);
-						VoxelShape northShape = createShape(block.information.outlineShape.north_shape);
-						VoxelShape southShape = createShape(block.information.outlineShape.south_shape);
-						VoxelShape eastShape = createShape(block.information.outlineShape.east_shape);
-						VoxelShape westShape = createShape(block.information.outlineShape.west_shape);
-						VoxelShape upShape = createShape(block.information.outlineShape.up_shape);
-						VoxelShape downShape = createShape(block.information.outlineShape.down_shape);
-						Direction direction = state.getValue(FACING);
-						switch (direction) {
-							case NORTH -> {
-								if (northShape != null) yield northShape;
-								else yield shape;
-							}
-							case SOUTH -> {
-								if (southShape != null) yield southShape;
-								else yield shape;
-							}
-							case EAST -> {
-								if (eastShape != null) yield eastShape;
-								else yield shape;
-							}
-							case WEST -> {
-								if (westShape != null) yield westShape;
-								else yield shape;
-							}
-							case DOWN -> {
-								if (downShape != null) yield downShape;
-								else yield shape;
-							}
-							case UP -> {
-								if (upShape != null) yield upShape;
-								else yield shape;
-							}
-							default -> {
-								yield shape;
-							}
-						}
-					}
-					case NONE -> Shapes.empty();
-				};
-			} else {
-				return Shapes.block();
-			}
-		} else {
-			return Shapes.block();
-		}
+	@NullMarked
+	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+		VoxelShape resolved = resolveShape(state, block.information.outlineShape, block.information.shape, block.information.shapes);
+		return resolved != null ? resolved : Shapes.block();
 	}
 
-	private VoxelShape createShape(float[] boundingBox) {
-		return Block.box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
+	@Override
+	@NullMarked
+	protected VoxelShape getOcclusionShape(BlockState state) {
+		VoxelShape resolved = resolveShape(state, block.information.outlineShape, block.information.shape, block.information.shapes);
+		return resolved != null ? resolved : Shapes.block();
+	}
+
+	private VoxelShape resolveShape(BlockState state, io.github.vampirestudios.obsidian.api.obsidian.block.BlockInformation.BoundingBox specific, float[] shorthand, float[][] shorthands) {
+		if (specific != null && specific.collisionType != null) {
+			return switch (specific.collisionType) {
+				case FULL_BLOCK -> Shapes.block();
+				case BOTTOM_SLAB -> box(0, 0, 0, 16, 8, 16);
+				case TOP_SLAB -> box(0, 8, 0, 16, 16, 16);
+				case CUSTOM -> {
+					Direction direction = state.getValue(FACING);
+					// Multi-box directional takes priority, then single-box directional,
+					// then multi-box fallback, then single-box fallback
+					float[][] dirShapes = getDirectionalShapes(specific, direction);
+					if (dirShapes != null) yield createCompositeShape(dirShapes);
+					float[] dirArr = getDirectionalShape(specific, direction);
+					if (dirArr != null) yield createShape(dirArr);
+					if (specific.full_shapes != null) yield createCompositeShape(specific.full_shapes);
+					yield box(specific.full_shape[0], specific.full_shape[1], specific.full_shape[2],
+							specific.full_shape[3], specific.full_shape[4], specific.full_shape[5]);
+				}
+				case NONE -> Shapes.empty();
+			};
+		}
+		// Multi-box shorthand takes priority over single-box shorthand
+		if (shorthands != null) return createCompositeShape(shorthands);
+		if (shorthand != null) return box(shorthand[0], shorthand[1], shorthand[2], shorthand[3], shorthand[4], shorthand[5]);
+		return null;
+	}
+
+	private float[][] getDirectionalShapes(io.github.vampirestudios.obsidian.api.obsidian.block.BlockInformation.BoundingBox specific, Direction direction) {
+		return switch (direction) {
+			case NORTH -> specific.north_shapes;
+			case SOUTH -> specific.south_shapes;
+			case EAST -> specific.east_shapes;
+			case WEST -> specific.west_shapes;
+			case UP -> specific.up_shapes;
+			case DOWN -> specific.down_shapes;
+		};
+	}
+
+	private float[] getDirectionalShape(io.github.vampirestudios.obsidian.api.obsidian.block.BlockInformation.BoundingBox specific, Direction direction) {
+		return switch (direction) {
+			case NORTH -> specific.north_shape;
+			case SOUTH -> specific.south_shape;
+			case EAST -> specific.east_shape;
+			case WEST -> specific.west_shape;
+			case UP -> specific.up_shape;
+			case DOWN -> specific.down_shape;
+		};
+	}
+
+	private VoxelShape createShape(float[] arr) {
+		if (arr == null) return null;
+		return box(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
+	}
+
+	/** Combines multiple boxes into a single composite VoxelShape using Shapes.or(). */
+	private VoxelShape createCompositeShape(float[][] boxes) {
+		VoxelShape result = Shapes.empty();
+		for (float[] b : boxes) {
+			result = Shapes.or(result, box(b[0], b[1], b[2], b[3], b[4], b[5]));
+		}
+		return result;
 	}
 }

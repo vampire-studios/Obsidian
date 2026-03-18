@@ -12,13 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class BlockInformation {
-
-    /*public static final MapCodec<BlockInformation> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            Description.CODEC.fieldOf("description").forGetter(block -> block.description),
-            Codec.STRING.fieldOf("block_type").forGetter(block -> block.block_type),
-
-    ).apply(instance, BlockInformation::new));*/
-
     public NameInformation name;
 
     @SerializedName("block_set_type")
@@ -36,6 +29,23 @@ public class BlockInformation {
     @Path("parent_block")
     public Identifier parentBlock;
 
+    /**
+     * Shorthand for simple non-full blocks (decorations, plushies, etc.).
+     * A 6-element array [x1, y1, z1, x2, y2, z2] in pixel space (0–16).
+     * Sets both the collision and outline shape in one field.
+     * If {@code collision_shape} or {@code outline_shape} are also specified,
+     * they take priority over this shorthand for their respective shape.
+     */
+    public float[] shape;
+
+    /**
+     * Multi-box shorthand — an array of boxes, each a 6-element float array [x1,y1,z1,x2,y2,z2].
+     * All boxes are combined into one composite shape using {@code Shapes.or()}.
+     * Takes priority over {@code shape} when both are present.
+     * Example: [[1,0,1,14,2,14], [0,2,0,16,9,16]]
+     */
+    public float[][] shapes;
+
     @SerializedName("collision_shape")
     @com.google.gson.annotations.SerializedName("collision_shape")
     @Path("collision_shape")
@@ -50,6 +60,8 @@ public class BlockInformation {
 
     public boolean has_item = true;
     public boolean wooden_button = true;
+    public boolean powerable = false;
+    public boolean toggleable = false;
 
     public List<String> removedTooltipSections;
 
@@ -114,13 +126,23 @@ public class BlockInformation {
         @Path("collision_type")
         public CollisionType collisionType;
         public boolean advanced = false;
+        // Single-box shapes
         public float[] full_shape = new float[] {0, 0, 0, 16, 16, 16};
-        public float[] north_shape = new float[] {0, 0, 0, 16, 16, 16};
-        public float[] south_shape = new float[] {0, 0, 0, 16, 16, 16};
-        public float[] east_shape = new float[] {0, 0, 0, 16, 16, 16};
-        public float[] west_shape = new float[] {0, 0, 0, 16, 16, 16};
-        public float[] up_shape = new float[] {0, 0, 0, 16, 16, 16};
-        public float[] down_shape = new float[] {0, 0, 0, 16, 16, 16};
+        // Directional single-box overrides — null means "use full_shape for this direction"
+        public float[] north_shape = null;
+        public float[] south_shape = null;
+        public float[] east_shape = null;
+        public float[] west_shape = null;
+        public float[] up_shape = null;
+        public float[] down_shape = null;
+        // Multi-box shapes — takes priority over the single-box equivalents above when set
+        public float[][] full_shapes = null;
+        public float[][] north_shapes = null;
+        public float[][] south_shapes = null;
+        public float[][] east_shapes = null;
+        public float[][] west_shapes = null;
+        public float[][] up_shapes = null;
+        public float[][] down_shapes = null;
 
         public enum CollisionType {
             FULL_BLOCK,

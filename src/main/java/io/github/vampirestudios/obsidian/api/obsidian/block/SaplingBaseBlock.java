@@ -56,10 +56,10 @@ public class SaplingBaseBlock extends VegetationBlock implements BonemealableBlo
 		if (state.getValue(STAGE) == 0) {
 			world.setBlock(pos, state.cycle(STAGE), 4);
 		} else {
-			if (block.placable_feature != null) {
+			if (block.placeable_feature != null) {
 				world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-				if (world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).containsKey(block.placable_feature)) {
-					ConfiguredFeature<?, ?> feature = world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValue(block.placable_feature);
+				if (world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).containsKey(block.placeable_feature)) {
+					ConfiguredFeature<?, ?> feature = world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValue(block.placeable_feature);
 					assert feature != null;
 					feature.place(world, world.getChunkSource().getGenerator(), world.getRandom(), pos);
 				}

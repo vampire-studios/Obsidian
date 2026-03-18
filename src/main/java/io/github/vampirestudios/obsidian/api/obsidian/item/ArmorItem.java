@@ -9,12 +9,14 @@ public class ArmorItem extends Item {
     @SerializedName("material_id")
     @com.google.gson.annotations.SerializedName("material_id")
     public Identifier materialId;
-    public ArmorTemplate template = ArmorTemplate.LEATHER;
+	@SerializedName("armor_template")
+	@com.google.gson.annotations.SerializedName("armor_template")
+    public ArmorTemplate armorTemplate = ArmorTemplate.LEATHER;
     public String slot;
     public Type armor_type = Type.HUMANOID;
 
     public ArmorMaterial getTemplateMaterial() {
-        return switch (template) {
+        return switch (armorTemplate) {
 			case LEATHER, CUSTOM -> ArmorMaterials.LEATHER;
 			case COPPER -> ArmorMaterials.COPPER;
 			case CHAINMAIL -> ArmorMaterials.CHAINMAIL;

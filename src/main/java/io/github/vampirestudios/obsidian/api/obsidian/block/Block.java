@@ -45,7 +45,7 @@ public class Block {
     public OxidizableProperties oxidizable_properties;
     public boolean is_multi_block = false;
     public MultiBlockInformation multi_block_information;
-    public Identifier placable_feature;
+    public Identifier placeable_feature;
 
     @SerializedName("painting_table_information")
     @com.google.gson.annotations.SerializedName("painting_table_information")

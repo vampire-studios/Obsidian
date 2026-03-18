@@ -16,6 +16,10 @@ public class DisplayInformation {
     @blue.endless.jankson.annotation.SerializedName("block_model")
     public JsonElement blockModel;
 
+    @SerializedName("powered_model")
+    @blue.endless.jankson.annotation.SerializedName("powered_model")
+    public JsonElement poweredModel;
+
     @Deprecated
     public JsonElement model;
 
@@ -43,6 +47,10 @@ public class DisplayInformation {
         return parseModel(blockModel);
     }
 
+    public TextureAndModelInformation getPoweredModel() {
+        return parseModel(poweredModel);
+    }
+
     public TextureAndModelInformation getItemModel() {
         return parseModel(itemModel);
     }
@@ -56,6 +64,9 @@ public class DisplayInformation {
 
     public boolean hasBlockModelObject() { return blockModel != null && blockModel.isJsonObject(); }
     public boolean hasBlockModelString() { return blockModel != null && blockModel.isJsonPrimitive() && blockModel.getAsJsonPrimitive().isString(); }
+
+    public boolean hasPoweredModelObject() { return poweredModel != null && poweredModel.isJsonObject(); }
+    public boolean hasPoweredModelString() { return poweredModel != null && poweredModel.isJsonPrimitive() && poweredModel.getAsJsonPrimitive().isString(); }
 
     public boolean hasLegacyModelObject() { return model != null && model.isJsonObject(); }
     public boolean hasLegacyModelString() { return model != null && model.isJsonPrimitive() && model.getAsJsonPrimitive().isString(); }

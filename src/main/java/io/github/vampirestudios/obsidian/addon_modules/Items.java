@@ -7,9 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.github.vampirestudios.obsidian.BaseGson;
+import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
+import io.github.vampirestudios.obsidian.api.obsidian.ItemDisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
+import io.github.vampirestudios.obsidian.api.obsidian.item.ItemInformation;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.CustomMenuItem;
@@ -58,6 +61,8 @@ public class Items implements AddonModule {
 		io.github.vampirestudios.obsidian.api.obsidian.item.Item item = loadItem(addon, file);
 
 		if (item == null) return;
+
+		applyTemplate(item);
 
 		try {
 			Identifier identifier = getIdentifier(item, id, file);
@@ -118,12 +123,21 @@ public class Items implements AddonModule {
 	private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
 		Item.Properties props = new Item.Properties();
 
-		var comps = item.components;
-		if (comps == null) {
-			return props;
+		var settings = item.information.getItemSettings();
+		if (settings != null) {
+			props.stacksTo(settings.maxStackSize)
+					.rarity(net.minecraft.world.item.Rarity.valueOf(settings.rarity.toUpperCase(java.util.Locale.ROOT)));
+
+			if (settings.durability != 0) props.durability(settings.durability);
+			if (settings.fireproof) props.fireResistant();
+			if (settings.tooltipStyle != null) {
+				props.component(net.minecraft.core.component.DataComponents.TOOLTIP_STYLE,
+						settings.tooltipStyle);
+			}
 		}
 
-		applyAllComponents(props, comps);
+		if (item.components != null) applyAllComponents(props, item.components);
+
 		return props;
 	}
 
@@ -182,6 +196,76 @@ public class Items implements AddonModule {
 			}
 		}
 		return registeredItem;
+	}
+
+	private void applyTemplate(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
+		if (item.template == null || item.template.isBlank()) return;
+
+		net.minecraft.resources.Identifier templateId = net.minecraft.resources.Identifier.tryParse(item.template);
+		if (templateId == null) {
+			Obsidian.LOGGER.warn("Item has invalid template reference: {}", item.template);
+			return;
+		}
+
+		io.github.vampirestudios.obsidian.api.obsidian.item.Item template =
+				ContentRegistries.ITEM_TEMPLATES.getValue(templateId);
+		if (template == null) {
+			Obsidian.LOGGER.warn("Item references unknown template: {}", templateId);
+			return;
+		}
+
+		if (item.type == null) item.type = template.type;
+		if (item.useActions == null) item.useActions = template.useActions;
+		if (item.components == null) item.components = template.components;
+		if (item.menuConfig == null) item.menuConfig = template.menuConfig;
+
+		// Lore: use template's if item defines none
+		if ((item.lore == null || item.lore.isEmpty()) && template.lore != null) {
+			item.lore = template.lore;
+		}
+
+		// Maps: template provides defaults, item values take priority
+		if (template.drops != null) template.drops.forEach(item.drops::putIfAbsent);
+		if (template.events != null) template.events.forEach(item.events::putIfAbsent);
+
+		// Information: merge sub-fields so the item keeps its own name
+		if (item.information == null) {
+			item.information = template.information;
+		} else {
+			mergeInformation(item.information, template.information);
+		}
+
+		// Rendering: per-field null-fallback to template
+		if (item.rendering == null) {
+			item.rendering = template.rendering;
+		} else {
+			mergeRendering(item.rendering, template.rendering);
+		}
+	}
+
+	private void mergeInformation(ItemInformation item, ItemInformation template) {
+		if (template == null) return;
+		if (item.itemSettings == null) item.itemSettings = template.itemSettings;
+		if (item.itemType == null) item.itemType = template.itemType;
+		// item.name is intentionally not merged — each item must have its own identity
+	}
+
+	private void mergeRendering(ItemDisplayInformation item, ItemDisplayInformation template) {
+		if (template == null) return;
+		if (item.itemModel == null) item.itemModel = template.itemModel;
+		if (item.blockingModel == null) item.blockingModel = template.blockingModel;
+		if (item.pullingModels == null) item.pullingModels = template.pullingModels;
+		if (item.chargedModel == null) item.chargedModel = template.chargedModel;
+		if (item.fireworkModel == null) item.fireworkModel = template.fireworkModel;
+		if (item.castModel == null) item.castModel = template.castModel;
+		if (item.throwingModel == null) item.throwingModel = template.throwingModel;
+		if (item.arrowModel == null) item.arrowModel = template.arrowModel;
+		if (item.brokenModel == null) item.brokenModel = template.brokenModel;
+		if (item.damagedModels == null) item.damagedModels = template.damagedModels;
+		if (item.cooldownModel == null) item.cooldownModel = template.cooldownModel;
+		if (item.chargingModels == null) item.chargingModels = template.chargingModels;
+		if (item.useModels == null) item.useModels = template.useModels;
+		if (item.binarySelects == null) item.binarySelects = template.binarySelects;
 	}
 
 	@Override

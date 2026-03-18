@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class Item {
+    public String template;
     public ItemType type;
     public ItemInformation information;
     public ItemDisplayInformation rendering;

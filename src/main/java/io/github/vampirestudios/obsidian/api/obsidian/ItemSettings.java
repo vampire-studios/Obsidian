@@ -33,6 +33,15 @@ public class ItemSettings {
     public String rarity = "common";
     public boolean fireproof = false;
 
+    /**
+     * Identifier for a custom tooltip background sprite (minecraft:tooltip_style component).
+     * The sprite must be registered in the minecraft:tooltip_background atlas.
+     * Example: "mynamespace:my_wrap_tooltip"
+     */
+    @SerializedName("tooltip_style")
+    @com.google.gson.annotations.SerializedName("tooltip_style")
+    public Identifier tooltipStyle;
+
     public Fuel fuel;
 
     public static class Fuel {

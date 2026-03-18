@@ -8,6 +8,8 @@ import com.mojang.serialization.JsonOps;
 import io.github.vampirestudios.obsidian.addon_modules.DataComponentPatchDeserializer;
 import io.github.vampirestudios.obsidian.api.obsidian.IdentifierTypeAdapter;
 import io.github.vampirestudios.obsidian.api.obsidian.IntArrayTypeAdapter;
+import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
+import io.github.vampirestudios.obsidian.api.obsidian.NameInformationDeserializer;
 import io.github.vampirestudios.obsidian.api.obsidian.TriStateAdapter;
 import io.github.vampirestudios.obsidian.registry.components.actionPos.ActionPosition;
 import io.github.vampirestudios.obsidian.utils.IntArray;
@@ -52,6 +54,7 @@ public class BaseGson {
             .disableHtmlEscaping().setPrettyPrinting().setLenient()
             .enableComplexMapKeySerialization()
             .registerTypeAdapter(Identifier.class, new IdentifierTypeAdapter())
+            .registerTypeAdapter(NameInformation.class, new NameInformationDeserializer())
             .registerTypeAdapter(TriState.class, new TriStateAdapter())
             .registerTypeAdapter(IntArray.class, new IntArrayTypeAdapter())
             .registerTypeAdapter(DataComponentPatch.class, new DataComponentPatchDeserializer())

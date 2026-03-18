@@ -225,6 +225,13 @@ public class BlockInitThread implements Runnable {
                     TextureAndModelInformation itemInfo = block.rendering.getItemModel();
                     ARRPGenerationHelper.generateItemModel(resourcePack, blockId, itemInfo.parent, itemInfo.textures);
                 }
+                // Generate the powered model if powered_model was given as an object
+                if ((block.information.powerable || block.information.toggleable) && block.rendering.hasPoweredModelObject()) {
+                    TextureAndModelInformation poweredInfo = block.rendering.getPoweredModel();
+                    ARRPGenerationHelper.generateBlockModel(resourcePack, Utils.appendToPath(blockId, "_powered"),
+                            poweredInfo.parent, poweredInfo.textures);
+                }
+
                 ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, block, blockId, directModelId);
             }
             if (block.additional_information != null && translated != null) {
@@ -260,16 +267,21 @@ public class BlockInitThread implements Runnable {
     }
 
     private void generateBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
-        Identifier outModelId = Utils.prependToPath(blockId, "block/");
+        Identifier unpoweredModelId = Utils.prependToPath(blockId, "block/");
 
         // if block_model was given as a string, use it directly
         if (block.rendering.blockModel != null
                 && block.rendering.blockModel.isJsonPrimitive()
                 && block.rendering.blockModel.getAsJsonPrimitive().isString()) {
-            outModelId = Identifier.parse(block.rendering.blockModel.getAsString());
+            unpoweredModelId = Identifier.parse(block.rendering.blockModel.getAsString());
         }
 
-        ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, outModelId);
+        if (block.information.powerable || block.information.toggleable) {
+            Identifier poweredModelId = resolvePoweredModelId(block, blockId, unpoweredModelId);
+            ARRPGenerationHelper.generatePoweredBlockState(resourcePack, blockId, unpoweredModelId, poweredModelId);
+        } else {
+            ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, unpoweredModelId);
+        }
     }
 
     private void generatePillarBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
@@ -286,16 +298,21 @@ public class BlockInitThread implements Runnable {
     }
 
     private void generateHorizontalFacingBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
-        Identifier outModelId = Utils.prependToPath(blockId, "block/");
+        Identifier unpoweredModelId = Utils.prependToPath(blockId, "block/");
 
         // if block_model was given as a string, use it directly
         if (block.rendering.blockModel != null
                 && block.rendering.blockModel.isJsonPrimitive()
                 && block.rendering.blockModel.getAsJsonPrimitive().isString()) {
-            outModelId = Identifier.parse(block.rendering.blockModel.getAsString());
+            unpoweredModelId = Identifier.parse(block.rendering.blockModel.getAsString());
         }
 
-        ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, outModelId);
+        if (block.information.powerable || block.information.toggleable) {
+            Identifier poweredModelId = resolvePoweredModelId(block, blockId, unpoweredModelId);
+            ARRPGenerationHelper.generatePoweredHorizontalFacingBlockState(resourcePack, blockId, unpoweredModelId, poweredModelId);
+        } else {
+            ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, unpoweredModelId);
+        }
     }
 
     private void generateFacingBlockState(Block block, RuntimeResourcePack resourcePack, Identifier blockId) {
@@ -309,6 +326,23 @@ public class BlockInitThread implements Runnable {
         }
 
         ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, outModelId);
+    }
+
+    /**
+     * Resolves the powered model ID for a block.
+     * - String powered_model → use directly
+     * - Object powered_model → will be generated at block/<id>_powered
+     * - No powered_model → fall back to the unpowered model (same appearance for both states)
+     */
+    private Identifier resolvePoweredModelId(Block block, Identifier blockId, Identifier unpoweredModelId) {
+        if (block.rendering.poweredModel == null) return unpoweredModelId;
+        if (block.rendering.hasPoweredModelString()) {
+            return Identifier.parse(block.rendering.poweredModel.getAsString());
+        }
+        if (block.rendering.hasPoweredModelObject()) {
+            return Utils.appendAndPrependToPath(blockId, "block/", "_powered");
+        }
+        return unpoweredModelId;
     }
 
 }

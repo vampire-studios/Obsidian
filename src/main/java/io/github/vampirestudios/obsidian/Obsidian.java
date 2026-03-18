@@ -138,6 +138,7 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "wood_types", new WoodTypes());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "block_properties", new BlockProperties());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_properties", new ItemProperties());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "item_template", new ItemTemplates());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "tiers", new Tiers());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "blocks", new Blocks());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ores", new Ores());

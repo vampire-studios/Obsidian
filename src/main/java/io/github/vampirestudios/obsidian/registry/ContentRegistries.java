@@ -51,6 +51,7 @@ public class ContentRegistries {
 	public static Registry<ToolMaterial> TOOL_MATERIALS = FabricRegistryBuilder.createSimple(ToolMaterial.class, id("tool_materials")).buildAndRegister();
 	public static Registry<Tier> TIERS = FabricRegistryBuilder.createSimple(Tier.class, id("tiers")).buildAndRegister();
 	public static Registry<ItemSettings> ITEM_SETTINGS = FabricRegistryBuilder.createSimple(ItemSettings.class, id("item_settings")).buildAndRegister();
+	public static Registry<Item> ITEM_TEMPLATES = FabricRegistryBuilder.createSimple(Item.class, id("item_templates")).buildAndRegister();
 	public static Registry<BlockSetType> BLOCK_SET_TYPES = FabricRegistryBuilder.createSimple(BlockSetType.class, id("block_set_types")).buildAndRegister();
 	public static Registry<WoodType> WOOD_TYPES = FabricRegistryBuilder.createSimple(WoodType.class, id("wood_types")).buildAndRegister();
 	public static Registry<KeyBinding> KEY_BINDINGS = FabricRegistryBuilder.createSimple(KeyBinding.class, id("key_bindings")).buildAndRegister();
