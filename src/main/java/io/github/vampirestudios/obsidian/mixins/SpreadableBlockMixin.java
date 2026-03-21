@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.block.spread.IForgeSpreadingBlock;
@@ -8,15 +9,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SnowyDirtBlock;
-import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
+import net.minecraft.world.level.block.SnowyBlock;
+import net.minecraft.world.level.block.SpreadingSnowyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(SpreadingSnowyDirtBlock.class)
-public abstract class SpreadableBlockMixin extends SnowyDirtBlock implements IForgeSpreadingBlock {
+@Mixin(SpreadingSnowyBlock.class)
+public abstract class SpreadableBlockMixin extends SnowyBlock implements IForgeSpreadingBlock {
 
 	protected SpreadableBlockMixin(Properties settings) {
 		super(settings);
@@ -32,9 +33,11 @@ public abstract class SpreadableBlockMixin extends SnowyDirtBlock implements IFo
 		return false;
 	}
 
-	/**
+	*/
+/**
 	 * @author OliviaTheVampire
-	 */
+	 *//*
+
 	@Overwrite
 	@Override
 	public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
@@ -60,3 +63,4 @@ public abstract class SpreadableBlockMixin extends SnowyDirtBlock implements IFo
 		}
 	}
 }
+*/

@@ -27,7 +27,7 @@ public class SpecialText {
             } else if("space".equals(textType)) {
                 return Component.literal("");
             } else {
-                return TagParser.QUICK_TEXT_WITH_STF.parseNode(text).toText();
+                return TagParser.QUICK_TEXT_WITH_STF.parseNode(text).toComponent();
             }
         } else {
             return Component.literal("");

@@ -27,7 +27,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.quiltmc.qsl.fluid.api.QuiltFluidBlock;
 import org.quiltmc.qsl.fluid.impl.QuiltFluid;
 

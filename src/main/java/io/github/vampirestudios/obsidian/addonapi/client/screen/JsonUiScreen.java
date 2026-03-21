@@ -4,11 +4,9 @@ import io.github.vampirestudios.obsidian.addonapi.menu.AnchorPosDef;
 import io.github.vampirestudios.obsidian.addonapi.menu.ScreenMenuDefinition;
 import io.github.vampirestudios.obsidian.addonapi.menu.UiElementDef;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -116,39 +114,39 @@ public class JsonUiScreen extends Screen {
         // you can define a "ui_click" packet (menu id + element id) → server resolves actions.
     }
 
-	@Override
-	public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-		// background
-		renderBackground(ctx, mouseX, mouseY, delta);
-
-		// labels
-		for (UiElementDef el : labelElements) {
-			AnchorPosDef xPos = el.x != null ? el.x : defaultAnchorX();
-			AnchorPosDef yPos = el.y != null ? el.y : defaultAnchorY();
-
-			int w = el.width;
-			int h = el.height;
-			int x = resolveX(xPos, w, this.width);
-			int y = resolveY(yPos, h, this.height);
-
-			Component text = el.text != null ? el.text.toMc() : Component.literal(el.id);
-			ctx.drawString(this.font, text, x, y, 0xFFFFFF, false);
-		}
-
-		for (UiElementDef el : imageElements) {
-			AnchorPosDef xPos = el.x != null ? el.x : defaultAnchorX();
-			AnchorPosDef yPos = el.y != null ? el.y : defaultAnchorY();
-
-			int w = el.width;
-			int h = el.height;
-			int x = resolveX(xPos, w, this.width);
-			int y = resolveY(yPos, h, this.height);
-
-			Identifier texId = Identifier.tryParse(el.texture);
-			ctx.blit(texId, x, y, el.u, el.v, w, h, el.tex_width, el.tex_height);
-		}
-		super.render(ctx, mouseX, mouseY, delta);
-	}
+//	@Override
+//	public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
+//		// background
+//		renderBackground(ctx, mouseX, mouseY, delta);
+//
+//		// labels
+//		for (UiElementDef el : labelElements) {
+//			AnchorPosDef xPos = el.x != null ? el.x : defaultAnchorX();
+//			AnchorPosDef yPos = el.y != null ? el.y : defaultAnchorY();
+//
+//			int w = el.width;
+//			int h = el.height;
+//			int x = resolveX(xPos, w, this.width);
+//			int y = resolveY(yPos, h, this.height);
+//
+//			Component text = el.text != null ? el.text.toMc() : Component.literal(el.id);
+//			ctx.drawString(this.font, text, x, y, 0xFFFFFF, false);
+//		}
+//
+//		for (UiElementDef el : imageElements) {
+//			AnchorPosDef xPos = el.x != null ? el.x : defaultAnchorX();
+//			AnchorPosDef yPos = el.y != null ? el.y : defaultAnchorY();
+//
+//			int w = el.width;
+//			int h = el.height;
+//			int x = resolveX(xPos, w, this.width);
+//			int y = resolveY(yPos, h, this.height);
+//
+//			Identifier texId = Identifier.tryParse(el.texture);
+//			ctx.blit(texId, x, y, el.u, el.v, w, h, el.tex_width, el.tex_height);
+//		}
+//		super.render(ctx, mouseX, mouseY, delta);
+//	}
 
 	@Override
     public void onClose() {

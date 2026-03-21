@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import com.google.gson.JsonObject;
@@ -15,12 +16,15 @@ public abstract class BlockElementDeserializerMixin {
 		return null;
 	}
 
-	/**
+	*/
+/**
      * @author A
      * @reason A
-     */
+     *//*
+
     @Overwrite
     private static Vector3f getPosition(JsonObject jsonObject, String string) {
 		return getVector3f(jsonObject, string);
     }
 }
+*/

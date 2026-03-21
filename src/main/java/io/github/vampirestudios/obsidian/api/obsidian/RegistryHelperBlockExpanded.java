@@ -2,19 +2,22 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.RegistryHelper;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.TintedParticleLeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -31,7 +34,7 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 		Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
 		Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Properties()
 				.setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name)))));
-		ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.accept(item));
+		CreativeModeTabEvents.modifyOutputEvent(itemGroup).register(entries -> entries.accept(item));
 		return block;
 	}
 
@@ -39,13 +42,13 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 		registerBlockWithoutItem(name, block);
 		Item item = register(BuiltInRegistries.ITEM, name, new CustomBlockItem(block2, block, new Properties()
 				.setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name)))));
-		ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.accept(item));
+		CreativeModeTabEvents.modifyOutputEvent(itemGroup).register(entries -> entries.accept(item));
 	}
 
 	public void registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, ResourceKey<CreativeModeTab> itemGroup, Properties settings) {
 		Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
 		Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
-		ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.accept(item));
+		CreativeModeTabEvents.modifyOutputEvent(itemGroup).register(entries -> entries.accept(item));
 	}
 
 	public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Properties settings, ResourceKey<CreativeModeTab> itemGroup) {
@@ -57,7 +60,7 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 			Item item;
 			if (BuiltInRegistries.ITEM.containsKey(Identifier.fromNamespaceAndPath(this.modId, name))) item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
 			else item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
-			ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.accept(item));
+			CreativeModeTabEvents.modifyOutputEvent(itemGroup).register(entries -> entries.accept(item));
 		}
 		return block;
 	}
@@ -71,7 +74,7 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 			Item item;
 			if (BuiltInRegistries.ITEM.containsKey(Identifier.fromNamespaceAndPath(this.modId, name))) item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
 			else item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
-			if (block2.information.getItemSettings() != null) ItemGroupEvents.modifyEntriesEvent(block2.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
+			if (block2.information.getItemSettings() != null) CreativeModeTabEvents.modifyOutputEvent(block2.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
 		}
 		return block;
 	}
@@ -119,19 +122,19 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 
 	public Item registerItem(Item item, String name, ResourceKey<CreativeModeTab> itemGroup) {
 		register(BuiltInRegistries.ITEM, name, item);
-		ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.accept(item));
+		CreativeModeTabEvents.modifyOutputEvent(itemGroup).register(entries -> entries.accept(item));
 		return item;
 	}
 
 	public Item registerItem(Item item, String name) {
 		register(BuiltInRegistries.ITEM, name, item);
-		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> entries.accept(item));
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> entries.accept(item));
 		return item;
 	}
 
 	public Item registerDyeableItem(CustomDyeableItem item, String name) {
 		register(BuiltInRegistries.ITEM, name, item);
-		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> {
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> {
 			ItemStack stack = new ItemStack(item);
 			stack.set(DataComponents.DYED_COLOR, new DyedItemColor(item.block.additional_information.defaultColor));
 			entries.accept(stack);

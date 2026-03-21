@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.crucible;
 
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
@@ -184,7 +184,7 @@ public final class CrucibleFabricHooks {
             }
         });
 
-        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> CrucibleEvents.fire(
+        ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register((player, origin, destination) -> CrucibleEvents.fire(
                 SkillTrigger.CHANGE_WORLD,
 				SkillContext.builder(player).level(destination).build()
 		));

@@ -31,7 +31,7 @@ public class WorldCommandHandler implements CommandHandler {
 		CallChain.Segment segment = segments.getFirst();
 		try {
 			switch (segment.name()) {
-				case "time" -> LOGGER.info("world.time = {}", level.getDayTime() % 24000L);
+				case "time" -> LOGGER.info("world.time = {}", level.getOverworldClockTime() % 24000L);
 				case "setTime" -> setTime(level, segment, vars);
 				case "weather" -> setWeather(level, segment, vars);
 				case "spawn" -> spawn(level, segment, vars);
@@ -57,7 +57,7 @@ public class WorldCommandHandler implements CommandHandler {
 			LOGGER.warn("setTime requires time value");
 			return;
 		}
-		level.setDayTime((long) ScriptUtils.getNumberArg(segment, 0, vars));
+		level.clockManager().setTotalTicks(level.dimensionType().defaultClock().orElseThrow(), (long) ScriptUtils.getNumberArg(segment, 0, vars));
 	}
 
 	private void setWeather(ServerLevel level, CallChain.Segment segment, Map<String, Object> vars) {
@@ -68,9 +68,15 @@ public class WorldCommandHandler implements CommandHandler {
 		String kind = ScriptUtils.getStringArg(segment, 0, vars);
 		int seconds = (int) ScriptUtils.getNumberArg(segment, 1, vars);
 		switch (kind) {
-			case "clear" -> level.setWeatherParameters(seconds * 20, 0, false, false);
-			case "rain" -> level.setWeatherParameters(0, seconds * 20, true, false);
-			case "thunder" -> level.setWeatherParameters(0, seconds * 20, true, true);
+			case "clear" -> level.getWeatherData().setClearWeatherTime(seconds * 20);
+			case "rain" -> {
+				level.getWeatherData().setRaining(true);
+				level.getWeatherData().setRainTime(seconds * 20);
+			}
+			case "thunder" -> {
+				level.getWeatherData().setThundering(true);
+				level.getWeatherData().setThunderTime(seconds * 20);
+			}
 			default -> LOGGER.warn("Unknown weather type: {}", kind);
 		}
 	}

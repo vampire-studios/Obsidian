@@ -8,7 +8,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
-import org.jetbrains.annotations.Range;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 
 public class Fluid {
@@ -22,7 +21,7 @@ public class Fluid {
 	public boolean allowSprintSwimming;
 	public boolean canExtinguish;
 	public boolean canIgnite;
-	@Range(from = 1, to = 15) public int maxFluidLevel;
+	public int maxFluidLevel;
 	public float pushStrength;
 	public float pushStrengthUltrawarm;
 	public boolean pushStrengthChangesWhenWarm;
@@ -57,7 +56,7 @@ public class Fluid {
 
 	public ResourceKey<LootTable> fishingLootTable;
 
-	public Fluid(ParentFluid parent, NameInformation name, int fluidColor, int fluidFogColor, boolean allowSprintSwimming, boolean canExtinguish, boolean canIgnite, @Range(from = 1, to = 15) int maxFluidLevel, float pushStrength, float pushStrengthUltrawarm, boolean pushStrengthChangesWhenWarm, float fallDamageReduction, FallDamageReduction fallDamageReductionType, boolean fishingBobberFloats, boolean canFish, float horizontalViscosity, float verticalViscosity, float density, float temperature, boolean canBeInfinite, int flowSpeed, int flowSpeedUltrawarm, boolean flowSpeedChangesWhenWarm, int levelDecreasePerBlock, int levelDecreasePerBlockUltrawarm, boolean levelDecreasePerBlockChangesWhenWarm, int tickRate, int tickRateUltrawarm, boolean tickRateChangesWhenWarm, boolean randomTicking, float blastResistance, boolean boatFloats, Identifier splashSound, Identifier highSpeedSplashSound, Identifier particleType, Identifier splashParticle, Identifier bubbleParticle, ResourceKey<LootTable> fishingLootTable) {
+	public Fluid(ParentFluid parent, NameInformation name, int fluidColor, int fluidFogColor, boolean allowSprintSwimming, boolean canExtinguish, boolean canIgnite, int maxFluidLevel, float pushStrength, float pushStrengthUltrawarm, boolean pushStrengthChangesWhenWarm, float fallDamageReduction, FallDamageReduction fallDamageReductionType, boolean fishingBobberFloats, boolean canFish, float horizontalViscosity, float verticalViscosity, float density, float temperature, boolean canBeInfinite, int flowSpeed, int flowSpeedUltrawarm, boolean flowSpeedChangesWhenWarm, int levelDecreasePerBlock, int levelDecreasePerBlockUltrawarm, boolean levelDecreasePerBlockChangesWhenWarm, int tickRate, int tickRateUltrawarm, boolean tickRateChangesWhenWarm, boolean randomTicking, float blastResistance, boolean boatFloats, Identifier splashSound, Identifier highSpeedSplashSound, Identifier particleType, Identifier splashParticle, Identifier bubbleParticle, ResourceKey<LootTable> fishingLootTable) {
 		this.parent = parent;
 		this.name = name;
 		this.fluidColor = Integer.toString(fluidColor);

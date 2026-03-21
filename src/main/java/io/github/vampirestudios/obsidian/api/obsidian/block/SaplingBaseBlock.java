@@ -75,7 +75,7 @@ public class SaplingBaseBlock extends VegetationBlock implements BonemealableBlo
 
 	@Override
 	public boolean isBonemealSuccess(Level world, RandomSource random, BlockPos pos, BlockState state) {
-		return world.random.nextFloat() < 0.45;
+		return world.getRandom().nextFloat() < 0.45;
 	}
 
 	@Override

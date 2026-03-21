@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
@@ -19,8 +20,9 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class PickaxeItemImpl extends Item {
@@ -28,8 +30,21 @@ public class PickaxeItemImpl extends Item {
     public ToolItem item;
 
     public PickaxeItemImpl(ToolItem item, ToolMaterial material, Properties settings) {
-        super(settings.pickaxe(material, 1, 1));
+        super(buildProps(item, material, settings));
         this.item = item;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Properties buildProps(ToolItem item, ToolMaterial material, Properties settings) {
+        settings.pickaxe(material, 1, 1);
+        if (item.components != null) {
+            for (var e : item.components.entrySet()) {
+                var type = (DataComponentType<T>) e.getKey();
+                var opt  = (Optional<T>) e.getValue();
+                opt.ifPresent(v -> settings.component(type, v));
+            }
+        }
+        return settings;
     }
 
     @Override

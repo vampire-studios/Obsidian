@@ -65,11 +65,11 @@ public class PowerableHorizontalFacingBlockImpl extends HorizontalFacingBlockImp
     }
 
     @Override
-    public int getLightBlock(BlockState state) {
+    public int getLightDampening(BlockState state) {
         BlockSettings settings = block.information.getBlockSettings();
         if (settings != null && settings.poweredLuminance >= 0 && state.getValue(POWERED)) {
             return settings.poweredLuminance;
         }
-        return super.getLightBlock(state);
+        return super.getLightDampening(state);
     }
 }

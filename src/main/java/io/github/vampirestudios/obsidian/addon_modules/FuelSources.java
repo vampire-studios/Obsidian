@@ -8,7 +8,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.FuelSource;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
+import net.fabricmc.fabric.api.registry.FuelValueEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 
@@ -40,9 +40,9 @@ public class FuelSources implements AddonModule {
             } else {
                 if (fuelSource.burn_time > 0) {
                     if (fuelSource.item != null) {
-                        FuelRegistryEvents.EXCLUSIONS.register((builder, _) -> builder.add(BuiltInRegistries.ITEM.getValue(fuelSource.item), fuelSource.burn_time));
+                        FuelValueEvents.EXCLUSIONS.register((builder, _) -> builder.add(BuiltInRegistries.ITEM.getValue(fuelSource.item), fuelSource.burn_time));
                     } else {
-                        FuelRegistryEvents.EXCLUSIONS.register((builder, _) -> builder.add(fuelSource.getTag(), fuelSource.burn_time));
+                        FuelValueEvents.EXCLUSIONS.register((builder, _) -> builder.add(fuelSource.getTag(), fuelSource.burn_time));
                     }
                 } else {
                     /*if (fuelSource.item != null) {
@@ -51,7 +51,7 @@ public class FuelSources implements AddonModule {
                     } else {
                         FuelRegistry.INSTANCE.remove(fuelSource.getTag());
                     }*/
-                    FuelRegistryEvents.BUILD.register((builder, _) -> builder.remove(fuelSource.getTag()));
+                    FuelValueEvents.BUILD.register((builder, _) -> builder.remove(fuelSource.getTag()));
                 }
             }
             register(ContentRegistries.FUEL_SOURCES, "fuel_source", Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", "")), fuelSource);

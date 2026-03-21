@@ -22,7 +22,7 @@ public class CommandDefinition {
 			case 2 -> Commands.LEVEL_GAMEMASTERS;
 			case 3 -> Commands.LEVEL_ADMINS;
 			case 4 -> Commands.LEVEL_OWNERS;
-			default -> throw new IllegalStateException(STR."Unexpected value: \{permission_level}");
+			default -> throw new IllegalStateException("Unexpected value: " + permission_level);
 		};
 	}
 }

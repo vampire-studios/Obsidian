@@ -117,7 +117,7 @@ public final class ContentPackSyncNetworking {
                         return;
                 }
                 playPayloadRegistered = true;
-                PayloadTypeRegistry.playS2C().register(ContentPackManifestPayload.TYPE,
+                PayloadTypeRegistry.clientboundPlay().register(ContentPackManifestPayload.TYPE,
                         ContentPackManifestPayload.CODEC);
         }
 
@@ -126,7 +126,7 @@ public final class ContentPackSyncNetworking {
                         return;
                 }
                 configPayloadRegistered = true;
-                PayloadTypeRegistry.configurationS2C().register(ContentPackManifestPayload.TYPE,
+                PayloadTypeRegistry.clientboundConfiguration().register(ContentPackManifestPayload.TYPE,
                         ContentPackManifestPayload.CODEC);
         }
 }

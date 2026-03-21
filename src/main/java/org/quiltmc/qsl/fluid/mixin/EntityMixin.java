@@ -117,7 +117,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 		FluidState fluidState = this.level.getFluidState(this.blockPosition());
 		if (fluidState.getType() instanceof QuiltFlowableFluidExtensions fluid &&
 				!(getVehicle() instanceof Boat)) {
-			updateFluidHeightAndDoFluidPushing(TagKey.create(Registries.FLUID, fluidState.holder().unwrapKey().get().registry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
+			updateFluidHeightAndDoFluidPushing(TagKey.create(Registries.FLUID, fluidState.typeHolder().unwrapKey().get().registry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
 			if (!quilt$inCustomFluid && !firstTick) {
 				customSplashEffects();
 			}

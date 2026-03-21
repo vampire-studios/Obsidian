@@ -23,8 +23,8 @@ import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -54,7 +54,7 @@ import java.util.zip.ZipFile;
 public class ObsidianAddonLoader {
 	public static final File OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve("obsidian_addons").toFile();
 	public static final File SERVER_OBSIDIAN_ADDON_DIRECTORY = FabricLoader.getInstance().getGameDir().resolve("server_obsidian_addons").toFile();
-	public static final Registry<IAddonPack> OBSIDIAN_ADDONS = FabricRegistryBuilder.createSimple(IAddonPack.class, Const.id("obsidian_addons")).buildAndRegister();
+	public static final Registry<IAddonPack> OBSIDIAN_ADDONS = FabricRegistryBuilder.create(IAddonPack.class, Const.id("obsidian_addons")).buildAndRegister();
 	public static final int SCHEMA_VERSION = 5;
 	private static final Map<String, ScriptManager> managers = new HashMap<>();
 	private static final Map<String, io.github.vampirestudios.obsidian.scripting.std.ObsPackRuntime> OBS_PACKS = new HashMap<>();
@@ -362,13 +362,13 @@ public class ObsidianAddonLoader {
 											try {
 												int i = rt.reload();
 												ctx.getSource()
-														.sendSuccess(() -> Component.literal(STR."Loaded \{i} .obs scripts for pack '\{pack}'"), false);
+														.sendSuccess(() -> Component.literal("Loaded " + i + " .obs scripts for pack '" + pack + "'"), false);
 											} catch (IOException e) {
 												throw new RuntimeException(e);
 											}
 										}
 										ctx.getSource()
-												.sendSuccess(() -> Component.literal(STR."§aReloaded \{count}" + " scripts in " + pack), false);
+												.sendSuccess(() -> Component.literal("§aReloaded " + count + " scripts in " + pack), false);
 										return 1;
 									})
 							)
@@ -387,13 +387,13 @@ public class ObsidianAddonLoader {
 										int i = rt.reload();
 
 										ctx.getSource()
-												.sendSuccess(() -> Component.literal(STR."Loaded \{i} .obs scripts across all pack"), false);
+												.sendSuccess(() -> Component.literal("Loaded " + i + " .obs scripts across all pack"), false);
 									} catch (Exception ignored) {
 									}
 								});
 
 								ctx.getSource()
-										.sendSuccess(() -> Component.literal(STR."\{STR."§aReloaded \{total}"} scripts across all packs"), false);
+										.sendSuccess(() -> Component.literal("§aReloaded " + total + " scripts across all packs"), false);
 								return 1;
 							})
 					)
@@ -471,7 +471,7 @@ public class ObsidianAddonLoader {
 
 	public net.minecraft.world.level.block.Block register(Identifier name, net.minecraft.world.level.block.Block block, ResourceKey<net.minecraft.world.item.CreativeModeTab> tab) {
 		Block block1 = register(name, block, new net.minecraft.world.item.Item.Properties());
-		ItemGroupEvents.modifyEntriesEvent(tab).register(entries -> entries.accept(block1));
+		CreativeModeTabEvents.modifyOutputEvent(tab).register(entries -> entries.accept(block1));
 		return block1;
 	}
 

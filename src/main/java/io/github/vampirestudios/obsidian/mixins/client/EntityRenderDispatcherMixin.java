@@ -8,12 +8,12 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MapRenderer;
 import net.minecraft.client.renderer.PlayerSkinRenderCache;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.model.AtlasManager;
 import net.minecraft.client.resources.model.EquipmentAssetManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.server.packs.PackType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,7 +29,7 @@ public class EntityRenderDispatcherMixin implements HasAnimationManager {
 	private AnimationManager quilt$animationManager;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void createAnimationManager(Minecraft minecraft, TextureManager textureManager, ItemModelResolver itemModelResolver, MapRenderer mapRenderer, BlockRenderDispatcher blockRenderDispatcher, AtlasManager atlasManager, Font font, Options options, Supplier supplier, EquipmentAssetManager equipmentAssetManager, PlayerSkinRenderCache playerSkinRenderCache, CallbackInfo ci) {
+	private void createAnimationManager(Minecraft minecraft, TextureManager textureManager, BlockModelResolver blockModelResolver, ItemModelResolver itemModelResolver, MapRenderer mapRenderer, AtlasManager atlasManager, Font font, Options options, Supplier entityModels, EquipmentAssetManager equipmentAssets, PlayerSkinRenderCache playerSkinRenderCache, CallbackInfo ci) {
 		this.quilt$animationManager = new AnimationManager();
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this.quilt$animationManager);
 	}

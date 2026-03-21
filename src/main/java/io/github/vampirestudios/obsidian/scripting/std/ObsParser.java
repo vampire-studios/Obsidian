@@ -168,7 +168,7 @@ public final class ObsParser {
 				continue;
 			}
 
-			throw err(path, lineNo, STR."Unrecognized: \{line.trim()}");
+			throw err(path, lineNo, "Unrecognized: " + line.trim());
 		}
 		return unit;
 	}
@@ -345,7 +345,7 @@ public final class ObsParser {
 	}
 
 	private static RuntimeException err(Path p, int line, String m) {
-		return new RuntimeException(STR."\{STR."\{p.getFileName()}:" + line}: " + m);
+		return new RuntimeException(p.getFileName() + ":" + line + ": " + m);
 	}
 
 	/* ------------ param parsing ------------ */

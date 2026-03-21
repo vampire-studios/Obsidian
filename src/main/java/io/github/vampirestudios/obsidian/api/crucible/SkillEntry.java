@@ -162,7 +162,7 @@ public class SkillEntry {
 
 	@Override
 	public String toString() {
-		return STR."SkillEntry{skillParameters=\{skillParameters}, target='\{target}\{'\''}, eventName='\{eventName}\{'\''}, eventParameter='\{eventParameter}\{'\''}, subSkills=\{subSkills}\{'}'}";
+		return "SkillEntry{skillParameters=" + skillParameters + ", target='" + target + "', eventName='" + eventName + "', eventParameter='" + eventParameter + "', subSkills=" + subSkills + "}";
 	}
 
 	public class Buff {

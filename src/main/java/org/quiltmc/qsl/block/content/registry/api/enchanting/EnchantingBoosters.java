@@ -37,7 +37,7 @@ public class EnchantingBoosters {
 	 */
 	public static Codec<EnchantingBoosterType> TYPE_CODEC = Identifier.CODEC.flatXmap(id -> {
 		EnchantingBoosterType type = TYPES.get(id);
-		return type != null ? DataResult.success(type) : DataResult.error(() -> STR."Unknown enchanting booster type: \{id}");
+		return type != null ? DataResult.success(type) : DataResult.error(() -> "Unknown enchanting booster type: " + id);
 	}, type -> {
 		Identifier identifier = TYPES.inverse().get(type);
 		return identifier != null ? DataResult.success(identifier) : DataResult.error(() -> "Unknown enchanting booster type");
@@ -56,7 +56,7 @@ public class EnchantingBoosters {
 											floatId.map(f -> DataResult.success(new ConstantBooster(f)), id -> {
 												EnchantingBoosterType type = TYPES.get(id);
 												if (type == null) {
-													return DataResult.error(() -> STR."Unknown Booster Type: \{id}");
+													return DataResult.error(() -> "Unknown Booster Type: " + id);
 												}
 
 												return type.simpleVariant().isPresent()
@@ -97,9 +97,9 @@ public class EnchantingBoosters {
 	 */
 	public static EnchantingBoosterType register(Identifier id, EnchantingBoosterType type) {
 		if (TYPES.containsKey(id)) {
-			throw new IllegalArgumentException(STR."\{id} already used as name");
+			throw new IllegalArgumentException(id + " already used as name");
 		} else if (TYPES.containsValue(type)) {
-			throw new IllegalArgumentException(STR."Type already assigned to \{TYPES.inverse().get(type)}");
+			throw new IllegalArgumentException("Type already assigned to " + TYPES.inverse().get(type));
 		}
 
 		TYPES.put(id, type);

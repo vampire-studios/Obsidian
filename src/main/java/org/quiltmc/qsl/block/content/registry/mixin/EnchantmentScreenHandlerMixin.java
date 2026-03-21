@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package org.quiltmc.qsl.block.content.registry.mixin;
 
@@ -50,4 +51,4 @@ public class EnchantmentScreenHandlerMixin {
 		// Round sum of powers to the nearest integer, x.5 is rounded down to x
 		return -Math.round(-BlockContentRegistriesImpl.calculateBookshelfCount(world, pos));
 	}
-}
+}*/

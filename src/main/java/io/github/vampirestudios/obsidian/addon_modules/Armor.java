@@ -18,7 +18,7 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.ArmorItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableArmorItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -123,7 +123,7 @@ public class Armor implements AddonModule {
             else
                 item = new ArmorItemImpl(armor, settings);
             REGISTRY_HELPER.items().registerItem(identifier.getPath(), item);
-            ItemGroupEvents.modifyEntriesEvent(armor.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
+            CreativeModeTabEvents.modifyOutputEvent(armor.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
 
             register(ContentRegistries.ARMORS, "armor", identifier, armor);
         } catch (Exception e) {

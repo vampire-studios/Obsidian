@@ -6,11 +6,7 @@ import com.mojang.math.Transformation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.github.vampirestudios.obsidian.addon_modules.DataComponentPatchDeserializer;
-import io.github.vampirestudios.obsidian.api.obsidian.IdentifierTypeAdapter;
-import io.github.vampirestudios.obsidian.api.obsidian.IntArrayTypeAdapter;
-import io.github.vampirestudios.obsidian.api.obsidian.NameInformation;
-import io.github.vampirestudios.obsidian.api.obsidian.NameInformationDeserializer;
-import io.github.vampirestudios.obsidian.api.obsidian.TriStateAdapter;
+import io.github.vampirestudios.obsidian.api.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.components.actionPos.ActionPosition;
 import io.github.vampirestudios.obsidian.utils.IntArray;
 import net.fabricmc.fabric.api.util.TriState;
@@ -27,8 +23,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Brightness;
-import net.minecraft.util.valueproviders.FloatProviderType;
-import net.minecraft.util.valueproviders.IntProviderType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityDimensions;
@@ -64,8 +58,6 @@ public class BaseGson {
             .registerTypeAdapter(MobEffect.class, new RegistrySerializer<>(BuiltInRegistries.MOB_EFFECT))
             .registerTypeAdapter(EntityType.class, new RegistrySerializer<>(BuiltInRegistries.ENTITY_TYPE))
             .registerTypeAdapter(BlockEntityType.class, new RegistrySerializer<>(BuiltInRegistries.BLOCK_ENTITY_TYPE))
-            .registerTypeAdapter(FloatProviderType.class, new RegistrySerializer<>(BuiltInRegistries.FLOAT_PROVIDER_TYPE))
-            .registerTypeAdapter(IntProviderType.class, new RegistrySerializer<>(BuiltInRegistries.INT_PROVIDER_TYPE))
             .registerTypeAdapter(HeightProviderType.class, new RegistrySerializer<>(BuiltInRegistries.HEIGHT_PROVIDER_TYPE))
             .registerTypeAdapter(BlockPredicateType.class, new RegistrySerializer<>(BuiltInRegistries.BLOCK_PREDICATE_TYPE))
             .registerTypeAdapter(CreativeModeTab.class, new RegistrySerializer<>(BuiltInRegistries.CREATIVE_MODE_TAB))

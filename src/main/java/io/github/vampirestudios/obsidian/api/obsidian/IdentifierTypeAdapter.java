@@ -25,6 +25,6 @@ public class IdentifierTypeAdapter implements JsonSerializer<Identifier>, JsonDe
             String path = obj.has("path") ? obj.get("path").getAsString() : "";
             return Identifier.fromNamespaceAndPath(namespace, path);
         }
-        throw new JsonParseException(STR."Invalid JSON for Identifier: \{json}");
+        throw new JsonParseException("Invalid JSON for Identifier: " + json);
     }
 }

@@ -106,7 +106,7 @@ public class ParticleSkill extends Skill {
             }
             if (particleType == ParticleTypes.ITEM && item.isPresent()) {
                 ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(this.item.get())));
-                return new ItemParticleOption(ParticleTypes.ITEM, itemStack);
+                return new ItemParticleOption(ParticleTypes.ITEM, itemStack.getItem());
             }
             return (ParticleOptions) particleType;
         } catch (Exception e) {

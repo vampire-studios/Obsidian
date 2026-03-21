@@ -16,8 +16,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -55,8 +55,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -109,7 +109,7 @@ public class NexoItem {
 		if (item.components().has(DataComponents.ITEM_NAME)) {
 			Component existing = item.components()
 					.getOrDefault(DataComponents.ITEM_NAME, Component.literal("A"));
-			return TagParser.QUICK_TEXT_WITH_STF.parseNode(existing.getString()).toText();
+			return TagParser.QUICK_TEXT_WITH_STF.parseNode(existing.getString()).toComponent();
 		}
 
 		// Otherwise, fall back to displayName, then itemName, then "A"
@@ -122,7 +122,7 @@ public class NexoItem {
 			name = "A";
 		}
 
-		return TagParser.QUICK_TEXT_WITH_STF.parseNode(name).toText();
+		return TagParser.QUICK_TEXT_WITH_STF.parseNode(name).toComponent();
 	}
 
 	private boolean isNameNotNull(String name) {
@@ -997,7 +997,7 @@ public class NexoItem {
 				if (damageTypeCounters.get(damageType) > 3) {  // Arbitrary threshold for resistance boost
 					if (entity instanceof Player) {
 						((Player) entity).addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, effectDuration, calculateResistanceLevel()));
-						LOGGER.info(STR."Adaptive resistance applied to \{entity.getName().getString()} for damage type \{damageType}");
+						LOGGER.info("Adaptive resistance applied to " + entity.getName().getString() + " for damage type " + damageType);
 					}
 					damageTypeCounters.put(damageType, 0);  // Reset counter after applying effect
 				}
@@ -1015,7 +1015,7 @@ public class NexoItem {
 			public void harvestEnergy(Level world, BlockPos pos) {
 				String currentEnergySource = determineEnergySource(world, pos);
 				if (energySources.contains(currentEnergySource)) {
-					LOGGER.info(STR."Harvesting energy from source: \{currentEnergySource}");
+					LOGGER.info("Harvesting energy from source: " + currentEnergySource);
 					// Implement recharge logic here
 				}
 			}
@@ -1061,7 +1061,7 @@ public class NexoItem {
 			public int cooldown;
 
 			public void activateAbility(Player player, Level world, Vec3 direction) {
-				LOGGER.info(STR."Activating telekinetic ability in the direction: \{direction}");
+				LOGGER.info("Activating telekinetic ability in the direction: " + direction);
 				// Logic to manipulate objects/entities within range
 			}
 		}
@@ -1083,7 +1083,7 @@ public class NexoItem {
 			public int duration;
 
 			public void createPortal(Level world, BlockPos pos) {
-				LOGGER.info(STR."Creating portal at location: \{pos}");
+				LOGGER.info("Creating portal at location: " + pos);
 				// Portal creation logic here
 				// This could involve placing portal blocks or teleporting entities
 			}
@@ -1121,7 +1121,7 @@ public class NexoItem {
 					entity.setPos(pos.getX(), pos.getY(), pos.getZ());
 					world.addFreshEntity(entity);
 
-					LOGGER.info(STR."Summoning ritual performed at \{pos}");
+					LOGGER.info("Summoning ritual performed at " + pos);
 				}
 			}
 
@@ -1295,7 +1295,7 @@ public class NexoItem {
 
 			private void increaseGameTickSpeed(Entity entity, float newTickSpeed) {
 				entity.level().tickRateManager().setTickRate(newTickSpeed);
-				LOGGER.info(STR."Game ticks are now set to \{newTickSpeed}");
+				LOGGER.info("Game ticks are now set to " + newTickSpeed);
 			}
 
 			private void freezeGameTickSpeed(Entity entity, boolean freeze) {
@@ -1360,13 +1360,13 @@ public class NexoItem {
 				// Apply the new modifier
 				attributeInstance.addPermanentModifier(modifier);
 
-				LOGGER.info(STR."Custom gravity (\{modifier.amount()}) applied to \{entity.getName().getString()}");
+				LOGGER.info("Custom gravity (" + modifier.amount() + ") applied to " + entity.getName().getString());
 
 				if (duration != -1) {
 					ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 					scheduler.schedule(() -> {
 						attributeInstance.removeModifier(modifier.id());
-						LOGGER.info(STR."Gravity effect reverted for \{entity.getName().getString()}");
+						LOGGER.info("Gravity effect reverted for " + entity.getName().getString());
 					}, duration, TimeUnit.SECONDS);
 					scheduler.schedule(scheduler::shutdown, duration + 5, TimeUnit.SECONDS);
 				}
@@ -1378,12 +1378,12 @@ public class NexoItem {
 				scheduler.execute(() -> player.level().getEntities(player, player.getBoundingBox().inflate(5)).forEach(e ->
 						((LivingEntity) e).heal(5.0F)));
 				scheduler.schedule(scheduler::shutdown, duration, TimeUnit.SECONDS);
-				LOGGER.info(STR."Healing rain activated around \{player.getName().getString()}");
+				LOGGER.info("Healing rain activated around " + player.getName().getString());
 			}
 
 			public static void applyMysteryTeleport(LivingEntity player) {
 				Level world = player.level();
-				BlockPos randomPos = player.blockPosition().offset(world.random.nextInt(100) - 50, 0, world.random.nextInt(100) - 50);
+				BlockPos randomPos = player.blockPosition().offset(world.getRandom().nextInt(100) - 50, 0, world.getRandom().nextInt(100) - 50);
 				player.teleportTo(randomPos.getX(), world.getHeight(Heightmap.Types.WORLD_SURFACE_WG, randomPos.getX(), randomPos.getZ()), randomPos.getZ());
 			}
 
@@ -1400,9 +1400,16 @@ public class NexoItem {
 			public void changeWeather(Level world) {
 				if (world instanceof ServerLevel serverWorld) {
 					switch (weatherType.toLowerCase()) {
-						case "clear" -> serverWorld.setWeatherParameters(duration * 20, 0, false, false);
-						case "rain" -> serverWorld.setWeatherParameters(0, duration * 20, true, false);
-						case "thunder" -> serverWorld.setWeatherParameters(0, duration * 20, true, true);
+						case "clear" -> serverWorld.getWeatherData().setClearWeatherTime(duration * 20);
+						case "rain" -> {
+							serverWorld.getWeatherData().setRaining(true);
+							serverWorld.getWeatherData().setRainTime(duration * 20);
+						}
+						case "thunder" -> {
+							serverWorld.getWeatherData().setThundering(true);
+							serverWorld.getWeatherData().setThunderTime(duration * 20);
+						}
+						default -> throw new IllegalStateException("Unexpected value: " + weatherType.toLowerCase());
 					}
 				}
 			}

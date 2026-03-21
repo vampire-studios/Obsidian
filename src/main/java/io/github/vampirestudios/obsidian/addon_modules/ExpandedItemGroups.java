@@ -31,9 +31,9 @@ public class ExpandedItemGroups implements AddonModule {
 //            ExpandedTabs groupTabLoader = new ExpandedTabs(itemGroup);
 //            groupTabLoader.acceptParsedFile(null, jsonObject);
 //            ModDataLoader.load(groupTabLoader);
-            register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", Identifier.fromNamespaceAndPath(id.modId(), STR."tabbed_\{itemGroup.targetGroup}"), itemGroup);
+            register(ContentRegistries.EXPANDED_ITEM_GROUPS, "tabbed_group", Identifier.fromNamespaceAndPath(id.modId(), "tabbed_" + itemGroup.targetGroup), itemGroup);
         } catch (Exception e) {
-            failedRegistering("tabbed_group", STR."tabbed_\{itemGroup.targetGroup}", e);
+            failedRegistering("tabbed_group", "tabbed_" + itemGroup.targetGroup, e);
         }
     }
 

@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
@@ -21,7 +22,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
 import net.minecraft.network.chat.Component;
@@ -80,7 +80,9 @@ public abstract class KeyBindEntryMixin extends KeyBindsList.Entry implements Ke
 		// TODO - Get client from the parent screen instead
 		Minecraft client = Minecraft.getInstance();
 		Component text = this.changeButton.getMessage();
-		int targetWidth = /*bl || bl2 ? 50 - 10 : */75 - 10;
+		int targetWidth = */
+/*bl || bl2 ? 50 - 10 : *//*
+75 - 10;
 		if (client.font.width(text) > targetWidth) {
 			StringBuilder protoText = new StringBuilder(text.getString());
 			if (this.key.getBoundChord() != null) {
@@ -119,4 +121,4 @@ public abstract class KeyBindEntryMixin extends KeyBindsList.Entry implements Ke
 			this.changeButton.setMessage(Component.literal(protoText.toString()));
 		}
 	}
-}
+}*/

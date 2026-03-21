@@ -8,11 +8,8 @@ import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded
 import io.github.vampirestudios.obsidian.api.obsidian.item.Cosmetic;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -26,8 +23,6 @@ import net.minecraft.world.item.equipment.Equippable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -63,48 +58,19 @@ public class Cosmetics implements AddonModule {
 				registeredItem = expanded.registerItem(identifier.getPath(), new ItemImpl(cosmetic, settings), creativeTab);
 			}
 
-			ItemGroupEvents.modifyEntriesEvent(creativeTab).register(entries -> entries.accept(registeredItem));
+			CreativeModeTabEvents.modifyOutputEvent(creativeTab).register(entries -> entries.accept(registeredItem));
 			register(ContentRegistries.COSMETICS, "cosmetic", identifier, cosmetic);
 		} catch (Exception e) {
 			failedRegistering("cosmetic", file.getName(), e);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
-		for (var e : map.entrySet()) {
-			var type = (DataComponentType<T>) e.getKey();
-			var opt  = (Optional<T>) e.getValue();
-			opt.ifPresent(v -> props.component(type, v));
-		}
-	}
-
 	private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-		Item.Properties props = new Item.Properties();
-
-		var comps = item.components;
-		if (comps == null) {
-			return props;
-		}
-
-		applyAllComponents(props, comps);
-		return props;
+		return ItemModuleHelper.baseProperties(item);
 	}
 
 	private ResourceKey<CreativeModeTab> getCreativeTab(Cosmetic cosmetic) {
-		ResourceKey<CreativeModeTab> creativeTab;
-		if (cosmetic.components != null && cosmetic.components.get(OItemComponents.CREATIVE_TAB) != null &&
-				cosmetic.components.get(OItemComponents.CREATIVE_TAB).isPresent()) {
-			Identifier tabLocation = (Identifier) Objects.requireNonNull(cosmetic.components.get(OItemComponents.CREATIVE_TAB)).orElseThrow();
-			creativeTab = ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabLocation);
-		} else if (cosmetic.information.getItemSettings().getItemGroup() != null) {
-			creativeTab = cosmetic.information.getItemSettings().getItemGroup();
-		} else if (cosmetic.information.getItemSettings().getParentSettings().getItemGroup() != null) {
-			creativeTab = cosmetic.information.getItemSettings().getParentSettings().getItemGroup();
-		} else {
-			creativeTab = net.minecraft.world.item.CreativeModeTabs.BUILDING_BLOCKS;
-		}
-		return creativeTab;
+		return ItemModuleHelper.getCreativeTab(cosmetic);
 	}
 
 	private boolean isWearable(Cosmetic cosmetic) {

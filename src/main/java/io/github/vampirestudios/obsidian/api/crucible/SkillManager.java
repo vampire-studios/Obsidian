@@ -25,7 +25,7 @@ public class SkillManager {
 
         Skill prev = skillRegistry.putIfAbsent(skillId, skill);
         if (prev != null) {
-            throw new IllegalArgumentException(STR."Skill ID already registered: \{skillId}");
+            throw new IllegalArgumentException("Skill ID already registered: " + skillId);
         }
 
         // ALSO register by trigger so triggerSkills() works

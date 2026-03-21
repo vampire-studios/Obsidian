@@ -2,21 +2,22 @@ package io.github.vampirestudios.obsidian.addon_modules;
 
 import blue.endless.jankson.api.SyntaxError;
 import io.github.vampirestudios.obsidian.BaseGson;
-import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.KeyBinding;
-import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.KeybindingImpl;
+import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
+import net.fabricmc.fabric.impl.client.keymapping.KeyMappingRegistryImpl;
 import net.minecraft.resources.Identifier;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class KeyBindings implements AddonModule {
     @Override
@@ -29,7 +30,7 @@ public class KeyBindings implements AddonModule {
                     () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
             );
             if (keyBinding.id == null) keyBinding.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-            KeyBindingRegistryImpl.registerKeyBinding(new KeybindingImpl(keyBinding));
+            KeyMappingRegistryImpl.registerKeyMapping(new KeybindingImpl(keyBinding));
             register(ContentRegistries.KEY_BINDINGS, "key_binding", identifier, keyBinding);
         } catch (Exception e) {
             failedRegistering("key_binding", file.getName(), e);

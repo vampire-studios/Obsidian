@@ -35,7 +35,7 @@ public class Command {
                 case 2 -> Commands.LEVEL_GAMEMASTERS;
                 case 3 -> Commands.LEVEL_ADMINS;
                 case 4 -> Commands.LEVEL_OWNERS;
-                default -> throw new IllegalStateException(STR."Unexpected value: \{op_level}");
+                default -> throw new IllegalStateException("Unexpected value: " + op_level);
             };
         }
 
@@ -46,7 +46,7 @@ public class Command {
                 case 2 ->permission -> permission == Permissions.COMMANDS_GAMEMASTER;
                 case 3 -> permission -> permission == Permissions.COMMANDS_ADMIN;
                 case 4 -> permission -> permission == Permissions.COMMANDS_OWNER;
-                default -> throw new IllegalStateException(STR."Unexpected value: \{op_level}");
+                default -> throw new IllegalStateException("Unexpected value: " + op_level);
             };
         }
     }

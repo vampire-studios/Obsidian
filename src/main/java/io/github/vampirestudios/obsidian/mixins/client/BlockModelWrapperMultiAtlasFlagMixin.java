@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.BlockModelWrapperMultiAtlasFlagAccessor;
@@ -13,3 +14,4 @@ public abstract class BlockModelWrapperMultiAtlasFlagMixin implements MultiAtlas
     @Override public boolean obsidian$isMultiAtlas() { return obsidian$multiAtlas; }
     @Override public void obsidian$setMultiAtlas(boolean v) { obsidian$multiAtlas = v; }
 }
+*/

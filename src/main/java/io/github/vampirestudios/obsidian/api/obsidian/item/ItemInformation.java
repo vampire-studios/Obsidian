@@ -31,7 +31,7 @@ public class ItemInformation {
 				return constructItemSettingsFromMap(propertiesMap);
 			}
 			case JsonObject jsonObject -> {
-				System.out.println(STR."Json Object: \{jsonObject.getAsString()}");
+				System.out.println("Json Object: " + jsonObject.getAsString());
 				return null;
 			}
 			case String s -> {
@@ -60,7 +60,7 @@ public class ItemInformation {
 		if (location != null) {
 			return ContentRegistries.ITEM_SETTINGS.getValue(location);
 		} else {
-			System.out.println(STR."Invalid Reference: \{reference}");
+			System.out.println("Invalid Reference: " + reference);
 			return handleInvalidReference(reference);
 		}
 	}

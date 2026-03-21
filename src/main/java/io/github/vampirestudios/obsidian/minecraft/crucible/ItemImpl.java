@@ -30,7 +30,7 @@ public class ItemImpl extends Item {
 
     @Override
     public Component getName(ItemStack stack) {
-        return TagParser.QUICK_TEXT_WITH_STF.parseNode(item.Display).toText();
+        return TagParser.QUICK_TEXT_WITH_STF.parseNode(item.Display).toComponent();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ItemImpl extends Item {
                                 TooltipFlag context) {
         if (item.Lore != null) {
             for (String lore : item.Lore) {
-                tooltip.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toText());
+                tooltip.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toComponent());
             }
         }
 
@@ -62,7 +62,7 @@ public class ItemImpl extends Item {
                     line = augType != null ? augType.resolveFilledLine(augTooltip, icon)
                             : "§8● " + slot.type() + ": " + augTooltip;
                 }
-                tooltip.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(line).toText());
+                tooltip.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(line).toComponent());
             }
         }
     }

@@ -6,7 +6,6 @@ import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.BlockPositionSource;
 
@@ -166,7 +165,7 @@ public final class ScriptUtils {
 	public static Block getBlock(String id) {
 		Identifier loc = Identifier.tryParse(id);
 		if (loc == null) {
-			throw new IllegalArgumentException(STR."Invalid block ID: \{id}");
+			throw new IllegalArgumentException("Invalid block ID: " + id);
 		}
 		return BuiltInRegistries.BLOCK.getValue(loc);
 	}
@@ -174,7 +173,7 @@ public final class ScriptUtils {
 	public static Item getItem(String id) {
 		Identifier loc = Identifier.tryParse(id);
 		if (loc == null) {
-			throw new IllegalArgumentException(STR."Invalid item ID: \{id}");
+			throw new IllegalArgumentException("Invalid item ID: " + id);
 		}
 		return BuiltInRegistries.ITEM.getValue(loc);
 	}
@@ -209,7 +208,7 @@ public final class ScriptUtils {
 			}
 			String itemId = ScriptUtils.getStringArg(segment, 8, vars);
 			Item item = getItem(itemId);
-			return new ItemParticleOption((ParticleType<ItemParticleOption>) type, new ItemStack(item));
+			return new ItemParticleOption((ParticleType<ItemParticleOption>) type, item);
 		} else if (type == ParticleTypes.DUST) {
 			if (segment.args().size() == 10) {
 				int color = (int) ScriptUtils.getNumberArg(segment, 8, vars);

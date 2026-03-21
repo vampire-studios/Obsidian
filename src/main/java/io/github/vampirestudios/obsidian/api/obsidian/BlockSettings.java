@@ -105,15 +105,15 @@ public class BlockSettings {
     public BlockSettings getParentSettings() {
         switch (baseBlockSettings) {
             case Map<?, ?> propertiesMap -> {
-                System.out.println(STR."Map: \{propertiesMap}");
+                System.out.println("Map: " + propertiesMap);
                 return constructBlockSettingsFromMap(propertiesMap);
             }
             case JsonObject jsonObject -> {
-                System.out.println(STR."Json Object: \{jsonObject.getAsString()}");
+                System.out.println("Json Object: " + jsonObject.getAsString());
                 return null;
             }
             case String s -> {
-                System.out.println(STR."String: \{s}");
+                System.out.println("String: " + s);
                 return getBlockSettingsFromReference(s);
             }
             case BlockSettings blockSettings -> {
@@ -139,7 +139,7 @@ public class BlockSettings {
         if (location != null) {
             return ContentRegistries.BLOCK_SETTINGS.getValue(location);
         } else {
-            System.out.println(STR."Invalid Reference: \{reference}");
+            System.out.println("Invalid Reference: " + reference);
             return handleInvalidReference(reference);
         }
     }

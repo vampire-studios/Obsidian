@@ -1,3 +1,4 @@
+/*
 package org.quiltmc.qsl.enchantment.mixin;
 
 import net.minecraft.core.BlockPos;
@@ -57,4 +58,4 @@ public abstract class EnchantmentScreenHandlerMixin extends AbstractContainerMen
 	private void clearEnchantmentContext(RegistryAccess registryAccess, ItemStack itemStack, int i, int j, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
 		EnchantmentGodClass.context.remove();
 	}
-}
+}*/

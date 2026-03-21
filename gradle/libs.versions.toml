@@ -1,9 +1,8 @@
 [versions]
-    minecraft = '1.21.11'
+    minecraft = '26.1-rc-2'
     fabric-loader = "0.18.4"
-    parchment = "2025.10.12"
 
-    fabric = "0.141.3+1.21.11"
+    fabric = "0.143.15+26.1"
 
     vampirelib = "7.2.0+build.1-1.21.5"
     owo-lib = '0.13.0+1.21.11'

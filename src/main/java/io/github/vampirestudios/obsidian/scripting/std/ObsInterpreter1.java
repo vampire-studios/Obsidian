@@ -56,7 +56,7 @@ public final class ObsInterpreter1 {
 			if (match(line, "^([A-Za-z_][A-Za-z0-9_]*)\\.actionbar\\(\"([^\"]*)\"\\);$")) {
 				var m = M(line);
 				ServerPlayer p = (ServerPlayer) vars.get(m.group(1));
-				if (p != null) p.displayClientMessage(Component.literal(m.group(2)), true);
+				if (p != null) p.sendSystemMessage(Component.literal(m.group(2)), true);
 				continue;
 			}
 
@@ -216,7 +216,7 @@ public final class ObsInterpreter1 {
 				var m = M(line);
 				String msg = m.group(1);
 				for (ServerPlayer p : server.getPlayerList().getPlayers())
-					p.displayClientMessage(Component.literal(msg), true);
+					p.sendSystemMessage(Component.literal(msg), true);
 				continue;
 			}
 
@@ -260,7 +260,7 @@ public final class ObsInterpreter1 {
 
 			// world.time();
 			if (match(line, "^world\\.time\\(\\);$")) {
-				long t = server.overworld().getDayTime() % 24000L;
+				long t = server.overworld().getOverworldClockTime() % 24000L;
 				System.out.println("[OBS] world.time = " + t);
 				continue;
 			}
@@ -269,7 +269,7 @@ public final class ObsInterpreter1 {
 			if (match(line, "^world\\.setTime\\((\\d+)\\);$")) {
 				var m = M(line);
 				long ticks = Long.parseLong(m.group(1));
-				server.overworld().setDayTime(ticks);
+				server.overworld().clockManager().setTotalTicks(server.overworld().dimensionType().defaultClock().orElseThrow(), ticks);
 				continue;
 			}
 
@@ -428,20 +428,19 @@ public final class ObsInterpreter1 {
 		return lvl != null ? lvl : srv.overworld();
 	}
 
-	private static void setWeather(ServerLevel lvl, String kind, int seconds) {
+	private static void setWeather(ServerLevel serverWorld, String kind, int duration) {
 		// vanilla-style: set rain/thunder timers; “seconds” isn’t a perfect 1:1 with these, but ok for MVP
 		switch (kind) {
-			case "clear" -> {
-				lvl.setWeatherParameters(seconds * 20, 0, false, false);
-			}
+			case "clear" -> serverWorld.getWeatherData().setClearWeatherTime(duration * 20);
 			case "rain" -> {
-				lvl.setWeatherParameters(0, seconds * 20, true, false);
+				serverWorld.getWeatherData().setRaining(true);
+				serverWorld.getWeatherData().setRainTime(duration * 20);
 			}
 			case "thunder" -> {
-				lvl.setWeatherParameters(0, seconds * 20, true, true);
+				serverWorld.getWeatherData().setThundering(true);
+				serverWorld.getWeatherData().setThunderTime(duration * 20);
 			}
-			default -> {
-			}
+			default -> throw new IllegalStateException("Unexpected value: " + kind.toLowerCase());
 		}
 	}
 

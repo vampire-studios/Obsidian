@@ -51,7 +51,7 @@ public class CognitiveEnhancement {
                 return;
             }
         }
-        System.out.println(STR."Effect not found: \{effectName}");
+        System.out.println("Effect not found: " + effectName);
     }
 
     public void applyRandomEffect(LivingEntity entity) {
@@ -187,13 +187,13 @@ public class CognitiveEnhancement {
         // Apply the new modifier
         attributeInstance.addPermanentModifier(modifier);
 
-        System.out.println(STR."Custom gravity (\{modifier.amount()}) applied to \{entity.getName().getString()}");
+        System.out.println("Custom gravity (" + modifier.amount() + ") applied to " + entity.getName().getString());
 
         if (duration != -1) {
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.schedule(() -> {
                 attributeInstance.removeModifier(modifier.id());
-                System.out.println(STR."Gravity effect reverted for \{entity.getName().getString()}");
+                System.out.println("Gravity effect reverted for " + entity.getName().getString());
             }, duration, TimeUnit.SECONDS);
             scheduler.schedule(scheduler::shutdown, duration + 5, TimeUnit.SECONDS);
         }
@@ -205,7 +205,7 @@ public class CognitiveEnhancement {
         scheduler.execute(() -> player.level().getEntities(player, player.getBoundingBox().inflate(5)).forEach(e ->
                 ((LivingEntity) e).heal(5.0F)));
         scheduler.schedule(scheduler::shutdown, duration, TimeUnit.SECONDS);
-        System.out.println(STR."Healing rain activated around \{player.getName().getString()}");
+        System.out.println("Healing rain activated around " + player.getName().getString());
     }
 
     public static void applyMysteryTeleport(LivingEntity player) {

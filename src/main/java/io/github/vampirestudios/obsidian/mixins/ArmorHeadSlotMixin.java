@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins;
 
 import io.github.vampirestudios.obsidian.CosmeticSlotExt;
@@ -20,7 +21,7 @@ import java.util.List;
 public class ArmorHeadSlotMixin {
     @Final
     @Shadow
-    ServerPlayer field_58075;
+	private ServerPlayer cache;
 
     @ModifyVariable(
             method = "sendSlotChange(Lnet/minecraft/world/inventory/AbstractContainerMenu;ILnet/minecraft/world/item/ItemStack;)V",
@@ -42,7 +43,7 @@ public class ArmorHeadSlotMixin {
     void modifyHeadSlotItem (AbstractContainerMenu abstractContainerMenu, List<ItemStack> list, ItemStack itemStack, int[] is, CallbackInfo ci) {
         if(abstractContainerMenu instanceof InventoryMenu && ((CosmeticSlotExt) abstractContainerMenu).getHeadCosmetics() != ItemStack.EMPTY) {
             ItemStack itemStack1 = ((CosmeticSlotExt) abstractContainerMenu).getHeadCosmetics();
-            this.field_58075.connection.send(new ClientboundContainerSetSlotPacket(abstractContainerMenu.containerId, abstractContainerMenu.incrementStateId(), 5, itemStack1));
+            this.cache.connection.send(new ClientboundContainerSetSlotPacket(abstractContainerMenu.containerId, abstractContainerMenu.incrementStateId(), 5, itemStack1));
         }
     }
-}
+}*/

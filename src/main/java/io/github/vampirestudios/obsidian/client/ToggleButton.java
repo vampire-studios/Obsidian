@@ -1,13 +1,12 @@
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -32,10 +31,11 @@ public class ToggleButton extends Button {
         setMessage(isStateTriggered ? Component.literal(widget.onText) : Component.literal(widget.offText));
     }
 
-	public void renderContents(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    @Override
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         if (this.sprites != null) {
 //            RenderSystem.disableDepthTest();
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.sprites.get(this.isStateTriggered, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.sprites.get(this.isStateTriggered, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
 //            guiGraphics.blitSprite(RenderType::guiTextured, this.sprites.get(this.isStateTriggered, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
 //            RenderSystem.enableDepthTest();
         }

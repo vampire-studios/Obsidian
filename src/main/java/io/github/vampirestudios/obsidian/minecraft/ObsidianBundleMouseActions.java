@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft;
 
+import io.github.vampirestudios.obsidian.minecraft.obsidian.BundleItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -7,9 +8,8 @@ import net.minecraft.client.ScrollWheelHandler;
 import net.minecraft.client.gui.ItemSlotMouseAction;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ServerboundSelectBundleItemPacket;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.BundleItem;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector2i;
 
@@ -54,8 +54,8 @@ public class ObsidianBundleMouseActions implements ItemSlotMouseAction {
 	}
 
 	@Override
-	public void onSlotClicked(Slot slot, ClickType clickType) {
-		if (clickType == ClickType.QUICK_MOVE || clickType == ClickType.SWAP) {
+	public void onSlotClicked(Slot slot, ContainerInput containerInput) {
+		if (containerInput == ContainerInput.QUICK_MOVE || containerInput == ContainerInput.SWAP) {
 			this.unselectedBundleItem(slot.getItem(), slot.index);
 		}
 	}

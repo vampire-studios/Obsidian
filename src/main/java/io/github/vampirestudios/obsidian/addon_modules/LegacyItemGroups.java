@@ -13,7 +13,7 @@ import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -65,9 +65,9 @@ public class LegacyItemGroups implements AddonModule {
             Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", "").replaceAll(".yml", ""));
             itemGroup.id = identifier;
 
-            CreativeModeTab itemGroup1 = FabricItemGroup.builder()
+            CreativeModeTab itemGroup1 = FabricCreativeModeTab.builder()
                     .icon(() -> new ItemStack(BuiltInRegistries.ITEM.getValue(itemGroup.icon)))
-                    .title(Component.translatable(STR."itemGroup.\{identifier.toLanguageKey()}"))
+                    .title(Component.translatable("itemGroup." + identifier.toLanguageKey()))
                     .displayItems((displayContext, entries) -> {
                         if (itemGroup.tags != null) {
                             for (Map.Entry<String, Identifier> tag : itemGroup.tags.entrySet()) {

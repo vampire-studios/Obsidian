@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version '1.15-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -56,7 +56,7 @@ loom {
 
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.141.3+1.21.11")
+		force("net.fabricmc.fabric-api:fabric-api:0.143.15+26.1")
 		force("net.fabricmc:fabric-loader:0.18.4")
 		force("com.terraformersmc:modmenu:17.0.0-alpha.1")
 	}
@@ -70,32 +70,29 @@ dependencies {
 	def noQuiltMC = { exclude group: 'org.quiltmc' }
 
 	minecraft libs.minecraft
-	mappings loom.layered {
-		it.officialMojangMappings()
-	}
 
-	modImplementation libs.fabric.loader
+	implementation libs.fabric.loader
 
-	modImplementation libs.fabric.api
+	implementation libs.fabric.api
 
-	modRuntimeOnly("com.terraformersmc:modmenu:17.0.0-beta.2")
+//	runtimeOnly("com.terraformersmc:modmenu:17.0.0-beta.2")
+//
+//	implementation("com.terraformersmc:biolith-fabric:3.5.0-beta.3")
 
-	modImplementation("com.terraformersmc:biolith-fabric:3.5.0-beta.3")
+	implementation include("io.github.cottonmc:Jankson-Fabric:11.0.0+j1.2.3")
 
-	modImplementation include("io.github.cottonmc:Jankson-Fabric:11.0.0+j1.2.3")
-
-	modImplementation (libs.owo.lib) {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
-	include (libs.owo.sentinel) {
-		noFapi
-		noFLoader
-		noCottonMC
-		noQuiltMC
-	}
+//	modImplementation (libs.owo.lib) {
+//		noFapi
+//		noFLoader
+//		noCottonMC
+//		noQuiltMC
+//	}
+//	include (libs.owo.sentinel) {
+//		noFapi
+//		noFLoader
+//		noCottonMC
+//		noQuiltMC
+//	}
 
 //	modImplementation ("io.wispforest:condensed_creative-fabric:${libs.versions.cct.get()}") {
 //		noFapi
@@ -110,7 +107,7 @@ dependencies {
 //		noQuiltMC
 //	}
 
-	modImplementation "dev.isxander:yet-another-config-lib:3.8.2+1.21.11-fabric"
+//	implementation "dev.isxander:yet-another-config-lib:3.9.0+26.1-fabric"
 
 	implementation "com.electronwill.night-config:core:${libs.versions.nc.get()}"
 	implementation "com.electronwill.night-config:toml:${libs.versions.nc.get()}"
@@ -124,14 +121,14 @@ dependencies {
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:${libs.versions.jackson.get()}"
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${libs.versions.jackson.get()}"
 
-	modImplementation("net.vampirestudios:arrp:0.12.1+build.2")
+	implementation("net.vampirestudios:arrp:0.12.1+build.4")
 
-	modImplementation "com.ptsmods:devlogin:3.3"
+	implementation "com.ptsmods:devlogin:3.3"
 
-	include(modImplementation("eu.pb4:sgui:1.12.0+1.21.11"))
-	modImplementation(include("eu.pb4:placeholder-api:2.8.2+1.21.10"))
+	include(implementation("eu.pb4:sgui:2.0.0-beta.1+26.1"))
+	implementation(include("eu.pb4:placeholder-api:3.0.0-beta.2+26.1"))
 
-	modImplementation("com.github.Chocohead:Fabric-ASM:v2.3") {
+	implementation("com.github.Chocohead:Fabric-ASM:v2.3") {
 		exclude (group: "net.fabricmc.fabric-api")
 	}
 	include "com.github.Chocohead:Fabric-ASM:v2.3"
@@ -148,11 +145,11 @@ processResources {
 java {
 	withSourcesJar()
 	withJavadocJar()
-	toolchain.languageVersion = JavaLanguageVersion.of(21)
+	toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 	it.options.encoding = 'UTF-8'
 }
 

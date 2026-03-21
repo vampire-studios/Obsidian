@@ -60,7 +60,7 @@ public class PlayersCommandHandler implements CommandHandler {
 					ObsInterpreter.execScoped(server, body, newVars);
 				}
 			}
-		} else if (segment.name().equals("withTag")) {
+		} /*else if (segment.name().equals("withTag")) {
 			String varName = segment.args().isEmpty() ? "p" : ScriptUtils.asStr(ScriptUtils.eval(segment.args().get(0), vars));
 			String tag = segment.args().size() >= 2 ? ScriptUtils.getStringArg(segment, 1, vars) : "";
 			for (ServerPlayer p : server.getPlayerList().getPlayers()) {
@@ -70,7 +70,7 @@ public class PlayersCommandHandler implements CommandHandler {
 				}
 			}
 			return;
-		} else {
+		} */else {
 			LOGGER.warn("Unknown players method with block: {}", segment.name());
 		}
 	}
@@ -83,7 +83,7 @@ public class PlayersCommandHandler implements CommandHandler {
 
 	private void actionBar(MinecraftServer server, String message) {
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-			player.displayClientMessage(Component.literal(message), true);
+			player.sendSystemMessage(Component.literal(message), true);
 		}
 	}
 

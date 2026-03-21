@@ -23,13 +23,13 @@ public abstract class DebugHudMixin {
 		Boolean value = Obsidian.BASED.getNullable(blockState.getBlock());
 		String valueStr;
 		if (value == null) {
-			valueStr = STR."\{ChatFormatting.BLUE}unset";
+			valueStr = ChatFormatting.BLUE + "unset";
 		} else if (value) {
-			valueStr = STR."\{ChatFormatting.GREEN}yes";
+			valueStr = ChatFormatting.GREEN + "yes";
 		} else {
-			valueStr = STR."\{ChatFormatting.RED}no";
+			valueStr = ChatFormatting.RED + "no";
 		}
 
-		list.add(STR."[Quilt] based: \{valueStr}");
+		list.add("[Quilt] based: " + valueStr);
 	}
 }*/

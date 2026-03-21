@@ -12,12 +12,8 @@ import net.devtech.arrp.json.iteminfo.JItemInfo;
 import net.devtech.arrp.json.iteminfo.model.*;
 import net.devtech.arrp.json.iteminfo.property.*;
 import net.devtech.arrp.json.iteminfo.tint.JTintDye;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.item.component.DyedItemColor;
-
-import java.util.Optional;
 
 public class ItemInitThread implements Runnable {
 
@@ -186,14 +182,14 @@ public class ItemInitThread implements Runnable {
                 ? (java.util.Optional<net.minecraft.world.item.component.DyedItemColor>) item.components.get(DataComponents.DYED_COLOR)
                 : java.util.Optional.empty();
 
-        boolean hasDyedComponent = dyedOpt != null && dyedOpt.isPresent();
+//        boolean hasDyedComponent = dyedOpt != null && dyedOpt.isPresent();
 
-        if (dyeable || hasDyedComponent) {
+        if (dyeable/* || hasDyedComponent*/) {
             int defaultColor = item.information.getItemSettings().getDefaultColor();
 
-            int tintDefault = defaultColor != -1
+            int tintDefault = /*defaultColor != -1
                     ? defaultColor
-                    : (hasDyedComponent ? dyedOpt.get().rgb() : 0xFFFFFFFF);
+                    : (hasDyedComponent ? dyedOpt.get().rgb() : 0xFFFFFFFF)*/defaultColor;
 
             model.tint(new JTintDye(tintDefault));
         }
@@ -207,13 +203,8 @@ public class ItemInitThread implements Runnable {
             }
         }
 
-        boolean hasItemModelComponent = item.components != null
-                && item.components.get(DataComponents.ITEM_MODEL) != null;
-
-        if (!hasItemModelComponent || dyeable) {
-            itemInfo.model(model);
-            resourcePack.addItemModelInfo(itemInfo, itemId);
-        }
+        itemInfo.model(model);
+        resourcePack.addItemModelInfo(itemInfo, itemId);
     }
 
     private static float[] vanillaDistributedThresholds(int stages) {

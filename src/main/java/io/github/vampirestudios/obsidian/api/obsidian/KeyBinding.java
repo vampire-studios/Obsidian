@@ -52,7 +52,7 @@ public class KeyBinding {
             case "spectator" -> KeyMapping.Category.SPECTATOR;
             case "debug" -> KeyMapping.Category.DEBUG;
             case "custom" -> KeyMapping.Category.register(customCategory);
-			default -> throw new IllegalStateException(STR."Unexpected value: \{category}");
+			default -> throw new IllegalStateException("Unexpected value: " + category);
 		};
     }
 

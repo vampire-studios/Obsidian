@@ -30,7 +30,7 @@ public class ShovelItemImpl extends ShovelItem {
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
         if (item.lore != null) {
             for (String lore : item.lore) {
-                consumer.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toText());
+                consumer.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toComponent());
             }
         }
     }

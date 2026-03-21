@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.client;
 
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
@@ -31,4 +32,4 @@ public class ProgressBar extends AbstractWidget {
     public void setProgress(double progress) {
         this.progress = progress;
     }
-}
+}*/

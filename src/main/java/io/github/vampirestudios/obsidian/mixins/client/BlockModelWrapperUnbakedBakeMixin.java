@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.BlockModelWrapperMultiAtlasFlagAccessor;
@@ -25,3 +26,4 @@ public abstract class BlockModelWrapperUnbakedBakeMixin {
         }
     }
 }
+*/

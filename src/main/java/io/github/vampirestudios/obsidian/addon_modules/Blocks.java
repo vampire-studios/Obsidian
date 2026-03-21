@@ -21,7 +21,6 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OBE;
-import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
@@ -170,13 +169,13 @@ public class Blocks implements AddonModule {
     private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
         // 1) Components override everything
         var comps = block.components;
-        if (comps != null) {
-            var opt = comps.get(OItemComponents.CREATIVE_TAB); // Optional<Identifier> (based on your usage)
-            if (opt != null && opt.isPresent()) {
-                Identifier id = opt.get();
-                return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, id);
-            }
-        }
+//        if (comps != null) {
+//            var opt = comps.get(OItemComponents.CREATIVE_TAB); // Optional<Identifier> (based on your usage)
+//            if (opt != null && opt.isPresent()) {
+//                Identifier id = opt.get();
+//                return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, id);
+//            }
+//        }
 
         // 2) Then item settings
         var settings = block.information.getItemSettings();
@@ -207,7 +206,7 @@ public class Blocks implements AddonModule {
         switch (type) {
             case PAINTING_TABLE -> {
                 Block paintingTable = registry.registerBlock(new PaintingTableBlock(block, blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                OBE.PAINTING_TABLE.addSupportedBlock(paintingTable);
+                OBE.PAINTING_TABLE.addValidBlock(paintingTable);
             }
             case BLOCK, WOOD -> {
                 if (isDyable(block)) {
@@ -295,19 +294,19 @@ public class Blocks implements AddonModule {
             case CRAFTING_TABLE -> registry.registerBlock(new CraftingTableBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
             case FURNACE -> {
                 Block furnace = registry.registerBlock(new FurnaceBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.FURNACE.addSupportedBlock(furnace);
+                BlockEntityType.FURNACE.addValidBlock(furnace);
             }
             case BLAST_FURNACE -> {
                 Block blast = registry.registerBlock(new BlastFurnaceBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.BLAST_FURNACE.addSupportedBlock(blast);
+                BlockEntityType.BLAST_FURNACE.addValidBlock(blast);
             }
             case SMOKER -> {
                 Block smoker = registry.registerBlock(new SmokerBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.SMOKER.addSupportedBlock(smoker);
+                BlockEntityType.SMOKER.addValidBlock(smoker);
             }
             case BARREL -> {
                 Block barrel = registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.BARREL.addSupportedBlock(barrel);
+                BlockEntityType.BARREL.addValidBlock(barrel);
             }
             case CARPET -> registry.registerBlock(new CarpetBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
         }

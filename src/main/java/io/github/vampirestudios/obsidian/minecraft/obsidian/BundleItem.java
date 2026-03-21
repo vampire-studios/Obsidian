@@ -257,7 +257,7 @@ public class BundleItem extends Item {
 		BundleContents bundleContents = itemEntity.getItem().get(OItemComponents.BUNDLE_CONTENTS);
 		if (bundleContents != null) {
 			itemEntity.getItem().set(OItemComponents.BUNDLE_CONTENTS, BundleContents.EMPTY);
-			ItemUtils.onContainerDestroyed(itemEntity, bundleContents.itemsCopy());
+			ItemUtils.onContainerDestroyed(itemEntity, bundleContents.itemCopyStream());
 		}
 	}
 

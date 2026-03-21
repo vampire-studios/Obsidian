@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
@@ -66,7 +67,8 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 		this.quilt$initialMouseRelease = true;
 	}
 
-	/*@Inject(
+	*/
+/*@Inject(
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/Options;setKey(Lnet/minecraft/client/KeyMapping;Lcom/mojang/blaze3d/platform/InputConstants$Key;)V"
@@ -81,14 +83,16 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 		}
 
 		cir.setReturnValue(true);
-	}*/
+	}*//*
+
 
 	@Inject(at = @At(value = "RETURN", ordinal = 1), method = "mouseClicked")
 	private void excludeFirstMouseClick(MouseButtonEvent mouseButtonEvent, boolean bl, CallbackInfoReturnable<Boolean> cir) {
 		this.quilt$initialMouseRelease = true;
 	}
 
-	/*@Inject(
+	*/
+/*@Inject(
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/Options;setKey(Lnet/minecraft/client/KeyMapping;Lcom/mojang/blaze3d/platform/InputConstants$Key;)V",
@@ -104,7 +108,8 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 		}
 
 		cir.setReturnValue(true);
-	}*/
+	}*//*
+
 
 	@Override
 	public boolean keyReleased(KeyEvent keyEvent) {
@@ -157,4 +162,4 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 			return super.mouseReleased(mouseButtonEvent);
 		}
 	}
-}
+}*/

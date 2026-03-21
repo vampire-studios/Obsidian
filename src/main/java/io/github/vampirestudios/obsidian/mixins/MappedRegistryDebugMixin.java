@@ -20,7 +20,7 @@ public class MappedRegistryDebugMixin<T> {
     @Inject(method = "prepareTagReload", at = @At("HEAD"))
     private void yourmod$debugPrepareTagReload(TagLoader.LoadResult<T> loadResult, CallbackInfoReturnable<Registry.PendingTags<T>> cir) {
         if (!this.frozen) {
-            System.err.println(STR."[TAG-DEBUG] Registry NOT frozen during tag reload: \{this.key}");
+            System.err.println("[TAG-DEBUG] Registry NOT frozen during tag reload: " + this.key);
         }
     }
 }

@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.api;
 
 import net.fabricmc.fabric.api.event.Event;
@@ -7,11 +8,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.VillagerTrade;
+import net.minecraft.world.item.trading.VillagerTrades;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +23,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Supplier;
 
+*/
 /**
  * Modifies trades for a merchant type.
- */
+ *//*
+
 public final class ModifyTradesEvents {
 
     public static final Event<ModifyVillager> VILLAGER = EventFactory.createArrayBacked(ModifyVillager.class, listeners ->
@@ -39,77 +43,99 @@ public final class ModifyTradesEvents {
                 }
             });
 
-    /**
+    */
+/**
      * Registers new trades into all villager types trader.
-     */
+     *//*
+
     @FunctionalInterface
     public interface ModifyVillager {
 
-        /**
+        */
+/**
          * Modifies the trades for all normal villagers.
          *
          * @param context The context for the event
-         */
+         *//*
+
         void modifyTrades(Context context);
 
-        /**
+        */
+/**
          * Context for registering villager trades.
          *
          * @since 1.0.0
-         */
+         *//*
+
         interface Context {
 
-            /**
+            */
+/**
              * @return The profession of the villager to add trades to
-             */
+             *//*
+
             VillagerProfession getProfession();
 
-            /**
+            */
+/**
              * Retrieves the registry of trades for the specified tier.
              *
              * @param tier A number between 1 and 5 to retrieve the tier of trades
              * @return The registry for that tier
-             */
+             *//*
+
             TradeRegistry getTrades(int tier);
         }
     }
 
-    /**
+    */
+/**
      * Registers new trades into the wandering trader.
-     */
+     *//*
+
     @FunctionalInterface
     public interface ModifyWanderer {
 
-        /**
+        */
+/**
          * Modifies the trades for the wandering trader.
          *
          * @param context The context for the event
-         */
+         *//*
+
         void modifyTrades(Context context);
 
-        /**
+        */
+/**
          * Context for registering wanderer trades.
          *
          * @since 1.0.0
-         */
+         *//*
+
         interface Context {
 
-            /**
+            */
+/**
              * @return The common trades registry
-             */
+             *//*
+
             TradeRegistry getGeneric();
 
-            /**
+            */
+/**
              * @return The rarer trades registry
-             */
+             *//*
+
             TradeRegistry getRare();
         }
     }
 
-    /**
+    */
+/**
      * Registers trades into a villager trade list.
-     */
-    public static class TradeRegistry implements List<VillagerTrades.ItemListing> {
+     *//*
+
+    public static class TradeRegistry implements List<VillagerTrade.Item> {
 
         private final List<VillagerTrades.ItemListing> trades;
 
@@ -238,7 +264,8 @@ public final class ModifyTradesEvents {
             return this.trades.subList(fromIndex, toIndex);
         }
 
-        /**
+        */
+/**
          * Adds a simple trade for items or emeralds.
          *
          * @param item           The item to trade for
@@ -247,12 +274,14 @@ public final class ModifyTradesEvents {
          * @param maxUses        The maximum amount of times this trade can be used before needing to reset
          * @param xpGain         The amount of experience gained by this exchange
          * @param sellToVillager Whether the villager is buying or selling the item for emeralds
-         */
+         *//*
+
         public void add(ItemLike item, int emeralds, int itemCount, int maxUses, int xpGain, boolean sellToVillager) {
             this.add(new ItemTrade(() -> item, emeralds, itemCount, maxUses, xpGain, 0.05F, sellToVillager));
         }
 
-        /**
+        */
+/**
          * Adds a simple trade for items or emeralds.
          *
          * @param item            The item to trade for
@@ -262,12 +291,14 @@ public final class ModifyTradesEvents {
          * @param xpGain          The amount of experience gained by this exchange
          * @param priceMultiplier The multiplier for how much the price deviates
          * @param sellToVillager  Whether the villager is buying or selling the item for emeralds
-         */
+         *//*
+
         public void add(ItemLike item, int emeralds, int itemCount, int maxUses, int xpGain, float priceMultiplier, boolean sellToVillager) {
             this.add(new ItemTrade(() -> item, emeralds, itemCount, maxUses, xpGain, priceMultiplier, sellToVillager));
         }
 
-        /**
+        */
+/**
          * Adds a simple trade for items or emeralds.
          *
          * @param item           The item to trade for as a supplier
@@ -276,12 +307,14 @@ public final class ModifyTradesEvents {
          * @param maxUses        The maximum amount of times this trade can be used before needing to reset
          * @param xpGain         The amount of experience gained by this exchange
          * @param sellToVillager Whether the villager is buying or selling the item for emeralds
-         */
+         *//*
+
         public void add(Supplier<? extends ItemLike> item, int emeralds, int itemCount, int maxUses, int xpGain, boolean sellToVillager) {
             this.add(new ItemTrade(item, emeralds, itemCount, maxUses, xpGain, 0.05F, sellToVillager));
         }
 
-        /**
+        */
+/**
          * Adds a simple trade for items or emeralds.
          *
          * @param item            The item to trade for as a supplier
@@ -291,7 +324,8 @@ public final class ModifyTradesEvents {
          * @param xpGain          The amount of experience gained by this exchange
          * @param priceMultiplier The multiplier for how much the price deviates
          * @param sellToVillager  Whether the villager is buying or selling the item for emeralds
-         */
+         *//*
+
         public void add(Supplier<? extends ItemLike> item, int emeralds, int itemCount, int maxUses, int xpGain, float priceMultiplier, boolean sellToVillager) {
             this.add(new ItemTrade(item, emeralds, itemCount, maxUses, xpGain, priceMultiplier, sellToVillager));
         }
@@ -308,4 +342,4 @@ public final class ModifyTradesEvents {
             return new MerchantOffer(new ItemCost(this.sellToVillager ? item.getItem() : emeralds.getItem(), this.sellToVillager ? this.itemCount : this.emeralds), this.sellToVillager ? emeralds : item, this.maxUses, this.xpGain, this.priceMultiplier);
         }
     }
-}
+}*/

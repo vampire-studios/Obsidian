@@ -1,4 +1,4 @@
-accessWidener v2 named
+accessWidener v2 official
 accessible method net/minecraft/network/chat/TextColor <init> (I)V
 
 accessible method net/minecraft/client/model/geom/ModelLayers register (Ljava/lang/String;)Lnet/minecraft/client/model/geom/ModelLayerLocation;
@@ -19,8 +19,6 @@ accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map
 accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
 accessible field net/minecraft/world/level/block/FireBlock burnOdds Lit/unimi/dsi/fastutil/objects/Object2IntMap;
 accessible field net/minecraft/world/level/block/FireBlock igniteOdds Lit/unimi/dsi/fastutil/objects/Object2IntMap;
-
-accessible class net/minecraft/client/renderer/block/model/BlockElement$Deserializer
 
 accessible method net/minecraft/server/packs/FilePackResources <init> (Lnet/minecraft/server/packs/PackLocationInfo;Lnet/minecraft/server/packs/FilePackResources$SharedZipFileAccess;Ljava/lang/String;)V
 accessible method net/minecraft/server/packs/FilePackResources$SharedZipFileAccess <init> (Ljava/io/File;)V

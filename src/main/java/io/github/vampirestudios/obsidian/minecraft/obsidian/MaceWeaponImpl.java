@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MaceItem;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.component.Weapon;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class MaceWeaponImpl extends MaceItem {
@@ -54,7 +56,19 @@ public class MaceWeaponImpl extends MaceItem {
         } else {
             props.repairable(toolMaterial.repairItems());
         }
+        // Apply user-defined components last so they can override anything above.
+        applyComponents(props, item);
         return props;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void applyComponents(Properties props, WeaponItem item) {
+        if (item.components == null) return;
+        for (var e : item.components.entrySet()) {
+            var type = (DataComponentType<T>) e.getKey();
+            var opt  = (Optional<T>) e.getValue();
+            opt.ifPresent(v -> props.component(type, v));
+        }
     }
 
     private static ItemAttributeModifiers buildAttributes(float attackDamage, float attackSpeed) {

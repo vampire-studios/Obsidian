@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
@@ -137,8 +138,8 @@ public class KeyBindMixin implements ChordedKeyBind {
 	@Inject(at = @At("HEAD"), method = "same", cancellable = true)
 	private void keyOrChordEquals(KeyMapping other, CallbackInfoReturnable<Boolean> cir) {
 		if (this.quilt$boundChord != null) {
-			if (other.getBoundChord() != null) {
-				cir.setReturnValue(this.quilt$boundChord.equals(other.getBoundChord()));
+			if (other.getDefaultKey() != null) {
+				cir.setReturnValue(this.quilt$boundChord.equals(other.getDefaultKey()));
 			} else {
 				cir.setReturnValue(false);
 			}
@@ -203,4 +204,4 @@ public class KeyBindMixin implements ChordedKeyBind {
 
 		return (KeyMapping) (Object) this;
 	}
-}
+}*/

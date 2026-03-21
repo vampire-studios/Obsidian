@@ -19,7 +19,7 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
@@ -42,8 +42,8 @@ public abstract class KeyBindsScreenMixin extends OptionsSubScreen {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Inject(method = "render", at = @At("TAIL"))
-	private void renderConflictTooltips(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	private void renderConflictTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
 		// TODO - Somehow extend the hover area to include the label too
 //		ControlsListWidget.Entry entry = ((EntryListWidgetAccessor<ControlsListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
 //		if (entry != null && entry instanceof ControlsListWidget.KeyBindingEntry keyBindEntry) {

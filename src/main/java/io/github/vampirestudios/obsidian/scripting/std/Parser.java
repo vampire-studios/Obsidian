@@ -46,7 +46,7 @@ final class Parser {
 			i++;
 			return new Stmt.Block();
 		}
-		if (peek(K.RBRACE)) throw err(STR."Stray '}' at \{curr().p()}");
+		if (peek(K.RBRACE)) throw err("Stray '}' at " + curr().p());
 		try {
 			if (peek(K.WAIT)) return parseWait();
 			if (peek(K.REPEAT)) return parseRepeat();
@@ -184,7 +184,7 @@ final class Parser {
 		List<Stmt.Block> caseBlocks = new ArrayList<>();
 		Stmt.Block defaultBlock = null;
 		while (!peek(K.RBRACE)) {
-			if (peek(K.EOF)) throw err(STR."Unterminated switch block before EOF at \{curr().p()}");
+			if (peek(K.EOF)) throw err("Unterminated switch block before EOF at " + curr().p());
 			if (peek(K.CASE)) {
 				i++;
 				Expr value = parsePrimary(); // Restrict to literals (NUM, STR, TRUE, FALSE)
@@ -298,7 +298,7 @@ final class Parser {
 		need(K.LBRACE, "{");
 		var blk = new Stmt.Block();
 		while (!peek(K.RBRACE)) {
-			if (peek(K.EOF)) throw err(STR."Unterminated block before EOF at \{curr().p()}");
+			if (peek(K.EOF)) throw err("Unterminated block before EOF at " + curr().p());
 			blk.stmts().add(parseStmt());
 		}
 		need(K.RBRACE, "}");

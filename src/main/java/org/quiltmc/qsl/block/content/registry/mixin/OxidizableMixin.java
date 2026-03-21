@@ -19,6 +19,7 @@ package org.quiltmc.qsl.block.content.registry.mixin;
 import com.google.common.collect.BiMap;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WeatheringCopper;
+import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,7 +39,7 @@ public interface OxidizableMixin {
 							remap = false
 					)
 			),
-			method = "method_34740()Lcom/google/common/collect/BiMap;",
+			method = "lambda$static$0()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)
@@ -51,9 +52,9 @@ public interface OxidizableMixin {
 	// Replaces old map with one updated by our API
 	@Inject(
 			slice = @Slice(
-					from = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/WeatheringCopper;NEXT_BY_BLOCK:Ljava/util/function/Supplier;")
+					from = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/WeatheringCopper;NEXT_BY_BLOCK:Ljava/util/function/Supplier;", opcode = Opcodes.GETSTATIC)
 			),
-			method = "method_34739()Lcom/google/common/collect/BiMap;",
+			method = "lambda$static$1()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)

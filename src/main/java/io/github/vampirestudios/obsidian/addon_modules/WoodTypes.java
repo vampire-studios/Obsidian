@@ -40,8 +40,8 @@ public class WoodTypes implements AddonModule {
 
 			register(ContentRegistries.WOOD_TYPES, "block_set_types", identifier, woodTypes);
 			new WoodTypeBuilder()
-					.soundGroup(getSoundType(woodTypes.setType))
-					.hangingSignSoundGroup(getSoundType(woodTypes.hangingSignSoundType))
+					.soundType(getSoundType(woodTypes.setType))
+					.hangingSignSoundType(getSoundType(woodTypes.hangingSignSoundType))
 					.fenceGateCloseSound(getSoundEvent(woodTypes.fenceGateClose))
 					.fenceGateOpenSound(getSoundEvent(woodTypes.fenceGateOpen))
 					.register(woodTypes.id, getBlockSetType(woodTypes.setType));

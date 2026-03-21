@@ -26,14 +26,14 @@ public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
         super(settings
 				.equippableUnswappable(EquipmentSlot.OFFHAND)
 				.repairable(BuiltInRegistries.ITEM.getValue(shieldItem.repairItem))
-				.component(
+				.delayedComponent(
 						DataComponents.BLOCKS_ATTACKS,
-						new BlocksAttacks(
+						context -> new BlocksAttacks(
 								shieldItem.cooldownTicks,
 								1.0F,
 								List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)),
 								new BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
-								Optional.of(DamageTypeTags.BYPASSES_SHIELD),
+								Optional.of(context.getOrThrow(DamageTypeTags.BYPASSES_SHIELD)),
 								Optional.of(BuiltInRegistries.SOUND_EVENT.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, shieldItem.blockSound))),
 								Optional.of(BuiltInRegistries.SOUND_EVENT.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, shieldItem.breakSound)))
 						)

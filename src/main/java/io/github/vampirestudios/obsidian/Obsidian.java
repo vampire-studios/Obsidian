@@ -5,8 +5,6 @@ import blue.endless.jankson.JsonNull;
 import blue.endless.jankson.JsonPrimitive;
 import io.github.vampirestudios.obsidian.addon_modules.*;
 import io.github.vampirestudios.obsidian.addon_modules.crucible.*;
-import io.github.vampirestudios.obsidian.addon_modules.crucible.CrucibleSkills;
-import io.github.vampirestudios.obsidian.addon_modules.crucible.EffectsModule;
 import io.github.vampirestudios.obsidian.addon_modules.nexo.NexoItems;
 import io.github.vampirestudios.obsidian.api.crucible.CrucibleEvents;
 import io.github.vampirestudios.obsidian.api.crucible.CrucibleFabricHooks;
@@ -18,6 +16,7 @@ import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.DynamicContainer;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.ThrownKnifeEntity;
 import io.github.vampirestudios.obsidian.registry.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
@@ -29,8 +28,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -46,9 +45,9 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.EquipmentAsset;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -63,6 +62,14 @@ public class Obsidian implements ModInitializer {
 			<SeatEntity>create(MobCategory.MISC, SeatEntity::new)
 			.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
 			.build(ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Const.id("seat"))));
+	public static final EntityType<ThrownKnifeEntity> THROWN_KNIFE = Registry.register(
+			BuiltInRegistries.ENTITY_TYPE, Const.id("thrown_knife"),
+			FabricEntityTypeBuilder.<ThrownKnifeEntity>create(
+							MobCategory.MISC,
+							io.github.vampirestudios.obsidian.minecraft.obsidian.ThrownKnifeEntity::new)
+					.dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+					.trackRangeBlocks(64)
+					.build(ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Const.id("thrown_knife"))));
 	public static final RegistryHelper OBSIDIAN_REGISTRY_HELPER = new RegistryHelper(Const.MOD_ID);
 
 	public static MinecraftServer SERVER;
@@ -165,6 +172,7 @@ public class Obsidian implements ModInitializer {
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "sound_events", new SoundEvents());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "ranged_weapon", new RangedWeapons());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "weapon", new Weapons());
+		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "sound_playing_items", new SoundPlayingItems());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "commands", new Commands());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "entities", new Entities());
 		registerInRegistry(Registries.ADDON_MODULE_REGISTRY, "shields", new Shields());

@@ -4,7 +4,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -31,15 +31,15 @@ public class CustomButton extends Button {
 	}
 
 	@Override
-	protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+	protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
 		Minecraft minecraft = Minecraft.getInstance();
 //		guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
 //		RenderSystem.enableBlend();
 //		RenderSystem.enableDepthTest();
-		guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, widgetSprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, widgetSprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
 //		guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 		int i = this.active ? widget.activeColor : widget.defaultTextColor;
-		this.renderDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
+		this.extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
 	}
 
 	@Environment(EnvType.CLIENT)

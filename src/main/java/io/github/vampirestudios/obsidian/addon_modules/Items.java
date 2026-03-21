@@ -20,12 +20,9 @@ import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BundleItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -34,7 +31,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.hjson.JsonValue;
@@ -45,8 +41,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
@@ -68,7 +62,7 @@ public class Items implements AddonModule {
 			Identifier identifier = getIdentifier(item, id, file);
 			Item.Properties settings = createItemProperties(item).setId(ResourceKey.create(Registries.ITEM, identifier));
 			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
-			ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(item);
+			ResourceKey<CreativeModeTab> creativeTab = ItemModuleHelper.getCreativeTab(item);
 
 			registerEvents(item);
 
@@ -111,15 +105,6 @@ public class Items implements AddonModule {
 		return identifier;
 	}
 
-	@SuppressWarnings("unchecked")
-	static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
-		for (var e : map.entrySet()) {
-			var type = (DataComponentType<T>) e.getKey();
-			var opt  = (Optional<T>) e.getValue();
-			opt.ifPresent(v -> props.component(type, v));
-		}
-	}
-
 	private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
 		Item.Properties props = new Item.Properties();
 
@@ -128,7 +113,7 @@ public class Items implements AddonModule {
 			props.stacksTo(settings.maxStackSize)
 					.rarity(net.minecraft.world.item.Rarity.valueOf(settings.rarity.toUpperCase(java.util.Locale.ROOT)));
 
-			if (settings.durability != 0) props.durability(settings.durability);
+			if (item.damageable && settings.durability != 0) props.durability(settings.durability);
 			if (settings.fireproof) props.fireResistant();
 			if (settings.tooltipStyle != null) {
 				props.component(net.minecraft.core.component.DataComponents.TOOLTIP_STYLE,
@@ -136,27 +121,9 @@ public class Items implements AddonModule {
 			}
 		}
 
-		if (item.components != null) applyAllComponents(props, item.components);
+		if (item.components != null) ItemModuleHelper.applyAllComponents(props, item.components);
 
 		return props;
-	}
-
-	private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-		ResourceKey<CreativeModeTab> creativeTab;
-
-		// Check for OItemComponents.CREATIVE_TAB first
-		if (item.components != null && item.components.get(OItemComponents.CREATIVE_TAB) != null &&
-				item.components.get(OItemComponents.CREATIVE_TAB).isPresent()) {
-			Identifier tabLocation = (Identifier) Objects.requireNonNull(item.components.get(OItemComponents.CREATIVE_TAB)).orElseThrow();
-			creativeTab = ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabLocation);
-		} else if (item.information.getItemSettings().getItemGroup() != null) {
-			creativeTab = item.information.getItemSettings().getItemGroup();
-		} else if (item.information.getItemSettings().getParentSettings().getItemGroup() != null) {
-			creativeTab = item.information.getItemSettings().getParentSettings().getItemGroup();
-		} else {
-			creativeTab = CreativeModeTabs.BUILDING_BLOCKS;
-		}
-		return creativeTab;
 	}
 
 	private void registerEvents(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {

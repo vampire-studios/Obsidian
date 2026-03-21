@@ -123,7 +123,7 @@ public final class ObsBrigadier {
 				int last = perCmd.getOrDefault(sender.getUUID(), Integer.MIN_VALUE / 2);
 				int left = c.cooldownTicks() - (now - last);
 				if (left > 0) {
-					sender.displayClientMessage(Component.literal(STR."⏳ \{Math.ceil(left / 20.0)}" + "s cooldown"), true);
+					sender.sendSystemMessage(Component.literal("⏳ " + Math.ceil(left / 20.0) + "s cooldown"), true);
 					return 0;
 				}
 				perCmd.put(sender.getUUID(), now);
@@ -163,7 +163,7 @@ public final class ObsBrigadier {
 		} catch (Throwable t) {
 			// show cause in chat and full stack in log
 			String msg = (t.getMessage() != null ? t.getMessage() : t.getClass().getSimpleName());
-			ctx.getSource().sendFailure(Component.literal(STR."[obs] \{c.name()}" + ": " + msg));
+			ctx.getSource().sendFailure(Component.literal("[obs] " + c.name() + ": " + msg));
 			t.printStackTrace(); // or LOGGER.error("cmd {} failed", c.name(), t);
 			return 0;
 		}

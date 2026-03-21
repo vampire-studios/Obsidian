@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -129,15 +128,15 @@ public class DyableBlockImpl extends BaseEntityBlock {
         return stack;
     }
 
-    public int getColor(BlockState blockState, BlockAndTintGetter blockRenderView, BlockPos blockPos, int tintIndex) {
-        if (tintIndex == 0 && blockRenderView != null) {
-            BlockEntity blockEntity = blockRenderView.getBlockEntity(blockPos);
-            if (blockEntity instanceof DyeableBlockEntity) {
-                return ((DyeableBlockEntity) blockEntity).getDyeColor();
-            }
-        }
-        return 0;
-    }
+//    public int getColor(BlockState blockState, BlockAndTintGetter blockRenderView, BlockPos blockPos, int tintIndex) {
+//        if (tintIndex == 0 && blockRenderView != null) {
+//            BlockEntity blockEntity = blockRenderView.getBlockEntity(blockPos);
+//            if (blockEntity instanceof DyeableBlockEntity) {
+//                return ((DyeableBlockEntity) blockEntity).getDyeColor();
+//            }
+//        }
+//        return 0;
+//    }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {

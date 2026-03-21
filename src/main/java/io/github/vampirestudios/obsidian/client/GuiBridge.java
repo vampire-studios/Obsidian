@@ -30,15 +30,15 @@ public final class GuiBridge {
 			case 4 -> MenuType.GENERIC_9x4;
 			case 5 -> MenuType.GENERIC_9x5;
 			case 6 -> MenuType.GENERIC_9x6;
-			default -> throw new IllegalStateException(STR."Unexpected value: \{rows}");
+			default -> throw new IllegalStateException("Unexpected value: " + rows);
 		};
 		String id = UUID.randomUUID().toString();
 
 		SimpleGui gui = new SimpleGui(menu, p, false) {
 			@Override
-			public void onClose() {
+			public void onManualClose() {
 				ObsPackRuntime.fireGuiClose(getPlayer(), id);
-				super.onClose();
+				super.onManualClose();
 			}
 
 			@Override
@@ -71,9 +71,7 @@ public final class GuiBridge {
 		}
 
 		GuiElementBuilder el = new GuiElementBuilder(stack)
-				.setCallback((index, clickType, action) -> {
-					ObsPackRuntime.fireGuiClick(player, id, index, clickType.name().toLowerCase());
-				});
+				.setCallback((i, clickType, containerInput, slotBasedGui) -> ObsPackRuntime.fireGuiClick(player, id, i, clickType.name().toLowerCase()));
 
 		gui.setSlot(slot, el.build());
 	}

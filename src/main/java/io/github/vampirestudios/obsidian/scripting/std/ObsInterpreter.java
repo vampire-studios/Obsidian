@@ -6,7 +6,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -207,7 +206,7 @@ public final class ObsInterpreter {
 					try {
 						vars.put(varName, CFG.read(file));
 					} catch (IOException e) {
-						throw new RuntimeException(STR."config.read: \{e.getMessage()}");
+						throw new RuntimeException("config.read: " + e.getMessage());
 					}
 					continue;
 				}
@@ -218,7 +217,7 @@ public final class ObsInterpreter {
 						@SuppressWarnings("unchecked") Map<String, Object> obj = (Map<String, Object>) m;
 						CFG.write(file, obj);
 					} catch (IOException e) {
-						throw new RuntimeException(STR."config.write: \{e.getMessage()}");
+						throw new RuntimeException("config.write: " + e.getMessage());
 					}
 					continue;
 				}
@@ -382,18 +381,18 @@ public final class ObsInterpreter {
 		}
 
 		// nearEntityTag("#namespace:entity_tag", radius)
-		if (s.startsWith("nearEntityTag(")) {
-			var a = ScriptUtils.insideArgs(s);
-			if (a.size() < 2) return false;
-			TagKey<EntityType<?>> tag = TagKey.create(Registries.ENTITY_TYPE, ScriptUtils.rlFromHash(a.get(0)));
-			double r = ScriptUtils.parseDouble(a.get(1));
-			var pos = p.position();
-			var aabb = new net.minecraft.world.phys.AABB(
-					pos.x - r, pos.y - r, pos.z - r,
-					pos.x + r, pos.y + r, pos.z + r
-			);
-			return !p.level().getEntities(p, aabb, e -> e.getType().is(tag)).isEmpty();
-		}
+//		if (s.startsWith("nearEntityTag(")) {
+//			var a = ScriptUtils.insideArgs(s);
+//			if (a.size() < 2) return false;
+//			TagKey<EntityType<?>> tag = TagKey.create(Registries.ENTITY_TYPE, ScriptUtils.rlFromHash(a.get(0)));
+//			double r = ScriptUtils.parseDouble(a.get(1));
+//			var pos = p.position();
+//			var aabb = new net.minecraft.world.phys.AABB(
+//					pos.x - r, pos.y - r, pos.z - r,
+//					pos.x + r, pos.y + r, pos.z + r
+//			);
+//			return !p.level().getEntities(p, aabb, e -> e.getType().is(tag)).isEmpty();
+//		}
 
 		// dimension.tag("#namespace:dimension_type_tag")
 		// checks the DIMENSION_TYPE tag of the current level
@@ -432,10 +431,10 @@ public final class ObsInterpreter {
 				if (stack.getItem() == wanted.value()) have += stack.getCount();
 			return have >= need;
 		}
-		if (s.startsWith("player.hasTag(")) {
-			String tag = insideString(s);
-			return p.getTags().contains(tag);
-		}
+//		if (s.startsWith("player.hasTag(")) {
+//			String tag = insideString(s);
+//			return p.getTags().contains(tag);
+//		}
 		if (s.startsWith("near(")) {
 			// near(x,y,z,r)
 			var a = ScriptUtils.insideArgs(s);
@@ -464,13 +463,13 @@ public final class ObsInterpreter {
 		if (s.startsWith("time.between(")) {
 			// vanilla day time 0..23999
 			var a = ScriptUtils.insideArgs(s);
-			long t = p.level().getDayTime() % 24000L;
+			long t = p.level().getOverworldClockTime() % 24000L;
 			long lo = (long) ScriptUtils.parseDouble(a.get(0)), hi = (long) ScriptUtils.parseDouble(a.get(1));
 			return (lo <= hi) ? (t >= lo && t <= hi) : (t >= lo || t <= hi);
 		}
 		if (s.startsWith("weather.is(")) {
 			String k = insideString(s);
-			String w = p.level().isThundering() ? "thunder" : p.level().isRaining() ? "rain" : "clear";
+			String w = p.level().isThundering() ? "thunder" : (p.level().isRaining() ? "rain" : "clear");
 			return w.equals(k);
 		}
 		if (s.startsWith("team.is(")) {

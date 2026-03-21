@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SpearItemImpl extends Item {
@@ -25,7 +27,13 @@ public class SpearItemImpl extends Item {
     public WeaponItem item;
 
     public SpearItemImpl(WeaponItem item, ToolMaterial toolMaterial, float attackDamage, float attackSpeed, Properties settings) {
-        super(settings.spear(
+        super(buildProps(item, toolMaterial, settings));
+        this.item = item;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Properties buildProps(WeaponItem item, ToolMaterial toolMaterial, Properties settings) {
+        settings.spear(
                 toolMaterial,
                 item.spear.charge_time,         // attackDuration
                 item.spear.damage_multiplier,   // damageMultiplier
@@ -36,8 +44,15 @@ public class SpearItemImpl extends Item {
                 item.spear.knockback_threshold, // knockbackThreshold
                 item.spear.damage_time,         // damageTime
                 item.spear.damage_threshold     // damageThreshold
-        ));
-        this.item = item;
+        );
+        if (item.components != null) {
+            for (var e : item.components.entrySet()) {
+                var type = (DataComponentType<T>) e.getKey();
+                var opt  = (Optional<T>) e.getValue();
+                opt.ifPresent(v -> settings.component(type, v));
+            }
+        }
+        return settings;
     }
 
     @Override

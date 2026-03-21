@@ -5,20 +5,14 @@ import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.MaceWeaponImpl;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.MeleeWeaponImpl;
-import io.github.vampirestudios.obsidian.minecraft.obsidian.SpearItemImpl;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.registries.Registries;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;
 import org.jspecify.annotations.NonNull;
@@ -26,8 +20,6 @@ import org.jspecify.annotations.NonNull;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -41,12 +33,13 @@ public class Weapons implements AddonModule {
             Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
             weapon.information.id = identifier;
 
-            Item.Properties settings = createItemProperties(weapon).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
-            ResourceKey<CreativeModeTab> creativeTab = getCreativeTab(weapon);
+            Item.Properties settings = new Item.Properties();
+            if (!weapon.damageable) settings.component(DataComponents.UNBREAKABLE, Unit.INSTANCE);
+            settings.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
 
             Item weaponItem = getWeaponItem(weapon, settings);
             Item registeredItem = REGISTRY_HELPER.items().registerItem(identifier.getPath(), weaponItem);
-            ItemGroupEvents.modifyEntriesEvent(creativeTab).register(entries -> entries.accept(registeredItem));
+            CreativeModeTabEvents.modifyOutputEvent(ItemModuleHelper.getCreativeTab(weapon)).register(entries -> entries.accept(registeredItem));
             register(ContentRegistries.WEAPONS, "weapon", identifier, weapon);
         } catch (Exception e) {
             failedRegistering("weapon", file.getName(), e);
@@ -55,50 +48,19 @@ public class Weapons implements AddonModule {
 
     private static @NonNull Item getWeaponItem(WeaponItem weapon, Item.Properties settings) {
         ToolMaterial material = weapon.getTier();
-		return switch (weapon.weapon_type) {
-			case SPEAR        -> new SpearItemImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings);
-			case MACE         -> new MaceWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings);
-			case SWORD, null  -> new MeleeWeaponImpl(weapon, material, weapon.attackDamage, weapon.attackSpeed, settings);
-		};
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
-        for (var e : map.entrySet()) {
-            var type = (DataComponentType<T>) e.getKey();
-            var opt  = (Optional<T>) e.getValue();
-            opt.ifPresent(v -> props.component(type, v));
-        }
-    }
-
-    private Item.Properties createItemProperties(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-        Item.Properties props = new Item.Properties();
-
-        var comps = item.components;
-        if (comps == null) {
-            return props;
-        }
-
-        applyAllComponents(props, comps);
-        return props;
-    }
-
-    private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.item.Item item) {
-        ResourceKey<CreativeModeTab> creativeTab;
-
-        // Check for OItemComponents.CREATIVE_TAB first
-        if (item.components != null && item.components.get(OItemComponents.CREATIVE_TAB) != null &&
-                item.components.get(OItemComponents.CREATIVE_TAB).isPresent()) {
-            Identifier tabLocation = (Identifier) Objects.requireNonNull(item.components.get(OItemComponents.CREATIVE_TAB)).orElseThrow();
-            creativeTab = ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabLocation);
-        } else if (item.information.getItemSettings().getItemGroup() != null) {
-            creativeTab = item.information.getItemSettings().getItemGroup();
-        } else if (item.information.getItemSettings().getParentSettings().getItemGroup() != null) {
-            creativeTab = item.information.getItemSettings().getParentSettings().getItemGroup();
-        } else {
-            creativeTab = CreativeModeTabs.BUILDING_BLOCKS;
-        }
-        return creativeTab;
+        float dmg = weapon.attackDamage;
+        float spd = weapon.attackSpeed;
+        return switch (weapon.weapon_type) {
+            case SWORD      -> new MeleeWeaponImpl(weapon, material, dmg, spd, settings);
+            case SPEAR      -> new SpearItemImpl(weapon, material, dmg, spd, settings);
+            case MACE       -> new MaceWeaponImpl(weapon, material, dmg, spd, settings);
+            case LONGSWORD  -> new LongswordItemImpl(weapon, material, dmg, spd, settings);
+            case RAPIER     -> new RapierItemImpl(weapon, material, dmg, spd, settings);
+            case DAGGER     -> new DaggerItemImpl(weapon, material, dmg, spd, settings);
+            case KNIFE      -> new KnifeItemImpl(weapon, material, dmg, spd, settings);
+            case CLEAVER    -> new CleaverItemImpl(weapon, material, dmg, spd, settings);
+            case SCYTHE     -> new ScytheItemImpl(weapon, material, dmg, spd, settings);
+        };
     }
 
     @Override

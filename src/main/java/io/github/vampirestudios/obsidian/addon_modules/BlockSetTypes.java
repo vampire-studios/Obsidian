@@ -49,7 +49,7 @@ public class BlockSetTypes implements AddonModule {
 					.openableByWindCharge(blockSetType.canOpenByWindCharge)
 					.buttonActivatedByArrows(blockSetType.canButtonBeActivatedByArrows)
 					.pressurePlateActivationRule(blockSetType.getPressurePlateSensitivity())
-					.soundGroup(getSoundType(blockSetType.soundType))
+					.soundType(getSoundType(blockSetType.soundType))
 					.doorCloseSound(getSoundEvent(blockSetType.doorClose))
 					.doorOpenSound(getSoundEvent(blockSetType.doorOpen))
 					.trapdoorCloseSound(getSoundEvent(blockSetType.trapdoorClose))

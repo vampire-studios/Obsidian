@@ -103,6 +103,7 @@ public class ScriptParser {
                 String[] parts = inside.split("\\s+");
                 int n = Integer.parseInt(parts[0]);
                 int ticksPerUnit = switch(parts[1].toLowerCase()) {
+                    case "tick",   "ticks"   -> 1;
                     case "second", "seconds" -> 20;
                     case "minute", "minutes" -> 20 * 60;
                     case "hour",   "hours"   -> 20 * 60 * 60;

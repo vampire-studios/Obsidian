@@ -19,7 +19,7 @@ public class SubItemGroupInitThread implements Runnable {
         if (itemGroup.name != null && itemGroup.name.translations != null) {
             itemGroup.name.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                     itemGroup.id.getNamespace(), languageId,
-					STR."\{tab.getDisplayName().getString()}.\{itemGroup.id.getPath()}", name
+					tab.getDisplayName().getString() + "." + itemGroup.id.getPath(), name
             ));
         }
     }

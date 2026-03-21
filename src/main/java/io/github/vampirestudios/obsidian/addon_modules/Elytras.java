@@ -9,10 +9,10 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.Elytra;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ElytraItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -21,6 +21,7 @@ import net.minecraft.world.item.equipment.Equippable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
 public class Elytras implements AddonModule {
@@ -43,7 +44,7 @@ public class Elytras implements AddonModule {
 					)
 					.setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier))
 					.stacksTo(1)));
-			ItemGroupEvents.modifyEntriesEvent(item.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(registeredItem));
+			CreativeModeTabEvents.modifyOutputEvent(item.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(registeredItem));
 			register(ContentRegistries.ELYTRAS, "elytra", identifier, item);
 		} catch (Exception e) {
 			failedRegistering("elytra", file.getName(), e);

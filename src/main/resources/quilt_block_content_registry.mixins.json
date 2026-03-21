@@ -5,7 +5,7 @@
   "mixins": [
     "AxeItemMixin",
     "EnchantingTableBlockMixin",
-    "EnchantmentScreenHandlerMixin",
+//    "EnchantmentScreenHandlerMixin",
     "HoneycombItemMixin",
     "OxidizableMixin",
     "ShovelItemMixin"

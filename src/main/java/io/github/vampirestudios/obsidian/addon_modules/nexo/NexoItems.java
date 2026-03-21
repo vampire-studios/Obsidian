@@ -14,15 +14,15 @@ import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded
 import io.github.vampirestudios.obsidian.minecraft.oraxen.*;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.SoundType;
@@ -159,7 +159,7 @@ public class NexoItems implements AddonModule {
 									Registries.CREATIVE_MODE_TAB,
 									Identifier.fromNamespaceAndPath(id.modId(), "items")
 							);
-							ItemGroupEvents.modifyEntriesEvent(tab)
+							CreativeModeTabEvents.modifyOutputEvent(tab)
 									.register(e -> e.accept(item));
 						}
 

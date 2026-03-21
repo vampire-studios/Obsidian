@@ -147,7 +147,7 @@ public enum SkillTrigger {
 
     // Backwards-compatible with your old API shape
     public String getName() {
-        return STR."on\{canonical.toLowerCase(Locale.ROOT)}";
+        return "on" + canonical.toLowerCase(Locale.ROOT);
     }
 
     // -------------------------
@@ -160,7 +160,7 @@ public enum SkillTrigger {
             // register canonical + enum name + "onX"
             reg(t, t.canonical);
             reg(t, t.name());
-            reg(t, STR."on\{t.canonical}");
+            reg(t, "on" + t.canonical);
 
             // register aliases
             for (String a : t.aliases) reg(t, a);

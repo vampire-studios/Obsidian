@@ -80,10 +80,10 @@ public class PlayerCommandHandler implements CommandHandler {
                 case "setHealth" -> setHealth(player, segment, vars);
                 case "addTag" -> addTag(player, ScriptUtils.getStringArg(segment, 0, vars));
                 case "removeTag" -> removeTag(player, ScriptUtils.getStringArg(segment, 0, vars));
-                case "hasTag" -> {
-                    String tag = ScriptUtils.getStringArg(segment, 0, vars);
-                    vars.put("_last", player.getTags().contains(tag));
-                }
+//                case "hasTag" -> {
+//                    String tag = ScriptUtils.getStringArg(segment, 0, vars);
+//                    vars.put("_last", player.getTags().contains(tag));
+//                }
                 case "tellRaw" -> {
                     String json = ScriptUtils.getStringArg(segment, 0, vars);
                     try {
@@ -161,7 +161,7 @@ public class PlayerCommandHandler implements CommandHandler {
     }
 
     private void sendActionBar(ServerPlayer player, String message) {
-        player.displayClientMessage(Component.literal(message), true);
+        player.sendSystemMessage(Component.literal(message), true);
     }
 
     private void sendTitle(ServerPlayer player, CallChain.Segment segment, Map<String, Object> vars) {
@@ -245,7 +245,7 @@ public class PlayerCommandHandler implements CommandHandler {
         Holder<MobEffect> effect = BuiltInRegistries.MOB_EFFECT
                 .get(Identifier.parse(ScriptUtils.getStringArg(segment, 0, vars)))
                 .orElseThrow(() ->
-                        new IllegalArgumentException(STR."Unknown effect: \{ScriptUtils.getStringArg(segment, 0, vars)}")
+                        new IllegalArgumentException("Unknown effect: " + ScriptUtils.getStringArg(segment, 0, vars))
                 );
         int seconds = (int) ScriptUtils.getNumberArg(segment, 1, vars);
         int amplifier = segment.args().size() >= 3 ? (int) ScriptUtils.getNumberArg(segment, 2, vars) : 0;

@@ -65,7 +65,7 @@ public class UseActions {
 	public SimpleMenuProvider openGui(ContainerLevelAccess containerLevelAccess) throws IllegalStateException {
 		TriFunction<Integer, Integer, Inventory, AbstractContainerMenu, ContainerLevelAccess> menuCreator = GUI_TYPE_TO_MENU_MAP.get(guiType);
 		if (menuCreator == null) {
-			throw new IllegalStateException(STR."Unexpected value: \{guiType}");
+			throw new IllegalStateException("Unexpected value: " + guiType);
 		}
 		return new SimpleMenuProvider((syncId, _, playerx) -> menuCreator.apply(syncId, gui_size, playerx.getInventory(), containerLevelAccess), gui_title.getName("gui", null));
 	}

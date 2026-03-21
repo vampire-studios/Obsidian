@@ -39,7 +39,7 @@ public class Item {
                 }
                 case SpecialText specialText1 -> specialText1;
                 case JsonObject object -> BaseGson.GSON.fromJson(object, SpecialText.class);
-				default -> throw new IllegalStateException(STR."Unexpected value: \{o}");
+				default -> throw new IllegalStateException("Unexpected value: " + o);
 			};
             lore1.add(specialText);
         }

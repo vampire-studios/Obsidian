@@ -17,7 +17,6 @@ import net.devtech.arrp.json.iteminfo.model.JRangeEntry;
 import net.devtech.arrp.json.iteminfo.property.JPropertyDamage;
 import net.devtech.arrp.json.iteminfo.property.JPropertyUsingItem;
 import net.devtech.arrp.json.iteminfo.tint.JTintDye;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
@@ -176,13 +175,13 @@ public class OraxenItemInitThread implements Runnable {
 			model.tint(new JTintDye(item.mechanics.dyeable.getDefaultColor()));
 		}
 
-		boolean hasItemModelComponent = item.components != null
-				&& item.components.get(DataComponents.ITEM_MODEL) != null;
+//		boolean hasItemModelComponent = item.components != null
+//				&& item.components.get(DataComponents.ITEM_MODEL) != null;
 
-		if (!hasItemModelComponent) {
-			itemInfo.model(model);
-			resourcePack.addItemModelInfo(itemInfo, id);
-		}
+//		if (!hasItemModelComponent) {
+//			itemInfo.model(model);
+//			resourcePack.addItemModelInfo(itemInfo, id);
+//		}
 
 		if (item.mechanics != null && item.mechanics.furniture != null) {
 			Identifier furnitureModel = item.pack.model != null ? item.pack.model : id;

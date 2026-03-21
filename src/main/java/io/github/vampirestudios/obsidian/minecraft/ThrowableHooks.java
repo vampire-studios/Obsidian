@@ -55,7 +55,7 @@ public final class ThrowableHooks {
 
             // sound
             SoundEvent se = BuiltInRegistries.SOUND_EVENT.getValue(cfg.throwSound());
-            world.playSound(null, player.blockPosition(), se, SoundSource.PLAYERS, 0.5f, 0.9f + world.random.nextFloat() * 0.2f);
+            world.playSound(null, player.blockPosition(), se, SoundSource.PLAYERS, 0.5f, 0.9f + world.getRandom().nextFloat() * 0.2f);
 
             // consume
             if (!player.isCreative() && cfg.consume()) {

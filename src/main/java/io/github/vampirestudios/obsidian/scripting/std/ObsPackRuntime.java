@@ -351,7 +351,7 @@ public final class ObsPackRuntime {
 					try {
 						ObsInterpreter.execA(srv, rule.body(), vars);
 					} catch (Throwable ex) {
-						System.err.println(STR."[OBS][rule] \{rule.when()}" + " -> " + ex.getMessage());
+						System.err.println("[OBS][rule] " + rule.when() + " -> " + ex.getMessage());
 					}
 					st.lastFire = now;
 				}

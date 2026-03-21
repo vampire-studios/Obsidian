@@ -120,15 +120,15 @@ public class ItemSettings {
     public ItemSettings getParentSettings() {
 		switch (baseItemSettings) {
 			case Map<?, ?> propertiesMap -> {
-				System.out.println(STR."Map: \{propertiesMap}");
+				System.out.println("Map: " + propertiesMap);
 				return constructItemSettingsFromMap(propertiesMap);
 			}
 			case JsonObject jsonObject -> {
-				System.out.println(STR."Json Object: \{jsonObject.getAsString()}");
+				System.out.println("Json Object: " + jsonObject.getAsString());
 				return null;
 			}
 			case String s -> {
-				System.out.println(STR."String: \{s}");
+				System.out.println("String: " + s);
 				return getItemSettingsFromReference(s);
 			}
 			case ItemSettings itemSettings1 -> {
@@ -154,7 +154,7 @@ public class ItemSettings {
         if (location != null) {
             return ContentRegistries.ITEM_SETTINGS.getValue(location);
         } else {
-            System.out.println(STR."Invalid Reference: \{reference}");
+            System.out.println("Invalid Reference: " + reference);
             return handleInvalidReference(reference);
         }
     }

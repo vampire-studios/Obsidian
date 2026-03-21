@@ -16,7 +16,7 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 public class CustomMenuItem extends ItemImpl {
     public CustomMenuItem(Item item, Properties settings) {
@@ -24,7 +24,8 @@ public class CustomMenuItem extends ItemImpl {
     }
 
     @Override
-    public @NotNull InteractionResult use(Level level, Player player, InteractionHand interactionHand) {
+	@NullMarked
+    public InteractionResult use(Level level, Player player, InteractionHand interactionHand) {
         if (item.useActions != null && item.useActions.right_click_actions != null && !item.useActions.right_click_actions.isEmpty()) {
             switch (item.useActions.right_click_actions) {
                 case "open_gui":
@@ -55,11 +56,11 @@ public class CustomMenuItem extends ItemImpl {
 				case 7 -> OMenus.GENERIC_9x7;
 				case 8 -> OMenus.GENERIC_9x8;
 				case 9 -> OMenus.GENERIC_9x9;
-				default -> throw new IllegalStateException(STR."Unexpected value: \{item.menuConfig.rows}");
+				default -> throw new IllegalStateException("Unexpected value: " + item.menuConfig.rows);
 			};
             player.openMenu(new SimpleMenuProvider(
                     (syncId, inv, _) -> chestMenuMenuType.create(syncId, inv),
-                    TagParser.QUICK_TEXT_WITH_STF.parseNode(item.menuConfig.title).toText()
+                    TagParser.QUICK_TEXT_WITH_STF.parseNode(item.menuConfig.title).toComponent()
             ));
         }
         return InteractionResult.SUCCESS;

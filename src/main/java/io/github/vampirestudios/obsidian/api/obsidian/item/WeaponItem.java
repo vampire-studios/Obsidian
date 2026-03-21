@@ -12,11 +12,40 @@ public class WeaponItem extends Item {
 	public float attackSpeed;
 	public float attackDamage;
     public enum WeaponType {
-        @com.google.gson.annotations.SerializedName("sword")  SWORD,
-        @com.google.gson.annotations.SerializedName("spear")  SPEAR,
-        @com.google.gson.annotations.SerializedName("mace")   MACE
+        @com.google.gson.annotations.SerializedName("sword")      SWORD,
+        @com.google.gson.annotations.SerializedName("spear")      SPEAR,
+        @com.google.gson.annotations.SerializedName("mace")       MACE,
+        @com.google.gson.annotations.SerializedName("longsword")  LONGSWORD,
+        @com.google.gson.annotations.SerializedName("rapier")     RAPIER,
+        @com.google.gson.annotations.SerializedName("dagger")     DAGGER,
+        @com.google.gson.annotations.SerializedName("knife")      KNIFE,
+        @com.google.gson.annotations.SerializedName("cleaver")    CLEAVER,
+        @com.google.gson.annotations.SerializedName("scythe")     SCYTHE
     }
     public WeaponType weapon_type = WeaponType.SWORD;
+
+    /** Longsword: extra entity interaction range in blocks (stacks with default reach). */
+    @com.google.gson.annotations.SerializedName("reach_bonus")
+    public float reach_bonus = 0.0f;
+
+    /** Rapier: fraction 0–1 of target's armour value dealt as additional armour-bypassing damage. */
+    @com.google.gson.annotations.SerializedName("armor_pierce")
+    public float armor_pierce = 0.0f;
+
+    /** Dagger / Knife: damage multiplier applied when striking the target from behind. */
+    @com.google.gson.annotations.SerializedName("backstab_multiplier")
+    public float backstab_multiplier = 1.0f;
+
+    /** Knife: right-click throws the knife as a projectile and consumes one from the stack. */
+    public boolean throwable = false;
+
+    /** Cleaver / Scythe: radius in blocks for area-of-effect hits on secondary targets. */
+    @com.google.gson.annotations.SerializedName("aoe_radius")
+    public float aoe_radius = 0.0f;
+
+    /** Cleaver / Scythe: fraction of main-hit damage applied to nearby AoE targets. */
+    @com.google.gson.annotations.SerializedName("aoe_damage_multiplier")
+    public float aoe_damage_multiplier = 0.5f;
     /** Spear-only: nested under "spear" in JSON. All values default to vanilla iron spear. */
     public SpearProperties spear = new SpearProperties();
     /** Mace-only: nested under "mace" in JSON. Null fields fall back to the tool material's values. */
@@ -65,7 +94,7 @@ public class WeaponItem extends Item {
 						case "DIAMOND" -> ToolMaterial.DIAMOND;
 						case "GOLD" -> ToolMaterial.GOLD;
 						case "NETHERITE" -> ToolMaterial.NETHERITE;
-						default -> throw new IllegalStateException(STR."Unexpected value: \{path}");
+						default -> throw new IllegalStateException("Unexpected value: " + path);
 					};
 				}
 				ToolMaterial mat = ContentRegistries.TOOL_MATERIALS.getValue(id);
@@ -85,7 +114,7 @@ public class WeaponItem extends Item {
 						case "DIAMOND" -> ToolMaterial.DIAMOND;
 						case "GOLD" -> ToolMaterial.GOLD;
 						case "NETHERITE" -> ToolMaterial.NETHERITE;
-						default -> throw new IllegalStateException(STR."Unexpected value: \{path}");
+						default -> throw new IllegalStateException("Unexpected value: " + path);
 					};
 				}
 				ToolMaterial mat = ContentRegistries.TOOL_MATERIALS.getValue(location);

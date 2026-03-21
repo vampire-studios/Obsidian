@@ -7,7 +7,7 @@
 		"defaultRequire": 1
 	},
 	"mixins": [
-		"ArmorHeadSlotMixin",
+//		"ArmorHeadSlotMixin",
 		"BlockMixin",
 		"CraftingScreenHandlerMixin",
 		"DilationAccessor",
@@ -55,16 +55,16 @@
 	],
 	"client": [
 		"AbstractClientPlayerEntityMixin",
-		"BlockElementDeserializerMixin",
-		"BlockElementMixin",
+//		"BlockElementDeserializerMixin",
+//		"BlockElementMixin",
 		"OptionsMixin",
 		"client.AbstractContainerScreenMixin",
-		"client.BlockModelWrapperDetectRenderTypeMixin",
-		"client.BlockModelWrapperMultiAtlasFlagMixin",
-		"client.BlockModelWrapperUnbakedBakeMixin",
+//		"client.BlockModelWrapperDetectRenderTypeMixin",
+//		"client.BlockModelWrapperMultiAtlasFlagMixin",
+//		"client.BlockModelWrapperUnbakedBakeMixin",
 		"client.EntityRenderDispatcherMixin",
 		"client.EntityRendererFactoryContextMixin",
-		"client.ItemRendererMultiAtlasMixin",
+//		"client.ItemRendererMultiAtlasMixin",
 		"client.PlayerEntityRendererMixin",
 		"client.ReloadableResourceManagerImplMixin"
 	]

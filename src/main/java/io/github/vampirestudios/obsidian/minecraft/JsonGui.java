@@ -2,9 +2,8 @@ package io.github.vampirestudios.obsidian.minecraft;
 
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import io.github.vampirestudios.obsidian.client.CustomButton;
-import io.github.vampirestudios.obsidian.client.ProgressBar;
 import io.github.vampirestudios.obsidian.client.ToggleButton;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.CharacterEvent;
@@ -20,8 +19,8 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
     public JsonGui(DynamicContainer menu, Inventory inv, GUI gui) {
         super(menu, inv, Component.literal(gui.title));
         this.gui = gui;
-		this.imageWidth = gui.textureWidth;
-		this.imageHeight = gui.textureHeight;
+//		this.imageWidth = gui.textureWidth;
+//		this.imageHeight = gui.textureHeight;
     }
 
     @Override
@@ -31,13 +30,13 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
     }
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		super.render(guiGraphics, mouseX, mouseY, partialTick);
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+		super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 	}
 
 	@Override
-	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, gui.texture, leftPos, topPos, this.imageWidth, this.imageHeight);
+	public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, gui.texture, leftPos, topPos, this.imageWidth, this.imageHeight);
 //		guiGraphics.blitSprite(RenderType::guiTextured, gui.texture, leftPos, topPos, this.imageWidth, this.imageHeight);
 	}
 
@@ -51,17 +50,17 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
             int y = this.height / 2 - height / 2 + widget.position.y;
 
 			Component text = widget.text == null || widget.text.isEmpty() ? Component.empty() : Component.literal(widget.text);
-			switch (widget.type) {
-				case "button" -> createButton(text, width, height, x, y, widget);
-				case "checkbox" -> this.addRenderableWidget(Checkbox.builder(text, this.font).pos(x, y).build());
-				case "edit_box" -> createEditBox(text, width, height, x, y, widget);
-                case "string" -> {
-					if (widget.customPosString)
-						this.addRenderableWidget(new StringWidget(x, y, font.width(text.getVisualOrderText()), 9, text, font));
-					else this.addRenderableWidget(new StringWidget(text, font));
-				}
-				case "progress_bar" -> this.addRenderableWidget(new ProgressBar(widget));
-			}
+//			switch (widget.type) {
+//				case "button" -> createButton(text, width, height, x, y, widget);
+//				case "checkbox" -> this.addRenderableWidget(Checkbox.builder(text, this.font).pos(x, y).build());
+//				case "edit_box" -> createEditBox(text, width, height, x, y, widget);
+//                case "string" -> {
+//					if (widget.customPosString)
+//						this.addRenderableWidget(new StringWidget(x, y, font.width(text.getVisualOrderText()), 9, text, font));
+//					else this.addRenderableWidget(new StringWidget(text, font));
+//				}
+//				case "progress_bar" -> this.addRenderableWidget(new ProgressBar(widget));
+//			}
         }
     }
 

@@ -38,7 +38,7 @@ public class HoneycombItemMixin {
 							remap = false
 					)
 			),
-			method = "method_34723()Lcom/google/common/collect/BiMap;",
+			method = "lambda$static$0()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)
@@ -51,9 +51,9 @@ public class HoneycombItemMixin {
 	// Replaces old map with one updated by our API
 	@Inject(
 			slice = @Slice(
-					from = @At(value = "FIELD", target = "Lnet/minecraft/world/item/HoneycombItem;WAX_OFF_BY_BLOCK:Ljava/util/function/Supplier;")
+					from = @At(value = "FIELD", target = "Lnet/minecraft/world/item/HoneycombItem;WAXABLES:Ljava/util/function/Supplier;")
 			),
-			method = "method_34722()Lcom/google/common/collect/BiMap;",
+			method = "lambda$static$1()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)

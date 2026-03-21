@@ -16,7 +16,7 @@ public class RandomEffectSelector {
             int index = random.nextInt(possibleEffects.size());
             Runnable effect = possibleEffects.get(index);
             effect.run();
-            System.out.println(STR."Applied random effect: \{effect.getClass().getSimpleName()}");
+            System.out.println("Applied random effect: " + effect.getClass().getSimpleName());
         }
     }
 }

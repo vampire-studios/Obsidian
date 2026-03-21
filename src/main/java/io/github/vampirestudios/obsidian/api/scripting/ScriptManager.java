@@ -2,6 +2,8 @@ package io.github.vampirestudios.obsidian.api.scripting;
 
 import io.github.vampirestudios.obsidian.api.events.PlayerPickupItemCallback;
 import io.github.vampirestudios.obsidian.api.events.PlayerTickCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -37,6 +39,8 @@ public class ScriptManager {
 	private final List<ScriptParser.RecurringTaskDef> recurringDefs = new ArrayList<>();
 	private final Map<ScriptParser.RecurringTaskDef, Integer> ticksLeft = new HashMap<>();
 	private final Map<UUID,Boolean> lastSneakState = new HashMap<>();
+	private final Map<UUID,Integer> lastHeldSlot = new HashMap<>();
+	private final Map<UUID,Integer> lastXpLevel = new HashMap<>();
 	private final Map<String,String> config = new HashMap<>();
 	private final CommandExecutor executor = new CommandExecutor();
 	private final Path scriptsDir;
@@ -101,7 +105,7 @@ public class ScriptManager {
 			}
 			config.putAll(result.options);
 		} catch (IOException e) {
-			System.err.println(STR."Failed to load script \{file}" + ": " + e.getMessage());
+			System.err.println("Failed to load script " + file + ": " + e.getMessage());
 		}
 	}
 
@@ -266,7 +270,76 @@ public class ScriptManager {
 			});
 		}
 
-		// …add more events as needed…
+		// ENTITY KILL
+		if (byEvent.containsKey("entity kill")) {
+			ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register((world, killer, killed, source) -> {
+				if (killer instanceof Player player) {
+					String entityType = BuiltInRegistries.ENTITY_TYPE.getKey(killed.getType()).toString();
+					runScripts("entity kill", player, world, killed.blockPosition(), Map.of(
+							"entity", entityType,
+							"x", String.valueOf(killed.blockPosition().getX()),
+							"y", String.valueOf(killed.blockPosition().getY()),
+							"z", String.valueOf(killed.blockPosition().getZ())
+					));
+				}
+			});
+		}
+
+		// PLAYER DAMAGE
+		if (byEvent.containsKey("player damage")) {
+			ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> {
+				if (entity instanceof Player player) {
+					runScripts("player damage", player, player.level(), null, Map.of(
+							"damage", String.format("%.1f", damageTaken),
+							"source", source.getMsgId(),
+							"blocked", String.valueOf(blocked)
+					));
+				}
+			});
+		}
+
+		// ITEM CHANGE (hotbar slot change)
+		if (byEvent.containsKey("item change")) {
+			PlayerTickCallback.EVENT.register(player -> {
+				if (player.level().isClientSide()) return;
+				UUID id  = player.getUUID();
+				int  cur = player.getInventory().getSelectedSlot();
+				int  prev = lastHeldSlot.getOrDefault(id, -1);
+				if (cur != prev) {
+					lastHeldSlot.put(id, cur);
+					String itemId = BuiltInRegistries.ITEM.getKey(player.getMainHandItem().getItem()).toString();
+					runScripts("item change", player, player.level(), null, Map.of(
+							"slot", String.valueOf(cur),
+							"item", itemId
+					));
+				}
+			});
+		}
+
+		// PLAYER LEVEL UP
+		if (byEvent.containsKey("player level up")) {
+			PlayerTickCallback.EVENT.register(player -> {
+				if (player.level().isClientSide()) return;
+				UUID id  = player.getUUID();
+				int  cur = player.experienceLevel;
+				Integer prev = lastXpLevel.get(id);
+				if (prev != null && cur > prev) {
+					runScripts("player level up", player, player.level(), null, Map.of(
+							"level", String.valueOf(cur),
+							"prev_level", String.valueOf(prev)
+					));
+				}
+				lastXpLevel.put(id, cur);
+			});
+		}
+
+		// PLAYER TICK (fires every server tick per player — use sparingly)
+		if (byEvent.containsKey("player tick")) {
+			PlayerTickCallback.EVENT.register(player -> {
+				if (player.level().isClientSide()) return;
+				runScripts("player tick", player, player.level(), player.blockPosition());
+			});
+		}
 	}
 
 	private void runScripts(String event,
@@ -321,11 +394,22 @@ public class ScriptManager {
 			Map<String, String> vars = new HashMap<>();
 			// 1) interpolate eventVars like %message%, %player%…
 			for (var entry : eventVars.entrySet()) {
-				vars.put(STR."%\{entry.getKey()}%", entry.getValue());
+				vars.put("%" + entry.getKey() + "%", entry.getValue());
 			}
-			vars.put("%player%", player.getName().getString());
-			vars.put("%player's main item%", BuiltInRegistries.ITEM.getKey(player.getMainHandItem().getItem()).toString());
-			vars.put("%player's offhand item%", BuiltInRegistries.ITEM.getKey(player.getOffhandItem().getItem()).toString());
+			if (player != null) {
+				vars.put("%player%", player.getName().getString());
+				vars.put("%player's main item%", BuiltInRegistries.ITEM.getKey(player.getMainHandItem().getItem()).toString());
+				vars.put("%player's offhand item%", BuiltInRegistries.ITEM.getKey(player.getOffhandItem().getItem()).toString());
+				vars.put("%player's health%", String.format("%.1f", player.getHealth()));
+				vars.put("%player's max health%", String.format("%.1f", player.getMaxHealth()));
+				vars.put("%player's level%", String.valueOf(player.experienceLevel));
+				vars.put("%player's hunger%", String.valueOf(player.getFoodData().getFoodLevel()));
+				vars.put("%player's x%", String.format("%.1f", player.getX()));
+				vars.put("%player's y%", String.format("%.1f", player.getY()));
+				vars.put("%player's z%", String.format("%.1f", player.getZ()));
+				vars.put("%player's uuid%", player.getUUID().toString());
+				vars.put("%player's name%", player.getName().getString());
+			}
 
 			// sort keys by length descending
 			var keys = new ArrayList<>(vars.keySet());
@@ -413,8 +497,9 @@ public class ScriptManager {
 			}
 
 			// ── set / add ──
-			if (line.startsWith("set ")) {
-				var p = line.substring(4).split(" to ");
+			// "set X to Y" assigns a script variable; "set time/weather/..." flows to CommandExecutor
+			if (line.startsWith("set ") && line.contains(" to ")) {
+				var p = line.substring(4).split(" to ", 2);
 				vars.put(p[0].trim(), evalExpr(p[1].trim()));
 				continue;
 			}
@@ -490,14 +575,27 @@ public class ScriptManager {
 				case "saturation" -> String.valueOf(player.getFoodData().getSaturationLevel());
 				case "dimension" -> player.level().dimension().identifier().toString();
 				case "world" -> player.level().getServer().getWorldData().getLevelName();
+				case "level", "xp-level" -> String.valueOf(player.experienceLevel);
+				case "xp", "experience" -> String.valueOf(player.totalExperience);
+				case "game_mode", "gamemode", "game-mode" -> {
+					if (player instanceof net.minecraft.server.level.ServerPlayer sp)
+						yield sp.gameMode.getGameModeForPlayer().getName();
+					yield "unknown";
+				}
+				case "uuid" -> player.getUUID().toString();
+				case "name" -> player.getName().getString();
+				case "sneaking", "is-sneaking", "crouching" -> String.valueOf(player.isCrouching());
+				case "sprinting", "is-sprinting" -> String.valueOf(player.isSprinting());
+				case "on_ground", "on-ground" -> String.valueOf(player.onGround());
+				case "flying", "is-flying" -> String.valueOf(player.getAbilities().flying);
 				default -> token;
 			};
 		}
 		if (world != null && token.startsWith("world’s ")) {
 			String prop = token.substring("world's ".length());
 			return switch (prop) {
-				case "time" -> String.valueOf((int)(world.getDayTime() % 24000));
-				case "day", "is day" -> String.valueOf(world.getDayTime() % 24000 < 12000);
+				case "time" -> String.valueOf((int)(world.getOverworldClockTime() % 24000));
+				case "day", "is day" -> String.valueOf(world.getOverworldClockTime() % 24000 < 12000);
 				case "weather" -> {
 					if (world.isThundering()) yield "thunder";
 					if (world.isRaining())   yield "rain";
@@ -552,7 +650,7 @@ public class ScriptManager {
 		Matcher m = Pattern.compile("\\{([^}]+)}").matcher(expr);
 		StringBuilder sb = new StringBuilder();
 		while (m.find()) {
-			String v = vars.getOrDefault(STR."{\{m.group(1)}" + "}", "0");
+			String v = vars.getOrDefault("{" + m.group(1) + "}", "0");
 			m.appendReplacement(sb, v);
 		}
 		m.appendTail(sb);

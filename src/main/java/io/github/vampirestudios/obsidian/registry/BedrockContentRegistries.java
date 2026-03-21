@@ -7,5 +7,5 @@ import net.minecraft.core.Registry;
 import static io.github.vampirestudios.obsidian.Obsidian.id;
 
 public class BedrockContentRegistries {
-	public static Registry<BaseBlock> BLOCKS = FabricRegistryBuilder.createSimple(BaseBlock.class, id("bedrock_blocks")).buildAndRegister();
+	public static Registry<BaseBlock> BLOCKS = FabricRegistryBuilder.create(BaseBlock.class, id("bedrock_blocks")).buildAndRegister();
 }

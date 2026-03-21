@@ -14,15 +14,14 @@ import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -37,7 +36,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 
-import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class Ores implements AddonModule {
 
@@ -174,13 +174,13 @@ public class Ores implements AddonModule {
 	private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
 		// 1) Components override everything
 		var comps = block.components;
-		if (comps != null) {
-			var opt = comps.get(OItemComponents.CREATIVE_TAB); // Optional<Identifier> (based on your usage)
-			if (opt != null && opt.isPresent()) {
-				Identifier id = opt.get();
-				return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, id);
-			}
-		}
+//		if (comps != null) {
+//			var opt = comps.get(OItemComponents.CREATIVE_TAB); // Optional<Identifier> (based on your usage)
+//			if (opt != null && opt.isPresent()) {
+//				Identifier id = opt.get();
+//				return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, id);
+//			}
+//		}
 
 		// 2) Then item settings
 		var settings = block.information.getItemSettings();

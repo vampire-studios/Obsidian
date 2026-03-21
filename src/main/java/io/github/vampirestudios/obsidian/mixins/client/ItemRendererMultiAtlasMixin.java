@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,6 +9,7 @@ import com.mojang.math.MatrixUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -23,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(ItemRenderer.class)
+@Mixin(ItemEntityRenderer.class)
 public abstract class ItemRendererMultiAtlasMixin {
     private static final Identifier ITEMS_ATLAS = Identifier.withDefaultNamespace("textures/atlas/items.png");
     private static final Identifier BLOCKS_ATLAS = Identifier.withDefaultNamespace("textures/atlas/blocks.png");
@@ -130,3 +132,4 @@ public abstract class ItemRendererMultiAtlasMixin {
         renderQuadList(poseStack, vc, quads, tints, light, overlay);
     }
 }
+*/

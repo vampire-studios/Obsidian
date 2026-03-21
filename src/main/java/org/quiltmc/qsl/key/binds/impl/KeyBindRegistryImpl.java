@@ -55,7 +55,7 @@ public class KeyBindRegistryImpl {
 	}
 
 	public static void updateKeyBindState(KeyMapping key) {
-		if (key.isEnabled()) {
+		if (key.isDefault()) {
 			ENABLED_KEYS.add(key);
 		} else {
 			ENABLED_KEYS.remove(key);

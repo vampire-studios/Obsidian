@@ -256,7 +256,7 @@ public class EventActionHandler {
 
     private static void sendMessageAction(Player player, Map<String, Object> actionConfig) {
         String message = (String) actionConfig.get("message");
-        player.displayClientMessage(Component.literal(message), true);
+        player.sendOverlayMessage(Component.literal(message));
     }
 
     private static void applyEffectAction(Player player, Map<String, Object> actionConfig) {
@@ -311,7 +311,7 @@ public class EventActionHandler {
             case "add_value" -> AttributeModifier.Operation.ADD_VALUE;
             case "add_multiplied_base" -> AttributeModifier.Operation.ADD_MULTIPLIED_BASE;
             case "add_multiplied_total" -> AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
-			default -> throw new IllegalStateException(STR."Unexpected value: \{actionConfig.get("operation")}");
+			default -> throw new IllegalStateException("Unexpected value: " + actionConfig.get("operation"));
 		};
         player.getAttribute(BuiltInRegistries.ATTRIBUTE.getOrThrow(ResourceKey.create(Registries.ATTRIBUTE, Identifier.parse(attribute))))
                 .addOrUpdateTransientModifier(new AttributeModifier(name, amount, operation));
@@ -409,7 +409,7 @@ public class EventActionHandler {
                 .map(id -> new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(id))))
                 .orElse(stack);
         int count = ((Number) actionConfig.getOrDefault("max_particle_count", DEFAULT_PARTICLE_COUNT)).intValue();
-        ParticleUtils.spawnParticlesOnBlockFaces(level, pos, new ItemParticleOption(ParticleTypes.ITEM, particleItem), UniformInt.of(1, count));
+        ParticleUtils.spawnParticlesOnBlockFaces(level, pos, new ItemParticleOption(ParticleTypes.ITEM, particleItem.getItem()), UniformInt.of(1, count));
     }
 
     private static void playSound(Level level, BlockPos pos, Map<String, Object> actionConfig) {
@@ -424,7 +424,7 @@ public class EventActionHandler {
     private static void displayCustomMessage(Player player, Map<String, Object> actionConfig) {
         String message = (String) actionConfig.get("message");
         if (message != null) {
-            player.displayClientMessage(Component.literal(message), true);
+            player.sendOverlayMessage(Component.literal(message));
         }
     }
 

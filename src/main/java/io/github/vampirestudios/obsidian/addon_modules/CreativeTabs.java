@@ -14,7 +14,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -46,7 +46,7 @@ public class CreativeTabs implements AddonModule {
 
             if (result.result().isPresent()) {
                 CreativeTab creativeTab = result.result().get().getFirst();
-                CreativeModeTab itemGroup1 = FabricItemGroup.builder()
+                CreativeModeTab itemGroup1 = FabricCreativeModeTab.builder()
                         .icon(() -> new ItemStack(BuiltInRegistries.ITEM.getValue(creativeTab.icon)))
                         .displayItems((featureSet, entries) -> {
                             for (Holder<Item> item : creativeTab.items) {

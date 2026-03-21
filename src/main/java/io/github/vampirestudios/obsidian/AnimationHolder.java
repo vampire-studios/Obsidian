@@ -17,7 +17,7 @@ public record AnimationHolder(float length, boolean looping, Map<String, Map<Tar
             return DataResult.success(Float.toString(parsedValue));
         }
         catch (NumberFormatException exception) {
-            return DataResult.error(() -> STR."Timestamp must be a float: \{value}");
+            return DataResult.error(() -> "Timestamp must be a float: " + value);
         }
     });
 

@@ -9,6 +9,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import io.github.vampirestudios.obsidian.client.renderer.SeatEntityRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
@@ -21,8 +22,8 @@ import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.lang.JLang;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
@@ -59,6 +60,7 @@ public class ClientInit implements ClientModInitializer {
 //        ContentPackSyncNetworking.registerClientReceivers();
 
         EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
+        EntityRendererRegistry.register(Obsidian.THROWN_KNIFE, ThrownItemRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String id;
             if (iAddonPack.getConfigPackInfo() instanceof LegacyObsidianAddonInfo legacyObsidianAddonInfo) {
@@ -69,8 +71,8 @@ public class ClientInit implements ClientModInitializer {
             }
 
             ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> dispatcher.register(
-                ClientCommandManager.literal("opengui").then(
-                    ClientCommandManager.argument("gui", IdentifierArgument.id())
+                ClientCommands.literal("opengui").then(
+                    ClientCommands.argument("gui", IdentifierArgument.id())
                         .suggests(new GuiSuggestionProvider())
                         .executes(context -> {
                             Identifier gui = context.getArgument("gui", Identifier.class);
@@ -105,6 +107,9 @@ public class ClientInit implements ClientModInitializer {
                     if (item.id.getNamespace().equals(id))
                         new OraxenItemInitThread(resourcePack, item).run();
                 for (ToolItem item : ContentRegistries.TOOLS)
+                    if (item.information.id.getNamespace().equals(id))
+                        new ItemInitThread(resourcePack, item).run();
+                for (SoundPlayingItem item : ContentRegistries.SOUND_PLAYING_ITEMS)
                     if (item.information.id.getNamespace().equals(id))
                         new ItemInitThread(resourcePack, item).run();
                 for (WeaponItem item : ContentRegistries.WEAPONS)

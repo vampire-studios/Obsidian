@@ -5,15 +5,15 @@
 
 package io.github.vampirestudios.obsidian;
 
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -86,7 +86,7 @@ public record RegistryHelper(String modId) {
 		public Block registerBlock(Block block, String name, ResourceKey<CreativeModeTab> itemGroup) {
 			block = registerBlockWithoutItem(name, block);
 			Item item = this.register(BuiltInRegistries.ITEM, name, new BlockItem(block, new Item.Properties()));
-			ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.accept(item));
+			CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.accept(item));
 			return block;
 		}
 
@@ -96,7 +96,7 @@ public record RegistryHelper(String modId) {
 			Item item = this.register(BuiltInRegistries.ITEM, name, new BlockItem(block, new Item.Properties()));
 
 			for (ResourceKey<CreativeModeTab> itemGroup : itemGroups) {
-				ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.accept(item));
+				CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.accept(item));
 			}
 
 			return block;
@@ -106,7 +106,7 @@ public record RegistryHelper(String modId) {
 			this.register(BuiltInRegistries.BLOCK, name, block);
 			Item item = this.register(BuiltInRegistries.ITEM, name, new BlockItem(block, new Item.Properties()));
 			if (parentBlock != null) {
-				ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.addAfter(parentBlock, item));
+				CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.insertAfter(parentBlock, item));
 			}
 
 			return block;
@@ -116,7 +116,7 @@ public record RegistryHelper(String modId) {
 			this.register(BuiltInRegistries.BLOCK, name, block);
 			Item item = this.register(BuiltInRegistries.ITEM, name, new BlockItem(block, new Item.Properties()));
 			if (parentBlock != null) {
-				ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.addBefore(parentBlock, item));
+				CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.insertBefore(parentBlock, item));
 			}
 
 			return block;
@@ -125,14 +125,14 @@ public record RegistryHelper(String modId) {
 		public Block registerDoubleBlock(Block block, String name, ResourceKey<CreativeModeTab> itemGroup) {
 			this.register(BuiltInRegistries.BLOCK, name, block);
 			Item item = this.register(BuiltInRegistries.ITEM, name, new DoubleHighBlockItem(block, new Item.Properties()));
-			ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.accept(item));
+			CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.accept(item));
 			return block;
 		}
 
 		public Block registerDoubleBlock(Block block, String name, ResourceKey<CreativeModeTab> itemGroup, Block parentBlock) {
 			this.register(BuiltInRegistries.BLOCK, name, block);
 			Item item = this.register(BuiltInRegistries.ITEM, name, new DoubleHighBlockItem(block, new Item.Properties()));
-			ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.addAfter(parentBlock, item));
+			CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.insertAfter(parentBlock, item));
 			return block;
 		}
 
@@ -148,7 +148,7 @@ public record RegistryHelper(String modId) {
 			Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
 
 			for (ResourceKey<CreativeModeTab> itemGroup : itemGroups) {
-				ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.addAfter(parentBlock, item));
+				CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.insertAfter(parentBlock, item));
 			}
 
 			return block;
@@ -160,7 +160,7 @@ public record RegistryHelper(String modId) {
 			Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
 
 			for (ResourceKey<CreativeModeTab> itemGroup : itemGroups) {
-				ItemGroupEvents.modifyEntriesEvent(itemGroup).register((entries) -> entries.addBefore(parentBlock, item));
+				CreativeModeTabEvents.modifyOutputEvent(itemGroup).register((entries) -> entries.insertBefore(parentBlock, item));
 			}
 
 			return block;
@@ -169,7 +169,7 @@ public record RegistryHelper(String modId) {
 		public Block registerBlock(Block block, String name, Map<ItemLike, ResourceKey<CreativeModeTab>> itemGroups) {
 			Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
 			Item item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new BlockItem(block, new Item.Properties()));
-			itemGroups.forEach((block1, creativeModeTab) -> ItemGroupEvents.modifyEntriesEvent(creativeModeTab).register((entries) -> entries.addAfter(block1, item)));
+			itemGroups.forEach((block1, creativeModeTab) -> CreativeModeTabEvents.modifyOutputEvent(creativeModeTab).register((entries) -> entries.insertAfter(block1, item)));
 			return block;
 		}
 
@@ -177,7 +177,7 @@ public record RegistryHelper(String modId) {
 			this.register(BuiltInRegistries.BLOCK, name, block);
 			Item item = new StandingAndWallBlockItem(block, wallBlock, Direction.DOWN, new Item.Properties());
 			this.register(BuiltInRegistries.ITEM, name, item);
-			ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register((entries) -> entries.accept(item));
+			CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.BUILDING_BLOCKS).register((entries) -> entries.accept(item));
 			return block;
 		}
 
@@ -248,13 +248,13 @@ public record RegistryHelper(String modId) {
 
 		public Item registerItem(String name, Item item, ResourceKey<CreativeModeTab> creativeModeTab, Item vanillaItem) {
 			Item registeredItem = this.register(BuiltInRegistries.ITEM, name, item);
-			ItemGroupEvents.modifyEntriesEvent(creativeModeTab).register((entries) -> entries.addAfter(vanillaItem, registeredItem));
+			CreativeModeTabEvents.modifyOutputEvent(creativeModeTab).register((entries) -> entries.insertAfter(vanillaItem, registeredItem));
 			return registeredItem;
 		}
 
 		public Item registerItem(String name, Item item, ResourceKey<CreativeModeTab> creativeModeTab) {
 			Item registeredItem = this.register(BuiltInRegistries.ITEM, name, item);
-			ItemGroupEvents.modifyEntriesEvent(creativeModeTab).register((entries) -> entries.accept(registeredItem));
+			CreativeModeTabEvents.modifyOutputEvent(creativeModeTab).register((entries) -> entries.accept(registeredItem));
 			return registeredItem;
 		}
 

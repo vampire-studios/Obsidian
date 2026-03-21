@@ -9,16 +9,18 @@ import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableBlockEntity;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
 import java.util.Map;
 
 public class BlockInitThread implements Runnable {
@@ -47,11 +49,9 @@ public class BlockInitThread implements Runnable {
     @Override
     public void run() {
         try {
-            net.minecraft.world.level.block.Block block1 = BuiltInRegistries.BLOCK.getValue(block.information.id);
             NameInformation nameInformation = block.information.name;
             Identifier blockId = block.information.id;
             Map<String, String> translated = nameInformation.translations;
-            BlockRenderLayerMap.putBlock(block1, ChunkSectionLayer.CUTOUT);
             if (translated != null) {
                 translated.forEach((languageId, name) -> ClientInit.addTranslation(
                         blockId.getNamespace(), languageId, nameInformation.text, name
@@ -256,10 +256,18 @@ public class BlockInitThread implements Runnable {
             dyable |= block.getBlockType() == Block.BlockType.DYEABLE;
             if (dyable) {
                 net.minecraft.world.level.block.Block registeredBlock = BuiltInRegistries.BLOCK.getValue(block.information.id);
-                ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> {
-                    if (world == null || pos == null) return block.additional_information.defaultColor;
-                    return getBlockEntityColor(block, world, pos);
-                }, registeredBlock);
+                BlockColorRegistry.register(List.of(new BlockTintSource() {
+                    @Override
+                    public int color(BlockState state) {
+                        return block.additional_information.defaultColor;
+                    }
+
+                    @Override
+                    public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                        if (level == null || pos == null) return block.additional_information.defaultColor;
+                        return getBlockEntityColor(block, level, pos);
+                    }
+                }), registeredBlock);
             }
         } catch (Exception e) {
             e.printStackTrace();

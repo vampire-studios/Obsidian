@@ -18,7 +18,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -96,7 +95,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 			this.information = information;
 			this.player = player;
 
-			this.setSlotRedirect(information.buttons.inputSlot, new Slot(container, 0, 0, 0));
+//			this.setSlotRedirect(information.buttons.inputSlot, new Slot(container, 0, 0, 0));
 			this.setTitle(getTitle());
 			drawColorSlots();
 			this.open();
@@ -104,7 +103,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 
 		public Component getTitle() {
 			if (information != null && information.title != null && !information.title.trim().isEmpty()) {
-				return TagParser.QUICK_TEXT_WITH_STF.parseNode(information.title).toText();
+				return TagParser.QUICK_TEXT_WITH_STF.parseNode(information.title).toComponent();
 			} else {
 				return Component.literal(DEFAULT_TITLE);
 			}
@@ -118,7 +117,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 						PaintingTableInformation.Color baseColor = getColorCategoryForIndex(colorIndex, colorMap);
 //						List<PaintingTableInformation.Color> subColors = getColorCategoryForIndex(colorIndex, colorMap);
 						ItemStack colorItemStack = buildColorItemStack(baseColor);
-						this.setSlot(colorIndex, GuiElementBuilder.from(colorItemStack).setCallback((index, clickType, actionType) -> {
+						this.setSlot(colorIndex, GuiElementBuilder.from(colorItemStack).setCallback((index, clickType, actionType, a) -> {
 //							drawGradientSlots(subColors, container.getItem(0), player);
 						}));
 					}
@@ -138,7 +137,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 
 		private ItemStack buildColorItemStack(ItemStack itemStack, PaintingTableInformation.Color color, boolean customName) {
 			itemStack.set(DataComponents.DYED_COLOR, new DyedItemColor(ColorUtil.toIntRgb(ColorUtil.toFloatArray(color.getColor()))));
-			if(customName) itemStack.set(DataComponents.ITEM_NAME, MarkdownLiteParserV1.ALL.parseNode(color.name).toText());
+			if(customName) itemStack.set(DataComponents.ITEM_NAME, MarkdownLiteParserV1.ALL.parseNode(color.name).toComponent());
 			return itemStack;
 		}
 

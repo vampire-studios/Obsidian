@@ -1,3 +1,4 @@
+/*
 package io.github.vampirestudios.obsidian.mixins.client;
 
 import io.github.vampirestudios.obsidian.MultiAtlasState;
@@ -30,12 +31,14 @@ public abstract class BlockModelWrapperDetectRenderTypeMixin {
     @Unique private static final Identifier ITEMS_ATLAS = Identifier.withDefaultNamespace("textures/atlas/items.png");
     @Unique private static final Identifier BLOCKS_ATLAS = Identifier.withDefaultNamespace("textures/atlas/blocks.png");
 
-    /**
+    */
+/**
      * Bypasses the IllegalStateException and sets MultiAtlasState.MIXED when both atlases are detected.
      *
      * NOTE: We deliberately return a "reasonable default" RenderType for item models.
      * The *correct* atlas binding per-quad is handled by the ItemRenderer mixin (section 4).
-     */
+     *//*
+
     @Inject(
         method = "detectRenderType",
         at = @At("HEAD"),
@@ -73,3 +76,4 @@ public abstract class BlockModelWrapperDetectRenderTypeMixin {
         }
     }
 }
+*/

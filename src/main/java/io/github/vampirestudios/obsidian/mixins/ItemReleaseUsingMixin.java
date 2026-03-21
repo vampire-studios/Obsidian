@@ -95,7 +95,7 @@ public abstract class ItemReleaseUsingMixin {
 
         // Sound
         SoundEvent se = BuiltInRegistries.SOUND_EVENT.getValue(shooter.shootSound());
-        level.playSound(null, player.blockPosition(), se, SoundSource.PLAYERS, 1.0f, 0.9f + level.random.nextFloat() * 0.2f);
+        level.playSound(null, player.blockPosition(), se, SoundSource.PLAYERS, 1.0f, 0.9f + level.getRandom().nextFloat() * 0.2f);
 
         // Consume ammo
         if (shooter.requiresAmmo() && shooter.consumeAmmo() && !player.getAbilities().instabuild) {
