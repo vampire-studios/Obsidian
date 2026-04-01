@@ -14,6 +14,7 @@ import net.devtech.arrp.json.iteminfo.model.JModelSelect;
 import net.devtech.arrp.json.iteminfo.model.JSelectCase;
 import net.devtech.arrp.json.iteminfo.property.JPropertyDisplayContext;
 import net.devtech.arrp.json.iteminfo.tint.JTintDye;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
@@ -80,10 +81,10 @@ public class ArmorInitThread implements Runnable {
                 }
             }
         }
-//        boolean hasItemModelComponent = armor.components != null && armor.components.get(DataComponents.ITEM_MODEL) != null;
+        boolean hasItemModelComponent = armor.components != null && armor.components.get(DataComponents.ITEM_MODEL) != null;
         boolean dyeable = armor.information.getItemSettings().dyeable;
 
-        if (/*!hasItemModelComponent || */dyeable) {
+        if (!hasItemModelComponent || dyeable) {
             itemInfo.model(model);
             resourcePack.addItemModelInfo(itemInfo, itemId);
         }

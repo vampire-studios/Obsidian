@@ -1,13 +1,15 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import net.minecraft.core.component.DataComponentPatch;
+import io.github.vampirestudios.obsidian.registry.OItemComponents;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-
-import java.util.Optional;
 
 /** Shared helpers to reduce boilerplate across item-related addon modules. */
 public final class ItemModuleHelper {
@@ -19,13 +21,15 @@ public final class ItemModuleHelper {
     // -------------------------------------------------------------------------
 
     /** Applies every entry from {@code map} onto {@code props}. */
-    @SuppressWarnings("unchecked")
-    public static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
-        for (var e : map.entrySet()) {
-            var type = (DataComponentType<T>) e.getKey();
-            var opt  = (Optional<T>) e.getValue();
-            opt.ifPresent(v -> props.component(type, v));
+    public static void applyAllComponents(Item.Properties props, DataComponentMap map) {
+        for (TypedDataComponent<?> entry : map) {
+            applyTyped(props, entry);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
+        props.component(entry.type(), entry.value());
     }
 
     /**
@@ -54,13 +58,12 @@ public final class ItemModuleHelper {
     public static ResourceKey<CreativeModeTab> getCreativeTab(
             io.github.vampirestudios.obsidian.api.obsidian.item.Item item,
             ResourceKey<CreativeModeTab> defaultTab) {
-//        if (item.components != null) {
-//            var opt = item.components.get(OItemComponents.CREATIVE_TAB);
-//            if (opt != null && opt.isPresent()) {
-//                Identifier tabId = (Identifier) Objects.requireNonNull(opt).orElseThrow();
-//                return ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabId);
-//            }
-//        }
+        if (item.components != null) {
+            Identifier tabId = item.components.get(OItemComponents.CREATIVE_TAB);
+            if (tabId != null) {
+                return ResourceKey.create(Registries.CREATIVE_MODE_TAB, tabId);
+            }
+        }
         if (item.information.getItemSettings().getItemGroup() != null)
             return item.information.getItemSettings().getItemGroup();
         if (item.information.getItemSettings().getParentSettings().getItemGroup() != null)

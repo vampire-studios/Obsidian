@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.EventActionHandler;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
-import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +24,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /** Extended-reach sword — adds reach_bonus blocks to entity interaction range. */
@@ -65,13 +64,16 @@ public class LongswordItemImpl extends Item {
         }
 
         if (item.components != null) {
-            for (var e : item.components.entrySet()) {
-                var type = (DataComponentType<T>) e.getKey();
-                var opt  = (Optional<T>) e.getValue();
-                opt.ifPresent(v -> settings.component(type, v));
+            for (TypedDataComponent<?> entry : item.components) {
+                applyTyped(settings, entry);
             }
         }
         return settings;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
+        props.component(entry.type(), entry.value());
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import io.github.vampirestudios.obsidian.api.EventActionHandler;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -16,12 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MaceItem;
-import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.core.component.DataComponentType;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.component.Weapon;
@@ -29,7 +25,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class MaceWeaponImpl extends MaceItem {
@@ -61,14 +56,15 @@ public class MaceWeaponImpl extends MaceItem {
         return props;
     }
 
-    @SuppressWarnings("unchecked")
     private static <T> void applyComponents(Properties props, WeaponItem item) {
         if (item.components == null) return;
-        for (var e : item.components.entrySet()) {
-            var type = (DataComponentType<T>) e.getKey();
-            var opt  = (Optional<T>) e.getValue();
-            opt.ifPresent(v -> props.component(type, v));
+        for (TypedDataComponent<?> entry : item.components) {
+            applyTyped(props, entry);
         }
+    }
+
+    private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
+        props.component(entry.type(), entry.value());
     }
 
     private static ItemAttributeModifiers buildAttributes(float attackDamage, float attackSpeed) {

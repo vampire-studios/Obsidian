@@ -1,4 +1,3 @@
-/*
 package io.github.vampirestudios.obsidian.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,7 +7,10 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<EntityImpl>> {
@@ -21,32 +23,23 @@ public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<En
     }
 
     @Override
-    public Identifier getTextureLocation(EntityImpl entityImpl) {
+	public Identifier getTextureLocation(LivingEntityRenderState state) {
         return entity.information.getEntityTexture();
     }
 
-    @Override
-    protected boolean shouldShowName(EntityImpl mob) {
+	@Override
+	protected boolean shouldShowName(EntityImpl entity, double distanceToCameraSq) {
         return false;
     }
 
-    @Nullable
-    @Override
-    protected RenderType getRenderType(EntityImpl entity, boolean showBody, boolean translucent, boolean showOutline) {
-        Identifier identifier = this.getTextureLocation(entity);
-        if (translucent) {
-            return RenderType.itemEntityTranslucentCull(identifier);
-        } else if (showBody) {
-            return this.model.renderType(identifier);
-        } else {
-            return showOutline ? RenderType.outline(identifier) : null;
-        }
-    }
+	@Override
+	public EntityRenderState createRenderState() {
+		return null;
+	}
 
     @Override
     protected void scale(EntityImpl entity, PoseStack matrixStack, float f) {
         float g = 0.9375F;
         matrixStack.scale(g, g, g);
     }
-
-}*/
+}

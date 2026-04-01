@@ -36,10 +36,13 @@ public class NameInformationDeserializer implements JsonDeserializer<NameInforma
     public NameInformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
 
-        // Form 1: plain string → literal text, no translations map
+        // Form 1: plain string → treat as en_us translation (same as shorthand Form 2)
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             NameInformation info = new NameInformation();
             info.text = json.getAsString();
+            Map<String, String> map = new HashMap<>();
+            map.put("en_us", info.text);
+            info.translations = map;
             return info;
         }
 

@@ -3,7 +3,7 @@ package io.github.vampirestudios.obsidian.minecraft.obsidian;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.EventActionHandler;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
-import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -23,7 +23,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -44,13 +43,16 @@ public class KnifeItemImpl extends Item {
     private static <T> Properties buildProps(WeaponItem item, ToolMaterial toolMaterial, float attackDamage, float attackSpeed, Properties settings) {
         settings.sword(toolMaterial, attackDamage, attackSpeed);
         if (item.components != null) {
-            for (var e : item.components.entrySet()) {
-                var type = (DataComponentType<T>) e.getKey();
-                var opt  = (Optional<T>) e.getValue();
-                opt.ifPresent(v -> settings.component(type, v));
+            for (TypedDataComponent<?> entry : item.components) {
+                applyTyped(settings, entry);
             }
         }
         return settings;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
+        props.component(entry.type(), entry.value());
     }
 
     @Override

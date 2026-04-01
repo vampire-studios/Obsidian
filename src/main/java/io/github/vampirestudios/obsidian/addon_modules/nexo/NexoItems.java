@@ -17,8 +17,8 @@ import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -32,7 +32,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
@@ -108,17 +111,8 @@ public class NexoItems implements AddonModule {
 
 				// apply data components
 				if (nexoItem.components != null) {
-					for (Map.Entry<DataComponentType<?>, ?> comp : nexoItem.components.entrySet()) {
-						DataComponentType<Object> type = (DataComponentType<Object>) comp.getKey();
-						Object raw    = comp.getValue();
-
-						// unwrap Optional if needed
-						if (raw instanceof Optional<?> opt) {
-							if (opt.isEmpty()) continue;
-							raw = opt.get();
-						}
-
-						props.component(type, raw);
+					for (TypedDataComponent<?> dataComponent : nexoItem.components) {
+						applyTyped(props, dataComponent);
 					}
 				}
 
@@ -187,6 +181,11 @@ public class NexoItems implements AddonModule {
 		} catch (Exception e) {
 			failedRegistering("nexo_item", file.getName(), e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
+		props.component(entry.type(), entry.value());
 	}
 
 	@Override

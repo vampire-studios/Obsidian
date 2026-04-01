@@ -5,7 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import io.github.vampirestudios.obsidian.addon_modules.DataComponentPatchDeserializer;
+import io.github.vampirestudios.obsidian.addon_modules.DataComponentMapDeserializer;
 import io.github.vampirestudios.obsidian.api.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.components.actionPos.ActionPosition;
 import io.github.vampirestudios.obsidian.utils.IntArray;
@@ -14,7 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -51,7 +51,7 @@ public class BaseGson {
             .registerTypeAdapter(NameInformation.class, new NameInformationDeserializer())
             .registerTypeAdapter(TriState.class, new TriStateAdapter())
             .registerTypeAdapter(IntArray.class, new IntArrayTypeAdapter())
-            .registerTypeAdapter(DataComponentPatch.class, new DataComponentPatchDeserializer())
+            .registerTypeAdapter(DataComponentMap.class, new DataComponentMapDeserializer())
             .registerTypeAdapter(Item.class, new RegistrySerializer<>(BuiltInRegistries.ITEM))
             .registerTypeAdapter(Block.class, new RegistrySerializer<>(BuiltInRegistries.BLOCK))
             .registerTypeAdapter(SoundEvent.class, new RegistrySerializer<>(BuiltInRegistries.SOUND_EVENT))

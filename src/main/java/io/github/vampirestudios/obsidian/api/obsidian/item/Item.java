@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemDisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -18,7 +18,7 @@ public class Item {
     public ItemInformation information;
     public ItemDisplayInformation rendering;
     public UseActions useActions;
-    public DataComponentPatch components;
+    public DataComponentMap components;
     public boolean damageable = true;
     public List<Object> lore = new ArrayList<>();
     public Map<Identifier, Identifier> drops = new HashMap<>();

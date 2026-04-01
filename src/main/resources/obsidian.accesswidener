@@ -10,6 +10,8 @@ accessible method net/minecraft/world/level/levelgen/VerticalAnchor$Absolute <in
 accessible method net/minecraft/world/level/levelgen/VerticalAnchor$AboveBottom <init> (I)V
 accessible method net/minecraft/world/level/levelgen/VerticalAnchor$BelowTop <init> (I)V
 
+accessible class net/minecraft/client/resources/model/cuboid/CuboidModelElement$Deserializer
+
 accessible method net/minecraft/world/level/block/state/properties/WoodType register (Lnet/minecraft/world/level/block/state/properties/WoodType;)Lnet/minecraft/world/level/block/state/properties/WoodType;
 accessible method net/minecraft/world/level/block/state/properties/BlockSetType register (Lnet/minecraft/world/level/block/state/properties/BlockSetType;)Lnet/minecraft/world/level/block/state/properties/BlockSetType;
 
@@ -24,7 +26,6 @@ accessible method net/minecraft/server/packs/FilePackResources <init> (Lnet/mine
 accessible method net/minecraft/server/packs/FilePackResources$SharedZipFileAccess <init> (Ljava/io/File;)V
 accessible class net/minecraft/server/packs/FilePackResources$SharedZipFileAccess
 
-accessible method net/minecraft/core/component/DataComponentPatch <init> (Lit/unimi/dsi/fastutil/objects/Reference2ObjectMap;)V
 
 accessible method net/minecraft/core/Holder$Reference bindTags (Ljava/util/Collection;)V
 accessible method net/minecraft/core/HolderSet$Named bind (Ljava/util/List;)V

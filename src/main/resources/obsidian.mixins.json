@@ -55,7 +55,7 @@
 	],
 	"client": [
 		"AbstractClientPlayerEntityMixin",
-//		"BlockElementDeserializerMixin",
+		"BlockElementDeserializerMixin",
 //		"BlockElementMixin",
 		"OptionsMixin",
 		"client.AbstractContainerScreenMixin",

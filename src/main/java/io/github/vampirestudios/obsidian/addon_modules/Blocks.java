@@ -21,13 +21,14 @@ import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.*;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OBE;
+import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.data.BlockInitThread;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -50,7 +51,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.*;
 
@@ -157,25 +157,24 @@ public class Blocks implements AddonModule {
         return props;
     }
 
-    @SuppressWarnings("unchecked")
-    static <T> void applyAllComponents(Item.Properties props, DataComponentPatch map) {
-        for (var e : map.entrySet()) {
-            var type = (DataComponentType<T>) e.getKey();
-            var opt  = (Optional<T>) e.getValue();
-            opt.ifPresent(v -> props.component(type, v));
+    static void applyAllComponents(Item.Properties props, DataComponentMap map) {
+        for (TypedDataComponent<?> entry : map) {
+            applyTyped(props, entry);
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
+        props.component(entry.type(), entry.value());
+    }
+
     private ResourceKey<CreativeModeTab> getCreativeTab(io.github.vampirestudios.obsidian.api.obsidian.block.Block block) {
-        // 1) Components override everything
-        var comps = block.components;
-//        if (comps != null) {
-//            var opt = comps.get(OItemComponents.CREATIVE_TAB); // Optional<Identifier> (based on your usage)
-//            if (opt != null && opt.isPresent()) {
-//                Identifier id = opt.get();
-//                return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, id);
-//            }
-//        }
+        if (block.components != null) {
+            Identifier tabId = block.components.get(OItemComponents.CREATIVE_TAB);
+            if (tabId != null) {
+                return ResourceKey.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, tabId);
+            }
+        }
 
         // 2) Then item settings
         var settings = block.information.getItemSettings();

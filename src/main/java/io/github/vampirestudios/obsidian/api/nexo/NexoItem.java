@@ -11,7 +11,7 @@ import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -85,7 +85,7 @@ public class NexoItem {
 	@JsonProperty("Mechanics")
 	public Mechanics mechanics;
 	@JsonProperty("Components")
-	public DataComponentPatch components;
+	public DataComponentMap components;
 	public String permission;
 	public String color;
 	public List<String> lore = new ArrayList<>();
