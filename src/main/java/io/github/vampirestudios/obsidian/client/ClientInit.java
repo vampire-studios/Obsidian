@@ -6,6 +6,7 @@ import io.github.vampirestudios.obsidian.api.SubItemGroup;
 import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemGroup;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
+import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import io.github.vampirestudios.obsidian.client.renderer.SeatEntityRenderer;
@@ -127,6 +128,9 @@ public class ClientInit implements ClientModInitializer {
                 for (ArmorItem armor : ContentRegistries.ARMORS)
                     if (armor.information.id.getNamespace().equals(id))
                         new ArmorInitThread(resourcePack, armor).run();
+                for (Entity entity : ContentRegistries.ENTITIES)
+                    if (entity.information.id != null && entity.information.id.getNamespace().equals(id))
+                        new EntityInitThread(entity).run();
                 for (ItemGroup itemGroup : ContentRegistries.ITEM_GROUPS)
                     if (itemGroup.id.getNamespace().equals(id))
                         new ItemGroupInitThread(itemGroup).run();

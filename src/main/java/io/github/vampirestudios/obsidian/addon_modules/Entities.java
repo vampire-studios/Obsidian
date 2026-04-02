@@ -30,7 +30,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
@@ -42,6 +41,10 @@ public class Entities implements AddonModule {
         Entity entity = BaseGson.GSON.fromJson(entityJson, Entity.class);
         try {
             if (entity == null) return;
+
+            Identifier entityId = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
+            entity.information.id = entityId;
+
             String baseColor = entity.information.spawn_egg.base_color.replace("#", "").replace("0x", "");
             String overlayColor = entity.information.spawn_egg.overlay_color.replace("#", "").replace("0x", "");
             entity.components = new HashMap<>();
@@ -83,13 +86,7 @@ public class Entities implements AddonModule {
             BreathableComponent finalBreathableComponent = breathableComponent;
             assert finalHealthComponent != null;
 
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    entity.information.identifier,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-            if (entity.information.identifier == null) entity.information.identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-
-            EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(identifier)
+            EntityType<EntityImpl> entityType = EntityRegistryBuilder.<EntityImpl>createBuilder(entityId)
                     .entity((type, world) -> new EntityImpl(type, world, entity, finalHealthComponent.value, finalBreathableComponent))
                     .category(entity.entity_components.getCategory())
                     .dimensions(EntityDimensions.fixed(collisionBoxComponent.width, collisionBoxComponent.height))
@@ -98,7 +95,7 @@ public class Entities implements AddonModule {
                     .egg(Integer.parseInt(baseColor, 16), Integer.parseInt(overlayColor, 16))
                     .build();
             FabricDefaultAttributeRegistry.register(entityType, EntityUtils.createGenericEntityAttributes(finalHealthComponent.max, movementComponent.value));
-            register(ContentRegistries.ENTITIES, "entity", identifier, entity);
+            register(ContentRegistries.ENTITIES, "entity", entityId, entity);
         } catch (Exception e) {
             failedRegistering("entity", file.getName(), e);
         }

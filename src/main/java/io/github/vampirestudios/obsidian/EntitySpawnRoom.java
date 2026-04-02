@@ -30,12 +30,14 @@ public class EntitySpawnRoom extends StructurePiece {
         this.generateBox(world, boundingBox, this.boundingBox.minX(), this.boundingBox.minY(), this.boundingBox.minZ(), this.boundingBox.maxX(), this.boundingBox.maxY(), this.boundingBox.maxZ(), Blocks.STONE.defaultBlockState(), Blocks.CAVE_AIR.defaultBlockState(), false);
 
         // Add entities based on the level
-        if (level == BackroomsLevel.LEVEL_2) {
-            EntityType.ZOMBIE.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
-        } else if (level == BackroomsLevel.LEVEL_3) {
-            EntityType.ENDERMAN.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
-        } else if (level == BackroomsLevel.LEVEL_4) {
-            EntityType.WITCH.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+        if (world instanceof ServerLevel serverLevel) {
+            if (level == BackroomsLevel.LEVEL_2) {
+                EntityType.ZOMBIE.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+            } else if (level == BackroomsLevel.LEVEL_3) {
+                EntityType.ENDERMAN.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+            } else if (level == BackroomsLevel.LEVEL_4) {
+                EntityType.WITCH.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+            }
         }
     }
 

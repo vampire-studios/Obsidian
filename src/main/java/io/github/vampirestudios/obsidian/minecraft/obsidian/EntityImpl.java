@@ -18,7 +18,6 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 
@@ -40,7 +39,8 @@ public class EntityImpl extends PathfinderMob {
         this.health = health;
         this.components = entity.components;
         this.breathableComponent = breathableComponent;
-        this.entity.animations.forEach(identifier -> animationStates.put(new AnimationState(), identifier));
+        if (this.entity.animations != null)
+            this.entity.animations.forEach(identifier -> animationStates.put(new AnimationState(), identifier));
     }
 
     @Override
@@ -68,47 +68,32 @@ public class EntityImpl extends PathfinderMob {
         super.registerGoals();
         if (entity == null) return;
 
-        BasicMovementComponent basicMovementComponent = null;
-        Component c = components.get("minecraft:behaviour.basic");
-        if (c instanceof BasicMovementComponent basicMovementComponent1) {
-            basicMovementComponent = basicMovementComponent1;
+        Component c = components.get("minecraft:movement.basic");
+        if (c instanceof BasicMovementComponent) {
+            this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         }
-        assert basicMovementComponent != null;
-        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0D));
 
-        PanicBehaviourComponent panicBehaviourComponent = null;
-        c = components.get("minecraft:behaviour.panic");
-        if (c instanceof PanicBehaviourComponent panicBehaviourComponent1) {
-            panicBehaviourComponent = panicBehaviourComponent1;
+        c = components.get("minecraft:behavior.panic");
+        if (c instanceof PanicBehaviourComponent panicBehaviourComponent) {
+            this.goalSelector.addGoal(panicBehaviourComponent.priority, new PanicGoal(this, panicBehaviourComponent.speed_multiplier));
         }
-        assert panicBehaviourComponent != null;
-        this.goalSelector.addGoal(panicBehaviourComponent.priority, new PanicGoal(this, panicBehaviourComponent.speed_multiplier));
 
-        TemptBehaviourComponent temptBehaviourComponent = null;
-        c = components.get("minecraft:behaviour.tempt");
-        if (c instanceof TemptBehaviourComponent temptBehaviourComponent1) {
-            temptBehaviourComponent = temptBehaviourComponent1;
+        c = components.get("minecraft:behavior.tempt");
+        if (c instanceof TemptBehaviourComponent temptBehaviourComponent) {
+            List<ItemStack> temptItems = new ArrayList<>();
+            temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.tryParse(item)))));
+            this.goalSelector.addGoal(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.of(temptItems.stream().map(ItemStack::getItem)), temptBehaviourComponent.can_be_scared));
         }
-        assert temptBehaviourComponent != null;
-        List<ItemStack> temptItems = new ArrayList<>();
-        temptBehaviourComponent.items.forEach(item -> temptItems.add(new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.tryParse(item)))));
-        this.goalSelector.addGoal(temptBehaviourComponent.priority, new TemptGoal(this, temptBehaviourComponent.speed_multiplier, Ingredient.of((ItemLike) temptItems.stream()), temptBehaviourComponent.can_be_scared));
 
-        RandomLookAroundBehaviourComponent randomLookAroundBehaviourComponent = null;
-        c = components.get("minecraft:behaviour.random_look_around");
-        if (c instanceof RandomLookAroundBehaviourComponent randomLookAroundBehaviourComponent1) {
-            randomLookAroundBehaviourComponent = randomLookAroundBehaviourComponent1;
+        c = components.get("minecraft:behavior.random_look_around");
+        if (c instanceof RandomLookAroundBehaviourComponent randomLookAroundBehaviourComponent) {
+            this.goalSelector.addGoal(randomLookAroundBehaviourComponent.priority, new RandomLookAroundGoal(this));
         }
-        assert randomLookAroundBehaviourComponent != null;
-        this.goalSelector.addGoal(randomLookAroundBehaviourComponent.priority, new RandomLookAroundGoal(this));
 
-        LookAtPlayerBehaviourComponent lookAtPlayerBehaviourComponent = null;
-        c = components.get("minecraft:behaviour.look_at_player");
-        if (c instanceof LookAtPlayerBehaviourComponent lookAtPlayerBehaviourComponent1) {
-            lookAtPlayerBehaviourComponent = lookAtPlayerBehaviourComponent1;
+        c = components.get("minecraft:behavior.look_at_player");
+        if (c instanceof LookAtPlayerBehaviourComponent lookAtPlayerBehaviourComponent) {
+            this.goalSelector.addGoal(lookAtPlayerBehaviourComponent.priority, new LookAtPlayerGoal(this, Player.class, lookAtPlayerBehaviourComponent.look_distance, lookAtPlayerBehaviourComponent.probability));
         }
-        assert lookAtPlayerBehaviourComponent != null;
-        this.goalSelector.addGoal(lookAtPlayerBehaviourComponent.priority, new LookAtPlayerGoal(this, Player.class, lookAtPlayerBehaviourComponent.look_distance, lookAtPlayerBehaviourComponent.probability));
     }
 
 }

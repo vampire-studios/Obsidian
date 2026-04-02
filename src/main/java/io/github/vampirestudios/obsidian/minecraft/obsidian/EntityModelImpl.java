@@ -1,39 +1,31 @@
-/*
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.vampirestudios.obsidian.api.obsidian.EntityModel;
 import io.github.vampirestudios.obsidian.registry.Registries;
-import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 
-public class EntityModelImpl extends HierarchicalModel<EntityImpl> {
+public class EntityModelImpl<T extends EntityImplRenderState> extends net.minecraft.client.model.EntityModel<T> {
 
-    public ModelPart part;
     public EntityModel entityModel;
 
     public EntityModelImpl(EntityModel entityModelIn) {
+        super(entityModelIn.getTexturedModelData().bakeRoot());
         this.entityModel = entityModelIn;
-        part = entityModelIn.getTexturedModelData().bakeRoot();
+    }
+
+    public EntityModelImpl(ModelPart part) {
+        super(part);
+        this.entityModel = null;
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        part.render(poseStack, buffer, packedLight, packedOverlay, color);
-    }
-
-    @Override
-    public ModelPart root() {
-        return this.part;
-    }
-
-    @Override
-    public void setupAnim(EntityImpl entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        entity.animationStates.forEach((animationState, identifier) -> this.animate(
-                animationState, Registries.ANIMATION_DEFINITIONS.get(identifier), animationProgress
-        ));
+    public void setupAnim(EntityImplRenderState state) {
+        if (Registries.ANIMATION_DEFINITIONS != null) {
+            state.animationStates.forEach((animationState, identifier) -> {
+                var animation = Registries.ANIMATION_DEFINITIONS.getValue(identifier);
+                animation.bake(root).apply(animationState, state.ageInTicks);
+            });
+        }
     }
 
 }
-*/

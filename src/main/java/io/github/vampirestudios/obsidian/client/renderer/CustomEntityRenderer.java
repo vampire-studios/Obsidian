@@ -3,17 +3,13 @@ package io.github.vampirestudios.obsidian.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.RenderType;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImplRenderState;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityModelImpl;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Mob;
-import org.jetbrains.annotations.Nullable;
 
-public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<EntityImpl>> {
+public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityImplRenderState, EntityModelImpl<EntityImplRenderState>> {
 
     private final Entity entity;
 
@@ -23,23 +19,29 @@ public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityModel<En
     }
 
     @Override
-	public Identifier getTextureLocation(LivingEntityRenderState state) {
+    public Identifier getTextureLocation(EntityImplRenderState state) {
         return entity.information.getEntityTexture();
     }
 
-	@Override
-	protected boolean shouldShowName(EntityImpl entity, double distanceToCameraSq) {
+    @Override
+    protected boolean shouldShowName(EntityImpl entity, double distanceToCameraSq) {
         return false;
     }
 
-	@Override
-	public EntityRenderState createRenderState() {
-		return null;
-	}
+    @Override
+    public EntityImplRenderState createRenderState() {
+        return new EntityImplRenderState();
+    }
 
     @Override
-    protected void scale(EntityImpl entity, PoseStack matrixStack, float f) {
-        float g = 0.9375F;
-        matrixStack.scale(g, g, g);
+    public void extractRenderState(EntityImpl entity, EntityImplRenderState state, float tickDelta) {
+        super.extractRenderState(entity, state, tickDelta);
+        if (entity.animationStates != null)
+            state.animationStates = entity.animationStates;
+    }
+
+    @Override
+    protected void scale(EntityImplRenderState state, PoseStack poseStack) {
+        poseStack.scale(0.9375F, 0.9375F, 0.9375F);
     }
 }

@@ -95,7 +95,7 @@ public class EntityRegistryBuilder<E extends Entity> {
         }
 
         if (this.hasEgg) {
-            RegistryHelper.createRegistryHelper(name.getNamespace()).items().registerItem(String.format("%s_spawn_egg", name.getPath()), new SpawnEggItem(new Properties().spawnEgg(entityType)));
+            RegistryHelper.createRegistryHelper(name.getNamespace()).items().registerItem(String.format("%s_spawn_egg", name.getPath()), new SpawnEggItem(new Properties().spawnEgg(entityType).setId(ResourceKey.create(Registries.ITEM, name.withSuffix("_spawn_egg")))));
         }
 
         return entityType;
