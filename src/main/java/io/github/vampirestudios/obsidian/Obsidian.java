@@ -15,6 +15,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
 import io.github.vampirestudios.obsidian.minecraft.DynamicContainer;
+import io.github.vampirestudios.obsidian.minecraft.obsidian.EntityImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.SeatEntity;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ThrownKnifeEntity;
 import io.github.vampirestudios.obsidian.registry.*;
@@ -23,6 +24,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
@@ -310,6 +312,14 @@ public class Obsidian implements ModInitializer {
 						return InteractionResult.SUCCESS;
 					}
 				}
+			}
+			return InteractionResult.PASS;
+		});
+
+		UseEntityCallback.EVENT.register((player, world, hand, target, hitResult) -> {
+			if (world.isClientSide()) return InteractionResult.PASS;
+			if (target instanceof EntityImpl obsidianEntity) {
+				return obsidianEntity.handleInteraction(player, hand);
 			}
 			return InteractionResult.PASS;
 		});

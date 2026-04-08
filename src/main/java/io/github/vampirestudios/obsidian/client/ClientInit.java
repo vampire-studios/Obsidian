@@ -129,7 +129,7 @@ public class ClientInit implements ClientModInitializer {
                     if (armor.information.id.getNamespace().equals(id))
                         new ArmorInitThread(resourcePack, armor).run();
                 for (Entity entity : ContentRegistries.ENTITIES)
-                    if (entity.information.id != null && entity.information.id.getNamespace().equals(id))
+                    if (entity.description.id != null && entity.description.id.getNamespace().equals(id))
                         new EntityInitThread(entity).run();
                 for (ItemGroup itemGroup : ContentRegistries.ITEM_GROUPS)
                     if (itemGroup.id.getNamespace().equals(id))

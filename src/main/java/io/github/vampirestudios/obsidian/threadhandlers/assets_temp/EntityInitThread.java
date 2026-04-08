@@ -19,7 +19,7 @@ public class EntityInitThread implements Runnable {
 
     @Override
     public void run() {
-        Identifier id = entity.information.id;
+        Identifier id = entity.description.id;
         if (id == null) return;
 
         @SuppressWarnings("unchecked")
@@ -28,17 +28,17 @@ public class EntityInitThread implements Runnable {
 
         EntityRendererRegistry.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
 
-        if (entity.information.name != null) {
+        if (entity.description.name != null) {
             ClientInit.addTranslation(
                 id.getNamespace(), "en_us",
                 "entity." + id.getNamespace() + "." + id.getPath(),
-                entity.information.name
+                entity.description.name
             );
-            if (entity.information.spawnable) {
+            if (entity.description.spawnable) {
                 ClientInit.addTranslation(
                     id.getNamespace(), "en_us",
                     "item." + id.getNamespace() + "." + id.getPath() + "_spawn_egg",
-                    entity.information.name + " Spawn Egg"
+                    entity.description.name + " Spawn Egg"
                 );
             }
         }

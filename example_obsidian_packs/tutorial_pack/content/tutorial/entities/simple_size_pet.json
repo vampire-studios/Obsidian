@@ -1,0 +1,102 @@
+{
+  "description": {
+    "name": "Simple Size Pet",
+    "spawnable": true,
+    "summonable": true,
+    "vanilla_entity_type": "minecraft:pig",
+    "spawn_egg": {
+      "base_color": "#37474F",
+      "overlay_color": "#FFCC80"
+    }
+  },
+  "entity_components": {
+    "entity_category": "creature"
+  },
+  "properties": {
+    "size": {
+      "type": "enum",
+      "enum_values": ["small", "medium"],
+      "default": "small",
+      "client_sync": true
+    }
+  },
+  "components": {
+    "minecraft:collision_box": {
+      "width": 0.7,
+      "height": 0.7
+    },
+    "minecraft:health": {
+      "max": 20.0,
+      "value": 20.0
+    },
+    "minecraft:movement": {
+      "value": 0.24
+    },
+    "minecraft:movement.basic": {},
+    "minecraft:behavior.random_stroll": {
+      "priority": 4,
+      "speed_multiplier": 1.0
+    },
+    "minecraft:behavior.look_at_player": {
+      "priority": 6,
+      "look_distance": 6.0,
+      "probability": 0.05
+    }
+  },
+  "component_sets": {
+    "size_small": {
+      "components": {
+        "minecraft:collision_box": {
+          "width": 0.6,
+          "height": 0.6
+        },
+        "minecraft:movement": {
+          "value": 0.28
+        }
+      }
+    },
+    "size_medium": {
+      "components": {
+        "minecraft:collision_box": {
+          "width": 0.85,
+          "height": 0.85
+        },
+        "minecraft:movement": {
+          "value": 0.20
+        }
+      }
+    }
+  },
+  "states": [
+    {
+      "property": "size",
+      "equals": "small",
+      "apply": ["size_small"]
+    },
+    {
+      "property": "size",
+      "equals": "medium",
+      "apply": ["size_medium"]
+    }
+  ],
+  "events": {
+    "become_medium": {
+      "actions": [
+        {
+          "type": "set_property",
+          "property": "size",
+          "value": "medium"
+        }
+      ]
+    },
+    "become_small": {
+      "actions": [
+        {
+          "type": "set_property",
+          "property": "size",
+          "value": "small"
+        }
+      ]
+    }
+  }
+}

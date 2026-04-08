@@ -1,0 +1,260 @@
+{
+  "description": {
+    "name": "Pig Sheep Mix",
+    "spawnable": true,
+    "summonable": true,
+    "vanilla_entity_type": "minecraft:pig",
+    "spawn_egg": {
+      "base_color": "#E8A4B8",
+      "overlay_color": "#F4F4F4"
+    }
+  },
+  "entity_components": {
+    "entity_category": "creature"
+  },
+  "attributes": {
+    "minecraft:tempt_range": 10.0
+  },
+  "properties": {
+    "woolly": {
+      "type": "boolean",
+      "default": true,
+      "client_sync": true
+    },
+    "temperament": {
+      "type": "enum",
+      "enum_values": ["calm", "skittish"],
+      "default": "calm",
+      "client_sync": true
+    }
+  },
+  "components": {
+    "minecraft:collision_box": {
+      "width": 0.9,
+      "height": 0.9
+    },
+    "minecraft:health": {
+      "max": 20.0,
+      "value": 20.0
+    },
+    "minecraft:movement": {
+      "value": 0.22
+    },
+    "minecraft:movement.basic": {},
+    "minecraft:behavior.random_stroll": {
+      "priority": 4,
+      "speed_multiplier": 1.0
+    },
+    "minecraft:behavior.look_at_player": {
+      "priority": 6,
+      "look_distance": 6.0,
+      "probability": 0.05
+    },
+    "minecraft:behavior.random_look_around": {
+      "priority": 7
+    }
+  },
+  "component_sets": {
+    "woolly_body": {
+      "components": {
+        "minecraft:health": {
+          "max": 24.0,
+          "value": 24.0
+        },
+        "minecraft:movement": {
+          "value": 0.20
+        }
+      }
+    },
+    "shorn_body": {
+      "components": {
+        "minecraft:health": {
+          "max": 18.0,
+          "value": 18.0
+        },
+        "minecraft:movement": {
+          "value": 0.24
+        }
+      }
+    },
+    "skittish_mindset": {
+      "components": {
+        "minecraft:behavior.panic": {
+          "priority": 2,
+          "speed_multiplier": 1.3
+        }
+      }
+    },
+    "calm_mindset": {
+      "components": {
+        "minecraft:behavior.tempt": {
+          "priority": 3,
+          "speed_multiplier": 1.1,
+          "items": [
+            "minecraft:wheat"
+          ],
+          "can_be_scared": false
+        }
+      }
+    }
+  },
+  "states": [
+    {
+      "property": "woolly",
+      "equals": true,
+      "apply": ["woolly_body"]
+    },
+    {
+      "property": "woolly",
+      "equals": false,
+      "apply": ["shorn_body"]
+    },
+    {
+      "property": "temperament",
+      "equals": "calm",
+      "apply": ["calm_mindset"]
+    },
+    {
+      "property": "temperament",
+      "equals": "skittish",
+      "apply": ["skittish_mindset"]
+    }
+  ],
+  "predicates": {
+    "has_wool": {
+      "property": "woolly",
+      "value": true
+    },
+    "is_shorn": {
+      "property": "woolly",
+      "value": false
+    }
+  },
+  "timers": {
+    "wool_regrow": {
+      "duration_ticks": 600,
+      "on_complete_event": "regrow_wool",
+      "loop": false
+    }
+  },
+  "events": {
+    "shear_like_action": {
+      "actions": [
+        {
+          "type": "if",
+          "predicate": "has_wool",
+          "then": [
+            {
+              "type": "sequence",
+              "actions": [
+                {
+                  "type": "set_property",
+                  "property": "woolly",
+                  "value": false
+                },
+                {
+                  "type": "start_timer",
+                  "timer": "wool_regrow"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "regrow_wool": {
+      "actions": [
+        {
+          "type": "set_property",
+          "property": "woolly",
+          "value": true
+        }
+      ]
+    },
+    "become_skittish": {
+      "actions": [
+        {
+          "type": "set_property",
+          "property": "temperament",
+          "value": "skittish"
+        }
+      ]
+    },
+    "become_calm": {
+      "actions": [
+        {
+          "type": "set_property",
+          "property": "temperament",
+          "value": "calm"
+        }
+      ]
+    }
+  },
+  "interactions": [
+    {
+      "id": "shear_like",
+      "display_text": "Shear Wool",
+      "predicate": "has_wool",
+      "actions": [
+        {
+          "type": "trigger_event",
+          "event": "shear_like_action"
+        }
+      ],
+      "sound": "minecraft:entity.sheep.shear",
+      "item_damage": 1
+    },
+    {
+      "id": "calm_mode",
+      "display_text": "Calm Down",
+      "actions": [
+        {
+          "type": "trigger_event",
+          "event": "become_calm"
+        }
+      ],
+      "sound": "minecraft:entity.pig.ambient"
+    },
+    {
+      "id": "panic_mode",
+      "display_text": "Startle",
+      "actions": [
+        {
+          "type": "trigger_event",
+          "event": "become_skittish"
+        }
+      ],
+      "sound": "minecraft:entity.pig.hurt"
+    }
+  ],
+  "ai": {
+    "goal_selector": {
+      "backend": "goal_selector",
+      "goals": [
+        {
+          "id": "minecraft:behavior.tempt",
+          "priority": 3
+        },
+        {
+          "id": "minecraft:behavior.panic",
+          "priority": 2
+        },
+        {
+          "id": "minecraft:behavior.random_look_around",
+          "priority": 7
+        },
+        {
+          "id": "minecraft:behavior.look_at_player",
+          "priority": 6
+        }
+      ],
+      "targets": []
+    },
+    "brain": {
+      "backend": "brain",
+      "sensors": [],
+      "activities": [],
+      "memories": []
+    }
+  }
+}

@@ -217,6 +217,7 @@ public class Registries {
         registerInRegistryVanilla(ENTITY_COMPONENTS, "health", HealthComponent.class);
         registerInRegistryVanilla(ENTITY_COMPONENTS, "movement", MovementComponent.class);
         registerInRegistryVanilla(ENTITY_COMPONENTS, "nameable", NameableComponent.class);
+        registerInRegistryVanilla(ENTITY_COMPONENTS, "ai", io.github.vampirestudios.obsidian.api.obsidian.entity.Entity.StructuredAI.class);
 
         registerInRegistryVanilla(ENTITY_COMPONENTS, "movement.basic", BasicMovementComponent.class);
 

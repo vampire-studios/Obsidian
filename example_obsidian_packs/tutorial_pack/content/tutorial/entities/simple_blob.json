@@ -1,0 +1,36 @@
+{
+  "description": {
+    "name": "Simple Blob",
+    "spawnable": true,
+    "summonable": true,
+    "vanilla_entity_type": "minecraft:pig",
+    "spawn_egg": {
+      "base_color": "#2E7D32",
+      "overlay_color": "#A5D6A7"
+    }
+  },
+  "entity_components": {
+    "entity_category": "creature"
+  },
+  "components": {
+    "minecraft:collision_box": {
+      "width": 0.7,
+      "height": 0.7
+    },
+    "minecraft:health": {
+      "max": 16.0,
+      "value": 16.0
+    },
+    "minecraft:movement": {
+      "value": 0.22
+    },
+    "minecraft:movement.basic": {},
+    "minecraft:behavior.random_stroll": {
+      "priority": 4,
+      "speed_multiplier": 1.0
+    },
+    "minecraft:behavior.random_look_around": {
+      "priority": 6
+    }
+  }
+}
