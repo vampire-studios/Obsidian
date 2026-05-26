@@ -56,8 +56,8 @@ loom {
 
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.143.15+26.1")
-		force("net.fabricmc:fabric-loader:0.18.4")
+		force("net.fabricmc.fabric-api:fabric-api:0.148.3+26.2")
+		force("net.fabricmc:fabric-loader:0.19.2")
 		force("com.terraformersmc:modmenu:17.0.0-alpha.1")
 	}
 }
@@ -79,7 +79,7 @@ dependencies {
 //
 //	implementation("com.terraformersmc:biolith-fabric:3.5.0-beta.3")
 
-	implementation include("io.github.cottonmc:Jankson-Fabric:11.0.0+j1.2.3")
+	implementation include("io.github.cottonmc:Jankson-Fabric:12.0.0")
 
 //	modImplementation (libs.owo.lib) {
 //		noFapi
@@ -121,9 +121,9 @@ dependencies {
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:${libs.versions.jackson.get()}"
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${libs.versions.jackson.get()}"
 
-	implementation("net.vampirestudios:arrp:0.12.1+build.4")
+	implementation("net.vampirestudios:arrp:0.15.0+build.1")
 
-	implementation "com.ptsmods:devlogin:3.3"
+	implementation "com.ptsmods:devlogin:3.5"
 
 	include(implementation("eu.pb4:sgui:2.0.0-beta.1+26.1"))
 	implementation(include("eu.pb4:placeholder-api:3.0.0-beta.2+26.1"))

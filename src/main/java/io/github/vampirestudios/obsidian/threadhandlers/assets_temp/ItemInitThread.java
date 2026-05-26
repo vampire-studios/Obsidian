@@ -7,14 +7,20 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.Item;
 import io.github.vampirestudios.obsidian.client.ARRPGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.json.iteminfo.JItemInfo;
-import net.devtech.arrp.json.iteminfo.model.*;
-import net.devtech.arrp.json.iteminfo.property.*;
-import net.devtech.arrp.json.iteminfo.tint.JTintDye;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
+import net.vampirestudios.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.arrp.assets.item.ItemModel;
+import net.vampirestudios.arrp.assets.item.ItemModelDefinition;
+import net.vampirestudios.arrp.assets.item.RangeEntry;
+import net.vampirestudios.arrp.assets.item.SelectCase;
+import net.vampirestudios.arrp.assets.item.models.ModelBasic;
+import net.vampirestudios.arrp.assets.item.models.ModelCondition;
+import net.vampirestudios.arrp.assets.item.models.ModelRangeDispatch;
+import net.vampirestudios.arrp.assets.item.models.ModelSelect;
+import net.vampirestudios.arrp.assets.item.properties.*;
+import net.vampirestudios.arrp.assets.item.tints.TintDye;
 
 public class ItemInitThread implements Runnable {
 
@@ -34,7 +40,7 @@ public class ItemInitThread implements Runnable {
                     "item." + item.information.id.getNamespace() + "." + item.information.id.getPath(), name
             ));
         }
-        JItemInfo itemInfo = new JItemInfo();
+        ItemModelDefinition itemInfo = new ItemModelDefinition();
 
         var itemId = item.information.id;
 
@@ -42,16 +48,16 @@ public class ItemInitThread implements Runnable {
                 ? item.rendering.resolveItemDefinitionModelId(itemId)
                 : Utils.prependToPath(itemId, "item/");
 
-        JModelBasic fallbackModel = JModelBasic.model(defModelId.toString());
-        JItemModel model = fallbackModel;
+        ModelBasic fallbackModel = ModelBasic.model(defModelId);
+        ItemModel model = fallbackModel;
         if (item.information != null && item.information.getItemSettings() != null &&
                 item.information.getItemSettings().renderModeModels != null &&
                 item.information.getItemSettings().customRenderMode) {
-            JModelSelect select = new JModelSelect().property(JPropertyDisplayContext.displayContext());
+            ModelSelect select = new ModelSelect().property(PropertyDisplayContext.displayContext());
             for (RenderModeModel renderModeModel : item.information.getItemSettings().renderModeModels) {
-                JSelectCase caseX = JSelectCase.of(
+                SelectCase caseX = SelectCase.of(
                         renderModeModel.modes,
-                        JItemModel.model(renderModeModel.model.toString())
+                        ItemModel.model(renderModeModel.model)
                 );
                 select.addCase(caseX);
             }
@@ -102,40 +108,40 @@ public class ItemInitThread implements Runnable {
                 if (p2 != null) generateIfObject(id2, p2);
 
                 // range_dispatch over crossbow pull (vanilla thresholds: 0.58 and 1.0, fallback pulling_0)
-                JModelRangeDispatch pullDispatch = (JModelRangeDispatch) new JModelRangeDispatch()
-                        .property(JPropertyCrossbowPull.crossbowPull()) // <- matches "minecraft:crossbow/pull"
-                        .entry(JRangeEntry.of(0.58f, JItemModel.model(id1.toString())))
-                        .entry(JRangeEntry.of(1.0f, JItemModel.model(id2.toString())))
-                        .fallback(JItemModel.model(id0.toString()));
+                ModelRangeDispatch pullDispatch = (ModelRangeDispatch) new ModelRangeDispatch()
+                        .property(PropertyCrossbowPull.crossbowPull()) // <- matches "minecraft:crossbow/pull"
+                        .entry(RangeEntry.of(0.58f, ItemModel.model(id1)))
+                        .entry(RangeEntry.of(1.0f, ItemModel.model(id2)))
+                        .fallback(ItemModel.model(id0));
 
                 // condition on using_item (vanilla: on_true = pullDispatch, on_false = base crossbow model)
-                JModelCondition using = new JModelCondition()
-                        .property(new JPropertyUsingItem())
+                ModelCondition using = new ModelCondition()
+                        .property(new PropertyUsingItem())
                         .onTrue(pullDispatch)
                         .onFalse(model);
 
                 // select on charge_type (vanilla: arrow/rocket cases, fallback = using condition)
-                JModelSelect chargeType = new JModelSelect()
-                        .property(JPropertyChargeType.chargeType()); // <- matches "minecraft:charge_type"
+                ModelSelect chargeType = new ModelSelect()
+                        .property(PropertyChargeType.chargeType()); // <- matches "minecraft:charge_type"
 
                 // "when": "arrow"
                 if (arrowInfo != null) {
-                    chargeType.addCase(JSelectCase.of(new String[]{"arrow"}, JItemModel.model(arrowId.toString())));
+                    chargeType.addCase(SelectCase.of(new String[]{"arrow"}, ItemModel.model(arrowId)));
                 }
 
                 // "when": "rocket"
                 if (rocketInfo != null) {
-                    chargeType.addCase(JSelectCase.of(new String[]{"rocket"}, JItemModel.model(rocketId.toString())));
+                    chargeType.addCase(SelectCase.of(new String[]{"rocket"}, ItemModel.model(rocketId)));
                 }
 
                 chargeType.fallback(using);
 
                 model = chargeType;
             } else if (pulls != null && pulls.length > 0) {
-                JItemModel dispatch = buildBowUseDurationDispatch(itemId, di);
+                ItemModel dispatch = buildBowUseDurationDispatch(itemId, di);
 
-				model = new JModelCondition()
-						.property(new JPropertyUsingItem())
+				model = new ModelCondition()
+						.property(new PropertyUsingItem())
 						.onTrue(dispatch)
 						.onFalse(model);
             }
@@ -146,8 +152,8 @@ public class ItemInitThread implements Runnable {
                 Identifier blockingId = di.variantModelId(itemId, "_blocking");
                 generateIfObject(blockingId, blockingInfo);
 
-                JModelCondition blockingSelect = new JModelCondition().property(new JPropertyUsingItem());
-                blockingSelect.onTrue(JItemModel.model(blockingId.toString()));
+                ModelCondition blockingSelect = new ModelCondition().property(new PropertyUsingItem());
+                blockingSelect.onTrue(ItemModel.model(blockingId));
                 blockingSelect.onFalse(model);
                 model = blockingSelect;
             }
@@ -158,8 +164,8 @@ public class ItemInitThread implements Runnable {
                 Identifier castId = di.variantModelId(itemId, "_cast");
                 generateIfObject(castId, castInfo);
 
-                JModelSelect castSelect = new JModelSelect().property(JPropertyFishingRodCast.fishingRodCast());
-                castSelect.addCase(JSelectCase.of(new float[]{1.0f}, JItemModel.model(castId.toString())));
+                ModelSelect castSelect = new ModelSelect().property(PropertyFishingRodCast.fishingRodCast());
+                castSelect.addCase(SelectCase.of(new float[]{1.0f}, ItemModel.model(castId)));
                 castSelect.fallback(model);
                 model = castSelect;
             }
@@ -170,8 +176,8 @@ public class ItemInitThread implements Runnable {
                 Identifier throwingId = di.variantModelId(itemId, "_throwing");
                 generateIfObject(throwingId, throwingInfo);
 
-                JModelSelect throwingSelect = new JModelSelect().property(net.devtech.arrp.json.iteminfo.property.JPropertyThrowing.throwing());
-                throwingSelect.addCase(JSelectCase.of(new float[]{1.0f}, JItemModel.model(throwingId.toString())));
+                ModelSelect throwingSelect = new ModelSelect().property(PropertyThrowing.throwing());
+                throwingSelect.addCase(SelectCase.of(new float[]{1.0f}, ItemModel.model(throwingId)));
                 throwingSelect.fallback(model);
                 model = throwingSelect;
             }
@@ -183,7 +189,7 @@ public class ItemInitThread implements Runnable {
 
         if (dyeable) {
             int defaultColor = item.information.getItemSettings().getDefaultColor();
-            model.tint(new JTintDye(defaultColor));
+            model.tint(new TintDye(defaultColor));
         }
         if (item.lore != null) {
             for (SpecialText lore : item.getLore()) {
@@ -218,7 +224,7 @@ public class ItemInitThread implements Runnable {
         return t;
     }
 
-    private JItemModel buildBowUseDurationDispatch(Identifier itemId, io.github.vampirestudios.obsidian.api.obsidian.ItemDisplayInformation di) {
+    private ItemModel buildBowUseDurationDispatch(Identifier itemId, io.github.vampirestudios.obsidian.api.obsidian.ItemDisplayInformation di) {
         TextureAndModelInformation[] pulls = di.getPullingModels();
         if (pulls == null || pulls.length == 0) return null;
 
@@ -232,13 +238,13 @@ public class ItemInitThread implements Runnable {
 
         float[] thresholds = vanillaDistributedThresholds(n);
 
-        JModelRangeDispatch dispatch = (JModelRangeDispatch) new JModelRangeDispatch()
-                .property(JPropertyUseDuration.useDuration())
+        ModelRangeDispatch dispatch = (ModelRangeDispatch) new ModelRangeDispatch()
+                .property(PropertyUseDuration.useDuration())
                 .scale(0.05f)
-                .fallback(JItemModel.model(ids[0].toString()));
+                .fallback(ItemModel.model(ids[0]));
 
         for (int i = 1; i < n; i++) {
-            dispatch.entry(JRangeEntry.of(thresholds[i - 1], JItemModel.model(ids[i].toString())));
+            dispatch.entry(RangeEntry.of(thresholds[i - 1], ItemModel.model(ids[i])));
         }
 
         return dispatch;

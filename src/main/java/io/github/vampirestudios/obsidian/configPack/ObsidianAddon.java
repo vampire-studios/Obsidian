@@ -2,7 +2,7 @@ package io.github.vampirestudios.obsidian.configPack;
 
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
-import net.devtech.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.arrp.api.RuntimeResourcePack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackLocationInfo;

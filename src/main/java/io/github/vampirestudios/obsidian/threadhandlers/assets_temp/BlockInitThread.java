@@ -8,7 +8,7 @@ import io.github.vampirestudios.obsidian.client.ARRPGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.DyeableBlockEntity;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.devtech.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.arrp.api.RuntimeResourcePack;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;

@@ -1,14 +1,16 @@
 package io.github.vampirestudios.obsidian.utils;
 
 import io.github.vampirestudios.obsidian.RegistryHelper;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.*;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType.EntityFactory;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.SpawnEggItem;
 
@@ -75,16 +77,22 @@ public class EntityRegistryBuilder<E extends Entity> {
     }
 
     public EntityType<E> build() {
-        FabricEntityTypeBuilder<E> entityBuilder = FabricEntityTypeBuilder.create(this.category, this.entityFactory).dimensions(this.dimensions);
+        EntityType.Builder<E> entityBuilder = EntityType.Builder.of(this.entityFactory, this.category)
+                .sized(this.dimensions.width(), this.dimensions.height())
+                .eyeHeight(this.dimensions.eyeHeight());
         if (fireImmune) {
             entityBuilder.fireImmune();
         }
         if (summonable) {
-            entityBuilder.disableSummon();
+            entityBuilder.noSummon();
         }
         if (this.alwaysUpdateVelocity && this.updateIntervalTicks != 0 & this.trackingDistance != 0) {
-            entityBuilder = FabricEntityTypeBuilder.create(this.category, this.entityFactory).dimensions(this.dimensions)
-                    .trackable(this.trackingDistance, this.updateIntervalTicks, this.alwaysUpdateVelocity);
+            entityBuilder = EntityType.Builder.of(this.entityFactory, this.category)
+                    .sized(this.dimensions.width(), this.dimensions.height())
+                    .eyeHeight(this.dimensions.eyeHeight())
+                    .clientTrackingRange(this.trackingDistance)
+                    .updateInterval(this.updateIntervalTicks)
+                    .alwaysUpdateVelocity(this.alwaysUpdateVelocity);
         }
 
         EntityType<E> entityType;

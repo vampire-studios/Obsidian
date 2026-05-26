@@ -25,7 +25,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Registry;
@@ -38,7 +37,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -60,17 +58,16 @@ import java.util.List;
 public class Obsidian implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger(Const.MOD_NAME);
 	public static final Logger BEDROCK_LOGGER = LogManager.getLogger(Const.MOD_NAME + " | Bedrock");
-	public static final EntityType<SeatEntity> SEAT = Registry.register(BuiltInRegistries.ENTITY_TYPE, Const.id("seat"), FabricEntityTypeBuilder.
-			<SeatEntity>create(MobCategory.MISC, SeatEntity::new)
-			.dimensions(EntityDimensions.fixed(0.001F, 0.001F))
-			.build(ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Const.id("seat"))));
+	public static final EntityType<SeatEntity> SEAT = Registry.register(
+			BuiltInRegistries.ENTITY_TYPE, Const.id("seat"),
+			EntityType.Builder.of(SeatEntity::new, MobCategory.MISC)
+					.sized(0.001F, 0.001F)
+					.build(ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Const.id("seat"))));
 	public static final EntityType<ThrownKnifeEntity> THROWN_KNIFE = Registry.register(
 			BuiltInRegistries.ENTITY_TYPE, Const.id("thrown_knife"),
-			FabricEntityTypeBuilder.<ThrownKnifeEntity>create(
-							MobCategory.MISC,
-							io.github.vampirestudios.obsidian.minecraft.obsidian.ThrownKnifeEntity::new)
-					.dimensions(EntityDimensions.fixed(0.25F, 0.25F))
-					.trackRangeBlocks(64)
+			EntityType.Builder.of(ThrownKnifeEntity::new, MobCategory.MISC)
+					.sized(0.25F, 0.25F)
+					.clientTrackingRange(64)
 					.build(ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Const.id("thrown_knife"))));
 	public static final RegistryHelper OBSIDIAN_REGISTRY_HELPER = new RegistryHelper(Const.MOD_ID);
 
@@ -105,7 +102,7 @@ public class Obsidian implements ModInitializer {
 	}
 
 	private static <T, U extends T> JsonElement lookupSerialize(T t, Registry<U> registry) {
-		@SuppressWarnings("unchecked") //Widening cast happening because of generic type parameters in the registry class
+		@SuppressWarnings("unchecked")
 		Identifier id = registry.getKey((U) t);
 		if (id == null) return JsonNull.INSTANCE;
 		return new JsonPrimitive(id.toString());

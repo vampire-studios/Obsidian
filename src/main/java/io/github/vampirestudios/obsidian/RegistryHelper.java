@@ -7,7 +7,6 @@ package io.github.vampirestudios.obsidian;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -56,7 +55,7 @@ public record RegistryHelper(String modId) {
 		return (BlockEntityType) this.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, name, builder.build());
 	}
 
-	public <T extends Entity> EntityType<T> registerEntity(FabricEntityTypeBuilder<T> builder, String name) {
+	public <T extends Entity> EntityType<T> registerEntity(EntityType.Builder<T> builder, String name) {
 		return (EntityType) this.register(BuiltInRegistries.ENTITY_TYPE, name, builder.build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(this.modId(), name))));
 	}
 

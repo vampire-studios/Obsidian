@@ -1,8 +1,8 @@
 package io.github.vampirestudios.obsidian.api.obsidian.block;
 
 import com.google.gson.annotations.SerializedName;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Tuple;
 
 import java.util.Objects;
 
@@ -40,19 +40,19 @@ public class Functions {
 
     public static class Predicate {
         public PredicateType type = PredicateType.ALWAYS;
-        public Tuple<String, String> values;
+        public Pair<String, String> values;
 
         public boolean matches() {
             return switch(type) {
                 case NEVER -> false;
                 case ALWAYS -> true;
-                case EQUALS -> Objects.equals(values.getA(), values.getB());
-                case NOT_EQUALS -> !Objects.equals(values.getA(), values.getB());
-                case CONTAINS -> values.getA().contains(values.getB());
-                case NOT_CONTAINS -> !values.getA().contains(values.getB());
-                case BEGINS_WITH -> values.getA().startsWith(values.getB());
-                case ENDS_WITH -> values.getA().endsWith(values.getB());
-                case REGEX -> values.getA().matches(values.getB());
+                case EQUALS -> Objects.equals(values.getFirst(), values.getSecond());
+                case NOT_EQUALS -> !Objects.equals(values.getFirst(), values.getSecond());
+                case CONTAINS -> values.getFirst().contains(values.getSecond());
+                case NOT_CONTAINS -> !values.getFirst().contains(values.getSecond());
+                case BEGINS_WITH -> values.getFirst().startsWith(values.getSecond());
+                case ENDS_WITH -> values.getFirst().endsWith(values.getSecond());
+                case REGEX -> values.getFirst().matches(values.getSecond());
             };
         }
 

@@ -6,14 +6,14 @@ import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import io.github.vampirestudios.obsidian.client.ARRPGenerationHelper;
 import io.github.vampirestudios.obsidian.client.ClientInit;
 import io.github.vampirestudios.obsidian.utils.Utils;
-import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.json.iteminfo.JItemInfo;
-import net.devtech.arrp.json.iteminfo.model.JItemModel;
-import net.devtech.arrp.json.iteminfo.model.JModelBasic;
-import net.devtech.arrp.json.iteminfo.model.JModelSelect;
-import net.devtech.arrp.json.iteminfo.model.JSelectCase;
-import net.devtech.arrp.json.iteminfo.property.JPropertyDisplayContext;
-import net.devtech.arrp.json.iteminfo.tint.JTintDye;
+import net.vampirestudios.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.arrp.assets.item.ItemModelDefinition;
+import net.vampirestudios.arrp.assets.item.ItemModel;
+import net.vampirestudios.arrp.assets.item.models.ModelBasic;
+import net.vampirestudios.arrp.assets.item.models.ModelSelect;
+import net.vampirestudios.arrp.assets.item.SelectCase;
+import net.vampirestudios.arrp.assets.item.properties.PropertyDisplayContext;
+import net.vampirestudios.arrp.assets.item.tints.TintDye;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
@@ -36,7 +36,7 @@ public class ArmorInitThread implements Runnable {
                     name
             ));
 
-        JItemInfo itemInfo = new JItemInfo();
+        ItemModelDefinition itemInfo = new ItemModelDefinition();
 
         var itemId = armor.information.id;
 
@@ -44,16 +44,16 @@ public class ArmorInitThread implements Runnable {
                 ? armor.rendering.resolveItemDefinitionModelId(itemId)
                 : Utils.prependToPath(itemId, "item/");
 
-        JModelBasic fallbackModel = JModelBasic.model(defModelId.toString());
-        JItemModel model = fallbackModel;
+        ModelBasic fallbackModel = ModelBasic.model(defModelId);
+        ItemModel model = fallbackModel;
         if (armor.information != null && armor.information.getItemSettings() != null &&
                 armor.information.getItemSettings().renderModeModels != null &&
                 armor.information.getItemSettings().customRenderMode) {
-            JModelSelect select = new JModelSelect().property(JPropertyDisplayContext.displayContext());
+            ModelSelect select = new ModelSelect().property(PropertyDisplayContext.displayContext());
             for (RenderModeModel renderModeModel : armor.information.getItemSettings().renderModeModels) {
-                JSelectCase caseX = JSelectCase.of(
+                SelectCase caseX = SelectCase.of(
                         renderModeModel.modes,
-                        JItemModel.model(renderModeModel.model.toString())
+                        ItemModel.model(renderModeModel.model)
                 );
                 select.addCase(caseX);
             }
@@ -61,7 +61,7 @@ public class ArmorInitThread implements Runnable {
             model = select;
         }
         if (armor.information.getItemSettings().dyeable) {
-            model.tint(new JTintDye(armor.information.getItemSettings().defaultColor));
+            model.tint(new TintDye(armor.information.getItemSettings().defaultColor));
         }
         if (armor.rendering != null) {
             boolean hasOutItemModel =
