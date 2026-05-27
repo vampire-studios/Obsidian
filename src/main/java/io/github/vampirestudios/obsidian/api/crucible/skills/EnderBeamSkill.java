@@ -4,10 +4,7 @@ import io.github.vampirestudios.obsidian.api.crucible.Skill;
 import io.github.vampirestudios.obsidian.api.crucible.SkillTrigger;
 import io.github.vampirestudios.obsidian.api.crucible.targets.SkillTarget;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 
 import java.util.Objects;
@@ -68,7 +65,7 @@ public class EnderBeamSkill extends Skill {
         }
 
         protected void start(int duration) {
-            this.crystal = EntityType.END_CRYSTAL.create(this.entitySource.level(), EntitySpawnReason.SPAWN_ITEM_USE);
+            this.crystal = EntityTypes.END_CRYSTAL.create(this.entitySource.level(), EntitySpawnReason.SPAWN_ITEM_USE);
 			assert this.crystal != null;
 			this.crystal.setShowBottom(false);
             this.crystal.setInvulnerable(true);

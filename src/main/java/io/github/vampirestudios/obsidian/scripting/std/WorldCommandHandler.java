@@ -34,7 +34,7 @@ public class WorldCommandHandler implements CommandHandler {
 				case "time" -> LOGGER.info("world.time = {}", level.getOverworldClockTime() % 24000L);
 				case "setTime" -> setTime(level, segment, vars);
 				case "weather" -> setWeather(level, segment, vars);
-				case "spawn" -> spawn(level, segment, vars);
+//				case "spawn" -> spawn(level, segment, vars);
 				case "difficulty" -> setDifficulty(server, segment, vars);
 				case "explosion" -> createExplosion(level, segment, vars);
 				case "setBlock" -> setBlock(level, segment, vars);
@@ -81,28 +81,28 @@ public class WorldCommandHandler implements CommandHandler {
 		}
 	}
 
-	private void spawn(ServerLevel level, CallChain.Segment segment, Map<String, Object> vars) {
-		if (segment.args().size() < 4) {
-			LOGGER.warn("spawn requires entity ID and x, y, z coordinates");
-			return;
-		}
-		String id = ScriptUtils.getStringArg(segment, 0, vars);
-		double x = ScriptUtils.getNumberArg(segment, 1, vars);
-		double y = ScriptUtils.getNumberArg(segment, 2, vars);
-		double z = ScriptUtils.getNumberArg(segment, 3, vars);
-		EntityType<?> type = EntityType.byString(id).orElse(null);
-		if (type == null) {
-			LOGGER.warn("Unknown entity type: {}", id);
-			return;
-		}
-		Entity entity = type.create(level, EntitySpawnReason.COMMAND);
-		if (entity == null) {
-			LOGGER.warn("Failed to create entity: {}", id);
-			return;
-		}
-		entity.moveOrInterpolateTo(new Vec3(x, y, z), 0, 0);
-		level.addFreshEntity(entity);
-	}
+//	private void spawn(ServerLevel level, CallChain.Segment segment, Map<String, Object> vars) {
+//		if (segment.args().size() < 4) {
+//			LOGGER.warn("spawn requires entity ID and x, y, z coordinates");
+//			return;
+//		}
+//		String id = ScriptUtils.getStringArg(segment, 0, vars);
+//		double x = ScriptUtils.getNumberArg(segment, 1, vars);
+//		double y = ScriptUtils.getNumberArg(segment, 2, vars);
+//		double z = ScriptUtils.getNumberArg(segment, 3, vars);
+//		EntityType<?> type = EntityType.byString(id).orElse(null);
+//		if (type == null) {
+//			LOGGER.warn("Unknown entity type: {}", id);
+//			return;
+//		}
+//		Entity entity = type.create(level, EntitySpawnReason.COMMAND);
+//		if (entity == null) {
+//			LOGGER.warn("Failed to create entity: {}", id);
+//			return;
+//		}
+//		entity.moveOrInterpolateTo(new Vec3(x, y, z), 0, 0);
+//		level.addFreshEntity(entity);
+//	}
 
 	private void setDifficulty(MinecraftServer server, CallChain.Segment segment, Map<String, Object> vars) {
 		if (segment.args().size() < 1) {

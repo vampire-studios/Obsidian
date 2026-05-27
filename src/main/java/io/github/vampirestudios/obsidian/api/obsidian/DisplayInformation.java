@@ -96,7 +96,12 @@ public class DisplayInformation {
                 throw new IllegalArgumentException("Model must be a string Identifier or an object");
             }
             TextureAndModelInformation info = new TextureAndModelInformation();
-            info.parent = Identifier.parse(p.getAsString());
+            String raw = p.getAsString();
+            // Unqualified paths like "block/cube_all" are vanilla model parents; prepend "minecraft:"
+            if (!raw.contains(":")) {
+                raw = "minecraft:" + raw;
+            }
+            info.parent = Identifier.parse(raw);
             return info;
         }
 
@@ -123,7 +128,12 @@ public class DisplayInformation {
         if (!e.isJsonPrimitive() || !e.getAsJsonPrimitive().isString()) {
             throw new IllegalArgumentException("Field '" + key + "' must be a string Identifier");
         }
-        return Identifier.parse(e.getAsString());
+        String raw = e.getAsString();
+        // Unqualified paths like "block/cube_all" are vanilla model parents; prepend "minecraft:"
+        if (!raw.contains(":")) {
+            raw = "minecraft:" + raw;
+        }
+        return Identifier.parse(raw);
     }
 
     private static Map<String, Identifier> readTextures(JsonObject o, String key) {

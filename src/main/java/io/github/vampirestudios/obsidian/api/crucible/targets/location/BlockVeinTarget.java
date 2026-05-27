@@ -44,10 +44,10 @@ public class BlockVeinTarget extends LocationTarget {
         for (int[] direction : directions) {
             int x = direction[0], y = direction[1], z = direction[2];
             BlockPos neighbor = new BlockPos(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
-            if (!targets.contains(neighbor.getCenter())) {
+            if (!targets.contains(Vec3.atCenterOf(neighbor))) {
                 Block material = caster.level().getBlockState(neighbor).getBlock();
                 if (blockMatches(material, this.wantedBlockTypes)) {
-                    targets.add(neighbor.getCenter());
+                    targets.add(Vec3.atCenterOf(neighbor));
                     findConnectedBlocks(caster, targets, neighbor, limit - 1, false);
                 }
             }

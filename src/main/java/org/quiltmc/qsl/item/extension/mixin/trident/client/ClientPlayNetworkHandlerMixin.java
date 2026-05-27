@@ -3,7 +3,7 @@ package org.quiltmc.qsl.item.extension.mixin.trident.client;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.quiltmc.qsl.item.extension.impl.trident.TridentClientModInitializer;
 import org.quiltmc.qsl.item.extension.mixin.trident.AbstractArrowAccessor;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class ClientPlayNetworkHandlerMixin {
     @Inject(method = "handleAddEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;recreateFromPacket(Lnet/minecraft/network/protocol/game/ClientboundAddEntityPacket;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void onEntitySpawnMixin(ClientboundAddEntityPacket packet, CallbackInfo ci, Entity entity) {
-        if (entity.getType() == EntityType.TRIDENT) {
+        if (entity.getType() == EntityTypes.TRIDENT) {
             ((AbstractArrowAccessor) entity).setPickupItemStack(TridentClientModInitializer.TRIDENT_QUEUE.remove());
         }
     }

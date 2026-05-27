@@ -28,6 +28,9 @@ public class Block {
     public Blocks[] blocks;
     public Behaviour behaviour;
 
+    // Accept both "rendering" (current) and "display" (legacy alias used by older packs)
+    @com.google.gson.annotations.SerializedName(value = "rendering", alternate = {"display"})
+    @SerializedName("rendering")
     public DisplayInformation rendering;
     @SerializedName("drop_information")
     @com.google.gson.annotations.SerializedName("drop_information")

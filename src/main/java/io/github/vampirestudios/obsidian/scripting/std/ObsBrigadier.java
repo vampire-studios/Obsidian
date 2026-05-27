@@ -179,7 +179,8 @@ public final class ObsBrigadier {
 			case WORD -> Commands.argument(p.name(), StringArgumentType.word());
 			case TEXT -> Commands.argument(p.name(), StringArgumentType.greedyString());
 			case DURATION -> Commands.argument(p.name(), StringArgumentType.word()); // parse to ticks later
-			case COLOR -> Commands.argument(p.name(), ColorArgument.color());
+			case TEAM_COLOR -> Commands.argument(p.name(), TeamColorArgument.teamColor());
+			case HEX_COLOR -> Commands.argument(p.name(), HexColorArgument.hexColor());
 			case ENTITY -> Commands.argument(p.name(), EntityArgument.entity());
 			case ENTITIES -> Commands.argument(p.name(), EntityArgument.entities());
 			case PLAYER -> Commands.argument(p.name(), EntityArgument.player());
@@ -210,7 +211,8 @@ public final class ObsBrigadier {
 			case BOOL -> BoolArgumentType.getBool(ctx, name);
 			case WORD, TEXT, ENUM -> StringArgumentType.getString(ctx, name);
 			case DURATION -> Util.parseDurTicks(StringArgumentType.getString(ctx, name)); // int
-			case COLOR -> ColorArgument.getColor(ctx, name);                           // ChatFormatting / Color
+			case TEAM_COLOR -> TeamColorArgument.getTeamColor(ctx, name);
+			case HEX_COLOR -> HexColorArgument.getHexColor(ctx, name);
 			case ENTITY -> EntityArgument.getEntity(ctx, name);                         // Entity
 			case ENTITIES ->
 					EntityArgument.getEntities(ctx, name);                       // Collection<? extends Entity>

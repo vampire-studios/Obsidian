@@ -183,8 +183,6 @@ public class ItemInitThread implements Runnable {
             }
         }
 
-        boolean hasItemModelComponent = item.components != null && item.components.get(DataComponents.ITEM_MODEL) != null;
-
         boolean dyeable = item.information.getItemSettings().dyeable;
 
         if (dyeable) {
@@ -201,10 +199,11 @@ public class ItemInitThread implements Runnable {
             }
         }
 
-        if (!hasItemModelComponent || dyeable) {
-            itemInfo.model(model);
-            resourcePack.addItemModelInfo(itemInfo, itemId);
-        }
+        // Always emit items/<id>.json. In 1.21.4+ the ITEM_MODEL component is itself a
+        // path to an items/*.json file, so skipping generation when the component is set
+        // just means the component's target file never gets created → missing model.
+        itemInfo.model(model);
+        resourcePack.addItemModelInfo(itemInfo, itemId);
     }
 
     private static float[] vanillaDistributedThresholds(int stages) {

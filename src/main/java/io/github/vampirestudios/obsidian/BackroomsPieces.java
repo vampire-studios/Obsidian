@@ -106,7 +106,7 @@ public class BackroomsPieces {
                     topWallBlock = Blocks.STONE_BRICKS.defaultBlockState();
                     floorBlock = Blocks.STONE.defaultBlockState();
                     ceilingBlock = Blocks.STONE.defaultBlockState();
-                    lightBlock = Blocks.COPPER_BULB.defaultBlockState().setValue(CopperBulbBlock.LIT, true);
+                    lightBlock = Blocks.COPPER_BULB.weathering().unaffected().defaultBlockState().setValue(CopperBulbBlock.LIT, true);
                 }
                 case LEVEL_2 -> {
                     bottomWallBlock = Blocks.NETHER_BRICKS.defaultBlockState();
@@ -136,7 +136,7 @@ public class BackroomsPieces {
                 case TERROR_HOTEL -> {
                     bottomWallBlock = Blocks.DARK_OAK_PLANKS.defaultBlockState();
                     topWallBlock = Blocks.DARK_OAK_PLANKS.defaultBlockState();
-                    floorBlock = Blocks.RED_CARPET.defaultBlockState();
+                    floorBlock = Blocks.CARPET.red().defaultBlockState();
                     ceilingBlock = Blocks.DARK_OAK_PLANKS.defaultBlockState();
                 }
                 case SUBURBS -> {

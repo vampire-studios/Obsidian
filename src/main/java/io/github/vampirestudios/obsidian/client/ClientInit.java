@@ -10,7 +10,6 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.Entity;
 import io.github.vampirestudios.obsidian.api.obsidian.item.*;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.GUI;
 import io.github.vampirestudios.obsidian.client.renderer.SeatEntityRenderer;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader;
@@ -19,19 +18,20 @@ import io.github.vampirestudios.obsidian.minecraft.JsonGui;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.Registries;
 import io.github.vampirestudios.obsidian.threadhandlers.assets_temp.*;
-import net.vampirestudios.arrp.api.RRPCallback;
-import net.vampirestudios.arrp.api.RuntimeResourcePack;
-import net.vampirestudios.arrp.json.lang.JLang;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
+import net.vampirestudios.arrp.api.RRPCallback;
+import net.vampirestudios.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.arrp.assets.lang.Lang;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -47,21 +47,22 @@ public class ClientInit implements ClientModInitializer {
     public static final Map<String, Map<String, Map<String, String>>> translationMap = new HashMap<>();
 
     public static void addTranslation( String addonId, String languageId, String translationKey, String translation ) {
+        if (addonId == null || languageId == null || translationKey == null || translation == null) return;
         synchronized (translationMap) {
-            Map<String, Map<String, String>> addonTranslations = translationMap.computeIfAbsent( addonId, key -> new HashMap<>() );
-            Map<String, String> addonLanguageTranslations = addonTranslations.computeIfAbsent( languageId, key -> new HashMap<>() );
+            Map<String, Map<String, String>> addonTranslations = translationMap.computeIfAbsent( addonId, _ -> new HashMap<>() );
+            Map<String, String> addonLanguageTranslations = addonTranslations.computeIfAbsent( languageId, _ -> new HashMap<>() );
             addonLanguageTranslations.put( translationKey, translation );
         }
     }
 
     @Override
     public void onInitializeClient() {
-        Obsidian.LOGGER.info(String.format("You're now running Obsidian v%s on client-side for %s", Const.MOD_VERSION, SharedConstants.getCurrentVersion().name()));
+        Obsidian.LOGGER.info("You're now running Obsidian v{} on client-side for {}", Const.MOD_VERSION, SharedConstants.getCurrentVersion().name());
 
 //        ContentPackSyncNetworking.registerClientReceivers();
 
-        EntityRendererRegistry.register(Obsidian.SEAT, SeatEntityRenderer::new);
-        EntityRendererRegistry.register(Obsidian.THROWN_KNIFE, ThrownItemRenderer::new);
+        EntityRenderers.register(Obsidian.SEAT, SeatEntityRenderer::new);
+        EntityRenderers.register(Obsidian.THROWN_KNIFE, ThrownItemRenderer::new);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> {
             String id;
             if (iAddonPack.getConfigPackInfo() instanceof LegacyObsidianAddonInfo legacyObsidianAddonInfo) {
@@ -84,7 +85,7 @@ public class ClientInit implements ClientModInitializer {
                                 dynamicContainer.setGui(gui1);
                                 dynamicContainer.setContainerInventory(new SimpleContainer(Objects.requireNonNull(gui1).containerSize));
                                 dynamicContainer.setupSlots();
-                                Minecraft.getInstance().setScreen(new JsonGui(dynamicContainer, commandSource.getPlayer().getInventory(),
+                                Minecraft.getInstance().gui.setScreen(new JsonGui(dynamicContainer, commandSource.getPlayer().getInventory(),
                                         Objects.requireNonNull(gui1)
                                 ));
                                 return 1;
@@ -141,7 +142,7 @@ public class ClientInit implements ClientModInitializer {
                     if (elytra.information.id.getNamespace().equals(id))
                         new ElytraInitThread(elytra).run();
                 translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
-                    JLang lang = JLang.lang();
+                    Lang lang = Lang.lang();
                     translations.forEach(lang::entry);
                     resourcePack.addLang(Identifier.fromNamespaceAndPath(modId, languageId), lang);
                 }));

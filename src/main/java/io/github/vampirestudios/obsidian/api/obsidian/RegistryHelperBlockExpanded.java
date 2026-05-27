@@ -10,7 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.component.DyedItemColor;
@@ -93,7 +93,7 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 						.randomTicks()
 						.sound(block2.information.getBlockSettings().getBlockSoundGroup())
 						.noOcclusion()
-						.isValidSpawn((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
+						.isValidSpawn((state, world, pos, type) -> type == EntityTypes.OCELOT || type == EntityTypes.PARROT)
 						.isSuffocating((state, world, pos) -> false)
 						.isViewBlocking((state, world, pos) -> false)
 						.ignitedByLava()

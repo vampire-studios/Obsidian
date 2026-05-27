@@ -6,8 +6,6 @@
     "AxeItemMixin",
     "EnchantingTableBlockMixin",
 //    "EnchantmentScreenHandlerMixin",
-    "HoneycombItemMixin",
-    "OxidizableMixin",
     "ShovelItemMixin"
   ],
   "injectors": {

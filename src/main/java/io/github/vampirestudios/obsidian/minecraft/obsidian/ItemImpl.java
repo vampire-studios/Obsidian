@@ -98,7 +98,7 @@ public class ItemImpl extends Item {
                     break;
                 case "open_url":
                     if (world.isClientSide())
-                        Minecraft.getInstance().setScreen(new ConfirmLinkScreen(bl -> {
+                        Minecraft.getInstance().gui.setScreen(new ConfirmLinkScreen(bl -> {
                             if (bl) {
                                 Util.getPlatform().openUri(item.useActions.url);
                             }

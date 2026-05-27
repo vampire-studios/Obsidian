@@ -420,7 +420,8 @@ public final class ObsParser {
 				case "Text"       -> ScriptCommand.Kind.TEXT;
 				case "Duration"   -> ScriptCommand.Kind.DURATION;
 				case "Time"       -> ScriptCommand.Kind.TIME;
-				case "Color"      -> ScriptCommand.Kind.COLOR;
+				case "TeamColor"  -> ScriptCommand.Kind.TEAM_COLOR;
+				case "HexColor"   -> ScriptCommand.Kind.HEX_COLOR;
 				case "Entity"     -> ScriptCommand.Kind.ENTITY;
 				case "Entities"   -> ScriptCommand.Kind.ENTITIES;
 				case "Player"     -> ScriptCommand.Kind.PLAYER;

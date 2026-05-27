@@ -60,7 +60,7 @@ public class BlockInitThread implements Runnable {
             }
             if (block.lore != null) {
                 for (SpecialText lore : block.lore) {
-                    if (lore.textType.equals("translatable")) {
+                    if (lore.textType != null && lore.textType.equals("translatable")) {
                         lore.translations.forEach((languageId, name) -> ClientInit.addTranslation(
                                 blockId.getNamespace(), languageId, lore.text, name
                         ));
@@ -233,6 +233,12 @@ public class BlockInitThread implements Runnable {
                 }
 
                 ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, block, blockId, directModelId);
+            } else {
+                // No rendering config at all (pack provides blockstate/model via file-based resources).
+                // In 1.21.4+ every block item still needs an items/<id>.json, so emit one that
+                // points to the canonical block/<id> model which the file-based pack must provide.
+                ARRPGenerationHelper.generateBasicItemDefinition(resourcePack, block, blockId,
+                        Utils.prependToPath(blockId, "block/"));
             }
             if (block.additional_information != null && translated != null) {
                 if (block.additional_information.slab) {

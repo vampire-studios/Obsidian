@@ -7,16 +7,23 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.vampirestudios.arrp.api.RuntimeResourcePack;
 import net.vampirestudios.arrp.assets.blockstates.BlockState;
+import net.vampirestudios.arrp.assets.blockstates.SimpleModel;
 import net.vampirestudios.arrp.assets.blockstates.Variant;
+import net.vampirestudios.arrp.assets.item.ItemModel;
+import net.vampirestudios.arrp.assets.item.ItemModelDefinition;
+import net.vampirestudios.arrp.assets.item.RangeEntry;
+import net.vampirestudios.arrp.assets.item.SelectCase;
+import net.vampirestudios.arrp.assets.item.models.ModelBasic;
+import net.vampirestudios.arrp.assets.item.models.ModelCondition;
+import net.vampirestudios.arrp.assets.item.models.ModelRangeDispatch;
+import net.vampirestudios.arrp.assets.item.models.ModelSelect;
+import net.vampirestudios.arrp.assets.item.properties.PropertyChargeType;
+import net.vampirestudios.arrp.assets.item.properties.PropertyCrossbowPull;
+import net.vampirestudios.arrp.assets.item.properties.PropertyUseDuration;
+import net.vampirestudios.arrp.assets.item.properties.PropertyUsingItem;
+import net.vampirestudios.arrp.assets.item.tints.Tint;
 import net.vampirestudios.arrp.assets.models.Model;
 import net.vampirestudios.arrp.assets.models.Textures;
-import net.vampirestudios.arrp.json.blockstate.JBlockModel;
-import net.vampirestudios.arrp.json.iteminfo.JItemInfo;
-import net.vampirestudios.arrp.json.iteminfo.model.ModelBasic;
-import net.vampirestudios.arrp.json.iteminfo.tint.JTint;
-import net.vampirestudios.arrp.json.loot.JCondition;
-import net.vampirestudios.arrp.json.models.JOverride;
-import net.vampirestudios.arrp.json.models.Textures;
 
 import java.util.Map;
 
@@ -188,71 +195,130 @@ public class ARRPGenerationHelper {
 
     public static void generateItemModel(NexoItem item, RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier parent, Map<String, Identifier> textures) {
         if (name == null || parent == null) return;
-        Model itemModel = model(parent);
+
+        var tex = textures();
+        if (textures != null) textures.forEach((k, v) -> tex.var(k, v.toString()));
+        Identifier modelId = Utils.prependToPath(name, "item/");
+        clientResourcePackBuilder.addModel(model(parent).textures(tex), modelId);
+
+        ItemModelDefinition itemInfo = new ItemModelDefinition();
+        var fallbackModel = net.vampirestudios.arrp.assets.item.models.ModelBasic.model(modelId);
+        ItemModel model = fallbackModel;
 
         if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
             if (item.pack.blocking_model != null) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("blocking", 1), item.pack.blocking_model.toString()));
+                model = new ModelCondition()
+                        .property(new PropertyUsingItem())
+                        .onTrue(ItemModel.model(item.pack.blocking_model))
+                        .onFalse(model);
             }
         } else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
             if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.65f), item.pack.pulling_models.get(0).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.9f), item.pack.pulling_models.get(1).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+                ModelRangeDispatch pullDispatch = (ModelRangeDispatch) new ModelRangeDispatch()
+                        .property(PropertyUseDuration.useDuration())
+                        .scale(0.05f)
+                        .fallback(ItemModel.model(item.pack.pulling_models.get(0)));
+                pullDispatch.entry(RangeEntry.of(0.65f, ItemModel.model(item.pack.pulling_models.get(1))));
+                pullDispatch.entry(RangeEntry.of(0.9f, ItemModel.model(item.pack.pulling_models.get(2))));
+                model = new ModelCondition()
+                        .property(new PropertyUsingItem())
+                        .onTrue(pullDispatch)
+                        .onFalse(model);
             }
-        } else if(item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
-            // Assuming crossbow has three stages similar to the bow for pulling, plus a loaded and a firing state.
+        } else if (item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
+            ModelRangeDispatch pullDispatch = (ModelRangeDispatch) new ModelRangeDispatch()
+                    .property(PropertyCrossbowPull.crossbowPull())
+                    .fallback(item.pack.pulling_models != null && !item.pack.pulling_models.isEmpty()
+                            ? ItemModel.model(item.pack.pulling_models.get(0))
+                            : fallbackModel);
+            if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 2) {
+                pullDispatch.entry(RangeEntry.of(0.58f, ItemModel.model(item.pack.pulling_models.get(1))));
+            }
             if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.58f), item.pack.pulling_models.get(0).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.79f), item.pack.pulling_models.get(1).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+                pullDispatch.entry(RangeEntry.of(1.0f, ItemModel.model(item.pack.pulling_models.get(2))));
             }
-            // Handle charged state with normal arrow
+
+            ModelCondition using = new ModelCondition()
+                    .property(new PropertyUsingItem())
+                    .onTrue(pullDispatch)
+                    .onFalse(model);
+
+            ModelSelect chargeType = new ModelSelect()
+                    .property(PropertyChargeType.chargeType());
             if (item.pack.charged_model != null) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 0), item.pack.charged_model.toString()));
+                chargeType.addCase(SelectCase.of(new String[]{"arrow"}, ItemModel.model(item.pack.charged_model)));
             }
-            // Handle charged state with firework
             if (item.pack.firework_model != null) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 1), item.pack.firework_model.toString()));
+                chargeType.addCase(SelectCase.of(new String[]{"rocket"}, ItemModel.model(item.pack.firework_model)));
             }
+            chargeType.fallback(using);
+            model = chargeType;
         }
 
-        Textures textures1 = textures();
-        if (textures != null)
-            textures.forEach((s, location) -> textures1.var(s, location.toString()));
-        clientResourcePackBuilder.addModel(itemModel.textures(textures1), Utils.prependToPath(name, "item/"));
+        itemInfo.model(model);
+        clientResourcePackBuilder.addItemModelInfo(itemInfo, name);
     }
 
     public static void generateSimpleItemModel(NexoItem item, RuntimeResourcePack clientResourcePackBuilder, Identifier name, Identifier parent) {
-        Model itemModel = model(parent);
+        Identifier modelId = Utils.prependToPath(name, "item/");
+        clientResourcePackBuilder.addModel(model(parent), modelId);
+
+        ItemModelDefinition itemInfo = new ItemModelDefinition();
+        var fallbackModel = net.vampirestudios.arrp.assets.item.models.ModelBasic.model(modelId);
+        ItemModel model = fallbackModel;
 
         if (item.getItemType().equals(NexoItem.ItemType.SHIELD)) {
             if (item.pack.blocking_model != null) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("blocking", 1), item.pack.blocking_model.toString()));
+                model = new ModelCondition()
+                        .property(new PropertyUsingItem())
+                        .onTrue(ItemModel.model(item.pack.blocking_model))
+                        .onFalse(model);
             }
         } else if (item.getItemType().equals(NexoItem.ItemType.BOW)) {
             if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.65f), item.pack.pulling_models.get(0).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.9f), item.pack.pulling_models.get(1).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+                ModelRangeDispatch pullDispatch = (ModelRangeDispatch) new ModelRangeDispatch()
+                        .property(PropertyUseDuration.useDuration())
+                        .scale(0.05f)
+                        .fallback(ItemModel.model(item.pack.pulling_models.get(0)));
+                pullDispatch.entry(RangeEntry.of(0.65f, ItemModel.model(item.pack.pulling_models.get(1))));
+                pullDispatch.entry(RangeEntry.of(0.9f, ItemModel.model(item.pack.pulling_models.get(2))));
+                model = new ModelCondition()
+                        .property(new PropertyUsingItem())
+                        .onTrue(pullDispatch)
+                        .onFalse(model);
             }
-        } else if(item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
-            // Assuming crossbow has three stages similar to the bow for pulling, plus a loaded and a firing state.
+        } else if (item.getItemType().equals(NexoItem.ItemType.CROSSBOW)) {
+            ModelRangeDispatch pullDispatch = (ModelRangeDispatch) new ModelRangeDispatch()
+                    .property(PropertyCrossbowPull.crossbowPull())
+                    .fallback(item.pack.pulling_models != null && !item.pack.pulling_models.isEmpty()
+                            ? ItemModel.model(item.pack.pulling_models.get(0))
+                            : fallbackModel);
+            if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 2) {
+                pullDispatch.entry(RangeEntry.of(0.58f, ItemModel.model(item.pack.pulling_models.get(1))));
+            }
             if (item.pack.pulling_models != null && item.pack.pulling_models.size() >= 3) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.58f), item.pack.pulling_models.get(0).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 0.79f), item.pack.pulling_models.get(1).toString()));
-                itemModel.addOverride(new JOverride(new JCondition().parameter("pulling", 1).parameter("pull", 1.0f), item.pack.pulling_models.get(2).toString()));
+                pullDispatch.entry(RangeEntry.of(1.0f, ItemModel.model(item.pack.pulling_models.get(2))));
             }
-            // Handle charged state with normal arrow
+
+            ModelCondition using = new ModelCondition()
+                    .property(new PropertyUsingItem())
+                    .onTrue(pullDispatch)
+                    .onFalse(model);
+
+            ModelSelect chargeType = new ModelSelect()
+                    .property(PropertyChargeType.chargeType());
             if (item.pack.charged_model != null) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 0), item.pack.charged_model.toString()));
+                chargeType.addCase(SelectCase.of(new String[]{"arrow"}, ItemModel.model(item.pack.charged_model)));
             }
-            // Handle charged state with firework
             if (item.pack.firework_model != null) {
-                itemModel.addOverride(new JOverride(new JCondition().parameter("charged", 1).parameter("firework", 1), item.pack.firework_model.toString()));
+                chargeType.addCase(SelectCase.of(new String[]{"rocket"}, ItemModel.model(item.pack.firework_model)));
             }
+            chargeType.fallback(using);
+            model = chargeType;
         }
-        clientResourcePackBuilder.addModel(itemModel, Utils.prependToPath(name, "item/"));
+
+        itemInfo.model(model);
+        clientResourcePackBuilder.addItemModelInfo(itemInfo, name);
     }
 
     public static void generatePoweredBlockState(RuntimeResourcePack pack, Identifier name,
@@ -282,7 +348,7 @@ public class ARRPGenerationHelper {
     public static void generateSlabBlockState(RuntimeResourcePack pack, Identifier name, Identifier doubleBlockName) {
         BlockState state = BlockState.state();
         for (SlabType t : SlabType.values()) {
-            JBlockModel var = switch (t) {
+            SimpleModel var = switch (t) {
                 case BOTTOM -> BlockState.model(Utils.prependToPath(name, "block/"));
                 case TOP -> BlockState.model(Utils.appendAndPrependToPath(name, "block/", "_top"));
                 case DOUBLE -> BlockState.model(Utils.prependToPath(doubleBlockName, "block/"));
@@ -292,18 +358,12 @@ public class ARRPGenerationHelper {
         pack.addBlockState(state, name);
     }
 
-    public static void generateBasicItemDefinition(RuntimeResourcePack pack, Identifier name) {
-        JItemInfo itemInfo = new JItemInfo()
-                .model(ModelBasic.model(Utils.prependToPath(name, "item/").toString()));
-        pack.addItemModelInfo(itemInfo, name);
-    }
-
     public static void generateBasicItemDefinition(RuntimeResourcePack pack, Block block, Identifier name, Identifier directModelId) {
-        JItemInfo itemInfo = new JItemInfo();
-        var itemModel = ModelBasic.model(directModelId.toString());
+        ItemModelDefinition itemInfo = new ItemModelDefinition();
+        var itemModel = ModelBasic.model(directModelId);
 
         if (block.additional_information != null && block.additional_information.dyable) {
-            itemModel.tint(JTint.dye(block.additional_information.defaultColor));
+            itemModel.tint(Tint.dye(block.additional_information.defaultColor));
         }
 
         itemInfo.model(itemModel);

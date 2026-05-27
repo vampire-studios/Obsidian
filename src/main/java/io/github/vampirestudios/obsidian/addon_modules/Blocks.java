@@ -38,7 +38,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
@@ -102,7 +102,7 @@ public class Blocks implements AddonModule {
                     .pushReaction(settings.getPushReaction())
                     .sound(settings.getBlockSoundGroup())
                     .friction(settings.slipperiness)
-                    .emissiveRendering((state, level, pos) -> settings.is_emissive)
+                    .emissiveRendering((state) -> settings.is_emissive)
                     .lightLevel(state -> settings.luminance)
                     .speedFactor(settings.velocity_modifier)
                     .jumpFactor(settings.jump_velocity_modifier)
@@ -293,19 +293,19 @@ public class Blocks implements AddonModule {
             case CRAFTING_TABLE -> registry.registerBlock(new CraftingTableBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
             case FURNACE -> {
                 Block furnace = registry.registerBlock(new FurnaceBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.FURNACE.addValidBlock(furnace);
+                BlockEntityTypes.FURNACE.addValidBlock(furnace);
             }
             case BLAST_FURNACE -> {
                 Block blast = registry.registerBlock(new BlastFurnaceBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.BLAST_FURNACE.addValidBlock(blast);
+                BlockEntityTypes.BLAST_FURNACE.addValidBlock(blast);
             }
             case SMOKER -> {
                 Block smoker = registry.registerBlock(new SmokerBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.SMOKER.addValidBlock(smoker);
+                BlockEntityTypes.SMOKER.addValidBlock(smoker);
             }
             case BARREL -> {
                 Block barrel = registry.registerBlock(new BarrelBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
-                BlockEntityType.BARREL.addValidBlock(barrel);
+                BlockEntityTypes.BARREL.addValidBlock(barrel);
             }
             case CARPET -> registry.registerBlock(new CarpetBlock(blockProps), block, blockId.getPath(), itemProps, itemGroup);
         }

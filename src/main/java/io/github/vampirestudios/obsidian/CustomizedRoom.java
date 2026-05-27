@@ -7,7 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
@@ -35,8 +35,8 @@ public class CustomizedRoom extends StructurePiece {
 
         switch (level) {
             case LEVEL_0 -> {
-                wallBlock = Blocks.YELLOW_TERRACOTTA.defaultBlockState();
-                floorBlock = Blocks.GRAY_WOOL.defaultBlockState();
+                wallBlock = Blocks.DYED_TERRACOTTA.yellow().defaultBlockState();
+                floorBlock = Blocks.WOOL.gray().defaultBlockState();
                 ceilingBlock = Blocks.SEA_LANTERN.defaultBlockState();
             }
             case LEVEL_1 -> {
@@ -72,11 +72,11 @@ public class CustomizedRoom extends StructurePiece {
 
         // Add entities or effects based on the level
         if (level == BackroomsLevel.LEVEL_2 && random.nextFloat() < 0.3) {
-            EntityType.BLAZE.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+            EntityTypes.BLAZE.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
         } else if (level == BackroomsLevel.LEVEL_3 && random.nextFloat() < 0.3) {
-            EntityType.CREEPER.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+            EntityTypes.CREEPER.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
         } else if (level == BackroomsLevel.LEVEL_4 && random.nextFloat() < 0.3) {
-            EntityType.ENDERMAN.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+            EntityTypes.ENDERMAN.spawn((ServerLevel) world, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
         }
 
         // Add ambient sounds

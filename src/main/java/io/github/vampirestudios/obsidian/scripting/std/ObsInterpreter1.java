@@ -236,25 +236,25 @@ public final class ObsInterpreter1 {
 			/* -------------------- ENTITIES.* -------------------- */
 
 			// entities.inWorld("id").ofType("id")[.within(n)].removeAll();
-			if (match(line, "^entities\\.inWorld\\(\"([^\"]+)\"\\)\\.ofType\\(\"([^\"]+)\"\\)(?:\\.within\\((\\d+)\\))?\\.removeAll\\(\\);$")) {
-				var m = M(line);
-				ServerLevel lvl = world(server, m.group(1));
-				String typeId = m.group(2);
-				int radius = gInt(m, 3, 0);
-				removeEntities(lvl, typeId, radius, vars);
-				continue;
-			}
+//			if (match(line, "^entities\\.inWorld\\(\"([^\"]+)\"\\)\\.ofType\\(\"([^\"]+)\"\\)(?:\\.within\\((\\d+)\\))?\\.removeAll\\(\\);$")) {
+//				var m = M(line);
+//				ServerLevel lvl = world(server, m.group(1));
+//				String typeId = m.group(2);
+//				int radius = gInt(m, 3, 0);
+//				removeEntities(lvl, typeId, radius, vars);
+//				continue;
+//			}
 
 			// entities.inWorld("id").ofType("id")[.within(n)].count();
-			if (match(line, "^entities\\.inWorld\\(\"([^\"]+)\"\\)\\.ofType\\(\"([^\"]+)\"\\)(?:\\.within\\((\\d+)\\))?\\.count\\(\\);$")) {
-				var m = M(line);
-				ServerLevel lvl = world(server, m.group(1));
-				String typeId = m.group(2);
-				int radius = gInt(m, 3, 0);
-				int count = countEntities(lvl, typeId, radius, vars);
-				System.out.println("[OBS] entities.count = " + count);
-				continue;
-			}
+//			if (match(line, "^entities\\.inWorld\\(\"([^\"]+)\"\\)\\.ofType\\(\"([^\"]+)\"\\)(?:\\.within\\((\\d+)\\))?\\.count\\(\\);$")) {
+//				var m = M(line);
+//				ServerLevel lvl = world(server, m.group(1));
+//				String typeId = m.group(2);
+//				int radius = gInt(m, 3, 0);
+//				int count = countEntities(lvl, typeId, radius, vars);
+//				System.out.println("[OBS] entities.count = " + count);
+//				continue;
+//			}
 
 			/* -------------------- WORLD.* -------------------- */
 
@@ -283,15 +283,15 @@ public final class ObsInterpreter1 {
 			}
 
 			// world.spawn("entity_id", x, y, z);
-			if (match(line, "^world\\.spawn\\(\"([^\"]+)\",\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*([-0-9.]+)\\);$")) {
-				var m = M(line);
-				String id = m.group(1);
-				double x = Double.parseDouble(m.group(2));
-				double y = Double.parseDouble(m.group(3));
-				double z = Double.parseDouble(m.group(4));
-				spawn(server.overworld(), id, x, y, z);
-				continue;
-			}
+//			if (match(line, "^world\\.spawn\\(\"([^\"]+)\",\\s*([-0-9.]+),\\s*([-0-9.]+),\\s*([-0-9.]+)\\);$")) {
+//				var m = M(line);
+//				String id = m.group(1);
+//				double x = Double.parseDouble(m.group(2));
+//				double y = Double.parseDouble(m.group(3));
+//				double z = Double.parseDouble(m.group(4));
+//				spawn(server.overworld(), id, x, y, z);
+//				continue;
+//			}
 
 			// world.rule("doDaylightCycle", false);
 //			if (line.matches("^world\\.rule\\(\"([A-Za-z0-9_]+)\",\\s*(true|false)\\);$")) {
@@ -444,46 +444,46 @@ public final class ObsInterpreter1 {
 		}
 	}
 
-	private static void spawn(ServerLevel lvl, String entityId, double x, double y, double z) {
-		EntityType<?> type = EntityType.byString(entityId).orElse(null);
-		if (type == null) return;
-		Entity e = type.create(lvl, EntitySpawnReason.COMMAND);
-		if (e == null) return;
-		e.moveOrInterpolateTo(new Vec3(x, y, z), 0, 0);
-		lvl.addFreshEntity(e);
-	}
-
-	private static void removeEntities(ServerLevel lvl, String typeId, int radius, ObsVars vars) {
-		EntityType<?> type = EntityType.byString(typeId).orElse(null);
-		if (lvl == null || type == null) return;
-
-		BlockPos c = center(lvl, vars);
-		int r = (radius <= 0 ? 32 : radius);
-
-		var aabb = new net.minecraft.world.phys.AABB(
-				c.getX()-r, c.getY()-r, c.getZ()-r,
-				c.getX()+r, c.getY()+r, c.getZ()+r
-		);
-
-		Entity source = extractSource(vars);
-		lvl.getEntities(source, aabb, e -> e.getType() == type).forEach(Entity::discard);
-	}
-
-	private static int countEntities(ServerLevel lvl, String typeId, int radius, ObsVars vars) {
-		EntityType<?> type = EntityType.byString(typeId).orElse(null);
-		if (lvl == null || type == null) return 0;
-
-		BlockPos c = center(lvl, vars);
-		int r = (radius <= 0 ? 32 : radius);
-
-		var aabb = new net.minecraft.world.phys.AABB(
-				c.getX()-r, c.getY()-r, c.getZ()-r,
-				c.getX()+r, c.getY()+r, c.getZ()+r
-		);
-
-		Entity source = extractSource(vars);
-		return lvl.getEntities(source, aabb, e -> e.getType() == type).size();
-	}
+//	private static void spawn(ServerLevel lvl, String entityId, double x, double y, double z) {
+//		EntityType<?> type = EntityType.byString(entityId).orElse(null);
+//		if (type == null) return;
+//		Entity e = type.create(lvl, EntitySpawnReason.COMMAND);
+//		if (e == null) return;
+//		e.moveOrInterpolateTo(new Vec3(x, y, z), 0, 0);
+//		lvl.addFreshEntity(e);
+//	}
+//
+//	private static void removeEntities(ServerLevel lvl, String typeId, int radius, ObsVars vars) {
+//		EntityType<?> type = EntityType.byString(typeId).orElse(null);
+//		if (lvl == null || type == null) return;
+//
+//		BlockPos c = center(lvl, vars);
+//		int r = (radius <= 0 ? 32 : radius);
+//
+//		var aabb = new net.minecraft.world.phys.AABB(
+//				c.getX()-r, c.getY()-r, c.getZ()-r,
+//				c.getX()+r, c.getY()+r, c.getZ()+r
+//		);
+//
+//		Entity source = extractSource(vars);
+//		lvl.getEntities(source, aabb, e -> e.getType() == type).forEach(Entity::discard);
+//	}
+//
+//	private static int countEntities(ServerLevel lvl, String typeId, int radius, ObsVars vars) {
+//		EntityType<?> type = EntityType.byString(typeId).orElse(null);
+//		if (lvl == null || type == null) return 0;
+//
+//		BlockPos c = center(lvl, vars);
+//		int r = (radius <= 0 ? 32 : radius);
+//
+//		var aabb = new net.minecraft.world.phys.AABB(
+//				c.getX()-r, c.getY()-r, c.getZ()-r,
+//				c.getX()+r, c.getY()+r, c.getZ()+r
+//		);
+//
+//		Entity source = extractSource(vars);
+//		return lvl.getEntities(source, aabb, e -> e.getType() == type).size();
+//	}
 
 	private static Entity extractSource(ObsVars vars) {
 		Object s = vars.get("sender");

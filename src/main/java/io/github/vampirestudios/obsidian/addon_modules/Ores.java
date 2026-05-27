@@ -107,7 +107,7 @@ public class Ores implements AddonModule {
 					.pushReaction(settings.getPushReaction())
 					.sound(settings.getBlockSoundGroup())
 					.friction(settings.slipperiness)
-					.emissiveRendering((state, level, pos) -> settings.is_emissive)
+					.emissiveRendering((state) -> settings.is_emissive)
 					.lightLevel(state -> settings.luminance)
 					.speedFactor(settings.velocity_modifier)
 					.jumpFactor(settings.jump_velocity_modifier)

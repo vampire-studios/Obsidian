@@ -442,17 +442,17 @@ public final class ObsInterpreter {
 			double r = ScriptUtils.parseDouble(a.get(3));
 			return p.position().distanceTo(new net.minecraft.world.phys.Vec3(x, y, z)) <= r;
 		}
-		if (s.startsWith("nearEntity(")) {
-			// nearEntity("minecraft:zombie", r)
-			var a = ScriptUtils.insideArgs(s);
-			String typeId = a.get(0);
-			double r = ScriptUtils.parseDouble(a.get(1));
-			var type = net.minecraft.world.entity.EntityType.byString(typeId).orElse(null);
-			if (type == null) return false;
-			var pos = p.position();
-			var aabb = new net.minecraft.world.phys.AABB(pos.x - r, pos.y - r, pos.z - r, pos.x + r, pos.y + r, pos.z + r);
-			return !p.level().getEntities(p, aabb, e -> e.getType() == type).isEmpty();
-		}
+//		if (s.startsWith("nearEntity(")) {
+//			// nearEntity("minecraft:zombie", r)
+//			var a = ScriptUtils.insideArgs(s);
+//			String typeId = a.get(0);
+//			double r = ScriptUtils.parseDouble(a.get(1));
+//			var type = net.minecraft.world.entity.EntityType.(typeId).orElse(null);
+//			if (type == null) return false;
+//			var pos = p.position();
+//			var aabb = new net.minecraft.world.phys.AABB(pos.x - r, pos.y - r, pos.z - r, pos.x + r, pos.y + r, pos.z + r);
+//			return !p.level().getEntities(p, aabb, e -> e.getType() == type).isEmpty();
+//		}
 		if (s.startsWith("light.between(")) {
 			// block light level at player’s feet
 			var a = ScriptUtils.insideArgs(s);

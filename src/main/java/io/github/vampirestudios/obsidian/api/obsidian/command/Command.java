@@ -193,7 +193,8 @@ public class Command {
 
             //Misc
             argumentTypeMap.put("particle_effect", ParticleArgument.particle(commandBuildContext));
-            argumentTypeMap.put("color", ColorArgument.color());
+            argumentTypeMap.put("team_color", TeamColorArgument.teamColor());
+            argumentTypeMap.put("hex_color", HexColorArgument.hexColor());
             argumentTypeMap.put("function", FunctionArgument.functions());
 
             //Custom

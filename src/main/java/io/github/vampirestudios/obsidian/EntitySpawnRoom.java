@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
@@ -32,11 +32,11 @@ public class EntitySpawnRoom extends StructurePiece {
         // Add entities based on the level
         if (world instanceof ServerLevel serverLevel) {
             if (level == BackroomsLevel.LEVEL_2) {
-                EntityType.ZOMBIE.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+                EntityTypes.ZOMBIE.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
             } else if (level == BackroomsLevel.LEVEL_3) {
-                EntityType.ENDERMAN.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+                EntityTypes.ENDERMAN.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
             } else if (level == BackroomsLevel.LEVEL_4) {
-                EntityType.WITCH.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+                EntityTypes.WITCH.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
             }
         }
     }

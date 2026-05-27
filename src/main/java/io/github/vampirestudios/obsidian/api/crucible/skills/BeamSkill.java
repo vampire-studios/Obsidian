@@ -16,7 +16,7 @@ import net.minecraft.server.players.UserBanListEntry;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Display;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
@@ -170,7 +170,7 @@ public class BeamSkill extends Skill {
     }
 
     private void spawnItemDisplayEntity(ServerLevel level, Vec3 position, ItemStack itemStack) {
-        Display.ItemDisplay displayEntity = new Display.ItemDisplay(EntityType.ITEM_DISPLAY, level);
+        Display.ItemDisplay displayEntity = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         displayEntity.setPos(position.x, position.y, position.z);
         displayEntity.setItemStack(itemStack);
         displayEntity.setNoGravity(true);

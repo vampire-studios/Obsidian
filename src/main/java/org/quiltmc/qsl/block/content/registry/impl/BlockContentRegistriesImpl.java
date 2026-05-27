@@ -17,16 +17,17 @@
 package org.quiltmc.qsl.block.content.registry.impl;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import io.github.vampirestudios.obsidian.ResourceLoaderEvents;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EnchantingTableBlock;
+import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
@@ -36,20 +37,11 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public class BlockContentRegistriesImpl implements ModInitializer {
 	private static final Map<Block, BlockState> INITIAL_PATH_STATES = ImmutableMap.copyOf(ShovelItem.FLATTENABLES);
 	private static final Map<Block, Block> INITIAL_STRIPPED_BLOCKS = ImmutableMap.copyOf(AxeItem.STRIPPABLES);
-
-	public static final BiMap<Block, Block> INITIAL_OXIDATION_BLOCKS = HashBiMap.create();
-	public static final BiMap<Block, Block> OXIDATION_INCREASE_BLOCKS = HashBiMap.create();
-	public static final BiMap<Block, Block> OXIDATION_DECREASE_BLOCKS = HashBiMap.create();
-
-	public static final BiMap<Block, Block> INITIAL_WAXED_BLOCKS = HashBiMap.create();
-	public static final BiMap<Block, Block> WAXED_UNWAXED_BLOCKS = HashBiMap.create();
-	public static final BiMap<Block, Block> UNWAXED_WAXED_BLOCKS = HashBiMap.create();
 
 	@Override
 	public void onInitialize() {
@@ -61,20 +53,8 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 		);
 		var initialFlammableBlocks = builder.build();
 
-		// Force load the maps
-		WeatheringCopper.NEXT_BY_BLOCK.get();
-		HoneycombItem.WAX_OFF_BY_BLOCK.get();
-
 		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLE);
 		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLE);
-		addMapToAttachment(INITIAL_OXIDATION_BLOCKS.entrySet().stream().collect(Collectors.toMap(
-				Map.Entry::getKey,
-				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.OXIDIZABLE);
-		addMapToAttachment(INITIAL_WAXED_BLOCKS.entrySet().stream().collect(Collectors.toMap(
-				Map.Entry::getKey,
-				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.WAXABLE);
 		addMapToAttachment(initialFlammableBlocks, BlockContentRegistries.FLAMMABLE);
 
 		resetMaps();
@@ -91,9 +71,9 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 		AxeItem.STRIPPABLES.clear();
 		setMapFromAttachment(AxeItem.STRIPPABLES::put, BlockContentRegistries.STRIPPABLE);
 
-		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLE);
-
-		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE);
+//		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLE);
+//
+//		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE);
 
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.igniteOdds.clear();

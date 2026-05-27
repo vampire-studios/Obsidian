@@ -183,7 +183,7 @@ public class Registries {
         Registry.register(PROPERTIES, "bamboo_leaves", BlockStateProperties.BAMBOO_LEAVES);
         Registry.register(PROPERTIES, "tilt", BlockStateProperties.TILT);
         Registry.register(PROPERTIES, "vertical_direction", BlockStateProperties.VERTICAL_DIRECTION);
-        Registry.register(PROPERTIES, "dripstone_thickness", BlockStateProperties.DRIPSTONE_THICKNESS);
+        Registry.register(PROPERTIES, "speleothem_thickness", BlockStateProperties.SPELEOTHEM_THICKNESS);
         Registry.register(PROPERTIES, "sculk_sensor_phase", BlockStateProperties.SCULK_SENSOR_PHASE);
         Registry.register(PROPERTIES, "chiseled_bookshelf_slot_0_occupied", BlockStateProperties.SLOT_0_OCCUPIED);
         Registry.register(PROPERTIES, "chiseled_bookshelf_slot_1_occupied", BlockStateProperties.SLOT_1_OCCUPIED);

@@ -32,8 +32,6 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  * Current properties:
  * <ul>
  *     <li>{@link #FLATTENABLE}</li>
- *     <li>{@link #OXIDIZABLE}</li>
- *     <li>{@link #WAXABLE}</li>
  *     <li>{@link #STRIPPABLE}</li>
  *     <li>{@link #FLAMMABLE}</li>
  * 	   <li>{@link #ENCHANTING_BOOSTERS}</li>
@@ -52,24 +50,6 @@ public class BlockContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE = RegistryEntryAttachment
 			.builder(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(NAMESPACE, "flattenable"), BlockState.class, BlockState.CODEC)
-			.build();
-
-	/**
-	 * A {@link RegistryEntryAttachment} for oxidizable blocks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/oxidizable.json}
-	 */
-	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(NAMESPACE, "oxidizable"), ReversibleBlockEntry.class, ReversibleBlockEntry.CODEC)
-			.build();
-
-	/**
-	 * A {@link RegistryEntryAttachment} for waxable blocks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/waxable.json}
-	 */
-	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(NAMESPACE, "waxable"), ReversibleBlockEntry.class, ReversibleBlockEntry.CODEC)
 			.build();
 
 	/**

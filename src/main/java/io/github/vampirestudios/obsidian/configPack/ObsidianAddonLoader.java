@@ -239,7 +239,8 @@ public class ObsidianAddonLoader {
 									case BOOL -> String.valueOf(
 											BoolArgumentType.getBool(ctx, name));
 									case TEXT, WORD -> StringArgumentType.getString(ctx, name);
-									case COLOR -> ColorArgument.getColor(ctx, name).toString();
+									case TEAM_COLOR -> TeamColorArgument.getTeamColor(ctx, name).toString();
+									case HEX_COLOR -> String.valueOf(HexColorArgument.getHexColor(ctx, name));
 									case ENTITY -> {
 										var e = EntityArgument.getEntity(ctx, name);
 										yield e.getUUID().toString();
@@ -308,7 +309,8 @@ public class ObsidianAddonLoader {
 				case BOOL -> Commands.argument(pd.name(), BoolArgumentType.bool());
 				case TEXT -> Commands.argument(pd.name(), StringArgumentType.greedyString());
 				case WORD -> Commands.argument(pd.name(), StringArgumentType.word());
-				case COLOR -> Commands.argument(pd.name(), ColorArgument.color());
+				case TEAM_COLOR -> Commands.argument(pd.name(), TeamColorArgument.teamColor());
+				case HEX_COLOR -> Commands.argument(pd.name(), HexColorArgument.hexColor());
 				case ENTITY -> Commands.argument(pd.name(), EntityArgument.entity());
 				case ENTITIES -> Commands.argument(pd.name(), EntityArgument.entities());
 				case PLAYER -> Commands.argument(pd.name(), EntityArgument.player());
