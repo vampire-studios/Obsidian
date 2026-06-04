@@ -13,7 +13,7 @@ import java.util.List;
 @Mixin(MultiPackResourceManager.class)
 public abstract class ReloadableResourceManagerImplMixin {
 
-    @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
+    @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true, order=900)
     private static List<PackResources> addAdditionalPacks(List<PackResources> packs) {
         List<PackResources> packsNew = new java.util.ArrayList<>(packs);
         ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(addonPack -> packsNew.add(new ObsidianAddonResourcePack(addonPack)));

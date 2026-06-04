@@ -66,7 +66,8 @@ public class ItemInitThread implements Runnable {
         }
         if (item.rendering != null && item.rendering.hasItemModelObject()) {
             Identifier baseOutId = Utils.prependToPath(itemId, "item/");
-            boolean hasBaseAlready = resourcePack.getResource(PackType.CLIENT_RESOURCES, baseOutId) != null;
+            boolean hasBaseAlready = resourcePack.getResource(PackType.CLIENT_RESOURCES,
+                    Identifier.fromNamespaceAndPath(itemId.getNamespace(), "models/item/" + itemId.getPath() + ".json")) != null;
             if (!hasBaseAlready) {
                 var info = item.rendering.getItemModel();
                 ARRPGenerationHelper.generateItemModel1(resourcePack, baseOutId, info.parent, info.textures);

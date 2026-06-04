@@ -27,10 +27,16 @@ public class BlockInitThread implements Runnable {
 
     private final Block block;
     private final RuntimeResourcePack resourcePack;
+    private final boolean registerBlockColors;
 
     public BlockInitThread(RuntimeResourcePack resourcePack, Block blockIn) {
+        this(resourcePack, blockIn, true);
+    }
+
+    public BlockInitThread(RuntimeResourcePack resourcePack, Block blockIn, boolean registerBlockColors) {
         block = blockIn;
         this.resourcePack = resourcePack;
+        this.registerBlockColors = registerBlockColors;
     }
 
     public static int getBlockEntityColor(Block block, BlockGetter view, BlockPos pos) {
@@ -135,8 +141,7 @@ public class BlockInitThread implements Runnable {
                                 ARRPGenerationHelper.generateLanternBlockModels(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures, hangingModelInformation.parent, hangingModelInformation.textures);
                                 break;
                             default:
-                                if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
-                                    System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
+                                if (resourcePack.getResource(PackType.CLIENT_RESOURCES, Identifier.fromNamespaceAndPath(blockId.getNamespace(), "models/block/" + blockId.getPath() + ".json")) != null) {
                                     break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
@@ -185,32 +190,28 @@ public class BlockInitThread implements Runnable {
                                 break;
                             case DIRECTIONAL:
                                 ARRPGenerationHelper.generateFacingBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"), block.rendering.model_rotation_offset);
-                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
-                                    System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
+                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Identifier.fromNamespaceAndPath(blockId.getNamespace(), "models/block/" + blockId.getPath() + ".json")) != null) {
                                     break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case HORIZONTAL_DIRECTIONAL:
                                 ARRPGenerationHelper.generateHorizontalFacingBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"), block.rendering.model_rotation_offset);
-                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
-                                    System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
+                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Identifier.fromNamespaceAndPath(blockId.getNamespace(), "models/block/" + blockId.getPath() + ".json")) != null) {
                                     break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             case ROTATED_PILLAR, LOG:
                                 ARRPGenerationHelper.generatePillarBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
-                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
-                                    System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
+                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Identifier.fromNamespaceAndPath(blockId.getNamespace(), "models/block/" + blockId.getPath() + ".json")) != null) {
                                     break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
                                 break;
                             default:
                                 ARRPGenerationHelper.generateBasicBlockState(resourcePack, blockId, Utils.prependToPath(blockId, "block/"));
-                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Utils.prependToPath(blockId, "block/")) != null) {
-                                    System.out.printf("Skipping model generation cause %s already exists%n", Utils.prependToPath(blockId, "block/"));
+                                if (!textureAndModelInformation.parent.getNamespace().equals("minecraft") && resourcePack.getResource(PackType.CLIENT_RESOURCES, Identifier.fromNamespaceAndPath(blockId.getNamespace(), "models/block/" + blockId.getPath() + ".json")) != null) {
                                     break;
                                 }
                                 ARRPGenerationHelper.generateBlockModel(resourcePack, blockId, textureAndModelInformation.parent, textureAndModelInformation.textures);
@@ -260,7 +261,7 @@ public class BlockInitThread implements Runnable {
 
             boolean dyable = block.additional_information != null && block.additional_information.dyable;
             dyable |= block.getBlockType() == Block.BlockType.DYEABLE;
-            if (dyable) {
+            if (registerBlockColors && dyable) {
                 net.minecraft.world.level.block.Block registeredBlock = BuiltInRegistries.BLOCK.getValue(block.information.id);
                 BlockColorRegistry.register(List.of(new BlockTintSource() {
                     @Override

@@ -28,12 +28,12 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.SimpleContainer;
-import net.vampirestudios.arrp.api.RRPCallback;
 import net.vampirestudios.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.arrp.api.SidedRRPCallback;
 import net.vampirestudios.arrp.assets.lang.Lang;
 
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -94,62 +94,78 @@ public class ClientInit implements ClientModInitializer {
                 )
             ));
 
-            RuntimeResourcePack resourcePack = iAddonPack.getResourcePack();
             if (!iAddonPack.getConfigPackInfo().hasAssets) {
-                for (Block block : ContentRegistries.BLOCKS)
-                    if (block.information.id.getNamespace().equals(id))
-                        new BlockInitThread(resourcePack, block).run();
-                for (Block block : ContentRegistries.ORES)
-                    if (block.information.id.getNamespace().equals(id))
-                        new BlockInitThread(resourcePack, block).run();
-                for (Item item : ContentRegistries.ITEMS)
-                    if (item.information.id.getNamespace().equals(id))
-                        new ItemInitThread(resourcePack, item).run();
-                for (NexoItem item : ContentRegistries.NEXO_ITEMS)
-                    if (item.id.getNamespace().equals(id))
-                        new OraxenItemInitThread(resourcePack, item).run();
-                for (ToolItem item : ContentRegistries.TOOLS)
-                    if (item.information.id.getNamespace().equals(id))
-                        new ItemInitThread(resourcePack, item).run();
-                for (SoundPlayingItem item : ContentRegistries.SOUND_PLAYING_ITEMS)
-                    if (item.information.id.getNamespace().equals(id))
-                        new ItemInitThread(resourcePack, item).run();
-                for (WeaponItem item : ContentRegistries.WEAPONS)
-                    if (item.information.id.getNamespace().equals(id))
-                        new ItemInitThread(resourcePack, item).run();
-                for (RangedWeaponItem item : ContentRegistries.RANGED_WEAPONS)
-                    if (item.information.id.getNamespace().equals(id))
-                        new ItemInitThread(resourcePack, item).run();
-                for (ShieldItem item : ContentRegistries.SHIELDS)
-                    if (item.information.id.getNamespace().equals(id))
-                        new ItemInitThread(resourcePack, item).run();
-                for (FoodItem foodItem : ContentRegistries.FOODS)
-                    if (foodItem.information.id.getNamespace().equals(id))
-                        new ItemInitThread(resourcePack, foodItem).run();
-                for (ArmorItem armor : ContentRegistries.ARMORS)
-                    if (armor.information.id.getNamespace().equals(id))
-                        new ArmorInitThread(resourcePack, armor).run();
-                for (Entity entity : ContentRegistries.ENTITIES)
-                    if (entity.description.id != null && entity.description.id.getNamespace().equals(id))
-                        new EntityInitThread(entity).run();
-                for (ItemGroup itemGroup : ContentRegistries.ITEM_GROUPS)
-                    if (itemGroup.id.getNamespace().equals(id))
-                        new ItemGroupInitThread(itemGroup).run();
-                for (SubItemGroup itemGroup : Registries.SUB_ITEM_GROUPS)
-                    if (itemGroup.id.getNamespace().equals(id))
-                        new SubItemGroupInitThread(itemGroup).run();
-                for (Elytra elytra : ContentRegistries.ELYTRAS)
-                    if (elytra.information.id.getNamespace().equals(id))
-                        new ElytraInitThread(elytra).run();
-                translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
-                    Lang lang = Lang.lang();
-                    translations.forEach(lang::entry);
-                    resourcePack.addLang(Identifier.fromNamespaceAndPath(modId, languageId), lang);
-                }));
-                RRPCallback.AFTER_VANILLA.register(a -> a.add(resourcePack));
-                resourcePack.dumpDirect(Path.of("rrp.debug"));
+                initializeOneTimeClientContent(id);
+                boolean[] firstGeneration = {true};
+                SidedRRPCallback.AFTER_VANILLA.register((type, packs) -> {
+                    if (type != PackType.CLIENT_RESOURCES) {
+                        return;
+                    }
+                    RuntimeResourcePack resourcePack = iAddonPack.getResourcePack();
+                    generateAssets(id, resourcePack, firstGeneration[0]);
+                    if (firstGeneration[0]) {
+                        firstGeneration[0] = false;
+                    }
+                    packs.add(resourcePack);
+                });
             }
         });
+    }
+
+    private static void generateAssets(String id, RuntimeResourcePack resourcePack, boolean registerBlockColors) {
+        for (Block block : ContentRegistries.BLOCKS)
+            if (block.information.id.getNamespace().equals(id))
+                new BlockInitThread(resourcePack, block, registerBlockColors).run();
+        for (Block block : ContentRegistries.ORES)
+            if (block.information.id.getNamespace().equals(id))
+                new BlockInitThread(resourcePack, block, registerBlockColors).run();
+        for (Item item : ContentRegistries.ITEMS)
+            if (item.information.id.getNamespace().equals(id))
+                new ItemInitThread(resourcePack, item).run();
+        for (NexoItem item : ContentRegistries.NEXO_ITEMS)
+            if (item.id.getNamespace().equals(id))
+                new OraxenItemInitThread(resourcePack, item).run();
+        for (ToolItem item : ContentRegistries.TOOLS)
+            if (item.information.id.getNamespace().equals(id))
+                new ItemInitThread(resourcePack, item).run();
+        for (SoundPlayingItem item : ContentRegistries.SOUND_PLAYING_ITEMS)
+            if (item.information.id.getNamespace().equals(id))
+                new ItemInitThread(resourcePack, item).run();
+        for (WeaponItem item : ContentRegistries.WEAPONS)
+            if (item.information.id.getNamespace().equals(id))
+                new ItemInitThread(resourcePack, item).run();
+        for (RangedWeaponItem item : ContentRegistries.RANGED_WEAPONS)
+            if (item.information.id.getNamespace().equals(id))
+                new ItemInitThread(resourcePack, item).run();
+        for (ShieldItem item : ContentRegistries.SHIELDS)
+            if (item.information.id.getNamespace().equals(id))
+                new ItemInitThread(resourcePack, item).run();
+        for (FoodItem foodItem : ContentRegistries.FOODS)
+            if (foodItem.information.id.getNamespace().equals(id))
+                new ItemInitThread(resourcePack, foodItem).run();
+        for (ArmorItem armor : ContentRegistries.ARMORS)
+            if (armor.information.id.getNamespace().equals(id))
+                new ArmorInitThread(resourcePack, armor).run();
+        translationMap.forEach((modId, modTranslations) -> modTranslations.forEach((languageId, translations) -> {
+            Lang lang = Lang.lang();
+            translations.forEach(lang::entry);
+            resourcePack.addLang(Identifier.fromNamespaceAndPath(modId, languageId), lang);
+        }));
+    }
+
+    private static void initializeOneTimeClientContent(String id) {
+        for (Entity entity : ContentRegistries.ENTITIES)
+            if (entity.description.id != null && entity.description.id.getNamespace().equals(id))
+                new EntityInitThread(entity).run();
+        for (ItemGroup itemGroup : ContentRegistries.ITEM_GROUPS)
+            if (itemGroup.id.getNamespace().equals(id))
+                new ItemGroupInitThread(itemGroup).run();
+        for (SubItemGroup itemGroup : Registries.SUB_ITEM_GROUPS)
+            if (itemGroup.id.getNamespace().equals(id))
+                new SubItemGroupInitThread(itemGroup).run();
+        for (Elytra elytra : ContentRegistries.ELYTRAS)
+            if (elytra.information.id.getNamespace().equals(id))
+                new ElytraInitThread(elytra).run();
     }
 
 }
