@@ -12,5 +12,6 @@ public class OBlockTags {
 		return TagKey.create(Registries.BLOCK, Obsidian.id(name));
 	}
 
-	public static void init() {}
+	public static void init() {
+	}
 }

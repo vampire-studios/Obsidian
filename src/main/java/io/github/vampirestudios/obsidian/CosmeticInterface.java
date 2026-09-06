@@ -5,9 +5,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public interface CosmeticInterface {
-    void obsidian$addHolder(LivingEntity livingEntity, Item item, ItemStack itemStack, String slot);
+	void obsidian$addHolder(LivingEntity livingEntity, Item item, ItemStack itemStack, String slot);
 
-    void obsidian$destroyHolder(String slot);
+	void obsidian$destroyHolder(String slot);
 
-    float obsidian$bodyYaw();
+	float obsidian$bodyYaw();
 }

@@ -6,6 +6,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -31,32 +33,95 @@ import org.jspecify.annotations.Nullable;
 import org.quiltmc.qsl.fluid.api.QuiltFluidBlock;
 import org.quiltmc.qsl.fluid.impl.QuiltFluid;
 
+import java.util.List;
+
 public abstract class FluidImpl extends QuiltFluid {
-	public static IntegerProperty LEVEL;
 
-	private final QuiltFluidBlock fluidBlock;
+	/**
+	 * The level property of the fluid currently being built. {@link #createFluidStateDefinition} runs
+	 * from the {@link Fluid} constructor, before this subclass can assign any field, so the property has
+	 * to be handed over out-of-band — the same hand-off {@link BlockImpl} uses for its block properties.
+	 */
+	private static final ThreadLocal<IntegerProperty> CONSTRUCTING_LEVEL =
+			ThreadLocal.withInitial(() -> IntegerProperty.create("level", 0, 8));
+
 	private final io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid;
+	private final IntegerProperty level;
 
-	public FluidImpl(io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid) {
-		LEVEL = IntegerProperty.create("level", 0, fluid.maxFluidLevel);
+	// Assigned by register(), which is the only thing allowed to build a fluid pair. Vanilla calls
+	// getSource()/getFlowing()/getBucket() constantly at runtime, so none of them may register anything.
+	private QuiltFluidBlock fluidBlock;
+	private Still source;
+	private Flowing flowing;
+	private Item bucket;
+
+	protected FluidImpl(io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid) {
 		this.fluid = fluid;
-		this.fluidBlock = Registry.register(BuiltInRegistries.BLOCK, fluid.id, new QuiltFluidBlock(this, BlockBehaviour.Properties.ofLegacyCopy(Blocks.WATER)));
+		this.level = CONSTRUCTING_LEVEL.get();
+	}
+
+	/**
+	 * Builds and registers one fluid: its still and flowing forms, its block, and its bucket.
+	 *
+	 * <p>The still form is the one everything else points at, so it has to exist before the block and
+	 * the bucket are built, and both forms have to be wired to each other before either is registered —
+	 * the registry freeze walks the fluid's states as soon as it is added.
+	 *
+	 * @return the registered still fluid
+	 */
+	public static Still register(io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid) {
+		Identifier flowingId = Utils.appendToPath(fluid.id, "_flowing");
+		Identifier bucketId = Utils.appendToPath(fluid.id, "_bucket");
+
+		CONSTRUCTING_LEVEL.set(IntegerProperty.create("level", 0, fluid.maxFluidLevel));
+		Still still;
+		Flowing flowing;
+		try {
+			still = new Still(fluid);
+			flowing = new Flowing(fluid);
+		} finally {
+			CONSTRUCTING_LEVEL.remove();
+		}
+
+		QuiltFluidBlock block = new QuiltFluidBlock(still, BlockBehaviour.Properties.ofLegacyCopy(Blocks.WATER)
+				.setId(ResourceKey.create(Registries.BLOCK, fluid.id)));
+		Item bucket = new BucketItem(still, new Item.Properties()
+				.stacksTo(1)
+				.setId(ResourceKey.create(Registries.ITEM, bucketId)));
+
+		for (FluidImpl form : List.of(still, flowing)) {
+			form.fluidBlock = block;
+			form.source = still;
+			form.flowing = flowing;
+			form.bucket = bucket;
+		}
+
+		Registry.register(BuiltInRegistries.FLUID, fluid.id, still);
+		Registry.register(BuiltInRegistries.FLUID, flowingId, flowing);
+		Registry.register(BuiltInRegistries.BLOCK, fluid.id, block);
+		Registry.register(BuiltInRegistries.ITEM, bucketId, bucket);
+
+		return still;
+	}
+
+	/** The level property this fluid's states were built with. */
+	public IntegerProperty getLevelProperty() {
+		return this.level;
 	}
 
 	@Override
 	public Fluid getFlowing() {
-		return Registry.register(BuiltInRegistries.FLUID, Utils.appendToPath(this.fluid.id, "_flowing"), new Flowing(this.fluid));
+		return this.flowing;
 	}
 
 	@Override
 	public Fluid getSource() {
-		return Registry.register(BuiltInRegistries.FLUID, this.fluid.id, new Still(this.fluid));
+		return this.source;
 	}
 
 	@Override
 	public Item getBucket() {
-		return Registry.register(BuiltInRegistries.ITEM, Utils.appendToPath(this.fluid.id, "_bucket"), new BucketItem(this, new Item.Properties()
-				.stacksTo(1)));
+		return this.bucket;
 	}
 
 	@Override
@@ -216,15 +281,17 @@ public abstract class FluidImpl extends QuiltFluid {
 		public Flowing(io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid fluid) {
 			super(fluid);
 		}
+
 		@Override
 		protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
 			super.createFluidStateDefinition(builder);
-			builder.add(LEVEL);
+			// Runs from the superclass constructor, so the field is not assigned yet — read the hand-off.
+			builder.add(CONSTRUCTING_LEVEL.get());
 		}
 
 		@Override
 		public int getAmount(FluidState fluidState) {
-			return fluidState.getValue(LEVEL);
+			return fluidState.getValue(this.getLevelProperty());
 		}
 
 		@Override

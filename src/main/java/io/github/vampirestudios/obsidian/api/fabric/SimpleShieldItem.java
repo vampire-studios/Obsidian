@@ -4,7 +4,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShieldItem;
 
 public class SimpleShieldItem extends ShieldItem {
-    public SimpleShieldItem(Item.Properties settings) {
-        super(settings);
-    }
+	public SimpleShieldItem(Item.Properties settings) {
+		super(settings);
+	}
 }

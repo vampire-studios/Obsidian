@@ -16,24 +16,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockItem.class)
 public abstract class BlockItemPlaceMixin {
-    @Inject(
-            method = "place",
-            at = @At("RETURN")
-    )
-    private void crucible$afterPlace(BlockPlaceContext ctx, CallbackInfoReturnable<InteractionResult> cir) {
-        // Only after a successful place
-        if (!cir.getReturnValue().consumesAction()) return;
-        if (!(ctx.getPlayer() instanceof ServerPlayer sp)) return;
-        if (!(ctx.getLevel() instanceof ServerLevel sl)) return;
+	@Inject(
+			method = "place",
+			at = @At("RETURN")
+	)
+	private void crucible$afterPlace(BlockPlaceContext ctx, CallbackInfoReturnable<InteractionResult> cir) {
+		// Only after a successful place
+		if (!cir.getReturnValue().consumesAction()) return;
+		if (!(ctx.getPlayer() instanceof ServerPlayer sp)) return;
+		if (!(ctx.getLevel() instanceof ServerLevel sl)) return;
 
-        BlockPos pos = ctx.getClickedPos().relative(ctx.getClickedFace());
-        CrucibleEvents.fire(SkillTrigger.BLOCK_PLACE,
-                SkillContext.builder(sp)
-                        .level(sl)
-                        .hand(ctx.getHand())
-                        .stack(ctx.getItemInHand())
-                        .position(pos)
-                        .build()
-        );
-    }
+		BlockPos pos = ctx.getClickedPos().relative(ctx.getClickedFace());
+		CrucibleEvents.fire(SkillTrigger.BLOCK_PLACE,
+				SkillContext.builder(sp)
+						.level(sl)
+						.hand(ctx.getHand())
+						.stack(ctx.getItemInHand())
+						.position(pos)
+						.build()
+		);
+	}
 }

@@ -2,9 +2,8 @@
   "information": {
     "name": {
       "translations": {
-        "en_us": "Eatable Bucket"
+        "en_us": "<color #ca165f>Eatable Bucket"
       },
-      "color": "#ca165f",
       "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
     },
     "item_group": "minecraft:food",

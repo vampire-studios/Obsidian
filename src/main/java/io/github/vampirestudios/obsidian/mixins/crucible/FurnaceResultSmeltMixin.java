@@ -15,16 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FurnaceResultSlot.class)
 public class FurnaceResultSmeltMixin {
 
-    @Inject(method = "onTake(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
-    private void crucible$smelt(Player player, ItemStack smelted, CallbackInfo ci) {
-        if (!(player instanceof ServerPlayer sp)) return;
+	@Inject(method = "onTake(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
+	private void crucible$smelt(Player player, ItemStack smelted, CallbackInfo ci) {
+		if (!(player instanceof ServerPlayer sp)) return;
 
-        CrucibleEvents.fire(
-                SkillTrigger.ITEM_SMELT,
-                SkillContext.builder(sp)
-                        .level(sp.level())
-                        .stack(smelted)
-                        .build()
-        );
-    }
+		CrucibleEvents.fire(
+				SkillTrigger.ITEM_SMELT,
+				SkillContext.builder(sp)
+						.level(sp.level())
+						.stack(smelted)
+						.build()
+		);
+	}
 }

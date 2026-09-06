@@ -2,10 +2,9 @@
     "information": {
         "name": {
             "translations": {
-                "en_us": "Poisoned Apple Pie",
-                "nb_no": "Giftig eplepai"
-            },
-            "color": "#ca165f"
+                "en_us": "<color #ca165f>Poisoned Apple Pie",
+                "nb_no": "<color #ca165f>Giftig eplepai"
+            }
         },
         "item_group": "minecraft:food",
         "rarity": "common",

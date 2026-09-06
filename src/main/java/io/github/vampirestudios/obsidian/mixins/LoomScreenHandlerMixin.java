@@ -12,14 +12,16 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(LoomMenu.class)
 public class LoomScreenHandlerMixin {
 
-    @Shadow @Final private ContainerLevelAccess access;
+	@Shadow
+	@Final
+	private ContainerLevelAccess access;
 
-    /**
-     * @author Olivia
-     * @reason idk
-     */
-    @Overwrite
-    public boolean stillValid(Player player) {
-        return this.access.evaluate((world, pos) -> world.getBlockState(pos).getBlock() instanceof LoomBlock, true);
-    }
+	/**
+	 * @author Olivia
+	 * @reason idk
+	 */
+	@Overwrite
+	public boolean stillValid(Player player) {
+		return this.access.evaluate((world, pos) -> world.getBlockState(pos).getBlock() instanceof LoomBlock, true);
+	}
 }

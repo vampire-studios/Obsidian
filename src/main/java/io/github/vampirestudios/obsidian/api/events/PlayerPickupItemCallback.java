@@ -16,18 +16,18 @@ import net.minecraft.world.entity.player.Player;
  *  - FAIL:    cancels pickup entirely
  */
 public interface PlayerPickupItemCallback {
-    Event<PlayerPickupItemCallback> EVENT = EventFactory.createArrayBacked(
-        PlayerPickupItemCallback.class,
-        listeners -> (player, item) -> {
-            for (PlayerPickupItemCallback listener : listeners) {
-                InteractionResult res = listener.interact(player, item);
-                if (res != InteractionResult.PASS) {
-                    return res;
-                }
-            }
-            return InteractionResult.PASS;
-        }
-    );
+	Event<PlayerPickupItemCallback> EVENT = EventFactory.createArrayBacked(
+			PlayerPickupItemCallback.class,
+			listeners -> (player, item) -> {
+				for (PlayerPickupItemCallback listener : listeners) {
+					InteractionResult res = listener.interact(player, item);
+					if (res != InteractionResult.PASS) {
+						return res;
+					}
+				}
+				return InteractionResult.PASS;
+			}
+	);
 
-    InteractionResult interact(Player player, ItemEntity itemEntity);
+	InteractionResult interact(Player player, ItemEntity itemEntity);
 }

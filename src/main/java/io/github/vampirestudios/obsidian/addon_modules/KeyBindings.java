@@ -1,18 +1,17 @@
+/*
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.KeyBinding;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.KeybindingImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.impl.client.keymapping.KeyMappingRegistryImpl;
 import net.minecraft.resources.Identifier;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -20,25 +19,27 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.f
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class KeyBindings implements AddonModule {
-    @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        KeyBinding keyBinding = BaseGson.GSON.fromJson(new FileReader(file), KeyBinding.class);
-        try {
-            if (keyBinding == null) return;
-            Identifier identifier = Objects.requireNonNullElseGet(
-                    keyBinding.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
-            );
-            if (keyBinding.id == null) keyBinding.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-            KeyMappingRegistryImpl.registerKeyMapping(new KeybindingImpl(keyBinding));
-            register(ContentRegistries.KEY_BINDINGS, "key_binding", identifier, keyBinding);
-        } catch (Exception e) {
-            failedRegistering("key_binding", file.getName(), e);
-        }
-    }
+	@Override
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		KeyBinding keyBinding = AddonFormats.read(addon, file, KeyBinding.class);
+		try {
+			if (keyBinding == null) return;
+			Identifier identifier = Objects.requireNonNullElseGet(
+					keyBinding.id,
+					() -> Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file))
+			);
+			if (keyBinding.id == null)
+				keyBinding.id = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
+			KeyMappingRegistryImpl.registerKeyMapping(new KeybindingImpl(keyBinding));
+			register(ContentRegistries.KEY_BINDINGS, "key_binding", identifier, keyBinding);
+		} catch (Exception e) {
+			failedRegistering("key_binding", file.getName(), e);
+		}
+	}
 
-    @Override
-    public String getType() {
-        return "key_binding";
-    }
+	@Override
+	public String getType() {
+		return "key_binding";
+	}
 }
+*/

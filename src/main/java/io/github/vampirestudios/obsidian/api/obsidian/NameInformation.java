@@ -10,25 +10,25 @@ import java.util.Objects;
 
 public class NameInformation extends SpecialText {
 
-    public static final Codec<NameInformation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.optionalFieldOf("text", "").forGetter(s -> s.text),
-            Codec.STRING.optionalFieldOf("text_type", "").forGetter(s -> s.textType),
-            Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("translations", Map.of()).forGetter(s -> s.translations)
-    ).apply(instance, NameInformation::new));
+	public static final Codec<NameInformation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.STRING.optionalFieldOf("text", "").forGetter(s -> s.text),
+			Codec.STRING.optionalFieldOf("text_type", "").forGetter(s -> s.textType),
+			Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("translations", Map.of()).forGetter(s -> s.translations)
+	).apply(instance, NameInformation::new));
 
-    public NameInformation(String text, String textType, Map<String, String> translations) {
-        super(text, textType, translations);
-    }
+	public NameInformation(String text, String textType, Map<String, String> translations) {
+		super(text, textType, translations);
+	}
 
-    public NameInformation() {
-    }
+	public NameInformation() {
+	}
 
-    public Component getName(String type, Identifier id) {
-        if (id != null && Objects.equals(this.textType, "translatable")) {
+	public Component getName(String type, Identifier id) {
+		if (id != null && Objects.equals(this.textType, "translatable")) {
 			return Component.translatable(id.toLanguageKey(type));
-        } else {
-            return getName();
-        }
-    }
+		} else {
+			return getName();
+		}
+	}
 
 }

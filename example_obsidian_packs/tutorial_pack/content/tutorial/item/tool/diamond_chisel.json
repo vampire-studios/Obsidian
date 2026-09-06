@@ -1,0 +1,48 @@
+{
+  "tool_type": "chisel",
+  "material": "minecraft:diamond",
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Diamond Chisel"
+      }
+    },
+    "lore": [
+      "Carves stone into finer shapes."
+    ]
+  },
+  "chisel_mappings": [
+    {
+      "from": "minecraft:stone_bricks",
+      "to": "minecraft:chiseled_stone_bricks",
+      "sound": "minecraft:block.stone.hit",
+      "particle": "scrape",
+      "item_damage_per_use": 1
+    },
+    {
+      "from": {
+        "type": "minecraft:matching_block_tag",
+        "tag": "minecraft:base_stone_overworld"
+      },
+      "to": "minecraft:cobblestone",
+      "sound": "minecraft:block.stone.hit",
+      "item_damage_per_use": 1
+    },
+    {
+      "from": "minecraft:cobblestone",
+      "to": {
+        "type": "minecraft:weighted_state_provider",
+        "entries": [
+          { "weight": 4, "data": { "Name": "minecraft:mossy_cobblestone" } },
+          { "weight": 1, "data": { "Name": "minecraft:cracked_stone_bricks" } }
+        ]
+      },
+      "sound": "minecraft:block.stone.hit",
+      "disallowed_faces": ["down"],
+      "item_damage_per_use": 2
+    }
+  ],
+  "rendering": {
+    "item_model": "minecraft:item/diamond_pickaxe"
+  }
+}

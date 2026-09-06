@@ -32,7 +32,10 @@ final class Parser {
 		var blk = new Stmt.Block();
 		while (!peek(K.EOF)) {
 			// NEW: tolerate accidental top-level RBRACE/SEMI (e.g., when a DSL "actions" block leaked a brace)
-			if (peek(K.SEMI) || peek(K.RBRACE)) { i++; continue; }
+			if (peek(K.SEMI) || peek(K.RBRACE)) {
+				i++;
+				continue;
+			}
 
 			int before = i;
 			blk.stmts().add(parseStmt());
@@ -62,8 +65,8 @@ final class Parser {
 			if (peek(K.STATE)) return parseStateAssign();
 			if (peek(K.CONFIG)) return parseConfigStmt();
 			if (peek(K.OBSERVABLE)) return parseObservable();
-			if (peek(K.WATCH))  return parseWatch();
-			if (peek(K.ID) && t.get(i+1).k()==K.ASSIGN) return parseAssign();
+			if (peek(K.WATCH)) return parseWatch();
+			if (peek(K.ID) && t.get(i + 1).k() == K.ASSIGN) return parseAssign();
 			return parseCallOrFuncStmt();
 		} catch (RuntimeException ex) {
 			synchronize();
@@ -272,7 +275,10 @@ final class Parser {
 		need(K.OBSERVABLE, "observable");
 		String name = need(K.ID, "observable name").s();
 		Expr init = new Expr.Num(0); // default 0
-		if (peek(K.ASSIGN)) { i++; init = parseExpr(); }
+		if (peek(K.ASSIGN)) {
+			i++;
+			init = parseExpr();
+		}
 		need(K.SEMI, "Expected ';' after observable");
 		return new Stmt.Observable(name, init);
 	}
@@ -313,7 +319,11 @@ final class Parser {
 			List<Expr> args = new ArrayList<>();
 			if (!peek(K.RP)) {
 				args.add(parseExpr());
-				while (peek(K.COMMA)) { i++; if (peek(K.RP)) break; args.add(parseExpr()); }
+				while (peek(K.COMMA)) {
+					i++;
+					if (peek(K.RP)) break;
+					args.add(parseExpr());
+				}
 			}
 			need(K.RP, ")");
 			need(K.SEMI, "Expected ';' after function call");

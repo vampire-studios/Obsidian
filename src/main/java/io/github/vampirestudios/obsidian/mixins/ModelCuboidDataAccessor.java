@@ -16,20 +16,20 @@ import java.util.Set;
 public interface ModelCuboidDataAccessor {
 	@Invoker("<init>")
 	static CubeDefinition createModelCuboidData(
-		@Nullable String string,
-		float f,
-		float g,
-		float h,
-		float i,
-		float j,
-		float k,
-		float l,
-		float m,
-		CubeDeformation dilation,
-		boolean bl,
-		float n,
-		float o,
-		Set<Direction> set
+			@Nullable String string,
+			float f,
+			float g,
+			float h,
+			float i,
+			float j,
+			float k,
+			float l,
+			float m,
+			CubeDeformation dilation,
+			boolean bl,
+			float n,
+			float o,
+			Set<Direction> set
 	) {
 		throw new UnsupportedOperationException();
 	}

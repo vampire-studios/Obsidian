@@ -1,25 +1,17 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.Jankson;
-import blue.endless.jankson.JsonObject;
-import blue.endless.jankson.api.SyntaxError;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.toml.TomlFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemDisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ItemInformation;
-import io.github.vampirestudios.obsidian.configPack.LegacyObsidianAddonInfo;
-import io.github.vampirestudios.obsidian.configPack.ObsidianAddonInfo;
 import io.github.vampirestudios.obsidian.minecraft.CustomMenuItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BlockItemImpl;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.BundleItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -33,23 +25,21 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.hjson.JsonValue;
-import org.hjson.Stringify;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.alreadyRegistered;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class Items implements AddonModule {
 
 	@Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
 		if (!"obsidian".equals(id.format())) return;
 
 		io.github.vampirestudios.obsidian.api.obsidian.item.Item item = loadItem(addon, file);
@@ -60,6 +50,10 @@ public class Items implements AddonModule {
 
 		try {
 			Identifier identifier = getIdentifier(item, id, file);
+			// Asked before the item is built: a built one that cannot be registered leaves a registry entry
+			// behind that stops the game finishing startup at all.
+			if (alreadyRegistered(BuiltInRegistries.ITEM, identifier, "item", file.getName())) return;
+
 			Item.Properties settings = createItemProperties(item).setId(ResourceKey.create(Registries.ITEM, identifier));
 			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 			ResourceKey<CreativeModeTab> creativeTab = ItemModuleHelper.getCreativeTab(item);
@@ -74,33 +68,12 @@ public class Items implements AddonModule {
 		}
 	}
 
-	private io.github.vampirestudios.obsidian.api.obsidian.item.Item loadItem(IAddonPack addon, File file) throws IOException, SyntaxError {
-		io.github.vampirestudios.obsidian.api.obsidian.item.Item item;
-		if (addon.getConfigPackInfo() instanceof LegacyObsidianAddonInfo) {
-			item = BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
-		} else {
-			ObsidianAddonInfo addonInfo = (ObsidianAddonInfo) addon.getConfigPackInfo();
-			item = switch (addonInfo.format) {
-				case JSON ->
-						BaseGson.GSON.fromJson(new FileReader(file), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
-				case JSON5 -> {
-					JsonObject jsonObject = Jankson.builder().build().load(file);
-					yield Jankson.builder().build().fromJson(jsonObject, io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
-				}
-				case YAML ->
-						new ObjectMapper(new YAMLFactory()).readValue(file, io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
-				case TOML ->
-						new ObjectMapper(new TomlFactory()).readValue(file, io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
-				case HJSON ->
-						BaseGson.GSON.fromJson(JsonValue.readHjson(new FileReader(file)).toString(Stringify.FORMATTED), io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
-				default -> null;
-			};
-		}
-		return item;
+	private io.github.vampirestudios.obsidian.api.obsidian.item.Item loadItem(IAddonPack addon, File file) throws IOException {
+		return AddonFormats.read(addon, file, io.github.vampirestudios.obsidian.api.obsidian.item.Item.class);
 	}
 
 	private Identifier getIdentifier(io.github.vampirestudios.obsidian.api.obsidian.item.Item item, BasicAddonInfo id, File file) {
-		Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replace(".json", ""));
+		Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
 		item.information.id = identifier;
 		return identifier;
 	}
@@ -109,19 +82,10 @@ public class Items implements AddonModule {
 		Item.Properties props = new Item.Properties();
 
 		var settings = item.information.getItemSettings();
-		if (settings != null) {
-			props.stacksTo(settings.maxStackSize)
-					.rarity(net.minecraft.world.item.Rarity.valueOf(settings.rarity.toUpperCase(java.util.Locale.ROOT)));
-
-			if (item.damageable && settings.durability != 0) props.durability(settings.durability);
-			if (settings.fireproof) props.fireResistant();
-			if (settings.tooltipStyle != null) {
-				props.component(net.minecraft.core.component.DataComponents.TOOLTIP_STYLE,
-						settings.tooltipStyle);
-			}
-		}
+		if (settings != null) settings.applyTo(props, item.damageable);
 
 		if (item.components != null) ItemModuleHelper.applyAllComponents(props, item.components);
+		ItemModuleHelper.applyPalette(props, item);
 
 		return props;
 	}
@@ -149,7 +113,7 @@ public class Items implements AddonModule {
 	}
 
 	private Item registerItem(RegistryHelperItemExpanded expanded, io.github.vampirestudios.obsidian.api.obsidian.item.Item item, Identifier identifier,
-							  Item.Properties settings, ResourceKey<CreativeModeTab> creativeTab) {
+	                          Item.Properties settings, ResourceKey<CreativeModeTab> creativeTab) {
 		Item registeredItem;
 		if (item.information.getItemSettings().canPlaceBlock) {
 			registeredItem = expanded.registerItem(identifier, new BlockItemImpl(item, BuiltInRegistries.BLOCK.getValue(item.information.getItemSettings().placableBlock), settings), creativeTab);

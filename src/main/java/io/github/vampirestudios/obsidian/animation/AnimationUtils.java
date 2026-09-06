@@ -1,9 +1,10 @@
 package io.github.vampirestudios.obsidian.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import net.minecraft.client.animation.AnimationChannel;
+
 import java.util.Map;
 import java.util.Optional;
-import net.minecraft.client.animation.AnimationChannel;
 
 public class AnimationUtils {
 	private static final Map<String, AnimationChannel.Interpolation> INTERPOLATORS = new Object2ObjectLinkedOpenHashMap<>();

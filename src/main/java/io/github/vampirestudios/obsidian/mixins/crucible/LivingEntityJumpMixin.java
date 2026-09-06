@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityJumpMixin {
-    @Inject(method = "jumpFromGround", at = @At("TAIL"))
-    private void crucible$afterJump(CallbackInfo ci) {
-        LivingEntity le = (LivingEntity)(Object)this;
-        if (!(le instanceof ServerPlayer sp)) return;
-        if (!(sp.level() instanceof ServerLevel level)) return;
+	@Inject(method = "jumpFromGround", at = @At("TAIL"))
+	private void crucible$afterJump(CallbackInfo ci) {
+		LivingEntity le = (LivingEntity) (Object) this;
+		if (!(le instanceof ServerPlayer sp)) return;
+		if (!(sp.level() instanceof ServerLevel level)) return;
 
-        CrucibleEvents.fire(SkillTrigger.JUMP,
-                SkillContext.builder(sp).level(level).build()
-        );
-    }
+		CrucibleEvents.fire(SkillTrigger.JUMP,
+				SkillContext.builder(sp).level(level).build()
+		);
+	}
 }

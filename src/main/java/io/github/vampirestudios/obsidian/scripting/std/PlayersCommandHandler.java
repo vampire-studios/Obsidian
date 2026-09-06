@@ -70,7 +70,7 @@ public class PlayersCommandHandler implements CommandHandler {
 				}
 			}
 			return;
-		} */else {
+		} */ else {
 			LOGGER.warn("Unknown players method with block: {}", segment.name());
 		}
 	}

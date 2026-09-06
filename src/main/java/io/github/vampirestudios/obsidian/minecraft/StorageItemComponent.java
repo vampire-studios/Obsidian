@@ -8,7 +8,8 @@ import net.minecraft.network.codec.StreamCodec;
 
 import java.util.List;
 
-public record StorageItemComponent(int maxSlots, int maxWeightLimit, int weightInStorageItem, boolean allowNestedStorageItem, List<String> bannedItems) {
+public record StorageItemComponent(int maxSlots, int maxWeightLimit, int weightInStorageItem,
+                                   boolean allowNestedStorageItem, List<String> bannedItems) {
 	public static final StorageItemComponent DEFAULT = new StorageItemComponent(64, 64, 4, true, List.of("minecraft:shulker_box"));
 
 	public static final Codec<StorageItemComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(

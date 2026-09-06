@@ -8,15 +8,15 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class EffectSkill extends Skill {
 
-    private final Effect effect;
+	private final Effect effect;
 
-    public EffectSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, Effect effect) {
-        super(skillId, target, trigger);
-        this.effect = effect;
-    }
+	public EffectSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, Effect effect) {
+		super(skillId, target, trigger);
+		this.effect = effect;
+	}
 
-    @Override
-    public void applyEffect(LivingEntity caster, LivingEntity target) {
-        effect.apply(target);
-    }
+	@Override
+	public void applyEffect(LivingEntity caster, LivingEntity target) {
+		effect.apply(target);
+	}
 }

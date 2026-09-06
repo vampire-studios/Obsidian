@@ -2,20 +2,20 @@ package io.github.vampirestudios.obsidian.api.obsidian;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
 import net.minecraft.server.packs.PackResources;
-import net.vampirestudios.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.packwright.api.RuntimeResourcePack;
 
 import java.io.File;
 
 public interface IAddonPack {
 
-    File getFile();
+	File getFile();
 
-    BaseAddonInfo getConfigPackInfo();
+	BaseAddonInfo getConfigPackInfo();
 
-    String getObsidianDisplayName();
+	String getObsidianDisplayName();
 
-    PackResources getVirtualResourcePack();
+	PackResources getVirtualResourcePack();
 
-    RuntimeResourcePack getResourcePack();
+	RuntimeResourcePack getResourcePack();
 
 }

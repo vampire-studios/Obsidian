@@ -8,5 +8,5 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EntityImplRenderState extends LivingEntityRenderState {
-    public Map<AnimationState, Identifier> animationStates = new HashMap<>();
+	public Map<AnimationState, Identifier> animationStates = new HashMap<>();
 }

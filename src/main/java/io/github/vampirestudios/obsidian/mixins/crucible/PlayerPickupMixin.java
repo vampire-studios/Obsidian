@@ -15,15 +15,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class PlayerPickupMixin {
-    @Inject(method = "onItemPickup", at = @At("TAIL"))
-    private void crucible$afterTake(ItemEntity itemEntity, CallbackInfo ci) {
-        LivingEntity p = (LivingEntity)(Object)this;
-        if (!(p instanceof Player sp)) return;
-        if (!(sp.level() instanceof ServerLevel level)) return;
+	@Inject(method = "onItemPickup", at = @At("TAIL"))
+	private void crucible$afterTake(ItemEntity itemEntity, CallbackInfo ci) {
+		LivingEntity p = (LivingEntity) (Object) this;
+		if (!(p instanceof Player sp)) return;
+		if (!(sp.level() instanceof ServerLevel level)) return;
 
-        ItemStack stack = itemEntity.getItem();
-        CrucibleEvents.fire(SkillTrigger.ITEM_PICKUP,
-                SkillContext.builder(sp).level(level).stack(stack).build()
-        );
-    }
+		ItemStack stack = itemEntity.getItem();
+		CrucibleEvents.fire(SkillTrigger.ITEM_PICKUP,
+				SkillContext.builder(sp).level(level).stack(stack).build()
+		);
+	}
 }

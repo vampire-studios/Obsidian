@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,53 +16,42 @@ import org.jetbrains.annotations.Nullable;
 
 public class WaterloggablePlantBlockImpl extends VegetationBlock implements SimpleWaterloggedBlock {
 
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    private final Block block;
-    private static final MapCodec<VegetationBlock> CODEC = simpleCodec(WaterloggablePlantBlockImpl::new);
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	private final Block block;
 
-    @Override
-    public MapCodec<? extends VegetationBlock> codec() {
-        return CODEC;
-    }
+	public WaterloggablePlantBlockImpl(Block block, Properties settings) {
+		super(settings);
+		this.block = block;
+		this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
+	}
 
-    public WaterloggablePlantBlockImpl(Properties settings) {
-        super(settings);
-        this.block = null;
-    }
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+	}
 
-    public WaterloggablePlantBlockImpl(Block block, Properties settings) {
-        super(settings);
-        this.block = block;
-        this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
-    }
+	@Override
+	public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
+	}
 
-    @Override
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
-    }
+	@Override
+	public boolean propagatesSkylightDown(BlockState state) {
+		return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
+	}
 
-    @Override
-    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
-    }
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+		builder.add(WATERLOGGED);
+	}
 
-    @Override
-    public boolean propagatesSkylightDown(BlockState state) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(WATERLOGGED);
-    }
-
-    @Nullable
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        LevelAccessor worldAccess = ctx.getLevel();
-        BlockPos blockPos = ctx.getClickedPos();
-        boolean bl = worldAccess.getFluidState(blockPos).getType() == Fluids.WATER;
-        return this.defaultBlockState().setValue(WATERLOGGED, bl);
-    }
+	@Nullable
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		LevelAccessor worldAccess = ctx.getLevel();
+		BlockPos blockPos = ctx.getClickedPos();
+		boolean bl = worldAccess.getFluidState(blockPos).getType() == Fluids.WATER;
+		return this.defaultBlockState().setValue(WATERLOGGED, bl);
+	}
 
     /*public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
         if (state.getValue(WATERLOGGED)) {

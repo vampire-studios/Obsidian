@@ -5,8 +5,8 @@ import io.github.vampirestudios.obsidian.api.nexo.ItemMechanic;
 import io.github.vampirestudios.obsidian.api.nexo.NexoItem;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -50,7 +50,7 @@ public class ArmorMechanic implements ItemMechanic {
 				SoundEvents.ARMOR_EQUIP_LEATHER,
 				matSrc.toughness,
 				matSrc.knockback_resistance,
-				TagKey.create(Registries.ITEM, matSrc.repair_tag),
+				TagKey.create(Registries.ITEM, matSrc.repairTag),
 				assetKey
 		);
 

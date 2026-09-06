@@ -8,90 +8,92 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SkillManager {
 
-    private final Map<Identifier, Skill> skillRegistry = new ConcurrentHashMap<>();
-    private final Map<SkillTrigger, CopyOnWriteArrayList<Skill>> skillTriggerMap = new ConcurrentHashMap<>();
-    private final Map<SkillTrigger, Map<SkillScope, List<Skill>>> byTrigger = new ConcurrentHashMap<>();
+	private final Map<Identifier, Skill> skillRegistry = new ConcurrentHashMap<>();
+	private final Map<SkillTrigger, CopyOnWriteArrayList<Skill>> skillTriggerMap = new ConcurrentHashMap<>();
+	private final Map<SkillTrigger, Map<SkillScope, List<Skill>>> byTrigger = new ConcurrentHashMap<>();
 
-    private static final SkillManager INSTANCE = new SkillManager();
-    private SkillManager() {}
+	private static final SkillManager INSTANCE = new SkillManager();
 
-    public static SkillManager getInstance() {
-        return INSTANCE;
-    }
+	private SkillManager() {
+	}
 
-    public void registerSkill(Identifier skillId, Skill skill) {
-        Objects.requireNonNull(skillId, "skillId");
-        Objects.requireNonNull(skill, "skill");
+	public static SkillManager getInstance() {
+		return INSTANCE;
+	}
 
-        Skill prev = skillRegistry.putIfAbsent(skillId, skill);
-        if (prev != null) {
-            throw new IllegalArgumentException("Skill ID already registered: " + skillId);
-        }
+	public void registerSkill(Identifier skillId, Skill skill) {
+		Objects.requireNonNull(skillId, "skillId");
+		Objects.requireNonNull(skill, "skill");
 
-        // ALSO register by trigger so triggerSkills() works
-        registerSkill(skill);
-    }
+		Skill prev = skillRegistry.putIfAbsent(skillId, skill);
+		if (prev != null) {
+			throw new IllegalArgumentException("Skill ID already registered: " + skillId);
+		}
 
-    public Skill getSkillById(Identifier skillId) {
-        return skillRegistry.get(skillId);
-    }
+		// ALSO register by trigger so triggerSkills() works
+		registerSkill(skill);
+	}
 
-    public void registerSkill(Skill skill) {
-        Objects.requireNonNull(skill, "skill");
-        Objects.requireNonNull(skill.trigger, "skill.trigger");
-        SkillScope scope = skill.scope == null ? SkillScope.GLOBAL : skill.scope;
+	public Skill getSkillById(Identifier skillId) {
+		return skillRegistry.get(skillId);
+	}
 
-        byTrigger.computeIfAbsent(skill.trigger, _ -> new ConcurrentHashMap<>())
-                .computeIfAbsent(scope, _ -> Collections.synchronizedList(new ArrayList<>()))
-                .add(skill);
-    }
+	public void registerSkill(Skill skill) {
+		Objects.requireNonNull(skill, "skill");
+		Objects.requireNonNull(skill.trigger, "skill.trigger");
+		SkillScope scope = skill.scope == null ? SkillScope.GLOBAL : skill.scope;
 
-    public void triggerSkills(SkillTrigger trigger, SkillContext ctx, SkillScope scope) {
-        Map<SkillScope, List<Skill>> scopes = byTrigger.get(trigger);
-        if (scopes == null) return;
+		byTrigger.computeIfAbsent(skill.trigger, _ -> new ConcurrentHashMap<>())
+				.computeIfAbsent(scope, _ -> Collections.synchronizedList(new ArrayList<>()))
+				.add(skill);
+	}
 
-        List<Skill> skills = scopes.get(scope);
-        if (skills == null || skills.isEmpty()) return;
+	public void triggerSkills(SkillTrigger trigger, SkillContext ctx, SkillScope scope) {
+		Map<SkillScope, List<Skill>> scopes = byTrigger.get(trigger);
+		if (scopes == null) return;
 
-        for (Skill skill : skills) {
-            // Your existing repeat scheduling logic can stay here
-            if (skill.repeat <= 1) {
-                executeSkill(skill, ctx);
-            } else {
-                for (int i = 0; i < skill.repeat; i++) {
-                    int delay = i * skill.repeatInterval;
-                    SkillScheduler.scheduleSkillExecution(delay, () -> executeSkill(skill, ctx));
-                }
-            }
-        }
-    }
+		List<Skill> skills = scopes.get(scope);
+		if (skills == null || skills.isEmpty()) return;
 
-    public void executeSkills(List<Skill> skills, SkillTrigger trigger, SkillContext ctx) {
-        for (Skill skill : skills) {
-            if (skill.trigger != trigger) continue;
-            if (skill.repeat <= 1) {
-                executeSkill(skill, ctx);
-            } else {
-                for (int i = 0; i < skill.repeat; i++) {
-                    int delay = i * skill.repeatInterval;
-                    SkillScheduler.scheduleSkillExecution(delay, () -> executeSkill(skill, ctx));
-                }
-            }
-        }
-    }
+		for (Skill skill : skills) {
+			// Your existing repeat scheduling logic can stay here
+			if (skill.repeat <= 1) {
+				executeSkill(skill, ctx);
+			} else {
+				for (int i = 0; i < skill.repeat; i++) {
+					int delay = i * skill.repeatInterval;
+					SkillScheduler.scheduleSkillExecution(delay, () -> executeSkill(skill, ctx));
+				}
+			}
+		}
+	}
 
-    private void executeSkill(Skill skill, SkillContext ctx) {
-        // conditions
-        if (ctx.hasTarget()) {
+	public void executeSkills(List<Skill> skills, SkillTrigger trigger, SkillContext ctx) {
+		for (Skill skill : skills) {
+			if (skill.trigger != trigger) continue;
+			if (skill.repeat <= 1) {
+				executeSkill(skill, ctx);
+			} else {
+				for (int i = 0; i < skill.repeat; i++) {
+					int delay = i * skill.repeatInterval;
+					SkillScheduler.scheduleSkillExecution(delay, () -> executeSkill(skill, ctx));
+				}
+			}
+		}
+	}
+
+	private void executeSkill(Skill skill, SkillContext ctx) {
+		// conditions
+		if (ctx.hasTarget()) {
 //            if (!skill.evaluateConditions(ctx.caster, ctx.target)) return;
-            skill.applyEffect(ctx.caster, ctx.target);
-            return;
-        }
-        if (ctx.hasPosition()) {
-            // if you want pos-conditions, add later
-            skill.applyEffect(ctx.caster, ctx.position);
-            return;
-        }
-        skill.applyEffect(ctx.caster);
-    }
+			skill.applyEffect(ctx.caster, ctx.target);
+			return;
+		}
+		if (ctx.hasPosition()) {
+			// if you want pos-conditions, add later
+			skill.applyEffect(ctx.caster, ctx.position);
+			return;
+		}
+		skill.applyEffect(ctx.caster);
+	}
 }

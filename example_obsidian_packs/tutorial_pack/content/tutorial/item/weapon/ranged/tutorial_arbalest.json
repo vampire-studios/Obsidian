@@ -1,0 +1,17 @@
+{
+  "information": {
+    "name": "Tutorial Arbalest",
+    "item_properties": {
+      "max_count": 1,
+      "max_damage": 465,
+      "rarity": "uncommon",
+      "item_group": "minecraft:tools_and_combat"
+    }
+  },
+  "weapon_type": "heavy_crossbow",
+  "charge_time": 40,
+  "projectile_velocity": 1.25,
+  "ammo": [
+    "tutorial:tutorial_bolt"
+  ]
+}

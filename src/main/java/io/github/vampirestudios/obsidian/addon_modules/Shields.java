@@ -1,13 +1,12 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ShieldItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ShieldItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
@@ -16,39 +15,38 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class Shields implements AddonModule {
-    @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        ShieldItem shieldItem = BaseGson.GSON.fromJson(new FileReader(file), ShieldItem.class);
-        try {
-            if(shieldItem == null) return;
+	@Override
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		ShieldItem shieldItem = AddonFormats.read(addon, file, ShieldItem.class);
+		try {
+			if (shieldItem == null) return;
 
-            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-            shieldItem.information.id = identifier;
+			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
+			shieldItem.information.id = identifier;
 
-            Item.Properties settings = ItemModuleHelper.baseProperties(shieldItem).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
-            var creativeTab = ItemModuleHelper.getCreativeTab(shieldItem);
+			Item.Properties settings = ItemModuleHelper.baseProperties(shieldItem).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
+			var creativeTab = ItemModuleHelper.getCreativeTab(shieldItem);
 
-            if (shieldItem.canHaveBanner)
-                settings.component(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
+			if (shieldItem.canHaveBanner)
+				settings.component(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
 
-            RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
+			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 
-            expanded.registerItem(identifier.getPath(), new ShieldItemImpl(shieldItem, settings), creativeTab);
-            register(ContentRegistries.SHIELDS, "shield", identifier, shieldItem);
-        } catch (Exception e) {
-            failedRegistering("shield", file.getName(), e);
-        }
-    }
+			expanded.registerItem(identifier.getPath(), new ShieldItemImpl(shieldItem, settings), creativeTab);
+			register(ContentRegistries.SHIELDS, "shield", identifier, shieldItem);
+		} catch (Exception e) {
+			failedRegistering("shield", file.getName(), e);
+		}
+	}
 
-    @Override
-    public String getType() {
-        return "item/shield";
-    }
+	@Override
+	public String getType() {
+		return "item/shield";
+	}
 }

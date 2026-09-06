@@ -5,9 +5,9 @@ import net.minecraft.resources.Identifier;
 
 public class CauldronType {
 
-    public Identifier name;
-    public Identifier item;
-    public BlockState blockstate;
-    public Identifier sound_event;
+	public Identifier name;
+	public Identifier item;
+	public BlockState blockstate;
+	public Identifier sound_event;
 
 }

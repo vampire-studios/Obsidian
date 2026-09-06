@@ -24,11 +24,11 @@ import java.util.stream.Stream;
 public final class BundleContents implements TooltipComponent {
 	public static final BundleContents EMPTY = new BundleContents(List.of());
 	public static final Codec<BundleContents> CODEC = ItemStack.CODEC
-		.listOf()
-		.flatXmap(BundleContents::checkAndCreate, bundleContents -> DataResult.success(bundleContents.items));
+			.listOf()
+			.flatXmap(BundleContents::checkAndCreate, bundleContents -> DataResult.success(bundleContents.items));
 	public static final StreamCodec<RegistryFriendlyByteBuf, BundleContents> STREAM_CODEC = ItemStack.STREAM_CODEC
-		.apply(ByteBufCodecs.list())
-		.map(BundleContents::new, bundleContents -> bundleContents.items);
+			.apply(ByteBufCodecs.list())
+			.map(BundleContents::new, bundleContents -> bundleContents.items);
 	private static final Fraction BUNDLE_IN_BUNDLE_WEIGHT = Fraction.getFraction(1, 16);
 	private static final int NO_STACK_INDEX = -1;
 	public static final int NO_SELECTED_ITEM_INDEX = -1;
@@ -88,7 +88,7 @@ public final class BundleContents implements TooltipComponent {
 	}
 
 	public ItemStack getItemUnsafe(int i) {
-		return (ItemStack)this.items.get(i);
+		return (ItemStack) this.items.get(i);
 	}
 
 	public Stream<ItemStack> itemCopyStream() {
@@ -164,7 +164,7 @@ public final class BundleContents implements TooltipComponent {
 				return -1;
 			} else {
 				for (int i = 0; i < this.items.size(); i++) {
-					if (ItemStack.isSameItemSameComponents((ItemStack)this.items.get(i), itemStack)) {
+					if (ItemStack.isSameItemSameComponents((ItemStack) this.items.get(i), itemStack)) {
 						return i;
 					}
 				}
@@ -189,7 +189,7 @@ public final class BundleContents implements TooltipComponent {
 					this.weight = this.weight.add(BundleContents.getWeight(itemStack).multiplyBy(Fraction.getFraction(i, 1)));
 					int j = this.findStackIndex(itemStack);
 					if (j != -1) {
-						ItemStack itemStack2 = (ItemStack)this.items.remove(j);
+						ItemStack itemStack2 = (ItemStack) this.items.remove(j);
 						ItemStack itemStack3 = itemStack2.copyWithCount(itemStack2.getCount() + i);
 						itemStack.shrink(i);
 						this.items.add(0, itemStack3);
@@ -218,7 +218,7 @@ public final class BundleContents implements TooltipComponent {
 				return null;
 			} else {
 				int i = this.selectedItem != -1 && this.selectedItem < this.items.size() ? this.selectedItem : 0;
-				ItemStack itemStack = ((ItemStack)this.items.remove(i)).copy();
+				ItemStack itemStack = ((ItemStack) this.items.remove(i)).copy();
 				this.weight = this.weight.subtract(BundleContents.getWeight(itemStack).multiplyBy(Fraction.getFraction(itemStack.getCount(), 1)));
 				this.toggleSelectedItem(-1);
 				return itemStack;

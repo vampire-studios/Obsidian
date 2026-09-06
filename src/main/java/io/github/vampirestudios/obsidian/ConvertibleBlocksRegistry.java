@@ -14,12 +14,12 @@ public final class ConvertibleBlocksRegistry {
 
 	/**
 	 * Registers a link between two different blocks.
-	 * (See for example {@link OxidizableBlocksRegistry#registerOxidizableBlockPair(Block, Block)} and
-	 * {@link OxidizableBlocksRegistry#registerWaxableBlockPair(Block, Block)})
+	 * (See for example {@link OxidizableBlocksRegistry#registerNextStage(Block, Block)} and
+	 * {@link OxidizableBlocksRegistry#registerWaxable(Block, Block)})
 	 *
 	 * @param convertibleBlockPair the convertible block pair
 	 */
-	public static void registerConvertibleBlockPair(ConvertibleBlockPair convertibleBlockPair) {
+	public static void register(ConvertibleBlockPair convertibleBlockPair) {
 		Objects.requireNonNull(convertibleBlockPair, "ConvertibleBlockPair cannot be null!");
 		Obsidian.CONVERTIBLE_BLOCKS.add(convertibleBlockPair);
 	}

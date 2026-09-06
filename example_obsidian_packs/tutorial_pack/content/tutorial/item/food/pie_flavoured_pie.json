@@ -2,9 +2,8 @@
   "information": {
     "name": {
       "translations": {
-        "en_us": "Pie Flavoured Pie"
+        "en_us": "<color #ca165f>Pie Flavoured Pie"
       },
-      "color": "#ca165f",
       "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
     },
     "item_group": "minecraft:food",
@@ -18,12 +17,7 @@
   },
   "lore": [
     {
-      "text": {
-        "type": "literal",
-        "text": "This is a pie with a pie popping up",
-        "color": "#ffffff",
-        "formatting": []
-      }
+      "text": "<color #ffffff>This is a pie with a pie popping up"
     }
   ],
   "rendering": {

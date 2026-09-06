@@ -16,21 +16,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BucketItem.class)
 public abstract class BucketUseMixin {
-    @Inject(method = "use", at = @At("RETURN"))
-    private void crucible$afterBucketUse(Level level, Player player, InteractionHand hand,
-                                         CallbackInfoReturnable<InteractionResult> cir) {
-        if (level.isClientSide()) return;
-        if (!(level instanceof ServerLevel sl)) return;
+	@Inject(method = "use", at = @At("RETURN"))
+	private void crucible$afterBucketUse(Level level, Player player, InteractionHand hand,
+	                                     CallbackInfoReturnable<InteractionResult> cir) {
+		if (level.isClientSide()) return;
+		if (!(level instanceof ServerLevel sl)) return;
 
-        // Only if it did something meaningful
-        if (!cir.getReturnValue().consumesAction()) return;
+		// Only if it did something meaningful
+		if (!cir.getReturnValue().consumesAction()) return;
 
-        CrucibleEvents.fire(SkillTrigger.BUCKET,
-                SkillContext.builder(player)
-                        .level(sl)
-                        .hand(hand)
-                        .stack(player.getItemInHand(hand))
-                        .build()
-        );
-    }
+		CrucibleEvents.fire(SkillTrigger.BUCKET,
+				SkillContext.builder(player)
+						.level(sl)
+						.hand(hand)
+						.stack(player.getItemInHand(hand))
+						.build()
+		);
+	}
 }

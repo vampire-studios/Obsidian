@@ -11,6 +11,7 @@ public record ScriptRule(
 	public static ScriptRule edge(String when, List<String> body, int cooldownTicks) {
 		return new ScriptRule(when, body, 0, cooldownTicks);
 	}
+
 	public static ScriptRule paced(String when, List<String> body, int cadenceTicks, int cooldownTicks) {
 		return new ScriptRule(when, body, Math.max(1, cadenceTicks), cooldownTicks);
 	}

@@ -4,10 +4,10 @@ import net.minecraft.network.chat.Component;
 
 public class TooltipInformation {
 
-    public SpecialText text;
+	public SpecialText text;
 
-    public Component getText() {
-        return text.getName();
-    }
+	public Component getText() {
+		return text.getName();
+	}
 
 }

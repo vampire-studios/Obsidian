@@ -12,13 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerTeleportMixin {
-    @Inject(method = "teleportTo(DDD)V", at = @At("TAIL"))
-    private void crucible$afterTeleport(double x, double y, double z, CallbackInfo ci) {
-        ServerPlayer sp = (ServerPlayer) (Object) this;
-        if (!(sp.level() instanceof ServerLevel level)) return;
+	@Inject(method = "teleportTo(DDD)V", at = @At("TAIL"))
+	private void crucible$afterTeleport(double x, double y, double z, CallbackInfo ci) {
+		ServerPlayer sp = (ServerPlayer) (Object) this;
+		if (!(sp.level() instanceof ServerLevel level)) return;
 
-        CrucibleEvents.fire(SkillTrigger.TELEPORT,
-                SkillContext.builder(sp).level(level).build()
-        );
-    }
+		CrucibleEvents.fire(SkillTrigger.TELEPORT,
+				SkillContext.builder(sp).level(level).build()
+		);
+	}
 }

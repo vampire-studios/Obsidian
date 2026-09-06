@@ -16,20 +16,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Animal.class)
 public abstract class AnimalBreedMixin {
 
-    @org.jspecify.annotations.Nullable
-    @Shadow
-    public abstract ServerPlayer getLoveCause();
+	@org.jspecify.annotations.Nullable
+	@Shadow
+	public abstract ServerPlayer getLoveCause();
 
-    @Inject(method = "spawnChildFromBreeding", at = @At("TAIL"))
-    private void crucible$afterSpawnChildFromBreeding(ServerLevel level, Animal otherParent, CallbackInfo ci) {
-        Player cause = this.getLoveCause();
-        if (!(cause instanceof ServerPlayer sp)) return;
+	@Inject(method = "spawnChildFromBreeding", at = @At("TAIL"))
+	private void crucible$afterSpawnChildFromBreeding(ServerLevel level, Animal otherParent, CallbackInfo ci) {
+		Player cause = this.getLoveCause();
+		if (!(cause instanceof ServerPlayer sp)) return;
 
-        // optional: if you want the baby as target, you'd need a different injection point that exposes the baby entity.
-        CrucibleEvents.fire(SkillTrigger.BREED,
-                SkillContext.builder(sp)
-                        .level(level)
-                        .build()
-        );
-    }
+		// optional: if you want the baby as target, you'd need a different injection point that exposes the baby entity.
+		CrucibleEvents.fire(SkillTrigger.BREED,
+				SkillContext.builder(sp)
+						.level(level)
+						.build()
+		);
+	}
 }

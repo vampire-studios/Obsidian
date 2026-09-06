@@ -13,5 +13,6 @@ public class OEntityTags {
 		return TagKey.create(Registries.ENTITY_TYPE, Obsidian.id(name));
 	}
 
-	public static void init() {}
+	public static void init() {
+	}
 }

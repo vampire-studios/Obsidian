@@ -69,7 +69,7 @@ public class SpreadBehaviors {
 				Blocks.DIRT,
 				SpreaderType.MYCELIUM,
 				(state, level, pos) -> Blocks.MYCELIUM.defaultBlockState()
-						.setValue( BlockStateProperties.SNOWY, level.getBlockState( pos.above() ).is(Blocks.SNOW) )
+						.setValue(BlockStateProperties.SNOWY, level.getBlockState(pos.above()).is(Blocks.SNOW))
 		);
 		addSpreaderBehavior(
 				Blocks.MYCELIUM,

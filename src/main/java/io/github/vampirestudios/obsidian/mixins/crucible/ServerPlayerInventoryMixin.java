@@ -13,23 +13,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerPlayer.class)
 public class ServerPlayerInventoryMixin {
 
-    @Inject(method = "initMenu(Lnet/minecraft/world/inventory/AbstractContainerMenu;)V", at = @At("TAIL"))
-    private void crucible$invOpen(AbstractContainerMenu menu, CallbackInfo ci) {
-        ServerPlayer sp = (ServerPlayer) (Object) this;
+	@Inject(method = "initMenu(Lnet/minecraft/world/inventory/AbstractContainerMenu;)V", at = @At("TAIL"))
+	private void crucible$invOpen(AbstractContainerMenu menu, CallbackInfo ci) {
+		ServerPlayer sp = (ServerPlayer) (Object) this;
 
-        CrucibleEvents.fire(
-                SkillTrigger.INVENTORY_OPEN,
-                SkillContext.builder(sp).level(sp.level()).build()
-        );
-    }
+		CrucibleEvents.fire(
+				SkillTrigger.INVENTORY_OPEN,
+				SkillContext.builder(sp).level(sp.level()).build()
+		);
+	}
 
-    @Inject(method = "doCloseContainer()V", at = @At("HEAD"))
-    private void crucible$invClose(CallbackInfo ci) {
-        ServerPlayer sp = (ServerPlayer) (Object) this;
+	@Inject(method = "doCloseContainer()V", at = @At("HEAD"))
+	private void crucible$invClose(CallbackInfo ci) {
+		ServerPlayer sp = (ServerPlayer) (Object) this;
 
-        CrucibleEvents.fire(
-                SkillTrigger.INVENTORY_CLOSE,
-                SkillContext.builder(sp).level(sp.level()).build()
-        );
-    }
+		CrucibleEvents.fire(
+				SkillTrigger.INVENTORY_CLOSE,
+				SkillContext.builder(sp).level(sp.level()).build()
+		);
+	}
 }

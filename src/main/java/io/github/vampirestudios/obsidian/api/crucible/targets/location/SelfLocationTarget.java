@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class SelfLocationTarget extends LocationTarget {
-    public SelfLocationTarget() {
-        super(List.of("SelfLocation", "casterLocation", "bossLocation", "mobLocation"));
-    }
+	public SelfLocationTarget() {
+		super(List.of("SelfLocation", "casterLocation", "bossLocation", "mobLocation"));
+	}
 
-    @Override
-    public List<Vec3> getTargets(LivingEntity caster) {
-        return Collections.singletonList(caster.position());
-    }
+	@Override
+	public List<Vec3> getTargets(LivingEntity caster) {
+		return Collections.singletonList(caster.position());
+	}
 }

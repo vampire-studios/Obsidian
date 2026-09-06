@@ -12,17 +12,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractClientPlayer.class)
 public abstract class AbstractClientPlayerEntityMixin {
 
-    // For 1.21.x, Yarn exposes getFovMultiplier; signature differs across point releases.
-    // If your mappings show getFovMultiplier() with params, adjust the method descriptor accordingly.
-    @Inject(method = "getFieldOfViewModifier", at = @At("RETURN"), cancellable = true)
-    private void yourmod$fovMultiplier(CallbackInfoReturnable<Float> cir) {
-        AbstractClientPlayer self = (AbstractClientPlayer)(Object)this;
-        if (!self.isUsingItem()) return;
+	// For 1.21.x, Yarn exposes getFovMultiplier; signature differs across point releases.
+	// If your mappings show getFovMultiplier() with params, adjust the method descriptor accordingly.
+	@Inject(method = "getFieldOfViewModifier", at = @At("RETURN"), cancellable = true)
+	private void yourmod$fovMultiplier(CallbackInfoReturnable<Float> cir) {
+		AbstractClientPlayer self = (AbstractClientPlayer) (Object) this;
+		if (!self.isUsingItem()) return;
 
-        ItemStack active = self.getActiveItem();
-        ScopeComponent sc = active.get(OItemComponents.SCOPE);
-        if (sc == null) return;
+		ItemStack active = self.getActiveItem();
+		ScopeComponent sc = active.get(OItemComponents.SCOPE);
+		if (sc == null) return;
 
-        cir.setReturnValue(cir.getReturnValue() * sc.zoomMultiplier());
-    }
+		cir.setReturnValue(cir.getReturnValue() * sc.zoomMultiplier());
+	}
 }

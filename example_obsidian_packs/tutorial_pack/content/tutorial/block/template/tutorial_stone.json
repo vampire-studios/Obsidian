@@ -1,0 +1,15 @@
+{
+  "information": {
+    "block_properties": {
+      "material": "minecraft:stone",
+      "sound_group": "minecraft:stone",
+      "hardness": 2.0,
+      "resistance": 6.0,
+      "requires_tool": true,
+      "mineable": "pickaxe"
+    },
+    "item_properties": {
+      "item_group": "minecraft:building_blocks"
+    }
+  }
+}

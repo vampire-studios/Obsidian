@@ -1,0 +1,15 @@
+{
+  "durability": 15,
+  "defense": {
+    "BOOTS": 2,
+    "LEGGINGS": 5,
+    "CHESTPLATE": 6,
+    "HELMET": 2,
+    "BODY": 5
+  },
+  "enchantability": 10,
+  "equip_sound": "minecraft:item.armor.equip_iron",
+  "toughness": 2.0,
+  "knockback_resistance": 0.1,
+  "repair_item": "minecraft:bucket"
+}

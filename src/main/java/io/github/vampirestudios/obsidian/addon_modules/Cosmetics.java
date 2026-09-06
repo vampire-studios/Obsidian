@@ -1,13 +1,12 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.item.Cosmetic;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.ItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.component.DataComponents;
@@ -21,7 +20,6 @@ import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.equipment.Equippable;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
@@ -29,12 +27,12 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 
 public class Cosmetics implements AddonModule {
 	@Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		Cosmetic cosmetic = BaseGson.GSON.fromJson(new FileReader(file), Cosmetic.class);
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		Cosmetic cosmetic = AddonFormats.read(addon, file, Cosmetic.class);
 		try {
 			if (cosmetic == null) return;
 
-			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
 			cosmetic.information.id = identifier;
 
 			Item.Properties settings = createItemProperties(cosmetic)
@@ -86,7 +84,7 @@ public class Cosmetics implements AddonModule {
 	}
 
 	private Item registerWearableItem(RegistryHelperItemExpanded expanded, Cosmetic cosmetic, Identifier identifier,
-									  Item.Properties settings, ResourceKey<CreativeModeTab> creativeTab) {
+	                                  Item.Properties settings, ResourceKey<CreativeModeTab> creativeTab) {
 		if (cosmetic.information.getItemSettings().wearableSlot != null && !cosmetic.information.getItemSettings().wearableSlot.isEmpty()) {
 			settings.component(DataComponents.EQUIPPABLE,
 					Equippable.builder(EquipmentSlot.byName(cosmetic.information.getItemSettings().wearableSlot)).build());

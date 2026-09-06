@@ -1,0 +1,14 @@
+{
+  "template": "tutorial:tutorial_stone",
+  "information": {
+    "name": "Tutorial Slate"
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/tuff_bricks"
+      }
+    }
+  }
+}

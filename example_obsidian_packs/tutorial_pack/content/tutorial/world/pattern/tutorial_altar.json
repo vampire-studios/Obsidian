@@ -1,0 +1,40 @@
+{
+  "pattern": [
+    ["bbb", "b#b", "bbb"],
+    ["   ", " _ ", "   "]
+  ],
+  "keys": {
+    "b": "tutorial:tutorial_bricks",
+    "#": "minecraft:gold_block"
+  },
+  "anchor": "#",
+  "activator": "tutorial:tutorial_key",
+  "consume_pattern": false,
+  "cost": {
+    "items": [
+      {
+        "item": "minecraft:diamond",
+        "count": 2
+      }
+    ],
+    "experience_levels": 1
+  },
+  "events": {
+    "on_activate": [
+      {
+        "action": "start_event",
+        "event": "tutorial:tutorial_siege"
+      },
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:block.beacon.activate"
+      }
+    ],
+    "on_fail": [
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:block.note_block.bass"
+      }
+    ]
+  }
+}

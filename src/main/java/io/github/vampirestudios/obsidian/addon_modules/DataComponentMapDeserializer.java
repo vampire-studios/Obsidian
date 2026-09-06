@@ -10,12 +10,12 @@ import java.lang.reflect.Type;
 
 public class DataComponentMapDeserializer implements JsonDeserializer<DataComponentMap> {
 
-    @Override
-    public DataComponentMap deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        JsonObject rootNode = jsonElement.getAsJsonObject();
-        DataComponentPatch patch = DataComponentPatch.CODEC.parse(JsonOps.INSTANCE, rootNode).getOrThrow();
-        PatchedDataComponentMap map = new PatchedDataComponentMap(DataComponentMap.EMPTY);
-        map.applyPatch(patch);
-        return map;
-    }
+	@Override
+	public DataComponentMap deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+		JsonObject rootNode = jsonElement.getAsJsonObject();
+		DataComponentPatch patch = DataComponentPatch.CODEC.parse(JsonOps.INSTANCE, rootNode).getOrThrow();
+		PatchedDataComponentMap map = new PatchedDataComponentMap(DataComponentMap.EMPTY);
+		map.applyPatch(patch);
+		return map;
+	}
 }

@@ -54,12 +54,15 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 	public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Properties settings, ResourceKey<CreativeModeTab> itemGroup) {
 		if (BuiltInRegistries.BLOCK.containsKey(Identifier.fromNamespaceAndPath(this.modId, name)))
 			block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
-		else block = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
+		else
+			block = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
 
 		if (block2.information.has_item) {
 			Item item;
-			if (BuiltInRegistries.ITEM.containsKey(Identifier.fromNamespaceAndPath(this.modId, name))) item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
-			else item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
+			if (BuiltInRegistries.ITEM.containsKey(Identifier.fromNamespaceAndPath(this.modId, name)))
+				item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
+			else
+				item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
 			CreativeModeTabEvents.modifyOutputEvent(itemGroup).register(entries -> entries.accept(item));
 		}
 		return block;
@@ -68,13 +71,17 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 	public Block registerBlock(Block block, io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Item.Properties settings) {
 		if (BuiltInRegistries.BLOCK.containsKey(Identifier.fromNamespaceAndPath(this.modId, name)))
 			block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
-		else block = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
+		else
+			block = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(this.modId, name), block);
 
 		if (block2.information.has_item) {
 			Item item;
-			if (BuiltInRegistries.ITEM.containsKey(Identifier.fromNamespaceAndPath(this.modId, name))) item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
-			else item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
-			if (block2.information.getItemSettings() != null) CreativeModeTabEvents.modifyOutputEvent(block2.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
+			if (BuiltInRegistries.ITEM.containsKey(Identifier.fromNamespaceAndPath(this.modId, name)))
+				item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(this.modId, name));
+			else
+				item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new CustomBlockItem(block2, block, settings));
+			if (block2.information.getItemSettings() != null)
+				CreativeModeTabEvents.modifyOutputEvent(block2.information.getItemSettings().getItemGroup()).register(entries -> entries.accept(item));
 		}
 		return block;
 	}
@@ -84,20 +91,19 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 		Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(this.modId, name), new HangingTallBlockItem(block2, block, settings));
 	}
 
-	public void registerLeavesBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block2, String name, Properties settings) {
+	public void registerLeavesBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block2,
+	                                BlockBehaviour.Properties properties, String name, Properties settings) {
 		Block leavesBlock = new TintedParticleLeavesBlock(
 				0.0F,
-				BlockBehaviour.Properties.of()
-						.mapColor(MapColor.PLANT)
+				properties.mapColor(MapColor.PLANT)
 						.strength(0.2F)
 						.randomTicks()
 						.sound(block2.information.getBlockSettings().getBlockSoundGroup())
 						.noOcclusion()
 						.isValidSpawn((state, world, pos, type) -> type == EntityTypes.OCELOT || type == EntityTypes.PARROT)
 						.isSuffocating((state, world, pos) -> false)
-						.isViewBlocking((state, world, pos) -> false)
 						.ignitedByLava()
-						.pushReaction(PushReaction.DESTROY)
+						.pushReaction(PushReaction.POPPED)
 		);
 		Block block = registerBlockWithoutItem(name, leavesBlock);
 		if (block2.information.has_item) registerItem(new CustomBlockItem(block2, block, settings), name);
@@ -109,8 +115,9 @@ public class RegistryHelperBlockExpanded extends RegistryHelper.Blocks {
 				.strength(2.0F).sound(SoundType.WOOD)), block, name, settings);
 	}
 
-	public void registerNetherStemBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, String name, MapColor mapColor, Properties settings) {
-		this.registerBlock(new PillarBlockImpl(block, BlockBehaviour.Properties.of().mapColor(blockState -> mapColor).strength(2.0F).sound(SoundType.STEM)),
+	public void registerNetherStemBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block,
+	                                    BlockBehaviour.Properties properties, String name, MapColor mapColor, Properties settings) {
+		this.registerBlock(new PillarBlockImpl(block, properties.mapColor(blockState -> mapColor).strength(2.0F).sound(SoundType.STEM)),
 				block, name, settings);
 	}
 

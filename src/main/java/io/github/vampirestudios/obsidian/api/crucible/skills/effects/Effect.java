@@ -4,15 +4,15 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 public abstract class Effect {
-    private Identifier id;
+	private Identifier id;
 
-    public void setId(Identifier id) {
-        this.id = id;
-    }
+	public void setId(Identifier id) {
+		this.id = id;
+	}
 
-    public Identifier getId() {
-        return id;
-    }
+	public Identifier getId() {
+		return id;
+	}
 
-    public abstract void apply(LivingEntity target);
+	public abstract void apply(LivingEntity target);
 }

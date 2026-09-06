@@ -20,41 +20,41 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
-    public static final SegmentedAnglePrecision SEGMENTED_ANGLE8 = new SegmentedAnglePrecision(3); // 3 bits precision = 8
+	public static final SegmentedAnglePrecision SEGMENTED_ANGLE8 = new SegmentedAnglePrecision(3); // 3 bits precision = 8
 
-    public static void handleBlockPlaceEffects(ServerPlayer player, InteractionHand hand, BlockPos pos, SoundType type) {
-        player.swing(hand, true);
-        Util.playBlockPlaceSound(player, pos, type);
-    }
+	public static void handleBlockPlaceEffects(ServerPlayer player, InteractionHand hand, BlockPos pos, SoundType type) {
+//		player.swing(hand, true);
+		Util.playBlockPlaceSound(player, pos, type);
+	}
 
-    public static void playBlockPlaceSound(ServerPlayer player, BlockPos pos, SoundType type) {
-        player.connection.send(new ClientboundSoundPacket(
-                Holder.direct(type.getPlaceSound()),
-                SoundSource.BLOCKS,
-                pos.getX(),
-                pos.getY(),
-                pos.getZ(),
-                (type.getVolume() + 1.0F) / 2.0F,
-                type.getPitch() * 0.8F,
-                player.level().getRandom().nextLong()
-        ));
-    }
+	public static void playBlockPlaceSound(ServerPlayer player, BlockPos pos, SoundType type) {
+		player.connection.send(new ClientboundSoundPacket(
+				Holder.direct(type.getPlaceSound()),
+				SoundSource.BLOCKS,
+				pos.getX(),
+				pos.getY(),
+				pos.getZ(),
+				(type.getVolume() + 1.0F) / 2.0F,
+				type.getPitch() * 0.8F,
+				player.level().getRandom().nextLong()
+		));
+	}
 
-    public static Optional<Integer> validateAndConvertHexColor(String hexColor) {
-        // Regular expression pattern to match hex color strings
-        Pattern hexColorPattern = Pattern.compile("^#?([A-Fa-f0-9]{6})$|^0x([A-Fa-f0-9]{6})$");
+	public static Optional<Integer> validateAndConvertHexColor(String hexColor) {
+		// Regular expression pattern to match hex color strings
+		Pattern hexColorPattern = Pattern.compile("^#?([A-Fa-f0-9]{6})$|^0x([A-Fa-f0-9]{6})$");
 
-        Matcher matcher = hexColorPattern.matcher(hexColor);
+		Matcher matcher = hexColorPattern.matcher(hexColor);
 
-        if (matcher.matches()) {
-            String hexDigits = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
-            int intValue = Integer.parseInt(hexDigits, 16);
-            return Optional.of(intValue);
-        } else {
-            Obsidian.LOGGER.warn("Invalid hex color formats");
-            return Optional.empty();
-        }
-    }
+		if (matcher.matches()) {
+			String hexDigits = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
+			int intValue = Integer.parseInt(hexDigits, 16);
+			return Optional.of(intValue);
+		} else {
+			Obsidian.LOGGER.warn("Invalid hex color formats");
+			return Optional.empty();
+		}
+	}
 
    /* public static void forEachRotated(List<DecorationData.BlockConfig> blockConfigs, BlockPos originBlockPos, float rotation, Consumer<BlockPos> consumer) {
         if (blockConfigs != null) {
@@ -188,17 +188,17 @@ public class Util {
         return itemDisplayElement;
     }*/
 
-    @Nullable
-    public static ItemEntity spawnAtLocation(Level level, Vec3 pos, ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
-            return null;
-        } else if (level.isClientSide()) {
-            return null;
-        } else {
-            ItemEntity itemEntity = new ItemEntity(level, pos.x(), pos.y(), pos.z(), itemStack);
-            itemEntity.setDefaultPickUpDelay();
-            level.addFreshEntity(itemEntity);
-            return itemEntity;
-        }
-    }
+	@Nullable
+	public static ItemEntity spawnAtLocation(Level level, Vec3 pos, ItemStack itemStack) {
+		if (itemStack.isEmpty()) {
+			return null;
+		} else if (level.isClientSide()) {
+			return null;
+		} else {
+			ItemEntity itemEntity = new ItemEntity(level, pos.x(), pos.y(), pos.z(), itemStack);
+			itemEntity.setDefaultPickUpDelay();
+			level.addFreshEntity(itemEntity);
+			return itemEntity;
+		}
+	}
 }

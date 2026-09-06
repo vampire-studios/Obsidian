@@ -10,28 +10,28 @@ import net.minecraft.world.phys.EntityHitResult;
 
 public class ThrownKnifeEntity extends ThrowableItemProjectile {
 
-    private float damage = 3.0f;
+	private float damage = 3.0f;
 
-    public ThrownKnifeEntity(EntityType<? extends ThrownKnifeEntity> type, Level level) {
-        super(type, level);
-    }
+	public ThrownKnifeEntity(EntityType<? extends ThrownKnifeEntity> type, Level level) {
+		super(type, level);
+	}
 
-    public void setDamage(float damage) {
-        this.damage = damage;
-    }
+	public void setDamage(float damage) {
+		this.damage = damage;
+	}
 
-    @Override
-    protected Item getDefaultItem() {
-        return Items.STONE_SWORD;
-    }
+	@Override
+	protected Item getDefaultItem() {
+		return Items.STONE_SWORD;
+	}
 
-    @Override
-    protected void onHitEntity(EntityHitResult result) {
-        super.onHitEntity(result);
-        result.getEntity().hurtServer(
+	@Override
+	protected void onHitEntity(EntityHitResult result) {
+		super.onHitEntity(result);
+		result.getEntity().hurtServer(
 				(ServerLevel) result.getEntity().level(),
-                this.damageSources().thrown(this, this.getOwner()),
-                this.damage
-        );
-    }
+				this.damageSources().thrown(this, this.getOwner()),
+				this.damage
+		);
+	}
 }

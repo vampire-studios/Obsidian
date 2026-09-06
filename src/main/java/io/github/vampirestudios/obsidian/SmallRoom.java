@@ -15,17 +15,17 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 
 public class SmallRoom extends StructurePiece {
 
-    public SmallRoom(int depth, RandomSource random, BoundingBox boundingBox) {
-        super(StructurePieceType.MINE_SHAFT_ROOM, depth, boundingBox);
-    }
+	public SmallRoom(int depth, RandomSource random, BoundingBox boundingBox) {
+		super(StructurePieceType.MINE_SHAFT_ROOM, depth, boundingBox);
+	}
 
-    @Override
-    public void postProcess(WorldGenLevel world, StructureManager structureManager, ChunkGenerator chunkGenerator, RandomSource random, BoundingBox boundingBox, ChunkPos chunkPos, BlockPos pos) {
-        // Generate a small cramped room
-        this.generateBox(world, boundingBox, this.boundingBox.minX(), this.boundingBox.minY(), this.boundingBox.minZ(), this.boundingBox.maxX(), this.boundingBox.maxY(), this.boundingBox.maxZ(), Blocks.STONE.defaultBlockState(), Blocks.CAVE_AIR.defaultBlockState(), false);
-    }
+	@Override
+	public void postProcess(WorldGenLevel world, StructureManager structureManager, ChunkGenerator chunkGenerator, RandomSource random, BoundingBox boundingBox, ChunkPos chunkPos, BlockPos pos) {
+		// Generate a small cramped room
+		this.generateBox(world, boundingBox, this.boundingBox.minX(), this.boundingBox.minY(), this.boundingBox.minZ(), this.boundingBox.maxX(), this.boundingBox.maxY(), this.boundingBox.maxZ(), Blocks.STONE.defaultBlockState(), Blocks.CAVE_AIR.defaultBlockState(), false);
+	}
 
-    @Override
-    protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag nbt) {
-    }
+	@Override
+	protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag nbt) {
+	}
 }

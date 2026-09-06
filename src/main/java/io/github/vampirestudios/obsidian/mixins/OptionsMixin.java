@@ -13,10 +13,11 @@ import java.util.List;
 @Mixin(Options.class)
 public class OptionsMixin {
 
-    @Shadow public List<String> resourcePacks;
+	@Shadow
+	public List<String> resourcePacks;
 
-    @Inject(method = "load", at = @At("RETURN"))
-    private void obsidian_onLoad(CallbackInfo ci) {
-        ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> resourcePacks.add(iAddonPack.getVirtualResourcePack().packId()));
-    }
+	@Inject(method = "load", at = @At("RETURN"))
+	private void obsidian_onLoad(CallbackInfo ci) {
+		ObsidianAddonLoader.OBSIDIAN_ADDONS.forEach(iAddonPack -> resourcePacks.add(iAddonPack.getVirtualResourcePack().packId()));
+	}
 }

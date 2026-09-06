@@ -11,73 +11,73 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Pack.class)
 public interface PackAccessor {
-    @Accessor
-    String getId();
+	@Accessor
+	String getId();
 
-    @Mutable
-    @Accessor
-    void setId(String id);
+	@Mutable
+	@Accessor
+	void setId(String id);
 
-    @Accessor
-    Pack.ResourcesSupplier getResources();
+	@Accessor
+	Pack.ResourcesSupplier getResources();
 
-    @Mutable
-    @Accessor
-    void setResources(Pack.ResourcesSupplier resources);
+	@Mutable
+	@Accessor
+	void setResources(Pack.ResourcesSupplier resources);
 
-    @Accessor
-    Component getTitle();
+	@Accessor
+	Component getTitle();
 
-    @Mutable
-    @Accessor
-    void setTitle(Component title);
+	@Mutable
+	@Accessor
+	void setTitle(Component title);
 
-    @Accessor
-    Component getDescription();
+	@Accessor
+	Component getDescription();
 
-    @Mutable
-    @Accessor
-    void setDescription(Component description);
+	@Mutable
+	@Accessor
+	void setDescription(Component description);
 
-    @Accessor
-    PackCompatibility getCompatibility();
+	@Accessor
+	PackCompatibility getCompatibility();
 
-    @Mutable
-    @Accessor
-    void setCompatibility(PackCompatibility compatibility);
+	@Mutable
+	@Accessor
+	void setCompatibility(PackCompatibility compatibility);
 
-    @Accessor
-    FeatureFlagSet getRequestedFeatures();
+	@Accessor
+	FeatureFlagSet getRequestedFeatures();
 
-    @Mutable
-    @Accessor
-    void setRequestedFeatures(FeatureFlagSet requestedFeatures);
+	@Mutable
+	@Accessor
+	void setRequestedFeatures(FeatureFlagSet requestedFeatures);
 
-    @Accessor
-    Pack.Position getDefaultPosition();
+	@Accessor
+	Pack.Position getDefaultPosition();
 
-    @Mutable
-    @Accessor
-    void setDefaultPosition(Pack.Position defaultPosition);
+	@Mutable
+	@Accessor
+	void setDefaultPosition(Pack.Position defaultPosition);
 
-    @Accessor
-    boolean isRequired();
+	@Accessor
+	boolean isRequired();
 
-    @Mutable
-    @Accessor
-    void setRequired(boolean required);
+	@Mutable
+	@Accessor
+	void setRequired(boolean required);
 
-    @Accessor
-    boolean isFixedPosition();
+	@Accessor
+	boolean isFixedPosition();
 
-    @Mutable
-    @Accessor
-    void setFixedPosition(boolean fixedPosition);
+	@Mutable
+	@Accessor
+	void setFixedPosition(boolean fixedPosition);
 
-    @Accessor
-    PackSource getPackSource();
+	@Accessor
+	PackSource getPackSource();
 
-    @Mutable
-    @Accessor
-    void setPackSource(PackSource packSource);
+	@Mutable
+	@Accessor
+	void setPackSource(PackSource packSource);
 }

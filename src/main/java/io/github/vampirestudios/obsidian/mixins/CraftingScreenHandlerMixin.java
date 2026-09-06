@@ -12,14 +12,16 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(CraftingMenu.class)
 public class CraftingScreenHandlerMixin {
 
-    @Shadow @Final private ContainerLevelAccess access;
+	@Shadow
+	@Final
+	private ContainerLevelAccess access;
 
-    /**
-     * @author Olivia
-     * @reason idk
-     */
-    @Overwrite
-    public boolean stillValid(Player player) {
-        return this.access.evaluate((world, pos) -> world.getBlockState(pos).getBlock() instanceof CraftingTableBlock, true);
-    }
+	/**
+	 * @author Olivia
+	 * @reason idk
+	 */
+	@Overwrite
+	public boolean stillValid(Player player) {
+		return this.access.evaluate((world, pos) -> world.getBlockState(pos).getBlock() instanceof CraftingTableBlock, true);
+	}
 }

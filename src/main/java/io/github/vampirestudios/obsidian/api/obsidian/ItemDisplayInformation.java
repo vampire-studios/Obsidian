@@ -1,13 +1,17 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import blue.endless.jankson.annotation.SerializedName;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import io.github.vampirestudios.obsidian.BaseGson;
+import io.github.vampirestudios.obsidian.api.obsidian.palette.Palette;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.minecraft.resources.Identifier;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,23 +50,26 @@ public class ItemDisplayInformation {
 	// JSON field name constants
 	// ----------------------------
 
-	private static final String F_ITEM_MODEL      = "item_model";
-	private static final String F_BLOCKING_MODEL  = "blocking_model";
-	private static final String F_PULLING_MODELS  = "pulling_models";
-	private static final String F_CHARGED_MODEL   = "charged_model";
-	private static final String F_FIREWORK_MODEL  = "firework_model";
-	private static final String F_CAST_MODEL      = "cast_model";
-	private static final String F_THROWING_MODEL  = "throwing_model";
-	private static final String F_ARROW_MODEL     = "arrow_model";
-	private static final String F_BROKEN_MODEL   = "broken_model";
+	private static final String F_ITEM_MODEL = "item_model";
+	private static final String F_BLOCKING_MODEL = "blocking_model";
+	private static final String F_PULLING_MODELS = "pulling_models";
+	private static final String F_CHARGED_MODEL = "charged_model";
+	private static final String F_FIREWORK_MODEL = "firework_model";
+	private static final String F_CAST_MODEL = "cast_model";
+	private static final String F_THROWING_MODEL = "throwing_model";
+	private static final String F_ARROW_MODEL = "arrow_model";
+	private static final String F_BROKEN_MODEL = "broken_model";
 	private static final String F_DAMAGED_MODELS = "damaged_models";
 	private static final String F_COOLDOWN_MODEL = "cooldown_model";
 	private static final String F_CHARGING_MODELS = "charging_models";
-	private static final String F_USE_MODELS      = "use_models";
+	private static final String F_USE_MODELS = "use_models";
 	private static final String F_BINARY_SELECTS = "binary_selects";
+	private static final String F_CHANNELS = "channels";
+	private static final String F_PALETTE = "palette";
+	private static final String F_EQUIPMENT = "equipment";
 
-	private static final String K_PARENT   = "parent";
-	private static final String K_MODEL    = "model";
+	private static final String K_PARENT = "parent";
+	private static final String K_MODEL = "model";
 	private static final String K_TEXTURES = "textures";
 
 	/**
@@ -79,61 +86,211 @@ public class ItemDisplayInformation {
 	@Deprecated
 	public TextureAndModelInformation model;
 
-	@SerializedName(F_BLOCKING_MODEL)
 	@com.google.gson.annotations.SerializedName(F_BLOCKING_MODEL)
 	public JsonElement blockingModel;
 
-	@SerializedName(F_ITEM_MODEL)
 	@com.google.gson.annotations.SerializedName(F_ITEM_MODEL)
 	public JsonElement itemModel;
 
-	@SerializedName(F_PULLING_MODELS)
 	@com.google.gson.annotations.SerializedName(F_PULLING_MODELS)
 	public JsonElement pullingModels; // array of string|object
 
-	@SerializedName(F_CHARGED_MODEL)
 	@com.google.gson.annotations.SerializedName(F_CHARGED_MODEL)
 	public JsonElement chargedModel;  // string|object
 
-	@SerializedName(F_FIREWORK_MODEL)
 	@com.google.gson.annotations.SerializedName(F_FIREWORK_MODEL)
 	public JsonElement fireworkModel; // string|object
 
-	@SerializedName(F_CAST_MODEL)
 	@com.google.gson.annotations.SerializedName(F_CAST_MODEL)
 	public JsonElement castModel; // fishing rod
 
-	@SerializedName(F_THROWING_MODEL)
 	@com.google.gson.annotations.SerializedName(F_THROWING_MODEL)
 	public JsonElement throwingModel; // trident
 
-	@SerializedName(F_ARROW_MODEL)
 	@com.google.gson.annotations.SerializedName(F_ARROW_MODEL)
 	public JsonElement arrowModel; // crossbow (optional; if absent, chargedModel is used)
 
-	@SerializedName(F_BROKEN_MODEL)
 	@com.google.gson.annotations.SerializedName(F_BROKEN_MODEL)
 	public JsonElement brokenModel; // string|object
 
-	@SerializedName(F_DAMAGED_MODELS)
 	@com.google.gson.annotations.SerializedName(F_DAMAGED_MODELS)
 	public JsonElement damagedModels; // array of string|object
 
-	@SerializedName(F_COOLDOWN_MODEL)
 	@com.google.gson.annotations.SerializedName(F_COOLDOWN_MODEL)
 	public JsonElement cooldownModel; // string|object
 
-	@SerializedName(F_CHARGING_MODELS)
 	@com.google.gson.annotations.SerializedName(F_CHARGING_MODELS)
 	public JsonElement chargingModels; // array of string|object
 
-	@SerializedName(F_USE_MODELS)
 	@com.google.gson.annotations.SerializedName(F_USE_MODELS)
 	public JsonElement useModels; // object map: action -> string|object
 
-	@SerializedName(F_BINARY_SELECTS)
 	@com.google.gson.annotations.SerializedName(F_BINARY_SELECTS)
 	public JsonElement binarySelects; // object map: name -> { property, cases: [{when,bool, model}] }
+
+	/**
+	 * The colour channels this item's model has. Each channel is one tint layer of the model, so a
+	 * single model and a single texture cover every palette.
+	 *
+	 * <p>Three forms, all describing a {@link Palette}:</p>
+	 * <ul>
+	 *   <li><b>Array</b> — {@code ["primary", "secondary"]}, channel names in tint-layer order</li>
+	 *   <li><b>String</b> — the id of a shared palette in {@code palettes/}, whose write order is
+	 *       the layer order</li>
+	 *   <li><b>Object</b> — a palette written inline, for the keys the array form cannot carry</li>
+	 * </ul>
+	 *
+	 * <p>Inline forms are registered under the item's own id, so everything downstream refers to one
+	 * palette either way. Read it through {@link #resolveChannels(Identifier)}.</p>
+	 */
+	@com.google.gson.annotations.SerializedName(F_CHANNELS)
+	public JsonElement channels;
+
+	/** Palette this item starts out painted with; falls back to the channels' own default. */
+	@com.google.gson.annotations.SerializedName(F_PALETTE)
+	public Identifier palette;
+
+	/**
+	 * What the item looks like <em>worn</em>, as opposed to held: the wings an elytra draws on the
+	 * wearer's back, the plates an armor piece draws on their body. One entry per equipment layer.
+	 *
+	 * <pre>{@code
+	 * "equipment": {
+	 *   "elytra": "examplepack:cheese_wings"
+	 * }
+	 * }</pre>
+	 *
+	 * <p>A layer is either the texture on its own, or an object carrying the texture and its
+	 * options:</p>
+	 *
+	 * <pre>{@code
+	 * "equipment": {
+	 *   "humanoid": { "texture": "examplepack:cheese_mail", "dyeable_color": 16770519 }
+	 * }
+	 * }</pre>
+	 *
+	 * <p>Layer names are the vanilla ones — {@code humanoid}, {@code humanoid_leggings},
+	 * {@code wings}, {@code wolf_body}, and the rest — plus {@code elytra} as a friendlier spelling of
+	 * {@code wings}. Read it through {@link #resolveEquipment()}.</p>
+	 */
+	@com.google.gson.annotations.SerializedName(F_EQUIPMENT)
+	public JsonElement equipment;
+
+	private transient Map<String, EquipmentLayer> cachedEquipment;
+
+	private transient Identifier cachedChannelsId;
+	private transient boolean cachedChannelsSet;
+
+	/**
+	 * The id of the palette describing this item's channels, registering an inline one under
+	 * {@code itemId} the first time it is asked for.
+	 *
+	 * @return the palette id, or {@code null} when the item declares no channels
+	 */
+	public Identifier resolveChannels(Identifier itemId) {
+		if (this.cachedChannelsSet) return this.cachedChannelsId;
+		this.cachedChannelsSet = true;
+
+		if (!isPresent(this.channels)) return this.cachedChannelsId = null;
+
+		if (this.channels.isJsonPrimitive()) {
+			return this.cachedChannelsId = Identifier.parse(this.channels.getAsString());
+		}
+
+		if (itemId == null) {
+			throw new IllegalArgumentException("An inline '" + F_CHANNELS + "' needs an owning item id");
+		}
+
+		Palette palette;
+		if (this.channels.isJsonArray()) {
+			List<String> names = new ArrayList<>();
+			for (JsonElement element : this.channels.getAsJsonArray()) names.add(element.getAsString());
+			palette = Palette.ofNames(names);
+		} else if (this.channels.isJsonObject()) {
+			palette = BaseGson.GSON.fromJson(this.channels, Palette.class);
+		} else {
+			throw new IllegalArgumentException("Field '" + F_CHANNELS + "' must be an array of channel "
+					+ "names, a palette id, or an inline palette object");
+		}
+
+		return this.cachedChannelsId = Palette.registerInline(itemId, palette);
+	}
+
+	/**
+	 * The declared equipment layers, keyed by lower-case layer name.
+	 *
+	 * @return the layers, empty when the item declares none
+	 */
+	public Map<String, EquipmentLayer> resolveEquipment() {
+		if (this.cachedEquipment != null) return this.cachedEquipment;
+
+		Map<String, EquipmentLayer> layers = new LinkedHashMap<>();
+		if (isPresent(this.equipment)) {
+			if (!this.equipment.isJsonObject()) {
+				throw new IllegalArgumentException("Field '" + F_EQUIPMENT + "' must be an object of layer "
+						+ "name to texture, e.g. { \"elytra\": \"examplepack:cheese_wings\" }");
+			}
+			for (Map.Entry<String, JsonElement> entry : this.equipment.getAsJsonObject().entrySet()) {
+				EquipmentLayer layer = EquipmentLayer.of(entry.getKey(), entry.getValue());
+				if (layer != null) layers.put(entry.getKey().toLowerCase(Locale.ROOT), layer);
+			}
+		}
+		return this.cachedEquipment = layers;
+	}
+
+	/**
+	 * The first declared layer among {@code names}, so a caller can accept more than one spelling of
+	 * the same layer.
+	 *
+	 * @return the layer, or null when the item declares none of them
+	 */
+	public EquipmentLayer equipmentLayer(String... names) {
+		Map<String, EquipmentLayer> layers = resolveEquipment();
+		if (layers.isEmpty()) return null;
+		for (String name : names) {
+			EquipmentLayer layer = layers.get(name);
+			if (layer != null) return layer;
+		}
+		return null;
+	}
+
+	/**
+	 * One equipment layer: the texture it draws, and the two options vanilla allows on it.
+	 *
+	 * @param texture          the texture, as written — resolving it against the layer's texture
+	 *                         directory is the generator's job
+	 * @param usePlayerTexture whether the layer uses the wearer's own skin instead
+	 * @param dyeableColor     the colour the layer takes while undyed, or null when it is not dyeable
+	 */
+	public record EquipmentLayer(Identifier texture, boolean usePlayerTexture, Integer dyeableColor) {
+
+		static EquipmentLayer of(String layerName, JsonElement element) {
+			if (!isPresent(element)) return null;
+
+			if (element.isJsonPrimitive()) {
+				return new EquipmentLayer(Identifier.parse(element.getAsString()), false, null);
+			}
+
+			if (!element.isJsonObject()) {
+				throw new IllegalArgumentException("Equipment layer '" + layerName + "' must be a texture id "
+						+ "or an object with a 'texture'");
+			}
+
+			JsonObject object = element.getAsJsonObject();
+			JsonElement texture = object.get("texture");
+			if (!isString(texture)) {
+				throw new IllegalArgumentException("Equipment layer '" + layerName + "' is missing its 'texture'");
+			}
+
+			JsonElement usePlayerTexture = object.get("use_player_texture");
+			JsonElement dyeableColor = object.get("dyeable_color");
+			return new EquipmentLayer(
+					Identifier.parse(texture.getAsString()),
+					isPresent(usePlayerTexture) && usePlayerTexture.getAsBoolean(),
+					isPresent(dyeableColor) ? dyeableColor.getAsInt() : null
+			);
+		}
+	}
 
 	// ----------------------------
 	// Parsed caches (avoid reparsing)
@@ -516,21 +673,49 @@ public class ItemDisplayInformation {
 		return isPresent(e) && e.isJsonObject();
 	}
 
-	public boolean hasItemModel()          { return isPresent(itemModel); }
-	public boolean hasItemModelString()    { return isString(itemModel); }
-	public boolean hasItemModelObject()    { return isObject(itemModel); }
+	public boolean hasItemModel() {
+		return isPresent(itemModel);
+	}
 
-	public boolean hasBlockingModel()      { return isPresent(blockingModel); }
-	public boolean hasBlockingModelObject(){ return isObject(blockingModel); }
+	public boolean hasItemModelString() {
+		return isString(itemModel);
+	}
 
-	public boolean hasCastModel()          { return isPresent(castModel); }
-	public boolean hasCastModelObject()    { return isObject(castModel); }
+	public boolean hasItemModelObject() {
+		return isObject(itemModel);
+	}
 
-	public boolean hasThrowingModel()      { return isPresent(throwingModel); }
-	public boolean hasThrowingModelObject(){ return isObject(throwingModel); }
+	public boolean hasBlockingModel() {
+		return isPresent(blockingModel);
+	}
 
-	public boolean hasChargedModel()       { return isPresent(chargedModel); }
-	public boolean hasFireworkModel()      { return isPresent(fireworkModel); }
+	public boolean hasBlockingModelObject() {
+		return isObject(blockingModel);
+	}
+
+	public boolean hasCastModel() {
+		return isPresent(castModel);
+	}
+
+	public boolean hasCastModelObject() {
+		return isObject(castModel);
+	}
+
+	public boolean hasThrowingModel() {
+		return isPresent(throwingModel);
+	}
+
+	public boolean hasThrowingModelObject() {
+		return isObject(throwingModel);
+	}
+
+	public boolean hasChargedModel() {
+		return isPresent(chargedModel);
+	}
+
+	public boolean hasFireworkModel() {
+		return isPresent(fireworkModel);
+	}
 
 	public boolean hasPullingModels() {
 		return pullingModels != null
@@ -574,19 +759,39 @@ public class ItemDisplayInformation {
 		return base.withSuffix(suffix);
 	}
 
-	public Identifier blockingModelId(Identifier itemId) { return variantModelId(itemId, "_blocking"); }
-	public Identifier chargedModelId(Identifier itemId)  { return variantModelId(itemId, "_charged"); }
-	public Identifier fireworkModelId(Identifier itemId) { return variantModelId(itemId, "_firework"); }
-	public Identifier castModelId(Identifier itemId)     { return variantModelId(itemId, "_cast"); }
-	public Identifier throwingModelId(Identifier itemId) { return variantModelId(itemId, "_throwing"); }
-	public Identifier arrowModelId(Identifier itemId)    { return variantModelId(itemId, "_arrow"); }
-	public Identifier pullingModelId(Identifier itemId, int idx) { return variantModelId(itemId, "_pulling_" + idx); }
+	public Identifier blockingModelId(Identifier itemId) {
+		return variantModelId(itemId, "_blocking");
+	}
+
+	public Identifier chargedModelId(Identifier itemId) {
+		return variantModelId(itemId, "_charged");
+	}
+
+	public Identifier fireworkModelId(Identifier itemId) {
+		return variantModelId(itemId, "_firework");
+	}
+
+	public Identifier castModelId(Identifier itemId) {
+		return variantModelId(itemId, "_cast");
+	}
+
+	public Identifier throwingModelId(Identifier itemId) {
+		return variantModelId(itemId, "_throwing");
+	}
+
+	public Identifier arrowModelId(Identifier itemId) {
+		return variantModelId(itemId, "_arrow");
+	}
+
+	public Identifier pullingModelId(Identifier itemId, int idx) {
+		return variantModelId(itemId, "_pulling_" + idx);
+	}
 
 	/**
 	 * @param property  What to evaluate to a boolean (component/property key etc).
 	 * @param whenTrue  Model for when the property is true/false. Both required.  */
 	public record BinarySelect(String property, TextureAndModelInformation whenTrue,
-							   TextureAndModelInformation whenFalse) {
+	                           TextureAndModelInformation whenFalse) {
 		public TextureAndModelInformation pick(boolean value) {
 			return value ? whenTrue : whenFalse;
 		}

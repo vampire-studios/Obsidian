@@ -20,13 +20,12 @@ public final class ObsInterpreter {
 	private static final PriorityQueue<Cont> CONT = new PriorityQueue<>(Comparator.comparingInt(Cont::tick));
 	private static final Map<String, ScriptFunc> FUNCS = new HashMap<>();
 	private static final Map<String, CommandHandler> HANDLERS = new HashMap<>();
-	private static final Map<String, List<Stmt>> BODY_CACHE =
-			new LinkedHashMap<>(128, 0.75f, true) {
-				@Override
-				protected boolean removeEldestEntry(Map.Entry<String, List<Stmt>> e) {
-					return this.size() > 512; // simple LRU cap
-				}
-			};
+	private static final Map<String, List<Stmt>> BODY_CACHE = new LinkedHashMap<>(128, 0.75f, true) {
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<String, List<Stmt>> e) {
+			return this.size() > 512;
+		}
+	};
 	static StateStore STORE; // set from runtime after load
 	private static ConfigIO CFG;
 

@@ -17,15 +17,12 @@ accessible method net/minecraft/world/level/block/state/properties/BlockSetType 
 
 accessible method net/minecraft/core/Holder$Reference bindValue (Ljava/lang/Object;)V
 
-accessible field net/minecraft/world/item/ShovelItem FLATTENABLES Ljava/util/Map;
-accessible field net/minecraft/world/item/AxeItem STRIPPABLES Ljava/util/Map;
 accessible field net/minecraft/world/level/block/FireBlock burnOdds Lit/unimi/dsi/fastutil/objects/Object2IntMap;
 accessible field net/minecraft/world/level/block/FireBlock igniteOdds Lit/unimi/dsi/fastutil/objects/Object2IntMap;
 
 accessible method net/minecraft/server/packs/FilePackResources <init> (Lnet/minecraft/server/packs/PackLocationInfo;Lnet/minecraft/server/packs/FilePackResources$SharedZipFileAccess;Ljava/lang/String;)V
 accessible method net/minecraft/server/packs/FilePackResources$SharedZipFileAccess <init> (Ljava/io/File;)V
 accessible class net/minecraft/server/packs/FilePackResources$SharedZipFileAccess
-
 
 accessible method net/minecraft/core/Holder$Reference bindTags (Ljava/util/Collection;)V
 accessible method net/minecraft/core/HolderSet$Named bind (Ljava/util/List;)V
@@ -38,3 +35,9 @@ accessible method net/minecraft/world/entity/Display$ItemDisplay setItemStack (L
 accessible method net/minecraft/world/entity/Display$ItemDisplay setItemTransform (Lnet/minecraft/world/item/ItemDisplayContext;)V
 
 accessible method net/minecraft/world/inventory/ChestMenu <init> (Lnet/minecraft/world/inventory/MenuType;ILnet/minecraft/world/entity/player/Inventory;I)V
+# Palette system: lets Obsidian register the "obsidian:palette" item tint source type
+accessible field net/minecraft/client/color/item/ItemTintSources ID_MAPPER Lnet/minecraft/util/ExtraCodecs$LateBoundIdMapper;
+
+# Cauldron types: lets Obsidian add its own item interactions to the vanilla cauldron dispatchers
+accessible method net/minecraft/core/cauldron/CauldronInteraction$Dispatcher put (Lnet/minecraft/world/item/Item;Lnet/minecraft/core/cauldron/CauldronInteraction;)V
+accessible method net/minecraft/core/cauldron/CauldronInteraction$Dispatcher put (Lnet/minecraft/tags/TagKey;Lnet/minecraft/core/cauldron/CauldronInteraction;)V

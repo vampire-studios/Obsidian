@@ -38,7 +38,7 @@ public class ObsidianBundleMouseActions implements ItemSlotMouseAction {
 			int k = vector2i.y == 0 ? -vector2i.x : vector2i.y;
 			if (k != 0) {
 				int l = BundleItem.getSelectedItem(itemStack);
-				int m = ScrollWheelHandler.getNextScrollWheelSelection((double)k, l, j);
+				int m = ScrollWheelHandler.getNextScrollWheelSelection((double) k, l, j);
 				if (l != m) {
 					this.toggleSelectedBundleItem(itemStack, i, m);
 				}

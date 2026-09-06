@@ -1,32 +1,31 @@
 package io.github.vampirestudios.obsidian.api.obsidian;
 
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ContextFloatProviders;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ResolvableFloat;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt;
 
 public class FuelSource {
 
-    public String operation;
-    public Identifier item;
-    public Identifier tag;
-    public int burn_time = -1;
+	public String operation = "add";
 
-    public Operation getOperation() {
-        return switch(operation) {
-            case "add" -> Operation.ADD;
-            case "remove" -> Operation.REMOVE;
-            default -> /*throw new IllegalStateException("Unexpected value: " + operation)*/Operation.ADD;
-        };
-    }
+	public Identifier item;
+	public TagKey<Item> tag;
 
-    public TagKey<Item> getTag() {
-        return TagKey.create(Registries.ITEM, tag);
-    }
+	public ResolvableInt burn_time;
+	public ResolvableFloat speed_multiplier = ResolvableFloat.fromKey(ContextFloatProviders.COOKING_DEFAULT_SPEED_MULTIPLIER);
 
-    public enum Operation {
-        ADD,
-        REMOVE
-    }
+	public Operation getOperation() {
+		if (operation.equals("remove")) {
+			return Operation.REMOVE;
+		}
+		return Operation.ADD;
+	}
 
+	public enum Operation {
+		ADD,
+		REMOVE
+	}
 }

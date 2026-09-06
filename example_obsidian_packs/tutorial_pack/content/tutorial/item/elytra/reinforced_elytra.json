@@ -13,7 +13,9 @@
       "textures": {
         "layer0": "tutorial:item/reinforced_elytra"
       }
+    },
+    "equipment": {
+      "elytra": "tutorial:reinforced_elytra"
     }
-  },
-  "texture": "tutorial:entity/elytra/reinforced_elytra"
+  }
 }

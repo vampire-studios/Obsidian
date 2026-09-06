@@ -30,9 +30,9 @@ public class SkillParser {
 	}
 
 	// skill{...} @Target{...} ~event
-	private static final Pattern SKILL_PATTERN  = Pattern.compile("([a-zA-Z0-9_:\\-]+)(?:\\{(.*?)})?");
+	private static final Pattern SKILL_PATTERN = Pattern.compile("([a-zA-Z0-9_:\\-]+)(?:\\{(.*?)})?");
 	private static final Pattern TARGET_PATTERN = Pattern.compile("@([a-zA-Z0-9_:\\-]+)(?:\\{(.+?)})?");
-	private static final Pattern EVENT_PATTERN  = Pattern.compile("~([a-zA-Z0-9_\\-]+)(?::([a-zA-Z0-9_\\-]+))?");
+	private static final Pattern EVENT_PATTERN = Pattern.compile("~([a-zA-Z0-9_\\-]+)(?::([a-zA-Z0-9_\\-]+))?");
 
 	// <skill.foo>
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("<skill\\.(\\w+)>");
@@ -80,6 +80,7 @@ public class SkillParser {
 	}};
 
 	private static final Map<String, String> aliasToParameter = new HashMap<>();
+
 	static {
 		for (var e : parameterAliases.entrySet()) {
 			for (String alias : e.getValue()) {
@@ -96,6 +97,7 @@ public class SkillParser {
 
 	// Skill type aliases
 	private static final Map<String, String> aliasMap = new HashMap<>();
+
 	static {
 		aliasMap.put("setmodel", "setitemmodel");
 		aliasMap.put("modelset", "setitemmodel");
@@ -320,6 +322,69 @@ public class SkillParser {
 				yield new SkillSkill(skillId, target, trigger, triggeredSkill);
 			}
 
+			// Several named skills, run in order. Steps are referenced by id rather than written inline,
+			// because inline braces cannot be split apart from the parameter separator reliably.
+			case "sequence", "seq" -> {
+				String names = params.getOrDefault("skills", params.get("s"));
+				if (names == null) {
+					System.err.println("sequence{...} missing skills=");
+					yield null;
+				}
+
+				List<Skill> steps = new ArrayList<>();
+				for (String raw : names.split(",")) {
+					Skill step = namedSkill(raw);
+					if (step != null) steps.add(step);
+				}
+
+				if (steps.isEmpty()) {
+					System.err.println("sequence{...} resolved no steps: " + names);
+					yield null;
+				}
+				yield new SequenceSkill(skillId, target, trigger, steps);
+			}
+
+			// switch{var=phase;cases=idle:skill_a,angry:skill_b;default=skill_c}
+			case "switch" -> {
+				String variable = params.getOrDefault("var", params.get("variable"));
+				if (variable == null) {
+					System.err.println("switch{...} missing var=");
+					yield null;
+				}
+
+				String rawCases = params.get("cases");
+				if (rawCases == null) {
+					System.err.println("switch{...} missing cases=");
+					yield null;
+				}
+
+				Map<String, Skill> cases = new LinkedHashMap<>();
+				for (String raw : rawCases.split(",")) {
+					String entryText = raw.trim();
+					if (entryText.isEmpty()) continue;
+
+					int split = entryText.indexOf(':');
+					if (split <= 0 || split == entryText.length() - 1) {
+						System.err.println("switch{...} case must be written value:skill, but was: " + entryText);
+						continue;
+					}
+
+					Skill caseSkill = namedSkill(entryText.substring(split + 1).trim());
+					if (caseSkill == null) continue;
+					cases.put(entryText.substring(0, split).trim().toLowerCase(Locale.ROOT), caseSkill);
+				}
+
+				Skill fallback = params.get("default") == null ? null : namedSkill(params.get("default").trim());
+				if (cases.isEmpty() && fallback == null) {
+					System.err.println("switch{...} resolved no cases: " + rawCases);
+					yield null;
+				}
+
+				// A variable named caster.* is read off the caster, matching variableEquals.
+				boolean onCaster = variable.startsWith("caster");
+				yield new SwitchSkill(skillId, target, trigger, variable, onCaster, cases, fallback);
+			}
+
 			case "heal" -> {
 				// YAML uses a= for heal amount
 				String amt = params.getOrDefault("amount", params.get("a"));
@@ -436,6 +501,16 @@ public class SkillParser {
 				yield null;
 			}
 		};
+	}
+
+	/** Looks up a skill declared elsewhere in the pack by its short name. */
+	private static Skill namedSkill(String name) {
+		if (name == null || name.isBlank()) return null;
+
+		Identifier id = Identifier.fromNamespaceAndPath(modId, name.trim().toLowerCase(Locale.ROOT));
+		Skill skill = SkillManager.getInstance().getSkillById(id);
+		if (skill == null) System.err.println("No skill found named: " + id);
+		return skill;
 	}
 
 	private static EntityType<?> parseEntityType(String entityId) {
@@ -612,20 +687,16 @@ public class SkillParser {
 		}
 	}
 
-	// Legacy helpers you had (kept for compatibility)
+	/**
+	 * Caster-side conditions from written lines.
+	 *
+	 * <p>This used to hand the whole {@code type{params}} line to a type parser that expected only the
+	 * name, so it resolved every condition to "unknown" and then failed on it — which meant an
+	 * {@code aura{}} with any condition at all could not be parsed. It delegates now.
+	 */
 	public static List<Condition> parseConditions(List<String> conditionLines) {
 		if (conditionLines == null || conditionLines.isEmpty()) return Collections.emptyList();
-
-		List<Condition> conditions = new ArrayList<>();
-		for (String line : conditionLines) {
-			if (line == null || line.isBlank()) continue;
-			ConditionParser.ConditionType type = ConditionParser.parseConditionType(line);
-			Map<String, Object> parameters = ConditionParser.parseParameters(line);
-
-			Condition condition = ConditionFactory.createCondition(type.name().toLowerCase(Locale.ROOT), parameters);
-			if (condition != null) conditions.add(condition);
-		}
-		return conditions;
+		return ConditionParser.parseConditions(conditionLines, true);
 	}
 
 	public static List<Effect> parseEffects(List<String> effectLines) {

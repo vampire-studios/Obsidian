@@ -9,21 +9,21 @@ import java.util.Map;
 
 public class AddonCommandRegistry {
 
-    private static final Map<Identifier, CommandDefinition> COMMANDS = new HashMap<>();
+	private static final Map<Identifier, CommandDefinition> COMMANDS = new HashMap<>();
 
-    public static void put(Identifier id, CommandDefinition def) {
-        COMMANDS.put(id, def);
-    }
+	public static void put(Identifier id, CommandDefinition def) {
+		COMMANDS.put(id, def);
+	}
 
-    public static CommandDefinition get(Identifier id) {
-        return COMMANDS.get(id);
-    }
+	public static CommandDefinition get(Identifier id) {
+		return COMMANDS.get(id);
+	}
 
-    public static Collection<CommandDefinition> all() {
-        return COMMANDS.values();
-    }
+	public static Collection<CommandDefinition> all() {
+		return COMMANDS.values();
+	}
 
-    public static void clear() {
-        COMMANDS.clear();
-    }
+	public static void clear() {
+		COMMANDS.clear();
+	}
 }

@@ -12,39 +12,39 @@ import java.util.Collection;
 import java.util.List;
 
 public class FabricLoaderInterface {
-    // hippity-hoppitied from ModsMod
-    private static final Method ADD_MOD_METHOD;
-    private static final Method CREATE_PLAIN_METHOD;
-    private static final Field MODS_FIELD;
+	// hippity-hoppitied from ModsMod
+	private static final Method ADD_MOD_METHOD;
+	private static final Method CREATE_PLAIN_METHOD;
+	private static final Field MODS_FIELD;
 
-    static {
-        try {
-            ADD_MOD_METHOD = FabricLoaderImpl.class.getDeclaredMethod("addMod", ModCandidateImpl.class);
-            ADD_MOD_METHOD.setAccessible(true);
+	static {
+		try {
+			ADD_MOD_METHOD = FabricLoaderImpl.class.getDeclaredMethod("addMod", ModCandidateImpl.class);
+			ADD_MOD_METHOD.setAccessible(true);
 
-            MODS_FIELD = FabricLoaderImpl.class.getDeclaredField("mods");
-            MODS_FIELD.setAccessible(true);
+			MODS_FIELD = FabricLoaderImpl.class.getDeclaredField("mods");
+			MODS_FIELD.setAccessible(true);
 
-            CREATE_PLAIN_METHOD = ModCandidateImpl.class.getDeclaredMethod("createPlain", List.class, LoaderModMetadata.class, boolean.class, Collection.class);
-            CREATE_PLAIN_METHOD.setAccessible(true);
-        } catch (NoSuchMethodException | NoSuchFieldException e) {
-            throw new IllegalStateException("failed to reflect addMod/createPlain/mods - fabric loader unsupported?", e);
-        }
-    }
+			CREATE_PLAIN_METHOD = ModCandidateImpl.class.getDeclaredMethod("createPlain", List.class, LoaderModMetadata.class, boolean.class, Collection.class);
+			CREATE_PLAIN_METHOD.setAccessible(true);
+		} catch (NoSuchMethodException | NoSuchFieldException e) {
+			throw new IllegalStateException("failed to reflect addMod/createPlain/mods - fabric loader unsupported?", e);
+		}
+	}
 
-    public static void addMod(FabricLoaderImpl fabricLoader, ModCandidateImpl candidate) {
-        try {
-            ADD_MOD_METHOD.invoke(fabricLoader, candidate);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new IllegalStateException("Failed to inject mod", e);
-        }
-    }
+	public static void addMod(FabricLoaderImpl fabricLoader, ModCandidateImpl candidate) {
+		try {
+			ADD_MOD_METHOD.invoke(fabricLoader, candidate);
+		} catch (InvocationTargetException | IllegalAccessException e) {
+			throw new IllegalStateException("Failed to inject mod", e);
+		}
+	}
 
-    public static ModCandidateImpl createPlain(Path path, LoaderModMetadata metadata, boolean requiresRemap, Collection<ModCandidateImpl> nestedMods) {
-        try {
-            return (ModCandidateImpl) CREATE_PLAIN_METHOD.invoke(null, List.of(path), metadata, requiresRemap, nestedMods);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException("Failed to create plain mod container", e);
-        }
-    }
+	public static ModCandidateImpl createPlain(Path path, LoaderModMetadata metadata, boolean requiresRemap, Collection<ModCandidateImpl> nestedMods) {
+		try {
+			return (ModCandidateImpl) CREATE_PLAIN_METHOD.invoke(null, List.of(path), metadata, requiresRemap, nestedMods);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new IllegalStateException("Failed to create plain mod container", e);
+		}
+	}
 }

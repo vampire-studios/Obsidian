@@ -1,7 +1,5 @@
 package io.github.vampirestudios.obsidian.configPack;
 
-import blue.endless.jankson.api.DeserializationException;
-import blue.endless.jankson.api.SyntaxError;
 import com.google.common.base.Joiner;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -20,6 +18,7 @@ import io.github.vampirestudios.obsidian.api.scripting.ScriptParser.ParamDef;
 import io.github.vampirestudios.obsidian.network.ContentPackSyncManager;
 import io.github.vampirestudios.obsidian.network.ContentPackSyncNetworking;
 import io.github.vampirestudios.obsidian.registry.Registries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import io.github.vampirestudios.obsidian.utils.Utils;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -32,8 +31,8 @@ import net.minecraft.commands.arguments.*;
 import net.minecraft.commands.arguments.coordinates.*;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
@@ -71,7 +70,7 @@ public class ObsidianAddonLoader {
 		File[] entries = SERVER_OBSIDIAN_ADDON_DIRECTORY.listFiles();
 		if (entries == null || entries.length == 0) return;
 		for (File hashDir : entries) {
-			register(hashDir, "addon.info.pack", "addon.info.json5");
+			register(hashDir, "addon.info.pack", "addon.info.json");
 		}
 	}
 
@@ -79,7 +78,8 @@ public class ObsidianAddonLoader {
 		if (file.isDirectory()) {
 			try {
 				File legacyPackInfoFile = new File(file, legacyFile);
-				File newPackInfoFile = new File(file, newFile);
+				// the info file may be written in any supported format, not just the json one
+				File newPackInfoFile = AddonFormats.resolve(file, AddonFormats.baseName(newFile));
 				Optional<File> fabricModJson;
 				if (new File(file, "fabric.mod.json").exists())
 					fabricModJson = Optional.of(new File(file, "fabric.mod.json"));
@@ -119,7 +119,7 @@ public class ObsidianAddonLoader {
 		ContentPackSyncManager.reset();
 		for (File file : Objects.requireNonNull(OBSIDIAN_ADDON_DIRECTORY.listFiles())) {
 			// Load Packs
-			register(file, "addon.info.pack", "addon.info.json5");
+			register(file, "addon.info.pack", "addon.info.json");
 		}
 
 		String moduleText;
@@ -217,7 +217,7 @@ public class ObsidianAddonLoader {
 						else break;
 					}
 
-					// 4) attach executes() to every prefix ≥ minArgs
+					// 4) attach executes() to every prefix â‰¥ minArgs
 					for (int count = minArgs; count <= nodes.size(); count++) {
 						ArgumentBuilder<CommandSourceStack, ?> target =
 								(count == 0 ? root : nodes.get(count - 1));
@@ -445,9 +445,13 @@ public class ObsidianAddonLoader {
 		if (Paths.get(id.addonPath(), addonModule.getType()).toFile().exists()) {
 			for (File file : Objects.requireNonNull(Paths.get(id.addonPath(), addonModule.getType()).toFile().listFiles())) {
 				if (file.isFile()) {
+					if (!AddonFormats.isSupported(file)) {
+						Obsidian.LOGGER.debug("Skipping {} in module {}: unsupported format", file.getName(), addonModule.getType());
+						continue;
+					}
 					try {
 						addonModule.init(addon, file, id);
-					} catch (SyntaxError | IOException | DeserializationException e) {
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
@@ -460,6 +464,27 @@ public class ObsidianAddonLoader {
 			Obsidian.LOGGER.info("Registered {} {}.", type, name);
 		if (list.get(name).isPresent()) return list.getValue(name);
 		else return Registry.register(list, name, idk);
+	}
+
+	/**
+	 * Whether {@code id} is already taken in a game registry, so the declaration reading it should be
+	 * skipped rather than registered.
+	 *
+	 * <p>Registering over a taken id throws — but by then the block or item has been constructed, and a
+	 * constructed one holds a registry entry that nothing can claim. The game refuses to finish freezing
+	 * its registries while any of those are left over, so a single duplicate declaration takes the whole
+	 * game down at startup instead of failing on its own. Asking first is what keeps it to one failure.
+	 *
+	 * <p>The usual cause is a pack declaring one name as both a block and an item: the block registers an
+	 * item of its own, and the item declaration then finds the id taken.
+	 */
+	public static boolean alreadyRegistered(Registry<?> registry, Identifier id, String type, String fileName) {
+		if (!registry.containsKey(id)) return false;
+
+		Obsidian.LOGGER.error("Skipping {} {}: {} is already registered. Two declarations share this id — "
+				+ "a block and an item of the same name will collide, since a block registers an item too.",
+				type, fileName, id);
+		return true;
 	}
 
 	public static void failedRegistering(String type, String name, Exception e) {

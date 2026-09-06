@@ -15,16 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ResultSlot.class)
 public class ResultSlotCraftMixin {
 
-    @Inject(method = "onTake(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
-    private void crucible$craft(Player player, ItemStack crafted, CallbackInfo ci) {
-        if (!(player instanceof ServerPlayer sp)) return;
+	@Inject(method = "onTake(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
+	private void crucible$craft(Player player, ItemStack crafted, CallbackInfo ci) {
+		if (!(player instanceof ServerPlayer sp)) return;
 
-        CrucibleEvents.fire(
-                SkillTrigger.ITEM_CRAFT,
-                SkillContext.builder(sp)
-                        .level(sp.level())
-                        .stack(crafted)
-                        .build()
-        );
-    }
+		CrucibleEvents.fire(
+				SkillTrigger.ITEM_CRAFT,
+				SkillContext.builder(sp)
+						.level(sp.level())
+						.stack(crafted)
+						.build()
+		);
+	}
 }

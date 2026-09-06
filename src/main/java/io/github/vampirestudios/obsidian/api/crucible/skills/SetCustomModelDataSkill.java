@@ -11,25 +11,25 @@ import net.minecraft.world.item.component.CustomModelData;
 import java.util.List;
 
 public class SetCustomModelDataSkill extends Skill {
-    private final int customModelData;
+	private final int customModelData;
 
-    public SetCustomModelDataSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, int customModelData) {
-        super(skillId, target, trigger);
-        this.customModelData = customModelData;
-    }
+	public SetCustomModelDataSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, int customModelData) {
+		super(skillId, target, trigger);
+		this.customModelData = customModelData;
+	}
 
-    @Override
-    public void applyEffect(LivingEntity caster) {
-        // Get the item in the main hand of the target (or modify as needed)
-        ItemStack itemStack = caster.getMainHandItem();
-        if (!itemStack.isEmpty()) {
-            itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(), List.of(customModelData)));
-        }
-    }
+	@Override
+	public void applyEffect(LivingEntity caster) {
+		// Get the item in the main hand of the target (or modify as needed)
+		ItemStack itemStack = caster.getMainHandItem();
+		if (!itemStack.isEmpty()) {
+			itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(), List.of(customModelData)));
+		}
+	}
 
-    @Override
-    public List<String> aliases() {
-        // Define aliases for this skill type
-        return List.of("setitemmodel", "setmodel");
-    }
+	@Override
+	public List<String> aliases() {
+		// Define aliases for this skill type
+		return List.of("setitemmodel", "setmodel");
+	}
 }

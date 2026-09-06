@@ -2,22 +2,24 @@
     "information": {
         "name": {
             "translations": {
-                "en_us": "Bucket Helmet",
-                "nb_no": "Bøttehjelm"
-            },
-            "color": "#d9aa51"
+                "en_us": "<color #d9aa51>Bucket Helmet",
+                "nb_no": "<color #d9aa51>Bøttehjelm"
+            }
         },
         "item_group": "minecraft:combat",
         "max_stack_size": 1
     },
-    "armor_slot": "head",
-    "armor_material": "tutorial:bucket",
+    "slot": "helmet",
+    "material_id": "tutorial:bucket",
     "rendering": {
         "item_model": {
             "parent": "item/generated",
             "textures": {
                 "layer0": "tutorial:item/bucket_helmet"
             }
+        },
+        "equipment": {
+            "humanoid": "tutorial:bucket_helmet"
         }
     }
 }

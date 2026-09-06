@@ -1,0 +1,42 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Rough Bricks"
+      }
+    },
+    "block_properties": {
+      "material": "minecraft:stone",
+      "sound_group": "minecraft:stone"
+    },
+    "item_properties": {
+      "item_group": "minecraft:building_blocks"
+    }
+  },
+  "additional_information": {
+    "convertible": {
+      "transformed_block": "minecraft:chiseled_stone_bricks",
+      "conversion_item": {
+        "tag": "minecraft:pickaxes"
+      },
+      "sound": "minecraft:block.stone.hit",
+      "particle": "scrape",
+      "disallowed_faces": [
+        "down"
+      ],
+      "item_damage_per_use": 1,
+      "reversible": true,
+      "reversal_item": {
+        "item": "minecraft:stick"
+      }
+    }
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/stone_bricks"
+      }
+    }
+  }
+}

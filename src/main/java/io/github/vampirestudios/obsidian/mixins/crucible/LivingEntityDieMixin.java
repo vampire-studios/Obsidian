@@ -14,26 +14,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityDieMixin {
-    @Inject(method = "die", at = @At("HEAD"))
-    private void crucible$onDie(DamageSource source, CallbackInfo ci) {
-        LivingEntity victim = (LivingEntity) (Object) this;
-        if (!(victim.level() instanceof ServerLevel level)) return;
+	@Inject(method = "die", at = @At("HEAD"))
+	private void crucible$onDie(DamageSource source, CallbackInfo ci) {
+		LivingEntity victim = (LivingEntity) (Object) this;
+		if (!(victim.level() instanceof ServerLevel level)) return;
 
-        // Victim DEATH
+		// Victim DEATH
 
 
-        if (victim instanceof ServerPlayer) {
-            CrucibleEvents.fire(SkillTrigger.PLAYERDEATH,
-                    SkillContext.builder(victim).level(level).build()
-            );
-        }
+		if (victim instanceof ServerPlayer) {
+			CrucibleEvents.fire(SkillTrigger.PLAYERDEATH,
+					SkillContext.builder(victim).level(level).build()
+			);
+		}
 
-        // Attacker KILL / KILLPLAYER
-        var attacker = source.getEntity();
-        if (attacker instanceof ServerPlayer killer) {
-            CrucibleEvents.fire(SkillTrigger.KILL,
-                    SkillContext.builder(killer).level(level).target(victim).build()
-            );
-        }
-    }
+		// Attacker KILL / KILLPLAYER
+		var attacker = source.getEntity();
+		if (attacker instanceof ServerPlayer killer) {
+			CrucibleEvents.fire(SkillTrigger.KILL,
+					SkillContext.builder(killer).level(level).target(victim).build()
+			);
+		}
+	}
 }

@@ -20,8 +20,13 @@ public final class ConfigIO {
 	private static final class Entry {
 		final Path path;
 		volatile long lastModified;
-		volatile Map<String,Object> data;
-		Entry(Path p, long lm, Map<String,Object> d){ path=p; lastModified=lm; data=d; }
+		volatile Map<String, Object> data;
+
+		Entry(Path p, long lm, Map<String, Object> d) {
+			path = p;
+			lastModified = lm;
+			data = d;
+		}
 	}
 
 	private final Map<String, Entry> cache = new ConcurrentHashMap<>();
@@ -33,12 +38,12 @@ public final class ConfigIO {
 
 	/** Read (from cache or disk). */
 	@SuppressWarnings("unchecked")
-	public Map<String,Object> read(String file) throws IOException {
+	public Map<String, Object> read(String file) throws IOException {
 		Path p = safePath(file);
 		long lm = Files.exists(p) ? Files.getLastModifiedTime(p).toMillis() : 0L;
 		Entry e = cache.get(file);
 		if (e == null || lm != e.lastModified) {
-			Map<String,Object> obj = Files.exists(p) ? readJson(p) : new HashMap<>();
+			Map<String, Object> obj = Files.exists(p) ? readJson(p) : new HashMap<>();
 			e = new Entry(p, lm, obj);
 			cache.put(file, e);
 		}
@@ -46,7 +51,7 @@ public final class ConfigIO {
 	}
 
 	/** Write to disk (optional feature). */
-	public void write(String file, Map<String,Object> obj) throws IOException {
+	public void write(String file, Map<String, Object> obj) throws IOException {
 		Path p = safePath(file);
 		String json = gson.toJson(obj);
 		byte[] bytes = json.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -69,7 +74,8 @@ public final class ConfigIO {
 					e.lastModified = lm;
 					// (optional) notify listeners here
 				}
-			} catch (IOException ignored) {}
+			} catch (IOException ignored) {
+			}
 		}
 	}
 
@@ -84,11 +90,11 @@ public final class ConfigIO {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String,Object> readJson(Path p) throws IOException {
+	private Map<String, Object> readJson(Path p) throws IOException {
 		long size = Files.size(p);
 		if (size > MAX_BYTES) throw new IOException("config too large (>256KB)");
 		String s = Files.readString(p);
-		Map<String,Object> m = new Gson().fromJson(s, Map.class);
+		Map<String, Object> m = new Gson().fromJson(s, Map.class);
 		return (m == null) ? new HashMap<>() : m;
 	}
 }

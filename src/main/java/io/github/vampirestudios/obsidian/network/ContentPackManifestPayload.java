@@ -9,49 +9,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record ContentPackManifestPayload(int schema, List<PackEntry> packs) implements CustomPacketPayload {
-        public static final Type<ContentPackManifestPayload> TYPE = new Type<>(Const.id("content_pack_manifest"));
-        public static final StreamCodec<FriendlyByteBuf, ContentPackManifestPayload> CODEC = StreamCodec.of(
-                        (buf, payload) -> payload.write(buf), ContentPackManifestPayload::read);
+	public static final Type<ContentPackManifestPayload> TYPE = new Type<>(Const.id("content_pack_manifest"));
+	public static final StreamCodec<FriendlyByteBuf, ContentPackManifestPayload> CODEC = StreamCodec.of(
+			(buf, payload) -> payload.write(buf), ContentPackManifestPayload::read);
 
-        public ContentPackManifestPayload(int schema, List<PackEntry> packs) {
-                this.schema = schema;
-                this.packs = List.copyOf(packs);
-        }
+	public ContentPackManifestPayload(int schema, List<PackEntry> packs) {
+		this.schema = schema;
+		this.packs = List.copyOf(packs);
+	}
 
-        @Override
-        public Type<? extends CustomPacketPayload> type() {
-                return TYPE;
-        }
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 
-        private void write(FriendlyByteBuf buf) {
-                buf.writeVarInt(schema);
-                buf.writeVarInt(packs.size());
-                packs.forEach(pack -> {
-                        buf.writeUtf(pack.id());
-                        buf.writeUtf(pack.version());
-                        buf.writeUtf(pack.format());
-                        buf.writeUtf(pack.folderName());
-                        buf.writeUtf(pack.sha256());
-                        buf.writeByteArray(pack.bundle());
-                });
-        }
+	private void write(FriendlyByteBuf buf) {
+		buf.writeVarInt(schema);
+		buf.writeVarInt(packs.size());
+		packs.forEach(pack -> {
+			buf.writeUtf(pack.id());
+			buf.writeUtf(pack.version());
+			buf.writeUtf(pack.format());
+			buf.writeUtf(pack.folderName());
+			buf.writeUtf(pack.sha256());
+			buf.writeByteArray(pack.bundle());
+		});
+	}
 
-        private static ContentPackManifestPayload read(FriendlyByteBuf buf) {
-                int schema = buf.readVarInt();
-                int count = buf.readVarInt();
-                List<PackEntry> packs = new ArrayList<>(count);
-                for (int i = 0; i < count; i++) {
-                        String id = buf.readUtf();
-                        String version = buf.readUtf();
-                        String format = buf.readUtf();
-                        String folderName = buf.readUtf();
-                        String sha256 = buf.readUtf();
-                        byte[] bundle = buf.readByteArray();
-                        packs.add(new PackEntry(id, version, format, folderName, sha256, bundle));
-                }
-                return new ContentPackManifestPayload(schema, packs);
-        }
+	private static ContentPackManifestPayload read(FriendlyByteBuf buf) {
+		int schema = buf.readVarInt();
+		int count = buf.readVarInt();
+		List<PackEntry> packs = new ArrayList<>(count);
+		for (int i = 0; i < count; i++) {
+			String id = buf.readUtf();
+			String version = buf.readUtf();
+			String format = buf.readUtf();
+			String folderName = buf.readUtf();
+			String sha256 = buf.readUtf();
+			byte[] bundle = buf.readByteArray();
+			packs.add(new PackEntry(id, version, format, folderName, sha256, bundle));
+		}
+		return new ContentPackManifestPayload(schema, packs);
+	}
 
-        public record PackEntry(String id, String version, String format, String folderName, String sha256, byte[] bundle) {
-        }
+	public record PackEntry(String id, String version, String format, String folderName, String sha256, byte[] bundle) {
+	}
 }

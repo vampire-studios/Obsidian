@@ -14,20 +14,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
-    private final GUI gui;
+	private final GUI gui;
 
-    public JsonGui(DynamicContainer menu, Inventory inv, GUI gui) {
-        super(menu, inv, Component.literal(gui.title));
-        this.gui = gui;
+	public JsonGui(DynamicContainer menu, Inventory inv, GUI gui) {
+		super(menu, inv, Component.literal(gui.title));
+		this.gui = gui;
 //		this.imageWidth = gui.textureWidth;
 //		this.imageHeight = gui.textureHeight;
-    }
+	}
 
-    @Override
-    protected void init() {
-        super.init();
-        loadGuiFromJson();
-    }
+	@Override
+	protected void init() {
+		super.init();
+		loadGuiFromJson();
+	}
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
@@ -41,13 +41,13 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
 	}
 
 	private void loadGuiFromJson() {
-        for (GUI.Widget widget : gui.widgets) {
+		for (GUI.Widget widget : gui.widgets) {
 			if (widget == null) continue;
 
-            int width = widget.position.width;
-            int height = widget.position.height;
-            int x = this.width / 2 - width / 2 + widget.position.x;
-            int y = this.height / 2 - height / 2 + widget.position.y;
+			int width = widget.position.width;
+			int height = widget.position.height;
+			int x = this.width / 2 - width / 2 + widget.position.x;
+			int y = this.height / 2 - height / 2 + widget.position.y;
 
 			Component text = widget.text == null || widget.text.isEmpty() ? Component.empty() : Component.literal(widget.text);
 //			switch (widget.type) {
@@ -61,11 +61,12 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
 //				}
 //				case "progress_bar" -> this.addRenderableWidget(new ProgressBar(widget));
 //			}
-        }
-    }
+		}
+	}
 
-    private void createButton(Component text, int width, int height, int x, int y, GUI.Widget widget) {
-		Button.OnPress onPress = button -> {};
+	private void createButton(Component text, int width, int height, int x, int y, GUI.Widget widget) {
+		Button.OnPress onPress = button -> {
+		};
 		switch (widget.buttonType) {
 			case "basic" -> this.addRenderableWidget(CustomButton.builder1(text, onPress)
 					.widgetSprites(widget.widgetSprites)
@@ -80,17 +81,18 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
 			case "text" -> this.addRenderableWidget(new PlainTextButton(x, y, width, height, text, onPress, this.font));
 			case "toggle" -> this.addRenderableWidget(new ToggleButton(x, y, width, height, widget));
 		}
-    }
+	}
 
-    private void createEditBox(Component text, int width, int height, int x, int y, GUI.Widget widget) {
+	private void createEditBox(Component text, int width, int height, int x, int y, GUI.Widget widget) {
 		Component placeholder = Component.literal(widget.placeholder);
-        if (widget.editBox.multiLine)
+		if (widget.editBox.multiLine)
 			if (widget.editBox.fitting)
 				this.addRenderableWidget(new FittingMultiLineTextWidget(x, y, width, height, placeholder, this.font)
 //						.setColor(widget.editBox.defaultTextColor)
 				);
-			else this.addRenderableWidget(MultiLineEditBox.builder().setPlaceholder(placeholder).build(this.font, width, height, text));
-        else {
+			else
+				this.addRenderableWidget(MultiLineEditBox.builder().setPlaceholder(placeholder).build(this.font, width, height, text));
+		else {
 			EditBox editBox = new EditBox(this.font, x, y, width, height, text);
 			editBox.setTextColor(widget.editBox.defaultTextColor);
 			editBox.setTextColorUneditable(widget.editBox.disabledTextColor);
@@ -99,7 +101,7 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
 			editBox.setMaxLength(widget.editBox.maxLength);
 			this.addRenderableWidget(editBox);
 		}
-    }
+	}
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
@@ -116,10 +118,10 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
 		return super.mouseDragged(mouseButtonEvent, d, e);
 	}
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
-    }
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	}
 
 	@Override
 	public boolean keyReleased(KeyEvent keyEvent) {
@@ -131,8 +133,8 @@ public class JsonGui extends AbstractContainerScreen<DynamicContainer> {
 		return super.charTyped(characterEvent);
 	}
 
-    @Override
-    public void mouseMoved(double mouseX, double mouseY) {
-        super.mouseMoved(mouseX, mouseY);
-    }
+	@Override
+	public void mouseMoved(double mouseX, double mouseY) {
+		super.mouseMoved(mouseX, mouseY);
+	}
 }

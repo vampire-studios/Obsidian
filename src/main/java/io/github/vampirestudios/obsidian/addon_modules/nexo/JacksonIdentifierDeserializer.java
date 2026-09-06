@@ -10,10 +10,10 @@ import java.io.IOException;
 
 public class JacksonIdentifierDeserializer extends JsonDeserializer<Identifier> {
 
-    @Override
-    public Identifier deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-        JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        String IdentifierString = node.asText();
-        return Identifier.tryParse(IdentifierString);
-    }
+	@Override
+	public Identifier deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+		JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+		String IdentifierString = node.asText();
+		return Identifier.tryParse(IdentifierString);
+	}
 }

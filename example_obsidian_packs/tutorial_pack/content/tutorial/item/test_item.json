@@ -17,24 +17,13 @@
   },
   "lore": [
     {
-      "text": {
-        "type": "literal",
-        "text": "Testing",
-        "color": "#ffffff",
-        "formatting": []
-      }
+      "text": "<color #ffffff><bold>Testing"
     },
     {
-      "text": {
-        "type": "translatable",
-        "text": "tutorial.test_item.desc",
-        "translations": {
-          "en_us": "This is a translated line"
-        },
-        "color": "#000000",
-        "formatting": [
-          "BOLD"
-        ]
+      "text": "tutorial.test_item.desc",
+      "type": "translatable",
+      "translations": {
+        "en_us": "This is a translated line"
       }
     }
   ]

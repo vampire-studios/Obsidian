@@ -7,6 +7,7 @@ import io.github.vampirestudios.obsidian.registry.OItemComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -21,169 +22,169 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ItemImpl extends Item {
-    public final CrucibleItem item;
+	public final CrucibleItem item;
 
-    public ItemImpl(CrucibleItem item, Properties settings) {
-        super(settings);
-        this.item = item;
-    }
+	public ItemImpl(CrucibleItem item, Properties settings) {
+		super(settings);
+		this.item = item;
+	}
 
-    @Override
-    public Component getName(ItemStack stack) {
-        return TagParser.QUICK_TEXT_WITH_STF.parseNode(item.Display).toComponent();
-    }
+	@Override
+	public Component getName(ItemStack stack) {
+		return TagParser.QUICK_TEXT.parseNode(item.Display).toComponent();
+	}
 
-    @Override
-    public void appendHoverText(ItemStack stack,
-                                TooltipContext tooltipContext,
-                                TooltipDisplay tooltipDisplay,
-                                Consumer<Component> tooltip,
-                                TooltipFlag context) {
-        if (item.Lore != null) {
-            for (String lore : item.Lore) {
-                tooltip.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toComponent());
-            }
-        }
+	@Override
+	public void appendHoverText(ItemStack stack,
+	                            TooltipContext tooltipContext,
+	                            TooltipDisplay tooltipDisplay,
+	                            Consumer<Component> tooltip,
+	                            TooltipFlag context) {
+		if (item.Lore != null) {
+			for (String lore : item.Lore) {
+				tooltip.accept(TagParser.QUICK_TEXT.parseNode(lore).toComponent());
+			}
+		}
 
-        AugmentSocketData sockets = stack.get(OItemComponents.AUGMENT_SOCKETS);
-        if (sockets != null) {
-            for (AugmentSlotEntry slot : sockets.slots()) {
-                CrucibleAugmentType augType = findAugmentType(slot.type());
-                String line;
-                if (slot.isEmpty()) {
-                    line = augType != null ? augType.resolveEmptyLine()
-                            : "§8○ Empty " + slot.type() + " Slot";
-                } else {
-                    String augIdStr = slot.augmentId().get();
-                    Identifier augId = Identifier.tryParse(augIdStr);
-                    CrucibleAugment augment = augId != null ? ContentRegistries.AUGMENTS.getValue(augId) : null;
-                    String augTooltip = augment != null ? augment.getEffectiveTooltip() : augIdStr;
-                    String icon = augment != null ? augment.Icon : null;
-                    line = augType != null ? augType.resolveFilledLine(augTooltip, icon)
-                            : "§8● " + slot.type() + ": " + augTooltip;
-                }
-                tooltip.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(line).toComponent());
-            }
-        }
-    }
+		AugmentSocketData sockets = stack.get(OItemComponents.AUGMENT_SOCKETS);
+		if (sockets != null) {
+			for (AugmentSlotEntry slot : sockets.slots()) {
+				CrucibleAugmentType augType = findAugmentType(slot.type());
+				String line;
+				if (slot.isEmpty()) {
+					line = augType != null ? augType.resolveEmptyLine()
+							: "<dark_gray>○ Empty " + slot.type() + " Slot";
+				} else {
+					String augIdStr = slot.augmentId().get();
+					Identifier augId = Identifier.tryParse(augIdStr);
+					CrucibleAugment augment = augId != null ? ContentRegistries.AUGMENTS.getValue(augId) : null;
+					String augTooltip = augment != null ? augment.getEffectiveTooltip() : augIdStr;
+					String icon = augment != null ? augment.Icon : null;
+					line = augType != null ? augType.resolveFilledLine(augTooltip, icon)
+							: "<dark_gray>● " + slot.type() + ": " + augTooltip;
+				}
+				tooltip.accept(TagParser.QUICK_TEXT.parseNode(line).toComponent());
+			}
+		}
+	}
 
-    @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (hand != InteractionHand.MAIN_HAND) return super.use(level, player, hand);
+	@Override
+	public InteractionResult use(Level level, Player player, InteractionHand hand) {
+		if (hand != InteractionHand.MAIN_HAND) return super.use(level, player, hand);
 
-        ItemStack mainStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        AugmentSocketData sockets = mainStack.get(OItemComponents.AUGMENT_SOCKETS);
-        if (sockets == null) return super.use(level, player, hand);
-        if (level.isClientSide()) return InteractionResult.CONSUME;
+		ItemStack mainStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+		AugmentSocketData sockets = mainStack.get(OItemComponents.AUGMENT_SOCKETS);
+		if (sockets == null) return super.use(level, player, hand);
+		if (level.isClientSide()) return InteractionResult.CONSUME;
 
-        ItemStack offStack = player.getItemInHand(InteractionHand.OFF_HAND);
-        if (offStack.isEmpty()) return super.use(level, player, hand);
+		ItemStack offStack = player.getItemInHand(InteractionHand.OFF_HAND);
+		if (offStack.isEmpty()) return super.use(level, player, hand);
 
-        Identifier offItemId = BuiltInRegistries.ITEM.getKey(offStack.getItem());
-        CrucibleItem offCrucible = offItemId != null ? ContentRegistries.CRUCIBLE_ITEMS.getValue(offItemId) : null;
-        if (offCrucible == null) return super.use(level, player, hand);
+		Identifier offItemId = BuiltInRegistries.ITEM.getKey(offStack.getItem());
+		CrucibleItem offCrucible = offItemId != null ? ContentRegistries.CRUCIBLE_ITEMS.getValue(offItemId) : null;
+		if (offCrucible == null) return super.use(level, player, hand);
 
-        if (offCrucible.Augmentation != null) {
-            return handleSocket(player, mainStack, sockets, offStack, offCrucible, offCrucible.Augmentation);
-        } else if (offCrucible.AugmentationRemover != null) {
-            return handleRemove(player, mainStack, sockets, offStack, offCrucible.AugmentationRemover);
-        } else if (offCrucible.AugmentationSocket != null) {
-            return handleUnlock(player, mainStack, sockets, offStack, offCrucible.AugmentationSocket);
-        }
+		if (offCrucible.Augmentation != null) {
+			return handleSocket(player, mainStack, sockets, offStack, offCrucible, offCrucible.Augmentation);
+		} else if (offCrucible.AugmentationRemover != null) {
+			return handleRemove(player, mainStack, sockets, offStack, offCrucible.AugmentationRemover);
+		} else if (offCrucible.AugmentationSocket != null) {
+			return handleUnlock(player, mainStack, sockets, offStack, offCrucible.AugmentationSocket);
+		}
 
-        return super.use(level, player, hand);
-    }
+		return super.use(level, player, hand);
+	}
 
-    private InteractionResult handleSocket(Player player, ItemStack mainStack,
-            AugmentSocketData sockets, ItemStack offStack, CrucibleItem offCrucible,
-            CrucibleItem.AugmentationDef augDef) {
-        if (offCrucible.id == null) return InteractionResult.FAIL;
-        if (sockets.countFreeSlots(augDef.Type) == 0) return InteractionResult.FAIL;
+	private InteractionResult handleSocket(Player player, ItemStack mainStack,
+	                                       AugmentSocketData sockets, ItemStack offStack, CrucibleItem offCrucible,
+	                                       CrucibleItem.AugmentationDef augDef) {
+		if (offCrucible.id == null) return InteractionResult.FAIL;
+		if (sockets.countFreeSlots(augDef.Type) == 0) return InteractionResult.FAIL;
 
-        AugmentSocketData updated = sockets.withAugmentAdded(augDef.Type, offCrucible.id.toString());
-        mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
+		AugmentSocketData updated = sockets.withAugmentAdded(augDef.Type, offCrucible.id.toString());
+		mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
 
-        if (!player.isCreative()) offStack.shrink(1);
+		if (!player.isCreative()) offStack.shrink(1);
 
-        if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
-            AugmentManager.getInstance().onEquipmentChange(sp);
-        }
-        return InteractionResult.SUCCESS;
-    }
+		if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
+			AugmentManager.getInstance().onEquipmentChange(sp);
+		}
+		return InteractionResult.SUCCESS;
+	}
 
-    private InteractionResult handleRemove(Player player, ItemStack mainStack,
-            AugmentSocketData sockets, ItemStack offStack,
-            CrucibleItem.AugmentationRemoverDef removerDef) {
-        Optional<String> removedAugId = sockets.getLastAugmentId(removerDef.Type);
-        if (removedAugId.isEmpty()) return InteractionResult.FAIL;
+	private InteractionResult handleRemove(Player player, ItemStack mainStack,
+	                                       AugmentSocketData sockets, ItemStack offStack,
+	                                       CrucibleItem.AugmentationRemoverDef removerDef) {
+		Optional<String> removedAugId = sockets.getLastAugmentId(removerDef.Type);
+		if (removedAugId.isEmpty()) return InteractionResult.FAIL;
 
-        AugmentSocketData updated = removerDef.DestroySocket
-                ? sockets.withSocketDestroyed(removerDef.Type)
-                : sockets.withAugmentRemoved(removerDef.Type);
-        mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
+		AugmentSocketData updated = removerDef.DestroySocket
+				? sockets.withSocketDestroyed(removerDef.Type)
+				: sockets.withAugmentRemoved(removerDef.Type);
+		mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
 
-        if (!player.isCreative()) offStack.shrink(1);
+		if (!player.isCreative()) offStack.shrink(1);
 
-        if (removerDef.ReturnAugment) {
-            Identifier augId = Identifier.tryParse(removedAugId.get());
-            if (augId != null) {
-                var itemHolder = BuiltInRegistries.ITEM.get(
-                        net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, augId));
-                itemHolder.ifPresent(h -> {
-                    ItemStack returnStack = new ItemStack(h.value());
-                    if (!player.getInventory().add(returnStack)) {
-                        player.drop(returnStack, false);
-                    }
-                });
-            }
-        }
+		if (removerDef.ReturnAugment) {
+			Identifier augId = Identifier.tryParse(removedAugId.get());
+			if (augId != null) {
+				var itemHolder = BuiltInRegistries.ITEM.get(
+						net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, augId));
+				itemHolder.ifPresent(h -> {
+					ItemStack returnStack = new ItemStack(h.value());
+					if (!player.getInventory().add(returnStack)) {
+						player.drop(returnStack, false, Prediction.PREDICTED);
+					}
+				});
+			}
+		}
 
-        if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
-            AugmentManager.getInstance().onEquipmentChange(sp);
-        }
-        return InteractionResult.SUCCESS;
-    }
+		if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
+			AugmentManager.getInstance().onEquipmentChange(sp);
+		}
+		return InteractionResult.SUCCESS;
+	}
 
-    private InteractionResult handleUnlock(Player player, ItemStack mainStack,
-            AugmentSocketData sockets, ItemStack offStack,
-            CrucibleItem.AugmentationSocketDef socketDef) {
-        int existing = sockets.countTotalSlots(socketDef.Type);
+	private InteractionResult handleUnlock(Player player, ItemStack mainStack,
+	                                       AugmentSocketData sockets, ItemStack offStack,
+	                                       CrucibleItem.AugmentationSocketDef socketDef) {
+		int existing = sockets.countTotalSlots(socketDef.Type);
 
-        // Check the item definition's own MaxAmount cap
-        if (item.AugmentSlots != null) {
-            for (CrucibleItem.AugmentSlotDef def : item.AugmentSlots) {
-                if (def.Type != null && def.Type.equalsIgnoreCase(socketDef.Type)) {
-                    if (existing >= def.MaxAmount) return InteractionResult.FAIL;
-                    break;
-                }
-            }
-        }
-        // Check the component's stored max (set at item creation)
-        if (existing >= sockets.getMaxSlots(socketDef.Type)) return InteractionResult.FAIL;
-        // Check the unlocker's own cap
-        if (existing >= socketDef.MaxSockets) return InteractionResult.FAIL;
+		// Check the item definition's own MaxAmount cap
+		if (item.AugmentSlots != null) {
+			for (CrucibleItem.AugmentSlotDef def : item.AugmentSlots) {
+				if (def.Type != null && def.Type.equalsIgnoreCase(socketDef.Type)) {
+					if (existing >= def.MaxAmount) return InteractionResult.FAIL;
+					break;
+				}
+			}
+		}
+		// Check the component's stored max (set at item creation)
+		if (existing >= sockets.getMaxSlots(socketDef.Type)) return InteractionResult.FAIL;
+		// Check the unlocker's own cap
+		if (existing >= socketDef.MaxSockets) return InteractionResult.FAIL;
 
-        AugmentSocketData updated = sockets.withSlotAdded(socketDef.Type);
-        mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
+		AugmentSocketData updated = sockets.withSlotAdded(socketDef.Type);
+		mainStack.set(OItemComponents.AUGMENT_SOCKETS, updated);
 
-        if (!player.isCreative()) offStack.shrink(1);
+		if (!player.isCreative()) offStack.shrink(1);
 
-        return InteractionResult.SUCCESS;
-    }
+		return InteractionResult.SUCCESS;
+	}
 
-    /** Looks up an augment type by raw type string (namespaced or path-only). */
-    private static CrucibleAugmentType findAugmentType(String rawType) {
-        Identifier direct = Identifier.tryParse(rawType.toLowerCase(Locale.ROOT));
-        if (direct != null) {
-            CrucibleAugmentType t = ContentRegistries.AUGMENT_TYPES.getValue(direct);
-            if (t != null) return t;
-        }
-        String lower = rawType.toLowerCase(Locale.ROOT);
-        for (var entry : ContentRegistries.AUGMENT_TYPES.entrySet()) {
-            if (entry.getKey().identifier().getPath().equals(lower)) {
-                return entry.getValue();
-            }
-        }
-        return null;
-    }
+	/** Looks up an augment type by raw type string (namespaced or path-only). */
+	private static CrucibleAugmentType findAugmentType(String rawType) {
+		Identifier direct = Identifier.tryParse(rawType.toLowerCase(Locale.ROOT));
+		if (direct != null) {
+			CrucibleAugmentType t = ContentRegistries.AUGMENT_TYPES.getValue(direct);
+			if (t != null) return t;
+		}
+		String lower = rawType.toLowerCase(Locale.ROOT);
+		for (var entry : ContentRegistries.AUGMENT_TYPES.entrySet()) {
+			if (entry.getKey().identifier().getPath().equals(lower)) {
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
 }

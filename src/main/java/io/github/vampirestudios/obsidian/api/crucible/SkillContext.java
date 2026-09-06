@@ -31,11 +31,21 @@ public final class SkillContext {
 		this.projectile = b.projectile;
 	}
 
-	public boolean hasTarget()   { return target != null; }
-	public boolean hasPosition() { return position != null; }
-	public boolean hasStack()    { return stack != null && !stack.isEmpty(); }
+	public boolean hasTarget() {
+		return target != null;
+	}
 
-	public static Builder builder(LivingEntity caster) { return new Builder(caster); }
+	public boolean hasPosition() {
+		return position != null;
+	}
+
+	public boolean hasStack() {
+		return stack != null && !stack.isEmpty();
+	}
+
+	public static Builder builder(LivingEntity caster) {
+		return new Builder(caster);
+	}
 
 	public static final class Builder {
 		private final LivingEntity caster;
@@ -46,15 +56,42 @@ public final class SkillContext {
 		private InteractionHand hand;
 		private Entity projectile;
 
-		private Builder(LivingEntity caster) { this.caster = caster; }
+		private Builder(LivingEntity caster) {
+			this.caster = caster;
+		}
 
-		public Builder target(@Nullable LivingEntity v) { this.target = v; return this; }
-		public Builder position(@Nullable BlockPos v)   { this.position = v; return this; }
-		public Builder level(@Nullable ServerLevel v)   { this.level = v; return this; }
-		public Builder stack(@Nullable ItemStack v)     { this.stack = v; return this; }
-		public Builder hand(@Nullable InteractionHand v){ this.hand = v; return this; }
-		public Builder projectile(@Nullable Entity v)   { this.projectile = v; return this; }
+		public Builder target(@Nullable LivingEntity v) {
+			this.target = v;
+			return this;
+		}
 
-		public SkillContext build() { return new SkillContext(this); }
+		public Builder position(@Nullable BlockPos v) {
+			this.position = v;
+			return this;
+		}
+
+		public Builder level(@Nullable ServerLevel v) {
+			this.level = v;
+			return this;
+		}
+
+		public Builder stack(@Nullable ItemStack v) {
+			this.stack = v;
+			return this;
+		}
+
+		public Builder hand(@Nullable InteractionHand v) {
+			this.hand = v;
+			return this;
+		}
+
+		public Builder projectile(@Nullable Entity v) {
+			this.projectile = v;
+			return this;
+		}
+
+		public SkillContext build() {
+			return new SkillContext(this);
+		}
 	}
 }

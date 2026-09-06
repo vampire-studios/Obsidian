@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.scripting.std;
 
-import io.github.vampirestudios.obsidian.client.GuiBridge;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -154,7 +153,7 @@ public final class ObsPackRuntime {
 		});
 		ServerTickEvents.END_SERVER_TICK.register(this::tick);
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, srv) -> {
-			if (handler.player != null) GuiBridge.closeAllFor(handler.player);
+//			if (handler.player != null) GuiBridge.closeAllFor(handler.player);
 		});
 	}
 
@@ -171,6 +170,7 @@ public final class ObsPackRuntime {
 		Object c = v.get("__cancel__");
 		return !(c instanceof Boolean b && b); // true = allow; false = cancel
 	}
+
 	// For Fabric callbacks that expect an ActionResult:
 	private InteractionResult fireCancelResult(String name, ObsVars v) {
 		return fireCancelable(name, v) ? InteractionResult.PASS : InteractionResult.FAIL;
@@ -321,7 +321,6 @@ public final class ObsPackRuntime {
 			}
 		}
 	}
-
 
 
 	private void evalRules(MinecraftServer srv, int now) {

@@ -18,9 +18,9 @@ package io.github.vampirestudios.obsidian;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.util.Util;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Util;
 import org.quiltmc.qsl.registry.attachment.api.DispatchedType;
 
 import java.util.Map;

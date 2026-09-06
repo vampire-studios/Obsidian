@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public abstract class EntitySneakMixin {
-    @Inject(method = "setShiftKeyDown", at = @At("TAIL"))
-    private void crucible$onShiftChanged(boolean sneaking, CallbackInfo ci) {
-        Entity e = (Entity)(Object)this;
-        if (!(e instanceof ServerPlayer sp)) return;
-        if (!(sp.level() instanceof ServerLevel level)) return;
+	@Inject(method = "setShiftKeyDown", at = @At("TAIL"))
+	private void crucible$onShiftChanged(boolean sneaking, CallbackInfo ci) {
+		Entity e = (Entity) (Object) this;
+		if (!(e instanceof ServerPlayer sp)) return;
+		if (!(sp.level() instanceof ServerLevel level)) return;
 
-        CrucibleEvents.fire(sneaking ? SkillTrigger.CROUCH : SkillTrigger.UNCROUCH,
-                SkillContext.builder(sp).level(level).build()
-        );
-    }
+		CrucibleEvents.fire(sneaking ? SkillTrigger.CROUCH : SkillTrigger.UNCROUCH,
+				SkillContext.builder(sp).level(level).build()
+		);
+	}
 }

@@ -1,105 +1,76 @@
 # Armor Materials
 
-Armor Materials define the tier and material properties of armor items.
+An armor material is the shared set of stats behind a set of armor pieces: protection, durability,
+enchantability, and what repairs it.
 
-Named item armor materials go in the `armor_material` directory in the content pack part of the addon.
+Materials go in `item/armor/material`, and the file name is the material's id:
 
-E.g.
 ```
-content/examplepack/items/armor/materials/rubber.json
+obsidian_addons/ExamplePack/content/examplepack/item/armor/material/rubber.json
 ```
+
+Registering a material creates no items. Armor pieces in `item/armor` reference it.
 
 ## Basic structure of the JSON file
 
 ```json
 {
-  "name": "rubber",
-  "toughness": 10.0,
-  "knockback_resistance": 30.0,
+  "durability": 15,
   "enchantability": 10,
-  "protection_amount": 20,
+  "toughness": 2.0,
+  "knockback_resistance": 0.1,
   "equip_sound": "minecraft:item.armor.equip_chain",
-  "repair_material": "minecraft:clay_ball",
-  "durability": {
-    "feet": 3000
-  },
-  "texture1": "examplepack:textures/models/armor/rubber_layer_1.png",
-  "texture2": "examplepack:textures/models/armor/rubber_layer_2.png"
-}
-```
-
-
-## "toughness"
-
-Defines how many uses (without Unbreaking) the item has before breaking.
-
-Required.
-
-Must be a positive number or zero. Decimals are allowed.
-
-## "knockback_resistance"
-
-Defines how much knockback is reduced when wearing this armor.
-
-Required.
-
-Must be a positive number or zero. Decimals are allowed.
-
-## "equip_sound"
-
-Defines the sound the armor makes when equipped.
-
-Required.
-
-Must be a resource location string like `"item.armor.equip_chain"`, or `"minecraft:item.armor.equip_chain"`.
-Like on model jsons and other vanilla files, if the namespace (the part before the colon) is missing "minecraft" is implied.
-
-## "enchantment_value"
-
-Defines how enchantable the tool is. Higher values will allow more enchantments to be placed at the same time.
-
-Required.
-
-Must be a positive integer or zero.
-
-## "repair_ingredient"
-
-Defines an ingredient to be used for repairing this tool tier.
-
-Required.
-
-Must be a json objects (`{}`) as defined in the [Ingredient definitions](./Ingredient.md).
-
-## "durability"
-
-Defines how many hits (without Unbreaking) the item can take before breaking, based on the slot the armor is equipped into.
-
-Required.
-
-Must be a json object (`{}`) containing positive integer values.
-
-Values are technically optional but missing values will be 0 and the armor will break instantly on first hit.
-
-See below for syntax.
-
-## "armor"
-
-Defines how many hits (without Unbreaking) the item can take before breaking, based on the slot the armor is equipped into.
-
-Required.
-
-Must be a json object (`{}`) containing positive integer values.
-
-Values are optional. Missing values will be 0 and the armor will not protect when equipped in those slots.
-
-Example:
-```json
-{
-  "armor": {
-    "feet": 30,
-    "legs": 40,
-    "chest": 50,
-    "head": 60
+  "repair_item": "examplepack:rubber",
+  "defense": {
+    "BOOTS": 2,
+    "LEGGINGS": 5,
+    "CHESTPLATE": 6,
+    "HELMET": 2,
+    "BODY": 5
   }
 }
 ```
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `durability` | `0` | Durability multiplier, applied per slot the vanilla way — iron is `15`, diamond `33`. Not a raw hit count. |
+| `defense` | 1/2/3/1/3 | Armor points per slot, keyed by `BOOTS`, `LEGGINGS`, `CHESTPLATE`, `HELMET` and `BODY` (`BODY` is for wolf and horse armor). Omitted slots keep the default shown. |
+| `toughness` | `0` | Armor toughness — reduces how much high-damage hits cut through armor. Diamond is `2`. |
+| `knockback_resistance` | `0` | Fraction of knockback ignored, `0` to `1`. Netherite is `0.1`. |
+| `enchantability` | `0` | Higher values give better enchantments per level. Gold is `25`, diamond `10`. |
+| `equip_sound` | leather | Sound played on equip. Resource location; falls back to the leather sound if unknown. |
+| `repair_item` | — | One concrete item that repairs this armor in an anvil. Written directly to the item's `repairable` component. |
+| `repair_tag` | empty material-local tag | Item tag whose members repair this armor in an anvil. |
+
+`name` is set from the file name; a `name` in the file is overwritten.
+
+If both repair fields are present, `repair_item` takes precedence.
+
+The slot keys in `defense` are the enum constants, so they are uppercase — `"BOOTS"`, not `"feet"`.
+
+## Textures
+
+Armor textures are not declared on the material. Each custom armor item declares its worn layers under
+`rendering.equipment`, separately from its inventory model:
+
+```json
+{
+  "slot": "helmet",
+  "material_id": "examplepack:rubber",
+  "rendering": {
+    "equipment": {
+      "humanoid": "examplepack:rubber_helmet"
+    }
+  }
+}
+```
+
+The texture above goes at
+`assets/examplepack/textures/entity/equipment/humanoid/rubber_helmet.png`. Leggings use the
+`humanoid_leggings` layer and directory. Obsidian generates the equipment-model JSON that connects
+the item to those textures.
+
+## See also
+
+* [Items](./Items.md) — armor pieces are items.
+* [Item Tiers](./ItemTiers.md) — the tool equivalent.

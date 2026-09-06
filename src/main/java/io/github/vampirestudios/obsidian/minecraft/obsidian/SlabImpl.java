@@ -8,25 +8,25 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class SlabImpl extends SlabBlock {
 
-    public Block block;
+	public Block block;
 
-    public SlabImpl(Block block, Properties settings) {
-        super(settings);
-        this.block = block;
-    }
+	public SlabImpl(Block block, Properties settings) {
+		super(settings);
+		this.block = block;
+	}
 
-    @Override
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
-    }
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+	}
 
-    @Override
-    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
-    }
+	@Override
+	public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
+	}
 
-    @Override
-    public boolean propagatesSkylightDown(BlockState state) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
-    }
+	@Override
+	public boolean propagatesSkylightDown(BlockState state) {
+		return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
+	}
 }

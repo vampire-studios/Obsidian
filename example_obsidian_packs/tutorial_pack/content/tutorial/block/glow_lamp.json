@@ -1,0 +1,84 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Glow Lamp"
+      }
+    },
+    "block_properties": {
+      "material": "minecraft:stone",
+      "sound_group": "minecraft:stone",
+      "randomTicks": true
+    },
+    "item_properties": {
+      "item_group": "minecraft:building_blocks"
+    },
+    "vanilla_properties": [
+      "lit",
+      "facing"
+    ],
+    "defaultValue": {
+      "lit": "false"
+    }
+  },
+  "events": {
+    "on_interact": [
+      {
+        "action": "set_block_property",
+        "property": "lit",
+        "value": "true"
+      },
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:block.lever.click",
+        "pitch": 1.4
+      },
+      {
+        "action": "send_message",
+        "message": "The lamp flickers on.",
+        "overlay": false
+      }
+    ],
+    "on_attack": [
+      {
+        "action": "set_block_property",
+        "property": "lit",
+        "value": "false"
+      },
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:block.lever.click",
+        "pitch": 0.8
+      }
+    ],
+    "on_step_on": [
+      {
+        "action": "apply_effect",
+        "effect": "minecraft:glowing",
+        "duration": 60,
+        "amplifier": 0
+      }
+    ],
+    "on_place": [
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:block.amethyst_block.chime"
+      }
+    ],
+    "on_random_tick": [
+      {
+        "action": "set_block_property",
+        "property": "lit",
+        "value": "false"
+      }
+    ]
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/sea_lantern"
+      }
+    }
+  }
+}

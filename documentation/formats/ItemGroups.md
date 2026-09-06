@@ -1,29 +1,87 @@
-# Creative Mode Tab Definition
+# Creative Tabs
 
-Creative Mode tab definitions allow adding new tabs to the creative mode menu.
+The categories down the side of the creative inventory.
 
-See ["group"](./Items.md#group) and ["creative_menu_stacks"](./Items.md#creative_menu_stacks) in the Item definitions for an example of where this is used.
+Obsidian reads two formats from two directories; both register a tab named after the file.
 
-Named item groups go in the `item_groups` directory in the content pack part of the addon.
+| Directory | Format |
+| --- | --- |
+| `creative_tab` | [Current format](#current-format) — items listed as a holder set, so tags work. |
+| `item_group` | [Legacy format](#legacy-format) — separate item/block lists with op-only and feature-flag variants. |
 
-E.g.
 ```
-content/examplepack/item_groups/bedrock_blocks.json
+obsidian_addons/ExamplePack/content/examplepack/creative_tab/cheese.json
 ```
 
-## Basic structure of the JSON file
+That file registers `examplepack:cheese`. Its title comes from the translation key
+`itemGroup.examplepack.cheese`, which your pack's language file must provide.
+
+## Current format
 
 ```json
 {
-  "icon": "minecraft:bedrock",
+  "name": "Cheese",
+  "icon": "examplepack:cheese_block",
+  "items": [
+    "examplepack:cheese_block",
+    "examplepack:cheese_stick"
+  ],
+  "no_scroll_bar": false
 }
 ```
 
-## "icon"
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `name` | yes | Display text — see [Names](./Names.md). Required by the parser, but the tab's visible title comes from the translation key above. |
+| `icon` | yes | Item shown on the tab. Resource location; `minecraft` is implied when the namespace is omitted. |
+| `items` | no | The tab's contents, as a vanilla holder set: a list of item ids, or `"#namespace:tag"` for a tag. Defaults to empty. |
+| `texture` | no | Background texture. |
+| `no_scroll_bar` | no | Hides the scroll bar. Default `false`. |
 
-Defines the item to be used as the icon for the tab.
+A file that fails to decode logs the reason and registers nothing, so an unknown item id in `items`
+costs you the whole tab.
 
-Required.
+## Legacy format
 
-Must be a resource location string like `"string"`, or `"minecraft:stick"`. Like on model jsons and other vanilla files,
-if the namespace (the part before the colon) is missing "minecraft" is implied.
+Files in `item_group` use separate lists, which is what makes op-only and feature-gated entries
+possible:
+
+```json
+{
+  "name": "Cheese",
+  "icon": "examplepack:cheese_block",
+  "items": ["examplepack:cheese_stick"],
+  "blocks": ["examplepack:cheese_block"],
+  "opItems": ["examplepack:debug_wand"]
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `name`, `icon` | As above. |
+| `items`, `blocks` | Ids added to the tab. |
+| `opItems`, `opBlocks` | Added only for players with operator permissions. |
+| `tags` | `{"item": "<tag id>"}` and/or `{"block": "<tag id>"}`. |
+| `featureSetItems`, `featureSetBlocks` | Map of feature flag to id; only `vanilla` is recognised. |
+
+## Putting an item in a tab
+
+
+Items and blocks choose their tab themselves, through `item_group` in their item settings:
+
+```json
+{
+  "information": {
+    "item_properties": { "item_group": "examplepack:cheese" }
+  }
+}
+```
+
+Listing the item on the tab and setting `item_group` on the item are two separate additions, so doing
+both can show the item twice. Pick one — `item_group` on the item scales better, since adding an item
+does not mean editing the tab as well.
+
+## See also
+
+* [Item Settings](./ItemSettings.md) — `item_group`, the other half of this.
+* [Names](./Names.md) — the `name` field.

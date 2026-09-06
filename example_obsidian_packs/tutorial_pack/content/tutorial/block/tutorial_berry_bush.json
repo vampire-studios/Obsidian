@@ -1,0 +1,65 @@
+{
+  "block_type": "bush",
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Tutorial Berry Bush"
+      }
+    },
+    "block_properties": {
+      "sound_group": "minecraft:sweet_berry_bush",
+      "instant_break": true
+    },
+    "item_properties": {
+      "item_group": "minecraft:natural_blocks"
+    }
+  },
+  "can_plant_on": [
+    "minecraft:grass_block",
+    "minecraft:dirt",
+    "minecraft:coarse_dirt",
+    "minecraft:podzol"
+  ],
+  "bush_properties": {
+    "max_age": 3,
+    "ripe_age": 2,
+    "berry": "minecraft:sweet_berries",
+    "min_berries": 1,
+    "max_berries": 2,
+    "bonus_when_ripe": 1,
+    "damage": 1.0,
+    "damage_type": "minecraft:sweet_berry_bush",
+    "immune_entities": ["minecraft:fox", "minecraft:bee"],
+    "slowdown": [0.8, 0.75, 0.8],
+    "growth_chance": 5,
+    "min_light": 9,
+    "bonemeal_min": 1,
+    "bonemeal_max": 1
+  },
+  "drop_information": {
+    "drops": [
+      {
+        "name": "minecraft:sweet_berries",
+        "count": {
+          "min": 1,
+          "max": 2
+        },
+        "when": {
+          "age": {
+            "min": 2
+          }
+        }
+      }
+    ]
+  },
+  "rendering": {
+    "block_model": {
+      "textures": {
+        "stage0": "block/sweet_berry_bush_stage0",
+        "stage1": "block/sweet_berry_bush_stage1",
+        "stage2": "block/sweet_berry_bush_stage2",
+        "stage3": "block/sweet_berry_bush_stage3"
+      }
+    }
+  }
+}

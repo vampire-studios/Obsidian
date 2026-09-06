@@ -1,0 +1,27 @@
+{
+  "information": {
+    "name": "<light_purple>Tutorial Rift",
+    "vanilla_properties": [
+      "horizontal_axis"
+    ],
+    "block_properties": {
+      "material": "minecraft:portal",
+      "sound_group": "minecraft:glass",
+      "collidable": false,
+      "luminance": 11,
+      "hardness": -1.0,
+      "resistance": 3600000.0,
+      "translucent": true
+    },
+    "has_item": false
+  },
+  "particle_type": "minecraft:portal",
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/nether_portal"
+      }
+    }
+  }
+}

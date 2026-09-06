@@ -5,8 +5,8 @@ import net.minecraft.resources.Identifier;
 
 public interface IBedrockAddon extends IAddonPack {
 
-    ManifestFile getManifestFile();
+	ManifestFile getManifestFile();
 
-    Identifier getIdentifier();
+	Identifier getIdentifier();
 
 }

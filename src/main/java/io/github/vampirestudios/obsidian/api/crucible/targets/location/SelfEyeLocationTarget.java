@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class SelfEyeLocationTarget extends LocationTarget {
-    public SelfEyeLocationTarget() {
-        super(List.of("SelfEyeLocation", "eyeDirection", "casterEyeLocation", "bossEyeLocation", "mobEyeLocation"));
-    }
+	public SelfEyeLocationTarget() {
+		super(List.of("SelfEyeLocation", "eyeDirection", "casterEyeLocation", "bossEyeLocation", "mobEyeLocation"));
+	}
 
-    @Override
-    public List<Vec3> getTargets(LivingEntity caster) {
-        return Collections.singletonList(caster.getEyePosition());
-    }
+	@Override
+	public List<Vec3> getTargets(LivingEntity caster) {
+		return Collections.singletonList(caster.getEyePosition());
+	}
 }

@@ -4,7 +4,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.entity.Component;
 
 public class PeekBehaviourComponent extends Component {
 
-    public int priority;
-    public float speed_multiplier = 1.0F;
+	public int priority;
+	public float speed_multiplier = 1.0F;
 
 }

@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public final class ObsSuggest {
 	private static final Map<String, SuggestionProvider<CommandSourceStack>> REG = new HashMap<>();
 	private static boolean bootstrapped = false;
+
 	private ObsSuggest() {
 	}
 
@@ -21,20 +22,22 @@ public final class ObsSuggest {
 		if (bootstrapped) return;
 		bootstrapped = true;
 
-		REG.computeIfAbsent("items",    k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.ITEM)));
-		REG.computeIfAbsent("blocks",   k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.BLOCK)));
+		REG.computeIfAbsent("items", k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.ITEM)));
+		REG.computeIfAbsent("blocks", k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.BLOCK)));
 		REG.computeIfAbsent("entities", k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.ENTITY_TYPE)));
-		REG.computeIfAbsent("biomes",   k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.BIOME)));
-		REG.computeIfAbsent("sounds",   k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.SOUND_EVENT)));
+		REG.computeIfAbsent("biomes", k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.BIOME)));
+		REG.computeIfAbsent("sounds", k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.SOUND_EVENT)));
 		REG.computeIfAbsent("dimensions", k -> (ctx, b) -> suggestAllFiltered(b, registryIds(ctx, Registries.DIMENSION)));
 		REG.computeIfAbsent("gamemodes", k -> (ctx, b) -> {
-			suggestAllFiltered(b, List.of("survival","creative","adventure","spectator"));
+			suggestAllFiltered(b, List.of("survival", "creative", "adventure", "spectator"));
 			return b.buildFuture();
 		});
 	}
 
 	/** Remove all providers. Useful if you want a clean slate on reload. */
-	public static void clear() { REG.clear(); }
+	public static void clear() {
+		REG.clear();
+	}
 
 	public static void register(String id, SuggestionProvider<CommandSourceStack> provider) {
 		REG.put(id, provider);
@@ -48,12 +51,17 @@ public final class ObsSuggest {
 
 	/** Safely read a previously-parsed argument; returns "" if unavailable. */
 	public static String arg(CommandContext<CommandSourceStack> ctx, String name) {
-		try { return String.valueOf(ctx.getArgument(name, Object.class)); }
-		catch (Exception ignored) { return ""; }
+		try {
+			return String.valueOf(ctx.getArgument(name, Object.class));
+		} catch (Exception ignored) {
+			return "";
+		}
 	}
 
 	/** Lowercased partial token the player is completing right now. */
-	public static String prefix(SuggestionsBuilder b) { return b.getRemainingLowerCase(); }
+	public static String prefix(SuggestionsBuilder b) {
+		return b.getRemainingLowerCase();
+	}
 
 	/** Suggest only entries that contain the current prefix (case-insensitive). */
 	public static CompletableFuture<Suggestions> suggestAllFiltered(

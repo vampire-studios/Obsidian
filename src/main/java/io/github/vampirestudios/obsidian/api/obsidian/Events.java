@@ -5,16 +5,16 @@ import java.util.Map;
 
 public class Events {
 
-    public Map<String, Event> events = new HashMap<>();
+	public Map<String, Event> events = new HashMap<>();
 
-    public static class Event {
+	public static class Event {
 
-        public Map<String, EventVariables> eventVariables = new HashMap<>();
+		public Map<String, EventVariables> eventVariables = new HashMap<>();
 
-        public static class EventVariables {
+		public static class EventVariables {
 
-        }
+		}
 
-    }
+	}
 
 }

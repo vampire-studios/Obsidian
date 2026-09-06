@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -201,7 +202,7 @@ public class BundleItem extends Item {
 		if (bundleContents != null && !bundleContents.isEmpty()) {
 			Optional<ItemStack> optional = removeOneItemFromBundle(itemStack, player, bundleContents);
 			if (optional.isPresent()) {
-				player.drop((ItemStack)optional.get(), true);
+				player.drop((ItemStack) optional.get(), true, Prediction.PREDICTED);
 				return true;
 			} else {
 				return false;
@@ -275,7 +276,7 @@ public class BundleItem extends Item {
 
 	private static void playDropContentsSound(Level level, Entity entity) {
 		level.playSound(
-			null, entity.blockPosition(), SoundEvents.BUNDLE_DROP_CONTENTS, SoundSource.PLAYERS, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F
+				null, entity.blockPosition(), SoundEvents.BUNDLE_DROP_CONTENTS, SoundSource.PLAYERS, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F
 		);
 	}
 

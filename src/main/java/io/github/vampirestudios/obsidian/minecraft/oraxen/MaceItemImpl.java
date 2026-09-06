@@ -23,41 +23,41 @@ import java.util.function.Consumer;
 
 public class MaceItemImpl extends MaceItem {
 
-    public NexoItem item;
+	public NexoItem item;
 
-    public MaceItemImpl(NexoItem item, float attackDamage, float attackSpeed, Properties settings) {
-        super(settings.rarity(Rarity.EPIC)
-                .durability(500)
-                .component(DataComponents.TOOL, createToolProperties())
-                .repairable(BuiltInRegistries.ITEM.getValue(item.repairItem))
-                .attributes(createAttributes(attackDamage, attackSpeed))
-                .enchantable(15)
-                .component(DataComponents.WEAPON, new Weapon(1)));
-        this.item = item;
-    }
+	public MaceItemImpl(NexoItem item, float attackDamage, float attackSpeed, Properties settings) {
+		super(settings.rarity(Rarity.EPIC)
+				.durability(500)
+				.component(DataComponents.TOOL, createToolProperties())
+				.repairable(BuiltInRegistries.ITEM.getValue(item.repairItem))
+				.attributes(createAttributes(attackDamage, attackSpeed))
+				.enchantable(15)
+				.component(DataComponents.WEAPON, new Weapon(1)));
+		this.item = item;
+	}
 
-    public static @NotNull ItemAttributeModifiers createAttributes(float attackDamage, float attackSpeed) {
-        return ItemAttributeModifiers.builder()
-                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-                .add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-                .build();
-    }
+	public static @NotNull ItemAttributeModifiers createAttributes(float attackDamage, float attackSpeed) {
+		return ItemAttributeModifiers.builder()
+				.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+				.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+				.build();
+	}
 
-    public static Tool createToolProperties() {
-        return new Tool(List.of(), 1.0F, 2, false);
-    }
+	public static Tool createToolProperties() {
+		return new Tool(List.of(), 1.0F, 2, false);
+	}
 
-    @Override
-    public Component getName(ItemStack stack) {
-        return this.item.getName(this);
-    }
+	@Override
+	public Component getName(ItemStack stack) {
+		return this.item.getName(this);
+	}
 
-    @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
-        if (item.lore != null) {
-            for (String lore : item.lore) {
-                consumer.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toComponent());
-            }
-        }
-    }
+	@Override
+	public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
+		if (item.lore != null) {
+			for (String lore : item.lore) {
+				consumer.accept(TagParser.QUICK_TEXT.parseNode(lore).toComponent());
+			}
+		}
+	}
 }

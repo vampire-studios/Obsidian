@@ -15,13 +15,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MerchantResultSlot.class)
 public abstract class MerchantTradeMixin {
-    @Inject(method = "onTake", at = @At("TAIL"))
-    private void crucible$afterTrade(Player player, ItemStack stack, CallbackInfo ci) {
-        if (!(player instanceof ServerPlayer sp)) return;
-        if (!(sp.level() instanceof ServerLevel level)) return;
+	@Inject(method = "onTake", at = @At("TAIL"))
+	private void crucible$afterTrade(Player player, ItemStack stack, CallbackInfo ci) {
+		if (!(player instanceof ServerPlayer sp)) return;
+		if (!(sp.level() instanceof ServerLevel level)) return;
 
-        CrucibleEvents.fire(SkillTrigger.TRADE,
-                SkillContext.builder(sp).level(level).stack(stack).build()
-        );
-    }
+		CrucibleEvents.fire(SkillTrigger.TRADE,
+				SkillContext.builder(sp).level(level).stack(stack).build()
+		);
+	}
 }

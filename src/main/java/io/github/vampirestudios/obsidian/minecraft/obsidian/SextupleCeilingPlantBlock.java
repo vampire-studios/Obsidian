@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,32 +21,27 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class SextupleCeilingPlantBlock extends VegetationBlock {
-    public static final EnumProperty<SextupleBlockPart> PART = CProperties.SEXTUPLE_BLOCK_PART;
-    private static final MapCodec<VegetationBlock> CODEC = simpleCodec(SextupleCeilingPlantBlock::new);
+	public static final EnumProperty<SextupleBlockPart> PART = CProperties.SEXTUPLE_BLOCK_PART;
 
-    @Override
-    public MapCodec<? extends VegetationBlock> codec() {
-        return CODEC;
-    }
+	public SextupleCeilingPlantBlock(Properties settings) {
+		super(settings.offsetType(OffsetType.XZ));
+		this.registerDefaultState(this.stateDefinition.any().setValue(PART, SextupleBlockPart.TOP));
+	}
 
-    public SextupleCeilingPlantBlock(Properties settings) {
-        super(settings.offsetType(OffsetType.XZ));
-        this.registerDefaultState(this.stateDefinition.any().setValue(PART, SextupleBlockPart.TOP));
-    }
+	protected boolean canPlantBelow(BlockState state, BlockGetter world, BlockPos pos) {
+		return this.mayPlaceOn(state, world, pos);
+	}
 
-    protected boolean canPlantBelow(BlockState state, BlockGetter world, BlockPos pos) {
-        return this.mayPlaceOn(state, world, pos);
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(PART);
-    }
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(PART);
+	}
 
     /*@Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
@@ -60,109 +57,109 @@ public class SextupleCeilingPlantBlock extends VegetationBlock {
         return super.updateShape(state, direction, newState, world, pos, posFrom);
     }*/
 
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        BlockPos blockPos = ctx.getClickedPos();
-        return blockPos.getY() > 0 &&
-                ctx.getLevel().getBlockState(blockPos.below(1)).canBeReplaced(ctx) &&
-                ctx.getLevel().getBlockState(blockPos.below(2)).canBeReplaced(ctx) &&
-                ctx.getLevel().getBlockState(blockPos.below(3)).canBeReplaced(ctx) &&
-                ctx.getLevel().getBlockState(blockPos.below(4)).canBeReplaced(ctx) &&
-                ctx.getLevel().getBlockState(blockPos.below(5)).canBeReplaced(ctx)
-                ? super.getStateForPlacement(ctx)
-                : null;
-    }
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		BlockPos blockPos = ctx.getClickedPos();
+		return blockPos.getY() > 0 &&
+				ctx.getLevel().getBlockState(blockPos.below(1)).canBeReplaced(ctx) &&
+				ctx.getLevel().getBlockState(blockPos.below(2)).canBeReplaced(ctx) &&
+				ctx.getLevel().getBlockState(blockPos.below(3)).canBeReplaced(ctx) &&
+				ctx.getLevel().getBlockState(blockPos.below(4)).canBeReplaced(ctx) &&
+				ctx.getLevel().getBlockState(blockPos.below(5)).canBeReplaced(ctx)
+				? super.getStateForPlacement(ctx)
+				: null;
+	}
 
-    @Override
-    public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        world.setBlock(pos.below(1), this.defaultBlockState().setValue(PART, SextupleBlockPart.UPPER), 3);
-        world.setBlock(pos.below(2), this.defaultBlockState().setValue(PART, SextupleBlockPart.UPPER_MIDDLE), 3);
-        world.setBlock(pos.below(3), this.defaultBlockState().setValue(PART, SextupleBlockPart.LOWER_MIDDLE), 3);
-        world.setBlock(pos.below(4), this.defaultBlockState().setValue(PART, SextupleBlockPart.LOWER), 3);
-        world.setBlock(pos.below(4), this.defaultBlockState().setValue(PART, SextupleBlockPart.BOTTOM), 3);
-    }
+	@Override
+	public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+		world.setBlock(pos.below(1), this.defaultBlockState().setValue(PART, SextupleBlockPart.UPPER), 3);
+		world.setBlock(pos.below(2), this.defaultBlockState().setValue(PART, SextupleBlockPart.UPPER_MIDDLE), 3);
+		world.setBlock(pos.below(3), this.defaultBlockState().setValue(PART, SextupleBlockPart.LOWER_MIDDLE), 3);
+		world.setBlock(pos.below(4), this.defaultBlockState().setValue(PART, SextupleBlockPart.LOWER), 3);
+		world.setBlock(pos.below(4), this.defaultBlockState().setValue(PART, SextupleBlockPart.BOTTOM), 3);
+	}
 
-    @Override
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        if (state.getValue(PART) == SextupleBlockPart.TOP) {
-            BlockPos blockPos = pos.above();
-            return this.canPlantBelow(world.getBlockState(blockPos), world, pos);
-        } else {
-            BlockState blockState = world.getBlockState(pos.above());
-            return blockState.is(this) && blockState.getValue(PART) == SextupleBlockPart.TOP;
-        }
-    }
+	@Override
+	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+		if (state.getValue(PART) == SextupleBlockPart.TOP) {
+			BlockPos blockPos = pos.above();
+			return this.canPlantBelow(world.getBlockState(blockPos), world, pos);
+		} else {
+			BlockState blockState = world.getBlockState(pos.above());
+			return blockState.is(this) && blockState.getValue(PART) == SextupleBlockPart.TOP;
+		}
+	}
 
-    @Override
-    public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
-        super.playerDestroy(world, player, pos, Blocks.AIR.defaultBlockState(), blockEntity, stack);
-    }
+	@Override
+	public void playerDestroy(ServerLevel level, ServerPlayer player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack destroyedWith) {
+		super.playerDestroy(level, player, pos, Blocks.AIR.defaultBlockState(), blockEntity, destroyedWith);
+	}
 
-    @Override
-    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide()) {
-            if (player.isCreative()) {
-                onBreakInCreative(world, pos, state, player);
-            } else {
-                dropResources(state, world, pos, null, player, player.getMainHandItem());
-            }
-        }
+	@Override
+	public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+		if (!world.isClientSide()) {
+			if (player.isCreative()) {
+				onBreakInCreative(world, pos, state, player);
+			} else {
+				dropResources(state, world, pos, null, player, player.getMainHandItem());
+			}
+		}
 
-        return super.playerWillDestroy(world, pos, state, player);
-    }
+		return super.playerWillDestroy(world, pos, state, player);
+	}
 
-    protected static void onBreakInCreative(Level world, BlockPos pos, BlockState state, Player player) {
-        ArrayList<BlockPos> positions = new ArrayList<>();
-        SextupleBlockPart tripleBlockPart = state.getValue(PART);
+	protected static void onBreakInCreative(Level world, BlockPos pos, BlockState state, Player player) {
+		ArrayList<BlockPos> positions = new ArrayList<>();
+		SextupleBlockPart tripleBlockPart = state.getValue(PART);
 
-        if (tripleBlockPart == SextupleBlockPart.TOP) {
-            positions.add(pos.below(1));
-            positions.add(pos.below(2));
-            positions.add(pos.below(3));
-            positions.add(pos.below(4));
-            positions.add(pos.below(5));
-        } else if (tripleBlockPart == SextupleBlockPart.UPPER) {
-            positions.add(pos.above(1));
-            positions.add(pos.below(1));
-            positions.add(pos.below(2));
-            positions.add(pos.below(3));
-            positions.add(pos.below(4));
-        } else if (tripleBlockPart == SextupleBlockPart.UPPER_MIDDLE) {
-            positions.add(pos.below(1));
-            positions.add(pos.below(2));
-            positions.add(pos.below(3));
-            positions.add(pos.above(1));
-            positions.add(pos.above(2));
-        } else if (tripleBlockPart == SextupleBlockPart.LOWER_MIDDLE) {
-            positions.add(pos.above(1));
-            positions.add(pos.above(2));
-            positions.add(pos.above(3));
-            positions.add(pos.below(1));
-            positions.add(pos.below(2));
-        } else if (tripleBlockPart == SextupleBlockPart.LOWER) {
-            positions.add(pos.above(1));
-            positions.add(pos.above(2));
-            positions.add(pos.above(3));
-            positions.add(pos.above(4));
-            positions.add(pos.below(1));
-        } else if (tripleBlockPart == SextupleBlockPart.BOTTOM) {
-            positions.add(pos.above(1));
-            positions.add(pos.above(2));
-            positions.add(pos.above(3));
-            positions.add(pos.above(4));
-            positions.add(pos.above(5));
-        }
+		if (tripleBlockPart == SextupleBlockPart.TOP) {
+			positions.add(pos.below(1));
+			positions.add(pos.below(2));
+			positions.add(pos.below(3));
+			positions.add(pos.below(4));
+			positions.add(pos.below(5));
+		} else if (tripleBlockPart == SextupleBlockPart.UPPER) {
+			positions.add(pos.above(1));
+			positions.add(pos.below(1));
+			positions.add(pos.below(2));
+			positions.add(pos.below(3));
+			positions.add(pos.below(4));
+		} else if (tripleBlockPart == SextupleBlockPart.UPPER_MIDDLE) {
+			positions.add(pos.below(1));
+			positions.add(pos.below(2));
+			positions.add(pos.below(3));
+			positions.add(pos.above(1));
+			positions.add(pos.above(2));
+		} else if (tripleBlockPart == SextupleBlockPart.LOWER_MIDDLE) {
+			positions.add(pos.above(1));
+			positions.add(pos.above(2));
+			positions.add(pos.above(3));
+			positions.add(pos.below(1));
+			positions.add(pos.below(2));
+		} else if (tripleBlockPart == SextupleBlockPart.LOWER) {
+			positions.add(pos.above(1));
+			positions.add(pos.above(2));
+			positions.add(pos.above(3));
+			positions.add(pos.above(4));
+			positions.add(pos.below(1));
+		} else if (tripleBlockPart == SextupleBlockPart.BOTTOM) {
+			positions.add(pos.above(1));
+			positions.add(pos.above(2));
+			positions.add(pos.above(3));
+			positions.add(pos.above(4));
+			positions.add(pos.above(5));
+		}
 
-        positions.forEach((blockPos) -> {
-            world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 35);
-            world.levelEvent(player, 2001, blockPos, Block.getId(state));
-        });
-    }
+		positions.forEach((blockPos) -> {
+			world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 35);
+			world.levelEvent(player, 2001, blockPos, Block.getId(state));
+		});
+	}
 
-    @SuppressWarnings("deprecation")
-    @Override
-    @Environment(EnvType.CLIENT)
-    public long getSeed(BlockState state, BlockPos pos) {
-        return Mth.getSeed(pos.getX(), pos.below(state.getValue(PART) == SextupleBlockPart.BOTTOM ? 0 : 1).getY(), pos.getZ());
-    }
+	@SuppressWarnings("deprecation")
+	@Override
+	@Environment(EnvType.CLIENT)
+	public long getSeed(BlockState state, BlockPos pos) {
+		return Mth.getSeed(pos.getX(), pos.below(state.getValue(PART) == SextupleBlockPart.BOTTOM ? 0 : 1).getY(), pos.getZ());
+	}
 }

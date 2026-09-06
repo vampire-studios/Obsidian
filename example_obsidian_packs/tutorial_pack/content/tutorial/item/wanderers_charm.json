@@ -1,0 +1,51 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Wanderer's Charm"
+      }
+    },
+    "item_properties": {
+      "item_group": "minecraft:tools_and_utilities",
+      "max_stack_size": 1,
+      "max_damage": 64,
+      "has_glint": true
+    },
+    "lore": [
+      "Right-click to mend, right-click a mob to soothe it."
+    ]
+  },
+  "events": {
+    "on_use": [
+      { "action": "heal", "amount": 4 },
+      { "action": "feed", "food": 2, "saturation": 0.5 },
+      { "action": "clear_effects" },
+      { "action": "damage_item", "amount": 1 },
+      { "action": "set_cooldown", "seconds": 5 },
+      { "action": "play_sound", "sound": "minecraft:block.amethyst_block.chime" },
+      { "action": "send_message", "message": "The charm warms in your hand." }
+    ],
+    "interact_entity": [
+      { "action": "extinguish" },
+      { "action": "remove_effect", "effect": "minecraft:poison" },
+      { "action": "spawn_particles", "particle": "minecraft:heart", "count": 3, "speed": 0, "offsetX": 0, "offsetY": 1, "offsetZ": 0 }
+    ],
+    "stop_using": [
+      { "action": "send_message", "message": "You let the charm settle." }
+    ],
+    "on_pickup": [
+      { "action": "give_experience_levels", "amount": 1 },
+      { "action": "send_message", "message": "The charm hums as you pick it up.", "overlay": false }
+    ],
+    "destroyed": [
+      { "action": "give_item", "item": "minecraft:amethyst_shard", "count": 2 },
+      { "action": "send_message", "message": "The charm shatters, leaving shards behind.", "overlay": false }
+    ],
+    "use_on": [
+      { "action": "open_gui", "gui_type": "chest", "gui_size": 3, "title": "Wanderer's Satchel" }
+    ]
+  },
+  "rendering": {
+    "item_model": "minecraft:item/amethyst_shard"
+  }
+}

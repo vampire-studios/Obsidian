@@ -14,8 +14,8 @@ public final class ObsParser {
 	private static final Pattern CMD = Pattern.compile(
 			"^\\s*command\\s+\"([^\"]+)\"\\s*\\(([^)]*)\\)\\s*\\{\\s*$"); // you already allow any quoted name
 	private static final Pattern EVERY = Pattern.compile("^\\s*(every|schedule)\\s+([0-9]+[smht])\\s+tag\\s+\"([^\"]+)\"\\s*\\{\\s*$");
-	private static final Pattern RULE         = Pattern.compile("^\\s*rule\\s+when\\s+(.*)\\{\\s*$");
-	private static final Pattern RULE_EVERY   = Pattern.compile("^\\s*rule\\s+every\\s+([0-9]+[smht])\\s+when\\s+(.*)\\{\\s*$");
+	private static final Pattern RULE = Pattern.compile("^\\s*rule\\s+when\\s+(.*)\\{\\s*$");
+	private static final Pattern RULE_EVERY = Pattern.compile("^\\s*rule\\s+every\\s+([0-9]+[smht])\\s+when\\s+(.*)\\{\\s*$");
 	private static final Pattern FUNC = Pattern.compile("^\\s*func\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(([^)]*)\\)\\s*\\{\\s*$");
 
 	/* command block metadata */
@@ -70,8 +70,8 @@ public final class ObsParser {
 					String ln = it.next();
 
 					// adjust structural depth
-					int open = (int) ln.chars().filter(ch -> ch=='{').count();
-					int close = (int) ln.chars().filter(ch -> ch=='}').count();
+					int open = (int) ln.chars().filter(ch -> ch == '{').count();
+					int close = (int) ln.chars().filter(ch -> ch == '}').count();
 					depth += open - close;
 
 					if (ln.isBlank() || ln.strip().startsWith("//")) {
@@ -80,17 +80,36 @@ public final class ObsParser {
 					}
 
 					Matcher a;
-					if ((a = PERM.matcher(ln)).matches()) { perm = a.group(1); if (depth == 0) break; continue; }
-					if ((a = ALIASES.matcher(ln)).matches()) { aliases = parseAliases(a.group(1)); if (depth == 0) break; continue; }
-					if ((a = COOLDOWN.matcher(ln)).matches()) { cooldownTicks = parseDurTicks(a.group(1)); if (depth == 0) break; continue; }
-					if ((a = DESC.matcher(ln)).matches()) { description = a.group(1); if (depth == 0) break; continue; }
+					if ((a = PERM.matcher(ln)).matches()) {
+						perm = a.group(1);
+						if (depth == 0) break;
+						continue;
+					}
+					if ((a = ALIASES.matcher(ln)).matches()) {
+						aliases = parseAliases(a.group(1));
+						if (depth == 0) break;
+						continue;
+					}
+					if ((a = COOLDOWN.matcher(ln)).matches()) {
+						cooldownTicks = parseDurTicks(a.group(1));
+						if (depth == 0) break;
+						continue;
+					}
+					if ((a = DESC.matcher(ln)).matches()) {
+						description = a.group(1);
+						if (depth == 0) break;
+						continue;
+					}
 
 					if (SUGGEST.matcher(ln).matches()) {
 						int d = 1;
 						while (it.hasNext()) {
 							String sLn = it.next();
 							if (sLn.contains("{")) d++;
-							if (sLn.contains("}")) { d--; if (d == 0) break; }
+							if (sLn.contains("}")) {
+								d--;
+								if (d == 0) break;
+							}
 							Matcher se = SUG_ENTRY.matcher(sLn);
 							if (se.matches()) suggests.put(se.group(1), se.group(2));
 						}
@@ -353,24 +372,32 @@ public final class ObsParser {
 	// Supports: name: Int = 5, message: Text..., kind: Enum["a","b"] = "a", time: Duration = 30s,
 	// sender: Player, targets: Entities, etc.
 	// ObsParser.parseParams(...) — drop-in replacement
-	private static List<ScriptCommand.Param> parseParams(String sig){
+	private static List<ScriptCommand.Param> parseParams(String sig) {
 		var out = new ArrayList<ScriptCommand.Param>();
 		if (sig == null || sig.isBlank()) return out;
 
 		// split by commas not inside [] or quotes
-		int depthSq=0; boolean inStr=false; StringBuilder tok=new StringBuilder();
+		int depthSq = 0;
+		boolean inStr = false;
+		StringBuilder tok = new StringBuilder();
 		List<String> parts = new ArrayList<>();
-		for (int i=0;i<sig.length();i++){
+		for (int i = 0; i < sig.length(); i++) {
 			char c = sig.charAt(i);
-			if (c=='"' && (i==0 || sig.charAt(i-1)!='\\')) { inStr = !inStr; }
+			if (c == '"' && (i == 0 || sig.charAt(i - 1) != '\\')) {
+				inStr = !inStr;
+			}
 			if (!inStr) {
-				if (c=='[') depthSq++;
-				else if (c==']') depthSq--;
-				else if (c==',' && depthSq==0) { parts.add(tok.toString().trim()); tok.setLength(0); continue; }
+				if (c == '[') depthSq++;
+				else if (c == ']') depthSq--;
+				else if (c == ',' && depthSq == 0) {
+					parts.add(tok.toString().trim());
+					tok.setLength(0);
+					continue;
+				}
 			}
 			tok.append(c);
 		}
-		if (tok.length()>0) parts.add(tok.toString().trim());
+		if (tok.length() > 0) parts.add(tok.toString().trim());
 
 		for (String raw : parts) {
 			if (raw.isBlank()) continue;
@@ -378,7 +405,7 @@ public final class ObsParser {
 			// Optional wrapper: [ ... ] at top level
 			String p = raw.trim();
 			boolean wrapOptional = p.startsWith("[") && p.endsWith("]");
-			if (wrapOptional) p = p.substring(1, p.length()-1).trim();
+			if (wrapOptional) p = p.substring(1, p.length() - 1).trim();
 
 			// name : rest
 			int colon = p.indexOf(':');
@@ -391,49 +418,49 @@ public final class ObsParser {
 			}
 
 			String name = p.substring(0, colon).trim();
-			String rest = p.substring(colon+1).trim();
+			String rest = p.substring(colon + 1).trim();
 
 			// explicit optional on name/type
 			boolean nameOpt = name.endsWith("?");
-			if (nameOpt) name = name.substring(0, name.length()-1).trim();
+			if (nameOpt) name = name.substring(0, name.length() - 1).trim();
 			boolean typeOpt = rest.endsWith("?");
-			if (typeOpt) rest = rest.substring(0, rest.length()-1).trim();
+			if (typeOpt) rest = rest.substring(0, rest.length() - 1).trim();
 
 			// default?
 			String def = null;
 			int eq = topLevelEq(rest);
 			if (eq >= 0) {
-				def = rest.substring(eq+1).trim().replaceAll(";$","");
+				def = rest.substring(eq + 1).trim().replaceAll(";$", "");
 				rest = rest.substring(0, eq).trim();
 			}
 
 			// varargs?
 			boolean varargs = rest.endsWith("...");
-			if (varargs) rest = rest.substring(0, rest.length()-3).trim();
+			if (varargs) rest = rest.substring(0, rest.length() - 3).trim();
 
 			// kind
 			ScriptCommand.Kind kind = switch (rest) {
-				case "Int"        -> ScriptCommand.Kind.INTEGER;
-				case "Float"      -> ScriptCommand.Kind.FLOAT;
-				case "Bool"       -> ScriptCommand.Kind.BOOL;
-				case "Word"       -> ScriptCommand.Kind.WORD;
-				case "Text"       -> ScriptCommand.Kind.TEXT;
-				case "Duration"   -> ScriptCommand.Kind.DURATION;
-				case "Time"       -> ScriptCommand.Kind.TIME;
-				case "TeamColor"  -> ScriptCommand.Kind.TEAM_COLOR;
-				case "HexColor"   -> ScriptCommand.Kind.HEX_COLOR;
-				case "Entity"     -> ScriptCommand.Kind.ENTITY;
-				case "Entities"   -> ScriptCommand.Kind.ENTITIES;
-				case "Player"     -> ScriptCommand.Kind.PLAYER;
-				case "Players"    -> ScriptCommand.Kind.PLAYERS;
-				case "GameMode"   -> ScriptCommand.Kind.GAME_MODE;
-				case "BlockPos"   -> ScriptCommand.Kind.BLOCK_POS;
-				case "UUID"       -> ScriptCommand.Kind.UUID;
-				case "Rotation"   -> ScriptCommand.Kind.ROTATION;
-				case "Angle"      -> ScriptCommand.Kind.ANGLE;
-				case "Swizzle"    -> ScriptCommand.Kind.SWIZZLE;
-				case "Vec2"       -> ScriptCommand.Kind.VEC2;
-				case "Vec3"       -> ScriptCommand.Kind.VEC3;
+				case "Int" -> ScriptCommand.Kind.INTEGER;
+				case "Float" -> ScriptCommand.Kind.FLOAT;
+				case "Bool" -> ScriptCommand.Kind.BOOL;
+				case "Word" -> ScriptCommand.Kind.WORD;
+				case "Text" -> ScriptCommand.Kind.TEXT;
+				case "Duration" -> ScriptCommand.Kind.DURATION;
+				case "Time" -> ScriptCommand.Kind.TIME;
+				case "TeamColor" -> ScriptCommand.Kind.TEAM_COLOR;
+				case "HexColor" -> ScriptCommand.Kind.HEX_COLOR;
+				case "Entity" -> ScriptCommand.Kind.ENTITY;
+				case "Entities" -> ScriptCommand.Kind.ENTITIES;
+				case "Player" -> ScriptCommand.Kind.PLAYER;
+				case "Players" -> ScriptCommand.Kind.PLAYERS;
+				case "GameMode" -> ScriptCommand.Kind.GAME_MODE;
+				case "BlockPos" -> ScriptCommand.Kind.BLOCK_POS;
+				case "UUID" -> ScriptCommand.Kind.UUID;
+				case "Rotation" -> ScriptCommand.Kind.ROTATION;
+				case "Angle" -> ScriptCommand.Kind.ANGLE;
+				case "Swizzle" -> ScriptCommand.Kind.SWIZZLE;
+				case "Vec2" -> ScriptCommand.Kind.VEC2;
+				case "Vec3" -> ScriptCommand.Kind.VEC3;
 				default -> {
 					if (rest.startsWith("Enum[")) yield ScriptCommand.Kind.ENUM;
 					yield ScriptCommand.Kind.WORD;
@@ -446,8 +473,8 @@ public final class ObsParser {
 			String extra = def;
 			if (kind == ScriptCommand.Kind.ENUM) {
 				int a = rest.indexOf('['), b = rest.lastIndexOf(']');
-				String options = (a>=0 && b>a) ? rest.substring(a+1,b) : "";
-				extra = "["+options+"]";
+				String options = (a >= 0 && b > a) ? rest.substring(a + 1, b) : "";
+				extra = "[" + options + "]";
 				if (def != null && !def.isBlank()) extra = extra + "||" + def;
 				def = null;
 				hasDefault = extra.contains("||");
@@ -460,7 +487,7 @@ public final class ObsParser {
 			// Varargs TEXT should be greedy and last; enforce later in Brigadier
 			if (varargs && kind == ScriptCommand.Kind.WORD) kind = ScriptCommand.Kind.TEXT;
 
-			out.add(new ScriptCommand.Param(name, kind, required, (kind==ScriptCommand.Kind.ENUM ? extra : def)));
+			out.add(new ScriptCommand.Param(name, kind, required, (kind == ScriptCommand.Kind.ENUM ? extra : def)));
 		}
 
 		return out;

@@ -3,9 +3,11 @@ package io.github.vampirestudios.obsidian.registry;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.crucible.AugmentSocketData;
 import io.github.vampirestudios.obsidian.minecraft.*;
+import io.github.vampirestudios.obsidian.registry.components.Attraction;
 import io.github.vampirestudios.obsidian.registry.components.EnergyStorage;
 import io.github.vampirestudios.obsidian.registry.components.FluidContents;
-import io.github.vampirestudios.obsidian.registry.components.Attraction;
+import io.github.vampirestudios.obsidian.registry.components.PaletteApplicator;
+import io.github.vampirestudios.obsidian.registry.components.PaletteComponent;
 import io.github.vampirestudios.obsidian.registry.components.Wearable;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -65,11 +67,11 @@ public class OItemComponents {
 	public static final DataComponentType<ChargeComponent> CHARGE = register(
 			"charge", builder -> builder.persistent(ChargeComponent.CODEC).networkSynchronized(ChargeComponent.STREAM_CODEC)
 	);
-//	public static final DataComponentType<CustomMenuComponent> CUSTOM_MENU = register(
+	//	public static final DataComponentType<CustomMenuComponent> CUSTOM_MENU = register(
 //			"custom_menu", builder -> builder.persistent(CustomMenuComponent.CODEC).networkSynchronized(CustomMenuComponent.STREAM_CODEC)
 //	);
 	public static final DataComponentType<FluidContents> FLUID_CONTENTS =
-		register("fluid_contents", builder -> builder.persistent(FluidContents.CODEC));
+			register("fluid_contents", builder -> builder.persistent(FluidContents.CODEC));
 
 	public static final DataComponentType<EnergyStorage> ENERGY =
 			register("energy", builder -> builder.persistent(EnergyStorage.CODEC));
@@ -83,7 +85,21 @@ public class OItemComponents {
 					.networkSynchronized(AugmentSocketData.STREAM_CODEC)
 	);
 
-	public static void init() {}
+	public static final DataComponentType<PaletteComponent> PALETTE = register("palette", builder -> builder
+			.persistent(PaletteComponent.CODEC)
+			.networkSynchronized(PaletteComponent.STREAM_CODEC)
+	);
+	public static final DataComponentType<Identifier> CHANNELS = register("channels", builder -> builder
+			.persistent(Identifier.CODEC)
+			.networkSynchronized(Identifier.STREAM_CODEC)
+	);
+	public static final DataComponentType<PaletteApplicator> PALETTE_APPLICATOR = register("palette_applicator", builder -> builder
+			.persistent(PaletteApplicator.CODEC)
+			.networkSynchronized(PaletteApplicator.STREAM_CODEC)
+	);
+
+	public static void init() {
+	}
 
 	private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
 		return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Obsidian.id(name), builder.apply(DataComponentType.builder()).build());

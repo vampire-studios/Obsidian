@@ -1,137 +1,298 @@
 # Block Types
 
-Blocks come in many types. Some common blocks require special handling such as special superclasses to be used in code.
+`block_type` picks which kind of block to build. It decides the block's shape, its state properties and
+how it behaves — a `stairs` block is a real stairs block, with the vanilla corner logic and waterlogging
+that comes with it.
 
-To support those special blocks, there's a number of block types that can be specified in the json.
+```json
+{ "block_type": "stairs" }
+```
 
-More types will be added in the future as needed.
+Values are case-insensitive; `"stairs"` and `"STAIRS"` are the same. The default is `block`.
 
-## "block"
+An unrecognized value fails the whole file with `Failed to register block` in the log, naming the value
+it did not know.
 
-Default block type.
+## Basic shapes
 
-Default render layer: solid.
+| Type                        | Behaves like                                                 | State properties                                   |
+|-----------------------------|--------------------------------------------------------------|----------------------------------------------------|
+| `block`                     | A plain full block.                                          | —                                                  |
+| `directional`               | Placeable facing any of the six directions.                  | `facing`                                           |
+| `horizontal_directional`    | Placeable facing the four horizontal directions.             | `facing`                                           |
+| `eight_directional_block`   | Placeable at eight rotations, 45° apart.                     | `rotation` (0–7)                                   |
+| `sixteen_directional_block` | Placeable at sixteen rotations, 22.5° apart, like a sign.    | `rotation` (0–15)                                  |
+| `rotated_pillar`            | Log-style axis rotation.                                     | `axis`                                             |
+| `slab`                      | Slab, with waterlogging.                                     | `type`, `waterlogged`                              |
+| `stairs`                    | Stairs, with corners and waterlogging. Needs `parent_block`. | `facing`, `half`, `shape`, `waterlogged`           |
+| `wall`                      | Wall, with waterlogging.                                     | `up`, `north`/`south`/`east`/`west`, `waterlogged` |
+| `fence`                     | Fence.                                                       | `north`/`south`/`east`/`west`, `waterlogged`       |
+| `fence_gate`                | Fence gate. Takes `wood_type`.                               | `open`, `powered`, `in_wall`                       |
+| `pane`                      | Glass-pane connection behaviour.                             | connection states                                  |
+| `carpet`                    | Thin, walkable layer.                                        | —                                                  |
 
-No default blockstate properties.
+## Doors, buttons and redstone
 
-## "directional"
+| Type                             | Notes                                                                                                                    |
+|----------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `door`                           | Takes `block_set_type` — that is what supplies the open/close sounds.                                                    |
+| `trapdoor`                       | Takes `block_set_type`.                                                                                                  |
+| `button`                         | Takes `block_set_type`. `information.wooden_button` (default `true`) sets the press duration to 30 ticks rather than 20. |
+| `pressure_plate`                 | Takes `block_set_type`.                                                                                                  |
+| `lever`                          | Flips between powered and unpowered, mountable on floor, wall or ceiling.                                                |
 
-A block that can be placed in multiple cardinal directions, including up and down.
+`block_set_type` is optional on all of these, and `wood_type` on `fence_gate`: a block that declares
+neither gets oak's sounds and behaviour rather than failing to register.
 
-Default render layer: solid.
+## Nature
 
-Default blockstate properties: facing
+| Type                             | Notes                                                                                  |
+|----------------------------------|----------------------------------------------------------------------------------------|
+| `log`, `stem`, `wood`            | Axis-rotating natural pillars.                                                         |
+| `leaves`                         | Leaves, with distance and persistence.                                                 |
+| `plant`                          | Small plant. No collision, breaks instantly.                                           |
+| `horizontal_facing_plant`        | Plant that faces a direction.                                                          |
+| `double_plant`                   | Two blocks tall.                                                                       |
+| `horizontal_facing_double_plant` | Two tall and facing.                                                                   |
+| `hanging_double_leaves`          | Hangs downward, two blocks tall.                                                       |
+| `sapling`                        | Grows into a configured tree.                                                          |
+| `path`                           | Dirt-path shape.                                                                       |
+| `crop`                           | Grows through age states on farmland. See [Crops](#crops).                             |
+| `bush`                           | Berry bush: grows, is picked by hand, scratches. See [Bushes](#bushes).                |
+| `climbable`                      | Ladder-shaped and wall-mounted. See [Climbable blocks](#climbable-blocks).             |
+| `oxidizing_block`                | A copper-style chain. Uses `oxidizable_properties`, and registers one block per stage. |
 
-## "horizontal_directional"
+The plant types honour `waterloggable` in `additional_information`.
 
-A block that can be placed in multiple cardinal directions, but only the horizontal ones.
+## Furniture and stations
 
-Default render layer: solid.
+| Type                                  | Notes                                                                                                                                    |
+|---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| `crafting_table`, `loom`, `barrel`    | Working vanilla stations.                                                                                                                |
+| `furnace`, `blast_furnace`, `smoker`  | Working, with their block entities wired up.                                                                                             |
+| `bed`, `campfire`, `beehive`, `cake`  | Working, each with its own properties section.                                                                                           |
+| `painting_table`                      | Obsidian's own station, configured with `painting_table_information`.                                                                    |
+| `torch`, `lantern`, `chain`, `ladder` | Light sources and climbables.                                                                                                            |
+| `candle`                              | One to four per block, lightable and waterloggable. `luminance` in the settings is one candle's worth; vanilla scales it with the count. |
+| `rod`                                 | Thin rod on any of the six faces, like an end rod. Shape comes from vanilla.                                                             |
+| `dyeable`                             | Sixteen colour variants of one block.                                                                                                    |
 
-Default blockstate properties: facing
+## Crops
 
-## "rotated_pillar"
+A `crop` grows on farmland and drops its seed when broken early. Its stages come from `growable`:
 
-A block that can be placed in axis directions, like logs and pillars, where opposing cardinal directions look the same.
+```json
+{
+  "block_type": "crop",
+  "growable": { "max_age": 3, "seed": "examplepack:cheese_seeds" },
+  "can_plant_on": ["minecraft:farmland", "minecraft:soul_soil"]
+}
+```
 
-Default render layer: solid.
+| Field                        | Default | Meaning                                                                       |
+|------------------------------|---------|---------------------------------------------------------------------------------|
+| `growable.max_age`           | `7`     | The last stage the crop grows to, 1–7. Four-stage crops use `3`.                |
+| `growable.seed`              | own item| What is planted to get it.                                                      |
+| `growable.harvest_on_interact` | `false` | Right-click a grown crop to take its drops and reset it, without replanting.  |
+| `can_plant_on`               | farmland| Replaces the farmland requirement with your own list of supports.               |
 
-Default blockstate properties: axis
+Growth itself comes from the [growth settings](#growth-settings) below, which bushes share.
 
-Use "log" instead if you're making a log, or "stem" if you're making a stem.
+**Drops.** A crop registered with nothing declared drops its own block item at every stage, which is
+almost never what you want. Use [`when`](./Blocks.md#dropping-by-state) to separate produce from seed:
 
-## "slab"
+```json
+"drop_information": {
+  "drops": [
+    { "name": "examplepack:cheese", "when": { "age": 7 } },
+    { "name": "examplepack:cheese_seeds", "when": { "age": { "max": 6 } } }
+  ]
+}
+```
 
-A block that has the properties of a slab, including waterlogging.
+`harvest_on_interact` gives exactly those drops, so a right-click harvest and a break give the same
+thing.
 
-Default render layer: solid.
+## Growth settings
 
-Default blockstate properties: type, waterlogged
+Crops read these from `growable`, berry bushes from `bush_properties`. Left out, each block type keeps
+the vanilla behaviour for its own shape.
 
-## "stairs"
+| Field            | Default | Meaning                                                                              |
+|------------------|---------|----------------------------------------------------------------------------------------|
+| `min_light`      | `9`     | The light the block needs before it grows at all.                                       |
+| `growth_chance`  | —       | One in this many random ticks advances a stage.                                         |
+| `bonemeal_min`   | `2` / `1` | Fewest stages one bone meal advances. Bushes default to `1`, crops to `2`.            |
+| `bonemeal_max`   | `5` / `1` | Most stages one bone meal advances.                                                   |
+| `bonemeal_chance`| `1.0`   | The chance one bone meal does anything at all.                                           |
+| `shapes_by_age`  | —       | The block's shape at each stage. See below.                                              |
 
-A block that has the properties of a stair block, including waterlogging.
+Left out, `growth_chance` means each type keeps its own rate — for a crop that is vanilla's farmland
+formula, where well-watered soil in a tended row grows faster than dry ground. **Declaring it replaces
+that formula outright**, so a crop with `"growth_chance": 5` grows at the same speed on any soil.
+Moving only `min_light` also leaves the formula behind, falling back to roughly its dry-ground rate.
 
-Default render layer: solid.
+`shapes_by_age` is one box set per stage, in the same 0–16 model space as
+[voxel shapes](./VoxelShapes.md). A list shorter than the age range keeps its last entry for the rest:
 
-Default blockstate properties: facing, half, shape, waterlogged
+```json
+"shapes_by_age": [
+  [[5, 0, 5, 11, 4, 11]],
+  [[4, 0, 4, 12, 9, 12]],
+  [[2, 0, 2, 14, 15, 14]]
+]
+```
 
-Note: Parent block is required for this type.
+The age property is always vanilla's `age` 0–7 — it is built before the block's own configuration is
+reachable — so `max_age` caps how far the crop advances rather than shrinking the property. The
+blockstate therefore has to name all eight ages, or the ones it leaves out have no model and render as
+the missing-model cube. Generated blockstates draw the ages past `max_age` with the last stage's model;
+a blockstate you ship yourself has to cover them too.
 
-## "wall"
+Crops force no collision, instant breaking, and random ticks, since without random ticks they cannot
+grow.
 
-A block that has the properties of a wall, including waterlogging.
+## Bushes
 
-Default render layer: solid.
+A `bush` is vanilla's sweet berry bush shape: it grows through a few stages on its own, is **picked**
+by right-clicking once it is ripe rather than broken, drops back a stage when it is picked, and slows
+and scratches whatever pushes through it. Everything about it comes from `bush_properties`, and every
+field there defaults to the sweet berry bush's own number — so `"bush_properties": {}` is already a
+working bush.
 
-Default blockstate properties: up, east_wall, north_wall, south_wall, west_wall, waterlogged
+```json
+{
+  "block_type": "bush",
+  "bush_properties": {
+    "berry": "examplepack:tutorial_berries",
+    "max_age": 3,
+    "ripe_age": 2
+  },
+  "can_plant_on": ["minecraft:grass_block", "minecraft:dirt"]
+}
+```
 
-## "fence"
+| Field             | Default                                  | Meaning                                                                |
+|-------------------|------------------------------------------|--------------------------------------------------------------------------|
+| `max_age`         | `3`                                      | The last growth stage, 1–7.                                              |
+| `ripe_age`        | `2`                                      | The first stage that can be picked. Below it the bush is bare.           |
+| `berry`           | the bush's own item                      | What picking gives.                                                      |
+| `min_berries`     | `1`                                      | Fewest berries one picking gives.                                        |
+| `max_berries`     | `2`                                      | Most berries one picking gives.                                          |
+| `bonus_when_ripe` | `1`                                      | Extra berries when the bush is fully grown, not merely ripe.             |
+| `picked_age`      | below `ripe_age`                         | The stage a picked bush drops back to.                                   |
+| `damage`          | `1.0`                                    | Damage to something moving through a grown bush. `0` turns it off.       |
+| `damage_type`     | `minecraft:sweet_berry_bush`             | The kind of damage that is. Any damage type, yours included.             |
+| `immune_entities` | fox and bee                              | Entities the bush never hurts and never slows. `[]` makes it hurt all.   |
+| `slowdown`        | `[0.8, 0.75, 0.8]`                       | How much it slows movement, per axis. A single number does all three; `1` is no slowing. |
+| `pick_sound`      | `block.sweet_berry_bush.pick_berries`    | The sound picking makes.                                                 |
 
-A block that has the properties of a fence, including waterlogging.
+Growth and bone meal come from the [growth settings](#growth-settings) bushes share with crops, where a
+bush defaults to a growth chance of 5 and a single stage per bone meal.
 
-Default render layer: solid.
+Picking drops the bush back to `picked_age`, so a bush is picked over and over rather than once. Foxes
+and bees are left alone by default, and standing still in a bush is safe — it is moving through that
+scratches.
 
-Default blockstate properties: east, north, south, west, waterlogged
+A bush honours `waterloggable` in `additional_information` like the other plant types, and breaking one
+drops whatever `drop_information` says — picking and breaking are separate.
 
-## "fence_gate"
+Bushes force no collision, instant breaking and random ticks, since without random ticks they cannot
+grow. A bush with `max_age` up to 3 uses vanilla's `age` 0–3; a taller one uses `age` 0–7. Ages past
+`max_age` are drawn with the last stage's model, so the blockstate is complete either way.
 
-A block that has the properties of a fence gate.
+Textures are named per stage — `stage0` through `stage3` — and a bush that names only `all` draws the
+same texture at every stage:
 
-Default render layer: solid.
+```json
+"rendering": {
+  "block_model": {
+    "textures": {
+      "stage0": "examplepack:block/tutorial_bush_stage0",
+      "stage1": "examplepack:block/tutorial_bush_stage1",
+      "stage2": "examplepack:block/tutorial_bush_stage2",
+      "stage3": "examplepack:block/tutorial_bush_stage3"
+    }
+  }
+}
+```
 
-Default blockstate properties: open, powered, in_wall
+Picking is not the same as breaking: what a broken bush drops still comes from `drop_information` like
+any other block.
 
-## "leaves"
+## Climbable blocks
 
-A block that has the properties of leaves.
+The `climbable` type gives a block the ladder's shape, wall placement and waterlogging. **Climbing
+itself comes from the vanilla `minecraft:climbable` block tag**, which the block type cannot set on its
+own — add the block to the tag from your pack's `data` directory:
 
-Default render layer: cutout_mipped. Also defaults to not solid.
+```
+ExamplePack/data/minecraft/tags/block/climbable.json
+```
 
-Default blockstate properties: distance, persistent
+```json
+{ "replace": false, "values": ["examplepack:rope"] }
+```
 
-## "metal_door"
+A `climbable` block without that entry looks right and places right, but the player slides down it. See
+[Pack Structure](../PackStructure.md#assets-and-data) for how the `data` directory is loaded.
 
-A block that has the properties of a metal door.
+## Rotation blocks
 
-Default render layer: cutout. Also defaults to not solid.
+`eight_directional_block` and `sixteen_directional_block` carry a `rotation` number rather than a
+facing, so they turn with the player instead of snapping to a block face.
 
-Default blockstate properties: facing, open, hinge, powered, half
+**Shapes do not rotate with them.** A sixteenth of a turn is not a direction, and the shorthand shapes
+only know how to rotate to one. Keep the shape symmetrical, or make it cover every angle.
 
-## "wooden_door"
+### Models
 
-A block that has the properties of a wooden door.
+One model is usually enough:
 
-Default render layer: cutout. Also defaults to not solid.
+```json
+{
+  "block_type": "eight_directional_block",
+  "rendering": { "block_model": "examplepack:block/toy_car" }
+}
+```
 
-Default blockstate properties: facing, open, hinge, powered, half
+These blocks are **drawn by a renderer rather than baked into the chunk mesh**, because a baked model can
+only be turned in quarter turns and these stand at 45° and 22.5°. The renderer turns the block's own
+model, so any model works — including ones a rotated copy could never be generated from.
 
-## "trapdoor"
+That has one cost worth knowing: a rendered block is redrawn each frame, where a baked one is built into
+the chunk once. It is cheap per block, but a room filled with them is not free the way ordinary blocks
+are.
 
-A block that has the properties of a wooden trapdoor, including waterlogging.
+A block placed by the player faces them, on the assumption the model is drawn facing north like every
+other block type. A model drawn facing another way is corrected with `rendering.model_rotation_offset`,
+which applies here as it does to the facing blocks.
 
-Default render layer: cutout. Also defaults to not solid.
+The generated blockstate is deliberately **unturned** — one entry per rotation value, all pointing at the
+model as drawn. The renderer applies the angle, and a rotation in the blockstate would be applied on top
+of it.
 
-Default blockstate properties: open, half, powered, waterlogged
+A rotation may take a model of its own, turned like any other:
 
-## Additional block types
+```json
+{
+  "rendering": {
+    "block_model": "examplepack:block/statue",
+    "rotation_models": { "4": "examplepack:block/statue_seated" }
+  }
+}
+```
 
-Obsidian supports a larger set of block types that map to vanilla-style behaviors. These are declared in the `block_type` field and handled by the corresponding implementations in the mod code.
+Packs that ship their own blockstate (`has_assets`) supply their own entries; keep them unturned for the
+same reason.
 
-Common additional types include:
+## Variants
 
-* `painting_table`
-* `campfire`
-* `bed`
-* `log`, `stem`, `wood`
-* `oxidizing_block`
-* `plant`, `horizontal_facing_plant`, `sapling`, `double_plant`, `horizontal_facing_double_plant`, `hanging_double_leaves`
-* `torch`, `lantern`, `chain`
-* `ladder`, `path`, `carpet`, `pane`
-* `button`, `pressure_plate`
-* `door` (uses `block_set_type`)
-* `beehive`
-* `dyeable`
-* `loom`, `grindstone`, `crafting_table`, `piston`, `noteblock`, `jukebox`, `smoker`, `furnace`, `blast_furnace`, `lectern`, `fletching_table`, `barrel`, `composter`, `rails`, `cartography_table`
+Walls, pressure plates and buttons can also be generated as [variants](./Blocks.md#variants) of a base
+block, which is less work when you want the whole family from one texture.
 
-If a block type depends on `block_set_type`, `wood_type`, or other settings, those must be provided in the block's `information` section. Refer to the [Blocks](./Blocks.md) format page and the code for details on each type.
+## See also
+
+* [Blocks](./Blocks.md) — the block format itself.
+* [Block Settings](./BlockSettings.md) — hardness, sounds, light.
+* [Voxel Shapes](./VoxelShapes.md) — custom geometry, for when no type fits.

@@ -6,17 +6,17 @@ import java.util.List;
 
 public class InWaterCondition extends Condition {
 
-    public InWaterCondition() {
-        super(List.of("inWater", "water", "isInWater"));
-    }
+	public InWaterCondition() {
+		super(List.of("inWater", "water", "isInWater"));
+	}
 
-    @Override
-    public boolean evaluate(LivingEntity caster, LivingEntity target) {
-        return target.isInWater();
-    }
+	@Override
+	public boolean evaluate(LivingEntity caster, LivingEntity target) {
+		return target.isInWater();
+	}
 
-    @Override
-    public boolean applyToCaster() {
-        return false;
-    }
+	@Override
+	public boolean applyToCaster() {
+		return false;
+	}
 }

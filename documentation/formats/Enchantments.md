@@ -1,133 +1,51 @@
 # Enchantments
 
-Enchantment definitions let you define new enchantments.
+> **Obsidian does not load enchantments.** No module reads an enchantment directory on this branch, so
+> files in the format below do nothing at all.
+>
+> **Use a vanilla data pack instead.** Enchantments have been fully data-driven since 1.21, under
+> `data/<namespace>/enchantment/`, and the vanilla format is more capable than the one Obsidian had.
 
-Enchantment definitions go in the `enchantments` directory in the content pack part of the addon.
+The format is kept here as a record of what older versions accepted, and as the design if the module
+returns.
 
-E.g.
-```
-content/examplepack/enchantments/deadly.json
-```
+## The old format
 
-## Basic structure of the JSON file
+Files went in `enchantments`, with the file name as the id.
 
 ```json
 {
+  "rarity": "rare",
+  "type": "weapon",
+  "min_level": 1,
   "max_level": 3,
-  "blacklisted_enchantments": [
-    "minecraft:smite", "minecraft:bane_of_arthropods"
-  ]
+  "base_cost": 5,
+  "blacklisted_enchantments": ["minecraft:smite", "minecraft:bane_of_arthropods"]
 }
 ```
 
-## "rarity"
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `rarity` | `common` | `common`, `uncommon`, `rare`, `very_rare`. |
+| `type` | `breakable` | What it can be applied to — `armor`, `armor_head`, `weapon`, `digger`, `bow`, `trident`, `crossbow`, `wearable`, `fishing_rod`, `vanishable`, and the per-slot armor variants. |
+| `min_level` | `1` | Lowest level offered. |
+| `max_level` | `1` | Highest level offered. Must be ≥ `min_level`. |
+| `base_cost` | `1` | Enchanting cost. Higher makes it harder to get alongside others. |
+| `blacklisted_enchantments` | none | Enchantments this one cannot coexist with. |
 
-Defines the rarity of the enchantment.
+## The vanilla equivalent
 
-Optional. Default: common.
+A data pack enchantment lives in the pack's data directory rather than its content directory:
 
-Must be one of these strings: `"common"`, `"uncommon"`, `"rare"`, `"very_rare"`.
+```
+ExamplePack/data/examplepack/enchantment/sharpness_plus.json
+```
 
-## "type"
+Its fields — `description`, `supported_items`, `weight`, `max_level`, `min_cost`, `max_cost`,
+`effects` — are documented in the [Minecraft Wiki](https://minecraft.wiki/w/Enchantment_definition).
+`exclusive_set` replaces `blacklisted_enchantments`, and effects can do considerably more than the old
+format allowed.
 
-Defines the type of enchantment.
+## See also
 
-Optional. Default: breakable.
-
-Must be one of these strings: `"breakable"`, `"armor"`, `"armor_feet"`, `"armor_legs"`, `"armor_chest"`, `"armor_head"`, `"weapon"`, `"digger"`, `"fishing_rod"`, `"trident"`, `"bow"`, `"wearable"`, `"crossbow"`, `"vanishable"`.
-
-## "min_level"
-
-Defines the minimum enchantment level that appears in the creative menu and in the enchanting table.
-
-Optional. Default: 1.
-
-Must be a positive integer bigger than zero.
-
-## "max_level"
-
-Defines the maximum enchantment level that appears in the creative menu and in the enchanting table.
-
-Optional. Default: 1.
-
-Must be a positive integer bigger than zero. Must be bigger or equal to `"min_level"`.
-
-## "base_cost"
-
-Defines the base enchantability cost of this enchant. Bigger numbers will make it harder to obtain the enchantments along with other enchantments.
-
-Optional. Default: 1.
-
-Must be a positive integer or zero.
-
-## "per_level_cost"
-
-Defines the per-level enchantability cost increase of this enchant. Bigger numbers will make it harder to obtain the enchantments along with other enchantments.
-
-Optional. Default: 10.
-
-Must be a positive integer or zero.
-
-## "random_cost"
-
-Defines the random variance in the enchantability cost of this enchant. Bigger numbers will make it harder to obtain the enchantments along with other enchantments.
-
-Optional. Default: 5.
-
-Must be a positive integer or zero.
-
-## "accepted_items"
-
-Defines an item predicate which matches compatible items for this enchantment.
-
-Optional. Default: all items are allowed.
-
-See the vanilla documentation on item predicates, which are used in both advancement criteria and loot tables.
-
-## "blacklisted_enchantments"
-
-Defines a list of enchantments that are not allowed to exist at the same time as this enchantment.
-
-Optional. Default: all enchants that don't disallow this are allowed.
-
-Must be a json array (`[]`) containing strings of resource locations of other enchantments.
-
-## "treasure"
-
-Defines if the enchantment is treasure. If true, it will only be obtainable in loot, and won't appear in the enchanting table.
-
-Optional. Default: false.
-
-Must be a boolean (`false` or `true`).
-
-## "curse"
-
-Defines if the enchantment is a curse. If true, it will show red in the tooltip.
-
-Optional. Default: false.
-
-Must be a boolean (`false` or `true`).
-
-## "tradeable"
-
-Defines if the enchantment is tradeable. If true, it will appear in the villager trades.
-
-Optional. Default: true.
-
-Must be a boolean (`false` or `true`).
-
-## "discoverable"
-
-Defines if the enchantment is discoverable. If true, it will appear in loot.
-
-Optional. Default: true.
-
-Must be a boolean (`false` or `true`).
-
-## "allow_on_books"
-
-Defines if the enchantment is allowed to be on books. If true, it will appear when enchanting books.
-
-Optional. Default: true.
-
-Must be a boolean (`false` or `true`).
+* [Feature list](../Features.md) — what else is not loaded.

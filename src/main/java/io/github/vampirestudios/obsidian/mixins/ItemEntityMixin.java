@@ -11,17 +11,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemEntity.class)
 public class ItemEntityMixin {
-    @Inject(
-        method = "playerTouch",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private void hookOnPickup(Player player, CallbackInfo ci) {
-        InteractionResult result = PlayerPickupItemCallback.EVENT
-            .invoker()
-            .interact(player, (ItemEntity)(Object)this);
-        if (result == InteractionResult.FAIL) {
-            ci.cancel(); // abort pickup
-        }
-    }
+	@Inject(
+			method = "playerTouch",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	private void hookOnPickup(Player player, CallbackInfo ci) {
+		InteractionResult result = PlayerPickupItemCallback.EVENT
+				.invoker()
+				.interact(player, (ItemEntity) (Object) this);
+		if (result == InteractionResult.FAIL) {
+			ci.cancel(); // abort pickup
+		}
+	}
 }

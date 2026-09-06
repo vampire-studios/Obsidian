@@ -12,7 +12,8 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 
 public class ContentUtils {
 	public static void registerSoundIfNotFound(Identifier sound) {
-		if (!BuiltInRegistries.SOUND_EVENT.containsKey(sound)) Obsidian.registerInRegistry(BuiltInRegistries.SOUND_EVENT, sound, SoundEvent.createVariableRangeEvent(sound));
+		if (!BuiltInRegistries.SOUND_EVENT.containsKey(sound))
+			Obsidian.registerInRegistry(BuiltInRegistries.SOUND_EVENT, sound, SoundEvent.createVariableRangeEvent(sound));
 	}
 
 	public static BlockSetType getBlockSetType(Identifier id) {

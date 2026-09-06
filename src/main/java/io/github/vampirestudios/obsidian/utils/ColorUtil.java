@@ -26,7 +26,7 @@ public class ColorUtil {
 	}
 
 	public static int[] toIntArray(int color) {
-		return new int[] {
+		return new int[]{
 				(color >> 24) & 255,
 				(color >> 16) & 255,
 				(color >> 8) & 255,
@@ -84,8 +84,7 @@ public class ColorUtil {
 		int r = 0, g = 0, b = 0;
 		if (saturation == 0) {
 			r = g = b = (int) (brightness * 255.0F + 0.5F);
-		}
-		else {
+		} else {
 			float h = (hue - (float) Math.floor(hue)) * 6.0F;
 			float f = h - (float) java.lang.Math.floor(h);
 			float p = brightness * (1.0F - saturation);
@@ -137,8 +136,7 @@ public class ColorUtil {
 		if (len == 6) {
 			color = 0xFF000000;
 			shift = 16;
-		}
-		else {
+		} else {
 			color = 0;
 			shift = 24;
 		}
@@ -149,8 +147,7 @@ public class ColorUtil {
 				color |= Integer.valueOf(digit, 16) << shift;
 				shift -= 8;
 			}
-		}
-		catch (NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			Obsidian.LOGGER.catching(ex);
 			return -1;
 		}

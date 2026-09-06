@@ -8,22 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocationsAboveEntitiesTarget extends LocationTarget {
-    private final double radius;
-    private final double height;
-    private final int amount;
+	private final double radius;
+	private final double height;
+	private final int amount;
 
-    public LocationsAboveEntitiesTarget(double radius, double height, int amount) {
-        super(List.of("LocationsAboveEntities", "aboveEntities"));
-        this.radius = radius;
-        this.height = height;
-        this.amount = amount;
-    }
+	public LocationsAboveEntitiesTarget(double radius, double height, int amount) {
+		super(List.of("LocationsAboveEntities", "aboveEntities"));
+		this.radius = radius;
+		this.height = height;
+		this.amount = amount;
+	}
 
-    @Override
-    public List<Vec3> getTargets(LivingEntity caster) {
-        List<Vec3> locations = new ArrayList<>();
-        List<LivingEntity> entities = caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(radius));
-        entities.stream().limit(amount).forEach(entity -> locations.add(entity.position().add(0, height, 0)));
-        return locations;
-    }
+	@Override
+	public List<Vec3> getTargets(LivingEntity caster) {
+		List<Vec3> locations = new ArrayList<>();
+		List<LivingEntity> entities = caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(radius));
+		entities.stream().limit(amount).forEach(entity -> locations.add(entity.position().add(0, height, 0)));
+		return locations;
+	}
 }

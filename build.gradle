@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version '1.17.0-alpha.18'
+	id 'net.fabricmc.fabric-loom' version "1.17.20"
 	id 'maven-publish'
 }
 
@@ -56,18 +56,14 @@ loom {
 
 configurations.configureEach {
 	resolutionStrategy {
-		force("net.fabricmc.fabric-api:fabric-api:0.148.3+26.2")
-		force("net.fabricmc:fabric-loader:0.19.2")
+		force("net.fabricmc.fabric-api:fabric-api:0.159.1+26.3")
+		force("net.fabricmc:fabric-loader:0.19.5")
 		force("com.terraformersmc:modmenu:17.0.0-alpha.1")
 	}
 }
 
 dependencies {
 	implementation 'org.jetbrains:annotations:24.0.0'
-	def noFapi = { exclude group: 'net.fabricmc.fabric-api' }
-	def noFLoader = { exclude group: 'net.fabricmc' }
-	def noCottonMC = { exclude group: 'io.github.cottonmc' }
-	def noQuiltMC = { exclude group: 'org.quiltmc' }
 
 	minecraft libs.minecraft
 
@@ -121,11 +117,11 @@ dependencies {
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:${libs.versions.jackson.get()}"
 	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${libs.versions.jackson.get()}"
 
-	implementation("net.vampirestudios:arrp:0.15.0+build.2")
+	implementation("net.vampirestudios:packwright:1.0.3+build.1-26.3")
 
 	implementation "com.ptsmods:devlogin:3.5"
 
-	include(implementation("eu.pb4:sgui:2.0.0-beta.1+26.1"))
+//	include(implementation("eu.pb4:sgui:2.1.0+26.2"))
 //	implementation(include("eu.pb4:placeholder-api:3.0.0-beta.2+26.1"))
 	implementation 'com.github.coredex-source:TextPlaceholderAPI:26.2-SNAPSHOT'
 

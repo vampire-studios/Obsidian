@@ -1,0 +1,10 @@
+{
+  "block": "tutorial:tutorial_rift",
+  "frame": "tutorial:tutorial_bricks",
+  "ignition": "minecraft:flint_and_steel",
+  "dimension": "minecraft:the_nether",
+  "return_dimension": "minecraft:overworld",
+  "scale": 0.125,
+  "delay": 60,
+  "sound": "minecraft:block.portal.trigger"
+}

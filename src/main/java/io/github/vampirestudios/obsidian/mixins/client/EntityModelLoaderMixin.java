@@ -31,20 +31,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityModelSet.class)
 public class EntityModelLoaderMixin {
-    @Unique
-    private DynamicEntityModelLoader quilt$dynamicEntityModelLoader;
+	@Unique
+	private DynamicEntityModelLoader quilt$dynamicEntityModelLoader;
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void createAnimationManager(CallbackInfo ci) {
-        this.quilt$dynamicEntityModelLoader = new DynamicEntityModelLoader();
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this.quilt$dynamicEntityModelLoader);
-    }
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void createAnimationManager(CallbackInfo ci) {
+		this.quilt$dynamicEntityModelLoader = new DynamicEntityModelLoader();
+		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this.quilt$dynamicEntityModelLoader);
+	}
 
-    @Inject(method = "bakeLayer", at = @At("HEAD"), cancellable = true)
-    public void returnDynamicModel(ModelLayerLocation layer, CallbackInfoReturnable<ModelPart> cir) {
+	@Inject(method = "bakeLayer", at = @At("HEAD"), cancellable = true)
+	public void returnDynamicModel(ModelLayerLocation layer, CallbackInfoReturnable<ModelPart> cir) {
 //        LayerDefinition modelData = quilt$dynamicEntityModelLoader.getModelData(layer);
 //        if (modelData != null) {
 //            cir.setReturnValue(modelData.bakeRoot());
 //        }
-    }
+	}
 }

@@ -16,12 +16,9 @@
 
 package org.quiltmc.qsl.block.content.registry.api;
 
-import com.mojang.serialization.DataResult;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
 import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -31,8 +28,6 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  * <p>
  * Current properties:
  * <ul>
- *     <li>{@link #FLATTENABLE}</li>
- *     <li>{@link #STRIPPABLE}</li>
  *     <li>{@link #FLAMMABLE}</li>
  * 	   <li>{@link #ENCHANTING_BOOSTERS}</li>
  * </ul>
@@ -42,39 +37,6 @@ public class BlockContentRegistries {
 	 * The namespace for the content registries.
 	 */
 	public static final String NAMESPACE = "quilt";
-
-	/**
-	 * A {@link RegistryEntryAttachment} for when blocks are right clicked by a shovel.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flattenable.json}
-	 */
-	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(NAMESPACE, "flattenable"), BlockState.class, BlockState.CODEC)
-			.build();
-
-	/**
-	 * A {@link RegistryEntryAttachment} for strippable blocks.
-	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/strippable.json}
-	 */
-	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE = RegistryEntryAttachment
-			.builder(BuiltInRegistries.BLOCK,
-					Identifier.fromNamespaceAndPath(NAMESPACE, "strippable"),
-					Block.class,
-					BuiltInRegistries.BLOCK.byNameCodec().flatXmap(block -> {
-						if (!block.defaultBlockState().hasProperty(BlockStateProperties.AXIS)) {
-							return DataResult.error(() -> "block does not contain AXIS property");
-						}
-
-						return DataResult.success(block);
-					}, block -> {
-						if (!block.defaultBlockState().hasProperty(BlockStateProperties.AXIS)) {
-							return DataResult.error(() -> "block does not contain AXIS property");
-						}
-
-						return DataResult.success(block);
-					}))
-			.build();
 
 	/**
 	 * A {@link RegistryEntryAttachment} for flammable blocks.

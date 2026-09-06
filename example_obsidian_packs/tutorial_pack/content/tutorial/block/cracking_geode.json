@@ -1,0 +1,63 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Cracking Geode"
+      }
+    },
+    "block_properties": {
+      "material": "minecraft:stone",
+      "sound_group": "minecraft:stone",
+      "randomTicks": true
+    },
+    "item_properties": {
+      "item_group": "minecraft:natural_blocks"
+    }
+  },
+  "events": {
+    "on_attack": [
+      {
+        "action": "spawn_loot"
+      },
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:block.amethyst_cluster.break"
+      }
+    ],
+    "on_entity_inside": [
+      {
+        "action": "apply_effect",
+        "effect": "minecraft:slowness",
+        "duration": 40,
+        "amplifier": 0
+      }
+    ],
+    "on_place": [
+      {
+        "action": "set_block_at_pos",
+        "block": "minecraft:light",
+        "y": 1
+      }
+    ],
+    "on_random_tick": [
+      {
+        "action": "set_block",
+        "block": "minecraft:cracked_deepslate_bricks"
+      }
+    ],
+    "on_remove": [
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:block.amethyst_block.break"
+      }
+    ]
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/amethyst_block"
+      }
+    }
+  }
+}

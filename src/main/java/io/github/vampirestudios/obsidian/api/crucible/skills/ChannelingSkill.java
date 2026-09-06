@@ -9,20 +9,20 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.List;
 
 public class ChannelingSkill extends Skill {
-    private final int duration; // In ticks
-    private final List<Effect> continuousEffects;
+	private final int duration; // In ticks
+	private final List<Effect> continuousEffects;
 
-    public ChannelingSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, int duration, List<Effect> continuousEffects) {
-        super(skillId, target, trigger);
-        this.duration = duration;
-        this.continuousEffects = continuousEffects;
-    }
+	public ChannelingSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, int duration, List<Effect> continuousEffects) {
+		super(skillId, target, trigger);
+		this.duration = duration;
+		this.continuousEffects = continuousEffects;
+	}
 
-    @Override
-    public void applyEffect(LivingEntity caster, LivingEntity target) {
-        for (int i = 0; i < duration; i++) {
-            /*caster.level().getScheduler().schedule(() -> {
-                *//*if (!caster.isMoving() && !caster.()) {
+	@Override
+	public void applyEffect(LivingEntity caster, LivingEntity target) {
+		for (int i = 0; i < duration; i++) {
+			/*caster.level().getScheduler().schedule(() -> {
+			 *//*if (!caster.isMoving() && !caster.()) {
                     for (Effect effect : continuousEffects) {
                         effect.apply(target);
                     }
@@ -31,6 +31,6 @@ public class ChannelingSkill extends Skill {
                     return;
                 }*//*
             }, i * 20); // Apply every second*/
-        }
-    }
+		}
+	}
 }

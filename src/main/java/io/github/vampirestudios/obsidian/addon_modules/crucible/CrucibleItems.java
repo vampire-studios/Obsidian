@@ -1,10 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules.crucible;
 
-import blue.endless.jankson.api.DeserializationException;
-import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.github.vampirestudios.obsidian.api.crucible.*;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
@@ -12,6 +9,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded
 import io.github.vampirestudios.obsidian.minecraft.crucible.ItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
 import io.github.vampirestudios.obsidian.registry.OItemComponents;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.resources.Identifier;
@@ -32,13 +30,14 @@ public class CrucibleItems implements AddonModule {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CrucibleItems.class);
 
 	@Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError, DeserializationException {
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
 		if (!Objects.equals(id.format(), "crucible_like")) return;
 
-		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		ObjectMapper mapper = new ObjectMapper();
 		mapper.findAndRegisterModules();
 		try {
-			Map<String, CrucibleItem> items = mapper.readValue(file, new TypeReference<>() {});
+			Map<String, CrucibleItem> items = mapper.readValue(AddonFormats.readAsJsonString(addon, file), new TypeReference<>() {
+			});
 			for (Map.Entry<String, CrucibleItem> entry : items.entrySet()) {
 				String itemName = entry.getKey();
 				CrucibleItem crucibleItem = entry.getValue();
@@ -140,11 +139,13 @@ public class CrucibleItems implements AddonModule {
 				int min = Integer.parseInt(s.substring(0, toIdx).trim());
 				int max = Integer.parseInt(s.substring(toIdx + 2).trim());
 				return min + rng.nextInt(Math.max(1, max - min + 1));
-			} catch (NumberFormatException ignored) {}
+			} catch (NumberFormatException ignored) {
+			}
 		}
 		try {
 			return Integer.parseInt(s);
-		} catch (NumberFormatException ignored) {}
+		} catch (NumberFormatException ignored) {
+		}
 		return 1;
 	}
 }

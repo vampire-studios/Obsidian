@@ -15,20 +15,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ThrownSplashPotion.class)
 public class ThrownPotionMixin {
 
-    @Inject(method = "onHitAsPotion", at = @At("TAIL"))
-    private void crucible$splashPotion(CallbackInfo ci) {
-        ThrownSplashPotion potion = (ThrownSplashPotion) (Object) this;
-        if (!(potion.level() instanceof ServerLevel sl)) return;
+	@Inject(method = "onHitAsPotion", at = @At("TAIL"))
+	private void crucible$splashPotion(CallbackInfo ci) {
+		ThrownSplashPotion potion = (ThrownSplashPotion) (Object) this;
+		if (!(potion.level() instanceof ServerLevel sl)) return;
 
-        Entity owner = potion.getOwner();
-        if (!(owner instanceof LivingEntity caster)) return;
+		Entity owner = potion.getOwner();
+		if (!(owner instanceof LivingEntity caster)) return;
 
-        CrucibleEvents.fire(
-                SkillTrigger.SPLASH_POTION,
-                SkillContext.builder(caster)
-                        .level(sl)
-                        .projectile(potion)
-                        .build()
-        );
-    }
+		CrucibleEvents.fire(
+				SkillTrigger.SPLASH_POTION,
+				SkillContext.builder(caster)
+						.level(sl)
+						.projectile(potion)
+						.build()
+		);
+	}
 }

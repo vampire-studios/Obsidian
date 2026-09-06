@@ -1,5 +1,6 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import io.github.vampirestudios.obsidian.api.obsidian.item.ObsidianItemHolder;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ShieldItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,12 +19,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
+public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem implements ObsidianItemHolder {
 
-    public ShieldItem item;
+	public ShieldItem item;
 
-    public ShieldItemImpl(ShieldItem shieldItem, Item.Properties settings) {
-        super(settings
+	public ShieldItemImpl(ShieldItem shieldItem, Item.Properties settings) {
+		super(settings
 				.equippableUnswappable(EquipmentSlot.OFFHAND)
 				.repairable(BuiltInRegistries.ITEM.getValue(shieldItem.repairItem))
 				.delayedComponent(
@@ -40,8 +41,13 @@ public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
 				)
 				.component(DataComponents.BREAK_SOUND, BuiltInRegistries.SOUND_EVENT.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, shieldItem.breakSound)))
 		);
-        this.item = shieldItem;
-    }
+		this.item = shieldItem;
+	}
+
+	@Override
+	public io.github.vampirestudios.obsidian.api.obsidian.item.Item obsidianItem() {
+		return item;
+	}
 
 	@Override
 	public boolean isFoil(ItemStack stack) {
@@ -51,5 +57,5 @@ public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
 	@Override
 	public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
 		item.addLore(consumer);
-    }
+	}
 }

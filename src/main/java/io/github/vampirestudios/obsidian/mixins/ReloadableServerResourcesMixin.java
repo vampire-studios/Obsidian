@@ -19,11 +19,11 @@ import java.util.concurrent.Executor;
 
 @Mixin(ReloadableServerResources.class)
 public class ReloadableServerResourcesMixin {
-    @Inject(at = @At("HEAD"), method = "loadResources")
-    private static void filament$loadResources(ResourceManager resourceManager, LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess, List<Registry.PendingTags<?>> list, FeatureFlagSet featureFlagSet, Commands.CommandSelection commandSelection, PermissionSet permissionSet, Executor executor, Executor executor2, CallbackInfoReturnable<CompletableFuture<ReloadableServerResources>> cir) {
+	@Inject(at = @At("HEAD"), method = "loadResources")
+	private static void filament$loadResources(ResourceManager resourceManager, LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess, List<Registry.PendingTags<?>> list, FeatureFlagSet featureFlagSet, Commands.CommandSelection commandSelection, PermissionSet permissionSet, Executor executor, Executor executor2, CallbackInfoReturnable<CompletableFuture<ReloadableServerResources>> cir) {
 //        ((RegistryUnfreezer)BuiltInRegistries.BLOCK).obsidian$unfreeze();
 //        ((RegistryUnfreezer)BuiltInRegistries.ITEM).obsidian$unfreeze();
 //        ((RegistryUnfreezer)BuiltInRegistries.BLOCK_ENTITY_TYPE).obsidian$unfreeze();
 //        ((RegistryUnfreezer)BuiltInRegistries.CREATIVE_MODE_TAB).obsidian$unfreeze();
-    }
+	}
 }

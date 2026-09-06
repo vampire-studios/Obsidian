@@ -1,31 +1,16 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
+import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 
-import java.util.function.Consumer;
+/**
+ * Armor is an ordinary Obsidian item whose properties happen to carry an armor material — the slot,
+ * defense and equip sound all live in the settings {@link io.github.vampirestudios.obsidian.addon_modules.Armor}
+ * builds, so nothing here needs overriding. Extending {@link ItemImpl} is what gives armor the item events.
+ */
+public class ArmorItemImpl extends ItemImpl {
 
-public class ArmorItemImpl extends Item {
-
-    public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
-
-    public ArmorItemImpl(io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Properties settings) {
-        super(settings);
-        this.item = item;
-    }
-
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
-    }
-
-    @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
-        super.appendHoverText(itemStack, tooltipContext, tooltipDisplay, consumer, tooltipFlag);
-        item.addLore(consumer);
-    }
+	public ArmorItemImpl(ArmorItem item, Properties settings) {
+		super(item, settings);
+	}
 
 }

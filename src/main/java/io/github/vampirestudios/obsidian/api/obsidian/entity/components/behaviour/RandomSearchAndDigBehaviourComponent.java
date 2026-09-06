@@ -6,8 +6,8 @@ import java.util.List;
 
 public class RandomSearchAndDigBehaviourComponent extends Component {
 
-    public List<String> items;
-    public float look_distance = 8.0F;
-    public int[] look_time = new int[] {2, 4};
+	public List<String> items;
+	public float look_distance = 8.0F;
+	public int[] look_time = new int[]{2, 4};
 
 }

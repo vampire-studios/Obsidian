@@ -1,166 +1,232 @@
 package io.github.vampirestudios.obsidian;
 
-import net.fabricmc.fabric.api.registry.OxidizableBlocksRegistry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
- * This class is used to hold the link between two different blocks (See for example {@link OxidizableBlocksRegistry#registerOxidizableBlockPair(Block, Block)} and
- * {@link OxidizableBlocksRegistry#registerWaxableBlockPair(Block, Block)}).
- **/
-public class ConvertibleBlockPair {
+ * Represents a conversion relationship between two blocks.
+ *
+ * <p>This can be used for block conversions such as oxidation, waxing,
+ * stripping logs, scraping copper, or any custom conversion defined by a mod.</p>
+ */
+public final class ConvertibleBlockPair {
 	private final Block original;
 	private final Block converted;
 	private final ConversionItem conversionItem;
-	private final ConversionItem reversingItem;
-	private SoundEvent sound;
-	private Item droppedItem;
+	private final @Nullable ConversionItem reversingItem;
+	private final @Nullable SoundEvent sound;
+	private final @Nullable Item droppedItem;
 
-	/**
-	 * @param original        - The original block which will be converted
-	 * @param converted       - The block that the original one will be converted to
-	 * @param conversionItems - The item that is used to convert the original block into the converted block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItems) {
-		this(original, converted, conversionItems, null, null, null);
+	private ConvertibleBlockPair(Builder builder) {
+		this.original = Objects.requireNonNull(builder.original, "original");
+		this.converted = Objects.requireNonNull(builder.converted, "converted");
+		this.conversionItem = Objects.requireNonNull(builder.conversionItem, "conversionItem");
+		this.reversingItem = builder.reversingItem;
+		this.sound = builder.sound;
+		this.droppedItem = builder.droppedItem;
 	}
 
 	/**
-	 * @param original        - The original block which will be converted
-	 * @param converted       - The block that the original one will be converted to
-	 * @param conversionItems - The item that is used to convert the original block into the converted block
-	 * @param sound           - The item that is used to reverse the converted block into the original block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItems, SoundEvent sound) {
-		this(original, converted, conversionItems, null, sound);
+	 * Creates a new builder for a convertible block pair.
+	 *
+	 * @param original the original block before conversion
+	 * @param converted the resulting block after conversion
+	 * @param conversionItem the item or item tag used to perform the conversion
+	 * @return a new builder
+	 */
+	public static Builder builder(Block original, Block converted, ConversionItem conversionItem) {
+		return new Builder(original, converted, conversionItem);
 	}
 
 	/**
-	 * @param original        - The original block which will be converted
-	 * @param converted       - The block that the original one will be converted to
-	 * @param conversionItems - The item that is used to convert the original block into the converted block
-	 * @param droppedItem     - The item that is dropped when converting the block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItems, Item droppedItem) {
-		this(original, converted, conversionItems, null, null, droppedItem);
-	}
-
-	/**
-	 * @param original        - The original block which will be converted
-	 * @param converted       - The block that the original one will be converted to
-	 * @param conversionItems - The item that is used to convert the original block into the converted block
-	 * @param sound           - The item that is used to reverse the converted block into the original block
-	 * @param droppedItem     - The item that is dropped when converting the block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItems, SoundEvent sound, Item droppedItem) {
-		this(original, converted, conversionItems, null, sound, droppedItem);
-	}
-
-	/**
-	 * @param original       - The original block which will be converted
-	 * @param converted      - The block that the original one will be converted to
-	 * @param conversionItem - The item that is used to convert the original block into the converted block
-	 * @param reversingItem  - The item that is used to reverse the converted block into the original block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItem, ConversionItem reversingItem) {
-		this(original, converted, conversionItem, reversingItem, null, null);
-	}
-
-	/**
-	 * @param original       - The original block which will be converted
-	 * @param converted      - The block that the original one will be converted to
-	 * @param conversionItem - The item that is used to convert the original block into the converted block
-	 * @param reversingItem  - The item that is used to reverse the converted block into the original block
-	 * @param sound          - The item that is used to reverse the converted block into the original block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItem, ConversionItem reversingItem, SoundEvent sound) {
-		this(original, converted, conversionItem, reversingItem, sound, null);
-	}
-
-	/**
-	 * @param original       - The original block which will be converted
-	 * @param converted      - The block that the original one will be converted to
-	 * @param conversionItem - The item that is used to convert the original block into the converted block
-	 * @param reversingItem  - The item that is used to reverse the converted block into the original block
-	 * @param droppedItem    - The item that is dropped when converting the block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItem, ConversionItem reversingItem, Item droppedItem) {
-		this(original, converted, conversionItem, reversingItem, null, droppedItem);
-	}
-
-	/**
-	 * @param original       - The original block which will be converted
-	 * @param converted      - The block that the original one will be converted to
-	 * @param conversionItem - The item that is used to convert the original block into the converted block
-	 * @param reversingItem  - The item that is used to reverse the converted block into the original block
-	 * @param sound          - The sound that will be played when converting the blocks
-	 * @param droppedItem    - The item that will be dropped when converting the original block into the converted block
-	 **/
-	public ConvertibleBlockPair(Block original, Block converted, ConversionItem conversionItem, ConversionItem reversingItem, SoundEvent sound, Item droppedItem) {
-		this.original = original;
-		this.converted = converted;
-		this.conversionItem = conversionItem;
-		this.reversingItem = reversingItem;
-		this.sound = sound;
-		this.droppedItem = droppedItem;
-	}
-
-	public SoundEvent getSound() {
-		return this.sound;
-	}
-
-	public void setSound(SoundEvent sound) {
-		this.sound = sound;
-	}
-
-	public Block getOriginal() {
+	 * Returns the original block.
+	 *
+	 * @return the original block
+	 */
+	public Block original() {
 		return this.original;
 	}
 
-	public Block getConverted() {
+	/**
+	 * Returns the converted block.
+	 *
+	 * @return the converted block
+	 */
+	public Block converted() {
 		return this.converted;
 	}
 
-	public ConversionItem getConversionItem() {
+	/**
+	 * Returns the item or item tag used to convert the original block.
+	 *
+	 * @return the conversion item
+	 */
+	public ConversionItem conversionItem() {
 		return this.conversionItem;
 	}
 
-	public ConversionItem getReversingItem() {
+	/**
+	 * Returns the item or item tag used to reverse the conversion.
+	 *
+	 * @return the reverse conversion item, or {@code null} if the conversion cannot be reversed
+	 */
+	public @Nullable ConversionItem reversingItem() {
 		return this.reversingItem;
 	}
 
-	public Item getDroppedItem() {
+	/**
+	 * Returns the sound played when the conversion occurs.
+	 *
+	 * @return the conversion sound, or {@code null} if no sound is played
+	 */
+	public @Nullable SoundEvent sound() {
+		return this.sound;
+	}
+
+	/**
+	 * Returns the item dropped when the conversion occurs.
+	 *
+	 * @return the dropped item, or {@code null} if no item is dropped
+	 */
+	public @Nullable Item droppedItem() {
 		return this.droppedItem;
 	}
 
-	public void setDroppedItem(Item droppedItem) {
-		this.droppedItem = droppedItem;
+	/**
+	 * Builder for {@link ConvertibleBlockPair}.
+	 */
+	public static final class Builder {
+		private final Block original;
+		private final Block converted;
+		private final ConversionItem conversionItem;
+
+		private @Nullable ConversionItem reversingItem;
+		private @Nullable SoundEvent sound;
+		private @Nullable Item droppedItem;
+
+		private Builder(Block original, Block converted, ConversionItem conversionItem) {
+			this.original = original;
+			this.converted = converted;
+			this.conversionItem = conversionItem;
+		}
+
+		/**
+		 * Sets the item or item tag used to reverse the conversion.
+		 *
+		 * @param reversingItem the reverse conversion item
+		 * @return this builder
+		 */
+		public Builder reversingItem(ConversionItem reversingItem) {
+			this.reversingItem = reversingItem;
+			return this;
+		}
+
+		/**
+		 * Sets the sound played when the conversion occurs.
+		 *
+		 * @param sound the conversion sound
+		 * @return this builder
+		 */
+		public Builder sound(SoundEvent sound) {
+			this.sound = sound;
+			return this;
+		}
+
+		/**
+		 * Sets the item dropped when the conversion occurs.
+		 *
+		 * @param droppedItem the dropped item
+		 * @return this builder
+		 */
+		public Builder droppedItem(Item droppedItem) {
+			this.droppedItem = droppedItem;
+			return this;
+		}
+
+		/**
+		 * Builds a new {@link ConvertibleBlockPair}.
+		 *
+		 * @return the built convertible block pair
+		 */
+		public ConvertibleBlockPair build() {
+			return new ConvertibleBlockPair(this);
+		}
 	}
 
-	public record ConversionItem(TagKey<Item> tag, Item item) {
-		public ConversionItem {
-			if ((tag == null) == (item == null)) {
-				throw new IllegalArgumentException("Only one of the fields must be non-null");
-			}
+	/**
+	 * Represents an item requirement for a block conversion.
+	 *
+	 * <p>A conversion item may either match a specific item or any item
+	 * belonging to an item tag.</p>
+	 */
+	public sealed interface ConversionItem permits ItemConversionItem, TagConversionItem {
+
+		/**
+		 * Checks whether the given item stack satisfies this conversion requirement.
+		 *
+		 * @param stack the item stack to test
+		 * @return {@code true} if the stack matches this conversion item
+		 */
+		boolean matches(ItemStack stack);
+
+		/**
+		 * Creates a conversion requirement that matches a specific item.
+		 *
+		 * @param item the required item
+		 * @return a conversion item
+		 */
+		static ConversionItem of(Item item) {
+			return new ItemConversionItem(item);
 		}
 
-		public static ConversionItem of(TagKey<Item> tag) {
-			return new ConversionItem(tag, null);
+		/**
+		 * Creates a conversion requirement that matches any item in the given tag.
+		 *
+		 * @param tag the required item tag
+		 * @return a conversion item
+		 */
+		static ConversionItem of(TagKey<Item> tag) {
+			return new TagConversionItem(tag);
+		}
+	}
+
+	/**
+	 * A conversion requirement that matches a specific item.
+	 *
+	 * @param item the required item
+	 */
+	public record ItemConversionItem(Item item) implements ConversionItem {
+
+		public ItemConversionItem {
+			Objects.requireNonNull(item, "item");
 		}
 
-		public static ConversionItem of(Item item) {
-			return new ConversionItem(null, item);
-		}
-
-		// Call this by parsing the stack in hand
+		@Override
 		public boolean matches(ItemStack stack) {
-			if (this.tag != null) return stack.is(this.tag);
-			else {
-				return stack.is(this.item);
-			}
+			return stack.is(this.item);
+		}
+	}
+
+	/**
+	 * A conversion requirement that matches any item in a tag.
+	 *
+	 * @param tag the required item tag
+	 */
+	public record TagConversionItem(TagKey<Item> tag) implements ConversionItem {
+
+		public TagConversionItem {
+			Objects.requireNonNull(tag, "tag");
+		}
+
+		@Override
+		public boolean matches(ItemStack stack) {
+			return stack.is(this.tag);
 		}
 	}
 }

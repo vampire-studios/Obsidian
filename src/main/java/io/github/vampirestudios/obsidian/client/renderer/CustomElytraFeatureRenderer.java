@@ -48,10 +48,10 @@ public class CustomElytraFeatureRenderer<T extends LivingEntity, M extends Entit
                 } else if (playerSkin.capeTexture() != null && abstractClientPlayer.isModelPartShown(PlayerModelPart.CAPE)) {
                     identifier4 = playerSkin.capeTexture();
                 } else {
-                    identifier4 = elytra.texture;
+                    identifier4 = elytra.getTexture();
                 }
             } else {
-                identifier4 = elytra.texture;
+                identifier4 = elytra.getTexture();
             }
 
             matrixStack.pushPose();

@@ -97,8 +97,8 @@ public class JsonGuiLoader {
 
     */
 /**
-     * Applies padding settings based on JSON object.
-     *//*
+ * Applies padding settings based on JSON object.
+ *//*
 
     private static void applyPadding(JsonObject paddingObj, LayoutSettings settings) {
         settings.paddingHorizontal(paddingObj.has("horizontal") ? paddingObj.get("horizontal").getAsInt() : 0);
@@ -111,8 +111,8 @@ public class JsonGuiLoader {
 
     */
 /**
-     * Applies alignment settings based on JSON object.
-     *//*
+ * Applies alignment settings based on JSON object.
+ *//*
 
     private static void applyAlignment(JsonObject alignObj, LayoutSettings settings) {
         if (alignObj.has("horizontal")) {
@@ -165,17 +165,17 @@ public class JsonGuiLoader {
 
     */
 /**
-     * Parses a dimension field (like "width" or "height") from the given JSON object.
-     * The field can be:
-     *   - An integer (e.g. 200)
-     *   - A string "auto"
-     *   - Missing or invalid
-     *
-     * @param json          The JSON object containing the field
-     * @param field         The name of the field (e.g., "width")
-     * @param defaultValue  The integer to return if the field is missing or invalid
-     * @return an integer dimension or -1 if "auto"
-     *//*
+ * Parses a dimension field (like "width" or "height") from the given JSON object.
+ * The field can be:
+ *   - An integer (e.g. 200)
+ *   - A string "auto"
+ *   - Missing or invalid
+ *
+ * @param json          The JSON object containing the field
+ * @param field         The name of the field (e.g., "width")
+ * @param defaultValue  The integer to return if the field is missing or invalid
+ * @return an integer dimension or -1 if "auto"
+ *//*
 
     private static int parseDimension(JsonObject json, String field, int defaultValue) {
         if (!json.has(field)) {
@@ -211,12 +211,12 @@ public class JsonGuiLoader {
 
     */
 /**
-     * Reads an integer from a JSON element, allowing "auto" as a special case.
-     *
-     * @param element       The JSON element (e.g., json.get("x"))
-     * @param defaultValue  The fallback if it's missing or invalid
-     * @return an integer or -1 if "auto"
-     *//*
+ * Reads an integer from a JSON element, allowing "auto" as a special case.
+ *
+ * @param element       The JSON element (e.g., json.get("x"))
+ * @param defaultValue  The fallback if it's missing or invalid
+ * @return an integer or -1 if "auto"
+ *//*
 
     private static int readIntOrAuto(JsonElement element, int defaultValue) {
         if (element == null || element.isJsonNull()) {

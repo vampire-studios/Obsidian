@@ -21,10 +21,10 @@ public class HasPotionEffectCondition extends Condition {
 	public boolean evaluate(LivingEntity caster, LivingEntity target) {
 		MobEffectInstance effect = target.getEffect(Holder.direct(potionEffect));
 		return effect != null && effect.getAmplifier() >= minAmplifier;
-    }
+	}
 
-    @Override
-    public boolean applyToCaster() {
-        return false;
-    }
+	@Override
+	public boolean applyToCaster() {
+		return false;
+	}
 }

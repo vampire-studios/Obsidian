@@ -1,0 +1,30 @@
+{
+  "block_type": "horizontal_directional",
+  "information": {
+    "name": "Tutorial Crate",
+    "block_properties": {
+      "material": "minecraft:wood",
+      "sound_group": "minecraft:wood",
+      "hardness": 2.5,
+      "mineable": "axe"
+    },
+    "item_properties": {
+      "item_group": "minecraft:functional_blocks"
+    }
+  },
+  "behaviour": {
+    "container": {
+      "name": "<gold>Tutorial Crate",
+      "size": 27,
+      "drop_contents": true
+    }
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/barrel_side"
+      }
+    }
+  }
+}

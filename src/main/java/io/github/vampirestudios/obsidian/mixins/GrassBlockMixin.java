@@ -24,8 +24,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(GrassBlock.class)
 public class GrassBlockMixin implements IForgeSpreadingBlock {
-    @Override
-    public SpreaderType getSpreadingType(BlockState state) {
-        return SpreaderType.GRASS;
-    }
+	@Override
+	public SpreaderType getSpreadingType(BlockState state) {
+		return SpreaderType.GRASS;
+	}
 }

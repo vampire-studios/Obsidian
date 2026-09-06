@@ -21,14 +21,11 @@ import com.google.common.collect.ImmutableMap;
 import io.github.vampirestudios.obsidian.ResourceLoaderEvents;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
@@ -40,9 +37,6 @@ import java.util.function.BiFunction;
 
 @ApiStatus.Internal
 public class BlockContentRegistriesImpl implements ModInitializer {
-	private static final Map<Block, BlockState> INITIAL_PATH_STATES = ImmutableMap.copyOf(ShovelItem.FLATTENABLES);
-	private static final Map<Block, Block> INITIAL_STRIPPED_BLOCKS = ImmutableMap.copyOf(AxeItem.STRIPPABLES);
-
 	@Override
 	public void onInitialize() {
 		// Fill the initial flammable blocks map
@@ -53,8 +47,6 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 		);
 		var initialFlammableBlocks = builder.build();
 
-		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLE);
-		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLE);
 		addMapToAttachment(initialFlammableBlocks, BlockContentRegistries.FLAMMABLE);
 
 		resetMaps();
@@ -65,16 +57,6 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 	}
 
 	private static void resetMaps() {
-		ShovelItem.FLATTENABLES.clear();
-		setMapFromAttachment(ShovelItem.FLATTENABLES::put, BlockContentRegistries.FLATTENABLE);
-
-		AxeItem.STRIPPABLES.clear();
-		setMapFromAttachment(AxeItem.STRIPPABLES::put, BlockContentRegistries.STRIPPABLE);
-
-//		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLE);
-//
-//		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE);
-
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.igniteOdds.clear();
 		fireBlock.burnOdds.clear();

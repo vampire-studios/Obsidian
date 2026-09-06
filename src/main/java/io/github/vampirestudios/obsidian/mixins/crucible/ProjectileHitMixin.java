@@ -18,34 +18,34 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Projectile.class)
 public abstract class ProjectileHitMixin {
-    @Inject(method = "onHit", at = @At("HEAD"))
-    private void crucible$onHit(HitResult hit, CallbackInfo ci) {
-        Projectile proj = (Projectile) (Object) this;
-        if (!(proj.level() instanceof ServerLevel level)) return;
+	@Inject(method = "onHit", at = @At("HEAD"))
+	private void crucible$onHit(HitResult hit, CallbackInfo ci) {
+		Projectile proj = (Projectile) (Object) this;
+		if (!(proj.level() instanceof ServerLevel level)) return;
 
-        Entity owner = proj.getOwner();
-        if (!(owner instanceof ServerPlayer sp)) return;
+		Entity owner = proj.getOwner();
+		if (!(owner instanceof ServerPlayer sp)) return;
 
-        if (hit instanceof EntityHitResult ehr) {
-            Entity e = ehr.getEntity();
-            LivingEntity target = (e instanceof LivingEntity le) ? le : null;
+		if (hit instanceof EntityHitResult ehr) {
+			Entity e = ehr.getEntity();
+			LivingEntity target = (e instanceof LivingEntity le) ? le : null;
 
-            CrucibleEvents.fire(SkillTrigger.PROJECTILE_HIT,
-                    SkillContext.builder(sp)
-                            .level(level)
-                            .projectile(proj)
-                            .target(target)
-                            .build()
-            );
-        } else if (hit instanceof BlockHitResult bhr) {
-            // "land" = hit a block / ground
-            CrucibleEvents.fire(SkillTrigger.PROJECTILE_LAND,
-                    SkillContext.builder(sp)
-                            .level(level)
-                            .projectile(proj)
-                            .position(bhr.getBlockPos())
-                            .build()
-            );
-        }
-    }
+			CrucibleEvents.fire(SkillTrigger.PROJECTILE_HIT,
+					SkillContext.builder(sp)
+							.level(level)
+							.projectile(proj)
+							.target(target)
+							.build()
+			);
+		} else if (hit instanceof BlockHitResult bhr) {
+			// "land" = hit a block / ground
+			CrucibleEvents.fire(SkillTrigger.PROJECTILE_LAND,
+					SkillContext.builder(sp)
+							.level(level)
+							.projectile(proj)
+							.position(bhr.getBlockPos())
+							.build()
+			);
+		}
+	}
 }

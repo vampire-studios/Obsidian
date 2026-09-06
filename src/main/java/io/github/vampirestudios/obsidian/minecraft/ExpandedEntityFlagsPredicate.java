@@ -24,8 +24,8 @@ public class ExpandedEntityFlagsPredicate {
 	private final Boolean isBaby;
 
 	public ExpandedEntityFlagsPredicate(
-		@Nullable Boolean isOnFire, @Nullable Boolean isCrouching, @Nullable Boolean isSprinting, @Nullable Boolean isSwimming, @Nullable Boolean isWalking,
-		@Nullable Boolean isBaby
+			@Nullable Boolean isOnFire, @Nullable Boolean isCrouching, @Nullable Boolean isSprinting, @Nullable Boolean isSwimming, @Nullable Boolean isWalking,
+			@Nullable Boolean isBaby
 
 	) {
 		this.isOnFire = isOnFire;
@@ -48,7 +48,7 @@ public class ExpandedEntityFlagsPredicate {
 		} else if (this.isWalking != null && entity.isSwimming() != this.isWalking) {
 			return false;
 		} else {
-			return this.isBaby == null || !(entity instanceof LivingEntity) || ((LivingEntity)entity).isBaby() == this.isBaby;
+			return this.isBaby == null || !(entity instanceof LivingEntity) || ((LivingEntity) entity).isBaby() == this.isBaby;
 		}
 	}
 

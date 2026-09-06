@@ -24,8 +24,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(MyceliumBlock.class)
 public class MyceliumBlockMixin implements IForgeSpreadingBlock {
-    @Override
-    public SpreaderType getSpreadingType(BlockState state) {
-        return SpreaderType.MYCELIUM;
-    }
+	@Override
+	public SpreaderType getSpreadingType(BlockState state) {
+		return SpreaderType.MYCELIUM;
+	}
 }

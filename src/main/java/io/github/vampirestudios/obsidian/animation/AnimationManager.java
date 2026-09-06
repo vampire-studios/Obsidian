@@ -42,7 +42,8 @@ public class AnimationManager implements SimpleResourceReloadListener<AnimationM
 	@Override
 	public CompletableFuture<Void> apply(AnimationLoader data, ResourceManager manager, Executor executor) {
 		this.animations = data.getAnimations();
-		return CompletableFuture.runAsync(() -> {});
+		return CompletableFuture.runAsync(() -> {
+		});
 	}
 
 	public static class AnimationLoader {

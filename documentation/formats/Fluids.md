@@ -1,78 +1,88 @@
-# Fluid Definitions
+# Fluids
 
-Fluids define custom liquids and their behavior.
+Custom liquids: how they look, how they flow, and what happens to things standing in them.
 
-Fluid definitions go in the `fluid` directory in the thing pack.
+## Where it goes
 
-E.g.
 ```
-/things/examplepack/fluid/liquid_cheese.json
+obsidian_addons/ExamplePack/content/examplepack/fluid/liquid_cheese.json
 ```
 
-## Basic structure of the JSON file
+The file name is the fluid id.
+
+## Example
 
 ```json
 {
   "parent": "WATER",
-  "name": {
-    "text": "Liquid Cheese"
-  },
+  "name": "Liquid Cheese",
   "fluidColor": "16770519",
   "fluidFogColor": "16770519",
   "canBeInfinite": true,
   "flowSpeed": 4,
-  "tickRate": 5
+  "tickRate": 5,
+  "horizontalViscosity": 0.8
 }
 ```
 
-## "parent"
+Field names here are camelCase — this format is read field-for-field, without the snake_case renaming
+used by items and blocks.
 
-Controls which vanilla preset to start from before applying overrides.
+## Choosing a base
 
-Required. Values: `WATER`, `LAVA`, or `NONE`.
+`parent` is required and picks the preset the rest of the file adjusts.
 
-## "name"
+| Value | Starts from |
+| --- | --- |
+| `WATER` | Water: swimmable, infinite-capable, extinguishes fire. |
+| `LAVA` | Lava: slow, damaging, emits light. |
+| `NONE` | No preset — you set everything. |
 
-A [NameInformation] object used for the registered fluid name.
+`name` is required too. Everything else has a default.
 
-Required.
+## Appearance
 
-## Color fields
+| Field | Meaning |
+| --- | --- |
+| `fluidColor` | Tint, as a stringified integer — `"16770519"`, not `16770519`. |
+| `fluidFogColor` | Fog colour underwater, same format. |
+| `particleType`, `splashParticle`, `bubbleParticle` | Particle ids. |
+| `splashSound`, `highSpeedSplashSound` | Sound ids for entering the fluid. |
 
-* `fluidColor`: tint color for the fluid (stringified integer).
-* `fluidFogColor`: fog color for the fluid (stringified integer).
+## Flow
 
-## Flow and behavior fields
+| Field | Meaning |
+| --- | --- |
+| `flowSpeed` | How fast it spreads. |
+| `tickRate` | Ticks between flow updates. Lower is faster. |
+| `levelDecreasePerBlock` | How much a level drops per block travelled. Water is `1`, lava `2`. |
+| `maxFluidLevel` | Depth of a source block. |
+| `canBeInfinite` | Whether two sources make a third. |
+| `randomTicking` | Whether the fluid receives random ticks. |
 
-Fluids support a large number of tuning fields, including:
+Each of these has an `…Ultrawarm` counterpart (`flowSpeedUltrawarm`, `tickRateUltrawarm`,
+`levelDecreasePerBlockUltrawarm`) used in the Nether, gated by a matching
+`…ChangesWhenWarm` boolean. Set both or the Nether values are ignored.
 
-* `allowSprintSwimming`
-* `canExtinguish`
-* `canIgnite`
-* `maxFluidLevel`
-* `pushStrength`
-* `fallDamageReduction`
-* `horizontalViscosity`
-* `verticalViscosity`
-* `density`
-* `temperature`
-* `canBeInfinite`
-* `flowSpeed`
-* `levelDecreasePerBlock`
-* `tickRate`
-* `randomTicking`
-* `blastResistance`
-* `boatFloats`
+## Physics and effects
 
-These map directly to fields in `io.github.vampirestudios.obsidian.api.obsidian.fluid.Fluid`.
+| Field | Meaning |
+| --- | --- |
+| `horizontalViscosity`, `verticalViscosity` | Drag on entities moving through it. |
+| `density`, `temperature` | Used by buoyancy and warmth checks. |
+| `pushStrength` | How hard the current pushes. `pushStrengthUltrawarm` and `pushStrengthChangesWhenWarm` apply in the Nether. |
+| `allowSprintSwimming` | Whether players can swim-sprint. |
+| `fallDamageReduction`, `fallDamageReductionType` | How much of a fall the fluid absorbs. |
+| `canExtinguish`, `canIgnite` | Whether it puts entities out, or sets them alight. |
+| `boatFloats`, `fishingBobberFloats`, `canFish` | Boats, bobbers and fishing. |
+| `fishingLootTable` | What fishing in it yields. |
+| `blastResistance` | Resistance to explosions. |
 
-## Effects and sounds
+## Fluid types
 
-Optional fields for particles and sounds:
+There is no separate fluid-type registry: `parent` is the whole mechanism. Anything a preset does not
+give you is set field by field here.
 
-* `splashSound`
-* `highSpeedSplashSound`
-* `particleType`
-* `splashParticle`
-* `bubbleParticle`
-* `fishingLootTable`
+## See also
+
+* [Blocks](./Blocks.md) — for the block side of a fluid's world presence.

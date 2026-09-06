@@ -38,10 +38,10 @@ public class ScriptManager {
 	private final List<DelayedTask> delayedTasks = new ArrayList<>();
 	private final List<ScriptParser.RecurringTaskDef> recurringDefs = new ArrayList<>();
 	private final Map<ScriptParser.RecurringTaskDef, Integer> ticksLeft = new HashMap<>();
-	private final Map<UUID,Boolean> lastSneakState = new HashMap<>();
-	private final Map<UUID,Integer> lastHeldSlot = new HashMap<>();
-	private final Map<UUID,Integer> lastXpLevel = new HashMap<>();
-	private final Map<String,String> config = new HashMap<>();
+	private final Map<UUID, Boolean> lastSneakState = new HashMap<>();
+	private final Map<UUID, Integer> lastHeldSlot = new HashMap<>();
+	private final Map<UUID, Integer> lastXpLevel = new HashMap<>();
+	private final Map<String, String> config = new HashMap<>();
 	private final CommandExecutor executor = new CommandExecutor();
 	private final Path scriptsDir;
 
@@ -118,9 +118,9 @@ public class ScriptManager {
 	 * @param eventVars map of paramName -> stringified value
 	 */
 	public void runCommand(String name,
-						   Player player,
-						   ServerLevel world,
-						   Map<String, String> eventVars) {
+	                       Player player,
+	                       ServerLevel world,
+	                       Map<String, String> eventVars) {
 		var def = commandDefs.get(name);
 		if (def == null) return;
 		// now just execute the script body,
@@ -260,7 +260,7 @@ public class ScriptManager {
 		if (byEvent.containsKey("sneak toggle")) {
 			PlayerTickCallback.EVENT.register(player -> {
 				if (player.level().isClientSide()) return;
-				UUID id     = player.getUUID();
+				UUID id = player.getUUID();
 				boolean cur = player.isCrouching();
 				boolean prev = lastSneakState.getOrDefault(id, false);
 				if (cur != prev) {
@@ -302,9 +302,9 @@ public class ScriptManager {
 		if (byEvent.containsKey("item change")) {
 			PlayerTickCallback.EVENT.register(player -> {
 				if (player.level().isClientSide()) return;
-				UUID id  = player.getUUID();
-				int  cur = player.getInventory().getSelectedSlot();
-				int  prev = lastHeldSlot.getOrDefault(id, -1);
+				UUID id = player.getUUID();
+				int cur = player.getInventory().getSelectedSlot();
+				int prev = lastHeldSlot.getOrDefault(id, -1);
 				if (cur != prev) {
 					lastHeldSlot.put(id, cur);
 					String itemId = BuiltInRegistries.ITEM.getKey(player.getMainHandItem().getItem()).toString();
@@ -320,8 +320,8 @@ public class ScriptManager {
 		if (byEvent.containsKey("player level up")) {
 			PlayerTickCallback.EVENT.register(player -> {
 				if (player.level().isClientSide()) return;
-				UUID id  = player.getUUID();
-				int  cur = player.experienceLevel;
+				UUID id = player.getUUID();
+				int cur = player.experienceLevel;
 				Integer prev = lastXpLevel.get(id);
 				if (prev != null && cur > prev) {
 					runScripts("player level up", player, player.level(), null, Map.of(
@@ -343,10 +343,10 @@ public class ScriptManager {
 	}
 
 	private void runScripts(String event,
-							Player player,
-							Level world,
-							BlockPos pos,
-							Map<String, String> eventVars) {
+	                        Player player,
+	                        Level world,
+	                        BlockPos pos,
+	                        Map<String, String> eventVars) {
 		List<Script> scripts = byEvent.get(event);
 		if (scripts == null) return;
 		for (Script s : scripts) {
@@ -356,9 +356,9 @@ public class ScriptManager {
 
 	// keep the old signature for backwards-compat
 	public void runScripts(String event,
-						   Player player,
-						   Level world,
-						   BlockPos pos) {
+	                       Player player,
+	                       Level world,
+	                       BlockPos pos) {
 		runScripts(event, player, world, pos, Collections.emptyMap());
 	}
 
@@ -370,10 +370,10 @@ public class ScriptManager {
 	}
 
 	private void executeCommands(List<String> cmds,
-								 Player player,
-								 Level world,
-								 BlockPos pos,
-								 Map<String, String> eventVars) {
+	                             Player player,
+	                             Level world,
+	                             BlockPos pos,
+	                             Map<String, String> eventVars) {
 		for (int i = 0; i < cmds.size(); i++) {
 			String line = cmds.get(i).trim();
 
@@ -423,7 +423,7 @@ public class ScriptManager {
 			if (line.startsWith("loop ") && line.contains(" in ")) {
 				String[] parts = line.substring(5).split("\\s+in\\s+", 2);
 				String varName = parts[0].trim();         // e.g. "blocks"
-				String spec    = parts[1].trim();         // e.g. "radius 3 around player"
+				String spec = parts[1].trim();         // e.g. "radius 3 around player"
 				List<String> inner = collectBlock(cmds, ++i);
 
 				if (spec.startsWith("radius")) {
@@ -443,7 +443,7 @@ public class ScriptManager {
 						}
 					}
 				} else if (spec.startsWith("{") && spec.endsWith("}")) {
-					String list = spec.substring(1, spec.length()-1);
+					String list = spec.substring(1, spec.length() - 1);
 					for (String elem : list.split("\\s*,\\s*")) {
 						runLoopIteration(varName, elem, inner, player, world, pos, eventVars);
 					}
@@ -518,12 +518,12 @@ public class ScriptManager {
 	}
 
 	private void runLoopIteration(String varName,
-								  Object item,
-								  List<String> inner,
-								  Player player,
-								  Level world,
-								  BlockPos fallbackPos,
-								  Map<String,String> eventVars) {
+	                              Object item,
+	                              List<String> inner,
+	                              Player player,
+	                              Level world,
+	                              BlockPos fallbackPos,
+	                              Map<String, String> eventVars) {
 		// bind the loop variable
 		vars.put(varName, item.toString());
 
@@ -540,10 +540,10 @@ public class ScriptManager {
 	}
 
 	private String resolveToken(String token,
-								Player player,
-								Level world,
-								BlockPos pos,
-								Map<String, String> eventVars) {
+	                            Player player,
+	                            Level world,
+	                            BlockPos pos,
+	                            Map<String, String> eventVars) {
 		// strip quotes if present
 		token = executor.stripQuotes(token);
 
@@ -594,11 +594,11 @@ public class ScriptManager {
 		if (world != null && token.startsWith("world’s ")) {
 			String prop = token.substring("world's ".length());
 			return switch (prop) {
-				case "time" -> String.valueOf((int)(world.getOverworldClockTime() % 24000));
+				case "time" -> String.valueOf((int) (world.getOverworldClockTime() % 24000));
 				case "day", "is day" -> String.valueOf(world.getOverworldClockTime() % 24000 < 12000);
 				case "weather" -> {
 					if (world.isThundering()) yield "thunder";
-					if (world.isRaining())   yield "rain";
+					if (world.isRaining()) yield "rain";
 					yield "clear";
 				}
 				case "seed" -> String.valueOf(world.getServer().overworld().getSeed());
@@ -675,10 +675,10 @@ public class ScriptManager {
 
 	// helper to evaluate any boolean expression (block, vars, numeric ops)
 	private boolean evalCondition(String condRaw,
-								  Player player,
-								  Level world,
-								  BlockPos pos,
-								  Map<String, String> eventVars) {
+	                              Player player,
+	                              Level world,
+	                              BlockPos pos,
+	                              Map<String, String> eventVars) {
 		// reuse your resolveToken + comparison logic
 		String[] parts = condRaw.split("\\s+");
 		String lhs = resolveToken(parts[0], player, world, pos, eventVars);

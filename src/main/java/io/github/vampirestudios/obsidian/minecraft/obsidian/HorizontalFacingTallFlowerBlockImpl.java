@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -17,33 +18,33 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public class HorizontalFacingTallFlowerBlockImpl extends DoublePlantBlock implements BonemealableBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+	public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 
-    public HorizontalFacingTallFlowerBlockImpl(BlockBehaviour.Properties settings) {
-        super(settings);
-    }
+	public HorizontalFacingTallFlowerBlockImpl(BlockBehaviour.Properties settings) {
+		super(settings);
+	}
 
-    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
-        return false;
-    }
+	public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+		return false;
+	}
 
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
-    }
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
+	}
 
-    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(FACING);
-    }
+	protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+		builder.add(FACING);
+	}
 
-    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state) {
-        return true;
-    }
+	public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, BonemealSource source) {
+		return true;
+	}
 
-    public boolean isBonemealSuccess(Level world, RandomSource random, BlockPos pos, BlockState state) {
-        return true;
-    }
+	public boolean isBonemealSuccess(Level world, RandomSource random, BlockPos pos, BlockState state, BonemealSource source) {
+		return true;
+	}
 
-    public void performBonemeal(ServerLevel world, RandomSource random, BlockPos pos, BlockState state) {
-        popResource(world, pos, new ItemStack(this));
-    }
+	public void performBonemeal(ServerLevel world, RandomSource random, BlockPos pos, BlockState state, BonemealSource source) {
+		popResource(world, pos, new ItemStack(this));
+	}
 }

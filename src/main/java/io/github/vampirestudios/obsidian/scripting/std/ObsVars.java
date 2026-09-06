@@ -35,12 +35,17 @@ public final class ObsVars implements Map<String, Object> {
 	/** Assign into the nearest scope that already defines the key; else define in current. */
 	public void set(String key, Object value) {
 		for (Map<String, Object> s : scopes) {
-			if (s.containsKey(key)) { s.put(key, value); return; }
+			if (s.containsKey(key)) {
+				s.put(key, value);
+				return;
+			}
 		}
 		scopes.peek().put(key, value);
 	}
 
-	public void pushScope() { scopes.push(new HashMap<>()); }
+	public void pushScope() {
+		scopes.push(new HashMap<>());
+	}
 
 	public void popScope() {
 		if (scopes.size() <= 1) throw new IllegalStateException("Cannot pop the global scope");
@@ -76,10 +81,14 @@ public final class ObsVars implements Map<String, Object> {
 	// We expose a merged snapshot; each call rebuilds it (simple & safe).
 
 	@Override
-	public int size() { return entrySet().size(); }
+	public int size() {
+		return entrySet().size();
+	}
 
 	@Override
-	public boolean isEmpty() { return entrySet().isEmpty(); }
+	public boolean isEmpty() {
+		return entrySet().isEmpty();
+	}
 
 	@Override
 	public Set<Entry<String, Object>> entrySet() {

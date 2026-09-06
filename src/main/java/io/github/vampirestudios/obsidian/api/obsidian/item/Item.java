@@ -1,10 +1,12 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import blue.endless.jankson.annotation.SerializedName;
+import com.electronwill.nightconfig.core.conversion.Path;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.ItemDisplayInformation;
 import io.github.vampirestudios.obsidian.api.obsidian.SpecialText;
+import io.github.vampirestudios.obsidian.api.obsidian.menu.CustomMenuConfig;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -13,54 +15,55 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class Item {
-    public String template;
-    public ItemType type;
-    public ItemInformation information;
-    public ItemDisplayInformation rendering;
-    public UseActions useActions;
-    public DataComponentMap components;
-    public boolean damageable = true;
-    public List<Object> lore = new ArrayList<>();
-    public Map<Identifier, Identifier> drops = new HashMap<>();
-    public Map<String, List<Map<String, Object>>> events = new HashMap<>();
+	public String template;
+	public ItemType type;
+	public ItemInformation information;
+	public ItemDisplayInformation rendering;
+	@SerializedName("use_actions")
+	@Path("use_actions")
+	public UseActions useActions;
+	public DataComponentMap components;
+	public boolean damageable = true;
+	public List<Object> lore = new ArrayList<>();
+	public Map<Identifier, Identifier> drops = new HashMap<>();
+	public Map<String, List<Map<String, Object>>> events = new HashMap<>();
 
-    @SerializedName("menu_config")
-    @com.google.gson.annotations.SerializedName("menu_config")
-    public CustomMenuConfig menuConfig;
+	@SerializedName("menu_config")
+	public CustomMenuConfig menuConfig;
 
-    public List<SpecialText> getLore() {
-        List<SpecialText> lore1 = new ArrayList<>();
-        for (Object o : lore) {
-            SpecialText specialText = switch (o) {
-                case String s -> {
-                    SpecialText specialText1 = new SpecialText();
-                    specialText1.text = s;
-                    yield specialText1;
-                }
-                case SpecialText specialText1 -> specialText1;
-                case JsonObject object -> BaseGson.GSON.fromJson(object, SpecialText.class);
+	public List<SpecialText> getLore() {
+		List<SpecialText> lore1 = new ArrayList<>();
+		for (Object o : lore) {
+			SpecialText specialText = switch (o) {
+				case String s -> {
+					SpecialText specialText1 = new SpecialText();
+					specialText1.text = s;
+					yield specialText1;
+				}
+				case SpecialText specialText1 -> specialText1;
+				case JsonObject object -> BaseGson.GSON.fromJson(object, SpecialText.class);
 				default -> throw new IllegalStateException("Unexpected value: " + o);
 			};
-            lore1.add(specialText);
-        }
-        return lore1;
-    }
+			lore1.add(specialText);
+		}
+		return lore1;
+	}
 
-    public void addLore(Consumer<Component> tooltip) {
-        if (lore != null && !lore.isEmpty()) {
-            for (SpecialText text : getLore()) {
-                tooltip.accept(text.getName());
-            }
-        }
-    }
+	public void addLore(Consumer<Component> tooltip) {
+		if (lore != null && !lore.isEmpty()) {
+			for (SpecialText text : getLore()) {
+				tooltip.accept(text.getName());
+			}
+		}
+	}
 
-    public List<Map<String, Object>> getEventActions(String event) {
-        return events.getOrDefault(event, Collections.emptyList());
-    }
+	public List<Map<String, Object>> getEventActions(String event) {
+		return events.getOrDefault(event, Collections.emptyList());
+	}
 
-    public enum ItemType {
-        SHEARS,
-        BUNDLE,
-        CUSTOM_MENU
-    }
+	public enum ItemType {
+		SHEARS,
+		BUNDLE,
+		CUSTOM_MENU
+	}
 }

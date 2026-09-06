@@ -1,50 +1,22 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-public class EightDirectionBlockImpl extends Block {
-    public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 7);
+public class EightDirectionBlockImpl extends RotationBlockImpl {
 
-    public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
+	public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 7);
 
-    public EightDirectionBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
-        super(settings);
-        this.block = block;
-        this.registerDefaultState(this.stateDefinition.any().setValue(ROTATION, 0));
-    }
+	public EightDirectionBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
+		super(block, settings);
+	}
 
-    @Override
-    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings().translucent;
-    }
+	@Override
+	public IntegerProperty rotationProperty() {
+		return ROTATION;
+	}
 
-    @Override
-    public boolean propagatesSkylightDown(BlockState state) {
-        return block.information.getBlockSettings().translucent;
-    }
-
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(ROTATION, Mth.floor(((180.0F + ctx.getRotation()) * 16.0F / 360.0F) + 0.5D) & 7);
-    }
-
-    public BlockState rotate(BlockState state, Rotation rotation) {
-        return state.setValue(ROTATION, rotation.rotate(state.getValue(ROTATION), 8));
-    }
-
-    public BlockState mirror(BlockState state, Mirror mirror) {
-        return state.setValue(ROTATION, mirror.mirror(state.getValue(ROTATION), 8));
-    }
-
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ROTATION);
-    }
+	@Override
+	public int segments() {
+		return 8;
+	}
 }

@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import com.mojang.serialization.MapCodec;
 import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -8,83 +7,64 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.VegetationBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class HorizontalFacingPlantBlockImpl extends VegetationBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
-    private final Block block;
-    private static final MapCodec<VegetationBlock> CODEC = simpleCodec(HorizontalFacingPlantBlockImpl::new);
+	public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+	private final Block block;
 
-    @Override
-    protected MapCodec<? extends VegetationBlock> codec() {
-        return CODEC;
-    }
+	public HorizontalFacingPlantBlockImpl(Block block, Properties settings) {
+		super(settings);
+		this.block = block;
+	}
 
-    public HorizontalFacingPlantBlockImpl(BlockBehaviour.Properties properties) {
-        super(properties);
-        this.block = null;
-    }
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+	}
 
-    public HorizontalFacingPlantBlockImpl(Block block, Properties settings) {
-        super(settings);
-        this.block = block;
-    }
+	@Override
+	public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
+	}
 
-    @Override
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
-    }
+	@Override
+	public boolean propagatesSkylightDown(BlockState state) {
+		return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
+	}
 
-    @Override
-    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
-    }
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
+	}
 
-    @Override
-    public boolean propagatesSkylightDown(BlockState state) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
-    }
+	protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+		builder.add(FACING);
+	}
 
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
-    }
+	@Override
+	public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+		VoxelShape resolved = BlockShapeUtils.resolve(block.information.collisionShape,
+				block.information.shape, block.information.shapes, state.getValue(FACING));
+		return resolved != null ? resolved : Shapes.block();
+	}
 
-    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
-        builder.add(FACING);
-    }
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+		VoxelShape resolved = BlockShapeUtils.resolve(block.information.outlineShape,
+				block.information.shape, block.information.shapes, state.getValue(FACING));
+		return resolved != null ? resolved : Shapes.block();
+	}
 
-    @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        VoxelShape shape = createShape(block.information.collisionShape.full_shape);
-        VoxelShape northShape = createShape(block.information.collisionShape.north_shape);
-        VoxelShape southShape = createShape(block.information.collisionShape.south_shape);
-        VoxelShape eastShape = createShape(block.information.collisionShape.east_shape);
-        VoxelShape westShape = createShape(block.information.collisionShape.west_shape);
-        Direction direction = state.getValue(FACING);
-        switch(direction) {
-            case NORTH:
-                if (northShape != null) return northShape;
-                else return shape;
-            case SOUTH:
-                if (southShape != null) return southShape;
-                else return shape;
-            case EAST:
-                if (eastShape != null) return eastShape;
-                else return shape;
-            case WEST:
-                if (westShape != null) return westShape;
-                else return shape;
-            default:
-                return shape;
-        }
-    }
+	@Override
+	protected VoxelShape getOcclusionShape(BlockState state) {
+		VoxelShape resolved = BlockShapeUtils.resolve(block.information.outlineShape,
+				block.information.shape, block.information.shapes, state.getValue(FACING));
+		return resolved != null ? resolved : BlockShapeUtils.occlusionFallback(block);
+	}
 
-    private VoxelShape createShape(float[] boundingBox) {
-        return net.minecraft.world.level.block.Block.box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
-    }
 }

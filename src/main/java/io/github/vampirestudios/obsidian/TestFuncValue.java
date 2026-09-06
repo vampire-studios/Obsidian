@@ -21,6 +21,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.item.ItemStack;
 
 public final class TestFuncValue extends FuncValue {
@@ -38,7 +39,7 @@ public final class TestFuncValue extends FuncValue {
 
 	@Override
 	public void invoke(ServerPlayer player) {
-		player.getInventory().placeItemBackInInventory(this.stack.copy());
+		player.getInventory().placeItemBackInInventory(this.stack.copy(), Prediction.PREDICTED);
 	}
 
 	@Override

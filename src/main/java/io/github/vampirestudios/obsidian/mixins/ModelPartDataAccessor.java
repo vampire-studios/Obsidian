@@ -27,5 +27,4 @@ public interface ModelPartDataAccessor {
 	Map<String, PartDefinition> getChildren();
 
 
-
 }

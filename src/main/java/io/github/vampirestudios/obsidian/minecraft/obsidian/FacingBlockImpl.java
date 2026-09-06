@@ -1,187 +1,157 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class FacingBlockImpl extends DirectionalBlock {
+public class FacingBlockImpl extends DirectionalBlock implements PoweredBlock {
 
-    public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
-    private static final MapCodec<DirectionalBlock> CODEC = simpleCodec(FacingBlockImpl::new);
+	public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
-    }
+	private final BlockVariants variants;
 
-    public FacingBlockImpl(BlockBehaviour.Properties properties) {
-        super(properties);
-        this.block = null;
-    }
+	@Override
+	public io.github.vampirestudios.obsidian.api.obsidian.block.Block declaration() {
+		return block;
+	}
 
-    public FacingBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
-        super(settings);
-        this.block = block;
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
-    }
+	public FacingBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
+		super(BlockVariants.prepare(block, settings));
+		this.block = block;
+		this.variants = BlockVariants.consume();
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
+	}
 
-    @Override
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
-    }
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+	}
 
-    @Override
-    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
-    }
+	@Override
+	public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
+	}
 
-    @Override
-    public boolean propagatesSkylightDown(BlockState state) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
-    }
+	@Override
+	public boolean propagatesSkylightDown(BlockState state) {
+		return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
+	}
 
-    @Override
-    public void stepOn(Level world, BlockPos pos, BlockState state, Entity entity) {
-        super.stepOn(world, pos, state, entity);
-    }
+	@Override
+	public void stepOn(Level world, BlockPos pos, BlockState state, Entity entity) {
+		super.stepOn(world, pos, state, entity);
+	}
 
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
-    }
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		BlockState state = this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+		return variants.onPlacement(state, ctx, state.getValue(FACING));
+	}
 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(FACING);
+		BlockVariants.addTo(builder);
+		definePowered(builder);
+	}
 
-    @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        if (block.information.collisionShape != null) {
-            if(block.information.collisionShape.collisionType != null) {
-                return switch(block.information.collisionShape.collisionType) {
-                    case FULL_BLOCK -> Shapes.block();
-                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
-                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-                    case CUSTOM -> {
-                        VoxelShape shape = createShape(block.information.collisionShape.full_shape);
-                        VoxelShape northShape = createShape(block.information.collisionShape.north_shape);
-                        VoxelShape southShape = createShape(block.information.collisionShape.south_shape);
-                        VoxelShape eastShape = createShape(block.information.collisionShape.east_shape);
-                        VoxelShape westShape = createShape(block.information.collisionShape.west_shape);
-                        VoxelShape upShape = createShape( block.information.collisionShape.up_shape);
-                        VoxelShape downShape = createShape(block.information.collisionShape.down_shape);
-                        Direction direction = state.getValue(FACING);
-                        switch (direction) {
-                            case NORTH -> {
-                                if (northShape != null) yield northShape;
-                                else yield shape;
-                            }
-                            case SOUTH -> {
-                                if (southShape != null) yield southShape;
-                                else yield shape;
-                            }
-                            case EAST -> {
-                                if (eastShape != null) yield eastShape;
-                                else yield shape;
-                            }
-                            case WEST -> {
-                                if (westShape != null) yield westShape;
-                                else yield shape;
-                            }
-                            case DOWN -> {
-                                if (downShape != null) yield downShape;
-                                else yield shape;
-                            }
-                            case UP -> {
-                                if (upShape != null) yield upShape;
-                                else yield shape;
-                            }
-                            default -> {
-                                yield shape;
-                            }
-                        }
-                    }
-                    case NONE -> Shapes.empty();
-                };
-            } else {
-                return Shapes.block();
-            }
-        } else {
-            return Shapes.block();
-        }
-    }
+	@Override
+	public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+		VoxelShape resolved = shapeOf(state, false);
+		return resolved != null ? resolved : Shapes.block();
+	}
 
-    @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        if (block.information.outlineShape != null) {
-            if(block.information.outlineShape.collisionType != null) {
-                return switch(block.information.outlineShape.collisionType) {
-                    case FULL_BLOCK -> Shapes.block();
-                    case BOTTOM_SLAB -> box(0, 0, 0, 16, 8.0, 16);
-                    case TOP_SLAB -> box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-                    case CUSTOM -> {
-                        VoxelShape shape = createShape(block.information.outlineShape.full_shape);
-                        VoxelShape northShape = createShape(block.information.outlineShape.north_shape);
-                        VoxelShape southShape = createShape(block.information.outlineShape.south_shape);
-                        VoxelShape eastShape = createShape(block.information.outlineShape.east_shape);
-                        VoxelShape westShape = createShape(block.information.outlineShape.west_shape);
-                        VoxelShape upShape = createShape( block.information.outlineShape.up_shape);
-                        VoxelShape downShape = createShape(block.information.outlineShape.down_shape);
-                        Direction direction = state.getValue(FACING);
-                        switch (direction) {
-                            case NORTH -> {
-                                if (northShape != null) yield northShape;
-                                else yield shape;
-                            }
-                            case SOUTH -> {
-                                if (southShape != null) yield southShape;
-                                else yield shape;
-                            }
-                            case EAST -> {
-                                if (eastShape != null) yield eastShape;
-                                else yield shape;
-                            }
-                            case WEST -> {
-                                if (westShape != null) yield westShape;
-                                else yield shape;
-                            }
-                            case DOWN -> {
-                                if (downShape != null) yield downShape;
-                                else yield shape;
-                            }
-                            case UP -> {
-                                if (upShape != null) yield upShape;
-                                else yield shape;
-                            }
-                            default -> {
-                                yield shape;
-                            }
-                        }
-                    }
-                    case NONE -> Shapes.empty();
-                };
-            } else {
-                return Shapes.block();
-            }
-        } else {
-            return Shapes.block();
-        }
-    }
+	@Override
+	public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+		VoxelShape resolved = shapeOf(state, true);
+		return resolved != null ? resolved : Shapes.block();
+	}
 
-    private VoxelShape createShape(float[] boundingBox) {
-        return Block.box(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], boundingBox[4], boundingBox[5]);
-    }
+	@Override
+	protected VoxelShape getOcclusionShape(BlockState state) {
+		VoxelShape resolved = shapeOf(state, true);
+		return resolved != null ? resolved : BlockShapeUtils.occlusionFallback(block);
+	}
 
+	@Override
+	protected boolean isSignalSource(BlockState state) {
+		return RedstoneLogic.isSignalSource(block);
+	}
+
+	@Override
+	protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction towards) {
+		return RedstoneLogic.signal(block, state, towards, variants.power(), state.getValue(FACING));
+	}
+
+	@Override
+	protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction towards) {
+		return RedstoneLogic.isRepeater(block) ? getSignal(state, level, pos, towards) : 0;
+	}
+
+	@Override
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock,
+	                            Orientation orientation, boolean movedByPiston) {
+		super.neighborChanged(state, level, pos, sourceBlock, orientation, movedByPiston);
+		RedstoneLogic.onNeighbourChanged(block, level, pos, state, variants.power(), state.getValue(FACING));
+		refreshPower(state, level, pos);
+	}
+
+	@Override
+	protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+		// A repeater dropped next to a live wire has to catch up to it, having missed the change.
+		RedstoneLogic.onNeighbourChanged(block, level, pos, state, variants.power(), state.getValue(FACING));
+		super.onPlace(state, level, pos, oldState, movedByPiston);
+		if (!oldState.is(this)) refreshPower(state, level, pos);
+	}
+
+	@Override
+	protected net.minecraft.world.InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+	                                                               net.minecraft.world.entity.player.Player player,
+	                                                               net.minecraft.world.phys.BlockHitResult hit) {
+		return useToToggle(state, level, pos, super.useWithoutItem(state, level, pos, player, hit));
+	}
+
+	@Override
+	protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		super.tick(state, level, pos, random);
+		RedstoneLogic.onScheduledTick(block, level, pos, state, variants.power(), state.getValue(FACING));
+	}
+
+	@Override
+	protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+		return variants.canSurvive(state, level, pos, state.getValue(FACING)) && super.canSurvive(state, level, pos);
+	}
+
+	@Override
+	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos,
+	                                 Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+		if (!state.canSurvive(level, pos)) return Blocks.AIR.defaultBlockState();
+		return super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random);
+	}
+
+	/** The variant's shape when this state has one, otherwise the block-wide shape. */
+	private VoxelShape shapeOf(BlockState state, boolean outline) {
+		Direction facing = state.getValue(FACING);
+
+		VoxelShape variantShape = variants.shape(state, outline, facing);
+		if (variantShape != null) return variantShape;
+
+		return BlockShapeUtils.resolve(outline ? block.information.outlineShape : block.information.collisionShape,
+				block.information.shape, block.information.shapes, facing);
+	}
 }

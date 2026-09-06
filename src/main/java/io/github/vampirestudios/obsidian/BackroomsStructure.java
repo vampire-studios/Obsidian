@@ -15,42 +15,42 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilde
 import java.util.Optional;
 
 public class BackroomsStructure extends Structure {
-    public static final MapCodec<BackroomsStructure> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            settingsCodec(instance)
-    ).apply(instance, BackroomsStructure::new));
+	public static final MapCodec<BackroomsStructure> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+			settingsCodec(instance)
+	).apply(instance, BackroomsStructure::new));
 
-    public BackroomsStructure(StructureSettings settings) {
-        super(settings);
-    }
+	public BackroomsStructure(StructureSettings settings) {
+		super(settings);
+	}
 
-    @Override
-    public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-        ChunkPos chunkPos = context.chunkPos();
-        BlockPos blockPos = new BlockPos(chunkPos.getMinBlockX(), 50, chunkPos.getMinBlockZ());
-        StructurePiecesBuilder piecesBuilder = new StructurePiecesBuilder();
-        int yOffset = this.generatePieces(piecesBuilder, context);
-        return Optional.of(new GenerationStub(blockPos.offset(0, yOffset, 0), Either.right(piecesBuilder)));
-    }
+	@Override
+	public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+		ChunkPos chunkPos = context.chunkPos();
+		BlockPos blockPos = new BlockPos(chunkPos.getMinBlockX(), 50, chunkPos.getMinBlockZ());
+		StructurePiecesBuilder piecesBuilder = new StructurePiecesBuilder();
+		int yOffset = this.generatePieces(piecesBuilder, context);
+		return Optional.of(new GenerationStub(blockPos.offset(0, yOffset, 0), Either.right(piecesBuilder)));
+	}
 
-    private int generatePieces(StructurePiecesBuilder builder, Structure.GenerationContext context) {
-        ChunkPos chunkPos = context.chunkPos();
-        WorldgenRandom random = context.random();
-        BackroomsPieces.BackroomsRoom initialRoom = new BackroomsPieces.BackroomsRoom(0, random, chunkPos.getBlockX(2), chunkPos.getBlockZ(2), BackroomsLevel.LEVEL_0);
-        builder.addPiece(initialRoom);
-        initialRoom.addChildren(initialRoom, builder, random);
+	private int generatePieces(StructurePiecesBuilder builder, Structure.GenerationContext context) {
+		ChunkPos chunkPos = context.chunkPos();
+		WorldgenRandom random = context.random();
+		BackroomsPieces.BackroomsRoom initialRoom = new BackroomsPieces.BackroomsRoom(0, random, chunkPos.getBlockX(2), chunkPos.getBlockZ(2), BackroomsLevel.LEVEL_0);
+		builder.addPiece(initialRoom);
+		initialRoom.addChildren(initialRoom, builder, random);
 
-        // Use the level enum to adjust the structure generation
-        int seaLevel = context.chunkGenerator().getSeaLevel();
-        BlockPos centerPos = builder.getBoundingBox().getCenter();
-        int topY = context.chunkGenerator().getBaseHeight(centerPos.getX(), centerPos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-        int verticalOffset = Mth.randomBetweenInclusive(random, seaLevel, topY);
-        builder.offsetPiecesVertically(verticalOffset - centerPos.getY());
+		// Use the level enum to adjust the structure generation
+		int seaLevel = context.chunkGenerator().getSeaLevel();
+		BlockPos centerPos = builder.getBoundingBox().getCenter();
+		int topY = context.chunkGenerator().getBaseHeight(centerPos.getX(), centerPos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+		int verticalOffset = Mth.randomBetweenInclusive(random, seaLevel, topY);
+		builder.offsetPiecesVertically(verticalOffset - centerPos.getY());
 
-        return verticalOffset;
-    }
+		return verticalOffset;
+	}
 
-    @Override
-    public StructureType<?> type() {
-        return OStructureTypes.BACKROOMS; // Use your custom StructureType
-    }
+	@Override
+	public StructureType<?> type() {
+		return OStructureTypes.BACKROOMS; // Use your custom StructureType
+	}
 }

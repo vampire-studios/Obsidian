@@ -7,15 +7,15 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class SkillSkill extends Skill {
 
-    private final Skill executingSkill;
+	private final Skill executingSkill;
 
-    public SkillSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, Skill executingSkill) {
-        super(skillId, target, trigger);
-        this.executingSkill = executingSkill;
-    }
+	public SkillSkill(String skillId, SkillTarget<?> target, SkillTrigger trigger, Skill executingSkill) {
+		super(skillId, target, trigger);
+		this.executingSkill = executingSkill;
+	}
 
-    @Override
-    public void applyEffect(LivingEntity caster, LivingEntity target) {
-        executingSkill.runSkill(caster, target);
-    }
+	@Override
+	public void applyEffect(LivingEntity caster, LivingEntity target) {
+		executingSkill.runSkill(caster, target);
+	}
 }

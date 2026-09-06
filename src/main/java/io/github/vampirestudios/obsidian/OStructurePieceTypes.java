@@ -9,7 +9,8 @@ import java.util.Locale;
 public class OStructurePieceTypes {
 	public static final StructurePieceType BACKROOMS_ROOM = setPieceId(BackroomsPieces.BackroomsRoom::new, "BSRoom");
 
-	public static void init() {}
+	public static void init() {
+	}
 
 	private static StructurePieceType setFullContextPieceId(StructurePieceType type, String id) {
 		return Registry.register(BuiltInRegistries.STRUCTURE_PIECE, Obsidian.id(id.toLowerCase(Locale.ROOT)), type);

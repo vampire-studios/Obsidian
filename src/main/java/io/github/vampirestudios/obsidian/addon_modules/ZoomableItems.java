@@ -1,17 +1,15 @@
 /*
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperItemExpanded;
 import io.github.vampirestudios.obsidian.api.obsidian.item.ZoomableItem;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.resources.Identifier;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -19,16 +17,16 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.f
 
 public class ZoomableItems implements AddonModule {
     @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        ZoomableItem zoomableItem = BaseGson.GSON.fromJson(new FileReader(file), ZoomableItem.class);
+    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+        ZoomableItem zoomableItem = AddonFormats.read(addon, file, ZoomableItem.class);
         try {
             if (zoomableItem == null) return;
 
 			Identifier identifier = Objects.requireNonNullElseGet(
                     zoomableItem.information.name.id,
-                    () -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+                    () -> Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file))
             );
-            if (zoomableItem.information.name.id == null) zoomableItem.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+            if (zoomableItem.information.name.id == null) zoomableItem.information.name.id = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
 
 			RegistryHelperItemExpanded expanded = new RegistryHelperItemExpanded(id.modId());
 

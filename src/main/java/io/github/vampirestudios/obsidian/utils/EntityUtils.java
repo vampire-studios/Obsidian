@@ -12,22 +12,22 @@ import java.util.Map;
 
 public class EntityUtils {
 
-    public static AttributeSupplier.Builder createGenericEntityAttributes(double maxHealth, double movementSpeed, Map<String, Double> customAttributes) {
-        AttributeSupplier.Builder builder = PathfinderMob.createMobAttributes()
-                .add(Attributes.MOVEMENT_SPEED, movementSpeed)
-                .add(Attributes.MAX_HEALTH, maxHealth);
+	public static AttributeSupplier.Builder createGenericEntityAttributes(double maxHealth, double movementSpeed, Map<String, Double> customAttributes) {
+		AttributeSupplier.Builder builder = PathfinderMob.createMobAttributes()
+				.add(Attributes.MOVEMENT_SPEED, movementSpeed)
+				.add(Attributes.MAX_HEALTH, maxHealth);
 
-        if (customAttributes == null || customAttributes.isEmpty()) return builder;
+		if (customAttributes == null || customAttributes.isEmpty()) return builder;
 
-        for (Map.Entry<String, Double> entry : customAttributes.entrySet()) {
-            Identifier attributeId = Identifier.tryParse(entry.getKey());
-            if (attributeId == null || entry.getValue() == null) continue;
-            Holder<Attribute> attribute = BuiltInRegistries.ATTRIBUTE.get(attributeId).orElseThrow();
-            if (!attribute.isBound()) continue;
-            builder.add(attribute, entry.getValue());
-        }
+		for (Map.Entry<String, Double> entry : customAttributes.entrySet()) {
+			Identifier attributeId = Identifier.tryParse(entry.getKey());
+			if (attributeId == null || entry.getValue() == null) continue;
+			Holder<Attribute> attribute = BuiltInRegistries.ATTRIBUTE.get(attributeId).orElseThrow();
+			if (!attribute.isBound()) continue;
+			builder.add(attribute, entry.getValue());
+		}
 
-        return builder;
-    }
+		return builder;
+	}
 
 }

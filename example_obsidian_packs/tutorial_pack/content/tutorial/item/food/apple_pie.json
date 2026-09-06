@@ -2,10 +2,9 @@
   "information": {
     "name": {
       "translations": {
-        "en_us": "Apple Pie",
-        "nb_no": "Eplepai"
+        "en_us": "<color #ca165f>Apple Pie",
+        "nb_no": "<color #ca165f>Eplepai"
       },
-      "color": "#ca165f",
       "formatting": ["OBFUSCATED", "BOLD", "UNDERLINE", "ITALIC"]
     },
     "item_group": "minecraft:food",

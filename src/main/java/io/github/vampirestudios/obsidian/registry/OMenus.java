@@ -30,5 +30,6 @@ public class OMenus {
 		return Registry.register(BuiltInRegistries.MENU, Obsidian.id(string), new MenuType<>(menuSupplier, FeatureFlags.VANILLA_SET));
 	}
 
-	public static void init() {}
+	public static void init() {
+	}
 }

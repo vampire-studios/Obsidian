@@ -1,7 +1,8 @@
+/*
 package io.github.vampirestudios.obsidian.client;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.gui.SimpleGui;
+//import eu.pb4.sgui.api.elements.GuiElementBuilder;
+//import eu.pb4.sgui.api.gui.SimpleGui;
 import io.github.vampirestudios.obsidian.scripting.std.ObsPackRuntime;
 import io.github.vampirestudios.obsidian.scripting.std.PlayerCommandHandler;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -52,7 +53,9 @@ public final class GuiBridge {
 		return id;
 	}
 
-	/** Set a slot with a basic item. */
+	*/
+/** Set a slot with a basic item. *//*
+
 	public static void set(String id, int slot, String itemId, int count, Map<String, Object> comps, ServerPlayer player) {
 		SimpleGui gui = OPEN.get(id);
 		if (gui == null || gui.getPlayer() != player) return;
@@ -66,8 +69,11 @@ public final class GuiBridge {
 
 		ItemStack stack = new ItemStack(item, count);
 		if (comps != null) {
-			try { PlayerCommandHandler.applyComponents(stack, comps); }
-			catch (Exception e) { throw new IllegalArgumentException("components: " + e.getMessage(), e); }
+			try {
+				PlayerCommandHandler.applyComponents(stack, comps);
+			} catch (Exception e) {
+				throw new IllegalArgumentException("components: " + e.getMessage(), e);
+			}
 		}
 
 		GuiElementBuilder el = new GuiElementBuilder(stack)
@@ -81,7 +87,9 @@ public final class GuiBridge {
 		if (gui != null && gui.getPlayer() == player) gui.open();
 	}
 
-	/** Close a GUI for a player. */
+	*/
+/** Close a GUI for a player. *//*
+
 	public static void close(String id, ServerPlayer player) {
 		SimpleGui gui = OPEN.get(id);
 		if (gui != null && gui.getPlayer() == player) {
@@ -90,7 +98,9 @@ public final class GuiBridge {
 		}
 	}
 
-	/** Cleanup all GUIs for a player (call on disconnect). */
+	*/
+/** Cleanup all GUIs for a player (call on disconnect). *//*
+
 	public static void closeAllFor(ServerPlayer player) {
 		var ids = new java.util.ArrayList<String>();
 		OPEN.forEach((k, g) -> {
@@ -99,8 +109,11 @@ public final class GuiBridge {
 		for (var k : ids) close(k, player);
 	}
 
-	/** Utility: get GUI by id. */
+	*/
+/** Utility: get GUI by id. *//*
+
 	public static SimpleGui get(String id) {
 		return OPEN.get(id);
 	}
 }
+*/

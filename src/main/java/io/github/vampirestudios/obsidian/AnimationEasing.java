@@ -270,7 +270,7 @@ public class AnimationEasing {
 		}
 
 		public EasingTypes getEasingType(Type easingType) {
-			return switch(easingType) {
+			return switch (easingType) {
 				case IN -> easeMethod.getLeft();
 				case OUT -> easeMethod.getMiddle();
 				case IN_OUT -> easeMethod.getRight();

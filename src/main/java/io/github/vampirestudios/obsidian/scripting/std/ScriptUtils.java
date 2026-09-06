@@ -271,11 +271,11 @@ public final class ScriptUtils {
 		return switch (op) {
 			case "==" -> a == b;
 			case "!=" -> a != b;
-			case "<"  -> a < b;
+			case "<" -> a < b;
 			case "<=" -> a <= b;
-			case ">"  -> a > b;
+			case ">" -> a > b;
 			case ">=" -> a >= b;
-			default   -> false;
+			default -> false;
 		};
 	}
 
@@ -285,18 +285,27 @@ public final class ScriptUtils {
 		if (a < 0 || b <= a) return java.util.List.of();
 		String s = call.substring(a + 1, b).trim();
 		java.util.List<String> out = new java.util.ArrayList<>();
-		int depth = 0; boolean inStr = false; StringBuilder sb = new StringBuilder();
+		int depth = 0;
+		boolean inStr = false;
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
-			if (c=='"') { inStr = !inStr; continue; } // drop quotes
+			if (c == '"') {
+				inStr = !inStr;
+				continue;
+			} // drop quotes
 			if (!inStr) {
-				if (c=='(') depth++;
-				else if (c==')') depth--;
-				else if (c==',' && depth==0) { out.add(sb.toString().trim()); sb.setLength(0); continue; }
+				if (c == '(') depth++;
+				else if (c == ')') depth--;
+				else if (c == ',' && depth == 0) {
+					out.add(sb.toString().trim());
+					sb.setLength(0);
+					continue;
+				}
 			}
 			sb.append(c);
 		}
-		if (sb.length()>0) out.add(sb.toString().trim());
+		if (sb.length() > 0) out.add(sb.toString().trim());
 		return out;
 	}
 
@@ -304,33 +313,41 @@ public final class ScriptUtils {
 		s = s.trim();
 		if (s.startsWith("(") && s.endsWith(")")) {
 			int depth = 0;
-			for (int i=0;i<s.length();i++){
-				char c=s.charAt(i);
-				if (c=='(') depth++;
-				else if (c==')') { depth--; if (depth==0 && i < s.length()-1) return s; }
+			for (int i = 0; i < s.length(); i++) {
+				char c = s.charAt(i);
+				if (c == '(') depth++;
+				else if (c == ')') {
+					depth--;
+					if (depth == 0 && i < s.length() - 1) return s;
+				}
 			}
 			// if we finished with depth==0 at the last char, it was fully wrapped
-			return stripOuterParens(s.substring(1, s.length()-1));
+			return stripOuterParens(s.substring(1, s.length() - 1));
 		}
 		return s;
 	}
 
 	public static int indexOfTopLevel(String s, String needle) {
-		int depth = 0; boolean inStr = false;
+		int depth = 0;
+		boolean inStr = false;
 		for (int i = 0; i <= s.length() - needle.length(); i++) {
 			char c = s.charAt(i);
-			if (c=='"') inStr = !inStr;
+			if (c == '"') inStr = !inStr;
 			if (!inStr) {
-				if (c=='(') depth++;
-				else if (c==')') depth--;
-				if (depth==0 && s.startsWith(needle, i)) return i;
+				if (c == '(') depth++;
+				else if (c == ')') depth--;
+				if (depth == 0 && s.startsWith(needle, i)) return i;
 			}
 		}
 		return -1;
 	}
 
 	public static double parseDouble(String lit) {
-		try { return Double.parseDouble(lit.trim()); } catch (Exception e) { return 0.0; }
+		try {
+			return Double.parseDouble(lit.trim());
+		} catch (Exception e) {
+			return 0.0;
+		}
 	}
 
 	// Accepts "#ns:id" or "ns:id"; returns Identifier
@@ -352,7 +369,8 @@ public final class ScriptUtils {
 				Object v = eval(e, vars);
 				return v instanceof String;
 			}
-			default -> {}
+			default -> {
+			}
 		}
 		return arg instanceof String;
 	}

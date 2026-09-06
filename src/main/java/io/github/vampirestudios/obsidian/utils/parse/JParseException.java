@@ -2,20 +2,16 @@ package io.github.vampirestudios.obsidian.utils.parse;
 
 import com.google.gson.JsonParseException;
 
-public class JParseException extends JsonParseException
-{
-    public JParseException(String message)
-    {
-        super(message);
-    }
+public class JParseException extends JsonParseException {
+	public JParseException(String message) {
+		super(message);
+	}
 
-    public JParseException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
+	public JParseException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public JParseException(Throwable cause)
-    {
-        super(cause);
-    }
+	public JParseException(Throwable cause) {
+		super(cause);
+	}
 }

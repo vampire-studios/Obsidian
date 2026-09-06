@@ -1,33 +1,15 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
+import io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.item.component.TooltipDisplay;
 
-import java.util.function.Consumer;
+/** Armor that starts out dyed the colour the pack asked for. Otherwise an ordinary {@link ItemImpl}. */
+public class DyeableArmorItemImpl extends ItemImpl {
 
-public class DyeableArmorItemImpl extends Item {
-
-    public io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item;
-
-    public DyeableArmorItemImpl(io.github.vampirestudios.obsidian.api.obsidian.item.ArmorItem item, Properties settings) {
-        super(settings
-                .component(DataComponents.DYED_COLOR, new DyedItemColor(item.information.getItemSettings().defaultColor)));
-        this.item = item;
-    }
-
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
-    }
-
-    @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
-        item.addLore(consumer);
-    }
+	public DyeableArmorItemImpl(ArmorItem item, Properties settings) {
+		super(item, settings
+				.component(DataComponents.DYED_COLOR, new DyedItemColor(item.information.getItemSettings().defaultColor)));
+	}
 
 }

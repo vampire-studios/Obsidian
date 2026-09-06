@@ -35,8 +35,8 @@ public abstract class SpreadableBlockMixin extends SnowyBlock implements IForgeS
 
 	*/
 /**
-	 * @author OliviaTheVampire
-	 *//*
+ * @author OliviaTheVampire
+ *//*
 
 	@Overwrite
 	@Override

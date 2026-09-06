@@ -39,8 +39,6 @@ public class BlockContentRegistriesClientInitializer implements ClientModInitial
 		ItemTooltipCallback.EVENT.register((stack, _, _, lines) -> {
 			Block block = Block.byItem(stack.getItem());
 
-			BlockContentRegistries.FLATTENABLE.get(block).ifPresent(state -> lines.add(Component.literal("Flattenable block: " + state)));
-			BlockContentRegistries.STRIPPABLE.get(block).ifPresent(_block -> lines.add(Component.literal("Strips to: " + _block)));
 			BlockContentRegistries.FLAMMABLE.get(block).ifPresent(entry -> lines.add(Component.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
 			BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).ifPresent(value -> lines.add(Component.literal("Enchanting booster: " + value)));
 		});

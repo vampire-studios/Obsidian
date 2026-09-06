@@ -3,18 +3,16 @@ package io.github.vampirestudios.obsidian.utils.parse.value;
 import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 
-public interface LongValue
-{
-    void handle(LongConsumer value);
+public interface LongValue {
+	void handle(LongConsumer value);
 
-    LongValue min(long min);
+	LongValue min(long min);
 
-    LongValue range(long min, long maxExclusive);
+	LongValue range(long min, long maxExclusive);
 
-    long getAsLong();
+	long getAsLong();
 
-    default <T> MappedValue<T> map(LongFunction<T> mapping)
-    {
-        return MappedValue.of(mapping.apply(getAsLong()));
-    }
+	default <T> MappedValue<T> map(LongFunction<T> mapping) {
+		return MappedValue.of(mapping.apply(getAsLong()));
+	}
 }

@@ -1,0 +1,29 @@
+{
+  "information": {
+    "name": "Tutorial Bolt",
+    "item_properties": {
+      "max_count": 64,
+      "item_group": "minecraft:tools_and_combat"
+    }
+  },
+  "shape": "arrow",
+  "damage": 3.0,
+  "recoverable": true,
+  "flight": {
+    "gravity": 0.04
+  },
+  "trail": {
+    "particle": "minecraft:crit",
+    "interval": 2
+  },
+  "events": {
+    "projectile_hit_entity": [
+      {
+        "action": "apply_effect",
+        "effect": "minecraft:glowing",
+        "duration": 200,
+        "amplifier": 0
+      }
+    ]
+  }
+}

@@ -6,24 +6,24 @@ import net.minecraft.client.animation.AnimationChannel.Interpolations;
 import net.minecraft.util.StringRepresentable;
 
 public enum InterpolationType implements StringRepresentable {
-    LINEAR("linear", Interpolations.LINEAR),
-    CATMULLROM("catmullrom", Interpolations.CATMULLROM);
+	LINEAR("linear", Interpolations.LINEAR),
+	CATMULLROM("catmullrom", Interpolations.CATMULLROM);
 
-    public static final Codec<InterpolationType> CODEC = StringRepresentable.fromEnum(InterpolationType::values);
+	public static final Codec<InterpolationType> CODEC = StringRepresentable.fromEnum(InterpolationType::values);
 
-    private final String name;
-    private final Interpolation interpolation;
+	private final String name;
+	private final Interpolation interpolation;
 
-    InterpolationType(String name, Interpolation interpolation) {
-        this.name = name;
-        this.interpolation = interpolation;
-    }
+	InterpolationType(String name, Interpolation interpolation) {
+		this.name = name;
+		this.interpolation = interpolation;
+	}
 
-    public Interpolation getInterpolationFromType() {
-        return this.interpolation;
-    }
+	public Interpolation getInterpolationFromType() {
+		return this.interpolation;
+	}
 
-    public String getSerializedName() {
-        return this.name;
-    }
+	public String getSerializedName() {
+		return this.name;
+	}
 }

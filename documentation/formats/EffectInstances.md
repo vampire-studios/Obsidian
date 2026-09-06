@@ -1,83 +1,60 @@
-# Effect Instance Definitions
+# Effect Instances
 
-This format applies to effect instances as defined in other json files. There is no named definitions for effect instances
-at this point.
+A status effect with a duration and a strength. Used inside other files, never on its own.
 
-See [Food](./Food.md) for an example of where this is used.
+## In an event
 
-## Basic structure of the JSON file
+The [`apply_effect`](../Events.md#player-actions) action is the form you will actually use:
+
+```json
+{ "action": "apply_effect", "effect": "minecraft:poison", "duration": 200, "amplifier": 0 }
+```
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `effect` | yes | Effect id. |
+| `duration` | yes | Length in **ticks** — 20 per second, so `200` is ten seconds. |
+| `amplifier` | yes | Strength. `0` is level I, `1` is level II. |
+
+All three are required here: the action reads `duration` and `amplifier` without defaults, so omitting
+either throws and the action is skipped with an error in the log.
+
+## In a food component
+
+[Food components](./Food.md) accept a longer form:
 
 ```json
 {
-  "effect": "minecraft:poison",
-  "duration": 5,
-  "amplifier": 0,
-  "ambient": false,
-  "visible": true,
-  "show_particles": true,
-  "show_icon": true
+  "effects": [
+    {
+      "effect": "minecraft:poison",
+      "chance": 1.0,
+      "duration": 100,
+      "amplifier": 0,
+      "ambient": false,
+      "visible": true,
+      "show_particles": true,
+      "show_icon": true
+    }
+  ]
 }
 ```
 
-## "effect"
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `effect` | — | Effect id. |
+| `chance` | `0` | Probability of applying, `0`–`1`. |
+| `duration` | `0` | Ticks. `0` disappears instantly, so always set it. |
+| `amplifier` | `0` | `0` is level I. |
+| `ambient` | `false` | Beacon-style: different colour, no countdown. Leave off for food. |
+| `visible` | `false` | Whether the effect is shown at all. |
+| `show_particles` | `true` | Ambient particles around the player. |
+| `show_icon` | `true` | Icon in the corner of the HUD. |
 
-Defines which potion effect to apply.
+**Food effects are currently not applied** — the code that converts them into food properties is
+commented out. Use an `on_use` [event](../Events.md) with `apply_effect` until that changes.
 
-Required.
+## See also
 
-Must be a resource location string like `"poison"`, or `"minecraft:blindness"`. Like on model jsons and other vanilla files,
-if the namespace (the part before the colon) is missing "minecraft" is implied.
-
-## "duration"
-
-Defines how long the effect lasts, in ingame ticks (20ths of a second).
-
-Optional. Default: 0.
-
-The default will disappear immediately so a non-zero value is advised.
-
-Must be a positive integer.
-
-## "amplifier"
-
-Defines how strong the effect is. Higher numbers increase the potency of the effect further.
-
-Optional. Default: 0.
-
-The default means no amplification, and will do the standard effect.
-
-Must be a positive integer or zero.
-
-## "ambient"
-
-Defines if the effect should be considered an ambient effect such as coming from a beacon. Ambient effects appear
-in a different color and without a countdown. It is advised not to set the "ambient" property to true for foods and other
-contextual effects.
-
-Optional. Default: false.
-
-Must be a boolean (`false` or `true`).
-
-## "visible"
-
-Defines if the effect is visible. Invisible effects by default have no icon or particles, and don't appear in the list.
-
-Optional. Default: true.
-
-Must be a boolean (`false` or `true`).
-
-## "show_particles"
-
-Defines if the effect produces particles around the player.
-
-Optional. Default: same as "visible".
-
-Must be a boolean (`false` or `true`).
-
-## "show_icon"
-
-Defines if the effect has an icon in the top right of the HUD.
-
-Optional. Default: same as "visible".
-
-Must be a boolean (`false` or `true`).
+* [Food](./Food.md) — food components.
+* [Events](../Events.md) — `apply_effect`, `remove_effect`, `clear_effects`.

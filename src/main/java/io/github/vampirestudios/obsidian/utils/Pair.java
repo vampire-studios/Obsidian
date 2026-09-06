@@ -1,11 +1,11 @@
 package io.github.vampirestudios.obsidian.utils;
 
-public class Pair <A, B>{
-    public final A first;
-    public final B second;
+public class Pair<A, B> {
+	public final A first;
+	public final B second;
 
-    public Pair(A first, B second) {
-        this.first = first;
-        this.second = second;
-    }
+	public Pair(A first, B second) {
+		this.first = first;
+		this.second = second;
+	}
 }

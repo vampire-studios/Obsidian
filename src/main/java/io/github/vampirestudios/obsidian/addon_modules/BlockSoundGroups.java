@@ -1,19 +1,17 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.CustomSoundGroup;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -23,16 +21,17 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 public class BlockSoundGroups implements AddonModule {
 
 	@Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		CustomSoundGroup customSoundGroup = BaseGson.GSON.fromJson(new FileReader(file), CustomSoundGroup.class);
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		CustomSoundGroup customSoundGroup = AddonFormats.read(addon, file, CustomSoundGroup.class);
 		try {
 			if (customSoundGroup == null) return;
 
 			Identifier identifier = Objects.requireNonNullElseGet(
 					customSoundGroup.id,
-					() -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file))
 			);
-			if (customSoundGroup.id == null) customSoundGroup.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			if (customSoundGroup.id == null)
+				customSoundGroup.id = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
 
 			registerSoundIfNotFound(customSoundGroup.break_sound);
 			registerSoundIfNotFound(customSoundGroup.step_sound);
@@ -47,7 +46,8 @@ public class BlockSoundGroups implements AddonModule {
 	}
 
 	private void registerSoundIfNotFound(Identifier sound) {
-		if (!BuiltInRegistries.SOUND_EVENT.containsKey(sound)) Obsidian.registerInRegistry(BuiltInRegistries.SOUND_EVENT, sound, SoundEvent.createVariableRangeEvent(sound));
+		if (!BuiltInRegistries.SOUND_EVENT.containsKey(sound))
+			Obsidian.registerInRegistry(BuiltInRegistries.SOUND_EVENT, sound, SoundEvent.createVariableRangeEvent(sound));
 	}
 
 	@Override

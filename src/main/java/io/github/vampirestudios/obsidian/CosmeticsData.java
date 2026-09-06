@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class CosmeticsData {
-    public static void setHeadCosmetics(IEntityDataSaver player, ItemStack is){
+	public static void setHeadCosmetics(IEntityDataSaver player, ItemStack is) {
 //        String cosmetics;
 //        CompoundTag nbt = player.getPersistentData();
 //        if(is != ItemStack.EMPTY) {
@@ -19,29 +19,30 @@ public class CosmeticsData {
 //            cosmetics = is.getItem().toString();
 //        }
 //        nbt.putString("head_cosmetics", cosmetics);
-    }
-    public static ItemStack getHeadCosmetics(IEntityDataSaver player){
-        CompoundTag nbt = player.getPersistentData();
-        Optional<String> headCosmeticsString = nbt.getString("head_cosmetics");
+	}
 
-        if (headCosmeticsString.isEmpty()) return ItemStack.EMPTY;
+	public static ItemStack getHeadCosmetics(IEntityDataSaver player) {
+		CompoundTag nbt = player.getPersistentData();
+		Optional<String> headCosmeticsString = nbt.getString("head_cosmetics");
 
-        if (Objects.equals(headCosmeticsString.get(), "air")) {
-            return ItemStack.EMPTY;
-        }
+		if (headCosmeticsString.isEmpty()) return ItemStack.EMPTY;
 
-        String[] parts = headCosmeticsString.get().split(",", 2);
+		if (Objects.equals(headCosmeticsString.get(), "air")) {
+			return ItemStack.EMPTY;
+		}
 
-        String itemId = parts[0].toLowerCase();
+		String[] parts = headCosmeticsString.get().split(",", 2);
 
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(itemId)));
-        if(parts.length > 1) {
+		String itemId = parts[0].toLowerCase();
+
+		ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(itemId)));
+		if (parts.length > 1) {
 //            int itemCMD = Integer.parseInt(parts[1]);
 //            CompoundTag itemStackNbtData = new CompoundTag();
 //            itemStackNbtData.putInt("CustomModelData", itemCMD);
 //            itemStack.setTag(itemStackNbtData);
-        }
+		}
 
-        return itemStack;
-    }
+		return itemStack;
+	}
 }

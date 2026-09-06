@@ -7,12 +7,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class TriggerTarget extends EntityTarget<LivingEntity> {
-    public TriggerTarget() {
-        super(List.of("Trigger", "trigger"));
-    }
+	public TriggerTarget() {
+		super(List.of("Trigger", "trigger"));
+	}
 
-    @Override
-    public List<LivingEntity> getTargets(LivingEntity caster) {
-        return Collections.singletonList(caster);
-    }
+	@Override
+	public List<LivingEntity> getTargets(LivingEntity caster) {
+		return Collections.singletonList(caster);
+	}
 }

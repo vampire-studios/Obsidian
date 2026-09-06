@@ -13,6 +13,6 @@ public class BlockMixin {
 	 */
 	@Overwrite
 	public String toString() {
-		return this.getClass().toString() + "{" + BuiltInRegistries.BLOCK.getKey((Block)(Object)this) + "}";
+		return this.getClass().toString() + "{" + BuiltInRegistries.BLOCK.getKey((Block) (Object) this) + "}";
 	}
 }

@@ -6,8 +6,8 @@ import net.minecraft.world.item.component.DyedItemColor;
 
 public class DyeableArmorItemImpl extends CustomArmorItem {
 
-    public DyeableArmorItemImpl(NexoItem nexoItem, Properties settings) {
-        super(nexoItem, settings.component(DataComponents.DYED_COLOR, new DyedItemColor(nexoItem.mechanics.dyeable.default_color)));
-    }
+	public DyeableArmorItemImpl(NexoItem nexoItem, Properties settings) {
+		super(nexoItem, settings.component(DataComponents.DYED_COLOR, new DyedItemColor(nexoItem.mechanics.dyeable.default_color)));
+	}
 
 }

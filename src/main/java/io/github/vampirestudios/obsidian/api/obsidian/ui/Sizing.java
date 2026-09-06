@@ -1,9 +1,10 @@
 package io.github.vampirestudios.obsidian.api.obsidian.ui;
 
 import com.google.gson.JsonObject;
+import net.minecraft.util.GsonHelper;
+
 import java.util.Arrays;
 import java.util.Locale;
-import net.minecraft.util.GsonHelper;
 
 public class Sizing {
 	public SizingType type;

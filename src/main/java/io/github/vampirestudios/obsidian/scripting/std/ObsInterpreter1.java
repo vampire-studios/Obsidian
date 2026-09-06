@@ -10,14 +10,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +81,7 @@ public final class ObsInterpreter1 {
 					Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(m.group(2)));
 					int count = Integer.parseInt(m.group(3));
 					if (p != null && item != null)
-						p.getInventory().placeItemBackInInventory(new ItemStack(item, clamp(count, 1, 64)));
+						p.getInventory().placeItemBackInInventory(new ItemStack(item, clamp(count, 1, 64)), Prediction.PREDICTED);
 				}
 				continue;
 			}
@@ -145,19 +143,28 @@ public final class ObsInterpreter1 {
 			// player.heal(amount);
 			if (line.matches("^([A-Za-z_][A-Za-z0-9_]*)\\.heal\\((\\d+)\\);$")) {
 				var m = java.util.regex.Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\.heal\\((\\d+)\\);$").matcher(line);
-				if (m.find()) { var p = (ServerPlayer) vars.get(m.group(1)); if (p!=null) p.heal(Float.parseFloat(m.group(2))); }
+				if (m.find()) {
+					var p = (ServerPlayer) vars.get(m.group(1));
+					if (p != null) p.heal(Float.parseFloat(m.group(2)));
+				}
 				continue;
 			}
 
 			// player.xp(amount); / player.level(amount);
 			if (line.matches("^([A-Za-z_][A-Za-z0-9_]*)\\.xp\\((-?\\d+)\\);$")) {
 				var m = java.util.regex.Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\.xp\\((-?\\d+)\\);$").matcher(line);
-				if (m.find()) { var p = (ServerPlayer) vars.get(m.group(1)); if (p!=null) p.giveExperiencePoints(Integer.parseInt(m.group(2))); }
+				if (m.find()) {
+					var p = (ServerPlayer) vars.get(m.group(1));
+					if (p != null) p.giveExperiencePoints(Integer.parseInt(m.group(2)));
+				}
 				continue;
 			}
 			if (line.matches("^([A-Za-z_][A-Za-z0-9_]*)\\.level\\((-?\\d+)\\);$")) {
 				var m = java.util.regex.Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\.level\\((-?\\d+)\\);$").matcher(line);
-				if (m.find()) { var p = (ServerPlayer) vars.get(m.group(1)); if (p!=null) p.giveExperienceLevels(Integer.parseInt(m.group(2))); }
+				if (m.find()) {
+					var p = (ServerPlayer) vars.get(m.group(1));
+					if (p != null) p.giveExperienceLevels(Integer.parseInt(m.group(2)));
+				}
 				continue;
 			}
 
@@ -166,15 +173,15 @@ public final class ObsInterpreter1 {
 				var m = java.util.regex.Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\.gamemode\\(\"([a-z_]+)\"\\);$").matcher(line);
 				if (m.find()) {
 					var p = (ServerPlayer) vars.get(m.group(1));
-					if (p!=null) {
-						var gm = switch(m.group(2)) {
+					if (p != null) {
+						var gm = switch (m.group(2)) {
 							case "survival" -> net.minecraft.world.level.GameType.SURVIVAL;
 							case "creative" -> net.minecraft.world.level.GameType.CREATIVE;
 							case "adventure" -> net.minecraft.world.level.GameType.ADVENTURE;
 							case "spectator" -> net.minecraft.world.level.GameType.SPECTATOR;
 							default -> null;
 						};
-						if (gm!=null) p.setGameMode(gm);
+						if (gm != null) p.setGameMode(gm);
 					}
 				}
 				continue;
@@ -185,17 +192,23 @@ public final class ObsInterpreter1 {
 			// inventory.clear(); / inventory.has("id", count)
 			if (line.matches("^([A-Za-z_][A-Za-z0-9_]*)\\.inventory\\.clear\\(\\);$")) {
 				var m = java.util.regex.Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\.inventory\\.clear\\(\\);$").matcher(line);
-				if (m.find()) { var p=(ServerPlayer)vars.get(m.group(1)); if (p!=null) p.getInventory().clearContent(); }
+				if (m.find()) {
+					var p = (ServerPlayer) vars.get(m.group(1));
+					if (p != null) p.getInventory().clearContent();
+				}
 				continue;
 			}
 			if (line.matches("^([A-Za-z_][A-Za-z0-9_]*)\\.inventory\\.has\\(\"([^\"]+)\",\\s*(\\d+)\\);$")) {
 				var m = java.util.regex.Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\.inventory\\.has\\(\"([^\"]+)\",\\s*(\\d+)\\);$").matcher(line);
 				if (m.find()) {
-					var p=(ServerPlayer)vars.get(m.group(1)); if (p!=null) {
-						var item=BuiltInRegistries.ITEM.getValue(Identifier.parse(m.group(2)));
-						int need=Integer.parseInt(m.group(3));
-						int have=0; for (var s : p.getInventory().getNonEquipmentItems()) if (s.getItem()==item) have+=s.getCount();
-						System.out.println("[OBS] inventory.has = " + (have>=need));
+					var p = (ServerPlayer) vars.get(m.group(1));
+					if (p != null) {
+						var item = BuiltInRegistries.ITEM.getValue(Identifier.parse(m.group(2)));
+						int need = Integer.parseInt(m.group(3));
+						int have = 0;
+						for (var s : p.getInventory().getNonEquipmentItems())
+							if (s.getItem() == item) have += s.getCount();
+						System.out.println("[OBS] inventory.has = " + (have >= need));
 					}
 				}
 				continue;

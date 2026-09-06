@@ -33,11 +33,11 @@ public abstract class BlockModelWrapperDetectRenderTypeMixin {
 
     */
 /**
-     * Bypasses the IllegalStateException and sets MultiAtlasState.MIXED when both atlases are detected.
-     *
-     * NOTE: We deliberately return a "reasonable default" RenderType for item models.
-     * The *correct* atlas binding per-quad is handled by the ItemRenderer mixin (section 4).
-     *//*
+ * Bypasses the IllegalStateException and sets MultiAtlasState.MIXED when both atlases are detected.
+ *
+ * NOTE: We deliberately return a "reasonable default" RenderType for item models.
+ * The *correct* atlas binding per-quad is handled by the ItemRenderer mixin (section 4).
+ *//*
 
     @Inject(
         method = "detectRenderType",

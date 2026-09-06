@@ -84,7 +84,7 @@ public final class ObsBrigadier {
 	}
 
 	private static void applySuggests(ScriptCommand c, ScriptCommand.Param p,
-									  RequiredArgumentBuilder<CommandSourceStack, ?> req) {
+	                                  RequiredArgumentBuilder<CommandSourceStack, ?> req) {
 		String provId = (c.suggests() != null) ? c.suggests().get(p.name()) : null;
 
 		if (p.kind() == ScriptCommand.Kind.ENUM) {

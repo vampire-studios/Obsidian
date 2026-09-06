@@ -11,24 +11,24 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class CustomTallBlockItem extends BlockItem {
 
-    public final Block block;
+	public final Block block;
 
-    public CustomTallBlockItem(Block block, net.minecraft.world.level.block.Block blockImpl, Properties settings) {
-        super(blockImpl, settings);
-        this.block = block;
-    }
+	public CustomTallBlockItem(Block block, net.minecraft.world.level.block.Block blockImpl, Properties settings) {
+		super(blockImpl, settings);
+		this.block = block;
+	}
 
-    protected boolean placeBlock(BlockPlaceContext itemPlacementContext, BlockState blockState) {
-        Level world = itemPlacementContext.getLevel();
-        BlockPos blockPos = itemPlacementContext.getClickedPos().above();
-        BlockState blockState2 = world.isWaterAt(blockPos) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
-        world.setBlock(blockPos, blockState2, 27);
-        return super.placeBlock(itemPlacementContext, blockState);
-    }
+	protected boolean placeBlock(BlockPlaceContext itemPlacementContext, BlockState blockState) {
+		Level world = itemPlacementContext.getLevel();
+		BlockPos blockPos = itemPlacementContext.getClickedPos().above();
+		BlockState blockState2 = world.isWaterAt(blockPos) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
+		world.setBlock(blockPos, blockState2, 27);
+		return super.placeBlock(itemPlacementContext, blockState);
+	}
 
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        return block.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
-    }
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return block.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
+	}
 
 }

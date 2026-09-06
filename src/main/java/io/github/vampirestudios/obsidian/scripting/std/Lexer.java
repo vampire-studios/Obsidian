@@ -9,13 +9,18 @@ final class Lexer {
 		int i = 0, n = src.length();
 
 		// strip BOM
-		if (n > 0 && src.charAt(0) == '\uFEFF') { i++; }
+		if (n > 0 && src.charAt(0) == '\uFEFF') {
+			i++;
+		}
 
 		while (i < n) {
 			char c = src.charAt(i);
 
 			// whitespace
-			if (Character.isWhitespace(c)) { i++; continue; }
+			if (Character.isWhitespace(c)) {
+				i++;
+				continue;
+			}
 
 			// line & block comments
 			if (c == '/') {
@@ -29,7 +34,10 @@ final class Lexer {
 					if (n1 == '*') {                // /* ... */
 						i += 2;
 						while (i < n - 1) {
-							if (src.charAt(i) == '*' && src.charAt(i + 1) == '/') { i += 2; break; }
+							if (src.charAt(i) == '*' && src.charAt(i + 1) == '/') {
+								i += 2;
+								break;
+							}
 							i++;
 						}
 						continue;
@@ -38,48 +46,99 @@ final class Lexer {
 			}
 
 			switch (c) {
-				case '.' -> { out.add(new Tok(K.DOT, ".", i++)); }
-				case '(' -> { out.add(new Tok(K.LP, "(", i++)); }
-				case ')' -> { out.add(new Tok(K.RP, ")", i++)); }
-				case '{' -> { out.add(new Tok(K.LBRACE, "{", i++)); }
-				case ':' -> { out.add(new Tok(K.COLON, ":", i++)); }
-				case '[' -> { out.add(new Tok(K.LSQUARE, "[", i++)); }
-				case ']' -> { out.add(new Tok(K.RSQUARE, "]", i++)); }
-				case '}' -> { out.add(new Tok(K.RBRACE, "}", i++)); }
-				case ',' -> { out.add(new Tok(K.COMMA, ",", i++)); }
-				case ';' -> { out.add(new Tok(K.SEMI, ";", i++)); }
-				case '+' -> { out.add(new Tok(K.PLUS, "+", i++)); }
-				case '-' -> { out.add(new Tok(K.MINUS, "-", i++)); }
-				case '*' -> { out.add(new Tok(K.STAR, "*", i++)); }
-				case '/' -> { out.add(new Tok(K.SLASH, "/", i++)); }
-				case '%' -> { out.add(new Tok(K.PERCENT, "%", i++)); }
+				case '.' -> {
+					out.add(new Tok(K.DOT, ".", i++));
+				}
+				case '(' -> {
+					out.add(new Tok(K.LP, "(", i++));
+				}
+				case ')' -> {
+					out.add(new Tok(K.RP, ")", i++));
+				}
+				case '{' -> {
+					out.add(new Tok(K.LBRACE, "{", i++));
+				}
+				case ':' -> {
+					out.add(new Tok(K.COLON, ":", i++));
+				}
+				case '[' -> {
+					out.add(new Tok(K.LSQUARE, "[", i++));
+				}
+				case ']' -> {
+					out.add(new Tok(K.RSQUARE, "]", i++));
+				}
+				case '}' -> {
+					out.add(new Tok(K.RBRACE, "}", i++));
+				}
+				case ',' -> {
+					out.add(new Tok(K.COMMA, ",", i++));
+				}
+				case ';' -> {
+					out.add(new Tok(K.SEMI, ";", i++));
+				}
+				case '+' -> {
+					out.add(new Tok(K.PLUS, "+", i++));
+				}
+				case '-' -> {
+					out.add(new Tok(K.MINUS, "-", i++));
+				}
+				case '*' -> {
+					out.add(new Tok(K.STAR, "*", i++));
+				}
+				case '/' -> {
+					out.add(new Tok(K.SLASH, "/", i++));
+				}
+				case '%' -> {
+					out.add(new Tok(K.PERCENT, "%", i++));
+				}
 				case '!' -> {
-					if (i + 1 < n && src.charAt(i + 1) == '=') { out.add(new Tok(K.NEQ, "!=", i)); i += 2; }
-					else { out.add(new Tok(K.BANG, "!", i++)); }
+					if (i + 1 < n && src.charAt(i + 1) == '=') {
+						out.add(new Tok(K.NEQ, "!=", i));
+						i += 2;
+					} else {
+						out.add(new Tok(K.BANG, "!", i++));
+					}
 				}
 				case '=' -> {
-					if (i + 1 < n && src.charAt(i + 1) == '=') { out.add(new Tok(K.EQ, "==", i)); i += 2; }
-					else { out.add(new Tok(K.ASSIGN, "=", i++)); }
+					if (i + 1 < n && src.charAt(i + 1) == '=') {
+						out.add(new Tok(K.EQ, "==", i));
+						i += 2;
+					} else {
+						out.add(new Tok(K.ASSIGN, "=", i++));
+					}
 				}
 				case '<' -> {
-					if (i + 1 < n && src.charAt(i + 1) == '=') { out.add(new Tok(K.LTE, "<=", i)); i += 2; }
-					else { out.add(new Tok(K.LT, "<", i++)); }
+					if (i + 1 < n && src.charAt(i + 1) == '=') {
+						out.add(new Tok(K.LTE, "<=", i));
+						i += 2;
+					} else {
+						out.add(new Tok(K.LT, "<", i++));
+					}
 				}
 				case '>' -> {
-					if (i + 1 < n && src.charAt(i + 1) == '=') { out.add(new Tok(K.GTE, ">=", i)); i += 2; }
-					else { out.add(new Tok(K.GT, ">", i++)); }
+					if (i + 1 < n && src.charAt(i + 1) == '=') {
+						out.add(new Tok(K.GTE, ">=", i));
+						i += 2;
+					} else {
+						out.add(new Tok(K.GT, ">", i++));
+					}
 				}
 				case '&' -> {
-					if (i + 1 < n && src.charAt(i + 1) == '&') { out.add(new Tok(K.ANDAND, "&&", i)); i += 2; }
-					else throw err(i, "'&'");
+					if (i + 1 < n && src.charAt(i + 1) == '&') {
+						out.add(new Tok(K.ANDAND, "&&", i));
+						i += 2;
+					} else throw err(i, "'&'");
 				}
 				case '|' -> {
-					if (i + 1 < n && src.charAt(i + 1) == '|') { out.add(new Tok(K.OROR, "||", i)); i += 2; }
-					else throw err(i, "'|'");
+					if (i + 1 < n && src.charAt(i + 1) == '|') {
+						out.add(new Tok(K.OROR, "||", i));
+						i += 2;
+					} else throw err(i, "'|'");
 				}
 				case '"' -> { // string with escapes
 					int start = i;
-					int j = ++i; StringBuilder b = new StringBuilder();
+					int j = ++i;
+					StringBuilder b = new StringBuilder();
 					while (j < n) {
 						char d = src.charAt(j);
 						if (d == '\\' && j + 1 < n) {
@@ -89,16 +148,19 @@ final class Lexer {
 								case 'r' -> b.append('\r');
 								case 't' -> b.append('\t');
 								case '"' -> b.append('"');
-								case '\\'-> b.append('\\');
-								default  -> b.append(e); // lenient
+								case '\\' -> b.append('\\');
+								default -> b.append(e); // lenient
 							}
-							j += 2; continue;
+							j += 2;
+							continue;
 						}
 						if (d == '"') break;
-						b.append(d); j++;
+						b.append(d);
+						j++;
 					}
 					if (j >= n) throw err(start, "Unterminated string");
-					out.add(new Tok(K.STR, b.toString(), start)); i = j + 1;
+					out.add(new Tok(K.STR, b.toString(), start));
+					i = j + 1;
 				}
 				default -> {
 					if (Character.isDigit(c)) {
@@ -108,9 +170,14 @@ final class Lexer {
 						// integer / fraction
 						while (j < n) {
 							char d = src.charAt(j);
-							if (Character.isDigit(d)) { j++; continue; }
+							if (Character.isDigit(d)) {
+								j++;
+								continue;
+							}
 							if (d == '.' && !seenDot && j + 1 < n && Character.isDigit(src.charAt(j + 1))) {
-								seenDot = true; j++; continue;
+								seenDot = true;
+								j++;
+								continue;
 							}
 							break;
 						}
@@ -131,11 +198,13 @@ final class Lexer {
 						if (uStart < n) {
 							// longest wins: ms, then single-char units
 							if (uStart + 1 < n && (src.charAt(uStart) == 'm') && (src.charAt(uStart + 1) == 's')) {
-								unit = "ms"; j = uStart + 2;
+								unit = "ms";
+								j = uStart + 2;
 							} else {
 								char u = src.charAt(uStart);
 								if (u == 's' || u == 'm' || u == 'h' || u == 'd' || u == 't') {
-									unit = String.valueOf(u); j = uStart + 1;
+									unit = String.valueOf(u);
+									j = uStart + 1;
 								}
 							}
 						}
@@ -160,32 +229,35 @@ final class Lexer {
 							else break;
 						}
 						String w = src.substring(i, j);
-						K k = switch (w) {case "true"  -> K.TRUE;
+						K k = switch (w) {
+							case "true" -> K.TRUE;
 							case "false" -> K.FALSE;
 							case "every" -> K.EVERY;
 							case "while" -> K.WHILE;
-							case "repeat"-> K.REPEAT;
+							case "repeat" -> K.REPEAT;
 							case "observable" -> K.OBSERVABLE;
 							case "watch" -> K.WATCH;
-							case "wait"  -> K.WAIT;
-							case "let"   -> K.LET;
-							case "const"   -> K.CONST;
-							case "if"    -> K.IF;
-							case "else"  -> K.ELSE;
-							case "for"   -> K.FOR;
-							case "in"    -> K.IN;
-							case "to"    -> K.TO;
-							case "step"  -> K.STEP;
-							case "switch"-> K.SWITCH;
-							case "case"  -> K.CASE;
+							case "wait" -> K.WAIT;
+							case "let" -> K.LET;
+							case "const" -> K.CONST;
+							case "if" -> K.IF;
+							case "else" -> K.ELSE;
+							case "for" -> K.FOR;
+							case "in" -> K.IN;
+							case "to" -> K.TO;
+							case "step" -> K.STEP;
+							case "switch" -> K.SWITCH;
+							case "case" -> K.CASE;
 							case "default" -> K.DEFAULT;
 							// Optional readable ops:
-							case "and"   -> K.ANDAND;
-							case "or"    -> K.OROR;
-							case "not"   -> K.BANG;
-							default      -> K.ID;
+							case "and" -> K.ANDAND;
+							case "or" -> K.OROR;
+							case "not" -> K.BANG;
+							default -> K.ID;
 						};
-						out.add(new Tok(k, w, i)); i = j; continue;
+						out.add(new Tok(k, w, i));
+						i = j;
+						continue;
 					}
 
 					throw err(i, "Unexpected char: " + c);

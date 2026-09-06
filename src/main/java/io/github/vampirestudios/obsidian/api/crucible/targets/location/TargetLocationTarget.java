@@ -4,17 +4,17 @@ import io.github.vampirestudios.obsidian.api.crucible.targets.LocationTarget;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class TargetLocationTarget extends LocationTarget {
-    public TargetLocationTarget() {
-        super(List.of("TargetLocation", "targetLocation", "tl"));
-    }
+	public TargetLocationTarget() {
+		super(List.of("TargetLocation", "targetLocation", "tl"));
+	}
 
-    @Override
-    public List<Vec3> getTargets(LivingEntity caster) {
-        return Collections.singletonList(Objects.requireNonNull(caster.getLastHurtMob()).position());
-    }
+	@Override
+	public List<Vec3> getTargets(LivingEntity caster) {
+		// No last target is normal — the caster may not have hit anything yet.
+		LivingEntity target = caster.getLastHurtMob();
+		return target == null ? List.of() : List.of(target.position());
+	}
 }

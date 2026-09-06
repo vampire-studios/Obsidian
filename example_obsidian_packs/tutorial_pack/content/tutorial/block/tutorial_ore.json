@@ -1,0 +1,43 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Tutorial Ore"
+      }
+    },
+    "block_properties": {
+      "sound_group": "minecraft:stone",
+      "hardness": 3.0,
+      "resistance": 3.0,
+      "requires_tool": true,
+      "mineable": "pickaxe",
+      "tool_tier": "iron",
+      "translucent": false
+    },
+    "item_properties": {
+      "item_group": "minecraft:natural_blocks"
+    }
+  },
+  "drop_information": {
+    "silk_touch_drops_block": true,
+    "drops": [
+      {
+        "name": "minecraft:diamond",
+        "count": {
+          "min": 2,
+          "max": 5
+        },
+        "fortune": "ore_drops"
+      }
+    ],
+    "xp_drop_amount": 5
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/deepslate_diamond_ore"
+      }
+    }
+  }
+}

@@ -1,17 +1,15 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.block.BlockSetType;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeBuilder;
 import net.minecraft.resources.Identifier;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -22,16 +20,17 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 public class BlockSetTypes implements AddonModule {
 
 	@Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-		BlockSetType blockSetType = BaseGson.GSON.fromJson(new FileReader(file), BlockSetType.class);
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		BlockSetType blockSetType = AddonFormats.read(addon, file, BlockSetType.class);
 		try {
 			if (blockSetType == null) return;
 
 			Identifier identifier = Objects.requireNonNullElseGet(
 					blockSetType.id,
-					() -> Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""))
+					() -> Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file))
 			);
-			if (blockSetType.id == null) blockSetType.id = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
+			if (blockSetType.id == null)
+				blockSetType.id = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
 
 			registerSoundIfNotFound(blockSetType.soundType);
 			registerSoundIfNotFound(blockSetType.doorClose);

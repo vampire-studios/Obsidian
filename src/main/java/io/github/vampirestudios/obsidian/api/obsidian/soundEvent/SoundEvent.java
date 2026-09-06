@@ -4,6 +4,6 @@ import net.minecraft.resources.Identifier;
 
 public class SoundEvent {
 
-    public Identifier id;
+	public Identifier id;
 
 }

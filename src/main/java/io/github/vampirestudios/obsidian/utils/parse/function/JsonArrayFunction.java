@@ -5,6 +5,5 @@ import com.google.gson.JsonArray;
 import java.util.function.Function;
 
 @FunctionalInterface
-public interface JsonArrayFunction<T> extends Function<JsonArray, T>
-{
+public interface JsonArrayFunction<T> extends Function<JsonArray, T> {
 }

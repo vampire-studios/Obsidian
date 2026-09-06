@@ -1,9 +1,13 @@
 package io.github.vampirestudios.obsidian.api.nexo;
 
-import blue.endless.jankson.annotation.SerializedName;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.annotations.SerializedName;
 import eu.pb4.placeholders.api.parsers.TagParser;
 import io.github.vampirestudios.obsidian.Obsidian;
 import io.github.vampirestudios.obsidian.minecraft.oraxen.*;
@@ -23,7 +27,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Brightness;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -54,7 +57,6 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -64,6 +66,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Represents an Oraxen item with custom properties and mechanics.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NexoItem {
 	private static final Logger LOGGER = LogManager.getLogger(NexoItem.class);
 
@@ -78,7 +81,7 @@ public class NexoItem {
 	public String displayName;
 	@JsonProperty("itemname")
 	public String itemName;
-	public String material;
+	public String material = "PAPER";
 	public String crucible_id;
 	@JsonProperty("Pack")
 	public Pack pack;
@@ -86,6 +89,14 @@ public class NexoItem {
 	public Mechanics mechanics;
 	@JsonProperty("Components")
 	public DataComponentMap components;
+	@JsonProperty("ItemModel")
+	public JsonNode itemModel;
+	@JsonProperty("AttributeModifiers")
+	public Mechanics.Attributes attributeModifiers;
+	@JsonProperty("PersistentData")
+	public Map<String, Object> persistentData;
+	public String template;
+	public List<String> templates = new ArrayList<>();
 	public String permission;
 	public String color;
 	public List<String> lore = new ArrayList<>();
@@ -109,7 +120,7 @@ public class NexoItem {
 		if (item.components().has(DataComponents.ITEM_NAME)) {
 			Component existing = item.components()
 					.getOrDefault(DataComponents.ITEM_NAME, Component.literal("A"));
-			return TagParser.QUICK_TEXT_WITH_STF.parseNode(existing.getString()).toComponent();
+			return TagParser.QUICK_TEXT.parseNode(existing.getString()).toComponent();
 		}
 
 		// Otherwise, fall back to displayName, then itemName, then "A"
@@ -122,7 +133,7 @@ public class NexoItem {
 			name = "A";
 		}
 
-		return TagParser.QUICK_TEXT_WITH_STF.parseNode(name).toComponent();
+		return TagParser.QUICK_TEXT.parseNode(name).toComponent();
 	}
 
 	private boolean isNameNotNull(String name) {
@@ -148,26 +159,26 @@ public class NexoItem {
 				case FISHING_ROD -> createFishingRod(nexoItem, properties);
 				case TRIDENT -> createTrident(nexoItem, properties);
 				case MACE -> createMace(nexoItem, properties);
-				case ELYTRA	-> createElytra(nexoItem, properties);
+				case ELYTRA -> createElytra(nexoItem, properties);
 				// All armor & animal‑armor types
 				case HELMET,
-					 CHESTPLATE,
-					 LEGGINGS,
-					 BOOTS,
-					 HORSE_ARMOR,
-					 LLAMA_CARPET,
-					 WOLF_ARMOR	-> createArmor(nexoItem, properties);
+				     CHESTPLATE,
+				     LEGGINGS,
+				     BOOTS,
+				     HORSE_ARMOR,
+				     LLAMA_CARPET,
+				     WOLF_ARMOR -> createArmor(nexoItem, properties);
 				default -> createBasicItem(nexoItem, properties);
 			};
 		}
 
 		// Method implementations to create specific tool types with given tier
 		private Item createAxe(NexoItem nexoItem, ToolMaterial tier, Item.Properties properties) {
-			return new AxeItemImpl(nexoItem, tier, getAttackDamage(tier, ItemType.AXE), getAttackSpeed(ItemType.AXE), properties);
+			return new ItemImpl(nexoItem, properties.axe(tier, getAttackDamage(tier, ItemType.AXE), getAttackSpeed(ItemType.AXE)));
 		}
 
 		private Item createShovel(NexoItem nexoItem, ToolMaterial tier, Item.Properties properties) {
-			return new ShovelItemImpl(nexoItem, tier, getAttackDamage(tier, ItemType.SHOVEL), getAttackSpeed(ItemType.SHOVEL), properties);
+			return new ItemImpl(nexoItem, properties.shovel(tier, getAttackDamage(tier, ItemType.SHOVEL), getAttackSpeed(ItemType.SHOVEL)));
 		}
 
 		private Item createSword(NexoItem nexoItem, ToolMaterial tier, Item.Properties properties) {
@@ -175,7 +186,7 @@ public class NexoItem {
 		}
 
 		private Item createHoe(NexoItem nexoItem, ToolMaterial tier, Item.Properties properties) {
-			return new HoeItemImpl(nexoItem, tier, getAttackDamage(tier, ItemType.HOE), getAttackSpeed(ItemType.HOE), properties);
+			return new ItemImpl(nexoItem, properties.hoe(tier, getAttackDamage(tier, ItemType.HOE), getAttackSpeed(ItemType.HOE)));
 		}
 
 		private Item createPickaxe(NexoItem nexoItem, ToolMaterial tier, Item.Properties properties) {
@@ -187,7 +198,7 @@ public class NexoItem {
 				io.github.vampirestudios.obsidian.api.obsidian.item.ArmorMaterial material;
 				if (nexoItem.mechanics.armor.material != null && ContentRegistries.ARMOR_MATERIALS.containsKey(nexoItem.mechanics.armor.material)) {
 					material = ContentRegistries.ARMOR_MATERIALS.getValue(nexoItem.mechanics.armor.material);
-				} else if(nexoItem.mechanics.armor.armor_material != null) {
+				} else if (nexoItem.mechanics.armor.armor_material != null) {
 					material = nexoItem.mechanics.armor.armor_material;
 				} else {
 					material = null;
@@ -203,7 +214,7 @@ public class NexoItem {
 						SoundEvents.ARMOR_EQUIP_LEATHER,
 						material.toughness,
 						material.knockback_resistance,
-						TagKey.create(Registries.ITEM, material.repair_tag),
+						TagKey.create(Registries.ITEM, material.repairTag),
 						equipmentAsset
 				);
 
@@ -215,8 +226,7 @@ public class NexoItem {
 					item = new CustomArmorItem(nexoItem, properties);
 				}
 				return item;
-			}
-			else return createBasicItem(nexoItem, properties);
+			} else return createBasicItem(nexoItem, properties);
 		}
 
 		/*private Item createShield(OraxenItem oraxenItem, Item.Properties properties) {
@@ -236,8 +246,11 @@ public class NexoItem {
 		}
 
 		private Item createTrident(NexoItem nexoItem, Item.Properties properties) {
-			nexoItem.mechanics.trident.thrown_item_model = nexoItem.id.withSuffix("_throwing");
-			return new ItemImpl(nexoItem, properties);
+			if (nexoItem.mechanics != null && nexoItem.mechanics.trident != null
+					&& nexoItem.mechanics.trident.thrown_item_model == null) {
+				nexoItem.mechanics.trident.thrown_item_model = nexoItem.id.withSuffix("_throwing");
+			}
+			return new NexoTridentItemImpl(nexoItem, properties);
 		}
 
 		private Item createMace(NexoItem nexoItem, Item.Properties properties) {
@@ -284,7 +297,7 @@ public class NexoItem {
 	}
 
 	public ToolMaterial getTier() {
-		return switch(material.split("_")[0]) {
+		return switch (material.split("_")[0]) {
 			case "STONE" -> ToolMaterial.STONE;
 			case "IRON" -> ToolMaterial.IRON;
 			case "GOLDEN" -> ToolMaterial.GOLD;
@@ -338,6 +351,7 @@ public class NexoItem {
 		TRIDENT
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Pack {
 		public Identifier id;
 		public boolean generate_model = false;
@@ -352,19 +366,41 @@ public class NexoItem {
 		public Identifier charged_model;
 		public Identifier firework_model;
 		public Identifier cast_model;
+		public Identifier dyeable_model;
+		public Identifier dyeable_texture;
+		public Identifier blocking_texture;
+		public List<Identifier> pulling_textures;
+		public Identifier charged_texture;
+		public Identifier firework_texture;
+		public Identifier cast_texture;
+		public List<Object> composite_models;
+		public boolean oversized_in_gui;
+
+		/**
+		 * Which namespace the unqualified paths in this block belong to.
+		 *
+		 * <p>Left out, they mean {@code minecraft}, exactly as Nexo reads them. Set it to a namespace —
+		 * or to {@code pack} for this pack's own — when the assets ship somewhere else.
+		 */
+		public String namespace;
 
 		public Map<String, Identifier> getTextures() {
 			Map<String, Identifier> texturesMap = new HashMap<>();
 			if (textures instanceof List<?> list) {
 				handleTextureList(texturesMap, list.stream().map(o -> o instanceof String s ? s : null).toList());
-			} else if (textures instanceof Map<?, ?>) {
-				handleTextureMap(texturesMap, (Map<String, Identifier>) textures);
+			} else if (textures instanceof Map<?, ?> map) {
+				handleTextureMap(texturesMap, map);
+			} else if (textures instanceof String single) {
+				texturesMap.put("layer0", textureIdentifier(single));
+			} else if (texture != null) {
+				texturesMap.put("layer0", texture);
 			} else {
-				if(generate_model) {
-					LOGGER.info(id);
-					throw new IllegalStateException("Textures field must be a list or a map");
+				// No textures is not fatal. Throwing here aborted asset generation for the whole pack,
+				// so one under-specified item cost every model declared after it.
+				if (generate_model) {
+					LOGGER.warn("[Obsidian] Nexo item {} asks for a generated model but names no texture.", id);
 				}
-				else return null;
+				return null;
 			}
 			return texturesMap;
 		}
@@ -380,34 +416,49 @@ public class NexoItem {
 			if (modelName.equals("item/generated") || modelName.startsWith("item")) {
 				// Handle item model textures
 				for (int i = 0; i < textureList.size(); i++) {
-					texturesMap.put("layer" + i, Identifier.fromNamespaceAndPath(id.getNamespace(), textureList.get(i)));
+					if (textureList.get(i) != null) texturesMap.put("layer" + i, textureIdentifier(textureList.get(i)));
 				}
 			} else if (modelName.equals("block/cube_all")) {
 				// Handle block model textures where all sides are the same
 				if (!textureList.isEmpty()) {
-					texturesMap.put("all", Identifier.fromNamespaceAndPath(id.getNamespace(), textureList.get(0)));
+					if (textureList.get(0) != null) texturesMap.put("all", textureIdentifier(textureList.get(0)));
 				}
 			} else {
 				// Default case for other models
 				for (int i = 0; i < textureList.size(); i++) {
-					texturesMap.put("texture" + i, Identifier.fromNamespaceAndPath(id.getNamespace(), textureList.get(i)));
+					if (textureList.get(i) != null) texturesMap.put("texture" + i, textureIdentifier(textureList.get(i)));
 				}
 			}
 		}
 
-		private void handleTextureMap(Map<String, Identifier> texturesMap, Map<String, Identifier> textureMap) {
+		private void handleTextureMap(Map<String, Identifier> texturesMap, Map<?, ?> textureMap) {
 			if (textureMap == null || textureMap.isEmpty()) {
 				throw new IllegalArgumentException("Texture map cannot be null or empty");
 			}
 
-			for (Map.Entry<String, Identifier> entry : textureMap.entrySet()) {
-				String key = entry.getKey();
-				Identifier value = entry.getValue();
-				texturesMap.put(key, value);
+			for (Map.Entry<?, ?> entry : textureMap.entrySet()) {
+				if (entry.getKey() == null || entry.getValue() == null) continue;
+				Identifier value = entry.getValue() instanceof Identifier identifier
+						? identifier : textureIdentifier(entry.getValue().toString());
+				texturesMap.put(entry.getKey().toString(), value);
 			}
+		}
+
+		/**
+		 * A texture named in the {@code textures} block.
+		 *
+		 * <p>Anything unqualified was already given its namespace before this object was built, so a
+		 * bare path reaching here is a leftover and means {@code minecraft}, the same as everywhere
+		 * else. This used to namespace it to the pack, which made {@code textures: [x]} and
+		 * {@code texture: x} mean two different things.
+		 */
+		private Identifier textureIdentifier(String value) {
+			return value.contains(":") ? Identifier.parse(value)
+					: Identifier.withDefaultNamespace(value);
 		}
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Mechanics {
 		public Armor armor;
 		public Furniture furniture;
@@ -445,12 +496,16 @@ public class NexoItem {
 			public Identifier fall_sound;
 
 			public SoundType getSoundType() {
-				SoundEvent place = BuiltInRegistries.SOUND_EVENT.getValue(place_sound);
-				SoundEvent breakSound1 = BuiltInRegistries.SOUND_EVENT.getValue(break_sound);
-				SoundEvent hit = BuiltInRegistries.SOUND_EVENT.getValue(hit_sound);
-				SoundEvent step = BuiltInRegistries.SOUND_EVENT.getValue(step_sound);
-				SoundEvent fall = BuiltInRegistries.SOUND_EVENT.getValue(fall_sound);
+				SoundEvent place = resolve(place_sound, SoundType.WOOD.getPlaceSound());
+				SoundEvent breakSound1 = resolve(break_sound, SoundType.WOOD.getBreakSound());
+				SoundEvent hit = resolve(hit_sound, SoundType.WOOD.getHitSound());
+				SoundEvent step = resolve(step_sound, SoundType.WOOD.getStepSound());
+				SoundEvent fall = resolve(fall_sound, SoundType.WOOD.getFallSound());
 				return new SoundType(1.0f, 1.0f, breakSound1, step, place, hit, fall);
+			}
+
+			private static SoundEvent resolve(Identifier id, SoundEvent fallback) {
+				return id == null ? fallback : BuiltInRegistries.SOUND_EVENT.getOptional(id).orElse(fallback);
 			}
 		}
 
@@ -471,22 +526,37 @@ public class NexoItem {
 			public Identifier toggled_item_model;
 			public List<Light> lights = new ArrayList<>();
 
+			@JsonSetter("light")
+			public void setRawLight(String raw) {
+				addRawLight(raw);
+			}
+
 			// Jackson will call this with the raw strings from YAML
 			@JsonSetter("lights")
 			public void setRawLights(List<String> raw) {
-				for (String entry : raw) {
-					// entry looks like "x..y,a..b,c..d LEVEL"
-					String[] parts    = entry.split(" ");
-					String  coords    = parts[0];
-					int     lvl       = Integer.parseInt(parts[1]);
-					String[] axes     = coords.split(",");
-					List<Integer> xs  = expandIntRange(axes[0]);
-					List<Integer> ys  = expandIntRange(axes[1]);
-					List<Integer> zs  = expandIntRange(axes[2]);
+				if (raw != null) raw.forEach(this::addRawLight);
+			}
 
-					for (int x : xs) for (int y : ys) for (int z : zs) {
-						lights.add(new Light(new Vec3(x, y, z), lvl));
-					}
+			private void addRawLight(String entry) {
+				try {
+					// entry looks like "x..y,a..b,c..d LEVEL"
+					String[] parts = entry.trim().split("\\s+");
+					if (parts.length != 2) throw new IllegalArgumentException("expected 'x,y,z level'");
+					String coords = parts[0];
+					int lvl = Math.max(0, Math.min(15, Integer.parseInt(parts[1])));
+					String[] axes = coords.split(",");
+					if (axes.length != 3) throw new IllegalArgumentException("expected three coordinates");
+					List<Integer> xs = expandIntRange(axes[0]);
+					List<Integer> ys = expandIntRange(axes[1]);
+					List<Integer> zs = expandIntRange(axes[2]);
+
+					for (int x : xs)
+						for (int y : ys)
+							for (int z : zs) {
+								lights.add(new Light(new Vec3(x, y, z), lvl));
+							}
+				} catch (RuntimeException exception) {
+					LOGGER.warn("Ignoring malformed Nexo furniture light '{}': {}", entry, exception.getMessage());
 				}
 			}
 
@@ -505,8 +575,9 @@ public class NexoItem {
 			public static class Light {
 				public Vec3 pos;           // x,y,z
 				public int lightLevel;     // 0–15
+
 				public Light(Vec3 pos, int lightLevel) {
-					this.pos        = pos;
+					this.pos = pos;
 					this.lightLevel = lightLevel;
 				}
 			}
@@ -526,6 +597,7 @@ public class NexoItem {
 			@JsonProperty("nexo_blocks")
 			@SerializedName("nexo_blocks")
 			public List<String> nexoBlocks;
+			public RadiusLimitation radius_limitation;
 
 			public enum LimitedPlacingType {
 				ALLOW, DENY
@@ -555,32 +627,52 @@ public class NexoItem {
 
 			// new fields:
 			public boolean rotatable = true;              // e.g. rotatable: false
-			public RestrictedRotation restricted_rotation; // enum NONE, LOOSE, VERY_STRICT
+			public RestrictedRotation restricted_rotation = RestrictedRotation.STRICT;
 
 			public Hitbox hitbox;                         // barriers list
-			public List<String> seats;                      // seat offsets
+			public String seat;                           // singular seat offset
+			public List<String> seats;                    // seat offsets
+			public String bed;                            // x,y,z skip-night reset-phantoms
+			public List<String> beds;                     // multiple bed positions
 
 			public Storage storage;                       // optional chest logic
 			public Lights lights;                         // optional lamp logic
 
 			public Properties properties;
+			@JsonAlias({"clickActions", "click_actions"})
 			public List<ClickAction> clickActions;
 			public String modelengine_id;
+			public boolean waterloggable;
+			public Object jukebox;
+			public Object blocklocker;
+			public Door door;
+			public Evolution evolution;
+			@JsonAlias("placement")
+			public Placements placements;
+			public FurnitureStates states = new FurnitureStates();
+			public TextEntity text_entity;
+			public List<TextEntity> text_entities = new ArrayList<>();
 
-			public enum RestrictedRotation { NONE, LOOSE, VERY_STRICT }
+			public enum RestrictedRotation {NONE, LOOSE, STRICT, VERY_STRICT}
 
 			public static class Hitbox {
+				public String barrier;
 				public List<String> barriers;
+				public String interaction;
 				public List<String> interactions;
+				public String shulker;
 				public List<String> shulkers;
+				public String ghast;
+				public List<String> ghasts;
 
 				// parsed data
-				public List<Vec3>    barrierOffsets     = new ArrayList<>();
+				public List<Vec3> barrierOffsets = new ArrayList<>();
 				public List<InteractionBox> interactionBoxes = new ArrayList<>();
-				public List<ShulkerSpec>    shulkerSpecs     = new ArrayList<>();
+				public List<ShulkerSpec> shulkerSpecs = new ArrayList<>();
 
 				// helper classes
 				public static record InteractionBox(Vec3 offset, double width, double height) {}
+
 				public static record ShulkerSpec(BlockPos offset, double scale, double length, Direction dir) {}
 			}
 
@@ -593,6 +685,17 @@ public class NexoItem {
 			}
 
 			public static class Connectable {
+				public ConnectableItemType type = ConnectableItemType.ITEM_MODEL;
+				@JsonProperty("default")
+				public Identifier defaultModel;
+				public Identifier straight;
+				public Identifier left;
+				public Identifier right;
+				public Identifier inner;
+				public Identifier outer;
+
+				public enum ConnectableItemType {ITEM_MODEL, ITEM}
+
 				/*public enum ConnectableItemType {
 					ITEM_MODEL, ITEM;
 
@@ -747,18 +850,113 @@ public class NexoItem {
 				}*/
 			}
 
-			public static class Properties {
-				public Color glowColor;
-				public float viewRange;
-				public Brightness brightness;
-				public ItemDisplayContext display_transform = ItemDisplayContext.NONE;
+			public static class Placements {
+				public Placement floor;
+				public Placement wall;
+				public Placement roof;
+			}
+
+			public static class Placement {
+				public Identifier model;
+				public Identifier item_model;
+				public Properties properties;
+
+				public Identifier resolvedModel() {
+					return item_model != null ? item_model : model;
+				}
+			}
+
+			public static class Door {
+				public Identifier open_sound;
+				public Identifier close_sound;
+				public boolean is_sliding;
+				public boolean toggle_hitbox_on_open;
+				public boolean delay_hitbox_toggle;
+				public String automatic_close_delay;
+				public Properties open_properties;
+			}
+
+			public static class Evolution {
+				public int delay;
+				public double probability = 1.0;
+				public int light_boost;
+				public String next_stage;
+				public Drop drop;
+			}
+
+			public static class FurnitureStates {
+				@JsonAlias("conditions")
+				public List<String> condition = new ArrayList<>();
+				public String permission;
+				public String next_after;
+				public String reset_after;
+				private final Map<String, FurnitureState> entries = new LinkedHashMap<>();
+
+				@JsonAnySetter
+				public void add(String name, FurnitureState state) {
+					if (state != null) entries.put(name, state);
+				}
+
+				public boolean isEmpty() {
+					return entries.isEmpty();
+				}
+
+				public int size() {
+					return entries.size();
+				}
+
+				public Set<Map.Entry<String, FurnitureState>> entrySet() {
+					return entries.entrySet();
+				}
+			}
+
+			public static class FurnitureState {
+				public String type;
+				public Identifier model;
+				public Identifier item_model;
+				public Object value;
+				public String next_state;
+				public String next_after;
+				public String reset_after;
+				public String permission;
+				public List<String> conditions = new ArrayList<>();
+			}
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class TextEntity {
+				public Object text;
+				public String offset;
+				public String translation;
 				public String scale;
+				public String alignment;
+				public String tracking_rotation;
+				public String billboard;
+				public int line_width = 200;
+				public int background_color;
+				public byte text_opacity = -1;
+				public boolean shadow;
+				public boolean see_through;
+			}
+
+			public static class Properties {
+				@JsonAlias("glow_color")
+				public Object glowColor;
+				@JsonAlias("view_range")
+				public float viewRange;
+				public Object brightness;
+				public ItemDisplayContext display_transform = ItemDisplayContext.NONE;
+				public Object scale;
+				@JsonAlias("tracking_rotation")
 				public Display.BillboardConstraints trackingRotation = Display.BillboardConstraints.FIXED;
+				@JsonAlias("shadow_strength")
 				public float shadowStrength;
+				@JsonAlias("shadow_radius")
 				public float shadowRadius;
+				@JsonAlias("display_width")
 				public float displayWidth;
+				@JsonAlias("display_height")
 				public float displayHeight;
-				public Vec3 translation;
+				public Object translation;
 //				public Quaternionf leftRotation = new Quaternionf();
 //				public Quaternionf rightRotation = new Quaternionf();
 			}
@@ -769,9 +967,10 @@ public class NexoItem {
 			}
 		}
 
-		public static class NoteBlock { }
+		public static class NoteBlock extends CustomBlock {
+		}
 
-		public static class StringBlock {
+		public static class StringBlock extends CustomBlock {
 		}
 
 		public static class CustomBlock {
@@ -788,6 +987,12 @@ public class NexoItem {
 			public LogStrip log_strip;
 			public Directional directional;
 			public Sapling sapling;
+			public Furniture.Storage storage;
+			public List<Furniture.ClickAction> clickActions;
+			public boolean placeable_on_water;
+			public boolean requires_supporting;
+			public List<String> random_place;
+			public Object blocklocker;
 
 			public enum CustomBlockType {
 				NOTEBLOCK, STRINGBLOCK, CHORUSBLOCK
@@ -812,7 +1017,7 @@ public class NexoItem {
 				public String down_block;
 
 				public enum DirectionalType {
-					LOG, FURNACE, DROPPER
+					LOG, BARREL, FURNACE, DROPPER
 				}
 			}
 
@@ -924,37 +1129,37 @@ public class NexoItem {
 			public List<AttributeModifierData> modifiers;
 
 			public static class AttributeModifierData {
+				@JsonAlias({"attributeName", "attribute_name"})
+				@JsonProperty("attribute")
 				public Identifier attributeName; // The name of the attribute, e.g., "generic.max_health"
 				public double amount;
 				public String operation; // "ADDITION", "MULTIPLY_BASE", "MULTIPLY_TOTAL"
 				public String slot; // "mainhand", "offhand", "head", "chest", "legs", "feet", or "any"
 
 				public AttributeModifier.Operation getOperation() {
-					return switch (operation.toUpperCase()) {
-						case "MULTIPLY_BASE" -> AttributeModifier.Operation.ADD_MULTIPLIED_BASE;
-						case "MULTIPLY_TOTAL" -> AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
+					return switch (operation == null ? "ADD_NUMBER" : operation.toUpperCase(Locale.ROOT)) {
+						case "MULTIPLY_BASE", "ADD_SCALAR", "ADD_MULTIPLIED_BASE" -> AttributeModifier.Operation.ADD_MULTIPLIED_BASE;
+						case "MULTIPLY_TOTAL", "MULTIPLY_SCALAR_1", "ADD_MULTIPLIED_TOTAL" -> AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
 						default -> AttributeModifier.Operation.ADD_VALUE;
 					};
 				}
 
 				public EquipmentSlotGroup getEquipmentSlotGroup() {
-					return switch (slot.toLowerCase()) {
-						case "mainhand" -> EquipmentSlotGroup.MAINHAND;
-						case "offhand" -> EquipmentSlotGroup.OFFHAND;
-						case "head" -> EquipmentSlotGroup.HEAD;
-						case "chest" -> EquipmentSlotGroup.CHEST;
-						case "legs" -> EquipmentSlotGroup.LEGS;
-						case "feet" -> EquipmentSlotGroup.FEET;
-						case "any", "all" -> EquipmentSlotGroup.ANY;
-						default -> EquipmentSlotGroup.ANY;
-					};
+					if (slot == null || slot.isBlank()) return EquipmentSlotGroup.ANY;
+					try {
+						return EquipmentSlotGroup.valueOf(slot.toUpperCase(Locale.ROOT));
+					} catch (IllegalArgumentException ignored) {
+						return EquipmentSlotGroup.ANY;
+					}
 				}
 			}
 
 			public ItemAttributeModifiers createAttributeModifiers(List<AttributeModifierData> modifiersData) {
 				ImmutableList.Builder<ItemAttributeModifiers.Entry> entries = ImmutableList.builder();
 
+				if (modifiersData == null) return new ItemAttributeModifiers(entries.build());
 				for (AttributeModifierData modifierData : modifiersData) {
+					if (modifierData == null || modifierData.attributeName == null) continue;
 					Attribute attribute = BuiltInRegistries.ATTRIBUTE.getValue(modifierData.attributeName);
 
 					if (attribute != null) {
@@ -1201,7 +1406,8 @@ public class NexoItem {
 
 				effects.add(new Effect("invisibility_flash",
 						e -> applyInvisibilityFlash(entity, duration),
-						e -> {},
+						e -> {
+						},
 						duration));
 
 				effects.add(new Effect("change_gravity",
@@ -1211,17 +1417,20 @@ public class NexoItem {
 
 				effects.add(new Effect("healing_rain",
 						e -> applyHealingRain(entity, duration),
-						e -> {},
+						e -> {
+						},
 						duration));
 
 				effects.add(new Effect("mystery_teleport",
 						e -> applyMysteryTeleport(entity),
-						e -> {},
+						e -> {
+						},
 						0));
 
 				effects.add(new Effect("apply_clone",
 						e -> applyClone(entity, duration),
-						e -> {},
+						e -> {
+						},
 						duration));
 
 				return effects;
@@ -1651,10 +1860,18 @@ public class NexoItem {
 		}
 
 		public static class Trident {
+			public Sounds sounds;
 			public Identifier thrown_item_model;
 			public String thrown_item;
+			@JsonAlias("display_transform")
 			public ItemDisplayContext transform = ItemDisplayContext.NONE;
 			public Vec2 rotation = new Vec2(0, 0);
+
+			public static class Sounds {
+				public Identifier throw_sound;
+				public Identifier hit_sound;
+				public Identifier ground_sound;
+			}
 		}
 
 		public static class Bow {

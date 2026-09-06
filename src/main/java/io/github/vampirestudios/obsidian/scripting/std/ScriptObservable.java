@@ -7,7 +7,7 @@ package io.github.vampirestudios.obsidian.scripting.std;
 public record ScriptObservable(
 		String name,     // variable name
 		String initExpr,  // raw expression string for the initial value
-        Scope scope // GLOBAL or PLAYER
+		Scope scope // GLOBAL or PLAYER
 ) {
-	public enum Scope { GLOBAL, PLAYER }
+	public enum Scope {GLOBAL, PLAYER}
 }

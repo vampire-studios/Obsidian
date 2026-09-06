@@ -1,0 +1,15 @@
+{
+  "information": {
+    "name": "<gold>Tutorial Key",
+    "item_properties": {
+      "max_count": 1,
+      "rarity": "uncommon",
+      "item_group": "minecraft:tools_and_combat"
+    }
+  },
+  "lore": [
+    {
+      "text": "<gray><italic>Opens the tutorial vault."
+    }
+  ]
+}

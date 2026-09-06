@@ -16,30 +16,30 @@ import java.util.function.Consumer;
 
 public class EquipableItemImpl extends ItemImpl {
 
-    public EquipableItemImpl(NexoItem item, Properties settings) {
-        super(item, settings);
-    }
+	public EquipableItemImpl(NexoItem item, Properties settings) {
+		super(item, settings);
+	}
 
-    @Override
-    public Component getName(ItemStack stack) {
-        return this.item.getName(this);
-    }
+	@Override
+	public Component getName(ItemStack stack) {
+		return this.item.getName(this);
+	}
 
-    @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
-        if (item.lore != null) {
-            for (String lore : item.lore) {
-                consumer.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toComponent());
-            }
-        }
-    }
+	@Override
+	public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
+		if (item.lore != null) {
+			for (String lore : item.lore) {
+				consumer.accept(TagParser.QUICK_TEXT.parseNode(lore).toComponent());
+			}
+		}
+	}
 
-    @Override
-    public void inventoryTick(ItemStack itemStack, ServerLevel serverLevel, Entity entity, @Nullable EquipmentSlot equipmentSlot) {
-        if (item.mechanics != null && item.mechanics.cognitive_enhancement != null) {
-            if (!(entity instanceof Player player)) return; // Only apply to players
-            item.mechanics.cognitive_enhancement.onTick(player);
-        }
-        super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
-    }
+	@Override
+	public void inventoryTick(ItemStack itemStack, ServerLevel serverLevel, Entity entity, @Nullable EquipmentSlot equipmentSlot) {
+		if (item.mechanics != null && item.mechanics.cognitive_enhancement != null) {
+			if (!(entity instanceof Player player)) return; // Only apply to players
+			item.mechanics.cognitive_enhancement.onTick(player);
+		}
+		super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
+	}
 }

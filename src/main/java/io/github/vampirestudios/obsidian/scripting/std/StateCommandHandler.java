@@ -37,13 +37,17 @@ public class StateCommandHandler implements CommandHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Map<String,Object> resolvePlayerState(Object who, Map<String,Object> vars) {
+	private static Map<String, Object> resolvePlayerState(Object who, Map<String, Object> vars) {
 		if (who instanceof ServerPlayer sp) return STORE.player(sp.getUUID().toString());
 		String s = String.valueOf(who);
 		// try UUID
-		try { java.util.UUID.fromString(s); return STORE.player(s); } catch (Exception ignored) {}
+		try {
+			java.util.UUID.fromString(s);
+			return STORE.player(s);
+		} catch (Exception ignored) {
+		}
 		// fallback by name (online only)
-		MinecraftServer srv = ((ServerPlayer)vars.get("sender")).level().getServer();
+		MinecraftServer srv = ((ServerPlayer) vars.get("sender")).level().getServer();
 		for (var p : srv.getPlayerList().getPlayers())
 			if (p.getGameProfile().name().equalsIgnoreCase(s))
 				return STORE.player(p.getUUID().toString());

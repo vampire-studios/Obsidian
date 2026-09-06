@@ -1,0 +1,141 @@
+{
+  "name": "<gold>The Tutorial Siege",
+  "radius": 48,
+  "unique": true,
+  "cooldown": 1200,
+  "time_limit": 12000,
+  "bar": {
+    "color": "yellow",
+    "overlay": "notched_10",
+    "boss_music": true
+  },
+  "fail_when": {
+    "guard_dies": true
+  },
+  "stages": [
+    {
+      "name": "First Wave",
+      "wave": {
+        "spawns": [
+          {
+            "entity": "minecraft:villager",
+            "guard": true,
+            "name": "<green>Village Elder",
+            "name_visible": true,
+            "attributes": {
+              "minecraft:max_health": 40
+            }
+          },
+          {
+            "entity": "minecraft:zombie",
+            "count": 4,
+            "name": "Siege Ghoul",
+            "equipment": {
+              "head": "minecraft:iron_helmet",
+              "mainhand": "minecraft:stone_sword"
+            },
+            "attributes": {
+              "minecraft:max_health": 30
+            }
+          }
+        ],
+        "spread": 10,
+        "per_player": 0.5,
+        "interval": 20
+      },
+      "advance_when": {
+        "wave_cleared": true
+      },
+      "on_enter": [
+        {
+          "action": "send_message",
+          "message": "<gold>The first wave approaches!"
+        }
+      ]
+    },
+    {
+      "name": "Calm Before",
+      "advance_when": {
+        "duration": 200
+      }
+    },
+    {
+      "name": "<red>The Brute",
+      "bar": {
+        "color": "red",
+        "overlay": "progress",
+        "darken_sky": true
+      },
+      "wave": {
+        "spawns": [
+          {
+            "entity": "minecraft:ravager",
+            "count": 1,
+            "name": "<red>Tutorial Brute",
+            "name_visible": true,
+            "attributes": {
+              "minecraft:max_health": 80
+            }
+          }
+        ],
+        "spread": 6,
+        "track_health": true
+      },
+      "advance_when": {
+        "wave_cleared": true
+      },
+      "on_enter": [
+        {
+          "action": "send_message",
+          "message": "<red>Something larger is coming."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "threshold": 2,
+    "participation": [
+      {
+        "action": "give_item",
+        "item": "minecraft:emerald",
+        "count": 2
+      },
+      {
+        "action": "send_message",
+        "message": "<green>The village thanks you."
+      }
+    ],
+    "contribution": [
+      {
+        "action": "give_item",
+        "item": "tutorial:tutorial_key"
+      }
+    ],
+    "top": [
+      {
+        "action": "give_experience_levels",
+        "amount": 5
+      }
+    ]
+  },
+  "events": {
+    "on_start": [
+      {
+        "action": "send_message",
+        "message": "<gold>The siege begins!"
+      }
+    ],
+    "on_complete": [
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:ui.toast.challenge_complete"
+      }
+    ],
+    "on_fail": [
+      {
+        "action": "send_message",
+        "message": "<red>The elder has fallen."
+      }
+    ]
+  }
+}

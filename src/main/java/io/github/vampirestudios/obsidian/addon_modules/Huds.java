@@ -1,29 +1,26 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
 import com.google.gson.JsonObject;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.ui.HUD;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
-import net.minecraft.util.GsonHelper;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.register;
 
 public class Huds implements AddonModule {
-    @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        HUD hud = BaseGson.GSON.fromJson(new FileReader(file), HUD.class);
-        JsonObject jsonObject = GsonHelper.parse(new FileReader(file));
-        try {
-            if (hud == null) return;
+	@Override
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		HUD hud = AddonFormats.read(addon, file, HUD.class);
+		JsonObject jsonObject = AddonFormats.readObject(addon, file);
+		try {
+			if (hud == null) return;
 
 //            Component component = hud.getLayout(jsonObject);
 //            if (hud.getLayoutType() == LayoutType.FLOW_PANEL) {
@@ -53,14 +50,14 @@ public class Huds implements AddonModule {
 //                }
 //            });
 
-            register(ContentRegistries.HUDS, "hud", hud.id, hud);
-        } catch (Exception e) {
-            failedRegistering("hud", hud.id.toString(), e);
-        }
-    }
+			register(ContentRegistries.HUDS, "hud", hud.id, hud);
+		} catch (Exception e) {
+			failedRegistering("hud", hud.id.toString(), e);
+		}
+	}
 
-    @Override
-    public String getType() {
-        return "client/hud";
-    }
+	@Override
+	public String getType() {
+		return "client/hud";
+	}
 }

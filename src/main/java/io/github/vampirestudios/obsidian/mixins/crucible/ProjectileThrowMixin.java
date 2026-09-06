@@ -14,26 +14,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Projectile.class)
 public abstract class ProjectileThrowMixin {
-    @Inject(method = "shootFromRotation", at = @At("TAIL"))
-    private void crucible$onShootFromRotation(Entity owner, float xRot, float yRot, float yOffset, float velocity, float inaccuracy, CallbackInfo ci) {
-        Projectile proj = (Projectile) (Object) this;
-        if (!(proj.level() instanceof ServerLevel level)) return;
+	@Inject(method = "shootFromRotation", at = @At("TAIL"))
+	private void crucible$onShootFromRotation(Entity owner, float xRot, float yRot, float yOffset, float velocity, float inaccuracy, CallbackInfo ci) {
+		Projectile proj = (Projectile) (Object) this;
+		if (!(proj.level() instanceof ServerLevel level)) return;
 
-        if (owner instanceof ServerPlayer sp) {
-            CrucibleEvents.fire(SkillTrigger.PROJECTILE_THROW,
-                    SkillContext.builder(sp)
-                            .level(level)
-                            .projectile(proj)
-                            .build()
-            );
+		if (owner instanceof ServerPlayer sp) {
+			CrucibleEvents.fire(SkillTrigger.PROJECTILE_THROW,
+					SkillContext.builder(sp)
+							.level(level)
+							.projectile(proj)
+							.build()
+			);
 
-            // Optional: SHOOT trigger as well (if you differentiate bow vs throw later, you can refine)
-            CrucibleEvents.fire(SkillTrigger.SHOOT,
-                    SkillContext.builder(sp)
-                            .level(level)
-                            .projectile(proj)
-                            .build()
-            );
-        }
-    }
+			// Optional: SHOOT trigger as well (if you differentiate bow vs throw later, you can refine)
+			CrucibleEvents.fire(SkillTrigger.SHOOT,
+					SkillContext.builder(sp)
+							.level(level)
+							.projectile(proj)
+							.build()
+			);
+		}
+	}
 }

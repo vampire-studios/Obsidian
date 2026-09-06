@@ -15,18 +15,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityConsumeMixin {
 
-    @Inject(method = "completeUsingItem", at = @At("TAIL"))
-    private void crucible$afterCompleteUsingItem(CallbackInfo ci) {
-        LivingEntity self = (LivingEntity) (Object) this;
-        if (!(self instanceof ServerPlayer sp)) return;
-        if (!(sp.level() instanceof ServerLevel level)) return;
+	@Inject(method = "completeUsingItem", at = @At("TAIL"))
+	private void crucible$afterCompleteUsingItem(CallbackInfo ci) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (!(self instanceof ServerPlayer sp)) return;
+		if (!(sp.level() instanceof ServerLevel level)) return;
 
-        ItemStack used = sp.getActiveItem();
-        CrucibleEvents.fire(SkillTrigger.CONSUME,
-                SkillContext.builder(sp)
-                        .level(level)
-                        .stack(used)
-                        .build()
-        );
-    }
+		ItemStack used = sp.getActiveItem();
+		CrucibleEvents.fire(SkillTrigger.CONSUME,
+				SkillContext.builder(sp)
+						.level(level)
+						.stack(used)
+						.build()
+		);
+	}
 }

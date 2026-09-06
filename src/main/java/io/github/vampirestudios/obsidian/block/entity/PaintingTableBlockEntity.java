@@ -1,32 +1,16 @@
 package io.github.vampirestudios.obsidian.block.entity;
 
-import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1;
-import eu.pb4.placeholders.api.parsers.TagParser;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import io.github.vampirestudios.obsidian.api.obsidian.PaintingTableInformation;
 import io.github.vampirestudios.obsidian.registry.OBE;
-import io.github.vampirestudios.obsidian.registry.OI;
-import io.github.vampirestudios.obsidian.utils.ColorUtil;
-import io.github.vampirestudios.obsidian.utils.IntArray;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PaintingTableBlockEntity extends BlockEntity implements Container {
 	private final SimpleContainer container = new SimpleContainer(1);
@@ -37,7 +21,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 
 	public InteractionResult onUse(PaintingTableInformation information, Player player) {
 		if (player instanceof ServerPlayer serverPlayer) {
-			new Gui(information, serverPlayer);
+//			new Gui(information, serverPlayer);
 		}
 		return InteractionResult.SUCCESS;
 	}
@@ -82,7 +66,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 		container.clearContent();
 	}
 
-	private class Gui extends SimpleGui {
+	/*private class Gui extends SimpleGui {
 		private static final String DEFAULT_TITLE = "Painting Table";
 		private final PaintingTableInformation information;
 		private final ServerPlayer player;
@@ -103,7 +87,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 
 		public Component getTitle() {
 			if (information != null && information.title != null && !information.title.trim().isEmpty()) {
-				return TagParser.QUICK_TEXT_WITH_STF.parseNode(information.title).toComponent();
+				return TagParser.QUICK_TEXT.parseNode(information.title).toComponent();
 			} else {
 				return Component.literal(DEFAULT_TITLE);
 			}
@@ -122,7 +106,7 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 						}));
 					}
 				}
-			} else if(information.buttons.baseColorGrid.type == PaintingTableInformation.Type.SCROLLING) {
+			} else if (information.buttons.baseColorGrid.type == PaintingTableInformation.Type.SCROLLING) {
 			}
 		}
 
@@ -137,7 +121,8 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 
 		private ItemStack buildColorItemStack(ItemStack itemStack, PaintingTableInformation.Color color, boolean customName) {
 			itemStack.set(DataComponents.DYED_COLOR, new DyedItemColor(ColorUtil.toIntRgb(ColorUtil.toFloatArray(color.getColor()))));
-			if(customName) itemStack.set(DataComponents.ITEM_NAME, MarkdownLiteParserV1.ALL.parseNode(color.name).toComponent());
+			if (customName)
+				itemStack.set(DataComponents.ITEM_NAME, MarkdownLiteParserV1.ALL.parseNode(color.name).toComponent());
 			return itemStack;
 		}
 
@@ -205,5 +190,5 @@ public class PaintingTableBlockEntity extends BlockEntity implements Container {
 			double maxDistanceSquared = 18 * 18;
 			return player.blockPosition().distToCenterSqr(Vec3.atCenterOf(PaintingTableBlockEntity.this.getBlockPos())) > maxDistanceSquared;
 		}
-	}
+	}*/
 }

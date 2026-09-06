@@ -31,8 +31,10 @@ public interface ActionPosition {
 				return ops.getStringValue(typeVal).flatMap(typeRaw -> {
 					String type = typeRaw.toLowerCase(java.util.Locale.ROOT);
 					return switch (type) {
-						case "fixed" -> FixedPosition.CODEC.decode(ops, input).map(p -> p.mapFirst(v -> (ActionPosition) v));
-						case "relative" -> RelativePosition.CODEC.decode(ops, input).map(p -> p.mapFirst(v -> (ActionPosition) v));
+						case "fixed" ->
+								FixedPosition.CODEC.decode(ops, input).map(p -> p.mapFirst(v -> (ActionPosition) v));
+						case "relative" ->
+								RelativePosition.CODEC.decode(ops, input).map(p -> p.mapFirst(v -> (ActionPosition) v));
 						default -> DataResult.error(() -> "Unknown ActionPosition type: " + type);
 					};
 				});

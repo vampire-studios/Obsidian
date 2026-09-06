@@ -1,0 +1,43 @@
+{
+  "information": {
+    "name": "Tutorial Bomb",
+    "item_properties": {
+      "max_count": 16,
+      "item_group": "minecraft:tools_and_combat"
+    }
+  },
+  "shape": "thrown",
+  "damage": 4.0,
+  "cooldown": 20,
+  "flight": {
+    "speed": 1.5,
+    "gravity": 0.05,
+    "lifetime": 100
+  },
+  "trail": {
+    "particle": "minecraft:smoke",
+    "count": 2,
+    "interval": 1
+  },
+  "events": {
+    "projectile_hit_block": [
+      {
+        "action": "play_sound_at",
+        "sound": "minecraft:entity.generic.explode"
+      },
+      {
+        "action": "spawn_particles_at",
+        "particle": "minecraft:explosion",
+        "count": 8
+      }
+    ],
+    "projectile_hit_entity": [
+      {
+        "action": "apply_effect",
+        "effect": "minecraft:slowness",
+        "duration": 100,
+        "amplifier": 1
+      }
+    ]
+  }
+}

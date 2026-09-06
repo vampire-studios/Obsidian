@@ -1,0 +1,38 @@
+{
+  "block_type": "rotated_pillar",
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Tutorial Lamp"
+      }
+    },
+    "powerable": true,
+    "block_properties": {
+      "sound_group": "minecraft:glass",
+      "hardness": 0.3,
+      "resistance": 0.3,
+      "luminance": 0,
+      "powered_luminance": 15,
+      "translucent": false
+    },
+    "item_properties": {
+      "item_group": "minecraft:redstone_blocks"
+    }
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_column",
+      "textures": {
+        "end": "block/redstone_lamp",
+        "side": "block/redstone_lamp"
+      }
+    },
+    "powered_model": {
+      "parent": "block/cube_column",
+      "textures": {
+        "end": "block/redstone_lamp_on",
+        "side": "block/redstone_lamp_on"
+      }
+    }
+  }
+}

@@ -1,10 +1,7 @@
 package io.github.vampirestudios.obsidian.addon_modules.crucible;
 
-import blue.endless.jankson.api.DeserializationException;
-import blue.endless.jankson.api.SyntaxError;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.github.vampirestudios.obsidian.api.crucible.CrucibleSkill;
 import io.github.vampirestudios.obsidian.api.crucible.Skill;
 import io.github.vampirestudios.obsidian.api.crucible.SkillEntry;
@@ -12,6 +9,7 @@ import io.github.vampirestudios.obsidian.api.crucible.SkillParser;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
@@ -28,15 +26,16 @@ public class CrucibleSkills implements AddonModule {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CrucibleSkills.class);
 
 	@Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError, DeserializationException {
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
 		if (!Objects.equals(id.format(), "crucible_like")) return;
 
-		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		ObjectMapper mapper = new ObjectMapper();
 		mapper.findAndRegisterModules();
 
 		SkillParser.setModId(id.modId());
 		try {
-			Map<String, CrucibleSkill> items = mapper.readValue(file, new TypeReference<>() {});
+			Map<String, CrucibleSkill> items = mapper.readValue(AddonFormats.readAsJsonString(addon, file), new TypeReference<>() {
+			});
 			for (Map.Entry<String, CrucibleSkill> entry : items.entrySet()) {
 				String skillName = entry.getKey();
 				CrucibleSkill crucibleSkill = entry.getValue();

@@ -17,31 +17,31 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 
 public class EntitySpawnRoom extends StructurePiece {
 
-    private final BackroomsLevel level;
+	private final BackroomsLevel level;
 
-    public EntitySpawnRoom(int depth, RandomSource random, BoundingBox boundingBox, BackroomsLevel level) {
-        super(OStructurePieceTypes.BACKROOMS_ROOM, depth, boundingBox);
-        this.level = level;
-    }
+	public EntitySpawnRoom(int depth, RandomSource random, BoundingBox boundingBox, BackroomsLevel level) {
+		super(OStructurePieceTypes.BACKROOMS_ROOM, depth, boundingBox);
+		this.level = level;
+	}
 
-    @Override
-    public void postProcess(WorldGenLevel world, StructureManager structureManager, ChunkGenerator chunkGenerator, RandomSource random, BoundingBox boundingBox, ChunkPos chunkPos, BlockPos pos) {
-        // Customize the room as usual
-        this.generateBox(world, boundingBox, this.boundingBox.minX(), this.boundingBox.minY(), this.boundingBox.minZ(), this.boundingBox.maxX(), this.boundingBox.maxY(), this.boundingBox.maxZ(), Blocks.STONE.defaultBlockState(), Blocks.CAVE_AIR.defaultBlockState(), false);
+	@Override
+	public void postProcess(WorldGenLevel world, StructureManager structureManager, ChunkGenerator chunkGenerator, RandomSource random, BoundingBox boundingBox, ChunkPos chunkPos, BlockPos pos) {
+		// Customize the room as usual
+		this.generateBox(world, boundingBox, this.boundingBox.minX(), this.boundingBox.minY(), this.boundingBox.minZ(), this.boundingBox.maxX(), this.boundingBox.maxY(), this.boundingBox.maxZ(), Blocks.STONE.defaultBlockState(), Blocks.CAVE_AIR.defaultBlockState(), false);
 
-        // Add entities based on the level
-        if (world instanceof ServerLevel serverLevel) {
-            if (level == BackroomsLevel.LEVEL_2) {
-                EntityTypes.ZOMBIE.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
-            } else if (level == BackroomsLevel.LEVEL_3) {
-                EntityTypes.ENDERMAN.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
-            } else if (level == BackroomsLevel.LEVEL_4) {
-                EntityTypes.WITCH.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
-            }
-        }
-    }
+		// Add entities based on the level
+		if (world instanceof ServerLevel serverLevel) {
+			if (level == BackroomsLevel.LEVEL_2) {
+				EntityTypes.ZOMBIE.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+			} else if (level == BackroomsLevel.LEVEL_3) {
+				EntityTypes.ENDERMAN.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+			} else if (level == BackroomsLevel.LEVEL_4) {
+				EntityTypes.WITCH.spawn(serverLevel, null, null, pos, EntitySpawnReason.STRUCTURE, true, false);
+			}
+		}
+	}
 
-    @Override
-    protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag nbt) {
-    }
+	@Override
+	protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag nbt) {
+	}
 }

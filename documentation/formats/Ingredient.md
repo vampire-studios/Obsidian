@@ -1,21 +1,35 @@
-# Ingredient definitions
+# Ingredients
 
-Ingredients are not named, but rather used inside other json files.
+A test for "is this the right item". Used inside other files, never on its own — most visibly as the
+`conversion_item` on a block [`convertible`](./Blocks.md#convertible).
 
-Due to initialization timing, ingredients used in _Content Packs_ cannot be custom (mod-defined) ingredients. Only `item` and `tag` ingredients are supported.
-
-Item ingredients contain an `"item"` key with a resource location indicating the item registry name.
-
-```json
-{
-  "item": "minecraft:clay"
-}
-```
-
-Tag ingredients contain a `"tag"` key with a resource location indicating the item registry name.
+## By item
 
 ```json
-{
-  "tag": "c:string"
-}
+{ "item": "minecraft:clay" }
 ```
+
+## By tag
+
+```json
+{ "tag": "c:string" }
+```
+
+Any item in the tag matches, which is usually what you want for a family of tools:
+
+```json
+{ "conversion_item": { "tag": "minecraft:pickaxes" } }
+```
+
+## Limits
+
+Only `item` and `tag` are supported. Custom, mod-defined ingredient types cannot be used in content
+packs — packs are read while the game is still starting up, before those types exist.
+
+Give exactly one of the two. `item` is checked first, so an object with both silently ignores its `tag`,
+and an object with neither is dropped entirely — as is an `item` naming something that does not exist.
+
+## See also
+
+* [Item Stacks](./ItemStack.md) — for *describing* an item rather than matching one.
+* [Chisel Mappings](./ChiselMappings.md) — where a richer block-side predicate is available.

@@ -7,14 +7,14 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class AddonApiNetworking {
 
-    public static final Identifier OPEN_JSON_SCREEN =
+	public static final Identifier OPEN_JSON_SCREEN =
 			Identifier.fromNamespaceAndPath(Const.MOD_ID, "open_json_screen");
 
-    public static void registerServerReceivers() {
-        // currently we only need server → client, so nothing here yet
-    }
+	public static void registerServerReceivers() {
+		// currently we only need server → client, so nothing here yet
+	}
 
-    public static void registerClientReceivers() {
+	public static void registerClientReceivers() {
 //        ClientPlayNetworking.registerGlobalReceiver(OPEN_JSON_SCREEN,
 //                (idk, context) -> {
 //                    String idStr = buf.readUtf();
@@ -28,11 +28,11 @@ public class AddonApiNetworking {
 //                        mc.setScreen(new JsonUiScreen(screenDef, mc.screen));
 //                    });
 //                });
-    }
+	}
 
-    public static void sendOpenScreen(ServerPlayer player, String menuId) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
-        buf.writeUtf(menuId);
+	public static void sendOpenScreen(ServerPlayer player, String menuId) {
+		FriendlyByteBuf buf = new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+		buf.writeUtf(menuId);
 //        ServerPlayNetworking.send(player, CustomPacketPayload.createType(OPEN_JSON_SCREEN, buf).id());
-    }
+	}
 }

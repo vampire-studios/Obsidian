@@ -153,12 +153,12 @@ public class CognitiveEnhancement {
 
     */
 /**
-     * Changes the gravity for a living entity.
-     *
-     * @param entity The entity to modify.
-     * @param duration Duration in seconds for how long the gravity change should last.
-     * @param gravityFactor A double value that specifies the new gravity value (range from -1.0 to 1.0).
-     *//*
+ * Changes the gravity for a living entity.
+ *
+ * @param entity The entity to modify.
+ * @param duration Duration in seconds for how long the gravity change should last.
+ * @param gravityFactor A double value that specifies the new gravity value (range from -1.0 to 1.0).
+ *//*
 
     public static void changePlayerGravity(LivingEntity entity, int duration, double gravityFactor) {
         // Ensure gravityFactor is within the valid range

@@ -7,53 +7,50 @@ import io.github.vampirestudios.obsidian.utils.parse.function.JsonElementFunctio
 
 import java.util.function.Consumer;
 
-public interface Any
-{
-    ObjValue obj();
+public interface Any {
+	ObjValue obj();
 
-    ArrayValue array();
+	ArrayValue array();
 
-    StringValue string();
+	StringValue string();
 
-    IntValue intValue();
+	IntValue intValue();
 
-    LongValue longValue();
+	LongValue longValue();
 
-    FloatValue floatValue();
+	FloatValue floatValue();
 
-    DoubleValue doubleValue();
+	DoubleValue doubleValue();
 
-    BooleanValue bool();
+	BooleanValue bool();
 
-    Any ifObj(Consumer<ObjValue> visitor);
+	Any ifObj(Consumer<ObjValue> visitor);
 
-    Any ifArray(Consumer<ArrayValue> visitor);
+	Any ifArray(Consumer<ArrayValue> visitor);
 
-    Any ifString(Consumer<StringValue> visitor);
+	Any ifString(Consumer<StringValue> visitor);
 
-    Any ifInteger(Consumer<IntValue> visitor);
+	Any ifInteger(Consumer<IntValue> visitor);
 
-    Any ifLong(Consumer<LongValue> visitor);
+	Any ifLong(Consumer<LongValue> visitor);
 
-    Any ifFloat(Consumer<FloatValue> visitor);
+	Any ifFloat(Consumer<FloatValue> visitor);
 
-    Any ifDouble(Consumer<DoubleValue> visitor);
+	Any ifDouble(Consumer<DoubleValue> visitor);
 
-    Any ifBool(Consumer<BooleanValue> visitor);
+	Any ifBool(Consumer<BooleanValue> visitor);
 
-    void typeError();
+	void typeError();
 
-    void raw(JsonElementConsumer visitor);
+	void raw(JsonElementConsumer visitor);
 
-    JsonElement get();
+	JsonElement get();
 
-    default <T> MappedValue<T> map(JsonElementFunction<T> mapping)
-    {
-        return MappedValue.of(mapping.apply(get()));
-    }
+	default <T> MappedValue<T> map(JsonElementFunction<T> mapping) {
+		return MappedValue.of(mapping.apply(get()));
+	}
 
-    default <T> MappedValue<T> map(AnyFunction<T> mapping)
-    {
-        return MappedValue.of(mapping.apply(this));
-    }
+	default <T> MappedValue<T> map(AnyFunction<T> mapping) {
+		return MappedValue.of(mapping.apply(this));
+	}
 }

@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.block;
 
-import com.mojang.serialization.MapCodec;
+import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 import io.github.vampirestudios.obsidian.block.entity.PaintingTableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class PaintingTableBlock extends BaseEntityBlock {
 
-	public final io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
+	public final Block block;
 
-	public PaintingTableBlock(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
+	public PaintingTableBlock(Block block, Properties settings) {
 		super(settings);
 		this.block = block;
 	}
@@ -40,10 +40,5 @@ public class PaintingTableBlock extends BaseEntityBlock {
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new PaintingTableBlockEntity(pos, state);
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return null;
 	}
 }

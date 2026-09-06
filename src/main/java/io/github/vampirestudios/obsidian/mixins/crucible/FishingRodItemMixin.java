@@ -17,22 +17,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(FishingRodItem.class)
 public class FishingRodItemMixin {
 
-    @Inject(
-            method = "use",
-            at = @At("TAIL")
-    )
-    private void crucible$fishCast(Level level, Player player, InteractionHand hand,
-                                   CallbackInfoReturnable<InteractionResult> cir) {
-        if (level.isClientSide()) return;
-        if (!(player instanceof ServerPlayer sp)) return;
+	@Inject(
+			method = "use",
+			at = @At("TAIL")
+	)
+	private void crucible$fishCast(Level level, Player player, InteractionHand hand,
+	                               CallbackInfoReturnable<InteractionResult> cir) {
+		if (level.isClientSide()) return;
+		if (!(player instanceof ServerPlayer sp)) return;
 
-        CrucibleEvents.fire(
-                SkillTrigger.FISH,
-                SkillContext.builder(sp)
-                        .level(sp.level())
-                        .hand(hand)
-                        .stack(sp.getItemInHand(hand))
-                        .build()
-        );
-    }
+		CrucibleEvents.fire(
+				SkillTrigger.FISH,
+				SkillContext.builder(sp)
+						.level(sp.level())
+						.hand(hand)
+						.stack(sp.getItemInHand(hand))
+						.build()
+		);
+	}
 }

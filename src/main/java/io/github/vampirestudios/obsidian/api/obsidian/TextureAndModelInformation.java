@@ -6,43 +6,43 @@ import java.util.Map;
 
 public class TextureAndModelInformation {
 
-    public Map<String, Identifier> textures;
-    public Identifier parent;
+	public Map<String, Identifier> textures;
+	public Identifier parent;
 
-    public boolean inlineGenerated = false;
+	public boolean inlineGenerated = false;
 
-    public TextureAndModelInformation(Identifier parent) {
-        this.parent = parent;
-    }
+	public TextureAndModelInformation(Identifier parent) {
+		this.parent = parent;
+	}
 
-    public TextureAndModelInformation() {
-    }
+	public TextureAndModelInformation() {
+	}
 
-    public Map<String, Identifier> getTextures() {
-        return textures;
-    }
+	public Map<String, Identifier> getTextures() {
+		return textures;
+	}
 
-    public void setTextures(Map<String, Identifier> textures) {
-        this.textures = textures;
-    }
+	public void setTextures(Map<String, Identifier> textures) {
+		this.textures = textures;
+	}
 
-    public Identifier getParent() {
-        return parent;
-    }
+	public Identifier getParent() {
+		return parent;
+	}
 
-    public void setParent(Identifier parent) {
-        this.parent = parent;
-    }
+	public void setParent(Identifier parent) {
+		this.parent = parent;
+	}
 
-    public boolean isInlineGenerated() {
-        return inlineGenerated;
-    }
+	public boolean isInlineGenerated() {
+		return inlineGenerated;
+	}
 
-    public void setInlineGenerated(boolean inlineGenerated) {
-        this.inlineGenerated = inlineGenerated;
-    }
+	public void setInlineGenerated(boolean inlineGenerated) {
+		this.inlineGenerated = inlineGenerated;
+	}
 
-    public boolean isEmpty() {
-        return parent == null && (textures == null || textures.isEmpty());
-    }
+	public boolean isEmpty() {
+		return parent == null && (textures == null || textures.isEmpty());
+	}
 }

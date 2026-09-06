@@ -1,6 +1,6 @@
 package io.github.vampirestudios.obsidian.api.obsidian.item;
 
-import blue.endless.jankson.annotation.SerializedName;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * POJO for items that play a data-driven sound — either a music disc or a goat
@@ -38,21 +38,19 @@ import blue.endless.jankson.annotation.SerializedName;
  */
 public class SoundPlayingItem extends Item {
 
-    /**
-     * Which kind of sound-playing item to create. Required.
-     * Valid values: {@code "music_disc"}, {@code "goat_horn"}.
-     */
-    @SerializedName("sound_type")
-    @com.google.gson.annotations.SerializedName("sound_type")
-    public String sound_type;
+	/**
+	 * Which kind of sound-playing item to create. Required.
+	 * Valid values: {@code "music_disc"}, {@code "goat_horn"}.
+	 */
+	@SerializedName("sound_type")
+	public String sound_type;
 
-    /**
-     * Resource key of the data-driven sound entry. Required.
-     * Interpreted as a {@code JukeboxSong} key for {@code "music_disc"}, or as
-     * an {@code Instrument} key for {@code "goat_horn"}.
-     */
-    @SerializedName("sound")
-    @com.google.gson.annotations.SerializedName("sound")
-    public String sound;
+	/**
+	 * Resource key of the data-driven sound entry. Required.
+	 * Interpreted as a {@code JukeboxSong} key for {@code "music_disc"}, or as
+	 * an {@code Instrument} key for {@code "goat_horn"}.
+	 */
+	@SerializedName("sound")
+	public String sound;
 
 }

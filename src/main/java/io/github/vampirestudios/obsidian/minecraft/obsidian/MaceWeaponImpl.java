@@ -1,6 +1,7 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
 import io.github.vampirestudios.obsidian.api.EventActionHandler;
+import io.github.vampirestudios.obsidian.api.obsidian.item.Tier;
 import io.github.vampirestudios.obsidian.api.obsidian.item.WeaponItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.TypedDataComponent;
@@ -29,108 +30,110 @@ import java.util.function.Consumer;
 
 public class MaceWeaponImpl extends MaceItem {
 
-    public WeaponItem item;
+	public WeaponItem item;
 
-    public MaceWeaponImpl(WeaponItem item, ToolMaterial toolMaterial, float attackDamage, float attackSpeed, Properties settings) {
-        super(buildProperties(item, toolMaterial, attackDamage, attackSpeed, settings));
-        this.item = item;
-    }
+	public MaceWeaponImpl(WeaponItem item, ToolMaterial toolMaterial, float attackDamage, float attackSpeed, Properties settings) {
+		super(buildProperties(item, toolMaterial, attackDamage, attackSpeed, settings));
+		this.item = item;
+	}
 
-    private static Properties buildProperties(WeaponItem item, ToolMaterial toolMaterial, float attackDamage, float attackSpeed, Properties settings) {
-        WeaponItem.MaceProperties mace = item.mace;
-        Properties props = settings
-                .durability(mace.durability != null ? mace.durability : toolMaterial.durability())
-                .enchantable(mace.enchantability != null ? mace.enchantability : toolMaterial.enchantmentValue())
-                .component(DataComponents.TOOL, MaceItem.createToolProperties())
-                .attributes(buildAttributes(attackDamage, attackSpeed))
-                .component(DataComponents.WEAPON, new Weapon(1));
-        if (mace.repairable != null) {
-            Identifier repairId = Identifier.tryParse(mace.repairable);
-            if (repairId == null) throw new IllegalArgumentException("Invalid mace repair tag identifier: " + mace.repairable);
-            props.repairable(TagKey.create(Registries.ITEM, repairId));
-        } else {
-            props.repairable(toolMaterial.repairItems());
-        }
-        // Apply user-defined components last so they can override anything above.
-        applyComponents(props, item);
-        return props;
-    }
+	private static Properties buildProperties(WeaponItem item, ToolMaterial toolMaterial, float attackDamage, float attackSpeed, Properties settings) {
+		WeaponItem.MaceProperties mace = item.mace;
+		Properties props = settings
+				.durability(mace.durability != null ? mace.durability : toolMaterial.durability())
+				.enchantable(mace.enchantability != null ? mace.enchantability : toolMaterial.enchantmentValue())
+				.component(DataComponents.TOOL, MaceItem.createToolProperties())
+				.attributes(buildAttributes(attackDamage, attackSpeed))
+				.component(DataComponents.WEAPON, new Weapon(1));
+		if (mace.repairable != null) {
+			Identifier repairId = Identifier.tryParse(mace.repairable);
+			if (repairId == null)
+				throw new IllegalArgumentException("Invalid mace repair tag identifier: " + mace.repairable);
+			props.repairable(TagKey.create(Registries.ITEM, repairId));
+		} else {
+			props.repairable(toolMaterial.repairItems());
+			Tier.applyRepairItem(item.material, props);
+		}
+		// Apply user-defined components last so they can override anything above.
+		applyComponents(props, item);
+		return props;
+	}
 
-    private static <T> void applyComponents(Properties props, WeaponItem item) {
-        if (item.components == null) return;
-        for (TypedDataComponent<?> entry : item.components) {
-            applyTyped(props, entry);
-        }
-    }
+	private static <T> void applyComponents(Properties props, WeaponItem item) {
+		if (item.components == null) return;
+		for (TypedDataComponent<?> entry : item.components) {
+			applyTyped(props, entry);
+		}
+	}
 
-    private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
-        props.component(entry.type(), entry.value());
-    }
+	private static <T> void applyTyped(Item.Properties props, TypedDataComponent<T> entry) {
+		props.component(entry.type(), entry.value());
+	}
 
-    private static ItemAttributeModifiers buildAttributes(float attackDamage, float attackSpeed) {
-        return ItemAttributeModifiers.builder()
-                .add(Attributes.ATTACK_DAMAGE,
-                        new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage, AttributeModifier.Operation.ADD_VALUE),
-                        EquipmentSlotGroup.MAINHAND)
-                .add(Attributes.ATTACK_SPEED,
-                        new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE),
-                        EquipmentSlotGroup.MAINHAND)
-                .build();
-    }
+	private static ItemAttributeModifiers buildAttributes(float attackDamage, float attackSpeed) {
+		return ItemAttributeModifiers.builder()
+				.add(Attributes.ATTACK_DAMAGE,
+						new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage, AttributeModifier.Operation.ADD_VALUE),
+						EquipmentSlotGroup.MAINHAND)
+				.add(Attributes.ATTACK_SPEED,
+						new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE),
+						EquipmentSlotGroup.MAINHAND)
+				.build();
+	}
 
-    @Override
-    public boolean isFoil(ItemStack stack) {
-        return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
-    }
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return item.information.getItemSettings().hasEnchantmentGlint.orElse(stack.isEnchanted());
+	}
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, TooltipFlag context) {
-        item.addLore(tooltip);
-    }
+	@Override
+	public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, TooltipFlag context) {
+		item.addLore(tooltip);
+	}
 
-    @Override
-    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        super.hurtEnemy(stack, target, attacker); // applies smash-attack knockback & fall-damage cancellation
-        if (!(attacker instanceof Player player)) return;
-        EventActionHandler.handleHurtEnemy(target, player, item);
-    }
+	@Override
+	public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		super.hurtEnemy(stack, target, attacker); // applies smash-attack knockback & fall-damage cancellation
+		if (!(attacker instanceof Player player)) return;
+		EventActionHandler.handleHurtEnemy(target, player, item);
+	}
 
-    @Override
-    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
-        if (!(livingEntity instanceof Player player)) {
-            super.onUseTick(level, livingEntity, stack, remainingUseDuration);
-            return;
-        }
-        EventActionHandler.handleOnUseTick(player, item);
-        super.onUseTick(level, livingEntity, stack, remainingUseDuration);
-    }
+	@Override
+	public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
+		if (!(livingEntity instanceof Player player)) {
+			super.onUseTick(level, livingEntity, stack, remainingUseDuration);
+			return;
+		}
+		EventActionHandler.handleOnUseTick(player, item);
+		super.onUseTick(level, livingEntity, stack, remainingUseDuration);
+	}
 
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        EventActionHandler.handleOnUseOn(context, item);
-        return super.useOn(context);
-    }
+	@Override
+	public InteractionResult useOn(UseOnContext context) {
+		EventActionHandler.handleOnUseOn(context, item);
+		return super.useOn(context);
+	}
 
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
-        if (!(livingEntity instanceof Player player)) return super.finishUsingItem(stack, level, livingEntity);
-        EventActionHandler.handleOnFinishUsing(player, item);
-        return super.finishUsingItem(stack, level, livingEntity);
-    }
+	@Override
+	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+		if (!(livingEntity instanceof Player player)) return super.finishUsingItem(stack, level, livingEntity);
+		EventActionHandler.handleOnFinishUsing(player, item);
+		return super.finishUsingItem(stack, level, livingEntity);
+	}
 
-    @Override
-    public void inventoryTick(ItemStack itemStack, ServerLevel serverLevel, Entity entity, @Nullable EquipmentSlot equipmentSlot) {
-        if (!(entity instanceof Player player)) {
-            super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
-            return;
-        }
-        EventActionHandler.handleOnInventoryTick(player, item);
-        super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
-    }
+	@Override
+	public void inventoryTick(ItemStack itemStack, ServerLevel serverLevel, Entity entity, @Nullable EquipmentSlot equipmentSlot) {
+		if (!(entity instanceof Player player)) {
+			super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
+			return;
+		}
+		EventActionHandler.handleOnInventoryTick(player, item);
+		super.inventoryTick(itemStack, serverLevel, entity, equipmentSlot);
+	}
 
-    @Override
-    public void onCraftedBy(ItemStack itemStack, Player player) {
-        EventActionHandler.handleOnItemCrafted(player, item);
-        super.onCraftedBy(itemStack, player);
-    }
+	@Override
+	public void onCraftedBy(ItemStack itemStack, Player player) {
+		EventActionHandler.handleOnItemCrafted(player, item);
+		super.onCraftedBy(itemStack, player);
+	}
 }

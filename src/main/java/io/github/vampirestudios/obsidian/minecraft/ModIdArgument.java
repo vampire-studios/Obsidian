@@ -16,24 +16,24 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ModIdArgument implements ArgumentType<String> {
-    private static final List<String> EXAMPLES = Arrays.asList("fabric-api", "obsidian", "inventorysorter");
+	private static final List<String> EXAMPLES = Arrays.asList("fabric-api", "obsidian", "inventorysorter");
 
-    public static ModIdArgument modIdArgument() {
-        return new ModIdArgument();
-    }
+	public static ModIdArgument modIdArgument() {
+		return new ModIdArgument();
+	}
 
-    @Override
-    public String parse(final StringReader reader) throws CommandSyntaxException {
-        return reader.readUnquotedString();
-    }
+	@Override
+	public String parse(final StringReader reader) throws CommandSyntaxException {
+		return reader.readUnquotedString();
+	}
 
-    @Override
-    public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
-        return SharedSuggestionProvider.suggest(FabricLoader.getInstance().getAllMods().stream().map(modContainer -> modContainer.getMetadata().getId()), builder);
-    }
+	@Override
+	public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
+		return SharedSuggestionProvider.suggest(FabricLoader.getInstance().getAllMods().stream().map(modContainer -> modContainer.getMetadata().getId()), builder);
+	}
 
-    @Override
-    public Collection<String> getExamples() {
-        return EXAMPLES;
-    }
+	@Override
+	public Collection<String> getExamples() {
+		return EXAMPLES;
+	}
 }

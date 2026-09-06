@@ -1,6 +1,5 @@
 package io.github.vampirestudios.obsidian.minecraft.obsidian;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.functions.CommandFunction;
 import net.minecraft.core.BlockPos;
@@ -24,55 +23,49 @@ import java.util.Optional;
 
 public class WaterloggableBlockImpl extends Block implements SimpleWaterloggedBlock {
 
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
-    private static final MapCodec<Block> CODEC = simpleCodec(WaterloggableBlockImpl::new);
+	public io.github.vampirestudios.obsidian.api.obsidian.block.Block block;
 
-    @Override
-    public MapCodec<? extends Block> codec() {
-        return CODEC;
-    }
+	public WaterloggableBlockImpl(Properties settings) {
+		super(settings);
+		this.block = null;
+		this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
+	}
 
-    public WaterloggableBlockImpl(Properties settings) {
-        super(settings);
-        this.block = null;
-        this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
-    }
+	public WaterloggableBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
+		super(settings);
+		this.block = block;
+		this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
+	}
 
-    public WaterloggableBlockImpl(io.github.vampirestudios.obsidian.api.obsidian.block.Block block, Properties settings) {
-        super(settings);
-        this.block = block;
-        this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
-    }
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
+	}
 
-    @Override
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent ? 0.2F : 1.0F : super.getShadeBrightness(state, world, pos);
-    }
+	@Override
+	public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
+		return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
+	}
 
-    @Override
-    public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return block.information.getBlockSettings() != null ? !block.information.getBlockSettings().translucent : super.isCollisionShapeFullBlock(state, world, pos);
-    }
+	@Override
+	public boolean propagatesSkylightDown(BlockState state) {
+		return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
+	}
 
-    @Override
-    public boolean propagatesSkylightDown(BlockState state) {
-        return block.information.getBlockSettings() != null ? block.information.getBlockSettings().translucent : super.propagatesSkylightDown(state);
-    }
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(WATERLOGGED);
+	}
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(WATERLOGGED);
-    }
-
-    @Nullable
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        LevelAccessor worldAccess = ctx.getLevel();
-        BlockPos blockPos = ctx.getClickedPos();
-        boolean bl = worldAccess.getFluidState(blockPos).getType() == Fluids.WATER;
-        return this.defaultBlockState().setValue(WATERLOGGED, bl);
-    }
+	@Nullable
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		LevelAccessor worldAccess = ctx.getLevel();
+		BlockPos blockPos = ctx.getClickedPos();
+		boolean bl = worldAccess.getFluidState(blockPos).getType() == Fluids.WATER;
+		return this.defaultBlockState().setValue(WATERLOGGED, bl);
+	}
 
     /*public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
         if (state.getValue(WATERLOGGED)) {
@@ -112,27 +105,27 @@ public class WaterloggableBlockImpl extends Block implements SimpleWaterloggedBl
 //        return InteractionResult.FAIL;
 //    }
 
-    @Override
-    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-        if (block.functions.scheduled_tick.predicate.matches()) {
-            Optional<CommandFunction<CommandSourceStack>> function = world.getServer().getFunctions().get(block.functions.scheduled_tick.function_file);
-            function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-        }
-    }
+	@Override
+	public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+		if (block.functions.scheduled_tick.predicate.matches()) {
+			Optional<CommandFunction<CommandSourceStack>> function = world.getServer().getFunctions().get(block.functions.scheduled_tick.function_file);
+			function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
+		}
+	}
 
-    @Override
-    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-        if (block.functions.random_tick.predicate.matches()) {
-            Optional<CommandFunction<CommandSourceStack>> function = world.getServer().getFunctions().get(block.functions.random_tick.function_file);
-            function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-        }
-    }
+	@Override
+	public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+		if (block.functions.random_tick.predicate.matches()) {
+			Optional<CommandFunction<CommandSourceStack>> function = world.getServer().getFunctions().get(block.functions.random_tick.function_file);
+			function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
+		}
+	}
 
-    @Override
-    public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
-        if (!world.isClientSide() && block.functions.random_display_tick.predicate.matches()) {
-            Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.random_display_tick.function_file);
-            function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
-        }
-    }
+	@Override
+	public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
+		if (!world.isClientSide() && block.functions.random_display_tick.predicate.matches()) {
+			Optional<CommandFunction<CommandSourceStack>> function = Objects.requireNonNull(world.getServer()).getFunctions().get(block.functions.random_display_tick.function_file);
+			function.ifPresent(commandFunction -> world.getServer().getFunctions().execute(commandFunction, world.getServer().createCommandSourceStack()));
+		}
+	}
 }

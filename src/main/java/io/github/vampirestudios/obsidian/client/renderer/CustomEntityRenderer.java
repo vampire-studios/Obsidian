@@ -11,37 +11,37 @@ import net.minecraft.resources.Identifier;
 
 public class CustomEntityRenderer extends MobRenderer<EntityImpl, EntityImplRenderState, EntityModelImpl<EntityImplRenderState>> {
 
-    private final Entity entity;
+	private final Entity entity;
 
-    public CustomEntityRenderer(EntityRendererProvider.Context context, Entity entity) {
-        super(context, entity.description.getNewEntityModel(context), entity.shadowSize);
-        this.entity = entity;
-    }
+	public CustomEntityRenderer(EntityRendererProvider.Context context, Entity entity) {
+		super(context, entity.description.getNewEntityModel(context), entity.shadowSize);
+		this.entity = entity;
+	}
 
-    @Override
-    public Identifier getTextureLocation(EntityImplRenderState state) {
-        return entity.description.getEntityTexture();
-    }
+	@Override
+	public Identifier getTextureLocation(EntityImplRenderState state) {
+		return entity.description.getEntityTexture();
+	}
 
-    @Override
-    protected boolean shouldShowName(EntityImpl entity, double distanceToCameraSq) {
-        return false;
-    }
+	@Override
+	protected boolean shouldShowName(EntityImpl entity, double distanceToCameraSq) {
+		return false;
+	}
 
-    @Override
-    public EntityImplRenderState createRenderState() {
-        return new EntityImplRenderState();
-    }
+	@Override
+	public EntityImplRenderState createRenderState() {
+		return new EntityImplRenderState();
+	}
 
-    @Override
-    public void extractRenderState(EntityImpl entity, EntityImplRenderState state, float tickDelta) {
-        super.extractRenderState(entity, state, tickDelta);
-        if (entity.animationStates != null)
-            state.animationStates = entity.animationStates;
-    }
+	@Override
+	public void extractRenderState(EntityImpl entity, EntityImplRenderState state, float tickDelta) {
+		super.extractRenderState(entity, state, tickDelta);
+		if (entity.animationStates != null)
+			state.animationStates = entity.animationStates;
+	}
 
-    @Override
-    protected void scale(EntityImplRenderState state, PoseStack poseStack) {
-        poseStack.scale(0.9375F, 0.9375F, 0.9375F);
-    }
+	@Override
+	protected void scale(EntityImplRenderState state, PoseStack poseStack) {
+		poseStack.scale(0.9375F, 0.9375F, 0.9375F);
+	}
 }

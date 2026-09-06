@@ -24,11 +24,11 @@ public interface Easing {
 	/**
 	 * Simple linear tweening - no easing.
 	 */
-    Easing LINEAR = (t, b, c, d) -> c * t / d + b;
+	Easing LINEAR = (t, b, c, d) -> c * t / d + b;
 	/**
 	 * Quadratic easing in - accelerating from zero velocity.
 	 */
-    Easing QUAD_IN = (t, b, c, d) -> c * (t /= d) * t + b;
+	Easing QUAD_IN = (t, b, c, d) -> c * (t /= d) * t + b;
 
 	///////////// QUADRATIC EASING: t^2 ///////////////////
 	/**
@@ -176,16 +176,16 @@ public interface Easing {
 	 * Bounce easing out.
 	 */
 	Easing BOUNCE_OUT = (t, b, c, d) -> {
-        if ((t /= d) < (1 / 2.75f)) {
-            return c * (7.5625f * t * t) + b;
-        } else if (t < (2 / 2.75f)) {
-            return c * (7.5625f * (t -= (1.5f / 2.75f)) * t + .75f) + b;
-        } else if (t < (2.5f / 2.75f)) {
-            return c * (7.5625f * (t -= (2.25f / 2.75f)) * t + .9375f) + b;
-        } else {
-            return c * (7.5625f * (t -= (2.625f / 2.75f)) * t + .984375f) + b;
-        }
-    };
+		if ((t /= d) < (1 / 2.75f)) {
+			return c * (7.5625f * t * t) + b;
+		} else if (t < (2 / 2.75f)) {
+			return c * (7.5625f * (t -= (1.5f / 2.75f)) * t + .75f) + b;
+		} else if (t < (2.5f / 2.75f)) {
+			return c * (7.5625f * (t -= (2.25f / 2.75f)) * t + .9375f) + b;
+		} else {
+			return c * (7.5625f * (t -= (2.625f / 2.75f)) * t + .984375f) + b;
+		}
+	};
 	/**
 	 * Bounce easing in.
 	 */
@@ -196,9 +196,9 @@ public interface Easing {
 	 * Bounce easing in/out.
 	 */
 	Easing BOUNCE_IN_OUT = (t, b, c, d) -> {
-        if (t < d / 2) return Easing.BOUNCE_IN.ease(t * 2, 0, c, d) * .5f + b;
-        return Easing.BOUNCE_OUT.ease(t * 2 - d, 0, c, d) * .5f + c * .5f + b;
-    };
+		if (t < d / 2) return Easing.BOUNCE_IN.ease(t * 2, 0, c, d) * .5f + b;
+		return Easing.BOUNCE_OUT.ease(t * 2 - d, 0, c, d) * .5f + c * .5f + b;
+	};
 
 	/**
 	 * The basic function for easing.
@@ -209,7 +209,7 @@ public interface Easing {
 	 * @param d the duration time
 	 * @return the eased value
 	 */
-    float ease(float t, float b, float c, float d);
+	float ease(float t, float b, float c, float d);
 
 	/**
 	 * A base class for elastic easings.
@@ -276,7 +276,7 @@ public interface Easing {
 	/**
 	 * An Elastic easing used for ElasticIn functions.
 	 */
-    class ElasticIn extends Elastic {
+	class ElasticIn extends Elastic {
 		public ElasticIn(float amplitude, float period) {
 			super(amplitude, period);
 		}
@@ -303,7 +303,7 @@ public interface Easing {
 	/**
 	 * An Elastic easing used for ElasticOut functions.
 	 */
-    class ElasticOut extends Elastic {
+	class ElasticOut extends Elastic {
 		public ElasticOut(float amplitude, float period) {
 			super(amplitude, period);
 		}
@@ -330,7 +330,7 @@ public interface Easing {
 	/**
 	 * An Elastic easing used for ElasticInOut functions.
 	 */
-    class ElasticInOut extends Elastic {
+	class ElasticInOut extends Elastic {
 		public ElasticInOut(float amplitude, float period) {
 			super(amplitude, period);
 		}
@@ -409,7 +409,7 @@ public interface Easing {
 	/**
 	 * Back easing in - backtracking slightly, then reversing direction and moving to target.
 	 */
-    class BackIn extends Back {
+	class BackIn extends Back {
 		public BackIn() {
 			super();
 		}
@@ -427,7 +427,7 @@ public interface Easing {
 	/**
 	 * Back easing out - moving towards target, overshooting it slightly, then reversing and coming back to target.
 	 */
-    class BackOut extends Back {
+	class BackOut extends Back {
 		public BackOut() {
 			super();
 		}

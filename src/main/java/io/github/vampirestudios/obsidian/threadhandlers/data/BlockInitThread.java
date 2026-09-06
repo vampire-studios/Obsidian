@@ -4,14 +4,14 @@ import io.github.vampirestudios.obsidian.api.obsidian.block.Block;
 
 public class BlockInitThread implements Runnable {
 
-    private final Block block;
+	private final Block block;
 
-    public BlockInitThread(Block blockIn) {
-        block = blockIn;
-    }
+	public BlockInitThread(Block blockIn) {
+		block = blockIn;
+	}
 
-    @Override
-    public void run() {
+	@Override
+	public void run() {
         /*Obsidian.registerDataPack(Utils.appendToPath(block.information.name.id, "_data"), serverResourcePackBuilder -> {
             serverResourcePackBuilder.addLootTable(block.information.name.id, new LootTableBuilder()
                     .type(new Identifier("block"))
@@ -154,5 +154,5 @@ public class BlockInitThread implements Runnable {
                 });
             }
         }*/
-    }
+	}
 }

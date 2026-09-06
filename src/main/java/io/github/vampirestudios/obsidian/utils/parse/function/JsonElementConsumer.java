@@ -6,6 +6,5 @@ import java.util.function.Consumer;
 
 @FunctionalInterface
 public
-interface JsonElementConsumer extends Consumer<JsonElement>
-{
+interface JsonElementConsumer extends Consumer<JsonElement> {
 }

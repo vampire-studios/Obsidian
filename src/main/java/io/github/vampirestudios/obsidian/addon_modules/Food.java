@@ -1,24 +1,19 @@
 package io.github.vampirestudios.obsidian.addon_modules;
 
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
 import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.item.FoodItem;
 import io.github.vampirestudios.obsidian.minecraft.obsidian.FoodItemImpl;
 import io.github.vampirestudios.obsidian.registry.ContentRegistries;
-import io.github.vampirestudios.obsidian.registry.Registries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.failedRegistering;
@@ -26,55 +21,29 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.r
 
 public class Food implements AddonModule {
 
-    private File file;
+	@Override
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		FoodItem foodItem = AddonFormats.read(addon, file, FoodItem.class);
+		try {
+			if (foodItem == null) return;
 
-    @Override
-    public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError {
-        this.file = file;
-        FoodItem foodItem = BaseGson.GSON.fromJson(new FileReader(file), FoodItem.class);
-        try {
-            if (foodItem == null) return;
+			Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), AddonFormats.baseName(file));
+			foodItem.information.id = identifier;
 
-            Identifier identifier = Identifier.fromNamespaceAndPath(id.modId(), file.getName().replaceAll(".json", ""));
-            foodItem.information.id = identifier;
+			Item.Properties settings = ItemModuleHelper.baseProperties(foodItem).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
+			var creativeTab = ItemModuleHelper.getCreativeTab(foodItem);
 
-            Item.Properties settings = ItemModuleHelper.baseProperties(foodItem).setId(ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, identifier));
-            var creativeTab = ItemModuleHelper.getCreativeTab(foodItem);
+			ItemModuleHelper.applyFood(settings, foodItem.food_information, foodItem.components);
+			Item item = Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, identifier, new FoodItemImpl(foodItem, settings));
+			CreativeModeTabEvents.modifyOutputEvent(creativeTab).register(entries -> entries.accept(item));
+			register(ContentRegistries.FOODS, "food", identifier, foodItem);
+		} catch (Exception e) {
+			failedRegistering("food", file.getName(), e);
+		}
+	}
 
-            FoodProperties foodComponent = Registries.FOODS.getValue(foodItem.food_information.foodComponent);
-            Item item = Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM, identifier, new FoodItemImpl(foodItem, settings.food(foodComponent)));
-            CreativeModeTabEvents.modifyOutputEvent(creativeTab).register(entries -> entries.accept(item));
-            register(ContentRegistries.FOODS, "food", identifier, foodItem);
-        } catch (Exception e) {
-            failedRegistering("food", file.getName(), e);
-        }
-    }
-
-    @Override
-    public void initMealApi() throws FileNotFoundException {
-        FoodItem foodItem = BaseGson.GSON.fromJson(new FileReader(file), FoodItem.class);
-        try {
-            if (foodItem == null) return;
-            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(foodItem.information.id);
-//            MealItemRegistry.instance().register(item, ((player, stack) -> foodItem.food_information.fullness));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void initAppleSkin() throws FileNotFoundException {
-        /*FoodItem foodItem = Obsidian.GSON.fromJson(new FileReader(file), FoodItem.class);
-        try {
-            if (foodItem == null) return;
-            Item item = Registry.ITEM.get(foodItem.information.id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-    }
-
-    @Override
-    public String getType() {
-        return "item/food";
-    }
+	@Override
+	public String getType() {
+		return "item/food";
+	}
 }

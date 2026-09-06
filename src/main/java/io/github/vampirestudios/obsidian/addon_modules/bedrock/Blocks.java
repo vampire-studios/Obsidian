@@ -1,8 +1,5 @@
 package io.github.vampirestudios.obsidian.addon_modules.bedrock;
 
-import blue.endless.jankson.api.DeserializationException;
-import blue.endless.jankson.api.SyntaxError;
-import io.github.vampirestudios.obsidian.BaseGson;
 import io.github.vampirestudios.obsidian.api.bedrock.block.BaseBlock;
 import io.github.vampirestudios.obsidian.api.bedrock.block.Component;
 import io.github.vampirestudios.obsidian.api.obsidian.AddonModule;
@@ -10,6 +7,7 @@ import io.github.vampirestudios.obsidian.api.obsidian.IAddonPack;
 import io.github.vampirestudios.obsidian.api.obsidian.RegistryHelperBlockExpanded;
 import io.github.vampirestudios.obsidian.minecraft.bedrock.BlockImpl;
 import io.github.vampirestudios.obsidian.registry.BedrockContentRegistries;
+import io.github.vampirestudios.obsidian.utils.AddonFormats;
 import io.github.vampirestudios.obsidian.utils.BasicAddonInfo;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -17,7 +15,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 import static io.github.vampirestudios.obsidian.configPack.BedrockAddonLoader.failedRegistering;
@@ -27,8 +24,8 @@ import static io.github.vampirestudios.obsidian.configPack.ObsidianAddonLoader.R
 public class Blocks implements AddonModule {
 
 	@Override
-	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException, SyntaxError, DeserializationException {
-		BaseBlock baseBlock = BaseGson.GSON.fromJson(new FileReader(file), BaseBlock.class);
+	public void init(IAddonPack addon, File file, BasicAddonInfo id) throws IOException {
+		BaseBlock baseBlock = AddonFormats.read(addon, file, BaseBlock.class);
 		try {
 			if (baseBlock == null) return;
 

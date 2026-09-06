@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.resources.model.EquipmentAssetManager;
 import net.minecraft.client.resources.model.sprite.AtlasManager;
+import net.minecraft.client.resources.palette.PalettedTextureManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,9 +26,10 @@ public class EntityRendererFactoryContextMixin implements HasAnimationManager {
 	private AnimationManager quilt$animationManager;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void createAnimationManager(EntityRenderDispatcher entityRenderDispatcher, BlockModelResolver blockModelResolver, ItemModelResolver itemModelResolver, MapRenderer mapRenderer, ResourceManager resourceManager, EntityModelSet modelSet, EquipmentAssetManager equipmentAssets, AtlasManager atlasManager, Font font, PlayerSkinRenderCache playerSkinRenderCache, CallbackInfo ci) {
+	private void createAnimationManager(EntityRenderDispatcher entityRenderDispatcher, BlockModelResolver blockModelResolver, ItemModelResolver itemModelResolver, MapRenderer mapRenderer, ResourceManager resourceManager, EntityModelSet modelSet, EquipmentAssetManager equipmentAssets, AtlasManager atlasManager, Font font, PlayerSkinRenderCache playerSkinRenderCache, PalettedTextureManager palettedTextures, CallbackInfo ci) {
 		this.quilt$animationManager = entityRenderDispatcher.getAnimationManager();
 	}
+
 	@Override
 	public AnimationManager getAnimationManager() {
 		return quilt$animationManager;

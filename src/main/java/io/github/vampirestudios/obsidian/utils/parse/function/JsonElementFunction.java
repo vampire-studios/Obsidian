@@ -6,6 +6,5 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public
-interface JsonElementFunction<T> extends Function<JsonElement, T>
-{
+interface JsonElementFunction<T> extends Function<JsonElement, T> {
 }

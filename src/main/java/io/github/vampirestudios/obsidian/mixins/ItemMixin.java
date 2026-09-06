@@ -14,26 +14,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Item.class)
 public abstract class ItemMixin {
 
-    @Inject(method = "getUseAnimation", at = @At("HEAD"), cancellable = true)
-    private void yourmod$getUseAnimation(
-        ItemStack stack,
-        CallbackInfoReturnable<ItemUseAnimation> cir
-    ) {
-        ScopeComponent scope = stack.get(OItemComponents.SCOPE);
-        if (scope != null) {
-            cir.setReturnValue(ItemUseAnimation.SPYGLASS);
-        }
-    }
+	@Inject(method = "getUseAnimation", at = @At("HEAD"), cancellable = true)
+	private void yourmod$getUseAnimation(
+			ItemStack stack,
+			CallbackInfoReturnable<ItemUseAnimation> cir
+	) {
+		ScopeComponent scope = stack.get(OItemComponents.SCOPE);
+		if (scope != null) {
+			cir.setReturnValue(ItemUseAnimation.SPYGLASS);
+		}
+	}
 
-    @Inject(method = "getUseDuration", at = @At("HEAD"), cancellable = true)
-    private void yourmod$getUseDuration(
-        ItemStack stack,
-        LivingEntity user,
-        CallbackInfoReturnable<Integer> cir
-    ) {
-        ScopeComponent scope = stack.get(OItemComponents.SCOPE);
-        if (scope != null) {
-            cir.setReturnValue(scope.useDurationTicks());
-        }
-    }
+	@Inject(method = "getUseDuration", at = @At("HEAD"), cancellable = true)
+	private void yourmod$getUseDuration(
+			ItemStack stack,
+			LivingEntity user,
+			CallbackInfoReturnable<Integer> cir
+	) {
+		ScopeComponent scope = stack.get(OItemComponents.SCOPE);
+		if (scope != null) {
+			cir.setReturnValue(scope.useDurationTicks());
+		}
+	}
 }

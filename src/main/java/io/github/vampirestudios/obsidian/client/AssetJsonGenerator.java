@@ -2,9 +2,10 @@ package io.github.vampirestudios.obsidian.client;
 
 import com.google.gson.JsonElement;
 import io.github.vampirestudios.obsidian.Obsidian;
+import net.minecraft.resources.Identifier;
+
 import java.util.Map;
 import java.util.function.Consumer;
-import net.minecraft.resources.Identifier;
 
 public class AssetJsonGenerator extends JsonGenerator {
 	public AssetJsonGenerator(Map<Identifier, JsonElement> m) {

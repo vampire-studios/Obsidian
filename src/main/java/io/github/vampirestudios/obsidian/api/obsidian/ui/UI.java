@@ -25,9 +25,9 @@ public class UI {
 //	public List<Component> components = new ArrayList<>();
 
 	public Sizing sizing(JsonObject jsonObject, String type) {
-		if(GsonHelper.isStringValue(jsonObject, type)) {
+		if (GsonHelper.isStringValue(jsonObject, type)) {
 			return Sizing.of(GsonHelper.getAsString(jsonObject, type));
-		} else if(GsonHelper.isObjectNode(jsonObject, type)) {
+		} else if (GsonHelper.isObjectNode(jsonObject, type)) {
 			return Sizing.of(GsonHelper.getAsJsonObject(jsonObject, type));
 		} else {
 			return new Sizing().setType(SizingType.CONTENT);
@@ -35,9 +35,9 @@ public class UI {
 	}
 
 	public Surface surface(JsonObject jsonObject) {
-		if(GsonHelper.isStringValue(jsonObject, "surface")) {
+		if (GsonHelper.isStringValue(jsonObject, "surface")) {
 			return new Surface().setSurfaceType(Surface.SurfaceType.valueOf(GsonHelper.getAsString(jsonObject, "surface").toUpperCase(Locale.ROOT)));
-		} else if(GsonHelper.isObjectNode(jsonObject, "surface")) {
+		} else if (GsonHelper.isObjectNode(jsonObject, "surface")) {
 			return Surface.of(GsonHelper.getAsJsonObject(jsonObject, "surface"));
 		} else {
 			return new Surface().setSurfaceType(Surface.SurfaceType.PANEL);
@@ -92,22 +92,32 @@ public class UI {
 				case "OUTLINE" -> Surface.SurfaceType.OUTLINE;
 				case "TILED" -> Surface.SurfaceType.TILED;
 				case "GRADIENT" -> Surface.SurfaceType.GRADIENT;
-				default -> throw new IllegalStateException("Unexpected value: " + Arrays.toString(Surface.SurfaceType.values()));
+				default ->
+						throw new IllegalStateException("Unexpected value: " + Arrays.toString(Surface.SurfaceType.values()));
 			};
 
-			if (GsonHelper.isStringValue(jsonObject, "texture")) surface.texture = Identifier.tryParse(GsonHelper.getAsString(jsonObject, "texture"));
+			if (GsonHelper.isStringValue(jsonObject, "texture"))
+				surface.texture = Identifier.tryParse(GsonHelper.getAsString(jsonObject, "texture"));
 
-			if (GsonHelper.isNumberValue(jsonObject, "textureWidth")) surface.textureWidth = GsonHelper.getAsInt(jsonObject, "textureWidth");
-			if (GsonHelper.isNumberValue(jsonObject, "textureHeight")) surface.textureHeight = GsonHelper.getAsInt(jsonObject, "textureHeight");
+			if (GsonHelper.isNumberValue(jsonObject, "textureWidth"))
+				surface.textureWidth = GsonHelper.getAsInt(jsonObject, "textureWidth");
+			if (GsonHelper.isNumberValue(jsonObject, "textureHeight"))
+				surface.textureHeight = GsonHelper.getAsInt(jsonObject, "textureHeight");
 
-			if (GsonHelper.isStringValue(jsonObject, "flatColor")) surface.flatColor = GsonHelper.getAsString(jsonObject, "flatColor");
+			if (GsonHelper.isStringValue(jsonObject, "flatColor"))
+				surface.flatColor = GsonHelper.getAsString(jsonObject, "flatColor");
 
-			if (GsonHelper.isStringValue(jsonObject, "outlineColor")) surface.outlineColor = GsonHelper.getAsString(jsonObject, "outlineColor");
+			if (GsonHelper.isStringValue(jsonObject, "outlineColor"))
+				surface.outlineColor = GsonHelper.getAsString(jsonObject, "outlineColor");
 
-			if (GsonHelper.isStringValue(jsonObject, "topLeftColor")) surface.topLeftColor = GsonHelper.getAsString(jsonObject, "topLeftColor");
-			if (GsonHelper.isStringValue(jsonObject, "topRightColor")) surface.topRightColor = GsonHelper.getAsString(jsonObject, "topRightColor");
-			if (GsonHelper.isStringValue(jsonObject, "bottomRightColor")) surface.bottomRightColor = GsonHelper.getAsString(jsonObject, "bottomRightColor");
-			if (GsonHelper.isStringValue(jsonObject, "bottomLeftColor")) surface.bottomLeftColor = GsonHelper.getAsString(jsonObject, "bottomLeftColor");
+			if (GsonHelper.isStringValue(jsonObject, "topLeftColor"))
+				surface.topLeftColor = GsonHelper.getAsString(jsonObject, "topLeftColor");
+			if (GsonHelper.isStringValue(jsonObject, "topRightColor"))
+				surface.topRightColor = GsonHelper.getAsString(jsonObject, "topRightColor");
+			if (GsonHelper.isStringValue(jsonObject, "bottomRightColor"))
+				surface.bottomRightColor = GsonHelper.getAsString(jsonObject, "bottomRightColor");
+			if (GsonHelper.isStringValue(jsonObject, "bottomLeftColor"))
+				surface.bottomLeftColor = GsonHelper.getAsString(jsonObject, "bottomLeftColor");
 			return surface;
 		}
 

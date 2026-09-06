@@ -12,15 +12,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(net.minecraft.core.MappedRegistry.class)
 public class MappedRegistryDebugMixin<T> {
-    @Shadow private boolean frozen;
-    @Shadow
-    @Final
-    private ResourceKey<? extends Registry<T>> key;
+	@Shadow
+	private boolean frozen;
+	@Shadow
+	@Final
+	private ResourceKey<? extends Registry<T>> key;
 
-    @Inject(method = "prepareTagReload", at = @At("HEAD"))
-    private void yourmod$debugPrepareTagReload(TagLoader.LoadResult<T> loadResult, CallbackInfoReturnable<Registry.PendingTags<T>> cir) {
-        if (!this.frozen) {
-            System.err.println("[TAG-DEBUG] Registry NOT frozen during tag reload: " + this.key);
-        }
-    }
+	@Inject(method = "prepareTagReload", at = @At("HEAD"))
+	private void yourmod$debugPrepareTagReload(TagLoader.LoadResult<T> loadResult, CallbackInfoReturnable<Registry.PendingTags<T>> cir) {
+		if (!this.frozen) {
+			System.err.println("[TAG-DEBUG] Registry NOT frozen during tag reload: " + this.key);
+		}
+	}
 }

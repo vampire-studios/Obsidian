@@ -9,24 +9,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntitiesInLineTarget extends EntityTarget<LivingEntity> {
-    private final double length;
-    private final double width;
+	private final double length;
+	private final double width;
 
-    public EntitiesInLineTarget(double length, double width) {
-        super(List.of("EntitiesInLine", "line"));
-        this.length = length;
-        this.width = width;
-    }
+	public EntitiesInLineTarget(double length, double width) {
+		super(List.of("EntitiesInLine", "line"));
+		this.length = length;
+		this.width = width;
+	}
 
-    @Override
-    public List<LivingEntity> getTargets(LivingEntity caster) {
-        List<LivingEntity> targets = new ArrayList<>();
-        Vec3 start = caster.position();
-        Vec3 end = start.add(caster.getLookAngle().scale(length));
-        AABB lineBox = new AABB(start, end).inflate(width);
-        for (LivingEntity entity : caster.level().getEntitiesOfClass(LivingEntity.class, lineBox)) {
-            targets.add(entity);
-        }
-        return targets;
-    }
+	@Override
+	public List<LivingEntity> getTargets(LivingEntity caster) {
+		List<LivingEntity> targets = new ArrayList<>();
+		Vec3 start = caster.position();
+		Vec3 end = start.add(caster.getLookAngle().scale(length));
+		AABB lineBox = new AABB(start, end).inflate(width);
+		for (LivingEntity entity : caster.level().getEntitiesOfClass(LivingEntity.class, lineBox)) {
+			targets.add(entity);
+		}
+		return targets;
+	}
 }

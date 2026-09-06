@@ -21,7 +21,8 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 		super(component);
 	}
 
-	@Shadow protected abstract void addItemSlotMouseAction(ItemSlotMouseAction itemSlotMouseAction);
+	@Shadow
+	protected abstract void addItemSlotMouseAction(ItemSlotMouseAction itemSlotMouseAction);
 
 	@Inject(method = "init", at = @At(value = "TAIL"))
 	public void onInit(CallbackInfo ci) {

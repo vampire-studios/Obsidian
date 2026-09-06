@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
 
-    public NexoItem item;
+	public NexoItem item;
 
 	public ShieldItemImpl(NexoItem shieldItem, Item.Properties settings) {
 		super(settings.durability(336)
@@ -55,7 +55,7 @@ public class ShieldItemImpl extends net.minecraft.world.item.ShieldItem {
 	public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
 		if (item.lore != null) {
 			for (String lore : item.lore) {
-				consumer.accept(TagParser.QUICK_TEXT_WITH_STF.parseNode(lore).toComponent());
+				consumer.accept(TagParser.QUICK_TEXT.parseNode(lore).toComponent());
 			}
 		}
 	}

@@ -1,10 +1,10 @@
 package io.github.vampirestudios.obsidian.client;
 
 import com.google.gson.JsonElement;
+import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
-import net.minecraft.resources.Identifier;
 
 public class JsonGenerator {
 	private final Logger console;

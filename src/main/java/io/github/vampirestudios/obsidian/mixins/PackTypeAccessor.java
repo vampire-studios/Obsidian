@@ -6,8 +6,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(PackType.class)
 public interface PackTypeAccessor {
-    @Invoker("<init>")
-    static PackType createPackType(String directory) {
-        throw new UnsupportedOperationException();
-    }
+	@Invoker("<init>")
+	static PackType createPackType(String directory) {
+		throw new UnsupportedOperationException();
+	}
 }

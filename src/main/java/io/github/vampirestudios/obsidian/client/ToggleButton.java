@@ -12,32 +12,33 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 public class ToggleButton extends Button {
-    @Nullable
-    protected WidgetSprites sprites;
-    private final GUI.Widget widget;
-    protected boolean isStateTriggered;
+	@Nullable
+	protected WidgetSprites sprites;
+	private final GUI.Widget widget;
+	protected boolean isStateTriggered;
 
-    public ToggleButton(int x, int y, int width, int height, GUI.Widget widget) {
-        super(x, y, width, height, Component.empty(), button -> {}, Supplier::get);
-        this.widget = widget;
-        this.isStateTriggered = widget.defaultState;
-        this.sprites = widget.widgetSprites;
-    }
+	public ToggleButton(int x, int y, int width, int height, GUI.Widget widget) {
+		super(x, y, width, height, Component.empty(), button -> {
+		}, Supplier::get);
+		this.widget = widget;
+		this.isStateTriggered = widget.defaultState;
+		this.sprites = widget.widgetSprites;
+	}
 
-    @Override
-    public void onPress(InputWithModifiers inputWithModifiers) {
-        super.onPress(inputWithModifiers);
-        isStateTriggered = !isStateTriggered;
-        setMessage(isStateTriggered ? Component.literal(widget.onText) : Component.literal(widget.offText));
-    }
+	@Override
+	public void onPress(InputWithModifiers inputWithModifiers) {
+		super.onPress(inputWithModifiers);
+		isStateTriggered = !isStateTriggered;
+		setMessage(isStateTriggered ? Component.literal(widget.onText) : Component.literal(widget.offText));
+	}
 
-    @Override
-    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        if (this.sprites != null) {
+	@Override
+	protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+		if (this.sprites != null) {
 //            RenderSystem.disableDepthTest();
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.sprites.get(this.isStateTriggered, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
+			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.sprites.get(this.isStateTriggered, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
 //            guiGraphics.blitSprite(RenderType::guiTextured, this.sprites.get(this.isStateTriggered, this.isHoveredOrFocused()), this.getX(), this.getY(), this.width, this.height);
 //            RenderSystem.enableDepthTest();
-        }
-    }
+		}
+	}
 }

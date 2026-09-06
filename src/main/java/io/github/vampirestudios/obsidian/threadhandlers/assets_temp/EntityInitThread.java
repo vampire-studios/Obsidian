@@ -11,36 +11,36 @@ import net.minecraft.world.entity.EntityType;
 
 public class EntityInitThread implements Runnable {
 
-    private final Entity entity;
+	private final Entity entity;
 
-    public EntityInitThread(Entity entity) {
-        this.entity = entity;
-    }
+	public EntityInitThread(Entity entity) {
+		this.entity = entity;
+	}
 
-    @Override
-    public void run() {
-        Identifier id = entity.description.id;
-        if (id == null) return;
+	@Override
+	public void run() {
+		Identifier id = entity.description.id;
+		if (id == null) return;
 
-        @SuppressWarnings("unchecked")
-        EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) BuiltInRegistries.ENTITY_TYPE.getValue(id);
-        if (entityType == null) return;
+		@SuppressWarnings("unchecked")
+		EntityType<EntityImpl> entityType = (EntityType<EntityImpl>) BuiltInRegistries.ENTITY_TYPE.getValue(id);
+		if (entityType == null) return;
 
-        EntityRendererRegistry.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
+		EntityRendererRegistry.register(entityType, ctx -> new CustomEntityRenderer(ctx, entity));
 
-        if (entity.description.name != null) {
-            ClientInit.addTranslation(
-                id.getNamespace(), "en_us",
-                "entity." + id.getNamespace() + "." + id.getPath(),
-                entity.description.name
-            );
-            if (entity.description.spawnable) {
-                ClientInit.addTranslation(
-                    id.getNamespace(), "en_us",
-                    "item." + id.getNamespace() + "." + id.getPath() + "_spawn_egg",
-                    entity.description.name + " Spawn Egg"
-                );
-            }
-        }
-    }
+		if (entity.description.name != null) {
+			ClientInit.addTranslation(
+					id.getNamespace(), "en_us",
+					"entity." + id.getNamespace() + "." + id.getPath(),
+					entity.description.name
+			);
+			if (entity.description.spawnable) {
+				ClientInit.addTranslation(
+						id.getNamespace(), "en_us",
+						"item." + id.getNamespace() + "." + id.getPath() + "_spawn_egg",
+						entity.description.name + " Spawn Egg"
+				);
+			}
+		}
+	}
 }

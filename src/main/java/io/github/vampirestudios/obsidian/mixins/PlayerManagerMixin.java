@@ -17,16 +17,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerList.class)
 public class PlayerManagerMixin {
-    @Inject(
-            method = "placeNewPlayer",
-            at = @At( value = "TAIL" )
-    )
-    void modifyHeadSlotItem (Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
-        AbstractContainerMenu handler = player.containerMenu;
-        ItemStack itemStack = CosmeticsData.getHeadCosmetics((IEntityDataSaver) player);
-        if(itemStack != ItemStack.EMPTY ) {
-            ((CosmeticSlotExt) handler).setHeadCosmetics(itemStack);
-            player.connection.send(new ClientboundContainerSetSlotPacket(handler.containerId, handler.incrementStateId(), 5, itemStack));
-        }
-    }
+	@Inject(
+			method = "placeNewPlayer",
+			at = @At(value = "TAIL")
+	)
+	void modifyHeadSlotItem(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
+		AbstractContainerMenu handler = player.containerMenu;
+		ItemStack itemStack = CosmeticsData.getHeadCosmetics((IEntityDataSaver) player);
+		if (itemStack != ItemStack.EMPTY) {
+			((CosmeticSlotExt) handler).setHeadCosmetics(itemStack);
+			player.connection.send(new ClientboundContainerSetSlotPacket(handler.containerId, handler.incrementStateId(), 5, itemStack));
+		}
+	}
 }

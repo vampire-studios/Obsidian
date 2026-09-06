@@ -1,0 +1,58 @@
+{
+  "information": {
+    "name": {
+      "translations": {
+        "en_us": "Tutorial Bricks"
+      }
+    },
+    "block_properties": {
+      "material": "minecraft:stone",
+      "sound_group": "minecraft:stone"
+    },
+    "item_properties": {
+      "item_group": "minecraft:building_blocks"
+    }
+  },
+  "additional_information": {
+    "variants": {
+      "stairs": true,
+      "slab": true,
+      "fence": true,
+      "fence_gate": true,
+      "button": true,
+      "pressure_plate": true,
+      "door": true,
+      "wall": {
+        "textures": {
+          "all": "minecraft:block/deepslate_tiles"
+        },
+        "block_properties": {
+          "hardness": 6.0,
+          "resistance": 8.0,
+          "requires_tool": true,
+          "mineable": "pickaxe",
+          "translucent": false
+        }
+      },
+      "trapdoor": {
+        "id": "tutorial_brick_hatch",
+        "name": "Tutorial Brick Hatch",
+        "item_group": "minecraft:functional_blocks",
+        "loot_table": "minecraft:blocks/deepslate_bricks"
+      }
+    }
+  },
+  "drop_information": {
+    "companion_loot_tables": {
+      "slab": "minecraft:blocks/deepslate_brick_slab"
+    }
+  },
+  "rendering": {
+    "block_model": {
+      "parent": "block/cube_all",
+      "textures": {
+        "all": "block/deepslate_bricks"
+      }
+    }
+  }
+}

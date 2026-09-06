@@ -41,8 +41,8 @@ public class PaintingTableInformation {
 
 		public int getColor() {
 			if (color instanceof int[] ints) {
-				return ColorUtil.color(ints[0],ints[1],ints[2]);
-			} else if(color instanceof String s) {
+				return ColorUtil.color(ints[0], ints[1], ints[2]);
+			} else if (color instanceof String s) {
 				return ColorUtil.color(s.replaceAll("#", ""));
 			} else {
 				return ColorUtil.color("ffffff");
@@ -63,13 +63,15 @@ public class PaintingTableInformation {
 	public static class BaseColorGrid {
 		public Type type = Type.NORMAL;
 		public Normal normalGrid = new Normal();
+
 		public static class Normal {
 			public IntArray first = new IntArray(12, 14);
 			public IntArray second = new IntArray(21, 23);
 			public IntArray third = new IntArray(30, 32);
 			public List<IntArray> rows = List.of(first, second, third);
 		}
-//		public int[][] normalGrid = {
+
+		//		public int[][] normalGrid = {
 //				{12, 13, 14},
 //				{21, 22, 23},
 //				{30, 31, 32}

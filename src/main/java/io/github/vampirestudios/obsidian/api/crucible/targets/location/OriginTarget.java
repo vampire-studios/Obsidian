@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class OriginTarget extends LocationTarget {
-    public OriginTarget() {
-        super(List.of("Origin", "origin", "Source", "source"));
-    }
+	public OriginTarget() {
+		super(List.of("Origin", "origin", "Source", "source"));
+	}
 
-    @Override
-    public List<Vec3> getTargets(LivingEntity caster) {
-        return Collections.singletonList(caster.position());
-    }
+	@Override
+	public List<Vec3> getTargets(LivingEntity caster) {
+		return Collections.singletonList(caster.position());
+	}
 }

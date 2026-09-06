@@ -4,16 +4,16 @@ import net.minecraft.resources.Identifier;
 
 public class ExpandedItemGroup {
 
-    public Identifier target_group;
-    public Tab[] tabs;
-    public TabButton[] buttons;
+	public Identifier target_group;
+	public Tab[] tabs;
+	public TabButton[] buttons;
 
-    static class Tab {
-//        public String iconType;
+	static class Tab {
+		//        public String iconType;
 //        public IconTextureInformation iconInformation;
-        public Identifier icon;
-        public String name;
-        public Identifier tag;
+		public Identifier icon;
+		public String name;
+		public Identifier tag;
 
 //        public Icon icon() {
 //            if (iconType.equals("item")) {
@@ -23,13 +23,13 @@ public class ExpandedItemGroup {
 //                        iconInformation.textureWidth, iconInformation.textureHeight);
 //            }
 //        }
-    }
+	}
 
-    static class TabButton {
-//        public String iconType;
+	static class TabButton {
+		//        public String iconType;
 //        public IconTextureInformation iconInformation;
-        public Identifier icon;
-        public String name;
+		public Identifier icon;
+		public String name;
 
 //        public Icon icon() {
 //            if (iconType.equals("item")) {
@@ -39,14 +39,14 @@ public class ExpandedItemGroup {
 //                        iconInformation.textureWidth, iconInformation.textureHeight);
 //            }
 //        }
-    }
+	}
 
-    static class IconTextureInformation {
-        public Identifier texture;
-        public int u;
-        public int v;
-        public int textureHeight;
-        public int textureWidth;
-    }
+	static class IconTextureInformation {
+		public Identifier texture;
+		public int u;
+		public int v;
+		public int textureHeight;
+		public int textureWidth;
+	}
 
 }

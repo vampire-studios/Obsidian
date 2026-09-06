@@ -2,7 +2,7 @@
 package io.github.vampirestudios.obsidian.api.bedrock;
 
 import io.github.vampirestudios.obsidian.configPack.BaseAddonInfo;
-import net.vampirestudios.arrp.api.RuntimeResourcePack;
+import net.vampirestudios.packwright.api.RuntimeResourcePack;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackResources;

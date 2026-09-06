@@ -8,49 +8,50 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(AbstractContainerMenu.class)
 public class ScreenHandlerMixin implements CosmeticSlotExt {
-    @Unique
-    public ItemStack headCosmetics = ItemStack.EMPTY;
-    @Unique
-    public ItemStack chestCosmetics = ItemStack.EMPTY;
-    @Unique
-    public ItemStack leggingsCosmetics = ItemStack.EMPTY;
-    @Unique
-    public ItemStack bootsCosmetics = ItemStack.EMPTY;
+	@Unique
+	public ItemStack headCosmetics = ItemStack.EMPTY;
+	@Unique
+	public ItemStack chestCosmetics = ItemStack.EMPTY;
+	@Unique
+	public ItemStack leggingsCosmetics = ItemStack.EMPTY;
+	@Unique
+	public ItemStack bootsCosmetics = ItemStack.EMPTY;
 
-    public void setHeadCosmetics (ItemStack itemStack) {
-        headCosmetics = itemStack;
-    }
-    public ItemStack getHeadCosmetics () {
-        return headCosmetics;
-    }
+	public void setHeadCosmetics(ItemStack itemStack) {
+		headCosmetics = itemStack;
+	}
 
-    @Override
-    public ItemStack getChestCosmetics() {
-        return chestCosmetics;
-    }
+	public ItemStack getHeadCosmetics() {
+		return headCosmetics;
+	}
 
-    @Override
-    public void setChestCosmetics(ItemStack itemStack) {
-        this.chestCosmetics = itemStack;
-    }
+	@Override
+	public ItemStack getChestCosmetics() {
+		return chestCosmetics;
+	}
 
-    @Override
-    public ItemStack getLeggingsCosmetics() {
-        return leggingsCosmetics;
-    }
+	@Override
+	public void setChestCosmetics(ItemStack itemStack) {
+		this.chestCosmetics = itemStack;
+	}
 
-    @Override
-    public void setLeggingsCosmetics(ItemStack itemStack) {
-        this.leggingsCosmetics = itemStack;
-    }
+	@Override
+	public ItemStack getLeggingsCosmetics() {
+		return leggingsCosmetics;
+	}
 
-    @Override
-    public ItemStack getBootsCosmetics() {
-        return bootsCosmetics;
-    }
+	@Override
+	public void setLeggingsCosmetics(ItemStack itemStack) {
+		this.leggingsCosmetics = itemStack;
+	}
 
-    @Override
-    public void setBootsCosmetics(ItemStack itemStack) {
-        this.bootsCosmetics = itemStack;
-    }
+	@Override
+	public ItemStack getBootsCosmetics() {
+		return bootsCosmetics;
+	}
+
+	@Override
+	public void setBootsCosmetics(ItemStack itemStack) {
+		this.bootsCosmetics = itemStack;
+	}
 }

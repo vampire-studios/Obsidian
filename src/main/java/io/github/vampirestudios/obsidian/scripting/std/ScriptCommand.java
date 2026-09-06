@@ -8,12 +8,13 @@ public record ScriptCommand(
 		List<Param> params,
 		List<String> actions,
 		List<String> aliases,
-		Map<String,String> suggests,
+		Map<String, String> suggests,
 		int cooldownTicks,
 		String description,
 		String permission
 ) {
-	public record Param(String name, Kind kind, boolean required, String defaultLiteral) {}
+	public record Param(String name, Kind kind, boolean required, String defaultLiteral) {
+	}
 
 	public enum Kind {
 		INTEGER, FLOAT, BOOL, WORD, TEXT, DURATION, TIME, TEAM_COLOR,
